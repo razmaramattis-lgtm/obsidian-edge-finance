@@ -18,7 +18,7 @@ const plans = [
     ],
     cta: "Velg Start",
     highlighted: false,
-    compare: "Sanna: 3 990 kr/år — men uten mva, lønn og AI",
+    compare: "Andre: lavere pris — men uten mva, lønn og AI",
   },
   {
     name: "Grow",
@@ -86,7 +86,7 @@ const Pricing = () => {
           <AnimatedSection delay={0.2}>
             <div className="max-w-3xl mx-auto mb-20 p-6 glass rounded-3xl text-center">
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                <span className="text-foreground font-normal">Sanna</span> gir deg regnskapsfører til 3 990 kr/år — men mangler mva-rapportering, lønn, revisjonstøtte og AI. <span className="text-foreground font-normal">Fiken</span> og <span className="text-foreground font-normal">Tripletex</span> gir deg et system uten noen til å bruke det. <span className="text-primary font-medium">Avargo gir deg alt. Alltid.</span>
+                <span className="text-foreground font-normal">Billigalternativene</span> gir deg regnskapsfører til lav pris — men mangler mva-rapportering, lønn, revisjonstøtte og AI. <span className="text-foreground font-normal">Regnskapssystemene</span> gir deg et system uten noen til å bruke det. <span className="text-primary font-medium">Avargo gir deg alt. Alltid.</span>
               </p>
             </div>
           </AnimatedSection>
@@ -158,9 +158,9 @@ const Pricing = () => {
           </AnimatedSection>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
-              { name: "Sanna", them: "Billig for holdingselskaper, men mangler mva, lønn og strategisk dybde. Perfekt start — men du vokser forbi.", us: "Alt Sanna tilbyr + alt de mangler" },
-              { name: "Aider / Azets", them: "Store maskinerier der du er et kundenummer. Timefakturering som straffer deg for å stille spørsmål.", us: "Fast pris. Ubegrenset rådgivning." },
-              { name: "Fiken / Tripletex", them: "Regnskapssystem uten regnskapsfører. Du gjør jobben selv — og risikerer feil som koster deg dyrt.", us: "System + regnskapsfører + AI. Alt inkludert." },
+              { name: "Billigalternativene", them: "Lave priser for holdingselskaper, men mangler mva, lønn og strategisk dybde. Perfekt start — men du vokser forbi.", us: "Alt de tilbyr + alt de mangler" },
+              { name: "De store byråene", them: "Store maskinerier der du er et kundenummer. Timefakturering som straffer deg for å stille spørsmål.", us: "Fast pris. Ubegrenset rådgivning." },
+              { name: "Regnskapssystemer", them: "Et system uten regnskapsfører. Du gjør jobben selv — og risikerer feil som koster deg dyrt.", us: "System + regnskapsfører + AI. Alt inkludert." },
             ].map((comp, i) => (
               <AnimatedSection key={comp.name} delay={i * 0.1}>
                 <div className="p-8 glass rounded-3xl card-lift text-left h-full">

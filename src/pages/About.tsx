@@ -16,7 +16,7 @@ const About = () => {
                 <span className="italic text-gradient-rose">savnet da vi trengte det.</span>
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6 font-light">
-                De fleste regnskapsbyrå behandler deg som en mappe i et arkivskap. Sanna forstod at du ville ha noe enklere. Fiken ga deg verktøyet. Men ingen ga deg alt — en dedikert regnskapsfører som kjenner deg, forsterket av AI som gjør dere begge bedre.
+                De fleste regnskapsbyrå behandler deg som en mappe i et arkivskap. Noen forsto at du ville ha noe enklere. Andre ga deg verktøyet. Men ingen ga deg alt — en dedikert regnskapsfører som kjenner deg, forsterket av AI som gjør dere begge bedre.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6 font-light">
                 Avargo ble bygget av gründere som var lei av å vente 30 dager på en rapport som allerede var utdatert. Vi ville ha innsikt i sanntid. Vi ville ha en rådgiver som ringte oss med muligheter — ikke bare problemer. Vi ville ha noen som faktisk <em>brydde seg</em> om veksten vår.
