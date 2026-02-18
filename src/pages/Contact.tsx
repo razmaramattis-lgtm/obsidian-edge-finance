@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -15,21 +15,39 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-36 md:py-44 relative">
+    <section className="py-32 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />
       <div className="container mx-auto px-6 relative">
         <div className="grid md:grid-cols-2 gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Neste steg</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Søknad</p>
             <h1 className="font-heading text-5xl md:text-6xl mb-8 leading-snug">
-              Fortell oss om{" "}
-              <span className="italic text-gradient-rose">ambisjonene dine</span>
+              De fleste betaler for mye og får for lite.{" "}
+              <span className="italic text-gradient-rose">Du trenger ikke være en av dem.</span>
             </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-12 font-light">
-              Vi tar ikke inn alle. Fyll ut skjemaet så vurderer vi om det er en match — fordi den rette partneren gjør alt forskjellen.
+            <p className="text-muted-foreground text-lg leading-relaxed mb-6 font-light">
+              Vi tar ikke inn alle. Ikke fordi vi er arrogante — men fordi vi gir hver klient en dedikert regnskapsfører som investerer seg i ditt selskap. Det fungerer bare når vi har kapasitet til å gjøre det skikkelig.
             </p>
-            <div className="space-y-4 text-sm text-muted-foreground/50 font-light">
+            <p className="text-sm text-primary/70 italic font-light mb-10">
+              Fyll ut skjemaet. Vi kontakter deg innen 24 timer med en uforpliktende vurdering av hva Avargo kan gjøre for deg — og hva det koster å la være.
+            </p>
+
+            <div className="space-y-4 mb-10">
+              {[
+                "Dedikert regnskapsfører fra dag én",
+                "AI-drevet innsikt inkludert",
+                "Alt i én fast pris — ingen overraskelser",
+                "Spesialisert i din bransje",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3 text-sm text-foreground/60 font-light">
+                  <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-3 text-sm text-muted-foreground/50 font-light">
               <div className="flex items-center gap-3">
                 <div className="w-1 h-1 rounded-full bg-primary/40" />
                 <span>Oslo, Norge</span>
@@ -56,11 +74,14 @@ const Contact = () => {
               >
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Check size={24} className="text-primary" strokeWidth={1.5} />
+                    <Shield size={24} className="text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-heading text-3xl mb-4">Mottatt</h3>
-                  <p className="text-muted-foreground font-light leading-relaxed">
-                    Vi ser frem til å bli kjent med deg.<br />Forvent svar innen 24 timer.
+                  <h3 className="font-heading text-3xl mb-4">Søknad mottatt</h3>
+                  <p className="text-muted-foreground font-light leading-relaxed mb-4">
+                    Vi gjennomgår søknaden din og kontakter deg innen 24 timer.
+                  </p>
+                  <p className="text-sm text-primary/70 italic font-light">
+                    I mellomtiden taper din nåværende regnskapsfører deg penger. Bare så du vet.
                   </p>
                 </div>
               </motion.div>
@@ -79,22 +100,39 @@ const Contact = () => {
                   <input required type="text" className={inputClass} placeholder="Selskapets navn" />
                 </div>
                 <div>
-                  <label className={labelClass}>Hvor vil du være om 12 måneder?</label>
+                  <label className={labelClass}>Bransje</label>
+                  <select required className={inputClass}>
+                    <option value="">Velg bransje</option>
+                    <option>Tech & SaaS</option>
+                    <option>Eiendom & Utvikling</option>
+                    <option>Holding & Investering</option>
+                    <option>Consulting & Rådgivning</option>
+                    <option>Landbruk</option>
+                    <option>Varehandel</option>
+                    <option>Bygg & Anlegg</option>
+                    <option>Nettbutikk & E-commerce</option>
+                    <option>Helse & Velvære</option>
+                    <option>Annet</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
                   <select required className={inputClass}>
                     <option value="">Velg ambisjonsnivå</option>
-                    <option>Under 10 millioner</option>
+                    <option>Under 5 millioner</option>
+                    <option>5–10 millioner</option>
                     <option>10–50 millioner</option>
                     <option>50–100 millioner</option>
                     <option>Over 100 millioner</option>
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Hva holder deg tilbake?</label>
+                  <label className={labelClass}>Hva frustrerer deg mest med dagens regnskap?</label>
                   <textarea
                     required
-                    rows={4}
+                    rows={3}
                     className={`${inputClass} resize-none`}
-                    placeholder="Fortell oss om din største utfordring..."
+                    placeholder="Venter for lenge? Betaler for mye skatt? Føler du mangler kontroll?"
                   />
                 </div>
                 <button
@@ -104,6 +142,9 @@ const Contact = () => {
                   Send søknad
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </button>
+                <p className="text-xs text-muted-foreground/40 text-center font-light">
+                  Helt uforpliktende. Vi kontakter deg innen 24 timer.
+                </p>
               </form>
             )}
           </AnimatedSection>

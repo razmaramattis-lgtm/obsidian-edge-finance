@@ -96,11 +96,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </p>
             </div>
             <div>
-              <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Løsninger</h4>
+              <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Tjenester</h4>
               <div className="flex flex-col gap-3 text-sm text-foreground/40 font-light">
-                <span>AI-drevet regnskap</span>
+                <span>Dedikert regnskapsfører</span>
+                <span>AI-drevet innsikt</span>
                 <span>Skatteoptimalisering</span>
-                <span>Likviditetsprediksjon</span>
+                <span>Lønn & HR</span>
                 <span>CFO-as-a-Service</span>
               </div>
             </div>
@@ -108,9 +109,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Bransjer</h4>
               <div className="flex flex-col gap-3 text-sm text-foreground/40 font-light">
                 <span>Tech & SaaS</span>
-                <span>Eiendom</span>
-                <span>Holding</span>
-                <span>Consulting</span>
+                <span>Eiendom · Holding</span>
+                <span>Landbruk · Varehandel</span>
+                <span>Bygg · Nettbutikk</span>
+                <span>Helse · Consulting</span>
               </div>
             </div>
             <div>
