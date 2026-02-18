@@ -38,7 +38,7 @@ const Index = () => {
   const industries = [
     { icon: Globe, name: "Tech & SaaS", tagline: "Regnskap i samme tempo som koden din", desc: "Live-tracking av MRR, ARR, Burn-rate og Churn. Vi forstår runway, Series A og cap tables. Din dedikerte regnskapsfører snakker tech flytende." },
     { icon: Building2, name: "Eiendom & Utvikling", tagline: "Vi maksimerer din kvadratmeter-yield", desc: "Mva-justeringsregler, bankklar rapportering, investeringsanalyse og skatteoptimalisering på tvers av eiendomsporteføljer. Vi sikrer finansieringen din." },
-    { icon: Landmark, name: "Holding & Investering", tagline: "Beskytt formuen mot unødvendig lekkasje", desc: "Konsernbidrag, utbytteplanlegging, aksjonærregisteroppgave og skattemelding — alt håndtert. Sanna tilbyr dette for holdingselskaper, men mangler strategisk rådgivning. Vi leverer begge deler." },
+    { icon: Landmark, name: "Holding & Investering", tagline: "Beskytt formuen mot unødvendig lekkasje", desc: "Konsernbidrag, utbytteplanlegging, aksjonærregisteroppgave og skattemelding — alt håndtert. Andre tilbyr deler av dette. Vi leverer helheten — inkludert strategisk rådgivning." },
     { icon: Briefcase, name: "Consulting & Rådgivning", tagline: "Internasjonal presisjon, lokal nærhet", desc: "Compliance, internasjonal fakturering, transfer pricing og skatteoptimalisering. Din dedikerte regnskapsfører forstår konsulentbransjens unike utfordringer." },
     { icon: Tractor, name: "Landbruk", tagline: "Fra jord til regnskap — sømløst", desc: "Vi forstår jordbruksfradrag, investeringsstøtte, sesongvariasjoner og spesialreglene som gjelder primærnæringen. Din regnskapsfører kjenner gården din." },
     { icon: ShoppingCart, name: "Varehandel", tagline: "Full kontroll på marginer og varelager", desc: "Varelagerregnskap, innkjøpsanalyse, mva-rapportering og lønnsomhetsanalyse per produktkategori. Vi ser hva som selger — og hva som spiser marginen din." },
@@ -50,7 +50,7 @@ const Index = () => {
   const services = [
     { icon: Users, title: "Dedikert regnskapsfører", desc: "Ingen chatbot. Ingen callsenter. Du får én fast regnskapsfører som kjenner selskapet ditt like godt som du gjør. Alltid tilgjengelig. Alltid oppdatert." },
     { icon: Bot, title: "AI som superkraft", desc: "Vi bruker AI til å analysere 1400+ parametere, forutsi likviditetskriser og optimalisere skatt. Men maskinen rapporterer til mennesket — din dedikerte rådgiver tar beslutningene sammen med deg." },
-    { icon: FileCheck, title: "Komplett regnskapsføring", desc: "Bokføring, årsregnskap, skattemelding, aksjonærregisteroppgave og mva-rapportering — alt inkludert. Sanna tilbyr lignende, men mangler fortsatt moms, lønn og revisjonstøtte. Vi har alt fra dag én." },
+    { icon: FileCheck, title: "Komplett regnskapsføring", desc: "Bokføring, årsregnskap, skattemelding, aksjonærregisteroppgave og mva-rapportering — alt inkludert. Andre mangler moms, lønn eller revisjonstøtte. Vi har alt fra dag én." },
     { icon: CreditCard, title: "90+ bankintegrasjoner", desc: "Automatisk synkronisering med alle norske banker. Ingen manuell import. Ingen kopier-og-lim. Transaksjoner strømmer rett inn i regnskapet ditt." },
     { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepengeberegning, A-melding og arbeidsgiveravgift. Andre regnskapssystemer tar ekstra for dette. Hos oss er det inkludert." },
     { icon: BarChart3, title: "Sanntidsdashbord", desc: "Se likviditet, resultat og balanse oppdatert i sanntid. Ikke vent til neste månedsrapport for å ta beslutninger — se alt akkurat nå." },
@@ -62,7 +62,7 @@ const Index = () => {
 
   const testimonials = [
     {
-      quote: "Vi byttet fra Azets. Etter tre måneder hadde Avargo spart oss 340 000 kr i skatt vi ikke visste vi betalte for mye av. Regnskapsføreren vår ringer oss med innsikt — vi trenger aldri ringe dem.",
+      quote: "Vi byttet fra et tradisjonelt byrå. Etter tre måneder hadde Avargo spart oss 340 000 kr i skatt vi ikke visste vi betalte for mye av. Regnskapsføreren vår ringer oss med innsikt — vi trenger aldri ringe dem.",
       author: "CEO, Nordisk SaaS-selskap",
       metric: "340K",
       label: "spart i skatt",
@@ -74,7 +74,7 @@ const Index = () => {
       label: "tidlig varsling",
     },
     {
-      quote: "Sanna håndterte holdingselskapet vårt billig, men da vi vokste trengte vi noen som faktisk forsto vekststrategi. Avargo erstattet tre leverandører med ett dashbord og én dedikert rådgiver.",
+      quote: "Den forrige regnskapsføreren vår håndterte det billig, men da vi vokste trengte vi noen som faktisk forsto vekststrategi. Avargo erstattet tre leverandører med ett dashbord og én dedikert rådgiver.",
       author: "Grunnlegger, Tech-holding",
       metric: "3→1",
       label: "leverandører",
@@ -187,7 +187,7 @@ const Index = () => {
                 <span className="italic text-gradient-teal">ikke bruker på å bygge</span>
               </h2>
               <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto font-light mb-8">
-                Fiken og Tripletex ga deg et system og sa "lykke til". Sanna ga deg en regnskapsfører til en lav pris. Men hvem gir deg begge deler — pluss AI-drevet innsikt som faktisk gjør deg rikere?
+                Andre ga deg et system og sa "lykke til". Noen ga deg en regnskapsfører til lav pris — men uten AI, uten strategi, uten alt du faktisk trenger. Hvem gir deg helheten?
               </p>
               <p className="text-primary/90 text-lg font-heading italic">
                 Det gjør vi. Og bare vi.
@@ -212,7 +212,7 @@ const Index = () => {
               Hos Avargo får du en dedikert, autorisert regnskapsfører som kjenner bransjen din — forsterket av AI-verktøy som oppdager muligheter og risiko du ikke ser selv. Dette er ikke et regnskapssystem. Det er en vekstpartner.
             </p>
             <p className="text-sm text-muted-foreground/60 font-light mb-20">
-              Sanna tilbyr regnskapsfører til lav pris, men mangler mva-rapportering, lønn, revisjonstøtte og kryptovaluta. Fiken og Tripletex gir deg et verktøy — uten noen til å bruke det for deg. Hos Avargo er <em>alt</em> inkludert fra dag én.
+              Andre tilbyr regnskapsfører til lav pris, men mangler mva-rapportering, lønn, revisjonstøtte og kryptovaluta. Noen gir deg et verktøy — uten noen til å bruke det for deg. Hos Avargo er <em>alt</em> inkludert fra dag én.
             </p>
           </AnimatedSection>
 
