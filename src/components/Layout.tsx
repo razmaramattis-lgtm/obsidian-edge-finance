@@ -19,28 +19,28 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 backdrop-blur-xl bg-background/80">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/20 backdrop-blur-2xl bg-background/70">
         <div className="container mx-auto flex items-center justify-between h-16 px-6">
-          <Link to="/" className="font-heading text-xl font-bold tracking-tight text-primary">
+          <Link to="/" className="font-heading text-xl font-semibold tracking-tight text-primary">
             AVARGO
           </Link>
 
           {/* Desktop */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                className="text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-300"
               >
                 {item.label}
               </Link>
             ))}
             <Link
               to="/kontakt"
-              className="px-5 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded hover:opacity-90 transition-opacity"
+              className="px-5 py-2 text-[13px] font-medium bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
             >
-              Søk om medlemskap
+              Søk om klientstatus
             </Link>
           </div>
 
@@ -50,7 +50,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             className="md:hidden text-foreground"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
@@ -61,7 +61,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
+              className="md:hidden border-t border-border/20 bg-background/95 backdrop-blur-2xl"
             >
               <div className="flex flex-col gap-1 p-6">
                 {navItems.map((item) => (
@@ -69,7 +69,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     key={item.href}
                     to={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/30"
+                    className="py-3 text-[13px] text-muted-foreground hover:text-foreground transition-colors border-b border-border/20"
                   >
                     {item.label}
                   </Link>
@@ -77,9 +77,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link
                   to="/kontakt"
                   onClick={() => setMenuOpen(false)}
-                  className="mt-4 px-5 py-3 text-sm font-semibold bg-primary text-primary-foreground rounded text-center"
+                  className="mt-4 px-5 py-3 text-[13px] font-medium bg-primary text-primary-foreground rounded-md text-center"
                 >
-                  Søk om medlemskap
+                  Søk om klientstatus
                 </Link>
               </div>
             </motion.div>
@@ -91,18 +91,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main className="pt-16">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-16">
+      <footer className="border-t border-border/20 py-20">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-10">
+          <div className="grid md:grid-cols-4 gap-12">
             <div>
-              <span className="font-heading text-lg font-bold text-primary">AVARGO</span>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              <span className="font-heading text-lg font-semibold text-primary">AVARGO</span>
+              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
                 Din finansielle arkitekt.<br />Sanntid. Prediksjon. Kontroll.
               </p>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Tjenester</h4>
-              <div className="flex flex-col gap-2 text-sm text-foreground/70">
+              <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-5">Løsninger</h4>
+              <div className="flex flex-col gap-2.5 text-sm text-foreground/60">
                 <span>AI-drevet regnskap</span>
                 <span>Skatteoptimalisering</span>
                 <span>Likviditetsprediksjon</span>
@@ -110,8 +110,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Bransjer</h4>
-              <div className="flex flex-col gap-2 text-sm text-foreground/70">
+              <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-5">Bransjer</h4>
+              <div className="flex flex-col gap-2.5 text-sm text-foreground/60">
                 <span>Tech & SaaS</span>
                 <span>Eiendom</span>
                 <span>Holding</span>
@@ -119,20 +119,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Kontakt</h4>
-              <div className="flex flex-col gap-2 text-sm text-foreground/70">
+              <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground mb-5">Kontakt</h4>
+              <div className="flex flex-col gap-2.5 text-sm text-foreground/60">
                 <span>post@avargo.no</span>
                 <span>+47 22 00 00 00</span>
                 <span>Oslo, Norge</span>
               </div>
             </div>
           </div>
-          <div className="line-accent mt-12 mb-6" />
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+          <div className="line-accent mt-14 mb-6" />
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground/60">
             <span>© 2026 Avargo. Alle rettigheter reservert.</span>
             <div className="flex gap-6">
-              <span>Personvern</span>
-              <span>Vilkår</span>
+              <span className="hover:text-foreground transition-colors cursor-pointer">Personvern</span>
+              <span className="hover:text-foreground transition-colors cursor-pointer">Vilkår</span>
             </div>
           </div>
         </div>
