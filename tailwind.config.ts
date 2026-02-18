@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Playfair Display', 'serif'],
-        body: ['DM Sans', 'sans-serif'],
+        heading: ['Cormorant Garamond', 'serif'],
+        body: ['Outfit', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,19 +51,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        gold: {
-          DEFAULT: "hsl(var(--gold))",
-          glow: "hsl(var(--gold-glow))",
+        rose: {
+          DEFAULT: "hsl(var(--rose))",
+          glow: "hsl(var(--rose-glow))",
         },
-        violet: {
-          DEFAULT: "hsl(var(--violet))",
-          glow: "hsl(var(--violet-glow))",
+        teal: {
+          DEFAULT: "hsl(var(--teal))",
+          glow: "hsl(var(--teal-glow))",
         },
-        cobalt: {
-          DEFAULT: "hsl(var(--cobalt))",
-          glow: "hsl(var(--cobalt-glow))",
-        },
-        smoke: "hsl(var(--smoke))",
+        warm: "hsl(var(--warm))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
