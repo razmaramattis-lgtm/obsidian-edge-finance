@@ -5,21 +5,21 @@ import AnimatedSection from "@/components/AnimatedSection";
 const About = () => {
   return (
     <>
-      <section className="py-32 md:py-40 relative">
-        <div className="absolute inset-0 dreamy-bg opacity-40" />
+      <section className="py-36 md:py-44 relative">
+        <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-6 relative">
           <AnimatedSection>
             <div className="max-w-2xl">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-accent/70 mb-4">Om oss</p>
-              <h1 className="font-heading text-4xl md:text-5xl font-medium mb-8 leading-snug">
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Om oss</p>
+              <h1 className="font-heading text-5xl md:text-7xl mb-10 leading-snug">
                 Du trenger ikke en bokholder.{" "}
-                <span className="text-gradient-gold italic">Du trenger en drømmepartner.</span>
+                <span className="italic text-gradient-rose">Du trenger en strateg.</span>
               </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Avargo ble født ut av en visjon om at tall skal inspirere — ikke bare rapporteres. Vi er din finansielle arkitekt, her for å bygge veien til dit du vil.
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6 font-light">
+                Avargo eksisterer fordi regnskap fortjener noe bedre. Vi ser ikke tall — vi ser muligheter, risiko og veien videre.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Vårt team består av eks-analytikere og serie-gründere som forstår at regnskapet ditt er et verktøy for vekst — ikke et formål i seg selv.
+              <p className="text-lg text-muted-foreground leading-relaxed font-light">
+                Teamet vårt er bygget av eks-analytikere og gründere som vet at hvert tall forteller en historie. Vi leser den historien bedre enn noen andre.
               </p>
             </div>
           </AnimatedSection>
@@ -28,25 +28,24 @@ const About = () => {
 
       <div className="container mx-auto px-6"><div className="line-accent" /></div>
 
-      {/* Values */}
-      <section className="py-32 md:py-40">
+      <section className="py-36 md:py-44">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-accent/70 mb-4">Verdier</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-medium mb-20">Hvordan vi tenker</h2>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Verdier</p>
+            <h2 className="font-heading text-4xl md:text-5xl mb-20">Våre prinsipper</h2>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              { num: "01", title: "Presisjon med varme", desc: "Vi måler, analyserer og handler med nøyaktighet — men aldri uten å lytte til menneskene bak tallene." },
-              { num: "02", title: "Alltid et steg foran", desc: "Når du hører om utfordringen, har vi allerede funnet muligheten. Det er vår standard." },
-              { num: "03", title: "Vekst som eventyr", desc: "Hvert tall vi ser, ser vi gjennom linsen av 'Hvor langt kan dette ta deg?'" },
+              { num: "01", title: "Presisjon med omtanke", desc: "Vi måler og analyserer med kirurgisk nøyaktighet — men aldri uten å forstå mennesket bak tallene." },
+              { num: "02", title: "Alltid foran deg", desc: "Når du hører om utfordringen, har vi allerede funnet løsningen. Det er standardkravet vårt." },
+              { num: "03", title: "Vekst som livsstil", desc: "Vi ser hvert eneste tall gjennom én linse: Hvordan bygger dette mest mulig verdi for deg?" },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.15}>
-                <div className="p-8 bg-card/50 border border-border/30 rounded-2xl card-hover">
-                  <span className="font-heading text-5xl font-medium text-accent/10">{v.num}</span>
-                  <h3 className="font-heading text-xl font-medium mt-6 mb-3">{v.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{v.desc}</p>
+                <div className="p-10 glass rounded-3xl card-lift">
+                  <span className="font-heading text-6xl text-primary/8">{v.num}</span>
+                  <h3 className="font-heading text-2xl mt-6 mb-4">{v.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed font-light">{v.desc}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -54,20 +53,19 @@ const About = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-28 border-t border-border/15 text-center relative">
-        <div className="absolute inset-0 dreamy-bg opacity-30" />
+      <section className="py-32 border-t border-border/10 text-center relative">
+        <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-6 relative">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl md:text-4xl font-medium mb-8">
-              Klar for å drømme <span className="text-gradient-gold italic">større</span>?
+            <h2 className="font-heading text-4xl md:text-5xl mb-10">
+              Klar for <span className="italic text-gradient-rose">noe bedre</span>?
             </h2>
             <Link
               to="/kontakt"
-              className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground font-medium text-sm tracking-wide rounded-full hover:shadow-lg hover:shadow-primary/20 transition-all duration-500"
+              className="group inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
-              Start samtalen
-              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              La oss snakke
+              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
           </AnimatedSection>
         </div>
