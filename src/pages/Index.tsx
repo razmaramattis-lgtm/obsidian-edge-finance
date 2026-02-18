@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, TrendingUp, Shield, Zap, BarChart3, Building2, Briefcase, Globe, Landmark } from "lucide-react";
+import { ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import heroBg from "@/assets/hero-bg.jpg";
 
-// Live loss counter
 const LiveCounter = () => {
   const [amount, setAmount] = useState(247832);
   useEffect(() => {
@@ -16,9 +15,9 @@ const LiveCounter = () => {
   }, []);
 
   return (
-    <div className="inline-flex items-center gap-3 px-5 py-3 rounded bg-card border border-destructive/30">
-      <span className="text-xs uppercase tracking-widest text-destructive font-semibold">Tapt i dag av norske SMB</span>
-      <span className="font-heading text-xl font-bold text-destructive tabular-nums">
+    <div className="inline-flex items-center gap-4 px-6 py-3 rounded-md bg-card/80 border border-destructive/20 backdrop-blur-sm">
+      <span className="text-[10px] uppercase tracking-[0.2em] text-destructive/80 font-medium">Tapt i dag av norske SMB</span>
+      <span className="font-heading text-xl font-semibold text-destructive tabular-nums">
         kr {amount.toLocaleString("no-NO")}
       </span>
     </div>
@@ -27,10 +26,10 @@ const LiveCounter = () => {
 
 const Index = () => {
   const industries = [
-    { icon: Globe, name: "Tech & SaaS", desc: "Skalering fra Series A til børsnotering" },
-    { icon: Building2, name: "Eiendom", desc: "Porteføljeoptimalisering og skattestrategi" },
-    { icon: Landmark, name: "Holding", desc: "Konsernstruktur og utbytteplanlegging" },
-    { icon: Briefcase, name: "High-End Consulting", desc: "Internasjonal fakturering og compliance" },
+    { icon: Globe, name: "Tech & SaaS", desc: "Regnskap i samme tempo som koden din. Live-tracking av MRR, Burn-rate og Churn." },
+    { icon: Building2, name: "Eiendom & Utvikling", desc: "Full kontroll på mva-justeringsregler og bankklar rapportering som sikrer din neste finansiering." },
+    { icon: Landmark, name: "Holding & Investering", desc: "Strategisk utbytteplanlegging og konsernbidrag-optimalisering. Beskytt formuen." },
+    { icon: Briefcase, name: "High-End Consulting", desc: "Internasjonal fakturering, compliance og skatteoptimalisering for rådgiverselskaper." },
   ];
 
   const testimonials = [
@@ -58,37 +57,40 @@ const Index = () => {
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-40" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/85 to-background" />
         </div>
-        <div className="absolute inset-0 grid-overlay opacity-30" />
+        <div className="absolute inset-0 grid-overlay opacity-20" />
 
         <div className="relative z-10 container mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-3xl mx-auto"
           >
-            <h1 className="font-heading text-5xl md:text-7xl font-bold leading-[1.05] mb-6">
-              Stopp å telle penger.{" "}
-              <span className="text-gradient-gold">Begynn å tjene dem.</span>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground mb-8">Beyond Accounting. Precision in Motion.</p>
+            
+            <h1 className="font-heading text-5xl md:text-7xl font-semibold leading-[1.08] mb-8 tracking-tight">
+              Slutt å telle penger.{" "}
+              <span className="text-gradient-gold italic">Begynn å tjene dem.</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
               De fleste regnskapsførere ser i bakspeilet. Avargo er frontruta di. Vi automatiserer fortiden din så du kan eie fremtiden.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
               <Link
                 to="/kontakt"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-heading font-semibold text-sm uppercase tracking-wider rounded hover:opacity-90 transition-all glow-gold"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground font-medium text-sm tracking-wide rounded-md hover:opacity-90 transition-all glow-gold"
               >
-                Søk om medlemskap
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                Søk om klientstatus
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 to="/priser"
-                className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-heading font-semibold text-sm uppercase tracking-wider rounded hover:border-primary/50 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-4 border border-border/60 text-foreground/80 text-sm tracking-wide rounded-md hover:border-primary/40 hover:text-foreground transition-all"
               >
                 Se priser
               </Link>
@@ -98,24 +100,23 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2"
         >
-          <div className="w-5 h-8 rounded-full border-2 border-muted-foreground/40 flex items-start justify-center p-1">
-            <div className="w-1 h-2 rounded-full bg-primary" />
+          <div className="w-5 h-8 rounded-full border border-muted-foreground/30 flex items-start justify-center p-1.5">
+            <div className="w-0.5 h-1.5 rounded-full bg-primary/70" />
           </div>
         </motion.div>
       </section>
 
       {/* AUTHORITY LOGOS */}
-      <section className="py-12 border-y border-border/50">
+      <section className="py-10 border-y border-border/30">
         <div className="container mx-auto px-6">
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
             {partners.map((p) => (
-              <span key={p} className="text-sm font-heading font-medium tracking-widest uppercase text-muted-foreground/50">
+              <span key={p} className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground/40 font-medium">
                 {p}
               </span>
             ))}
@@ -123,31 +124,50 @@ const Index = () => {
         </div>
       </section>
 
+      {/* THE WHY */}
+      <section className="py-28 md:py-36">
+        <div className="container mx-auto px-6">
+          <AnimatedSection>
+            <div className="max-w-2xl mx-auto text-center">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80 mb-6">Hvorfor Avargo</p>
+              <h2 className="font-heading text-3xl md:text-4xl font-semibold mb-8 leading-snug italic">
+                "Hvorfor betale noen for å fortelle deg hva som skjedde i forrige måned?"
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Hos Avargo gir vi deg dataene som forteller deg hva du skal gjøre <em>neste</em> måned. Vi er ikke en kostnad i regnskapet ditt — vi er motoren i din vekst.
+              </p>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-6"><div className="line-accent" /></div>
+
       {/* METHOD */}
-      <section id="metoden" className="py-24 md:py-32">
+      <section id="metoden" className="py-28 md:py-36">
         <div className="container mx-auto px-6">
           <AnimatedSection>
             <div className="max-w-3xl">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-4 block">Metoden</span>
-              <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6">
-                Vi ser ikke hva som <span className="text-gradient-gold">skjedde</span>. Vi ser hva som{" "}
-                <span className="text-gradient-blue">kommer</span>.
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80 mb-4">Metoden</p>
+              <h2 className="font-heading text-3xl md:text-5xl font-semibold mb-8 leading-snug">
+                Vi ser ikke hva som <span className="text-gradient-gold italic">skjedde</span>. Vi ser hva som{" "}
+                <span className="text-gradient-cobalt italic">kommer</span>.
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                Vi bruker AI-drevet prediksjon for å forutse likviditetskriser tre måneder før de skjer. Mens konkurrentene våre sender deg en PDF i etterkant, gir vi deg retningen i sanntid.
+              <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
+                AI-drevet prediksjon som forutser likviditetskriser tre måneder før de skjer. Mens konkurrentene sender deg en PDF i etterkant, gir vi deg retningen i sanntid.
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-6 mt-16">
+          <div className="grid md:grid-cols-3 gap-px mt-20 bg-border/30 rounded-md overflow-hidden">
             {[
               { icon: Zap, title: "Sanntidsinnsikt", desc: "Dashbordet ditt oppdateres live. Aldri vent på en rapport igjen." },
               { icon: Shield, title: "Prediktiv skatt", desc: "AI analyserer 1400+ parametere for å minimere skattetrykket ditt — lovlig." },
               { icon: TrendingUp, title: "Vekstarkitektur", desc: "Vi strukturerer selskapet ditt for neste fase. Ikke bare neste kvartal." },
             ].map((item, i) => (
-              <AnimatedSection key={item.title} delay={i * 0.15}>
-                <div className="group p-8 bg-card border border-border/50 rounded hover:border-primary/30 transition-all duration-500 h-full">
-                  <item.icon size={28} className="text-primary mb-5" />
+              <AnimatedSection key={item.title} delay={i * 0.12}>
+                <div className="p-10 bg-card h-full group hover:bg-muted/50 transition-colors duration-500">
+                  <item.icon size={22} className="text-primary mb-6" strokeWidth={1.5} />
                   <h3 className="font-heading text-lg font-semibold mb-3">{item.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
@@ -160,28 +180,28 @@ const Index = () => {
       <div className="container mx-auto px-6"><div className="line-accent" /></div>
 
       {/* INDUSTRIES */}
-      <section id="bransjer" className="py-24 md:py-32">
+      <section id="bransjer" className="py-28 md:py-36">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-4 block">Bransjer</span>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-4 max-w-3xl">
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80 mb-4">Bransjer</p>
+            <h2 className="font-heading text-3xl md:text-5xl font-semibold mb-4 max-w-3xl leading-snug">
               Vi jobber ikke med hvem som helst.
             </h2>
-            <p className="text-muted-foreground text-lg mb-16 max-w-2xl">
+            <p className="text-muted-foreground text-lg mb-20 max-w-2xl">
               Avargo er skreddersydd for selskaper som skal skalere forbi 10, 50 og 100 millioner.
             </p>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-px bg-border/30 rounded-md overflow-hidden">
             {industries.map((ind, i) => (
-              <AnimatedSection key={ind.name} delay={i * 0.1}>
-                <div className="group flex items-start gap-5 p-8 bg-card border border-border/50 rounded hover:border-primary/30 transition-all duration-500">
-                  <div className="p-3 bg-muted rounded">
-                    <ind.icon size={24} className="text-primary" />
+              <AnimatedSection key={ind.name} delay={i * 0.08}>
+                <div className="group flex items-start gap-6 p-10 bg-card hover:bg-muted/50 transition-colors duration-500">
+                  <div className="p-3 bg-muted/60 rounded-md shrink-0">
+                    <ind.icon size={20} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h3 className="font-heading text-lg font-semibold mb-2">{ind.name}</h3>
-                    <p className="text-sm text-muted-foreground">{ind.desc}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{ind.desc}</p>
                   </div>
                 </div>
               </AnimatedSection>
@@ -191,21 +211,21 @@ const Index = () => {
       </section>
 
       {/* SOCIAL PROOF */}
-      <section className="py-24 md:py-32 bg-card">
+      <section className="py-28 md:py-36 border-y border-border/30">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-4 block">Resultater</span>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-16">Tall snakker høyere enn løfter.</h2>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80 mb-4">Resultater</p>
+            <h2 className="font-heading text-3xl md:text-5xl font-semibold mb-20">Tall snakker høyere enn løfter.</h2>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-px bg-border/30 rounded-md overflow-hidden">
             {testimonials.map((t, i) => (
-              <AnimatedSection key={i} delay={i * 0.15}>
-                <div className="p-8 border border-border/50 rounded h-full flex flex-col">
-                  <p className="text-foreground/90 leading-relaxed mb-6 flex-1">"{t.quote}"</p>
-                  <div className="border-t border-border/50 pt-4">
-                    <p className="text-sm font-semibold">{t.name}</p>
-                    <p className="text-xs text-muted-foreground">{t.company}</p>
+              <AnimatedSection key={i} delay={i * 0.12}>
+                <div className="p-10 bg-card h-full flex flex-col">
+                  <p className="text-foreground/85 leading-relaxed mb-8 flex-1 text-[15px]">"{t.quote}"</p>
+                  <div className="border-t border-border/30 pt-5">
+                    <p className="text-sm font-medium">{t.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{t.company}</p>
                   </div>
                 </div>
               </AnimatedSection>
@@ -215,25 +235,25 @@ const Index = () => {
       </section>
 
       {/* FREE HEALTH CHECK CTA */}
-      <section className="py-24 md:py-32">
+      <section className="py-28 md:py-36">
         <div className="container mx-auto px-6 text-center">
           <AnimatedSection>
             <div className="max-w-2xl mx-auto">
-              <span className="inline-block px-4 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 mb-6">
+              <span className="inline-block px-4 py-1.5 rounded-md text-[10px] font-medium uppercase tracking-[0.2em] bg-primary/10 text-primary border border-primary/15 mb-8">
                 Verdi: 5 000 kr — Gratis
               </span>
-              <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6">
-                Finansiell Helse-sjekk
+              <h2 className="font-heading text-3xl md:text-5xl font-semibold mb-6 leading-snug">
+                Finansiell <span className="italic text-gradient-gold">Helse-sjekk</span>
               </h2>
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+              <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
                 Få en komplett analyse av selskapets finansielle tilstand. Se hva du taper — og hva du kan tjene. Helt uforpliktende.
               </p>
               <Link
                 to="/kontakt"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-heading font-semibold text-sm uppercase tracking-wider rounded hover:opacity-90 transition-all glow-gold"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground font-medium text-sm tracking-wide rounded-md hover:opacity-90 transition-all glow-gold"
               >
                 Bestill gratis helse-sjekk
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </AnimatedSection>

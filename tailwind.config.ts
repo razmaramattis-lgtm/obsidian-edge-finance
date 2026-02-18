@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Space Grotesk', 'sans-serif'],
+        heading: ['Fraunces', 'serif'],
         body: ['Inter', 'sans-serif'],
       },
       colors: {
@@ -55,9 +55,9 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           glow: "hsl(var(--gold-glow))",
         },
-        obsidian: {
-          DEFAULT: "hsl(var(--obsidian-blue))",
-          glow: "hsl(var(--obsidian-blue-glow))",
+        cobalt: {
+          DEFAULT: "hsl(var(--cobalt))",
+          glow: "hsl(var(--cobalt-glow))",
         },
         smoke: "hsl(var(--smoke))",
         sidebar: {
