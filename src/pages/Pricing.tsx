@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const plans = [
@@ -7,7 +7,7 @@ const plans = [
     name: "Start",
     price: "9 900",
     period: "/mnd",
-    desc: "For selskaper som starter digitaliseringen.",
+    desc: "Et trygt første steg inn i fremtidens regnskap.",
     features: [
       "Automatisert bokføring",
       "Månedlig rapportering",
@@ -21,7 +21,7 @@ const plans = [
     name: "Grow",
     price: "24 900",
     period: "/mnd",
-    desc: "For selskaper i vekstfasen.",
+    desc: "For selskaper som er klare til å akselerere.",
     features: [
       "Alt i Start",
       "AI-drevet likviditetsprediksjon",
@@ -34,10 +34,10 @@ const plans = [
     highlighted: false,
   },
   {
-    name: "Avargo Elite",
+    name: "Elite",
     price: "59 900",
     period: "/mnd",
-    desc: "Full styringsplattform for ambisiøse selskaper.",
+    desc: "Den komplette plattformen for visionære ledere.",
     badge: "Anbefalt",
     features: [
       "Alt i Grow",
@@ -58,13 +58,15 @@ const plans = [
 const Pricing = () => {
   return (
     <>
-      <section className="py-28 md:py-36">
-        <div className="container mx-auto px-6">
+      <section className="py-32 md:py-40 relative">
+        <div className="absolute inset-0 dreamy-bg opacity-40" />
+        <div className="container mx-auto px-6 relative">
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-20">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80 mb-4">Priser</p>
-              <h1 className="font-heading text-4xl md:text-5xl font-semibold mb-6 leading-snug">
-                Invester i <span className="text-gradient-gold italic">kontroll</span>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-accent/70 mb-4">Priser</p>
+              <h1 className="font-heading text-4xl md:text-5xl font-medium mb-6 leading-snug">
+                En investering i{" "}
+                <span className="text-gradient-gold italic">fremtiden din</span>
               </h1>
               <p className="text-muted-foreground text-lg">
                 Vi viser deg ikke hva det koster. Vi viser deg hva det gir tilbake.
@@ -72,35 +74,36 @@ const Pricing = () => {
             </div>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-px bg-border/30 rounded-md overflow-hidden max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {plans.map((plan, i) => (
-              <AnimatedSection key={plan.name} delay={i * 0.12}>
+              <AnimatedSection key={plan.name} delay={i * 0.15}>
                 <div
-                  className={`relative p-10 h-full flex flex-col ${
+                  className={`relative p-8 rounded-2xl border h-full flex flex-col card-hover ${
                     plan.highlighted
-                      ? "bg-card"
-                      : "bg-card"
+                      ? "bg-card/80 border-primary/30 glow-gold backdrop-blur-sm"
+                      : "bg-card/50 border-border/30 backdrop-blur-sm"
                   }`}
                 >
                   {plan.badge && (
-                    <div className="absolute -top-0 right-8 px-3 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-wider uppercase rounded-b-md">
+                    <div className="absolute -top-3 left-8 flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-wider uppercase rounded-full">
+                      <Sparkles size={10} />
                       {plan.badge}
                     </div>
                   )}
-                  <h3 className="font-heading text-xl font-semibold mb-2">{plan.name}</h3>
+                  <h3 className="font-heading text-2xl font-medium mb-2">{plan.name}</h3>
                   <p className="text-sm text-muted-foreground mb-8">{plan.desc}</p>
                   <div className="mb-8">
-                    <span className="font-heading text-4xl font-semibold">kr {plan.price}</span>
+                    <span className="font-heading text-4xl font-medium">kr {plan.price}</span>
                     <span className="text-muted-foreground text-sm ml-1">{plan.period}</span>
                   </div>
                   {plan.roi && (
-                    <div className="px-3 py-2 rounded-md bg-primary/8 border border-primary/15 text-primary text-[11px] font-medium mb-8 text-center tracking-wide">
-                      {plan.roi}
+                    <div className="px-4 py-2.5 rounded-xl bg-primary/8 border border-primary/15 text-primary text-[11px] font-medium mb-8 text-center tracking-wide">
+                      ✦ {plan.roi}
                     </div>
                   )}
                   <ul className="flex flex-col gap-3 mb-10 flex-1">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/75">
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/70">
                         <Check size={14} className="text-primary mt-0.5 shrink-0" strokeWidth={2} />
                         {f}
                       </li>
@@ -108,10 +111,10 @@ const Pricing = () => {
                   </ul>
                   <Link
                     to="/kontakt"
-                    className={`group w-full flex items-center justify-center gap-2 py-3.5 rounded-md text-sm font-medium tracking-wide transition-all ${
+                    className={`group w-full flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-medium tracking-wide transition-all duration-500 ${
                       plan.highlighted
-                        ? "bg-primary text-primary-foreground hover:opacity-90 glow-gold"
-                        : "border border-border/60 text-foreground/80 hover:border-primary/40 hover:text-foreground"
+                        ? "bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20"
+                        : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"
                     }`}
                   >
                     {plan.cta}
@@ -125,22 +128,24 @@ const Pricing = () => {
       </section>
 
       {/* Comparison */}
-      <section className="py-28 border-t border-border/20">
+      <section className="py-28 border-t border-border/15">
         <div className="container mx-auto px-6 text-center">
           <AnimatedSection>
-            <h2 className="font-heading text-2xl md:text-4xl font-semibold mb-16">Hvorfor ikke de andre?</h2>
+            <h2 className="font-heading text-2xl md:text-4xl font-medium mb-16">
+              Hvorfor velge <span className="italic text-gradient-gold">Avargo</span>?
+            </h2>
           </AnimatedSection>
-          <div className="grid md:grid-cols-3 gap-px bg-border/30 rounded-md overflow-hidden max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
-              { name: "Sanna", weakness: "For enkle — du vokser fra dem", avargo: "Arkitektene for din neste fase" },
-              { name: "Aider", weakness: "For store — du blir et nummer", avargo: "Personlig og aggressivt vekstorientert" },
-              { name: "Azets", weakness: "For trege — timefokusert", avargo: "Betal for resultater, ikke timer" },
+              { name: "Sanna", weakness: "Bra start — men du vokser fra dem", avargo: "Arkitektene for din neste fase" },
+              { name: "Aider", weakness: "Store — du kan bli et nummer", avargo: "Personlig og dedikert til din vekst" },
+              { name: "Azets", weakness: "Tradisjonelle — timefokusert", avargo: "Betal for resultater, ikke timer" },
             ].map((comp, i) => (
-              <AnimatedSection key={comp.name} delay={i * 0.08}>
-                <div className="p-8 bg-card">
-                  <h3 className="font-heading text-lg font-semibold text-muted-foreground/60 mb-3">{comp.name}</h3>
-                  <p className="text-sm text-destructive/80 mb-4">{comp.weakness}</p>
-                  <div className="h-px bg-border/30 mb-4" />
+              <AnimatedSection key={comp.name} delay={i * 0.1}>
+                <div className="p-8 bg-card/50 border border-border/30 rounded-2xl card-hover">
+                  <h3 className="font-heading text-lg font-medium text-muted-foreground/50 mb-3">{comp.name}</h3>
+                  <p className="text-sm text-foreground/40 mb-4">{comp.weakness}</p>
+                  <div className="h-px bg-border/20 mb-4" />
                   <p className="text-sm text-primary font-medium">{comp.avargo}</p>
                 </div>
               </AnimatedSection>

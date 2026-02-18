@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Fraunces', 'serif'],
-        body: ['Inter', 'sans-serif'],
+        heading: ['Playfair Display', 'serif'],
+        body: ['DM Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -54,6 +54,10 @@ export default {
         gold: {
           DEFAULT: "hsl(var(--gold))",
           glow: "hsl(var(--gold-glow))",
+        },
+        violet: {
+          DEFAULT: "hsl(var(--violet))",
+          glow: "hsl(var(--violet-glow))",
         },
         cobalt: {
           DEFAULT: "hsl(var(--cobalt))",
