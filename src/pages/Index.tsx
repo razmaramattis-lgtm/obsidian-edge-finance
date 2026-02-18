@@ -111,18 +111,6 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* AUTHORITY LOGOS */}
-      <section className="py-10 border-y border-border/30">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
-            {partners.map((p) => (
-              <span key={p} className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground/40 font-medium">
-                {p}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* THE WHY */}
       <section className="py-28 md:py-36">
