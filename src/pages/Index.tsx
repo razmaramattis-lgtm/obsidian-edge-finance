@@ -224,7 +224,7 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {services.map((srv, i) => (
-              <AnimatedSection key={srv.title} delay={i * 0.06}>
+              <AnimatedSection key={srv.title} delay={i * 0.1}>
                 <div className="group p-6 md:p-8 glass rounded-3xl card-lift h-full relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="flex items-start gap-4 md:gap-5">
@@ -265,7 +265,7 @@ const Index = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {industries.map((ind, i) => (
-              <AnimatedSection key={ind.name} delay={i * 0.05}>
+              <AnimatedSection key={ind.name} delay={i * 0.08}>
                 <div className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="p-2.5 md:p-3 bg-muted/50 rounded-2xl inline-block mb-4 md:mb-5">
