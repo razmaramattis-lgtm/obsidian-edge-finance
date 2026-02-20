@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import Metoden from "./pages/Metoden";
 import Tjenester from "./pages/Tjenester";
 import Bransjer from "./pages/Bransjer";
+import Ressurser from "./pages/Ressurser";
 import NotFound from "./pages/NotFound";
 // Tjeneste-undersider
 import Regnskapsforer from "./pages/tjenester/Regnskapsforer";
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/bransjer/handverkere" element={<Handverkere />} />
             <Route path="/metoden" element={<Metoden />} />
             <Route path="/priser" element={<Pricing />} />
+            <Route path="/ressurser" element={<Ressurser />} />
             <Route path="/om-oss" element={<About />} />
             <Route path="/kontakt" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
