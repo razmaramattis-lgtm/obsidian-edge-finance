@@ -33,13 +33,6 @@ const categories = [
         desc: "Du får én navngitt regnskapsfører som kjenner selskapet ditt ut og inn. Ingen saksbehandlere. Ingen ventelinjer. Et menneske som proaktivt følger opp, stiller de riktige spørsmålene — og som du faktisk kan ringe.",
         sub: ["Løpende bokføring & MVA", "Årsregnskap & skattemelding", "Aksjonærregisteroppgave", "Revisjonstøtte & dokumentasjon"],
       },
-      {
-        icon: TrendingUp,
-        href: "/tjenester/ai-innsikt",
-        title: "AI-drevet finansiell innsikt",
-        desc: "Sanntidsrapporter som viser likviditet, resultattrender og skatteposisjon — presentert tydelig, uten regnskapsjargon. AI-en analyserer kontinuerlig og flagger avvik, fradragsmuligheter og risikofaktorer før de blir problemer.",
-        sub: ["Sanntidsdashbord", "Automatisk fradragsanalyse", "Risikovarsling & prognoser", "Skatteoptimalisering"],
-      },
     ],
   },
   {

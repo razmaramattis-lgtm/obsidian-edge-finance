@@ -13,7 +13,7 @@ const tjenesterGroups = [
     label: "Regnskap & Økonomi",
     items: [
       { icon: BookOpen, title: "Dedikert regnskapsfører", href: "/tjenester/regnskapsforer" },
-      { icon: TrendingUp, title: "AI-drevet finansiell innsikt", href: "/tjenester/ai-innsikt" },
+      
       { icon: Briefcase, title: "CFO-as-a-Service", href: "/tjenester/cfo" },
       { icon: Users, title: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
     ],
