@@ -73,27 +73,12 @@ const Pricing = () => {
               <h1 className="font-heading text-5xl md:text-7xl mb-10 leading-snug">
                 Hva er manglende <span className="italic text-gradient-rose">kontroll</span> egentlig verdt?
               </h1>
-              <div className="text-muted-foreground font-light leading-relaxed space-y-6 text-left max-w-xl mx-auto">
-                <p>
-                  Feil rapportering. Uforutsette skattesmeller. Tidsbruk på oppgaver du ikke burde gjort selv.
-                  Det er sjelden regningen du ser – det er konsekvensene du merker.
-                </p>
-                <p>
-                  Hos oss kjøper du ikke bare regnskap.
-                  Du får struktur, rådgivning og et system som faktisk brukes riktig.
-                </p>
-                <p>
-                  <span className="text-foreground font-normal">Lavprisaktører</span> leverer timer.<br />
-                  <span className="text-foreground font-normal">Regnskapssystemer</span> leverer programvare.<br />
-                  <span className="text-primary font-medium">Vi leverer helhet.</span>
-                </p>
-                <p>
-                  Med fastpris, rådgivning inkludert og full oversikt, vet du alltid hvor du står – og hva neste steg er.
-                </p>
-                <p className="text-sm text-primary/70 italic">
-                  Spørsmålet er ikke hva det koster — men om du har råd til å drive uten kontroll.
-                </p>
-              </div>
+              <p className="text-muted-foreground font-light leading-relaxed max-w-lg mx-auto mb-6">
+                Skattesmeller. Feil rapportering. Timer brukt på oppgaver som aldri burde vært dine. Det er ikke regningen som tar deg — det er det du ikke ser.
+              </p>
+              <p className="text-sm text-primary/70 italic font-light">
+                Spørsmålet er ikke hva det koster — men om du har råd til å drive uten kontroll.
+              </p>
             </div>
           </AnimatedSection>
 
