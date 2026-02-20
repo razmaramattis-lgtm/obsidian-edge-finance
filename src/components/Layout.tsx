@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import AvailabilityWidget from "./AvailabilityWidget";
+
 
 const navItems = [
   { label: "Metoden", href: "/metoden" },
@@ -135,7 +135,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </footer>
 
-      <AvailabilityWidget />
+      
     </div>
   );
 };
