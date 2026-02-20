@@ -5,7 +5,7 @@ import { ArrowRight, FileText, BookMarked, Newspaper, Archive, Download, FileSpr
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 
-const categories = [
+const contentSections = [
   { icon: FileText, label: "Blogg", desc: "Artikler om regnskap, skatt og økonomi skrevet av våre eksperter.", tag: "Kommer snart" },
   { icon: BookMarked, label: "Guider", desc: "Praktiske guider for bedriftseiere — fra skatteoptimalisering til holdingstruktur.", tag: "Kommer snart" },
   { icon: Newspaper, label: "Nyheter", desc: "Siste nytt om regelverksendringer, Avargo-nyheter og bransjeoppdateringer.", tag: "Kommer snart" },
@@ -21,16 +21,29 @@ interface ArchiveFile {
   file_size: string;
 }
 
+interface ArchiveCategory {
+  id: string;
+  name: string;
+  sort_order: number;
+}
+
 const Ressurser = () => {
   const [archiveFiles, setArchiveFiles] = useState<ArchiveFile[]>([]);
+  const [categories, setCategories] = useState<ArchiveCategory[]>([]);
 
   useEffect(() => {
-    supabase.from("archive_files").select("*").eq("active", true).order("category").order("sort_order")
-      .then(({ data }) => setArchiveFiles((data as ArchiveFile[]) || []));
+    Promise.all([
+      supabase.from("archive_categories").select("*").order("sort_order"),
+      supabase.from("archive_files").select("*").eq("active", true).order("sort_order"),
+    ]).then(([{ data: cats }, { data: files }]) => {
+      setCategories((cats as ArchiveCategory[]) || []);
+      setArchiveFiles((files as ArchiveFile[]) || []);
+    });
   }, []);
 
-  const grouped = archiveFiles.reduce((acc, f) => {
-    (acc[f.category] = acc[f.category] || []).push(f);
+  const grouped = categories.reduce((acc, cat) => {
+    const catFiles = archiveFiles.filter(f => f.category === cat.name);
+    if (catFiles.length > 0) acc[cat.name] = catFiles;
     return acc;
   }, {} as Record<string, ArchiveFile[]>);
 
@@ -108,7 +121,7 @@ const Ressurser = () => {
       <section className="py-24 md:py-40">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {categories.map((cat, i) => (
+            {contentSections.map((cat, i) => (
               <AnimatedSection key={cat.label} delay={i * 0.1}>
                 <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full relative">
                   <div className="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
