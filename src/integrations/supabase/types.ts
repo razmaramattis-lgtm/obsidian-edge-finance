@@ -84,7 +84,13 @@ export type Database = {
           created_at: string
           excerpt: string | null
           id: string
+          image_url: string | null
+          meta_description: string | null
+          meta_title: string | null
+          pinned: boolean | null
           published: boolean | null
+          slug: string | null
+          tags: string[] | null
           title: string
           updated_at: string
         }
@@ -94,7 +100,13 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          pinned?: boolean | null
           published?: boolean | null
+          slug?: string | null
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
@@ -104,7 +116,13 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          pinned?: boolean | null
           published?: boolean | null
+          slug?: string | null
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
