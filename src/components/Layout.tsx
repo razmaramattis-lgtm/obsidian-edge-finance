@@ -97,11 +97,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Tjenester</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
-                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
-                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
-                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Skatteoptimalisering</Link>
-                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Lønn & HR</Link>
-                <Link to="/priser" className="text-foreground/40 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
+                <Link to="/tjenester/regnskapsforer" className="text-foreground/40 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
+                <Link to="/tjenester/ai-innsikt" className="text-foreground/40 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
+                <Link to="/tjenester/ai-innsikt" className="text-foreground/40 hover:text-foreground transition-colors">Skatteoptimalisering</Link>
+                <Link to="/tjenester/hr-og-lonn" className="text-foreground/40 hover:text-foreground transition-colors">Lønn & HR</Link>
+                <Link to="/tjenester/cfo" className="text-foreground/40 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
               </div>
             </div>
             <div>
