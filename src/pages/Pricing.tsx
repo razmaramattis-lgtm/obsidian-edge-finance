@@ -65,15 +65,15 @@ const plans = [
 const Pricing = () => {
   return (
     <>
-      <section className="py-32 md:py-40 relative">
+      <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
-        <div className="container mx-auto px-6 relative">
+        <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-20">
-              <h1 className="font-heading text-5xl md:text-7xl mb-10 leading-snug">
+            <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-10 leading-snug">
                 Hva er manglende <span className="italic text-gradient-rose">kontroll</span> egentlig verdt?
               </h1>
-              <p className="text-muted-foreground font-light leading-relaxed max-w-lg mx-auto mb-6">
+              <p className="text-muted-foreground font-light leading-relaxed max-w-lg mx-auto mb-5 md:mb-6 text-base md:text-lg">
                 Skattesmeller. Feil rapportering. Timer brukt på oppgaver som aldri burde vært dine. Det er ikke regningen som tar deg — det er det du ikke ser.
               </p>
               <p className="text-sm text-primary/70 italic font-light">
@@ -82,32 +82,32 @@ const Pricing = () => {
             </div>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
             {plans.map((plan, i) => (
               <AnimatedSection key={plan.name} delay={i * 0.15}>
                 <div
-                  className={`relative p-10 rounded-3xl h-full flex flex-col card-lift ${
+                  className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${
                     plan.highlighted
                       ? "glass glow-rose border-primary/20"
                       : "glass"
                   }`}
                 >
                   {plan.badge && (
-                    <div className="absolute -top-3 left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
+                    <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
                       {plan.badge}
                     </div>
                   )}
-                  <h3 className="font-heading text-3xl mb-2">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground font-light mb-8">{plan.desc}</p>
-                  <div className="mb-8">
+                  <h3 className="font-heading text-2xl md:text-3xl mb-2">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground font-light mb-6 md:mb-8">{plan.desc}</p>
+                  <div className="mb-6 md:mb-8">
                     <span className="text-sm text-muted-foreground font-light mr-1">Fra</span>
-                    <span className="font-heading text-5xl">{plan.price}</span>
+                    <span className="font-heading text-4xl md:text-5xl">{plan.price}</span>
                     <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
                   {('inherits' in plan && plan.inherits) && (
                     <p className="text-xs text-primary/80 font-medium tracking-wide mb-4">{plan.inherits}</p>
                   )}
-                  <ul className="flex flex-col gap-3.5 mb-10 flex-1">
+                  <ul className="flex flex-col gap-3 mb-8 md:mb-10 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-3 text-sm text-foreground/60 font-light">
                         <Check size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
@@ -133,21 +133,21 @@ const Pricing = () => {
         </div>
       </section>
 
-      <section className="py-32 border-t border-border/10">
-        <div className="container mx-auto px-6">
+      <section className="py-24 md:py-32 border-t border-border/10">
+        <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-6">
-              <h2 className="font-heading text-3xl md:text-5xl mb-6">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6">
                 Hvorfor klientene våre{" "}
                 <span className="italic text-gradient-rose">ikke går tilbake</span>
               </h2>
-              <p className="text-muted-foreground font-light leading-relaxed max-w-lg mx-auto">
+              <p className="text-muted-foreground font-light leading-relaxed max-w-lg mx-auto text-sm md:text-base">
                 Når struktur først sitter, rådgivningen er tilgjengelig og tallene faktisk brukes — da føles det rart å gå tilbake til noe mindre.
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mt-12 md:mt-16">
             {[
               {
                 name: "Billigalternativene",
@@ -169,14 +169,14 @@ const Pricing = () => {
               },
             ].map((comp, i) => (
               <AnimatedSection key={comp.name} delay={i * 0.1}>
-                <div className="p-8 glass rounded-3xl card-lift text-left h-full flex flex-col">
-                  <h3 className="font-heading text-2xl mb-5">{comp.name}</h3>
+                <div className="p-7 md:p-8 glass rounded-3xl card-lift text-left h-full flex flex-col">
+                  <h3 className="font-heading text-xl md:text-2xl mb-4 md:mb-5">{comp.name}</h3>
                   <div className="flex-1">
                     {comp.body.split("\n\n").map((para, j) => (
                       <p key={j} className="text-sm text-foreground/35 font-light leading-relaxed mb-3">{para}</p>
                     ))}
                   </div>
-                  <div className="h-px bg-border/15 my-5" />
+                  <div className="h-px bg-border/15 my-4 md:my-5" />
                   <p className="text-sm text-foreground/70 font-light leading-relaxed mb-3">{comp.us}</p>
                   <p className="text-xs text-primary/70 italic font-light">{comp.tag}</p>
                 </div>
@@ -186,17 +186,17 @@ const Pricing = () => {
 
           {/* Closing */}
           <AnimatedSection delay={0.4}>
-            <div className="max-w-xl mx-auto text-center mt-20">
-              <p className="text-muted-foreground font-light leading-relaxed mb-2">
+            <div className="max-w-xl mx-auto text-center mt-16 md:mt-20">
+              <p className="text-muted-foreground font-light leading-relaxed mb-2 text-sm md:text-base">
                 Å bytte regnskapsfører handler sjelden om pris.
                 <br />Det handler om kontroll, tilgjengelighet og tillit.
               </p>
-              <p className="text-foreground/50 italic font-light text-sm mb-10">
+              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">
                 Når det først fungerer, blir du.
               </p>
               <Link
                 to="/kontakt"
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Book en gjennomgang
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
