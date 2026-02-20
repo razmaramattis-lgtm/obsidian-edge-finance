@@ -44,7 +44,7 @@ const steps = [
     phase: "Oppdagelse",
     duration: "Dag 1",
     title: "Vi lytter. Dypt.",
-    desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene. De fleste oppdager seks-sifrede muligheter allerede i dette møtet.",
+    desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene.",
     note: "45 minutter som kan forandre alt.",
     side: "left",
   },
