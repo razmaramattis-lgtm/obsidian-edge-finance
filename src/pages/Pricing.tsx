@@ -4,7 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 
 const plans = [
   {
-    name: "Fundament",
+    name: "Basis",
     price: "4 500",
     period: " kr/mnd",
     desc: "For selskaper som vil ha kontroll og struktur fra dag én.",
@@ -18,15 +18,15 @@ const plans = [
       "Rådgivning",
       "Regnskapsystemkostnad inkludert",
     ],
-    cta: "Velg Fundament",
+    cta: "Velg Basis",
     highlighted: false,
   },
   {
-    name: "Vekstpartner",
+    name: "Vekst",
     price: "6 000",
     period: " kr/mnd",
     desc: "For selskaper i vekst som trenger en strategisk partner.",
-    inherits: "Alt i Fundament, pluss:",
+    inherits: "Alt i Basis, pluss:",
     features: [
       "Lønn for opptil 10 ansatte",
       "Kvartalsvis gjennomgang",
@@ -39,7 +39,7 @@ const plans = [
       "Prioritert rådgivning",
       "Integrasjoner mot bank og fakturasystem",
     ],
-    cta: "Velg Vekstpartner",
+    cta: "Velg Vekst",
     highlighted: false,
   },
   {
@@ -48,7 +48,7 @@ const plans = [
     period: " kr/mnd",
     desc: "For selskaper som vil ha total oversikt. Din finansielle partner.",
     badge: "Anbefalt",
-    inherits: "Alt i Vekstpartner, pluss:",
+    inherits: "Alt i Vekst, pluss:",
     features: [
       "Månedlig rapportering",
       "Budsjett",
