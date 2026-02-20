@@ -7,7 +7,7 @@ const plans = [
     name: "Start",
     price: "9 900",
     period: "/mnd",
-    desc: "Alt Sanna tilbyr — pluss mva, lønn og AI-innsikt. Fra dag én.",
+    desc: "Alt en regnskapsfører tilbyr — pluss mva, lønn og AI-innsikt. Fra dag én.",
     features: [
       "Dedikert autorisert regnskapsfører",
       "AI-drevet bokføring og kontroll",
