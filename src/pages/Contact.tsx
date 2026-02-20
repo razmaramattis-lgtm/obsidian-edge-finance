@@ -3,8 +3,8 @@ import { ArrowRight, Check, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
-const inputClass = "w-full bg-card/40 backdrop-blur-xl border border-border/20 rounded-2xl px-5 py-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/30 focus:shadow-lg focus:shadow-primary/5 transition-all duration-500 font-light";
-const labelClass = "text-[10px] tracking-[0.25em] uppercase text-muted-foreground block mb-2.5";
+const inputClass = "w-full bg-card/40 backdrop-blur-xl border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/30 focus:shadow-lg focus:shadow-primary/5 transition-all duration-500 font-light";
+const labelClass = "text-[10px] tracking-[0.25em] uppercase text-muted-foreground block mb-2";
 
 const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -15,25 +15,25 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-32 md:py-40 relative">
+    <section className="py-24 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />
-      <div className="container mx-auto px-6 relative">
-        <div className="grid md:grid-cols-2 gap-24 max-w-5xl mx-auto">
+      <div className="container mx-auto px-4 md:px-6 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Søknad</p>
-            <h1 className="font-heading text-5xl md:text-6xl mb-8 leading-snug">
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Søknad</p>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl mb-6 md:mb-8 leading-snug">
               De fleste betaler for mye og får for lite.{" "}
               <span className="italic text-gradient-rose">Du trenger ikke være en av dem.</span>
             </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6 font-light">
+            <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
               Vi tar ikke inn alle. Ikke fordi vi er arrogante — men fordi vi gir hver klient en dedikert regnskapsfører som investerer seg i ditt selskap. Det fungerer bare når vi har kapasitet til å gjøre det skikkelig.
             </p>
-            <p className="text-sm text-primary/70 italic font-light mb-10">
-              Fyll ut skjemaet. Vi kontakter deg innen 24 timer med en uforpliktende vurdering av hva Avargo kan gjøre for deg — og hva det koster å la være.
+            <p className="text-sm text-primary/70 italic font-light mb-8 md:mb-10">
+              Fyll ut skjemaet. Vi kontakter deg innen 24 timer med en uforpliktende vurdering.
             </p>
 
-            <div className="space-y-4 mb-10">
+            <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
               {[
                 "Dedikert regnskapsfører fra dag én",
                 "AI-drevet innsikt inkludert",
@@ -70,7 +70,7 @@ const Contact = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                className="flex items-center justify-center h-full"
+                className="flex items-center justify-center h-full min-h-[400px]"
               >
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -86,7 +86,7 @@ const Contact = () => {
                 </div>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
                 <div>
                   <label className={labelClass}>Navn</label>
                   <input required type="text" className={inputClass} placeholder="Ditt fulle navn" />

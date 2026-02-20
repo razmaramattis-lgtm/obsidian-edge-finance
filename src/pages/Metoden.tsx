@@ -151,7 +151,7 @@ const Metoden = () => {
           <div className="absolute inset-0 ambient-glow opacity-40" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-6 text-center">
+        <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -162,7 +162,7 @@ const Metoden = () => {
               initial={{ opacity: 0, letterSpacing: "0.8em" }}
               animate={{ opacity: 1, letterSpacing: "0.4em" }}
               transition={{ delay: 0.4, duration: 1.4 }}
-              className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-12"
+              className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-8 md:mb-12"
             >
               En reise. Ikke en tjeneste.
             </motion.p>
@@ -171,7 +171,7 @@ const Metoden = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="font-heading text-6xl md:text-8xl leading-[1.02] mb-10"
+              className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10"
             >
               Overlat alt.
               <br />
@@ -182,7 +182,7 @@ const Metoden = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
-              className="text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto mb-6"
+              className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto mb-5 md:mb-6"
             >
               Hos Avargo møter du ikke ett menneske — du møter et helt team. Regnskapsførere, HR-spesialister, markedsførere og utviklere som analyserer selskapet ditt og iverksetter det som trengs. Alt etter ditt behov. Skreddersydd. Sømløst.
             </motion.p>
@@ -191,7 +191,7 @@ const Metoden = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5, duration: 1 }}
-              className="text-sm text-primary/70 italic font-light mb-16"
+              className="text-sm text-primary/70 italic font-light mb-12 md:mb-16"
             >
               Du trenger ikke tenke på noe annet enn å bygge selskapet ditt.
             </motion.p>
@@ -200,18 +200,18 @@ const Metoden = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.8, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-5 justify-center"
+              className="flex flex-col sm:flex-row gap-4 md:gap-5 justify-center"
             >
               <Link
                 to="/kontakt"
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Start reisen
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <a
                 href="#reisen"
-                className="inline-flex items-center gap-2 px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se hvordan det fungerer
               </a>
@@ -222,18 +222,18 @@ const Metoden = () => {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+          className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
         >
           <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/30">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-primary/30 to-transparent" />
+          <div className="w-px h-8 md:h-10 bg-gradient-to-b from-primary/30 to-transparent" />
         </motion.div>
       </section>
 
       {/* TEAM — cinematic split */}
       <section className="relative border-y border-border/10 overflow-hidden">
-        <div className="grid md:grid-cols-2 min-h-[600px]">
+        <div className="grid md:grid-cols-2 min-h-[500px] md:min-h-[600px]">
           {/* Image side */}
-          <div className="relative overflow-hidden min-h-[350px] md:min-h-0">
+          <div className="relative overflow-hidden min-h-[280px] md:min-h-0">
             <img
               src={metodenTeam}
               alt="Teamet ditt hos Avargo"
@@ -244,25 +244,25 @@ const Metoden = () => {
           </div>
 
           {/* Content side */}
-          <div className="flex flex-col justify-center py-20 px-8 md:px-16 relative">
+          <div className="flex flex-col justify-center py-14 md:py-20 px-6 md:px-16 relative">
             <div className="absolute inset-0 ambient-glow opacity-30" />
             <div className="relative z-10">
               <AnimatedSection>
-                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Ditt team</p>
-                <h2 className="font-heading text-4xl md:text-5xl mb-6 leading-snug">
+                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Ditt team</p>
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
                   Ikke én person.{" "}
                   <span className="italic text-gradient-rose">Et helt hus.</span>
                 </h2>
-                <p className="text-muted-foreground font-light leading-relaxed mb-10 max-w-md">
+                <p className="text-muted-foreground font-light leading-relaxed mb-8 md:mb-10 max-w-md text-sm md:text-base">
                   Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert rundt selskapet ditt. Vi vurderer hva du faktisk trenger — og setter inn riktig kompetanse.
                 </p>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 md:gap-4">
                   {team.map((member, i) => (
                     <AnimatedSection key={member.role} delay={i * 0.07}>
-                      <div className="flex items-start gap-4 group">
-                        <div className="w-8 h-8 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors duration-500">
-                          <member.icon size={14} className="text-primary" strokeWidth={1.5} />
+                      <div className="flex items-start gap-3 md:gap-4 group">
+                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors duration-500">
+                          <member.icon size={13} className="text-primary" strokeWidth={1.5} />
                         </div>
                         <div>
                           <p className="text-sm font-medium mb-0.5">{member.role}</p>
@@ -273,7 +273,7 @@ const Metoden = () => {
                   ))}
                 </div>
 
-                <p className="text-xs text-muted-foreground/30 italic font-light mt-8">
+                <p className="text-xs text-muted-foreground/30 italic font-light mt-7 md:mt-8">
                   Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører.
                 </p>
               </AnimatedSection>
@@ -283,17 +283,17 @@ const Metoden = () => {
       </section>
 
       {/* JOURNEY — 4 steps */}
-      <section id="reisen" className="py-32 md:py-48 relative overflow-hidden">
+      <section id="reisen" className="py-24 md:py-48 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-20" />
-        <div className="container mx-auto px-6 relative">
+        <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <div className="text-center mb-28">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Reisen</p>
-              <h2 className="font-heading text-4xl md:text-6xl mb-6 leading-snug">
+            <div className="text-center mb-20 md:mb-28">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Reisen</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug">
                 Fire faser.{" "}
                 <span className="italic text-gradient-teal">Én destinasjon.</span>
               </h2>
-              <p className="text-muted-foreground font-light max-w-xl mx-auto">
+              <p className="text-muted-foreground font-light max-w-xl mx-auto text-sm md:text-base">
                 Fra det første møtet til en permanent partner som proaktivt driver selskapet ditt fremover. Slik ser reisen ut.
               </p>
             </div>
@@ -318,12 +318,12 @@ const Metoden = () => {
           {/* Always available callout */}
           <AnimatedSection delay={0.4}>
             <div className="max-w-2xl mx-auto mt-8">
-              <div className="glass rounded-3xl p-8 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                  <Phone size={20} className="text-primary" strokeWidth={1.5} />
+              <div className="glass rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5 md:gap-6 text-center sm:text-left">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Phone size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="font-heading text-xl mb-2">Alltid tilgjengelige — for deg.</p>
+                  <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">Alltid tilgjengelige — for deg.</p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
                     Som klient kan du ringe oss når du vil. Ingen timespris. Ingen ventetid. Du er ikke et saksnummer — du er en partner vi bryr oss om.
                   </p>
@@ -335,7 +335,7 @@ const Metoden = () => {
       </section>
 
       {/* CLOSING — Velvet texture */}
-      <section className="relative py-40 md:py-56 overflow-hidden border-t border-border/10">
+      <section className="relative py-28 md:py-56 overflow-hidden border-t border-border/10">
         <div className="absolute inset-0">
           <img
             src={metodenClosing}
@@ -346,30 +346,30 @@ const Metoden = () => {
           <div className="absolute inset-0 ambient-glow opacity-50" />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <AnimatedSection>
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-8">Løftet</p>
-              <h2 className="font-heading text-5xl md:text-7xl leading-[1.02] mb-10">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Løftet</p>
+              <h2 className="font-heading text-4xl sm:text-5xl md:text-7xl leading-[1.02] mb-8 md:mb-10">
                 Du trenger ikke{" "}
                 <span className="italic text-gradient-rose">noe mer.</span>
               </h2>
-              <p className="text-muted-foreground text-lg font-light leading-relaxed mb-6 max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed mb-5 md:mb-6 max-w-2xl mx-auto">
                 Regnskap. HR. Markedsføring. Teknologi. Strategi. Alt samlet under ett tak, koordinert av et team som kjenner selskapet ditt like godt som du gjør selv. Du overlater. Vi leverer.
               </p>
-              <p className="text-primary/70 italic font-light mb-16 text-sm">
+              <p className="text-primary/70 italic font-light mb-12 md:mb-16 text-sm">
                 Ikke en regnskapsfører. Ikke et byrå. En partner for hele reisen.
               </p>
 
               <Link
                 to="/kontakt"
-                className="group inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Overlat alt til oss
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
 
-              <div className="mt-16 flex flex-wrap gap-10 justify-center">
+              <div className="mt-12 md:mt-16 flex flex-wrap gap-6 md:gap-10 justify-center">
                 {["5 virkedager til fullt operativt regnskap", "Én kontaktperson. Helt team.", "Ring oss når du vil — gratis"].map((signal) => (
                   <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/40 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />
@@ -386,3 +386,4 @@ const Metoden = () => {
 };
 
 export default Metoden;
+
