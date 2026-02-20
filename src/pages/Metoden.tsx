@@ -2,10 +2,13 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
-  ArrowRight, TrendingUp, Users, BarChart3, Bot,
-  CreditCard, Headphones, Code2, Megaphone, Shield
+  ArrowRight, TrendingUp, Users,
+  Headphones, Code2, Megaphone, Shield, Phone
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import metodenHero from "@/assets/metoden-hero.jpg";
+import metodenTeam from "@/assets/metoden-team.jpg";
+import metodenClosing from "@/assets/metoden-closing.jpg";
 
 const team = [
   {
@@ -43,6 +46,7 @@ const steps = [
     title: "Vi lytter. Dypt.",
     desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene. De fleste oppdager seks-sifrede muligheter allerede i dette møtet.",
     note: "45 minutter som kan forandre alt.",
+    side: "left",
   },
   {
     num: "II",
@@ -51,82 +55,59 @@ const steps = [
     title: "Teamet ditt tar form.",
     desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt trenger — ikke hva vi tilbyr som standard. Regnskapsfører, HR, markedsfører, utvikler. Eksakt det du trenger. Ikke mer. Ikke mindre.",
     note: "Én kontaktperson. Hele teamet bak.",
+    side: "right",
   },
   {
     num: "III",
-    phase: "Integrasjon",
-    duration: "Dag 2–3",
-    title: "Alt kobles sammen.",
-    desc: "90+ bankintegrasjoner aktiveres automatisk. Eksisterende systemer knyttes inn. Historiske data importeres og renskes. Du behøver ikke løfte en finger — vi tar over og gjør det ryddig fra bunnen av.",
-    note: "Fullt operativt regnskap på 5 virkedager.",
+    phase: "Innsyn",
+    duration: "Dag 3–5",
+    title: "Du ser alt. I sanntid.",
+    desc: "Din tilgang aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid. Du sitter aldri i mørket. Tallene er der når du vil se dem — uten at du trenger å gjøre noe som helst.",
+    note: "Full oversikt. Null innsats fra din side.",
+    side: "left",
   },
   {
     num: "IV",
-    phase: "Innsikt",
-    duration: "Dag 3–4",
-    title: "AI ser det ingen andre ser.",
-    desc: "Vår AI analyserer 1400+ parametere mot din unike situasjon. Skjulte fradrag. Fremtidige likviditetskriser. Strukturelle svakheter. Alt presenteres av din dedikerte rådgiver i et språk du forstår — ikke tall du må tyde alene.",
-    note: "Kunnskap er makt. Vi gir deg begge deler.",
-  },
-  {
-    num: "V",
-    phase: "Kontroll",
-    duration: "Dag 4–5",
-    title: "Du ser alt. I sanntid.",
-    desc: "Ditt personlige dashbord aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt. Aldri vent til neste månedsrapport for å ta en avgjørelse. Informasjon når du trenger den.",
-    note: "Beslutninger basert på fakta, ikke magefølelse.",
-  },
-  {
-    num: "VI",
     phase: "Partnerskap",
     duration: "For alltid",
-    title: "Overlat resten til oss.",
-    desc: "Fra nå av ringer vi deg — ikke omvendt. Vi proaktivt varsler deg om muligheter, risikoer og strategiske valg. Du fokuserer på det du er best på. Vi tar alt det andre. Slik er det ment å fungere.",
-    note: "Du bygger selskapet. Vi bygger fundamentet.",
+    title: "Vi ringer deg. Du kan ringe oss.",
+    desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv. Og når du har spørsmål, er vi bare ett anrop unna. Ingen venteliste. Ingen ekstra kostnad. Du er klient — og det merkes.",
+    note: "Tilgjengelige. Alltid. Uten ekstra kostnad.",
+    side: "right",
   },
 ];
 
 const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [0.3, 1]);
-  const y = useTransform(scrollYProgress, [0, 0.6], [40, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [0.2, 1]);
+  const y = useTransform(scrollYProgress, [0, 0.6], [50, 0]);
+
+  const isRight = index % 2 !== 0;
 
   return (
-    <motion.div ref={ref} style={{ opacity, y }} className="relative">
-      <div className="grid md:grid-cols-[1fr_80px_1fr] items-start gap-0">
-        {/* Left — number & phase (alternating) */}
-        {index % 2 === 0 ? (
+    <motion.div ref={ref} style={{ opacity, y }} className="relative mb-0">
+      <div className="grid md:grid-cols-[1fr_80px_1fr] items-center gap-0 min-h-[260px]">
+        {!isRight ? (
           <>
-            <div className="flex flex-col items-end text-right pr-10 pt-2 hidden md:flex">
-              <span className="font-heading text-[80px] leading-none text-primary/8 select-none">{step.num}</span>
+            {/* Left content */}
+            <div className="pb-16 pr-0 md:pr-12 flex flex-col items-start">
+              <ContentBlock step={step} align="left" />
             </div>
-            {/* Center spine node */}
-            <div className="hidden md:flex flex-col items-center">
-              <div className="w-px flex-1 bg-gradient-to-b from-transparent to-primary/20 min-h-8" />
-              <div className="w-5 h-5 rounded-full border border-primary/40 bg-background flex items-center justify-center shrink-0 my-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              </div>
-              <div className="w-px flex-1 bg-gradient-to-b from-primary/20 to-transparent min-h-8" />
-            </div>
-            <div className="pb-20 pl-0 md:pl-10">
-              <ContentBlock step={step} />
-            </div>
+            {/* Spine */}
+            <SpineNode />
+            {/* Right empty */}
+            <div className="hidden md:block" />
           </>
         ) : (
           <>
-            <div className="pb-20 pr-0 md:pr-10 text-right">
-              <ContentBlockRight step={step} />
-            </div>
-            <div className="hidden md:flex flex-col items-center">
-              <div className="w-px flex-1 bg-gradient-to-b from-transparent to-primary/20 min-h-8" />
-              <div className="w-5 h-5 rounded-full border border-primary/40 bg-background flex items-center justify-center shrink-0 my-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              </div>
-              <div className="w-px flex-1 bg-gradient-to-b from-primary/20 to-transparent min-h-8" />
-            </div>
-            <div className="flex flex-col items-start pt-2 pl-10 hidden md:flex">
-              <span className="font-heading text-[80px] leading-none text-primary/8 select-none">{step.num}</span>
+            {/* Left empty */}
+            <div className="hidden md:block" />
+            {/* Spine */}
+            <SpineNode />
+            {/* Right content */}
+            <div className="pb-16 pl-0 md:pl-12 flex flex-col items-start md:items-end">
+              <ContentBlock step={step} align="right" />
             </div>
           </>
         )}
@@ -135,38 +116,39 @@ const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => 
   );
 };
 
-const ContentBlock = ({ step }: { step: typeof steps[0] }) => (
-  <div className="group">
-    <p className="text-[10px] tracking-[0.35em] uppercase text-secondary mb-3">{step.phase} · {step.duration}</p>
-    <h3 className="font-heading text-3xl md:text-4xl mb-4 leading-snug">{step.title}</h3>
-    <p className="text-muted-foreground font-light leading-relaxed text-[15px] mb-5 max-w-sm">{step.desc}</p>
-    <p className="text-xs italic text-primary/60 font-light">{step.note}</p>
+const SpineNode = () => (
+  <div className="hidden md:flex flex-col items-center self-stretch">
+    <div className="w-px flex-1 bg-gradient-to-b from-transparent to-primary/25" />
+    <div className="w-6 h-6 rounded-full border border-primary/40 bg-background flex items-center justify-center shrink-0 my-3">
+      <div className="w-2 h-2 rounded-full bg-primary/70" />
+    </div>
+    <div className="w-px flex-1 bg-gradient-to-b from-primary/25 to-transparent" />
   </div>
 );
 
-const ContentBlockRight = ({ step }: { step: typeof steps[0] }) => (
-  <div className="group flex flex-col items-start md:items-end">
+const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | "right" }) => (
+  <div className={`max-w-sm ${align === "right" ? "text-left md:text-right" : "text-left"}`}>
     <p className="text-[10px] tracking-[0.35em] uppercase text-secondary mb-3">{step.phase} · {step.duration}</p>
     <h3 className="font-heading text-3xl md:text-4xl mb-4 leading-snug">{step.title}</h3>
-    <p className="text-muted-foreground font-light leading-relaxed text-[15px] mb-5 max-w-sm">{step.desc}</p>
-    <p className="text-xs italic text-primary/60 font-light">{step.note}</p>
+    <p className="text-muted-foreground font-light leading-relaxed text-[15px] mb-4">{step.desc}</p>
+    <p className="text-xs italic text-primary/55 font-light">{step.note}</p>
   </div>
 );
 
 const Metoden = () => {
   return (
     <>
-      {/* HERO — Cinematic opener */}
+      {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 ambient-glow opacity-80" />
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `repeating-linear-gradient(0deg, hsl(15 55% 65% / 0.5) 0px, transparent 1px, transparent 80px),
-                repeating-linear-gradient(90deg, hsl(15 55% 65% / 0.5) 0px, transparent 1px, transparent 80px)`,
-            }}
+          <img
+            src={metodenHero}
+            alt="Avargo — en reise mot full kontroll"
+            className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/50 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+          <div className="absolute inset-0 ambient-glow opacity-40" />
         </div>
 
         <div className="relative z-10 container mx-auto px-6 text-center">
@@ -237,7 +219,6 @@ const Metoden = () => {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
@@ -248,49 +229,60 @@ const Metoden = () => {
         </motion.div>
       </section>
 
-      {/* TEAM — Who you're actually getting */}
-      <section className="py-32 md:py-40 relative border-y border-border/10">
-        <div className="absolute inset-0 ambient-glow opacity-30" />
-        <div className="container mx-auto px-6 relative">
-          <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-20">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Ditt team</p>
-              <h2 className="font-heading text-4xl md:text-6xl mb-6 leading-snug">
-                Ikke én person.{" "}
-                <span className="italic text-gradient-rose">Et helt hus.</span>
-              </h2>
-              <p className="text-muted-foreground font-light leading-relaxed">
-                Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert for selskapet ditt. Vi vurderer hva ditt selskap faktisk trenger — og setter inn riktig kompetanse.
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="grid md:grid-cols-5 gap-4">
-            {team.map((member, i) => (
-              <AnimatedSection key={member.role} delay={i * 0.08}>
-                <div className="group p-7 glass rounded-3xl card-lift h-full relative overflow-hidden text-center">
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/0 to-primary/3 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl" />
-                  <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-5">
-                      <member.icon size={18} className="text-primary" strokeWidth={1.5} />
-                    </div>
-                    <h3 className="font-heading text-lg mb-3">{member.role}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed font-light">{member.desc}</p>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
+      {/* TEAM — cinematic split */}
+      <section className="relative border-y border-border/10 overflow-hidden">
+        <div className="grid md:grid-cols-2 min-h-[600px]">
+          {/* Image side */}
+          <div className="relative overflow-hidden min-h-[350px] md:min-h-0">
+            <img
+              src={metodenTeam}
+              alt="Teamet ditt hos Avargo"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/10 to-background/60 md:from-transparent md:to-background/80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent md:hidden" />
           </div>
 
-          <AnimatedSection delay={0.5}>
-            <p className="text-center text-sm text-muted-foreground/40 italic font-light mt-10">
-              Alle disipliner koordinert av én dedikert kontaktperson. Du slipper å snakke med fem ulike leverandører.
-            </p>
-          </AnimatedSection>
+          {/* Content side */}
+          <div className="flex flex-col justify-center py-20 px-8 md:px-16 relative">
+            <div className="absolute inset-0 ambient-glow opacity-30" />
+            <div className="relative z-10">
+              <AnimatedSection>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Ditt team</p>
+                <h2 className="font-heading text-4xl md:text-5xl mb-6 leading-snug">
+                  Ikke én person.{" "}
+                  <span className="italic text-gradient-rose">Et helt hus.</span>
+                </h2>
+                <p className="text-muted-foreground font-light leading-relaxed mb-10 max-w-md">
+                  Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert rundt selskapet ditt. Vi vurderer hva du faktisk trenger — og setter inn riktig kompetanse.
+                </p>
+
+                <div className="flex flex-col gap-4">
+                  {team.map((member, i) => (
+                    <AnimatedSection key={member.role} delay={i * 0.07}>
+                      <div className="flex items-start gap-4 group">
+                        <div className="w-8 h-8 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors duration-500">
+                          <member.icon size={14} className="text-primary" strokeWidth={1.5} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium mb-0.5">{member.role}</p>
+                          <p className="text-xs text-muted-foreground font-light leading-relaxed">{member.desc}</p>
+                        </div>
+                      </div>
+                    </AnimatedSection>
+                  ))}
+                </div>
+
+                <p className="text-xs text-muted-foreground/30 italic font-light mt-8">
+                  Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører.
+                </p>
+              </AnimatedSection>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* JOURNEY — The actual steps */}
+      {/* JOURNEY — 4 steps */}
       <section id="reisen" className="py-32 md:py-48 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-20" />
         <div className="container mx-auto px-6 relative">
@@ -298,7 +290,7 @@ const Metoden = () => {
             <div className="text-center mb-28">
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Reisen</p>
               <h2 className="font-heading text-4xl md:text-6xl mb-6 leading-snug">
-                Seks faser.{" "}
+                Fire faser.{" "}
                 <span className="italic text-gradient-teal">Én destinasjon.</span>
               </h2>
               <p className="text-muted-foreground font-light max-w-xl mx-auto">
@@ -307,9 +299,8 @@ const Metoden = () => {
             </div>
           </AnimatedSection>
 
-          {/* Timeline */}
           <div className="relative max-w-4xl mx-auto">
-            {/* Spine line */}
+            {/* Spine */}
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/5 via-primary/20 to-primary/5 hidden md:block -translate-x-1/2" />
 
             {steps.map((step, i) => (
@@ -317,26 +308,45 @@ const Metoden = () => {
             ))}
 
             {/* End node */}
-            <div className="hidden md:flex justify-center mb-8">
+            <div className="hidden md:flex justify-center mt-4 mb-8">
               <div className="w-8 h-8 rounded-full border border-primary/30 bg-background flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-primary/60" />
+                <TrendingUp size={14} className="text-primary/60" strokeWidth={1.5} />
               </div>
             </div>
           </div>
+
+          {/* Always available callout */}
+          <AnimatedSection delay={0.4}>
+            <div className="max-w-2xl mx-auto mt-8">
+              <div className="glass rounded-3xl p-8 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Phone size={20} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="font-heading text-xl mb-2">Alltid tilgjengelige — for deg.</p>
+                  <p className="text-sm text-muted-foreground font-light leading-relaxed">
+                    Som klient kan du ringe oss når du vil. Ingen timespris. Ingen ventetid. Du er ikke et saksnummer — du er en partner vi bryr oss om.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
-      {/* CLOSING — The promise */}
-      <section className="py-32 md:py-40 relative overflow-hidden border-t border-border/10">
-        <div className="absolute inset-0 ambient-glow opacity-60" />
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, hsl(15 55% 65%) 1px, transparent 0)`,
-            backgroundSize: "40px 40px",
-          }}
-        />
-        <div className="container mx-auto px-6 relative">
+      {/* CLOSING — Velvet texture */}
+      <section className="relative py-40 md:py-56 overflow-hidden border-t border-border/10">
+        <div className="absolute inset-0">
+          <img
+            src={metodenClosing}
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-background" />
+          <div className="absolute inset-0 ambient-glow opacity-50" />
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <AnimatedSection>
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-8">Løftet</p>
@@ -351,20 +361,17 @@ const Metoden = () => {
                 Ikke en regnskapsfører. Ikke et byrå. En partner for hele reisen.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                <Link
-                  to="/kontakt"
-                  className="group inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-                >
-                  Overlat alt til oss
-                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
-              </div>
+              <Link
+                to="/kontakt"
+                className="group inline-flex items-center gap-3 px-12 py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+              >
+                Overlat alt til oss
+                <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              </Link>
 
-              {/* Trust micro-signals */}
               <div className="mt-16 flex flex-wrap gap-10 justify-center">
-                {["5 virkedager til fullt operativt regnskap", "Én kontaktperson. Helt team.", "Ingen bindingstid"].map((signal) => (
-                  <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/50 font-light">
+                {["5 virkedager til fullt operativt regnskap", "Én kontaktperson. Helt team.", "Ring oss når du vil — gratis"].map((signal) => (
+                  <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/40 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />
                     {signal}
                   </div>
