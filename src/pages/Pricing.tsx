@@ -4,61 +4,60 @@ import AnimatedSection from "@/components/AnimatedSection";
 
 const plans = [
   {
-    name: "Start",
+    name: "Fundament",
     price: "4 500",
-    period: ",-/mnd",
-    desc: "For selskaper som vil ha et solid økonomisk fundament — uten administrativt stress.",
+    period: " kr/mnd",
+    desc: "For selskaper som vil ha kontroll og struktur fra dag én.",
     features: [
       "Løpende bokføring og bankavstemming",
       "MVA-rapportering",
       "Årsregnskap og skattemelding",
       "Aksjonærregisteroppgave",
-      "Lønn for inntil 2 ansatte",
+      "Lønn for inntil 5 ansatte",
       "Månedlig standard rapportpakke",
       "Rådgivning",
-      "Systemkostnader inkludert",
+      "Regnskapsystemkostnad inkludert",
     ],
-    cta: "Velg Start",
+    cta: "Velg Fundament",
     highlighted: false,
-    compare: "Fra",
   },
   {
-    name: "Grow",
-    price: "24 900",
-    period: "/mnd",
-    desc: "For selskaper som har smaken på vekst og trenger en strategisk partner.",
+    name: "Vekstpartner",
+    price: "6 000",
+    period: " kr/mnd",
+    desc: "For selskaper i vekst som trenger en strategisk partner.",
+    inherits: "Alt i Fundament, pluss:",
     features: [
-      "Alt i Start",
-      "AI-drevet likviditetsprediksjon",
-      "Kvartalsvis skatteoptimalisering",
-      "Full lønnskjøring og HR-admin",
-      "Sanntidsdashbord med AI-varsler",
-      "Dedikert bransjerådgiver",
-      "Revisjonstøtte inkludert",
-      "Prioritert support",
+      "Lønn for opptil 10 ansatte",
+      "Kvartalsvis gjennomgang",
+      "Likviditetsoversikt og prognose",
+      "Skatteoptimalisering og strukturvurdering",
+      "Gratis oppsett av integrasjonsløsninger",
+      "SEO-støtte for din bedrift",
+      "Hjelp med styreromsrapportering",
+      "Kontrakter og HR-støtte",
+      "Prioritert rådgivning",
+      "Integrasjoner mot bank og fakturasystem",
     ],
-    cta: "Velg Grow",
+    cta: "Velg Vekstpartner",
     highlighted: false,
   },
   {
-    name: "Elite",
-    price: "59 900",
-    period: "/mnd",
-    desc: "Full kontroll. Total oversikt. Ditt finansielle A-team — alltid tilgjengelig.",
+    name: "Pro",
+    price: "8 000",
+    period: " kr/mnd",
+    desc: "For selskaper som vil ha total oversikt. Din finansielle partner.",
     badge: "Anbefalt",
+    inherits: "Alt i Vekstpartner, pluss:",
     features: [
-      "Alt i Grow",
-      "CFO-as-a-Service",
-      "Prediktiv skattearkitektur",
-      "Styrerom-rapportering",
-      "M&A rådgivning",
-      "Exit-planlegging",
-      "Kryptovaluta-regnskap",
-      "Direktelinje 24/7 til ditt team",
-      "Ubegrenset rådgivningstimer",
+      "Månedlig rapportering",
+      "Budsjett",
+      "CFO-løsning",
+      "Hjelp med nettside",
+      "SOME-annonsering",
+      "Integrasjon av e-postsystem mot SOME og andre kanaler",
     ],
-    roi: "Gjennomsnittlig ROI: 340 %",
-    cta: "Søk om Elite",
+    cta: "Velg Pro",
     highlighted: true,
   },
 ];
@@ -110,17 +109,13 @@ const Pricing = () => {
                   )}
                   <h3 className="font-heading text-3xl mb-2">{plan.name}</h3>
                   <p className="text-sm text-muted-foreground font-light mb-8">{plan.desc}</p>
-                  <div className="mb-6">
+                  <div className="mb-8">
+                    <span className="text-sm text-muted-foreground font-light mr-1">Fra</span>
                     <span className="font-heading text-5xl">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm ml-2">kr{plan.period}</span>
+                    <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
-                  {plan.compare && (
-                    <p className="text-xs text-muted-foreground/50 italic mb-6 font-light">{plan.compare}</p>
-                  )}
-                  {plan.roi && (
-                    <div className="px-4 py-2.5 rounded-2xl bg-primary/8 border border-primary/15 text-primary text-xs font-medium mb-8 text-center tracking-wider">
-                      {plan.roi}
-                    </div>
+                  {('inherits' in plan && plan.inherits) && (
+                    <p className="text-xs text-primary/80 font-medium tracking-wide mb-4">{plan.inherits}</p>
                   )}
                   <ul className="flex flex-col gap-3.5 mb-10 flex-1">
                     {plan.features.map((f) => (
