@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
-  BookOpen, Archive, Shield, FolderOpen, Handshake, MessageSquare,
+  BookOpen, Archive, Shield, FolderOpen, Handshake,
   Users, Settings, LogOut, ChevronRight, Menu, X, UserCheck
 } from "lucide-react";
 
@@ -19,12 +19,12 @@ import ResourcesPanel from "@/components/admin/ResourcesPanel";
 import HmsPanel from "@/components/admin/HmsPanel";
 import InternalResourcesPanel from "@/components/admin/InternalResourcesPanel";
 import CollabPanel from "@/components/admin/CollabPanel";
-import ChatPanel from "@/components/admin/ChatPanel";
+
 import SettingsPanel from "@/components/admin/SettingsPanel";
 import HrPanel from "@/components/admin/HrPanel";
 
 type Panel = "overview" | "employees" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "chat" | "settings" | "hr";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -38,7 +38,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "hms", label: "HMS-bok", icon: Shield, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
-  { id: "chat", label: "Intern chat", icon: MessageSquare, group: "Internt" },
+  
   { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
       case "hms": return <HmsPanel />;
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
-      case "chat": return <ChatPanel />;
+      
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }
@@ -174,7 +174,7 @@ const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: 
     { id: "pricing" as Panel, icon: DollarSign, label: "Priser", desc: "Oppdater prisplaner", admin: true },
     { id: "archive" as Panel, icon: Archive, label: "Arkiv & Skjemaer", desc: "Last opp Excel-filer og skjemaer", admin: true },
     { id: "hms" as Panel, icon: Shield, label: "HMS-bok", desc: "HMS-dokumentasjon", admin: false },
-    { id: "chat" as Panel, icon: MessageSquare, label: "Intern chat", desc: "Chat med teamet", admin: false },
+    
     { id: "internal" as Panel, icon: FolderOpen, label: "Interne ressurser", desc: "Delte ressurser for ansatte", admin: false },
     { id: "collab" as Panel, icon: Handshake, label: "Samarbeidsavtaler", desc: "Avtaledokumenter", admin: false },
   ].filter(c => !c.admin || isAdmin);

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Tag, Share2, Pin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
 interface Post {
   id: string;
@@ -70,6 +71,8 @@ const BlogPost = () => {
             {post.excerpt && <p className="text-lg text-muted-foreground font-light leading-relaxed mb-6">{post.excerpt}</p>}
 
             <div className="flex items-center gap-4 text-xs text-muted-foreground/60 mb-8">
+              <span className="font-medium text-foreground/80">Avargo</span>
+              <span>·</span>
               <span className="flex items-center gap-1"><Calendar size={12} /> {formatDate(post.created_at)}</span>
             </div>
 
@@ -79,7 +82,7 @@ const BlogPost = () => {
               </div>
             )}
 
-            <div className="prose prose-lg dark:prose-invert max-w-none mb-12" dangerouslySetInnerHTML={{ __html: post.content || "" }} />
+            <div className="prose prose-lg dark:prose-invert max-w-none mb-12" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
 
             {(post.tags || []).length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-8 pt-6 border-t border-border/20">
