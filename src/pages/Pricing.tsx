@@ -69,26 +69,31 @@ const Pricing = () => {
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-6 relative">
           <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-8">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Investering</p>
-              <h1 className="font-heading text-5xl md:text-7xl mb-8 leading-snug">
-                Hva er <span className="italic text-gradient-rose">kontroll</span> verdt for deg?
+            <div className="text-center max-w-2xl mx-auto mb-20">
+              <h1 className="font-heading text-5xl md:text-7xl mb-10 leading-snug">
+                Hva er manglende <span className="italic text-gradient-rose">kontroll</span> egentlig verdt?
               </h1>
-              <p className="text-muted-foreground text-lg font-light mb-4">
-                Vi viser deg ikke hva det koster. Vi viser deg hva du taper ved å la være.
-              </p>
-              <p className="text-sm text-primary/70 italic font-light">
-                Gjennomsnittlig besparelse for nye klienter: 180 000 kr i første halvår.
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {/* Comparison callout */}
-          <AnimatedSection delay={0.2}>
-            <div className="max-w-3xl mx-auto mb-20 p-6 glass rounded-3xl text-center">
-              <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                <span className="text-foreground font-normal">Billigalternativene</span> gir deg regnskapsfører til lav pris — men mangler mva-rapportering, lønn, revisjonstøtte og AI. <span className="text-foreground font-normal">Regnskapssystemene</span> gir deg et system uten noen til å bruke det. <span className="text-primary font-medium">Avargo gir deg alt. Alltid.</span>
-              </p>
+              <div className="text-muted-foreground font-light leading-relaxed space-y-6 text-left max-w-xl mx-auto">
+                <p>
+                  Feil rapportering. Uforutsette skattesmeller. Tidsbruk på oppgaver du ikke burde gjort selv.
+                  Det er sjelden regningen du ser – det er konsekvensene du merker.
+                </p>
+                <p>
+                  Hos oss kjøper du ikke bare regnskap.
+                  Du får struktur, rådgivning og et system som faktisk brukes riktig.
+                </p>
+                <p>
+                  <span className="text-foreground font-normal">Lavprisaktører</span> leverer timer.<br />
+                  <span className="text-foreground font-normal">Regnskapssystemer</span> leverer programvare.<br />
+                  <span className="text-primary font-medium">Vi leverer helhet.</span>
+                </p>
+                <p>
+                  Med fastpris, rådgivning inkludert og full oversikt, vet du alltid hvor du står – og hva neste steg er.
+                </p>
+                <p className="text-sm text-primary/70 italic">
+                  Spørsmålet er ikke hva det koster — men om du har råd til å drive uten kontroll.
+                </p>
+              </div>
             </div>
           </AnimatedSection>
 
