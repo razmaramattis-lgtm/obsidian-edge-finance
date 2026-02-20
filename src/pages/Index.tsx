@@ -52,9 +52,8 @@ const Index = () => {
 
   const services = [
     { icon: Users, title: "Dedikert regnskapsfører", desc: "Ingen chatbot. Ingen callsenter. Du får én fast regnskapsfører som kjenner selskapet ditt like godt som du gjør. Alltid tilgjengelig. Alltid oppdatert." },
-    { icon: Bot, title: "AI som superkraft", desc: "Vi bruker AI til å analysere 1400+ parametere, forutsi likviditetskriser og optimalisere skatt. Men maskinen rapporterer til mennesket — din dedikerte rådgiver tar beslutningene sammen med deg." },
-    { icon: FileCheck, title: "Komplett regnskapsføring", desc: "Bokføring, årsregnskap, skattemelding, aksjonærregisteroppgave og mva-rapportering — alt inkludert. Andre mangler moms, lønn eller revisjonstøtte. Vi har alt fra dag én." },
-    { icon: CreditCard, title: "90+ bankintegrasjoner", desc: "Automatisk synkronisering med alle norske banker. Ingen manuell import. Ingen kopier-og-lim. Transaksjoner strømmer rett inn i regnskapet ditt." },
+    { icon: Bot, title: "AI som et verktøy for deg", desc: "Vi bruker AI til å forenkle og effektivisere prosessene rundt regnskap og økonomi — slik at hverdagen blir enklere for deg som kunde. Teknologien jobber i bakgrunnen, så du slipper å tenke på det." },
+    { icon: FileCheck, title: "Komplett regnskapsføring", desc: "Bokføring, årsregnskap, skattemelding, aksjonærregisteroppgave og mva-rapportering — alt inkludert. De fleste konkurrenter har skjulte priser og tilleggskostnader du ikke ser før fakturaen kommer. Hos oss er alt i fastprisen fra dag én." },
     { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepengeberegning, A-melding og arbeidsgiveravgift. Andre regnskapssystemer tar ekstra for dette. Hos oss er det inkludert." },
     { icon: BarChart3, title: "Sanntidsdashbord", desc: "Se likviditet, resultat og balanse oppdatert i sanntid. Ikke vent til neste månedsrapport for å ta beslutninger — se alt akkurat nå." },
     { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste eksisterte og strukturerer selskapet for minimal, lovlig skatt." },
