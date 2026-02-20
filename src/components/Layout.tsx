@@ -97,30 +97,30 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Tjenester</h4>
-              <div className="flex flex-col gap-3 text-sm text-foreground/40 font-light">
-                <span>Dedikert regnskapsfører</span>
-                <span>AI-drevet innsikt</span>
-                <span>Skatteoptimalisering</span>
-                <span>Lønn & HR</span>
-                <span>CFO-as-a-Service</span>
+              <div className="flex flex-col gap-3 text-sm font-light">
+                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
+                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
+                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Skatteoptimalisering</Link>
+                <Link to="/metoden" className="text-foreground/40 hover:text-foreground transition-colors">Lønn & HR</Link>
+                <Link to="/priser" className="text-foreground/40 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
               </div>
             </div>
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Bransjer</h4>
-              <div className="flex flex-col gap-3 text-sm text-foreground/40 font-light">
-                <span>Tech & SaaS</span>
-                <span>Eiendom · Holding</span>
-                <span>Landbruk · Varehandel</span>
-                <span>Bygg · Nettbutikk</span>
-                <span>Helse · Consulting</span>
+              <div className="flex flex-col gap-3 text-sm font-light">
+                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Tech & SaaS</Link>
+                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Eiendom · Holding</Link>
+                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Landbruk · Varehandel</Link>
+                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Bygg · Nettbutikk</Link>
+                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Helse · Consulting</Link>
               </div>
             </div>
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-6">Kontakt</h4>
-              <div className="flex flex-col gap-3 text-sm text-foreground/40 font-light">
-                <span>post@avargo.no</span>
-                <span>+47 22 00 00 00</span>
-                <span>Oslo, Norge</span>
+              <div className="flex flex-col gap-3 text-sm font-light">
+                <a href="mailto:post@avargo.no" className="text-foreground/40 hover:text-foreground transition-colors">post@avargo.no</a>
+                <a href="tel:+4722000000" className="text-foreground/40 hover:text-foreground transition-colors">+47 22 00 00 00</a>
+                <Link to="/kontakt" className="text-foreground/40 hover:text-foreground transition-colors">Oslo, Norge</Link>
               </div>
             </div>
           </div>
