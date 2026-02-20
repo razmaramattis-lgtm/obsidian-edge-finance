@@ -92,8 +92,8 @@ const ArchivePanel = () => {
             className="border-2 border-dashed border-border/30 rounded-xl p-8 text-center cursor-pointer hover:border-primary/40 transition-colors"
           >
             <FileSpreadsheet size={28} className="mx-auto text-muted-foreground mb-2" strokeWidth={1.5} />
-            <p className="text-sm text-muted-foreground">{selectedFile ? selectedFile.name : "Klikk for å velge fil (Excel, PDF, etc.)"}</p>
-            <input ref={fileRef} type="file" className="hidden" onChange={e => setSelectedFile(e.target.files?.[0] || null)} accept=".xlsx,.xls,.pdf,.doc,.docx,.csv" />
+            <p className="text-sm text-muted-foreground">{selectedFile ? selectedFile.name : "Klikk for å velge fil (PDF, Excel, Word, bilder, etc.)"}</p>
+            <input ref={fileRef} type="file" className="hidden" onChange={e => setSelectedFile(e.target.files?.[0] || null)} />
           </div>
           <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Filnavn/tittel" required
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />

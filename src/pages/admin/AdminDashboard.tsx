@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake, MessageSquare,
-  Users, Settings, LogOut, ChevronRight, Menu, X
+  Users, Settings, LogOut, ChevronRight, Menu, X, UserCheck
 } from "lucide-react";
 
 // Sub-panels
@@ -21,9 +21,10 @@ import InternalResourcesPanel from "@/components/admin/InternalResourcesPanel";
 import CollabPanel from "@/components/admin/CollabPanel";
 import ChatPanel from "@/components/admin/ChatPanel";
 import SettingsPanel from "@/components/admin/SettingsPanel";
+import HrPanel from "@/components/admin/HrPanel";
 
 type Panel = "overview" | "employees" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "chat" | "settings";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "chat" | "settings" | "hr";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -33,6 +34,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
+  { id: "hr", label: "HR & Personal", icon: UserCheck, adminOnly: true, group: "Ressurser" },
   { id: "hms", label: "HMS-bok", icon: Shield, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
@@ -64,6 +66,7 @@ const AdminDashboard = () => {
       case "pricing": return <PricingPanel />;
       case "archive": return <ArchivePanel />;
       case "resources": return <ResourcesPanel />;
+      case "hr": return <HrPanel />;
       case "hms": return <HmsPanel />;
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
