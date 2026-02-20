@@ -1,5 +1,3 @@
-import { Deno } from "https://deno.land/std@0.177.0/node/module.ts";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -20,7 +18,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    // Verify caller is authenticated and is admin
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Ikke autorisert." }), {
@@ -28,7 +25,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check caller's role using the user token
     const callerToken = authHeader.replace('Bearer ', '');
     const callerRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
       headers: { Authorization: `Bearer ${callerToken}`, apikey: serviceKey }
@@ -40,7 +36,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check if caller is admin in profiles table
     const profileRes = await fetch(`${supabaseUrl}/rest/v1/profiles?user_id=eq.${callerUser.id}&select=role`, {
       headers: { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey }
     });
@@ -51,7 +46,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create user with service role
     const createRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
       method: 'POST',
       headers: {
@@ -59,11 +53,7 @@ Deno.serve(async (req) => {
         apikey: serviceKey,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        password,
-        email_confirm: true,
-      }),
+      body: JSON.stringify({ email, password, email_confirm: true }),
     });
 
     const newUser = await createRes.json();
@@ -73,7 +63,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create profile
     await fetch(`${supabaseUrl}/rest/v1/profiles`, {
       method: 'POST',
       headers: {
