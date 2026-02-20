@@ -28,12 +28,14 @@ const categories = [
     services: [
       {
         icon: BookOpen,
+        href: "/tjenester/regnskapsforer",
         title: "Dedikert regnskapsfører",
         desc: "Du får én navngitt regnskapsfører som kjenner selskapet ditt ut og inn. Ingen saksbehandlere. Ingen ventelinjer. Et menneske som proaktivt følger opp, stiller de riktige spørsmålene — og som du faktisk kan ringe.",
         sub: ["Løpende bokføring & MVA", "Årsregnskap & skattemelding", "Aksjonærregisteroppgave", "Revisjonstøtte & dokumentasjon"],
       },
       {
         icon: TrendingUp,
+        href: "/tjenester/ai-innsikt",
         title: "AI-drevet finansiell innsikt",
         desc: "Sanntidsrapporter som viser likviditet, resultattrender og skatteposisjon — presentert tydelig, uten regnskapsjargon. AI-en analyserer kontinuerlig og flagger avvik, fradragsmuligheter og risikofaktorer før de blir problemer.",
         sub: ["Sanntidsdashbord", "Automatisk fradragsanalyse", "Risikovarsling & prognoser", "Skatteoptimalisering"],
@@ -51,6 +53,7 @@ const categories = [
     services: [
       {
         icon: Briefcase,
+        href: "/tjenester/cfo",
         title: "CFO-as-a-Service",
         desc: "En erfaren finansiell leder som deltar i strategimøter, investordialog og styrearbeid. Vi hjelper deg å navigere vekst, exit, fusjon eller refinansiering med presisjon og innsikt som gjør forskjellen.",
         sub: ["Kapitalstruktur & finansieringsstrategi", "Investor- og styrekommunikasjon", "Exit- og fusjonsplanlegging", "Budsjettering & scenarioanalyse"],
@@ -68,6 +71,7 @@ const categories = [
     services: [
       {
         icon: Users,
+        href: "/tjenester/hr-og-lonn",
         title: "Lønn & HR-administrasjon",
         desc: "Presis lønnskjøring, arbeidskontrakter, HMS-dokumentasjon og personaloppfølging. Vi sørger for at selskapet ditt alltid er compliant — og at dine ansatte opplever en profesjonell arbeidsgiver.",
         sub: ["Lønnskjøring & A-melding", "Arbeidskontrakter & personalreglement", "HMS & internkontroll", "Onboarding & offboarding"],
@@ -85,36 +89,42 @@ const categories = [
     services: [
       {
         icon: LayoutTemplate,
+        href: "/tjenester/nettsider",
         title: "Nettsider & digitale flater",
         desc: "Moderne, konverteringsoptimaliserte nettsider og nettbutikker som kommuniserer merkevaren din presist — og som gjør det enkelt for kundene å ta neste steg. Bygget for hastighet, skalerbarhet og resultat.",
         sub: ["Framer & custom nettside", "Nettside-redesign", "Nettbutikker & e-handel", "Landingssider & konverteringsoptimalisering"],
       },
       {
         icon: Search,
+        href: "/tjenester/seo",
         title: "SEO & søkbarhet",
         desc: "Strategisk søkemotoroptimalisering som bygger langsiktig organisk synlighet. Vi kombinerer teknisk SEO, innholdsstrategi og lokal tilstedeværelse — slik at kundene finner deg når behovet oppstår.",
         sub: ["Teknisk SEO & sidestruktur", "Google Min Bedrift-optimalisering", "AI-assistert innholdsproduksjon", "Konkurrentanalyse & søkeordstrategi"],
       },
       {
         icon: Megaphone,
+        href: "/tjenester/meta-annonser",
         title: "Meta-annonser (Facebook & Instagram)",
         desc: "Presisjonsrettede kampanjer på Meta-plattformene som genererer kvalifiserte leads og salg — ikke bare rekkevidde. Vi styrer budsjett, målgrupper og kreativt innhold basert på kontinuerlig dataanalyse.",
         sub: ["Kampanjestrategi & målgruppebygging", "Annonseproduksjon & A/B-testing", "Retargeting & lookalike-målgrupper", "Konverteringssporing & ROAS-optimalisering"],
       },
       {
         icon: Globe,
+        href: "/tjenester/google-ads",
         title: "Google Ads & søkeannonsering",
         desc: "Møt kunden i kjøpsøyeblikket med presisjonsstyrt søkeannonsering. Vi strukturerer kampanjer, byr strategisk og optimaliserer kontinuerlig — slik at hver krone gir maksimal avkastning.",
         sub: ["Søke- og displaykampanjer", "Performance Max", "Lokal annonsering", "Budsjettoptimalisering & rapportering"],
       },
       {
         icon: ShoppingCart,
+        href: "/tjenester/nettbutikk",
         title: "Nettbutikk & e-handel",
         desc: "En nettbutikk som ikke bare ser bra ut, men som konverterer besøkende til kunder. Vi designer, bygger og optimaliserer e-handelssystemer som er klare til å skalere.",
         sub: ["Shopify & WooCommerce", "Produktpresentasjon & UX", "Betalingsløsninger & integrasjoner", "Lager- og ordrestyring"],
       },
       {
         icon: Bot,
+        href: "/tjenester/ai-automatisering",
         title: "AI & automatisering",
         desc: "Intelligente arbeidsflyter og AI-drevne løsninger som eliminerer repetitive oppgaver og skalerer kapasiteten din uten proporsjonalt mer ressurser. Teknologi som jobber mens du sover.",
         sub: ["Prosessautomatisering & integrasjoner", "AI-chatbot & kundeservice", "Automatisk leadoppfølging", "Datadrevne beslutningssystemer"],
@@ -213,15 +223,15 @@ const Tjenester = () => {
             <div className={`grid grid-cols-1 ${cat.services.length === 1 ? "md:grid-cols-1 max-w-3xl" : cat.services.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-6 md:gap-8`}>
               {cat.services.map((service, i) => (
                 <AnimatedSection key={service.title} delay={i * 0.1}>
-                  <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full flex flex-col">
-                    <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-primary/8 border border-primary/15 flex items-center justify-center mb-5 md:mb-6">
+                  <Link to={service.href} className="block p-8 md:p-10 glass rounded-3xl card-lift h-full flex flex-col group">
+                    <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-primary/8 border border-primary/15 flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/15 transition-colors duration-500">
                       <service.icon size={17} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{service.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8 flex-1">
                       {service.desc}
                     </p>
-                    <ul className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-2 mb-6">
                       {service.sub.map((item) => (
                         <li key={item} className="flex items-center gap-2.5 text-xs text-muted-foreground/60 font-light">
                           <ChevronRight size={11} className="text-primary/40 shrink-0" />
@@ -229,7 +239,10 @@ const Tjenester = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
+                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/50 group-hover:text-primary transition-colors duration-300 mt-auto">
+                      Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  </Link>
                 </AnimatedSection>
               ))}
             </div>
