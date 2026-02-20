@@ -124,10 +124,12 @@
   100% { transform: translateX(0); }
 }
 .animate-marquee {
-  animation: marquee 40s linear infinite;
+  animation: marquee 38s linear infinite;
+  animation-delay: -6s;
 }
 .animate-marquee-reverse {
-  animation: marquee-reverse 50s linear infinite;
+  animation: marquee-reverse 53s linear infinite;
+  animation-delay: -19s;
 }
 
 html {
