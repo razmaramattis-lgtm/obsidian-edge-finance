@@ -38,8 +38,7 @@ const CollabPanel = () => {
       const path = `collab/${Date.now()}-${selectedFile.name}`;
       const { data: ud } = await supabase.storage.from("internal-docs").upload(path, selectedFile);
       if (ud) {
-        const { data: { publicUrl } } = supabase.storage.from("internal-docs").getPublicUrl(path);
-        fileData = { file_url: publicUrl, file_name: selectedFile.name };
+        fileData = { file_url: path, file_name: selectedFile.name };
       }
     }
 
@@ -103,7 +102,7 @@ const CollabPanel = () => {
               {item.description && <p className="text-xs text-muted-foreground">{item.description}</p>}
             </div>
             <div className="flex gap-2">
-              {item.file_url && <a href={item.file_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary"><Download size={14} /></a>}
+              {item.file_url && <button onClick={async () => { const { data } = await supabase.storage.from("internal-docs").createSignedUrl(item.file_url, 3600); if (data?.signedUrl) window.open(data.signedUrl, "_blank"); }} className="text-muted-foreground hover:text-primary"><Download size={14} /></button>}
               <button onClick={() => { setEditing(item); setForm({ title: item.title, description: item.description || "", partner: item.partner || "" }); setShowForm(true); }}
                 className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
               <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>

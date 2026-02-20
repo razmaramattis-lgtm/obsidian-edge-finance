@@ -37,8 +37,7 @@ const HmsPanel = () => {
       const path = `hms/${Date.now()}-${selectedFile.name}`;
       const { data: ud } = await supabase.storage.from("internal-docs").upload(path, selectedFile);
       if (ud) {
-        const { data: { publicUrl } } = supabase.storage.from("internal-docs").getPublicUrl(path);
-        fileData = { file_url: publicUrl, file_name: selectedFile.name };
+        fileData = { file_url: path, file_name: selectedFile.name };
       }
     }
 
@@ -105,9 +104,10 @@ const HmsPanel = () => {
             </div>
             {doc.content && <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{doc.content}</p>}
             {doc.file_name && (
-              <a href={doc.file_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-xs text-primary hover:underline">
+              <button onClick={async () => { const { data } = await supabase.storage.from("internal-docs").createSignedUrl(doc.file_url, 3600); if (data?.signedUrl) window.open(data.signedUrl, "_blank"); }}
+                className="inline-flex items-center gap-1.5 mt-3 text-xs text-primary hover:underline">
                 <FileText size={12} /> {doc.file_name}
-              </a>
+              </button>
             )}
           </div>
         ))}
