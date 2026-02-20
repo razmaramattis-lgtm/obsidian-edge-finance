@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
+  { label: "Tjenester", href: "/tjenester" },
   { label: "Metoden", href: "/metoden" },
-  { label: "Bransjer", href: "/#bransjer" },
   { label: "Priser", href: "/priser" },
   { label: "Om oss", href: "/om-oss" },
   { label: "Kontakt", href: "/kontakt" },
