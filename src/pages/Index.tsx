@@ -178,6 +178,35 @@ const Index = () => {
         </motion.div>
       </section>
 
+      {/* MARQUEE BANDS */}
+      <div className="relative py-10 border-y border-border/10 overflow-hidden select-none">
+        <div className="absolute inset-0 ambient-glow opacity-30" />
+        {/* Band 1 — services */}
+        <div className="relative flex overflow-hidden mb-5">
+          <div className="flex shrink-0 animate-marquee gap-12 pr-12">
+            {[...services, ...services].map((s, i) => (
+              <div key={i} className="flex items-center gap-3 whitespace-nowrap">
+                <s.icon size={13} className="text-primary/50 shrink-0" strokeWidth={1.5} />
+                <span className="text-[11px] tracking-[0.25em] uppercase text-foreground/35 font-light">{s.title}</span>
+                <span className="text-primary/20 mx-3">·</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Band 2 — industries (reverse) */}
+        <div className="relative flex overflow-hidden">
+          <div className="flex shrink-0 animate-marquee-reverse gap-12 pr-12">
+            {[...industries, ...industries].map((ind, i) => (
+              <div key={i} className="flex items-center gap-3 whitespace-nowrap">
+                <ind.icon size={13} className="text-secondary/50 shrink-0" strokeWidth={1.5} />
+                <span className="text-[11px] tracking-[0.25em] uppercase text-foreground/25 font-light">{ind.name}</span>
+                <span className="text-secondary/20 mx-3">·</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* THE HOOK */}
       <section className="py-32 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-60" />
