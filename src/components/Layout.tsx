@@ -5,10 +5,10 @@ import { Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Tjenester", href: "/tjenester" },
+  { label: "Bransjer", href: "/bransjer" },
   { label: "Metoden", href: "/metoden" },
   { label: "Priser", href: "/priser" },
   { label: "Om oss", href: "/om-oss" },
-  { label: "Kontakt", href: "/kontakt" },
 ];
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -107,11 +107,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Bransjer</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
-                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Tech & SaaS</Link>
-                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Eiendom · Holding</Link>
-                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Landbruk · Varehandel</Link>
-                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Bygg · Nettbutikk</Link>
-                <Link to="/#bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Helse · Consulting</Link>
+                <Link to="/bransjer/tech-saas" className="text-foreground/40 hover:text-foreground transition-colors">Tech & SaaS</Link>
+                <Link to="/bransjer/eiendom" className="text-foreground/40 hover:text-foreground transition-colors">Eiendom & Utvikling</Link>
+                <Link to="/bransjer/landbruk" className="text-foreground/40 hover:text-foreground transition-colors">Landbruk</Link>
+                <Link to="/bransjer/bygg-anlegg" className="text-foreground/40 hover:text-foreground transition-colors">Bygg & Anlegg</Link>
+                <Link to="/bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Se alle bransjer →</Link>
               </div>
             </div>
             <div>
