@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 import AvailabilityWidget from "./AvailabilityWidget";
 
 const navItems = [
-  { label: "Metoden", href: "/#metoden" },
+  { label: "Metoden", href: "/metoden" },
   { label: "Bransjer", href: "/#bransjer" },
   { label: "Priser", href: "/priser" },
   { label: "Om oss", href: "/om-oss" },
