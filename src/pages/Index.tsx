@@ -36,15 +36,18 @@ const LiveCounter = () => {
 
 const Index = () => {
   const industries = [
-    { icon: Globe, name: "Tech & SaaS", tagline: "Regnskap i samme tempo som koden din", desc: "Live-tracking av MRR, ARR, Burn-rate og Churn. Vi forstår runway, Series A og cap tables. Din dedikerte regnskapsfører snakker tech flytende." },
-    { icon: Building2, name: "Eiendom & Utvikling", tagline: "Vi maksimerer din kvadratmeter-yield", desc: "Mva-justeringsregler, bankklar rapportering, investeringsanalyse og skatteoptimalisering på tvers av eiendomsporteføljer. Vi sikrer finansieringen din." },
-    { icon: Landmark, name: "Holding & Investering", tagline: "Beskytt formuen mot unødvendig lekkasje", desc: "Konsernbidrag, utbytteplanlegging, aksjonærregisteroppgave og skattemelding — alt håndtert. Andre tilbyr deler av dette. Vi leverer helheten — inkludert strategisk rådgivning." },
-    { icon: Briefcase, name: "Consulting & Rådgivning", tagline: "Internasjonal presisjon, lokal nærhet", desc: "Compliance, internasjonal fakturering, transfer pricing og skatteoptimalisering. Din dedikerte regnskapsfører forstår konsulentbransjens unike utfordringer." },
-    { icon: Tractor, name: "Landbruk", tagline: "Fra jord til regnskap — sømløst", desc: "Vi forstår jordbruksfradrag, investeringsstøtte, sesongvariasjoner og spesialreglene som gjelder primærnæringen. Din regnskapsfører kjenner gården din." },
-    { icon: ShoppingCart, name: "Varehandel", tagline: "Full kontroll på marginer og varelager", desc: "Varelagerregnskap, innkjøpsanalyse, mva-rapportering og lønnsomhetsanalyse per produktkategori. Vi ser hva som selger — og hva som spiser marginen din." },
-    { icon: HardHat, name: "Bygg & Anlegg", tagline: "Prosjektregnskap som faktisk fungerer", desc: "Prosjektbasert bokføring, underentreprenør-håndtering, HMS-dokumentasjon og anbudsøkonomi. Vi holder oversikt så du kan holde fremdriften." },
-    { icon: Store, name: "Nettbutikk & E-commerce", tagline: "Skalering uten regnskapskaoset", desc: "Integrasjon med Shopify, WooCommerce og Klarna. Automatisk mva-beregning, valutahåndtering og sanntids lønnsomhetsanalyse per kanal." },
-    { icon: Heart, name: "Helse & Velvære", tagline: "Fokuser på pasientene — vi tar tallene", desc: "Spesialtilpasset for klinikker, praksiser og helseforetak. Vi håndterer refusjonsordninger, HELFO-oppgjør og bransjespesifikk rapportering." },
+    { icon: Globe, name: "Tech & SaaS", tagline: "Vi vokser i takt med deg", desc: "Teknologiselskaper beveger seg raskt, og det skal vi også. Vi forstår hvordan en startup fungerer — fra de første kundene til man begynner å tenke på vekst og investorer. Du bygger produktet, vi holder styr på alt rundt det." },
+    { icon: Building2, name: "Eiendom & Utvikling", tagline: "Oversikt fra kjøp til salg", desc: "Enten du eier én leilighet eller en hel portefølje, hjelper vi deg å holde full kontroll. Vi sørger for at du til enhver tid vet hva du tjener, hva det koster, og hvordan du kan gjøre det smartere." },
+    { icon: Landmark, name: "Holding & Investering", tagline: "Strukturen som beskytter deg", desc: "Mange som investerer i aksjer, eiendom eller andre selskaper oppdager fort at det fort blir komplisert å holde orden. Vi hjelper deg å bygge en ryddig og trygg struktur — slik at pengene dine er godt ivaretatt." },
+    { icon: Briefcase, name: "Consulting & Rådgivning", desc: "Konsulenter jobber gjerne alene eller i små team, og hverdagen er full av prosjekter, kunder og fakturering. Vi tar oss av alt det administrative, slik at du kan bruke tiden din på det du faktisk er god på.", tagline: "Mer tid til det du er best på" },
+    { icon: Tractor, name: "Landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder for bønder og sørger for at du aldri går glipp av det du har krav på." },
+    { icon: ShoppingCart, name: "Varehandel", tagline: "Alltid kontroll på varene og pengene", desc: "Butikk er mer enn salg — det handler om innkjøp, lager, svinn og marginer. Vi hjelper deg å forstå hva som faktisk lønner seg å selge, og gir deg et klart bilde av hvordan bedriften din går." },
+    { icon: HardHat, name: "Bygg & Anlegg", tagline: "Vi holder orden mens du bygger", desc: "Bygg- og anleggsbransjen er avhengig av at prosjekter går i pluss og at alt er på stell. Vi hjelper deg å ha god oversikt over hvert enkelt prosjekt, slik at du alltid vet om du tjener penger eller ikke." },
+    { icon: Store, name: "Nettbutikk & E-commerce", tagline: "Skalér trygt — vi har ryggen din", desc: "Å drive nettbutikk kan vokse raskt, og det kan fort bli kaotisk. Vi hjelper deg å holde styr på inntekter, avgifter og kostnader — uansett om du selger til norske eller utenlandske kunder." },
+    { icon: Heart, name: "Helse & Velvære", tagline: "Fokuser på menneskene du hjelper", desc: "Klinikker, treningssentre og helseforetak har nok å tenke på med kunder og pasienter. Vi ordner det økonomiske i bakgrunnen, slik at du kan gi full oppmerksomhet til dem du er der for." },
+    { icon: TrendingUp, name: "Restaurant & Uteliv", tagline: "Vi hjelper deg å holde hjulene i gang", desc: "Restaurant og café er en bransje der marginene kan være tynne og hverdagen er hektisk. Vi gir deg god oversikt over driften, slik at du kan ta bedre beslutninger — og sove litt bedre om natten." },
+    { icon: Users, name: "Frisør & Skjønnhet", tagline: "Mer tid bak stolen, ikke ved skrivebordet", desc: "Frisører og andre i skjønnhetsbransjen er eksperter på sitt håndverk — men trenger ikke å bli eksperter på regnskap. Det tar vi oss av, fra A til Å." },
+    { icon: Zap, name: "Håndverkere & Fagfolk", tagline: "Fagmann på jobb, vi tar resten", desc: "Enten du er elektriker, rørlegger, maler eller tømrer — vi vet at du vil bruke dagene ute hos kunder, ikke ved skrivebordet. Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
   ];
 
   const services = [
@@ -244,28 +247,28 @@ const Index = () => {
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-6 relative">
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Bransjeeksperter</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6">Noen av våre spesialfelt</p>
             <h2 className="font-heading text-4xl md:text-6xl mb-6 max-w-4xl leading-snug">
-              Din regnskapsfører forstår bransjen din.{" "}
+              Vi kjenner bransjen din.{" "}
               <span className="italic text-gradient-rose">Ikke bare tallene.</span>
             </h2>
             <p className="text-muted-foreground text-lg font-light mb-6 max-w-2xl">
-              Andre byrå gir deg en generalist. Vi gir deg en spesialist som kjenner bransjereglene, fradragene og fallgruvene i akkurat din næring. Det er forskjellen mellom regnskap og <em>riktig</em> regnskap.
+              Uansett hvilken bransje du er i, møter du noen hos oss som forstår hverdagen din — ikke bare tallene i regnskapet. Vi jobber med alt fra teknologiselskaper og bønder til frisører og håndverkere. Dette er noen av bransjene vi brenner for.
             </p>
             <p className="text-sm text-primary/70 italic font-light mb-20">
-              Vi har spesialiserte team for hver bransje. Du møter alltid noen som snakker ditt språk.
+              Driver du i en bransje du ikke ser her? Ring oss — vi tilpasser oss raskt.
             </p>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
             {industries.map((ind, i) => (
-              <AnimatedSection key={ind.name} delay={i * 0.06}>
+              <AnimatedSection key={ind.name} delay={i * 0.05}>
                 <div className="group p-8 glass rounded-3xl card-lift relative overflow-hidden h-full">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="p-3 bg-muted/50 rounded-2xl inline-block mb-5">
                     <ind.icon size={20} className="text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-heading text-2xl mb-1">{ind.name}</h3>
+                  <h3 className="font-heading text-xl mb-1">{ind.name}</h3>
                   <p className="text-sm text-primary/70 italic mb-4">{ind.tagline}</p>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light">{ind.desc}</p>
                 </div>
@@ -276,7 +279,7 @@ const Index = () => {
           <AnimatedSection delay={0.5}>
             <div className="mt-12 p-8 glass rounded-3xl text-center">
               <p className="text-muted-foreground font-light">
-                Driver du i en annen bransje? <span className="text-foreground">Vi spesialiserer oss på å forstå nye bransjer raskt.</span> Kontakt oss — vi tilpasser tjenesten til din virkelighet.
+                Er bransjen din ikke på listen? <span className="text-foreground">Vi tar på oss alle typer bedrifter.</span> Ta kontakt — vi setter oss raskt inn i din hverdag og tilpasser tjenesten til deg.
               </p>
             </div>
           </AnimatedSection>
