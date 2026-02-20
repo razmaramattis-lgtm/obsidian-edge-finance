@@ -53,7 +53,7 @@ const plans = [
       "Månedlig rapportering",
       "Budsjett",
       "CFO-løsning",
-      "Hjelp med nettside",
+      "Oppsett av nettside",
       "SOME-annonsering",
       "Integrasjon av e-postsystem mot SOME og andre kanaler",
     ],
