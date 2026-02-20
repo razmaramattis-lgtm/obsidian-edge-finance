@@ -5,7 +5,7 @@ import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  Mail, Info, FileText, BookMarked, Newspaper,
+  Mail, Info, FileText, BookMarked, Newspaper, Lock,
 } from "lucide-react";
 
 const tjenesterGroups = [
@@ -48,6 +48,7 @@ const bransjerItems = [
 const selskapetLinks = [
   { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss" },
   { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt" },
+  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-ansatte", href: "/admin/logg-inn" },
 ];
 
 const ressurserLinks = [

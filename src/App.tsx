@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
@@ -13,6 +14,8 @@ import Tjenester from "./pages/Tjenester";
 import Bransjer from "./pages/Bransjer";
 import Ressurser from "./pages/Ressurser";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 // Tjeneste-undersider
 import Regnskapsforer from "./pages/tjenester/Regnskapsforer";
 import AiInnsikt from "./pages/tjenester/AiInnsikt";
@@ -40,47 +43,67 @@ import Handverkere from "./pages/bransjer/Handverkere";
 
 const queryClient = new QueryClient();
 
+// Protected route for admin dashboard
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground text-sm">Laster…</div></div>;
+  if (!user) return <Navigate to="/admin/logg-inn" replace />;
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/tjenester" element={<Tjenester />} />
-            <Route path="/tjenester/regnskapsforer" element={<Regnskapsforer />} />
-            <Route path="/tjenester/ai-innsikt" element={<AiInnsikt />} />
-            <Route path="/tjenester/cfo" element={<CFO />} />
-            <Route path="/tjenester/hr-og-lonn" element={<HR />} />
-            <Route path="/tjenester/nettsider" element={<Nettsider />} />
-            <Route path="/tjenester/seo" element={<SEO />} />
-            <Route path="/tjenester/meta-annonser" element={<MetaAnnonser />} />
-            <Route path="/tjenester/google-ads" element={<GoogleAds />} />
-            <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
-            <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
-            <Route path="/bransjer" element={<Bransjer />} />
-            <Route path="/bransjer/tech-saas" element={<TechSaas />} />
-            <Route path="/bransjer/eiendom" element={<Eiendom />} />
-            <Route path="/bransjer/holding" element={<Holding />} />
-            <Route path="/bransjer/consulting" element={<Consulting />} />
-            <Route path="/bransjer/landbruk" element={<Landbruk />} />
-            <Route path="/bransjer/varehandel" element={<Varehandel />} />
-            <Route path="/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
-            <Route path="/bransjer/nettbutikk" element={<NettbutikkBransje />} />
-            <Route path="/bransjer/helse" element={<Helse />} />
-            <Route path="/bransjer/restaurant" element={<Restaurant />} />
-            <Route path="/bransjer/frisor" element={<Frisor />} />
-            <Route path="/bransjer/handverkere" element={<Handverkere />} />
-            <Route path="/metoden" element={<Metoden />} />
-            <Route path="/priser" element={<Pricing />} />
-            <Route path="/ressurser" element={<Ressurser />} />
-            <Route path="/om-oss" element={<About />} />
-            <Route path="/kontakt" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
+            {/* Admin routes (no Layout wrapper) */}
+            <Route path="/admin/logg-inn" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<Navigate to="/admin/logg-inn" replace />} />
+
+            {/* Public routes */}
+            <Route path="/*" element={
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/tjenester" element={<Tjenester />} />
+                  <Route path="/tjenester/regnskapsforer" element={<Regnskapsforer />} />
+                  <Route path="/tjenester/ai-innsikt" element={<AiInnsikt />} />
+                  <Route path="/tjenester/cfo" element={<CFO />} />
+                  <Route path="/tjenester/hr-og-lonn" element={<HR />} />
+                  <Route path="/tjenester/nettsider" element={<Nettsider />} />
+                  <Route path="/tjenester/seo" element={<SEO />} />
+                  <Route path="/tjenester/meta-annonser" element={<MetaAnnonser />} />
+                  <Route path="/tjenester/google-ads" element={<GoogleAds />} />
+                  <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
+                  <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
+                  <Route path="/bransjer" element={<Bransjer />} />
+                  <Route path="/bransjer/tech-saas" element={<TechSaas />} />
+                  <Route path="/bransjer/eiendom" element={<Eiendom />} />
+                  <Route path="/bransjer/holding" element={<Holding />} />
+                  <Route path="/bransjer/consulting" element={<Consulting />} />
+                  <Route path="/bransjer/landbruk" element={<Landbruk />} />
+                  <Route path="/bransjer/varehandel" element={<Varehandel />} />
+                  <Route path="/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
+                  <Route path="/bransjer/nettbutikk" element={<NettbutikkBransje />} />
+                  <Route path="/bransjer/helse" element={<Helse />} />
+                  <Route path="/bransjer/restaurant" element={<Restaurant />} />
+                  <Route path="/bransjer/frisor" element={<Frisor />} />
+                  <Route path="/bransjer/handverkere" element={<Handverkere />} />
+                  <Route path="/metoden" element={<Metoden />} />
+                  <Route path="/priser" element={<Pricing />} />
+                  <Route path="/ressurser" element={<Ressurser />} />
+                  <Route path="/om-oss" element={<About />} />
+                  <Route path="/kontakt" element={<Contact />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            } />
           </Routes>
-        </Layout>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
