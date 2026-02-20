@@ -117,9 +117,11 @@ const BlogListing = () => {
                     </div>
                     <h3 className="font-heading text-lg md:text-xl mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
                     {post.excerpt && <p className="text-sm text-muted-foreground font-light line-clamp-2 mb-3">{post.excerpt}</p>}
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-muted-foreground/60">{formatDate(post.created_at)}</span>
-                      <ArrowRight size={14} className="text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60">
+                      <span className="font-medium text-foreground/70">Avargo</span>
+                      <span>·</span>
+                      <span>{formatDate(post.created_at)}</span>
+                      <ArrowRight size={14} className="text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ml-auto" />
                     </div>
                     {(post.tags || []).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-3">
