@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
@@ -9,30 +8,6 @@ import {
 import AnimatedSection from "@/components/AnimatedSection";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const LiveCounter = () => {
-  const [amount, setAmount] = useState(247832);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAmount((prev) => prev + Math.floor(Math.random() * 12 + 3));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2, duration: 0.8 }}
-      className="inline-flex items-center gap-3 md:gap-4 px-4 md:px-6 py-3 rounded-full glass"
-    >
-      <div className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse shrink-0" />
-      <span className="text-[10px] md:text-xs tracking-widest uppercase text-muted-foreground">Tapte penger i dag</span>
-      <span className="font-heading text-lg md:text-xl text-destructive tabular-nums">
-        {amount.toLocaleString("no-NO")} kr
-      </span>
-    </motion.div>
-  );
-};
 
 const Index = () => {
   const industries = [
@@ -165,7 +140,7 @@ const Index = () => {
               </Link>
             </motion.div>
 
-            <LiveCounter />
+            
           </motion.div>
         </div>
 
