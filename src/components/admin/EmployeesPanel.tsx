@@ -35,16 +35,15 @@ const EmployeesPanel = () => {
     setAdding(true);
     setError("");
     try {
-      const { data, error: signUpError } = await supabase.auth.admin
-        ? await fetch(`https://zgujpuxizstchqgdzwng.supabase.co/functions/v1/create-employee`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
-            body: JSON.stringify({ email: newEmail, password: newPassword, name: newName, role: newRole }),
-          }).then(r => r.json())
-        : { error: null };
+      const session = (await supabase.auth.getSession()).data.session;
+      if (!session) { setError("Ikke innlogget."); setAdding(false); return; }
 
-      if (data?.error) {
-        setError(data.error);
+      const res = await supabase.functions.invoke("create-employee", {
+        body: { email: newEmail, password: newPassword, name: newName, role: newRole },
+      });
+
+      if (res.error || res.data?.error) {
+        setError(res.data?.error || "Noe gikk galt.");
       } else {
         setShowAdd(false);
         setNewName(""); setNewEmail(""); setNewPassword(""); setNewRole("employee");
