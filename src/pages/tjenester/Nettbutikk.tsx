@@ -36,7 +36,7 @@ const Nettbutikk = () => (
           <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">FX Media × Avargo</p>
+          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Avargo · Tjenester</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
             Nettbutikk.{" "}
             <span className="italic text-gradient-rose">Klar til å skalere.</span>

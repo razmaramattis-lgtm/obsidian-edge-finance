@@ -74,11 +74,11 @@ const categories = [
   {
     id: "marked",
     label: "Markedsføring & Vekst",
-    tag: "FX Media × Avargo",
+    tag: "Avargo · Markedsføring",
     tagColor: "text-primary",
     headline: "Synlighet. Trafikk. Konvertering.",
     intro:
-      "Gjennom samarbeidet med FX Media tilbyr Avargo full-spektrum digital markedsføring som kobler din finansielle strategi direkte til vekstmålene. Ikke kampanjer i vakuum — men markedsføring forankret i tallene.",
+      "Avargo tilbyr full-spektrum digital markedsføring som kobler din finansielle strategi direkte til vekstmålene. Ikke kampanjer i vakuum — men markedsføring forankret i tallene.",
     services: [
       {
         icon: LayoutTemplate,
@@ -245,19 +245,19 @@ const Tjenester = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* FX Media callout */}
+      {/* Marketing callout */}
       <AnimatedSection>
         <section className="py-20 md:py-28">
           <div className="container mx-auto px-4 md:px-6">
             <div className="glass rounded-3xl p-8 md:p-14 flex flex-col md:flex-row gap-8 md:gap-14 items-start md:items-center">
               <div className="flex-1">
-                <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4 md:mb-5">FX Media × Avargo</p>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4 md:mb-5">Avargo · Helhetlig</p>
                 <h3 className="font-heading text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-5 leading-snug">
                   Markedsføring og regnskap —{" "}
                   <span className="italic text-gradient-rose">endelig i samme samtale.</span>
                 </h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-xl">
-                  FX Media er en integrert del av Avargo-familien. Det betyr at markedsbudsjett, ROAS-kalkuleringer og vekststrategi alltid vurderes i lys av de faktiske tallene — ikke i isolasjon. En helhetlig tilnærming som gjør at pengene jobber smartere.
+                  Markedsføring er en integrert del av Avargo. Det betyr at markedsbudsjett, ROAS-kalkuleringer og vekststrategi alltid vurderes i lys av de faktiske tallene — ikke i isolasjon. En helhetlig tilnærming som gjør at pengene jobber smartere.
                 </p>
               </div>
               <div className="shrink-0">
