@@ -31,6 +31,7 @@ import GoogleAds from "./pages/tjenester/GoogleAds";
 import Nettbutikk from "./pages/tjenester/Nettbutikk";
 import AiAutomatisering from "./pages/tjenester/AiAutomatisering";
 import Kurs from "./pages/tjenester/Kurs";
+import EnTilEnRegnskap from "./pages/tjenester/EnTilEnRegnskap";
 // Bransje-undersider
 import TechSaas from "./pages/bransjer/TechSaas";
 import Eiendom from "./pages/bransjer/Eiendom";
@@ -99,6 +100,7 @@ const App = () => (
                     <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
                     <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
                     <Route path="/tjenester/kurs" element={<Kurs />} />
+                    <Route path="/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
                     <Route path="/bransjer" element={<Bransjer />} />
                     <Route path="/bransjer/tech-saas" element={<TechSaas />} />
                     <Route path="/bransjer/eiendom" element={<Eiendom />} />
