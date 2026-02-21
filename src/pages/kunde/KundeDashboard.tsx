@@ -9,16 +9,22 @@ import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
-  Download, Building2, Wand2, Calculator, Trash2, Eye, MoreVertical
+  Download, Building2, Calculator, Trash2, Eye, MoreVertical
 } from "lucide-react";
-import HrGenerator from "@/components/kunde/HrGenerator";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
+import DocumentGenerator from "@/components/kunde/DocumentGenerator";
+import { personalhandbokConfig } from "@/components/kunde/generators/personalhandbok";
+import { arbeidsreglementConfig } from "@/components/kunde/generators/arbeidsreglement";
+import { varslingsrutinerConfig } from "@/components/kunde/generators/varslingsrutiner";
+import { gdprConfig } from "@/components/kunde/generators/gdpr";
+import { digitalSikkerhetConfig } from "@/components/kunde/generators/digital-sikkerhet";
+import { psykososialtConfig } from "@/components/kunde/generators/psykososialt";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, BarChart, Bar
 } from "recharts";
 
-type Panel = "overview" | "documents" | "handbook" | "hr-generator" | "calculator" | "booking" | "partners";
+type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
 
 interface NavItem {
   id: Panel;
@@ -32,8 +38,12 @@ const navItems: NavItem[] = [
   { id: "documents", label: "Dokumenter", icon: FileText },
   { id: "booking", label: "Book rådgiver", icon: CalendarDays },
   { id: "partners", label: "Fordelsavtaler", icon: Handshake },
-  { id: "hr-generator", label: "HR-generator", icon: Wand2, group: "HR og personal" },
-  { id: "handbook", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
+  { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
+  { id: "arbeidsreglement", label: "Arbeidsreglement", icon: FileText, group: "HR og personal" },
+  { id: "varslingsrutiner", label: "Varslingsrutiner", icon: FileText, group: "HR og personal" },
+  { id: "gdpr", label: "GDPR & Personvern", icon: FileText, group: "HR og personal" },
+  { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: FileText, group: "HR og personal" },
+  { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: FileText, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
 ];
 
@@ -103,8 +113,12 @@ const KundeDashboard = () => {
   const renderPanel = () => {
     switch (activePanel) {
       case "documents": return <DocumentsPanel />;
-      case "handbook": return <HandbookPanel />;
-      case "hr-generator": return <HrGenerator onComplete={() => setActivePanel("handbook")} />;
+      case "personalhandbok": return <DocumentGenerator config={personalhandbokConfig} />;
+      case "arbeidsreglement": return <DocumentGenerator config={arbeidsreglementConfig} />;
+      case "varslingsrutiner": return <DocumentGenerator config={varslingsrutinerConfig} />;
+      case "gdpr": return <DocumentGenerator config={gdprConfig} />;
+      case "digital-sikkerhet": return <DocumentGenerator config={digitalSikkerhetConfig} />;
+      case "psykososialt": return <DocumentGenerator config={psykososialtConfig} />;
       case "calculator": return <AnsettelsesKalkulator />;
       case "booking": return <BookingPanel />;
       case "partners": return <PartnersPanel />;
