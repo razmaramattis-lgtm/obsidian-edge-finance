@@ -178,9 +178,13 @@ const INITIAL_FORM: FormData = {
   actionPlanResponsible: "",
   modules: [
     "formaal", "ansettelse", "arbeidstid", "ferie", "sykdom",
-    "hjemmekontor", "lonn", "pensjon", "hms", "psykososialt", "risikovurdering",
-    "kartlegging", "handlingsplan", "personvern", "varsling",
-    "arbeidsreglement", "internkontroll", "gdpr", "digitalt", "avslutning"
+    "hjemmekontor", "lonn", "pensjon", "kompetanse", "reise",
+    "kleskode", "sosiale", "konflikter", "avslutning", "baerekraft",
+    "arbeidsreglement",
+    "varsling",
+    "hms", "internkontroll", "psykososialt", "risikovurdering",
+    "kartlegging", "handlingsplan",
+    "digitalt", "airetningslinjer", "hybridarbeid"
   ],
 };
 
@@ -213,10 +217,6 @@ const ALL_MODULES = [
   { id: "risikovurdering", label: "Risikovurdering (2026)",      group: "HMS & Internkontroll" },
   { id: "kartlegging",  label: "Kartlegging (2026)",             group: "HMS & Internkontroll" },
   { id: "handlingsplan", label: "Handlingsplaner (2026)",        group: "HMS & Internkontroll" },
-  // — GDPR —
-  { id: "personvern",   label: "Personvern og IT",               group: "GDPR-compliance" },
-  { id: "gdpr",         label: "GDPR-compliance",                group: "GDPR-compliance" },
-  { id: "databehandler", label: "Databehandleravtaler",          group: "GDPR-compliance" },
   // — DIGIS-tillegg —
   { id: "digitalt",     label: "Digital arbeidsplass",           group: "DIGIS-tillegg" },
   { id: "airetningslinjer", label: "AI og automatisering",       group: "DIGIS-tillegg" },
@@ -315,38 +315,51 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
       const { error } = await supabase.from("customer_handbook_chapters").insert(rows);
       if (error) throw error;
 
-      // Save or update document reference under category "HR"
-      const docTitle = `Personalhåndbok – ${form.companyName || "Bedrift"}`;
-      const moduleGroups = [...new Set(ALL_MODULES.filter(m => form.modules.includes(m.id)).map(m => m.group))];
-      const description = `Generert ${new Date().toLocaleDateString("no-NO")}. Inneholder: ${moduleGroups.join(", ")}.`;
+      // Create/update separate documents per document group
+      const DOCUMENT_GROUPS = [
+        { group: "Personalhåndbok", category: "HR-Personalhåndbok" },
+        { group: "Arbeidsreglement", category: "HR-Arbeidsreglement" },
+        { group: "Varslingsrutiner", category: "HR-Varslingsrutiner" },
+        { group: "HMS & Internkontroll", category: "HR-HMS" },
+        { group: "DIGIS-tillegg", category: "HR-DIGIS" },
+      ];
 
-      // Check if an HR document already exists for this company
-      const { data: existingDoc } = await supabase
-        .from("customer_documents")
-        .select("id")
-        .eq("company_id", company.id)
-        .eq("category", "HR")
-        .limit(1)
-        .maybeSingle();
+      const dateStr = new Date().toLocaleDateString("no-NO");
 
-      if (existingDoc) {
-        await supabase.from("customer_documents").update({
-          title: docTitle,
-          description,
-          updated_at: new Date().toISOString(),
-        }).eq("id", existingDoc.id);
-      } else {
-        await supabase.from("customer_documents").insert({
-          company_id: company.id,
-          title: docTitle,
-          description,
-          category: "HR",
-          visibility: "private",
-        });
+      for (const dg of DOCUMENT_GROUPS) {
+        const groupModules = ALL_MODULES.filter(m => m.group === dg.group && form.modules.includes(m.id));
+        if (groupModules.length === 0) continue;
+
+        const docTitle = `${dg.group} – ${form.companyName || "Bedrift"}`;
+        const description = `Generert ${dateStr}. Kapitler: ${groupModules.map(m => m.label).join(", ")}.`;
+
+        const { data: existingDoc } = await supabase
+          .from("customer_documents")
+          .select("id")
+          .eq("company_id", company.id)
+          .eq("category", dg.category)
+          .limit(1)
+          .maybeSingle();
+
+        if (existingDoc) {
+          await supabase.from("customer_documents").update({
+            title: docTitle,
+            description,
+            updated_at: new Date().toISOString(),
+          }).eq("id", existingDoc.id);
+        } else {
+          await supabase.from("customer_documents").insert({
+            company_id: company.id,
+            title: docTitle,
+            description,
+            category: dg.category,
+            visibility: "private",
+          });
+        }
       }
 
       setGeneratedChapters(chapterContents);
-      toast.success("Personalhåndbok generert og lagret i Dokumenter!");
+      toast.success("Dokumenter generert og lagret!");
       onComplete?.();
     } catch (err) {
       console.error(err);
@@ -355,66 +368,91 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
     setGenerating(false);
   };
 
-  /* ───────── Download PDF ───────── */
+  /* ───────── Download PDFs per document group ───────── */
   const downloadPdf = async () => {
-    const chapters = generatedChapters || buildChapterContents(form);
-    if (chapters.length === 0) { toast.error("Ingen kapitler å eksportere."); return; }
+    const allChapters = generatedChapters || buildChapterContents(form);
+    if (allChapters.length === 0) { toast.error("Ingen kapitler å eksportere."); return; }
     setDownloadingPdf(true);
 
     try {
       const html2pdf = (await import("html2pdf.js")).default;
 
-      const container = document.createElement("div");
-      container.style.cssText = "width:210mm;padding:20mm;font-family:'Segoe UI',Arial,sans-serif;font-size:12pt;line-height:1.6;color:#1a1a2e;";
+      // Group chapters by document type
+      const DOC_GROUPS = [
+        { group: "Personalhåndbok", label: "Personalhåndbok" },
+        { group: "Arbeidsreglement", label: "Arbeidsreglement" },
+        { group: "Varslingsrutiner", label: "Varslingsrutiner" },
+        { group: "HMS & Internkontroll", label: "HMS og Internkontroll" },
+        { group: "DIGIS-tillegg", label: "DIGIS-tillegg" },
+      ];
 
-      // Cover page
-      container.innerHTML = `
-        <div style="text-align:center;padding:60mm 0 40mm;">
-          <h1 style="font-size:28pt;margin-bottom:8mm;color:#1a1a2e;">${form.companyName || "Bedrift"}</h1>
-          <h2 style="font-size:16pt;color:#666;font-weight:normal;margin-bottom:4mm;">Personalhåndbok</h2>
-          ${form.orgNumber ? `<p style="color:#999;font-size:10pt;">Org.nr: ${form.orgNumber}</p>` : ""}
-          <p style="color:#999;font-size:10pt;margin-top:8mm;">Generert: ${new Date().toLocaleDateString("no-NO")}</p>
-        </div>
-        <div style="page-break-after:always;"></div>
-        <h2 style="font-size:16pt;margin-bottom:6mm;color:#1a1a2e;">Innholdsfortegnelse</h2>
-        <ol style="font-size:11pt;line-height:2;color:#333;">
-          ${chapters.map((ch, i) => `<li>${ch.title}</li>`).join("")}
-        </ol>
-        <div style="page-break-after:always;"></div>
-      `;
+      const moduleGroupMap: Record<string, string> = {};
+      ALL_MODULES.forEach(m => { moduleGroupMap[m.id] = m.group; });
 
-      // Chapters
-      chapters.forEach((ch, i) => {
-        const cleaned = ch.content
-          .replace(/class="editable-field"/g, '')
-          .replace(/data-field="[^"]*"/g, '')
-          .replace(/style="color:#0d9488;[^"]*"/g, 'style="color:#0d9488;"');
+      // Map chapters back to groups via module order
+      const selectedModules = form.modules.filter(id => ALL_MODULES.some(m => m.id === id));
+      const chaptersByGroup: Record<string, { title: string; content: string }[]> = {};
+      let chapterIdx = 0;
+      for (const modId of selectedModules) {
+        if (chapterIdx >= allChapters.length) break;
+        const group = moduleGroupMap[modId];
+        if (group) {
+          if (!chaptersByGroup[group]) chaptersByGroup[group] = [];
+          chaptersByGroup[group].push(allChapters[chapterIdx]);
+        }
+        chapterIdx++;
+      }
+
+      for (const dg of DOC_GROUPS) {
+        const chapters = chaptersByGroup[dg.group];
+        if (!chapters || chapters.length === 0) continue;
+
+        const container = document.createElement("div");
+        container.style.cssText = "width:210mm;padding:20mm;font-family:'Segoe UI',Arial,sans-serif;font-size:12pt;line-height:1.6;color:#1a1a2e;";
+
+        container.innerHTML = `
+          <div style="text-align:center;padding:60mm 0 40mm;">
+            <h1 style="font-size:28pt;margin-bottom:8mm;color:#1a1a2e;">${form.companyName || "Bedrift"}</h1>
+            <h2 style="font-size:16pt;color:#666;font-weight:normal;margin-bottom:4mm;">${dg.label}</h2>
+            ${form.orgNumber ? `<p style="color:#999;font-size:10pt;">Org.nr: ${form.orgNumber}</p>` : ""}
+            <p style="color:#999;font-size:10pt;margin-top:8mm;">Generert: ${new Date().toLocaleDateString("no-NO")}</p>
+          </div>
+          <div style="page-break-after:always;"></div>
+          ${chapters.length > 1 ? `
+            <h2 style="font-size:16pt;margin-bottom:6mm;color:#1a1a2e;">Innholdsfortegnelse</h2>
+            <ol style="font-size:11pt;line-height:2;color:#333;">
+              ${chapters.map(ch => `<li>${ch.title}</li>`).join("")}
+            </ol>
+            <div style="page-break-after:always;"></div>
+          ` : ""}
+        `;
+
+        chapters.forEach((ch, i) => {
+          const cleaned = ch.content
+            .replace(/class="editable-field"/g, '')
+            .replace(/data-field="[^"]*"/g, '')
+            .replace(/style="color:#0d9488;[^"]*"/g, 'style="color:#0d9488;"');
+          container.innerHTML += `<div style="${i > 0 ? 'page-break-before:always;' : ''}">${cleaned}</div>`;
+        });
 
         container.innerHTML += `
-          <div style="${i > 0 ? 'page-break-before:always;' : ''}">
-            ${cleaned}
+          <div style="page-break-before:always;text-align:center;padding-top:60mm;">
+            <p style="color:#999;font-size:10pt;">Dokumentet er generert via Avargo HR-generator.</p>
+            <p style="color:#999;font-size:10pt;">${form.companyName} — ${new Date().toLocaleDateString("no-NO")}</p>
           </div>
         `;
-      });
 
-      // Footer
-      container.innerHTML += `
-        <div style="page-break-before:always;text-align:center;padding-top:60mm;">
-          <p style="color:#999;font-size:10pt;">Dokumentet er generert via Avargo HR-generator.</p>
-          <p style="color:#999;font-size:10pt;">${form.companyName} — ${new Date().toLocaleDateString("no-NO")}</p>
-        </div>
-      `;
+        await html2pdf().set({
+          margin: 0,
+          filename: `${dg.label.replace(/\s+/g, "-")}-${form.companyName.replace(/\s+/g, "-") || "bedrift"}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"], before: ".page-break" },
+        }).from(container).save();
+      }
 
-      await html2pdf().set({
-        margin: 0,
-        filename: `Personalhandbok-${form.companyName.replace(/\s+/g, "-") || "bedrift"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"], before: ".page-break" },
-      }).from(container).save();
-
-      toast.success("PDF lastet ned!");
+      toast.success("PDF-er lastet ned!");
     } catch (err) {
       console.error(err);
       toast.error("Kunne ikke generere PDF.");
@@ -512,7 +550,7 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
               disabled={downloadingPdf}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm border border-primary/30 text-primary hover:bg-primary/5 transition-all disabled:opacity-40"
             >
-              {downloadingPdf ? <><Loader2 size={16} className="animate-spin" /> Laster…</> : <><Download size={16} /> Last ned PDF</>}
+              {downloadingPdf ? <><Loader2 size={16} className="animate-spin" /> Laster…</> : <><Download size={16} /> Last ned PDF-er</>}
             </button>
           )}
           {currentStep < STEPS.length - 1 ? (
@@ -529,7 +567,7 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
               disabled={generating || form.modules.length === 0}
               className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
             >
-              {generating ? <><Loader2 size={16} className="animate-spin" /> Genererer…</> : <><FileCheck size={16} /> Generer håndbok</>}
+              {generating ? <><Loader2 size={16} className="animate-spin" /> Genererer…</> : <><FileCheck size={16} /> Generer dokumenter</>}
             </button>
           )}
         </div>
@@ -1256,7 +1294,7 @@ const StepGenerer = ({ form }: { form: FormData }) => {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-muted-foreground">Se over valgene dine. Etter generering kan du laste ned PDF-filen.</p>
+      <p className="text-sm text-muted-foreground">Se over valgene dine. Etter generering kan du laste ned separate PDF-er for hvert dokument.</p>
 
       <div className="space-y-4">
         <SummarySection title="Bedrift">
@@ -1429,10 +1467,6 @@ function buildChapterContents(form: FormData) {
       title: "Handlingsplaner (2026-krav)",
       content: `<h2>Handlingsplaner</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — internkontrollforskriften § 5</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal utarbeide konkrete handlingsplaner basert på risikovurderinger og kartlegging.</p><h3>Innhold</h3><ul><li><strong>Identifisert risiko</strong> — hva er problemet?</li><li><strong>Konkrete tiltak</strong> — hva skal gjøres?</li><li><strong>Ansvarlig:</strong> <span class="editable-field" data-field="Handlingsplan ansvarlig">${form.actionPlanResponsible || form.ceoName || "daglig leder"}</span></li><li><strong>Tidsfrist</strong> — når skal tiltaket være gjennomført?</li><li><strong>Evaluering</strong> — hvordan måles effekten?</li></ul><h3>Dokumentasjon</h3><p>Alle handlingsplaner dokumenteres og oppbevares tilgjengelig for ansatte og Arbeidstilsynet.</p>`,
     }),
-    personvern: () => ({
-      title: "Personvern og IT",
-      content: `<h2>Personvern og IT</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> behandler personopplysninger i henhold til personopplysningsloven og GDPR.</p><h3>IT-bruk</h3><ul><li>Bedriftens IT-utstyr og systemer skal primært brukes til arbeidsformål.</li><li>Passord skal være sterke og unike, og skal ikke deles med andre.</li><li>All programvare skal godkjennes av IT-ansvarlig.</li></ul><h3>Lagring av personopplysninger</h3><p>Kun nødvendige personopplysninger lagres, og de slettes når formålet er oppfylt. Ansatte har rett til innsyn i egne personopplysninger.</p>`,
-    }),
     sosiale: () => ({
       title: "Sosiale medier",
       content: `<h2>Sosiale medier</h2><p>Ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> ${form.socialMediaPolicy === "strict" ? "skal ikke publisere firmarelatert innhold på sosiale medier uten forhåndsgodkjenning" : form.socialMediaPolicy === "oppmuntret" ? "oppfordres til å dele positive bedriftsopplevelser som del av ambassadørprogrammet" : "forventes å utvise godt skjønn ved omtale av bedriften på sosiale medier"}.</p><h3>Retningslinjer</h3><ul><li>Ikke del konfidensielt materiale, interne diskusjoner eller kundeinformasjon.</li><li>Vær tydelig på at meninger er dine egne.</li><li>Vis respekt for kollegaer, kunder og samarbeidspartnere.</li></ul>`,
@@ -1461,14 +1495,6 @@ function buildChapterContents(form: FormData) {
     internkontroll: () => ({
       title: "Internkontroll (IK-HMS)",
       content: `<h2>Internkontroll — HMS</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har et systematisk internkontrollsystem i henhold til internkontrollforskriften.</p><h3>Organisering</h3><ul><li><strong>Daglig leder:</strong> ${form.ceoName || "[Navn]"}</li><li><strong>Verneombud:</strong> <span class="editable-field" data-field="Verneombud">[Navn]</span></li><li><strong>HMS-ansvarlig:</strong> <span class="editable-field" data-field="HMS-ansvarlig">[Navn]</span></li></ul><h3>IK-systemets innhold</h3><ol><li>Mål for HMS-arbeidet</li><li>Oversikt over organisasjon og ansvarsforhold</li><li>Kartlegging av farer og risikovurdering</li><li>Handlingsplaner med tiltak og tidsfrister</li><li>Rutiner for avvikshåndtering</li><li>Systematisk overvåking og gjennomgang</li><li>Dokumentasjon og arkivering</li></ol>`,
-    }),
-    gdpr: () => ({
-      title: "GDPR-compliance",
-      content: `<h2>GDPR-compliance</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> behandler personopplysninger i samsvar med GDPR og personopplysningsloven.</p><h3>Behandlingsansvarlig</h3><p>Behandlingsansvarlig er ${company} ved ${form.ceoName || "daglig leder"}.</p><h3>Behandlingsgrunnlag</h3><ul><li>Oppfyllelse av arbeidsavtale (art. 6(1)(b))</li><li>Rettslig forpliktelse (art. 6(1)(c))</li><li>Berettiget interesse (art. 6(1)(f))</li><li>Samtykke (art. 6(1)(a))</li></ul><h3>Ansattes rettigheter</h3><ul><li>Innsyn, retting, sletting, dataportabilitet, innsigelse</li></ul><h3>Sikkerhetsbrudd</h3><p>Datatilsynet varsles innen 72 timer ved brudd som utgjør risiko for de registrerte.</p>`,
-    }),
-    databehandler: () => ({
-      title: "Databehandleravtaler",
-      content: `<h2>Databehandleravtaler</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har inngått databehandleravtaler med alle tredjeparter som behandler personopplysninger på vegne av selskapet (GDPR art. 28).</p><h3>Kategorier</h3><ul><li>Regnskapssystem og lønnsleverandør</li><li>Skylagring og IT-infrastruktur</li><li>Rekrutteringsverktøy og HR-system</li><li>E-post og kommunikasjonsplattformer</li></ul><h3>Krav</h3><ul><li>Skriftlig avtale før behandling starter</li><li>Tilfredsstillende sikkerhetstiltak</li><li>Overføring utenfor EØS krever tilleggsgarantier</li></ul>`,
     }),
     digitalt: () => ({
       title: "Digital arbeidsplass",
