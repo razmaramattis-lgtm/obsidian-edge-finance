@@ -5,8 +5,11 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Save, Download, ChevronDown, ChevronRight, FileText,
-  CheckCircle2, AlertCircle, Eye, EyeOff, PanelLeftClose, PanelLeft
+  CheckCircle2, AlertCircle, Eye, EyeOff, PanelLeftClose, PanelLeft, Info
 } from "lucide-react";
+import {
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from "@/components/ui/tooltip";
 import DOMPurify from "dompurify";
 import type { GeneratorConfig } from "./generators/types";
 
@@ -223,9 +226,28 @@ const DocumentGenerator = ({ config }: Props) => {
                           )}
                           {group.fields.map(field => (
                             <div key={field.id}>
-                              <label className="text-[11px] font-medium text-muted-foreground mb-1 block">
-                                {field.label}
-                              </label>
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <label className="text-[11px] font-medium text-muted-foreground">
+                                  {field.label}
+                                </label>
+                                {field.helpText && field.type !== "checkbox" && (
+                                  <TooltipProvider delayDuration={200}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          type="button"
+                                          className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted/40 hover:bg-primary/20 text-muted-foreground/60 hover:text-primary transition-colors shrink-0"
+                                        >
+                                          <Info size={10} />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="right" className="max-w-[260px] text-xs leading-relaxed">
+                                        {field.helpText}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </div>
                               {field.type === "text" && (
                                 <input
                                   value={form[field.id] ?? ""}
@@ -272,10 +294,24 @@ const DocumentGenerator = ({ config }: Props) => {
                                     className="rounded border-border/30"
                                   />
                                   <span className="text-xs text-muted-foreground">{field.helpText || "Ja"}</span>
+                                  {field.helpText && (
+                                    <TooltipProvider delayDuration={200}>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <button
+                                            type="button"
+                                            className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted/40 hover:bg-primary/20 text-muted-foreground/60 hover:text-primary transition-colors shrink-0"
+                                          >
+                                            <Info size={10} />
+                                          </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right" className="max-w-[260px] text-xs leading-relaxed">
+                                          {field.helpText}
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
                                 </label>
-                              )}
-                              {field.helpText && field.type !== "checkbox" && (
-                                <p className="text-[10px] text-muted-foreground/50 mt-0.5">{field.helpText}</p>
                               )}
                             </div>
                           ))}

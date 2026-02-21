@@ -9,46 +9,66 @@ export const varslingsrutinerConfig: GeneratorConfig = {
   documentCategory: "HR-Varslingsrutiner",
   defaultValues: {
     companyName: "", orgNumber: "", ceoName: "",
-    numEmployees: "",
+    numEmployees: "", address: "",
     whistleblowerContact: "Daglig leder",
     whistleblowerEmail: "",
     whistleblowerPhone: "",
     externalChannel: "",
+    externalChannelUrl: "",
     verneombud: "",
     hrContact: "",
+    legalAdvisor: "",
+    boardChair: "",
     ackDeadlineDays: "3",
     investigationDeadlineDays: "30",
     escalationContact: "Styreleder",
+    anonymousReporting: true,
+    retalProtection: true,
+    whistleblowerTraining: "Årlig",
     adoptedDate: "",
+    reviewFrequency: "Årlig",
+    lastReviewDate: "",
+    documentRetention: "5 år etter avsluttet sak",
+    externalReportingBody: "Arbeidstilsynet",
   },
   fieldGroups: [
     {
       title: "Bedriftsinformasjon",
       fields: [
-        { id: "companyName", label: "Bedriftsnavn", type: "text" },
-        { id: "orgNumber", label: "Org.nummer", type: "text" },
-        { id: "ceoName", label: "Daglig leder", type: "text" },
-        { id: "numEmployees", label: "Antall ansatte", type: "number" },
+        { id: "companyName", label: "Bedriftsnavn", type: "text", helpText: "Offisielt firmanavn. Bedrifter med 5+ ansatte plikter å ha skriftlige varslingsrutiner (aml. § 2A-6)." },
+        { id: "orgNumber", label: "Org.nummer", type: "text", helpText: "9-sifret organisasjonsnummer fra Enhetsregisteret." },
+        { id: "ceoName", label: "Daglig leder", type: "text", helpText: "Daglig leder har overordnet ansvar for at varslingsrutinene fungerer og etterleves." },
+        { id: "numEmployees", label: "Antall ansatte", type: "number", helpText: "Totalt antall ansatte. Varslingsrutiner er lovpålagt for bedrifter med 5 eller flere ansatte." },
+        { id: "address", label: "Forretningsadresse", type: "text", helpText: "Bedriftens offisielle forretningsadresse." },
       ],
     },
     {
       title: "Varslingskontakter",
       fields: [
-        { id: "whistleblowerContact", label: "Intern varslingskontakt", type: "text" },
-        { id: "whistleblowerEmail", label: "Varslings-e-post", type: "text", placeholder: "varsling@bedrift.no" },
-        { id: "whistleblowerPhone", label: "Varslingstelefon", type: "text" },
-        { id: "verneombud", label: "Verneombud", type: "text" },
-        { id: "hrContact", label: "HR-ansvarlig", type: "text" },
-        { id: "escalationContact", label: "Eskaleringskontakt", type: "text", helpText: "Ved varsling om daglig leder" },
+        { id: "whistleblowerContact", label: "Intern varslingskontakt", type: "text", helpText: "Hovedpersonen som mottar interne varsler. Bør ha opplæring i håndtering av varslingssaker og kjennskap til regelverket." },
+        { id: "whistleblowerEmail", label: "Varslings-e-post", type: "text", placeholder: "varsling@bedrift.no", helpText: "Dedikert e-postadresse for varsling. Anbefales å ha en egen e-postadresse som kun brukes til varsling for å sikre konfidensialitet." },
+        { id: "whistleblowerPhone", label: "Varslingstelefon", type: "text", helpText: "Eget telefonnummer for varsling. Kan være et dedikert nummer eller mobilnummer til varslingskontakten." },
+        { id: "verneombud", label: "Verneombud", type: "text", helpText: "Verneombudet kan motta varsler om HMS-relaterte forhold. Lovpålagt for bedrifter med 10+ ansatte." },
+        { id: "hrContact", label: "HR-ansvarlig", type: "text", helpText: "HR-ansvarlig kan motta varsler om personalrelaterte saker (trakassering, diskriminering m.m.)." },
+        { id: "legalAdvisor", label: "Juridisk rådgiver", type: "text", helpText: "Intern eller ekstern juridisk rådgiver som kan bistå i komplekse varslingssaker." },
+        { id: "boardChair", label: "Styreleder", type: "text", helpText: "Styreleder kan motta varsler dersom saken gjelder daglig leder eller ledelsen." },
+        { id: "escalationContact", label: "Eskaleringskontakt", type: "text", helpText: "Person varselet eskaleres til dersom det gjelder daglig leder. Typisk styreleder eller ekstern part." },
       ],
     },
     {
-      title: "Frister og prosess",
+      title: "Frister, prosess og verktøy",
       fields: [
-        { id: "ackDeadlineDays", label: "Bekreftelsesfrist (dager)", type: "text" },
-        { id: "investigationDeadlineDays", label: "Undersøkelsesfrist (dager)", type: "text" },
-        { id: "externalChannel", label: "Eksternt varslingsverktøy", type: "text", placeholder: "F.eks. Whistlelink, BDO varsling" },
-        { id: "adoptedDate", label: "Vedtatt dato", type: "text" },
+        { id: "ackDeadlineDays", label: "Bekreftelsesfrist (virkedager)", type: "text", helpText: "Antall virkedager innen mottak av varsel skal bekreftes skriftlig til varsleren. Vanlig er 3 virkedager." },
+        { id: "investigationDeadlineDays", label: "Undersøkelsesfrist (virkedager)", type: "text", helpText: "Antall virkedager for å ferdigstille undersøkelse av varselet. Kan forlenges ved komplekse saker med skriftlig begrunnelse." },
+        { id: "externalChannel", label: "Eksternt varslingsverktøy", type: "text", placeholder: "F.eks. Whistlelink, BDO varsling", helpText: "Navn på eventuelt eksternt, uavhengig varslingsverktøy. Sikrer anonymitet og uavhengig behandling. Anbefalt for bedrifter med 50+ ansatte." },
+        { id: "externalChannelUrl", label: "URL eksternt verktøy", type: "text", helpText: "Nettadressen til det eksterne varslingsverktøyet, så ansatte vet hvor de finner det." },
+        { id: "anonymousReporting", label: "Tillat anonym varsling", type: "checkbox", helpText: "Om ansatte kan varsle anonymt. Anonym varsling kan gjøre undersøkelse vanskeligere, men bør tillates for å senke terskelen." },
+        { id: "whistleblowerTraining", label: "Opplæring i varsling", type: "select", options: ["Årlig", "Halvårlig", "Ved ansettelse", "Ved behov"], helpText: "Hvor ofte ansatte skal gjennomgå opplæring i varslingsrutiner. Inkluderer hva man kan varsle om og hvordan." },
+        { id: "adoptedDate", label: "Vedtatt dato", type: "text", helpText: "Datoen varslingsrutinene ble vedtatt av ledelsen." },
+        { id: "reviewFrequency", label: "Gjennomgangsfrekvens", type: "select", options: ["Årlig", "Halvårlig", "Hvert 2. år"], helpText: "Hvor ofte rutinene skal gjennomgås og eventuelt oppdateres for å sikre at de er aktuelle og effektive." },
+        { id: "lastReviewDate", label: "Siste gjennomgang", type: "text", helpText: "Dato for siste gjennomgang av rutinene." },
+        { id: "documentRetention", label: "Dokumentoppbevaring", type: "text", helpText: "Hvor lenge varslingsdokumentasjon oppbevares etter avsluttet sak. Må balansere dokumentasjonsbehov mot personvernhensyn." },
+        { id: "externalReportingBody", label: "Eksternt tilsynsorgan", type: "text", helpText: "Relevant tilsynsmyndighet for ekstern varsling (f.eks. Arbeidstilsynet, Datatilsynet, Økokrim)." },
       ],
     },
   ],
@@ -57,7 +77,7 @@ export const varslingsrutinerConfig: GeneratorConfig = {
       id: "innledning",
       title: "Innledning og formål",
       content: (form) => `<h2>1. Innledning og formål</h2>
-<p>Disse varslingsrutinene gjelder for alle ansatte, innleide, konsulenter og andre som utfører arbeid for <strong>${f(form.companyName, "Bedriftsnavn")}</strong> (org.nr. ${f(form.orgNumber, "Org.nr.")}).</p>
+<p>Disse varslingsrutinene gjelder for alle ansatte, innleide, konsulenter og andre som utfører arbeid for <strong>${f(form.companyName, "Bedriftsnavn")}</strong> (org.nr. ${f(form.orgNumber, "Org.nr.")}), med forretningsadresse ${f(form.address, "Adresse")}.</p>
 <h3>Lovgrunnlag</h3>
 <p>Rutinene er utarbeidet i henhold til arbeidsmiljøloven kapittel 2A (varsling) og gjelder fra ${f(form.adoptedDate, "Dato")}. Virksomheter med minst 5 ansatte plikter å ha skriftlige varslingsrutiner.</p>
 <h3>Formål</h3>
@@ -68,7 +88,9 @@ export const varslingsrutinerConfig: GeneratorConfig = {
 <li>Beskytte varslere mot gjengjeldelse</li>
 <li>Gi klare retningslinjer for hvordan varsling skal skje</li>
 <li>Sikre forutsigbar og rettferdig behandling av alle involverte parter</li>
-</ul>`,
+</ul>
+<h3>Gjennomgang</h3>
+<p>Rutinene gjennomgås ${f(form.reviewFrequency, "Frekvens").toLowerCase()}.${form.lastReviewDate ? ` Siste gjennomgang: ${form.lastReviewDate}.` : ""}</p>`,
     },
     {
       id: "kritikkverdige",
@@ -128,13 +150,15 @@ export const varslingsrutinerConfig: GeneratorConfig = {
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px;">Varslingskontakt</td><td style="padding:8px;">${f(form.whistleblowerContact, "Kontakt")}</td><td style="padding:8px;">Når saken gjelder nærmeste leder</td></tr>
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px;">Verneombud</td><td style="padding:8px;">${f(form.verneombud, "Verneombud")}</td><td style="padding:8px;">HMS-relaterte forhold</td></tr>
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px;">HR-ansvarlig</td><td style="padding:8px;">${f(form.hrContact, "HR")}</td><td style="padding:8px;">Personalrelaterte saker</td></tr>
+${form.legalAdvisor ? `<tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px;">Juridisk rådgiver</td><td style="padding:8px;">${form.legalAdvisor}</td><td style="padding:8px;">Komplekse juridiske spørsmål</td></tr>` : ""}
 <tr><td style="padding:8px;">Eskaleringskontakt</td><td style="padding:8px;">${f(form.escalationContact, "Eskalering")}</td><td style="padding:8px;">Når saken gjelder daglig leder</td></tr>
+${form.boardChair ? `<tr><td style="padding:8px;">Styreleder</td><td style="padding:8px;">${form.boardChair}</td><td style="padding:8px;">Saker om ledelsen/styrenivå</td></tr>` : ""}
 </table>
 ${form.whistleblowerEmail ? `<p><strong>Varslings-e-post:</strong> ${form.whistleblowerEmail}</p>` : ""}
 ${form.whistleblowerPhone ? `<p><strong>Varslingstelefon:</strong> ${form.whistleblowerPhone}</p>` : ""}
-${form.externalChannel ? `<h3>4.2 Eksternt varslingsverktøy</h3><p>Bedriften benytter <strong>${form.externalChannel}</strong> som eksternt, uavhengig varslingsverktøy for å sikre anonymitet og uavhengig behandling.</p>` : ""}
+${form.externalChannel ? `<h3>4.2 Eksternt varslingsverktøy</h3><p>Bedriften benytter <strong>${form.externalChannel}</strong> som eksternt, uavhengig varslingsverktøy for å sikre anonymitet og uavhengig behandling.${form.externalChannelUrl ? ` Tilgjengelig på: <strong>${form.externalChannelUrl}</strong>` : ""}</p>` : ""}
 <h3>4.${form.externalChannel ? "3" : "2"} Anonym varsling</h3>
-<p>Det er mulig å varsle anonymt. Merk at anonym varsling kan gjøre det vanskeligere å undersøke saken og gi tilbakemelding. Anonyme varsler tas likevel på alvor.</p>`,
+<p>${form.anonymousReporting ? "Det er mulig å varsle anonymt. Merk at anonym varsling kan gjøre det vanskeligere å undersøke saken og gi tilbakemelding. Anonyme varsler tas likevel på alvor." : "Bedriften anbefaler at varslere identifiserer seg for bedre oppfølging, men anonyme varsler vil også bli behandlet."}</p>`,
     },
     {
       id: "fremgangsmaate",
@@ -192,7 +216,7 @@ ${form.externalChannel ? `<h3>4.2 Eksternt varslingsverktøy</h3><p>Bedriften be
 <li>Kommunikasjon med involverte parter</li>
 <li>Konklusjon og begrunnelse</li>
 </ul>
-<p>Dokumentasjonen oppbevares konfidensielt og i tråd med personvernregelverket.</p>`,
+<p>Dokumentasjonen oppbevares konfidensielt i ${f(form.documentRetention, "5 år etter avsluttet sak")} og i tråd med personvernregelverket.</p>`,
     },
     {
       id: "vern",
@@ -244,9 +268,11 @@ ${form.externalChannel ? `<h3>4.2 Eksternt varslingsverktøy</h3><p>Bedriften be
 <p>Dersom varselet ikke behandles tilfredsstillende internt:</p>
 <ol>
 <li><strong>Første eskalering:</strong> Kontakt ${f(form.escalationContact, "Eskaleringskontakt")}</li>
-<li><strong>Andre eskalering:</strong> Ekstern varsling til tilsynsmyndighet</li>
-<li><strong>Tredje eskalering:</strong> Juridisk bistand (bedriften dekker kostnader ved berettiget varsling)</li>
-</ol>`,
+<li><strong>Andre eskalering:</strong> Ekstern varsling til ${f(form.externalReportingBody, "tilsynsmyndighet")}</li>
+<li><strong>Tredje eskalering:</strong> Juridisk bistand${form.legalAdvisor ? ` via ${form.legalAdvisor}` : ""} (bedriften dekker kostnader ved berettiget varsling)</li>
+</ol>
+<h3>8.4 Opplæring</h3>
+<p>Alle ansatte gjennomgår opplæring i varslingsrutinene <strong>${f(form.whistleblowerTraining, "Årlig").toLowerCase()}</strong>. Opplæringen dekker hva man kan varsle om, kanaler, rettigheter og vern mot gjengjeldelse.</p>`,
     },
   ],
 };
