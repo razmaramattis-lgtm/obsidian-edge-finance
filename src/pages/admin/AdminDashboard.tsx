@@ -23,6 +23,7 @@ import CollabPanel from "@/components/admin/CollabPanel";
 
 import SettingsPanel from "@/components/admin/SettingsPanel";
 import HrPanel from "@/components/admin/HrPanel";
+import OverviewPanel from "@/components/admin/OverviewPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
   | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr";
@@ -165,49 +166,6 @@ const AdminDashboard = () => {
           {renderPanel()}
         </div>
       </main>
-    </div>
-  );
-};
-
-const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: (p: Panel) => void }) => {
-  const { profile } = useAuth();
-  const cards = [
-    { id: "blog" as Panel, icon: FileText, label: "Blogg & Nyheter", desc: "Skriv og publiser artikler", admin: true },
-    { id: "services" as Panel, icon: Briefcase, label: "Tjenester", desc: "Administrer tjenester på nettsiden", admin: true },
-    { id: "pricing" as Panel, icon: DollarSign, label: "Priser", desc: "Oppdater prisplaner", admin: true },
-    { id: "archive" as Panel, icon: Archive, label: "Arkiv & Skjemaer", desc: "Last opp Excel-filer og skjemaer", admin: true },
-    { id: "hms" as Panel, icon: Shield, label: "HMS-bok", desc: "HMS-dokumentasjon", admin: false },
-    
-    { id: "internal" as Panel, icon: FolderOpen, label: "Interne ressurser", desc: "Delte ressurser for ansatte", admin: false },
-    { id: "collab" as Panel, icon: Handshake, label: "Samarbeidsavtaler", desc: "Avtaledokumenter", admin: false },
-    { id: "chat" as Panel, icon: MessageSquare, label: "Chat", desc: "Intern kommunikasjon", admin: false },
-  ].filter(c => !c.admin || isAdmin);
-
-  return (
-    <div>
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <p className="text-muted-foreground text-sm mb-6">
-          God dag, <span className="text-foreground font-medium">{profile?.name}</span> 👋
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {cards.map((card, i) => (
-            <motion.button
-              key={card.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07 }}
-              onClick={() => onNavigate(card.id)}
-              className="glass rounded-2xl p-5 text-left card-lift group border border-border/20 hover:border-primary/30 transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <card.icon size={18} className="text-primary" strokeWidth={1.5} />
-              </div>
-              <p className="font-medium text-sm mb-1">{card.label}</p>
-              <p className="text-xs text-muted-foreground font-light">{card.desc}</p>
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
     </div>
   );
 };
