@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     });
     const profiles = await profileRes.json();
     if (!profiles?.[0] || profiles[0].role !== 'admin') {
-      return new Response(JSON.stringify({ error: "Kun administrator kan opprette ansatte." }), {
+      return new Response(JSON.stringify({ error: "Kun administrator kan opprette brukere." }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }

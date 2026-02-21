@@ -20,6 +20,8 @@ import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import KundeLogin from "./pages/kunde/KundeLogin";
+import KundeDashboard from "./pages/kunde/KundeDashboard";
 // Tjeneste-undersider
 import Regnskapsforer from "./pages/tjenester/Regnskapsforer";
 import AiInnsikt from "./pages/tjenester/AiInnsikt";
@@ -71,6 +73,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Protected route for customer dashboard
+const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground text-sm">Laster…</div></div>;
+  if (!user) return <Navigate to="/kunde/logg-inn" replace />;
+  return <>{children}</>;
+};
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
@@ -84,6 +94,11 @@ const App = () => (
               <Route path="/admin/logg-inn" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin" element={<Navigate to="/admin/logg-inn" replace />} />
+
+              {/* Customer routes */}
+              <Route path="/kunde/logg-inn" element={<KundeLogin />} />
+              <Route path="/kunde/dashboard" element={<CustomerRoute><KundeDashboard /></CustomerRoute>} />
+              <Route path="/kunde" element={<Navigate to="/kunde/logg-inn" replace />} />
 
               {/* Public routes */}
               <Route path="/*" element={

@@ -337,6 +337,8 @@ export type Database = {
           offering: string | null
           partner: string | null
           phone: string | null
+          price: string | null
+          target_audience: string
           title: string
           updated_at: string
           website: string | null
@@ -354,6 +356,8 @@ export type Database = {
           offering?: string | null
           partner?: string | null
           phone?: string | null
+          price?: string | null
+          target_audience?: string
           title: string
           updated_at?: string
           website?: string | null
@@ -371,6 +375,8 @@ export type Database = {
           offering?: string | null
           partner?: string | null
           phone?: string | null
+          price?: string | null
+          target_audience?: string
           title?: string
           updated_at?: string
           website?: string | null
@@ -430,6 +436,160 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      customer_companies: {
+        Row: {
+          company_name: string
+          contact_phone: string | null
+          created_at: string
+          id: string
+          industry: string | null
+          org_number: string | null
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          org_number?: string | null
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          org_number?: string | null
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_companies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_documents: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string | null
+          file_name: string | null
+          file_size: string | null
+          file_url: string | null
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+          visibility: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_size?: string | null
+          file_url?: string | null
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+          visibility?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_size?: string | null
+          file_url?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_financials: {
+        Row: {
+          admin_action_plan: string | null
+          assets: number | null
+          company_id: string
+          costs: number
+          created_at: string
+          equity: number | null
+          id: string
+          liabilities: number | null
+          notes: string | null
+          period: string
+          result: number
+          revenue: number
+          updated_at: string
+        }
+        Insert: {
+          admin_action_plan?: string | null
+          assets?: number | null
+          company_id: string
+          costs?: number
+          created_at?: string
+          equity?: number | null
+          id?: string
+          liabilities?: number | null
+          notes?: string | null
+          period: string
+          result?: number
+          revenue?: number
+          updated_at?: string
+        }
+        Update: {
+          admin_action_plan?: string | null
+          assets?: number | null
+          company_id?: string
+          costs?: number
+          created_at?: string
+          equity?: number | null
+          id?: string
+          liabilities?: number | null
+          notes?: string | null
+          period?: string
+          result?: number
+          revenue?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_financials_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hms_documents: {
         Row: {
@@ -752,7 +912,9 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: { uid?: string }; Returns: boolean }
+      is_customer: { Args: { uid?: string }; Returns: boolean }
       is_employee_or_admin: { Args: { uid?: string }; Returns: boolean }
+      own_company_id: { Args: { uid?: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "employee" | "customer"
