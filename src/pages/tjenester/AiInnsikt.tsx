@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, ChevronRight, ArrowLeft, CheckCircle2, Zap } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 
 const deliverables = [
   "Sanntids likviditets- og resultatdashbord",
@@ -45,6 +46,7 @@ const RelatedServices = [
 const AiInnsikt = () => (
   <>
     <section className="py-28 md:py-44 relative overflow-hidden">
+      <img src={ambientTexture4} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div

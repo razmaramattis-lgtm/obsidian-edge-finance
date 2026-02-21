@@ -12,6 +12,7 @@ import {
 import AnimatedSection from "@/components/AnimatedSection";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
+import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
 
 /* ───────── Kategori-ikoner ───────── */
 const categoryConfig: Record<string, { icon: React.ElementType; color: string }> = {
@@ -207,6 +208,7 @@ const Kurs = () => {
 
       {/* HERO */}
       <section className="py-28 md:py-44 relative overflow-hidden">
+        <img src={ambientTexture1} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <motion.div
