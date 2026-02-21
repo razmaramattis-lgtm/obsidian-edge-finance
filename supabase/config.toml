@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.import-dictionary]
 verify_jwt = false
+
+[functions.tax-deadlines]
+verify_jwt = false
