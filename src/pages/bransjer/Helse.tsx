@@ -13,7 +13,7 @@ const Helse = () => (
       "Lønnskjøring for helsepersonell",
       "Fakturering mot HELFO og private betalere",
       "Arbeidsgiverperiode ved sykefravær",
-      "GDPR-compliant journalhåndtering",
+      
       "Leiekontrakter og lokalkostnader",
       "Pensjon og forsikringer for ansatte",
       "Skattemelding og årsregnskap",
