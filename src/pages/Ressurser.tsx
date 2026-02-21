@@ -91,7 +91,8 @@ const Ressurser = () => {
   };
 
   // Filter blog posts by category type
-  const nyheter = posts.filter(p => p.category === "Nyheter");
+  const NYHETER_CATEGORIES = ["Nyheter", "Regnskap", "Skatt"];
+  const nyheter = posts.filter(p => NYHETER_CATEGORIES.includes(p.category));
   const blogg = posts.filter(p => p.category === "Blogg");
   const guider = posts.filter(p => p.category === "Guide");
 
