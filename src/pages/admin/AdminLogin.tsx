@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Lock, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLogin = () => {
@@ -94,9 +94,19 @@ const AdminLogin = () => {
             </button>
           </form>
 
-          <p className="text-center text-xs text-muted-foreground/40 mt-6">
-            Tilgang kun for autoriserte Avargo-ansatte
-          </p>
+          <div className="flex flex-col items-center gap-3 mt-6">
+            <p className="text-xs text-muted-foreground/40">
+              Tilgang kun for autoriserte Avargo-ansatte
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft size={13} />
+              Gå tilbake
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
