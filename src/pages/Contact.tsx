@@ -92,15 +92,31 @@ const Contact = () => {
 
   const mapBransje = (desc: string): string => {
     const d = desc.toLowerCase();
-    if (d.includes("program") || d.includes("data") || d.includes("it-")) return "Tech & SaaS";
-    if (d.includes("eiendom") || d.includes("utleie")) return "Eiendom & Utvikling";
-    if (d.includes("holding") || d.includes("invest")) return "Holding & Investering";
-    if (d.includes("konsulent") || d.includes("rådgiv")) return "Consulting & Rådgivning";
-    if (d.includes("landbruk") || d.includes("jord")) return "Landbruk";
-    if (d.includes("handel") || d.includes("butikk")) return "Varehandel";
-    if (d.includes("bygg") || d.includes("anlegg")) return "Bygg & Anlegg";
-    if (d.includes("netthandel") || d.includes("nettbutikk")) return "Nettbutikk & E-commerce";
-    if (d.includes("helse") || d.includes("lege") || d.includes("tann")) return "Helse & Velvære";
+    if (d.includes("program") || d.includes("data") || d.includes("it-") || d.includes("teknologi")) return "Tech & SaaS";
+    if (d.includes("eiendom") || d.includes("utleie av eigen")) return "Eiendom & Utvikling";
+    if (d.includes("holding") || d.includes("invest") || d.includes("egeninvestering")) return "Holding & Investering";
+    if (d.includes("konsulent") || d.includes("rådgiv") || d.includes("bedriftsrådgivning")) return "Consulting & Rådgivning";
+    if (d.includes("landbruk") || d.includes("jord") || d.includes("fiske") || d.includes("skogbruk")) return "Landbruk";
+    if (d.includes("detaljhandel") || d.includes("butikk") || d.includes("engroshandel")) return "Varehandel";
+    if (d.includes("bygg") || d.includes("anlegg") || d.includes("oppføring")) return "Bygg & Anlegg";
+    if (d.includes("netthandel") || d.includes("nettbutikk") || d.includes("postordre")) return "Nettbutikk & E-commerce";
+    if (d.includes("helse") || d.includes("lege") || d.includes("tann") || d.includes("fysioterapi") || d.includes("velvære") || d.includes("pleie")) return "Helse & Velvære";
+    if (d.includes("restaurant") || d.includes("servering") || d.includes("drikke") || d.includes("kafe") || d.includes("bar") || d.includes("catering")) return "Restaurant & Uteliv";
+    if (d.includes("frisør") || d.includes("skjønnhet") || d.includes("hudpleie") || d.includes("salong")) return "Frisør & Skjønnhet";
+    if (d.includes("rørlegg") || d.includes("elektriker") || d.includes("maler") || d.includes("snekker") || d.includes("murer") || d.includes("taktek") || d.includes("vvs")) return "Håndverkere & Fagfolk";
+    if (d.includes("transport") || d.includes("logistikk") || d.includes("spedisjon") || d.includes("frakt") || d.includes("lasting")) return "Transport & Logistikk";
+    if (d.includes("industri") || d.includes("produksjon") || d.includes("tilvirkning") || d.includes("bearbeiding")) return "Industri & Produksjon";
+    if (d.includes("renhold") || d.includes("rengjøring") || d.includes("vaktmester") || d.includes("facility")) return "Renhold & Facility";
+    if (d.includes("film") || d.includes("musikk") || d.includes("kunst") || d.includes("medie") || d.includes("forlag") || d.includes("underholdning") || d.includes("teater")) return "Kultur, Media & Underholdning";
+    if (d.includes("sport") || d.includes("trening") || d.includes("fritid") || d.includes("idrett")) return "Sport & Fritid";
+    if (d.includes("undervisning") || d.includes("opplæring") || d.includes("kurs") || d.includes("utdanning")) return "Utdanning & Kurs";
+    if (d.includes("advokat") || d.includes("juridisk") || d.includes("rettslig")) return "Juridisk & Advokat";
+    if (d.includes("arkitekt") || d.includes("design") || d.includes("interiør")) return "Arkitektur & Design";
+    if (d.includes("reklame") || d.includes("markedsføring") || d.includes("annonsering") || d.includes("kommunikasjon")) return "Markedsføring & Reklame";
+    if (d.includes("bemanning") || d.includes("rekruttering") || d.includes("arbeidskraft") || d.includes("vikar")) return "Bemanning & Rekruttering";
+    if (d.includes("reise") || d.includes("turisme") || d.includes("overnatting") || d.includes("hotell")) return "Reiseliv & Turisme";
+    if (d.includes("motorvogn") || d.includes("bilverksted") || d.includes("bilpleie") || d.includes("kjøretøy")) return "Bil & Verksted";
+    if (d.includes("energi") || d.includes("kraft") || d.includes("miljø") || d.includes("avfall") || d.includes("gjenvinning")) return "Energi & Miljø";
     return "Annet";
   };
 
@@ -254,6 +270,22 @@ const Contact = () => {
                     <option>Bygg & Anlegg</option>
                     <option>Nettbutikk & E-commerce</option>
                     <option>Helse & Velvære</option>
+                    <option>Restaurant & Uteliv</option>
+                    <option>Frisør & Skjønnhet</option>
+                    <option>Håndverkere & Fagfolk</option>
+                    <option>Transport & Logistikk</option>
+                    <option>Industri & Produksjon</option>
+                    <option>Renhold & Facility</option>
+                    <option>Kultur, Media & Underholdning</option>
+                    <option>Sport & Fritid</option>
+                    <option>Utdanning & Kurs</option>
+                    <option>Juridisk & Advokat</option>
+                    <option>Arkitektur & Design</option>
+                    <option>Markedsføring & Reklame</option>
+                    <option>Bemanning & Rekruttering</option>
+                    <option>Reiseliv & Turisme</option>
+                    <option>Bil & Verksted</option>
+                    <option>Energi & Miljø</option>
                     <option>Annet</option>
                   </select>
                 </div>
