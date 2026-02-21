@@ -200,7 +200,7 @@ const Kurs = () => {
   return (
     <>
       <Helmet>
-        <title>Kurs — {courses.length}+ spesialiserte kurs | Avargo</title>
+        <title>{`Kurs — ${courses.length}+ spesialiserte kurs | Avargo`}</title>
         <meta name="description" content={`Velg blant ${courses.length}+ spesialiserte kurs innen regnskap, HR, AI, markedsføring og mer.`} />
       </Helmet>
 
