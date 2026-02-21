@@ -19,7 +19,7 @@ serve(async (req) => {
     const sb = createClient(supabaseUrl, supabaseKey);
 
     // Fetch all resources for the knowledge base
-    const [hmsRes, resourcesRes, archiveRes, internalRes, collabRes, servicesRes, pricingRes, knowledgeRes] = await Promise.all([
+    const [hmsRes, resourcesRes, archiveRes, internalRes, collabRes, servicesRes, pricingRes, knowledgeRes, hrHandbookRes] = await Promise.all([
       sb.from("hms_documents").select("title, content"),
       sb.from("resources").select("name, description, category, file_name"),
       sb.from("archive_files").select("name, description, category, file_name, file_url"),
@@ -28,6 +28,7 @@ serve(async (req) => {
       sb.from("services").select("title, description, group_name"),
       sb.from("pricing_plans").select("name, description, price, price_suffix, features"),
       sb.from("knowledge_materials").select("title, content, category").eq("active", true),
+      sb.from("hr_handbook").select("title, content, sort_order").order("sort_order"),
     ]);
 
     let context = "# OPPSLAGSVERK — Alt du trenger å vite\n\n";
@@ -61,12 +62,17 @@ serve(async (req) => {
       context += `### ${d.title} (${d.category || "Generelt"})\n${d.content || ""}\n\n`;
     });
 
+    context += "\n## Avargo Personalhåndbok (HR)\n";
+    (hrHandbookRes.data || []).forEach((d: any, i: number) => {
+      context += `### Kapittel ${d.sort_order || i + 1}: ${d.title}\n${d.content || "(Ingen innhold)"}\n\n`;
+    });
+
     const systemPrompt = `Du er "Ava", Avargo sin kunnskapsrike rådgiver. Du har en varm, profesjonell og hjelpsom personlighet. Du snakker som en erfaren kollega — ikke som en robot.
 
 Retningslinjer:
 - Svar ALLTID på norsk. Bruk et naturlig, muntlig språk uten å være uformelt.
 - Når du finner relevant informasjon, analyser den kort og gi et konkret, tydelig svar.
-- Henvis ALLTID til kilden: f.eks. "Ifølge kontoplanen (konto 6300)…", "I HMS-håndboken kapittel 3 står det at…", "I samarbeidsavtalen med [firma]…"
+- Henvis ALLTID til kilden: f.eks. "Ifølge kontoplanen (konto 6300)…", "I HMS-håndboken kapittel 3 står det at…", "I personalhåndboken under kapittel [X]…", "I samarbeidsavtalen med [firma]…"
 - Bruk markdown-formatering: **fet skrift** for viktige begreper, lister for opplistinger, overskrifter for å strukturere lange svar.
 - VIKTIG: Når du nevner et skjema eller en fil fra arkivet som har en nedlastingslenke, ALLTID inkluder en nedlastingslenke med denne formateringen: [📥 Last ned FILNAVN](URL)
 - Hvis du ikke finner svaret i ressursene, si det ærlig: "Jeg finner dessverre ikke dette i våre ressurser. Du bør sjekke med [relevant person/kilde]."
