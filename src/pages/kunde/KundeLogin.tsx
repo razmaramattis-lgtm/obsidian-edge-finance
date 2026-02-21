@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, AlertCircle, Lock } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Lock, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const KundeLogin = () => {
@@ -90,9 +90,19 @@ const KundeLogin = () => {
             </button>
           </form>
 
-          <p className="text-center text-xs text-muted-foreground mt-6">
-            Kontakt din regnskapsfører for tilgang
-          </p>
+          <div className="flex flex-col items-center gap-3 mt-6">
+            <p className="text-xs text-muted-foreground">
+              Kontakt din regnskapsfører for tilgang
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft size={13} />
+              Gå tilbake
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
