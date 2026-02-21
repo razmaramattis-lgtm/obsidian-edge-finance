@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Settings, LogOut, ChevronRight, Menu, X
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, UserCheck
 } from "lucide-react";
 
 // Sub-panels
+import EmployeesPanel from "@/components/admin/EmployeesPanel";
+import ChatPanel from "@/components/admin/ChatPanel";
 import BlogPanel from "@/components/admin/BlogPanel";
 import ServicesPanel from "@/components/admin/ServicesPanel";
 import IndustriesPanel from "@/components/admin/IndustriesPanel";
@@ -22,7 +24,7 @@ import CollabPanel from "@/components/admin/CollabPanel";
 import SettingsPanel from "@/components/admin/SettingsPanel";
 import HrPanel from "@/components/admin/HrPanel";
 
-type Panel = "overview" | "blog" | "services" | "industries" | "pricing"
+type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
   | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
@@ -37,7 +39,9 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "hms", label: "HMS-bok", icon: Shield, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
+  { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
   
+  { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
 
@@ -57,6 +61,8 @@ const AdminDashboard = () => {
 
   const renderPanel = () => {
     switch (activePanel) {
+      case "employees": return <EmployeesPanel />;
+      case "chat": return <ChatPanel />;
       case "blog": return <BlogPanel />;
       case "services": return <ServicesPanel />;
       case "industries": return <IndustriesPanel />;
@@ -174,6 +180,7 @@ const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: 
     
     { id: "internal" as Panel, icon: FolderOpen, label: "Interne ressurser", desc: "Delte ressurser for ansatte", admin: false },
     { id: "collab" as Panel, icon: Handshake, label: "Samarbeidsavtaler", desc: "Avtaledokumenter", admin: false },
+    { id: "chat" as Panel, icon: MessageSquare, label: "Chat", desc: "Intern kommunikasjon", admin: false },
   ].filter(c => !c.admin || isAdmin);
 
   return (
