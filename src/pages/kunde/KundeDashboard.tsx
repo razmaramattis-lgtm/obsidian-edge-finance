@@ -9,7 +9,7 @@ import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
-  Download, Building2, Wand2, Calculator
+  Download, Building2, Wand2, Calculator, Trash2, Eye, MoreVertical
 } from "lucide-react";
 import HrGenerator from "@/components/kunde/HrGenerator";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
@@ -298,26 +298,106 @@ const DocumentsPanel = () => {
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("Alle");
+  const [openDoc, setOpenDoc] = useState<any>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase
-        .from("customer_documents")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setDocs(data || []);
-      setLoading(false);
-    };
-    load();
+  const load = useCallback(async () => {
+    const { data } = await supabase
+      .from("customer_documents")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setDocs(data || []);
+    setLoading(false);
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleDelete = async (doc: any) => {
+    if (!confirm(`Slette "${doc.title}"?`)) return;
+    const { error } = await supabase.from("customer_documents").delete().eq("id", doc.id);
+    if (error) { toast.error("Kunne ikke slette dokumentet"); return; }
+    toast.success("Dokument slettet");
+    setDocs(prev => prev.filter(d => d.id !== doc.id));
+    setOpenMenu(null);
+  };
+
+  const handleDownloadFile = async (doc: any) => {
+    if (!doc.file_url) return;
+    const { data } = await supabase.storage.from("internal-docs").createSignedUrl(doc.file_url, 3600);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+    setOpenMenu(null);
+  };
+
+  const handleDownloadPdf = async (doc: any) => {
+    // For HR-generated docs, find related handbook chapters and generate PDF
+    const { data: company } = await supabase.from("customer_companies").select("id").limit(1).maybeSingle();
+    if (!company) return;
+    const { data: chapters } = await supabase
+      .from("customer_handbook_chapters")
+      .select("*")
+      .eq("company_id", company.id)
+      .order("sort_order");
+    if (!chapters || chapters.length === 0) { toast.error("Ingen kapitler funnet"); return; }
+
+    try {
+      const html2pdf = (await import("html2pdf.js")).default;
+      const container = document.createElement("div");
+      container.style.cssText = "width:210mm;padding:20mm;font-family:'Segoe UI',Arial,sans-serif;font-size:12pt;line-height:1.6;color:#1a1a2e;";
+
+      container.innerHTML = `
+        <div style="text-align:center;padding:60mm 0 40mm;">
+          <h1 style="font-size:28pt;margin-bottom:8mm;color:#1a1a2e;">${doc.title}</h1>
+          <p style="color:#999;font-size:10pt;margin-top:8mm;">Generert: ${new Date(doc.updated_at || doc.created_at).toLocaleDateString("no-NO")}</p>
+        </div>
+        <div style="page-break-after:always;"></div>
+      `;
+
+      chapters.forEach((ch: any, i: number) => {
+        const cleaned = (ch.content || "")
+          .replace(/class="editable-field"/g, '')
+          .replace(/data-field="[^"]*"/g, '');
+        container.innerHTML += `<div style="${i > 0 ? 'page-break-before:always;' : ''}">${cleaned}</div>`;
+      });
+
+      await html2pdf().set({
+        margin: 0,
+        filename: `${doc.title.replace(/\s+/g, "-")}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"], before: ".page-break" },
+      }).from(container).save();
+      toast.success("PDF lastet ned!");
+    } catch { toast.error("Kunne ikke generere PDF"); }
+    setOpenMenu(null);
+  };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   const categories = ["Alle", ...Array.from(new Set(docs.map(d => d.category || "Generelt")))];
   const filtered = activeCategory === "Alle" ? docs : docs.filter(d => (d.category || "Generelt") === activeCategory);
+  const isHrDoc = (doc: any) => doc.category?.startsWith("HR");
 
   return (
     <div className="space-y-4">
+      {/* View document modal */}
+      {openDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={() => setOpenDoc(null)}>
+          <div className="w-full max-w-3xl max-h-[80vh] overflow-y-auto bg-background border border-border/30 rounded-2xl p-6 shadow-xl mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-lg">{openDoc.title}</h2>
+              <button onClick={() => setOpenDoc(null)} className="text-muted-foreground hover:text-foreground text-sm">✕</button>
+            </div>
+            {openDoc.description && <p className="text-sm text-muted-foreground mb-4">{openDoc.description}</p>}
+            <p className="text-xs text-muted-foreground">
+              Opprettet: {new Date(openDoc.created_at).toLocaleDateString("no-NO")} · 
+              Oppdatert: {new Date(openDoc.updated_at).toLocaleDateString("no-NO")}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Kategori: {openDoc.category || "Generelt"}</p>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-2 flex-wrap">
         {categories.map(cat => (
           <button
@@ -342,27 +422,34 @@ const DocumentsPanel = () => {
       )}
       {filtered.map(doc => (
         <div key={doc.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between">
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">{doc.title}</p>
+              <p className="text-sm font-medium truncate">{doc.title}</p>
               {doc.category && doc.category !== "Generelt" && (
-                <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-medium">{doc.category}</span>
+                <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-medium shrink-0">{doc.category}</span>
               )}
             </div>
-            {doc.description && <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>}
+            {doc.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{doc.description}</p>}
             <p className="text-[10px] text-muted-foreground mt-1">{new Date(doc.created_at).toLocaleDateString("no-NO")}</p>
           </div>
-          {doc.file_url && (
-            <button
-              onClick={async () => {
-                const { data } = await supabase.storage.from("internal-docs").createSignedUrl(doc.file_url, 3600);
-                if (data?.signedUrl) window.open(data.signedUrl, "_blank");
-              }}
-              className="text-muted-foreground hover:text-primary"
-            >
-              <Download size={16} />
+          <div className="flex items-center gap-1 ml-3 shrink-0">
+            <button onClick={() => setOpenDoc(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" title="Åpne">
+              <Eye size={15} />
             </button>
-          )}
+            {doc.file_url && (
+              <button onClick={() => handleDownloadFile(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" title="Last ned fil">
+                <Download size={15} />
+              </button>
+            )}
+            {isHrDoc(doc) && (
+              <button onClick={() => handleDownloadPdf(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" title="Last ned PDF">
+                <Download size={15} />
+              </button>
+            )}
+            <button onClick={() => handleDelete(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all" title="Slett">
+              <Trash2 size={15} />
+            </button>
+          </div>
         </div>
       ))}
     </div>
