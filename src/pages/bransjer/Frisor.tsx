@@ -10,7 +10,7 @@ const Frisor = () => (
     body="Skjønnhetsbransjen er preget av blanding av ansatte og selvstendig næringsdrivende (kabinleie/stolleie), produktsalg ved siden av tjenesteyting, og ofte liten tid til å sette seg inn i regnskapsregler. Vi håndterer hele kompleksiteten, slik at du kan bruke dagene dine på kunder — ikke skrivebordsarbeid."
     deliverables={[
       "Lønnskjøring for ansatte og frilansere",
-      "Kabinleie og stolleie-regnskap",
+      "Kontorleie og stolleie-regnskap",
       "Produktsalg og MVA (tjeneste vs. vare)",
       "Tips-håndtering og skatteplikt",
       "Bokføring og kasseintegrasjon",
