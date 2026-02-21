@@ -157,7 +157,7 @@ const DocumentGenerator = ({ config }: Props) => {
       const html2pdf = (await import("html2pdf.js")).default;
       const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
 
-      const blob: Blob = await html2pdf()
+      const worker = html2pdf()
         .set({
           margin: [15, 18, 15, 18],
           filename,
@@ -171,23 +171,42 @@ const DocumentGenerator = ({ config }: Props) => {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(docRef.current)
-        .outputPdf("blob");
+        .from(docRef.current);
 
-      // Manual download via blob URL to bypass iframe restrictions
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Try blob download first (works in most browsers)
+      try {
+        const pdfObj = await worker.toPdf().get("pdf");
+        const blob = pdfObj.output("blob");
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 200);
+      } catch {
+        // Fallback: use html2pdf's built-in save
+        await html2pdf()
+          .set({
+            margin: [15, 18, 15, 18],
+            filename,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+          })
+          .from(docRef.current)
+          .save();
+      }
 
       toast.success("PDF lastet ned");
     } catch (err) {
       console.error("PDF error:", err);
-      toast.error("Kunne ikke generere PDF");
+      toast.error("Kunne ikke generere PDF — prøv igjen");
     }
     setDownloading(false);
   };
