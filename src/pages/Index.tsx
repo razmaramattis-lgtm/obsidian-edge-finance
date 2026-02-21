@@ -10,6 +10,11 @@ import {
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import heroBg from "@/assets/hero-bg.jpg";
+import serviceBg1 from "@/assets/service-bg-1.jpg";
+import serviceBg2 from "@/assets/service-bg-2.jpg";
+import serviceBg3 from "@/assets/service-bg-3.jpg";
+import serviceBg4 from "@/assets/service-bg-4.jpg";
+import serviceBg5 from "@/assets/service-bg-5.jpg";
 
 const Index = () => {
   const industries = [
@@ -44,6 +49,7 @@ const Index = () => {
     industryPage * industriesPerPage + industriesPerPage
   );
 
+  const serviceBgs = [serviceBg1, serviceBg2, serviceBg3, serviceBg4, serviceBg5, serviceBg1, serviceBg2, serviceBg3, serviceBg4];
   const services = [
     { icon: Users, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
     { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader.", href: "/tjenester/hr" },
@@ -223,151 +229,112 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* SERVICES — single showcase carousel */}
-      <section id="tjenester" className="py-24 md:py-40 relative overflow-hidden">
-        <div className="absolute inset-0 ambient-glow opacity-40" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
-              Én fast pris.{" "}
-              <span className="italic text-gradient-rose">Alt du trenger.</span>
-            </h2>
-            <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed max-w-2xl mb-14 md:mb-20">
-              Hos Avargo får du en dedikert regnskapsfører, AI-drevet innsikt, lønn, HR, markedsføring og rådgivning — samlet i én tjeneste med én fast pris.
-            </p>
-          </AnimatedSection>
+      {/* SERVICES — immersive fullwidth carousel */}
+      <section id="tjenester" className="relative overflow-hidden">
+        {/* Background image with crossfade */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`bg-${activeService}`}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="absolute inset-0"
+          >
+            <img
+              src={serviceBgs[activeService]}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
 
-          {/* Main showcase */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
-            {/* Left: service pill list */}
-            <div className="lg:col-span-4 hidden lg:flex flex-col gap-2">
-              {services.map((srv, i) => (
-                <button
-                  key={srv.title}
-                  onClick={() => goToService(i)}
-                  className={`group flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-500 ${
-                    i === activeService
-                      ? "bg-primary/10 border border-primary/20"
-                      : "hover:bg-card/40 border border-transparent"
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl transition-colors duration-500 ${
-                    i === activeService ? "bg-primary/20" : "bg-muted/50"
-                  }`}>
-                    <srv.icon size={16} className={`transition-colors duration-500 ${
-                      i === activeService ? "text-primary" : "text-foreground/40"
-                    }`} strokeWidth={1.5} />
-                  </div>
-                  <span className={`text-sm font-light transition-colors duration-500 ${
-                    i === activeService ? "text-foreground" : "text-foreground/50"
-                  }`}>
-                    {srv.title}
-                  </span>
-                  {i === activeService && (
-                    <motion.div
-                      layoutId="service-indicator"
-                      className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
+        {/* Click zones — left half prev, right half next (invisible) */}
+        <div
+          className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize"
+          onClick={prevService}
+        />
+        <div
+          className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize"
+          onClick={nextService}
+        />
 
-            {/* Center: active service card */}
-            <div className="lg:col-span-8">
+        <div className="relative z-10 py-24 md:py-40">
+          <div className="container mx-auto px-4 md:px-6">
+            <AnimatedSection>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
+                Én fast pris.{" "}
+                <span className="italic text-gradient-rose">Alt du trenger.</span>
+              </h2>
+            </AnimatedSection>
+
+            {/* Active service content */}
+            <div className="max-w-2xl relative z-30 pointer-events-none">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeService}
-                  initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96, y: -20 }}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 30 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-4 bg-primary/15 backdrop-blur-sm rounded-2xl border border-primary/10">
+                      <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
+                      {String(activeService + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading text-3xl md:text-5xl mb-4 md:mb-6">
+                    {current.title}
+                  </h3>
+
+                  <p className="text-foreground/80 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10 max-w-lg">
+                    {current.desc}
+                  </p>
+
                   <Link
                     to={current.href}
-                    className="group block relative p-10 md:p-14 glass rounded-3xl overflow-hidden card-lift"
+                    className="pointer-events-auto group inline-flex items-center gap-3 px-8 py-3.5 bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm tracking-wider rounded-full hover:bg-primary/20 transition-all duration-500"
                   >
-                    {/* Decorative glow */}
-                    <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/8 rounded-full blur-3xl group-hover:bg-primary/12 transition-colors duration-700" />
-                    <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-secondary/6 rounded-full blur-3xl" />
-
-                    {/* Number badge */}
-                    <div className="absolute top-6 right-8 font-heading text-7xl md:text-8xl text-primary/8 select-none">
-                      {String(activeService + 1).padStart(2, "0")}
-                    </div>
-
-                    <div className="relative">
-                      <div className="p-4 bg-primary/10 rounded-2xl inline-block mb-6 md:mb-8 group-hover:bg-primary/15 transition-colors duration-500">
-                        <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
-                      </div>
-
-                      <h3 className="font-heading text-3xl md:text-4xl mb-4 md:mb-5">
-                        {current.title}
-                      </h3>
-
-                      <p className="text-foreground/70 text-base md:text-lg leading-relaxed font-light max-w-lg mb-8">
-                        {current.desc}
-                      </p>
-
-                      <div className="flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all duration-300">
-                        Les mer om {current.title.toLowerCase()}
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
-                      </div>
-                    </div>
-
-                    {/* Progress bar */}
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/20">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-primary to-rose-glow"
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: serviceAutoplay ? 5 : 0, ease: "linear" }}
-                        key={`progress-${activeService}-${serviceAutoplay}`}
-                      />
-                    </div>
+                    Les mer
+                    <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                   </Link>
                 </motion.div>
               </AnimatePresence>
+            </div>
 
-              {/* Navigation controls */}
-              <div className="flex items-center justify-between mt-6">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={prevService}
-                    className="p-2.5 rounded-full border border-border/30 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
-                  >
-                    <ChevronLeft size={16} className="text-foreground/60" />
-                  </button>
-                  <button
-                    onClick={nextService}
-                    className="p-2.5 rounded-full border border-border/30 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
-                  >
-                    <ChevronRight size={16} className="text-foreground/60" />
-                  </button>
-                </div>
-
-                {/* Dots — mobile & desktop */}
-                <div className="flex items-center gap-1.5">
-                  {services.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => goToService(i)}
-                      className={`rounded-full transition-all duration-300 ${
-                        i === activeService
-                          ? "w-6 h-2 bg-primary"
-                          : "w-2 h-2 bg-foreground/15 hover:bg-foreground/30"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                <span className="text-xs text-foreground/30 font-light tabular-nums">
-                  {String(activeService + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
-                </span>
-              </div>
+            {/* Minimal progress dots at bottom */}
+            <div className="flex items-center gap-1.5 mt-16 md:mt-20">
+              {services.map((_, i) => (
+                <div
+                  key={i}
+                  className={`rounded-full transition-all duration-500 ${
+                    i === activeService
+                      ? "w-8 h-1.5 bg-primary"
+                      : "w-1.5 h-1.5 bg-foreground/20"
+                  }`}
+                />
+              ))}
             </div>
           </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/10 z-30">
+          <motion.div
+            className="h-full bg-gradient-to-r from-primary to-rose-glow"
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: serviceAutoplay ? 5 : 0, ease: "linear" }}
+            key={`progress-${activeService}-${serviceAutoplay}`}
+          />
         </div>
       </section>
 
