@@ -15,6 +15,8 @@ interface CustomerCompany {
   industry: string | null;
   contact_phone: string | null;
   created_at: string;
+  primary_advisor_id: string | null;
+  backup_advisor_id: string | null;
   profile?: { name: string; email: string };
 }
 
@@ -165,18 +167,48 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
+  const [advisors, setAdvisors] = useState<{ id: string; name: string }[]>([]);
+  const [primaryAdvisor, setPrimaryAdvisor] = useState(company.primary_advisor_id || "");
+  const [backupAdvisor, setBackupAdvisor] = useState(company.backup_advisor_id || "");
+  const [handbookInitialized, setHandbookInitialized] = useState(false);
 
   const load = async () => {
-    const [finRes, docRes] = await Promise.all([
+    const [finRes, docRes, advRes, hbRes] = await Promise.all([
       supabase.from("customer_financials").select("*").eq("company_id", company.id).order("period"),
       supabase.from("customer_documents").select("*").eq("company_id", company.id).order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, name").in("role", ["admin", "employee"]),
+      supabase.from("customer_handbook_chapters").select("id").eq("company_id", company.id).limit(1),
     ]);
     setFinancials((finRes.data as Financial[]) || []);
     setDocs(docRes.data || []);
+    setAdvisors((advRes.data as any[]) || []);
+    setHandbookInitialized((hbRes.data?.length || 0) > 0);
     setLoading(false);
   };
 
   useEffect(() => { load(); }, [company.id]);
+
+  const saveAdvisors = async (field: "primary_advisor_id" | "backup_advisor_id", value: string) => {
+    const val = value || null;
+    await supabase.from("customer_companies").update({ [field]: val }).eq("id", company.id);
+    toast.success("Rådgiver oppdatert");
+  };
+
+  const initHandbook = async () => {
+    const { data: chapters } = await supabase.from("hr_handbook").select("*").order("sort_order");
+    if (!chapters?.length) { toast.error("Ingen kapitler i malen"); return; }
+    const rows = chapters.map(ch => ({
+      company_id: company.id,
+      source_chapter_id: ch.id,
+      title: ch.title,
+      content: ch.content,
+      sort_order: ch.sort_order,
+      customized: false,
+    }));
+    await supabase.from("customer_handbook_chapters").insert(rows);
+    toast.success("Personalhåndbok opprettet fra mal");
+    setHandbookInitialized(true);
+  };
 
   const saveFinancial = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,6 +288,45 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
           </div>
         </div>
       </div>
+
+      {/* Advisor assignment */}
+      <div className="glass rounded-2xl p-5 border border-border/20 space-y-3">
+        <h3 className="font-medium text-sm">Tildelte rådgivere</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Oppdragsansvarlig</label>
+            <select value={primaryAdvisor} onChange={e => { setPrimaryAdvisor(e.target.value); saveAdvisors("primary_advisor_id", e.target.value); }} className={inputCls}>
+              <option value="">— Velg —</option>
+              {advisors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Reserve</label>
+            <select value={backupAdvisor} onChange={e => { setBackupAdvisor(e.target.value); saveAdvisors("backup_advisor_id", e.target.value); }} className={inputCls}>
+              <option value="">— Velg —</option>
+              {advisors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Handbook init */}
+      {!handbookInitialized && (
+        <div className="glass rounded-2xl p-5 border border-border/20 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Personalhåndbok</p>
+            <p className="text-xs text-muted-foreground">Opprett kundens personalhåndbok fra Avargo-malen</p>
+          </div>
+          <button onClick={initHandbook} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
+            Opprett fra mal
+          </button>
+        </div>
+      )}
+      {handbookInitialized && (
+        <div className="glass rounded-2xl px-5 py-3 border border-emerald-500/20 bg-emerald-500/5">
+          <p className="text-xs text-emerald-600">✓ Personalhåndbok er opprettet – kunden kan nå redigere den i sin portal</p>
+        </div>
+      )}
 
       <div className="flex gap-2">
         <button onClick={() => setTab("financials")}

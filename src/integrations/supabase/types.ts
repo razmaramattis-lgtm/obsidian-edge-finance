@@ -490,36 +490,56 @@ export type Database = {
       }
       customer_companies: {
         Row: {
+          backup_advisor_id: string | null
           company_name: string
           contact_phone: string | null
           created_at: string
           id: string
           industry: string | null
           org_number: string | null
+          primary_advisor_id: string | null
           profile_id: string
           updated_at: string
         }
         Insert: {
+          backup_advisor_id?: string | null
           company_name: string
           contact_phone?: string | null
           created_at?: string
           id?: string
           industry?: string | null
           org_number?: string | null
+          primary_advisor_id?: string | null
           profile_id: string
           updated_at?: string
         }
         Update: {
+          backup_advisor_id?: string | null
           company_name?: string
           contact_phone?: string | null
           created_at?: string
           id?: string
           industry?: string | null
           org_number?: string | null
+          primary_advisor_id?: string | null
           profile_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "customer_companies_backup_advisor_id_fkey"
+            columns: ["backup_advisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_companies_primary_advisor_id_fkey"
+            columns: ["primary_advisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customer_companies_profile_id_fkey"
             columns: ["profile_id"]
@@ -638,6 +658,57 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_handbook_chapters: {
+        Row: {
+          company_id: string
+          content: string | null
+          created_at: string
+          customized: boolean | null
+          id: string
+          sort_order: number | null
+          source_chapter_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          content?: string | null
+          created_at?: string
+          customized?: boolean | null
+          id?: string
+          sort_order?: number | null
+          source_chapter_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          content?: string | null
+          created_at?: string
+          customized?: boolean | null
+          id?: string
+          sort_order?: number | null
+          source_chapter_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_handbook_chapters_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_handbook_chapters_source_chapter_id_fkey"
+            columns: ["source_chapter_id"]
+            isOneToOne: false
+            referencedRelation: "hr_handbook"
             referencedColumns: ["id"]
           },
         ]
