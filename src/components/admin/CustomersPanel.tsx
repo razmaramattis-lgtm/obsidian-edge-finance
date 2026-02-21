@@ -8,6 +8,34 @@ import {
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 
+const notifyCustomer = async (
+  company: { id: string; company_name: string; profile?: { name: string; email: string } },
+  adminName: string,
+  actionType: string,
+  actionDetail: string
+) => {
+  const email = (company as any).profile?.email;
+  const name = (company as any).profile?.name;
+  if (!email) return;
+  try {
+    await supabase.functions.invoke("notify", {
+      body: {
+        type: "admin_update",
+        data: {
+          customer_email: email,
+          customer_name: name || "kunde",
+          company_name: company.company_name,
+          admin_name: adminName,
+          action_type: actionType,
+          action_detail: actionDetail,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("Notify error:", err);
+  }
+};
+
 interface CustomerCompany {
   id: string;
   profile_id: string;
@@ -156,6 +184,7 @@ const CustomersPanel = () => {
 
 // ========== CUSTOMER DETAIL ==========
 const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack: () => void }) => {
+  const { session } = useAuth();
   const [tab, setTab] = useState<"financials" | "documents" | "handbook">("financials");
   const [financials, setFinancials] = useState<Financial[]>([]);
   const [docs, setDocs] = useState<any[]>([]);
@@ -172,6 +201,15 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
   const [primaryAdvisor, setPrimaryAdvisor] = useState(company.primary_advisor_id || "");
   const [backupAdvisor, setBackupAdvisor] = useState(company.backup_advisor_id || "");
   const [handbookInitialized, setHandbookInitialized] = useState(false);
+  const [adminName, setAdminName] = useState("Avargo");
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      supabase.from("profiles").select("name").eq("user_id", session.user.id).single().then(({ data }) => {
+        if (data?.name) setAdminName(data.name);
+      });
+    }
+  }, [session?.user?.id]);
 
   const load = async () => {
     const [finRes, docRes, advRes, hbRes] = await Promise.all([
@@ -226,6 +264,7 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
       notes: finForm.notes || null,
       admin_action_plan: finForm.admin_action_plan || null,
     });
+    notifyCustomer(company, adminName, "financial", `Økonomidata for perioden ${finForm.period} er lagt inn. Inntekter: ${Number(finForm.revenue || 0).toLocaleString("no-NO")} kr, Resultat: ${Number(finForm.result || 0).toLocaleString("no-NO")} kr.`);
     toast.success("Periode lagret");
     setShowFinForm(false);
     setFinForm({ period: "", revenue: "", costs: "", result: "", equity: "", assets: "", liabilities: "", notes: "", admin_action_plan: "" });
@@ -249,6 +288,7 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
       visibility: docForm.visibility,
       ...fileData,
     });
+    notifyCustomer(company, adminName, "document", `Nytt dokument: «${docForm.title}»${docForm.description ? ` — ${docForm.description}` : ""}`);
     toast.success("Dokument lagret");
     setShowDocForm(false);
     setDocForm({ title: "", description: "", visibility: "private" });
@@ -344,6 +384,7 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
               companyId={company.id}
               onComplete={() => { setShowUploadForm(false); load(); }}
               onCancel={() => setShowUploadForm(false)}
+              onNotify={(detail: string) => notifyCustomer(company, adminName, "financial", detail)}
             />
           )}
 
@@ -447,14 +488,14 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
       )}
 
       {tab === "handbook" && (
-        <AdminHandbookEditor companyId={company.id} handbookInitialized={handbookInitialized} onInit={() => { initHandbook(); }} />
+        <AdminHandbookEditor companyId={company.id} handbookInitialized={handbookInitialized} onInit={() => { initHandbook(); }} onNotify={(detail: string) => notifyCustomer(company, adminName, "handbook", detail)} />
       )}
     </div>
   );
 };
 
 // ========== ADMIN HANDBOOK EDITOR ==========
-const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit }: { companyId: string; handbookInitialized: boolean; onInit: () => void }) => {
+const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit, onNotify }: { companyId: string; handbookInitialized: boolean; onInit: () => void; onNotify: (detail: string) => void }) => {
   const [chapters, setChapters] = useState<any[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const [editing, setEditing] = useState(false);
@@ -487,6 +528,7 @@ const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit }: { compa
     setEditing(false);
     setSaving(false);
     toast.success("Kapittel lagret");
+    onNotify(`Personalhåndboken er oppdatert — kapittelet «${ch.title}» har blitt redigert.`);
   };
 
   const saveTitle = async (idx: number, newTitle: string) => {
@@ -609,7 +651,7 @@ const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit }: { compa
 };
 
 // ========== FINANCIAL UPLOAD FORM ==========
-const FinancialUploadForm = ({ companyId, onComplete, onCancel }: { companyId: string; onComplete: () => void; onCancel: () => void }) => {
+const FinancialUploadForm = ({ companyId, onComplete, onCancel, onNotify }: { companyId: string; onComplete: () => void; onCancel: () => void; onNotify: (detail: string) => void }) => {
   const { session } = useAuth();
   const [period, setPeriod] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -658,6 +700,7 @@ const FinancialUploadForm = ({ companyId, onComplete, onCancel }: { companyId: s
       admin_action_plan: actionPlan || null,
     });
     if (error) { toast.error("Lagring feilet"); setSaving(false); return; }
+    onNotify(`Økonomidata for perioden ${period} er lagt inn fra fil. Inntekter: ${Number(parsed.data.revenue).toLocaleString("no-NO")} kr, Resultat: ${Number(parsed.data.result).toLocaleString("no-NO")} kr.`);
     toast.success(`Økonomidata for ${period} lagret`);
     setSaving(false);
     onComplete();
