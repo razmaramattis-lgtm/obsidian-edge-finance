@@ -44,7 +44,7 @@ const BransjePage = ({
         >
           <Link
             to="/bransjer"
-            className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12"
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/70 hover:text-foreground transition-colors mb-8 md:mb-12"
           >
             <ArrowLeft size={12} /> Alle bransjer
           </Link>
@@ -73,7 +73,7 @@ const BransjePage = ({
             </Link>
             <Link
               to="/priser"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se priser
             </Link>
@@ -102,7 +102,7 @@ const BransjePage = ({
             <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6">Hva vi dekker for deg</p>
             <ul className="flex flex-col gap-3">
               {deliverables.map((d) => (
-                <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/80">
                   <CheckCircle2 size={14} className="text-primary mt-0.5 shrink-0" strokeWidth={1.5} />
                   {d}
                 </li>
@@ -149,7 +149,7 @@ const BransjePage = ({
           {whyAvargo.map((w, i) => (
             <AnimatedSection key={w.num} delay={i * 0.1}>
               <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
-                <span className="font-heading text-5xl text-primary/8">{w.num}</span>
+                <span className="font-heading text-5xl text-primary/20">{w.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{w.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{w.desc}</p>
               </div>
@@ -178,7 +178,7 @@ const BransjePage = ({
       <section className="py-16 md:py-20 border-t border-border/10">
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/50 mb-8">Relaterte bransjer</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/70 mb-8">Relaterte bransjer</p>
             <div className="flex flex-wrap gap-3">
               {relatedSlugs.map((s) => (
                 <Link

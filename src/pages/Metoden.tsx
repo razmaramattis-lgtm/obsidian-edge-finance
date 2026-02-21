@@ -131,7 +131,7 @@ const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | 
     <p className="text-[10px] tracking-[0.35em] uppercase text-secondary mb-3">{step.phase} · {step.duration}</p>
     <h3 className="font-heading text-3xl md:text-4xl mb-4 leading-snug">{step.title}</h3>
     <p className="text-muted-foreground font-light leading-relaxed text-[15px] mb-4">{step.desc}</p>
-    <p className="text-xs italic text-primary/55 font-light">{step.note}</p>
+    <p className="text-xs italic text-primary/70 font-light">{step.note}</p>
   </div>
 );
 
@@ -211,7 +211,7 @@ const Metoden = () => {
               </Link>
               <a
                 href="#reisen"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se hvordan det fungerer
               </a>
@@ -273,7 +273,7 @@ const Metoden = () => {
                   ))}
                 </div>
 
-                <p className="text-xs text-muted-foreground/30 italic font-light mt-7 md:mt-8">
+                <p className="text-xs text-muted-foreground/50 italic font-light mt-7 md:mt-8">
                   Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører.
                 </p>
               </AnimatedSection>
@@ -371,7 +371,7 @@ const Metoden = () => {
 
               <div className="mt-12 md:mt-16 flex flex-wrap gap-6 md:gap-10 justify-center">
                 {["5 virkedager til fullt operativt regnskap", "Én kontaktperson. Helt team.", "Ring oss når du vil — gratis"].map((signal) => (
-                  <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/40 font-light">
+                  <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/60 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />
                     {signal}
                   </div>

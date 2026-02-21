@@ -71,7 +71,7 @@ const Bransjer = () => (
             </Link>
             <Link
               to="/tjenester"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se alle tjenester
             </Link>
@@ -110,7 +110,7 @@ const Bransjer = () => (
                 <h3 className="font-heading text-xl md:text-2xl mb-1.5">{ind.name}</h3>
                 <p className="text-sm text-primary/60 italic mb-3 font-light">{ind.tagline}</p>
                 <p className="text-sm text-muted-foreground leading-relaxed font-light flex-1">{ind.short}</p>
-                <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/40 group-hover:text-primary transition-colors duration-300 mt-5">
+                <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/60 group-hover:text-primary transition-colors duration-300 mt-5">
                   Les mer <ChevronRight size={11} className="group-hover:translate-x-0.5 transition-transform duration-300" />
                 </div>
               </Link>
@@ -152,7 +152,7 @@ const Bransjer = () => (
           ].map((p, i) => (
             <AnimatedSection key={p.num} delay={i * 0.12}>
               <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
-                <span className="font-heading text-5xl text-primary/8">{p.num}</span>
+                <span className="font-heading text-5xl text-primary/20">{p.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{p.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{p.desc}</p>
               </div>

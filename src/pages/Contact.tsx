@@ -158,13 +158,13 @@ const Contact = () => {
             </p>
             <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
               {["Dedikert regnskapsfører fra dag én", "AI-drevet innsikt inkludert", "Alt i én fast pris — ingen overraskelser", "Spesialisert i din bransje"].map((item) => (
-                <div key={item} className="flex items-center gap-3 text-sm text-foreground/60 font-light">
+                <div key={item} className="flex items-center gap-3 text-sm text-foreground/75 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
                   {item}
                 </div>
               ))}
             </div>
-            <div className="space-y-3 text-sm text-muted-foreground/50 font-light">
+            <div className="space-y-3 text-sm text-muted-foreground/70 font-light">
               <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>Oslo, Norge</span></div>
               <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>post@avargo.no</span></div>
               <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>+47 22 00 00 00</span></div>

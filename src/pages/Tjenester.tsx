@@ -176,7 +176,7 @@ const Tjenester = () => {
               </Link>
               <Link
                 to="/priser"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se priser
               </Link>
@@ -240,13 +240,13 @@ const Tjenester = () => {
                     </p>
                     <ul className="flex flex-col gap-2 mb-6">
                       {service.sub.map((item) => (
-                        <li key={item} className="flex items-center gap-2.5 text-xs text-muted-foreground/60 font-light">
+                        <li key={item} className="flex items-center gap-2.5 text-xs text-muted-foreground/80 font-light">
                           <ChevronRight size={11} className="text-primary/40 shrink-0" />
                           {item}
                         </li>
                       ))}
                     </ul>
-                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/50 group-hover:text-primary transition-colors duration-300 mt-auto">
+                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-auto">
                       Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
                   </Link>
@@ -311,7 +311,7 @@ const Tjenester = () => {
               </Link>
               <Link
                 to="/priser"
-                className="inline-flex items-center justify-center gap-2 px-10 md:px-12 py-4 md:py-5 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+                className="inline-flex items-center justify-center gap-2 px-10 md:px-12 py-4 md:py-5 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se prisene
               </Link>
