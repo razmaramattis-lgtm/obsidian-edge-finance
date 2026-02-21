@@ -30,11 +30,11 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard },
   { id: "documents", label: "Dokumenter", icon: FileText },
+  { id: "booking", label: "Book rådgiver", icon: CalendarDays },
+  { id: "partners", label: "Fordelsavtaler", icon: Handshake },
   { id: "hr-generator", label: "HR-generator", icon: Wand2, group: "HR og personal" },
   { id: "handbook", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
-  { id: "booking", label: "Book rådgiver", icon: CalendarDays },
-  { id: "partners", label: "Fordelsavtaler", icon: Handshake },
 ];
 
 const KundeDashboard = () => {
