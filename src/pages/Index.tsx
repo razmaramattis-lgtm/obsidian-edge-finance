@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users, BarChart3, Bot,
   FileCheck, CreditCard, Calculator, Clock, Lock, Headphones,
-  LayoutTemplate, Search, Megaphone, CheckCircle2
+  LayoutTemplate, Search, Megaphone, CheckCircle2, ChevronLeft, ChevronRight
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
@@ -45,16 +45,46 @@ const Index = () => {
   );
 
   const services = [
-    { icon: Users, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter." },
-    { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader." },
-    { icon: LayoutTemplate, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst." },
-    { icon: Bot, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran." },
-    { icon: FileCheck, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Hos oss er ingenting «ekstra»." },
-    { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om og strukturerer selskapet smart." },
-    { icon: Search, title: "SEO & søkbarhet", desc: "Bli synlig på Google med strategisk søkemotoroptimalisering som bygger langsiktig organisk trafikk til bedriften din." },
-    { icon: Headphones, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard hos Avargo, ikke et tillegg." },
-    { icon: Clock, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen." },
+    { icon: Users, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
+    { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader.", href: "/tjenester/hr" },
+    { icon: LayoutTemplate, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst.", href: "/tjenester/nettsider" },
+    { icon: Bot, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran.", href: "/tjenester/ai-innsikt" },
+    { icon: FileCheck, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Hos oss er ingenting «ekstra».", href: "/tjenester/en-til-en-regnskap" },
+    { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om og strukturerer selskapet smart.", href: "/tjenester/cfo" },
+    { icon: Search, title: "SEO & søkbarhet", desc: "Bli synlig på Google med strategisk søkemotoroptimalisering som bygger langsiktig organisk trafikk til bedriften din.", href: "/tjenester/seo" },
+    { icon: Headphones, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard hos Avargo, ikke et tillegg.", href: "/tjenester/cfo" },
+    { icon: Clock, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen.", href: "/tjenester/regnskapsforer" },
   ];
+
+  // Services carousel — one at a time
+  const [activeService, setActiveService] = useState(0);
+  const [serviceAutoplay, setServiceAutoplay] = useState(true);
+
+  useEffect(() => {
+    if (!serviceAutoplay) return;
+    const timer = setInterval(() => {
+      setActiveService((prev) => (prev + 1) % services.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [serviceAutoplay, services.length]);
+
+  const goToService = useCallback((index: number) => {
+    setActiveService(index);
+    setServiceAutoplay(false);
+    // Resume autoplay after 15s of inactivity
+    setTimeout(() => setServiceAutoplay(true), 15000);
+  }, []);
+
+  const nextService = useCallback(() => {
+    goToService((activeService + 1) % services.length);
+  }, [activeService, services.length, goToService]);
+
+  const prevService = useCallback(() => {
+    goToService((activeService - 1 + services.length) % services.length);
+  }, [activeService, services.length, goToService]);
+
+  const current = services[activeService];
+  const CurrentIcon = current.icon;
 
   return (
     <>
@@ -193,40 +223,150 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* SERVICES */}
-      <section id="tjenester" className="py-24 md:py-40">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* SERVICES — single showcase carousel */}
+      <section id="tjenester" className="py-24 md:py-40 relative overflow-hidden">
+        <div className="absolute inset-0 ambient-glow opacity-40" />
+        <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
             <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
               Én fast pris.{" "}
               <span className="italic text-gradient-rose">Alt du trenger.</span>
             </h2>
-            <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed max-w-2xl mb-4 md:mb-6">
-              Hos Avargo får du en dedikert regnskapsfører, AI-drevet innsikt, lønn, HR, markedsføring og rådgivning — samlet i én tjeneste med én fast pris. Ingen tillegg. Ingen overraskelser.
-            </p>
-            <p className="text-sm text-foreground/50 font-light mb-14 md:mb-20">
-              Andre tar ekstra for MVA, lønn og rådgivning. Hos oss er <em className="text-foreground/70">alt</em> inkludert fra dag én.
+            <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed max-w-2xl mb-14 md:mb-20">
+              Hos Avargo får du en dedikert regnskapsfører, AI-drevet innsikt, lønn, HR, markedsføring og rådgivning — samlet i én tjeneste med én fast pris.
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {services.map((srv, i) => (
-              <AnimatedSection key={srv.title} delay={i * 0.08}>
-                <div className="group p-6 md:p-8 glass rounded-3xl card-lift h-full relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <div className="flex items-start gap-4 md:gap-5">
-                    <div className="p-2.5 md:p-3 bg-primary/10 rounded-2xl shrink-0">
-                      <srv.icon size={18} className="text-primary" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <h3 className="font-heading text-lg md:text-xl mb-2">{srv.title}</h3>
-                      <p className="text-sm text-foreground/60 leading-relaxed font-light">{srv.desc}</p>
-                    </div>
+          {/* Main showcase */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+            {/* Left: service pill list */}
+            <div className="lg:col-span-4 hidden lg:flex flex-col gap-2">
+              {services.map((srv, i) => (
+                <button
+                  key={srv.title}
+                  onClick={() => goToService(i)}
+                  className={`group flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-500 ${
+                    i === activeService
+                      ? "bg-primary/10 border border-primary/20"
+                      : "hover:bg-card/40 border border-transparent"
+                  }`}
+                >
+                  <div className={`p-2 rounded-xl transition-colors duration-500 ${
+                    i === activeService ? "bg-primary/20" : "bg-muted/50"
+                  }`}>
+                    <srv.icon size={16} className={`transition-colors duration-500 ${
+                      i === activeService ? "text-primary" : "text-foreground/40"
+                    }`} strokeWidth={1.5} />
                   </div>
+                  <span className={`text-sm font-light transition-colors duration-500 ${
+                    i === activeService ? "text-foreground" : "text-foreground/50"
+                  }`}>
+                    {srv.title}
+                  </span>
+                  {i === activeService && (
+                    <motion.div
+                      layoutId="service-indicator"
+                      className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Center: active service card */}
+            <div className="lg:col-span-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeService}
+                  initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link
+                    to={current.href}
+                    className="group block relative p-10 md:p-14 glass rounded-3xl overflow-hidden card-lift"
+                  >
+                    {/* Decorative glow */}
+                    <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/8 rounded-full blur-3xl group-hover:bg-primary/12 transition-colors duration-700" />
+                    <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-secondary/6 rounded-full blur-3xl" />
+
+                    {/* Number badge */}
+                    <div className="absolute top-6 right-8 font-heading text-7xl md:text-8xl text-primary/8 select-none">
+                      {String(activeService + 1).padStart(2, "0")}
+                    </div>
+
+                    <div className="relative">
+                      <div className="p-4 bg-primary/10 rounded-2xl inline-block mb-6 md:mb-8 group-hover:bg-primary/15 transition-colors duration-500">
+                        <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
+                      </div>
+
+                      <h3 className="font-heading text-3xl md:text-4xl mb-4 md:mb-5">
+                        {current.title}
+                      </h3>
+
+                      <p className="text-foreground/70 text-base md:text-lg leading-relaxed font-light max-w-lg mb-8">
+                        {current.desc}
+                      </p>
+
+                      <div className="flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all duration-300">
+                        Les mer om {current.title.toLowerCase()}
+                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/20">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-primary to-rose-glow"
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: serviceAutoplay ? 5 : 0, ease: "linear" }}
+                        key={`progress-${activeService}-${serviceAutoplay}`}
+                      />
+                    </div>
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Navigation controls */}
+              <div className="flex items-center justify-between mt-6">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={prevService}
+                    className="p-2.5 rounded-full border border-border/30 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                  >
+                    <ChevronLeft size={16} className="text-foreground/60" />
+                  </button>
+                  <button
+                    onClick={nextService}
+                    className="p-2.5 rounded-full border border-border/30 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                  >
+                    <ChevronRight size={16} className="text-foreground/60" />
+                  </button>
                 </div>
-              </AnimatedSection>
-            ))}
+
+                {/* Dots — mobile & desktop */}
+                <div className="flex items-center gap-1.5">
+                  {services.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => goToService(i)}
+                      className={`rounded-full transition-all duration-300 ${
+                        i === activeService
+                          ? "w-6 h-2 bg-primary"
+                          : "w-2 h-2 bg-foreground/15 hover:bg-foreground/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <span className="text-xs text-foreground/30 font-light tabular-nums">
+                  {String(activeService + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -299,6 +439,8 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
+
       {/* SKATTEFRISTER */}
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-30" />
@@ -327,7 +469,7 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* CONVICTION SECTION (replaces fake testimonials) */}
+      {/* CONVICTION SECTION */}
       <section className="py-24 md:py-40 border-y border-border/15">
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
