@@ -383,6 +383,57 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          company_name: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          industry: string | null
+          industry_code: string | null
+          message: string | null
+          org_number: string | null
+          package: string | null
+          phone: string | null
+          revenue_target: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          industry_code?: string | null
+          message?: string | null
+          org_number?: string | null
+          package?: string | null
+          phone?: string | null
+          revenue_target?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          industry_code?: string | null
+          message?: string | null
+          org_number?: string | null
+          package?: string | null
+          phone?: string | null
+          revenue_target?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           active: boolean | null
