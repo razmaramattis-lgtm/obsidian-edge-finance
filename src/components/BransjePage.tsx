@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, CheckCircle2, ChevronRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -34,6 +35,11 @@ const BransjePage = ({
   ctaHeadline,
 }: BransjePageProps) => (
   <>
+    <Helmet>
+      <title>Regnskapsfører for {name} | Avargo</title>
+      <meta name="description" content={intro.length > 160 ? intro.slice(0, 157) + "..." : intro} />
+      <link rel="canonical" href={`https://avargo.no/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`} />
+    </Helmet>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture1} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />

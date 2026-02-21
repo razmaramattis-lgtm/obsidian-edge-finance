@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, Megaphone, ChevronRight, ArrowLeft, CheckCircle2, Target } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -30,6 +31,11 @@ const RelatedServices = [
 
 const MetaAnnonser = () => (
   <>
+    <Helmet>
+      <title>Meta-annonser (Facebook & Instagram Ads) | Avargo</title>
+      <meta name="description" content="Målrettet annonsering på Facebook og Instagram. Kampanjestrategi, innholdsproduksjon og konverteringsoptimalisering for norske bedrifter." />
+      <link rel="canonical" href="https://avargo.no/tjenester/meta-annonser" />
+    </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture4} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, ShoppingCart, ChevronRight, ArrowLeft, CheckCircle2, Package } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -30,6 +31,11 @@ const RelatedServices = [
 
 const Nettbutikk = () => (
   <>
+    <Helmet>
+      <title>Nettbutikk og e-handel — Komplett løsning | Avargo</title>
+      <meta name="description" content="Nettbutikk med Shopify, WooCommerce eller skreddersydd. Design, produktoppsett, betalingsløsning og markedsføring for norske nettbutikker." />
+      <link rel="canonical" href="https://avargo.no/tjenester/nettbutikk" />
+    </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture3} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />

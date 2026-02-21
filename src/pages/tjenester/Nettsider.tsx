@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, LayoutTemplate, ChevronRight, ArrowLeft, CheckCircle2, Globe } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -30,6 +31,11 @@ const RelatedServices = [
 
 const Nettsider = () => (
   <>
+    <Helmet>
+      <title>Nettsider og digitale flater for bedrifter | Avargo</title>
+      <meta name="description" content="Profesjonelle nettsider med SEO, design og utvikling. Konverteringsoptimaliserte løsninger for norske bedrifter — fra landingssider til komplette plattformer." />
+      <link rel="canonical" href="https://avargo.no/tjenester/nettsider" />
+    </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
