@@ -395,13 +395,27 @@ html {
   font-weight: 500;
   font-family: 'Outfit', sans-serif;
   font-size: 0.9em;
-  cursor: default;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .handbook-content .editable-field:hover {
   background: hsl(var(--primary) / 0.15);
   border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+.handbook-content .editable-field--filled {
+  background: hsl(var(--secondary) / 0.1);
+  border-color: hsl(var(--secondary) / 0.3);
+  border-style: solid;
+  color: hsl(var(--secondary));
+}
+
+.handbook-content .editable-field--filled:hover {
+  background: hsl(var(--secondary) / 0.15);
+  border-color: hsl(var(--secondary) / 0.5);
+  box-shadow: 0 0 0 3px hsl(var(--secondary) / 0.1);
 }
 
 .editable-field-preview {
