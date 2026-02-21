@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -142,9 +143,34 @@ const Contact = () => {
     fetchRoles(enhet.organisasjonsnummer);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("contact-submit", {
+        body: {
+          company_name: selskapsnavn,
+          org_number: orgnummer,
+          contact_person: kontaktperson,
+          email: epost,
+          phone: telefon,
+          industry: bransje,
+          industry_code: naering,
+          revenue_target: omsetning,
+          message: frustrasjon,
+          package: valgtPakke,
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Noe gikk galt. Vennligst prøv igjen.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -323,9 +349,12 @@ const Contact = () => {
                   <textarea required rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
                 </div>
 
-                <button type="submit" className="group w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.01] transition-all duration-500 mt-2">
-                  Send henvendelse
-                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                <button type="submit" disabled={submitting} className="group w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.01] transition-all duration-500 mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                  {submitting ? (
+                    <><Loader2 size={15} className="animate-spin" /> Sender...</>
+                  ) : (
+                    <>Send henvendelse <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
+                  )}
                 </button>
                 <p className="text-xs text-foreground/40 text-center font-light">Helt uforpliktende. Vi kontakter deg innen 24 timer.</p>
               </form>
