@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Calendar } from "@/components/ui/calendar";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
@@ -319,23 +320,387 @@ const DocumentsPanel = () => {
   );
 };
 
-// ========== HANDBOOK PANEL (placeholder) ==========
-const HandbookPanel = () => (
-  <div className="glass rounded-2xl p-8 border border-border/20 text-center">
-    <BookOpen size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-    <h3 className="font-heading text-base mb-1">Personalhåndbok</h3>
-    <p className="text-sm text-muted-foreground">Din personalhåndbok vil bli tilgjengelig her snart.</p>
-  </div>
-);
+// ========== HANDBOOK PANEL ==========
+const HandbookPanel = () => {
+  const [chapters, setChapters] = useState<any[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-// ========== BOOKING PANEL (placeholder) ==========
-const BookingPanel = () => (
-  <div className="glass rounded-2xl p-8 border border-border/20 text-center">
-    <CalendarDays size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-    <h3 className="font-heading text-base mb-1">Book rådgiver</h3>
-    <p className="text-sm text-muted-foreground">Booking-funksjonalitet kommer snart.</p>
-  </div>
-);
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from("customer_handbook_chapters")
+        .select("*")
+        .order("sort_order");
+      setChapters(data || []);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  const saveContent = async () => {
+    const ch = chapters[activeIdx];
+    if (!ch) return;
+    setSaving(true);
+    await supabase.from("customer_handbook_chapters")
+      .update({ content: editContent, customized: true })
+      .eq("id", ch.id);
+    const updated = [...chapters];
+    updated[activeIdx] = { ...ch, content: editContent, customized: true };
+    setChapters(updated);
+    setEditing(false);
+    setSaving(false);
+  };
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
+
+  if (chapters.length === 0) {
+    return (
+      <div className="glass rounded-2xl p-8 border border-border/20 text-center">
+        <BookOpen size={32} className="text-muted-foreground/30 mx-auto mb-3" />
+        <h3 className="font-heading text-base mb-1">Personalhåndbok</h3>
+        <p className="text-sm text-muted-foreground">Din personalhåndbok er ikke opprettet ennå. Kontakt din rådgiver.</p>
+      </div>
+    );
+  }
+
+  const active = chapters[activeIdx];
+
+  return (
+    <div className="flex gap-6">
+      {/* Sidebar */}
+      <div className="w-56 shrink-0 hidden md:block space-y-1">
+        {chapters.map((ch, i) => (
+          <button
+            key={ch.id}
+            onClick={() => { setActiveIdx(i); setEditing(false); }}
+            className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
+              i === activeIdx ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
+          >
+            <span className="font-light">{ch.title}</span>
+            {ch.customized && <span className="ml-1 text-[9px] text-primary">●</span>}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 space-y-4">
+        {/* Mobile chapter selector */}
+        <select
+          className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
+          value={activeIdx}
+          onChange={e => { setActiveIdx(Number(e.target.value)); setEditing(false); }}
+        >
+          {chapters.map((ch, i) => (
+            <option key={ch.id} value={i}>{ch.title}</option>
+          ))}
+        </select>
+
+        <div className="glass rounded-2xl p-6 border border-border/20">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-heading text-lg">{active.title}</h3>
+            {!editing ? (
+              <button
+                onClick={() => { setEditing(true); setEditContent(active.content || ""); }}
+                className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+              >
+                Rediger
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button onClick={saveContent} disabled={saving}
+                  className="px-3 py-1.5 text-xs rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                  {saving ? "Lagrer…" : "Lagre"}
+                </button>
+                <button onClick={() => setEditing(false)}
+                  className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50">
+                  Avbryt
+                </button>
+              </div>
+            )}
+          </div>
+
+          {editing ? (
+            <textarea
+              value={editContent}
+              onChange={e => setEditContent(e.target.value)}
+              className="w-full min-h-[400px] rounded-xl border border-border/30 bg-muted/30 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+            />
+          ) : (
+            <div
+              className="prose prose-sm max-w-none text-foreground/90"
+              dangerouslySetInnerHTML={{ __html: active.content || "<p class='text-muted-foreground'>Ingen innhold ennå.</p>" }}
+            />
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between">
+          <button
+            onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }}
+            disabled={activeIdx === 0}
+            className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
+          >
+            ← Forrige
+          </button>
+          <button
+            onClick={() => { setActiveIdx(Math.min(chapters.length - 1, activeIdx + 1)); setEditing(false); }}
+            disabled={activeIdx === chapters.length - 1}
+            className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
+          >
+            Neste →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ========== BOOKING PANEL ==========
+const BookingPanel = () => {
+  const [company, setCompany] = useState<any>(null);
+  const [advisors, setAdvisors] = useState<any[]>([]);
+  const [availability, setAvailability] = useState<any[]>([]);
+  const [blockedDates, setBlockedDates] = useState<any[]>([]);
+  const [existingBookings, setExistingBookings] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedSlot, setSelectedSlot] = useState<{ time: string; advisorId: string } | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", phone: "", company_name: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { profile } = useAuth();
+
+  useEffect(() => {
+    const load = async () => {
+      // Get customer company with assigned advisors
+      const { data: comp } = await supabase
+        .from("customer_companies")
+        .select("*")
+        .limit(1)
+        .maybeSingle();
+      setCompany(comp);
+
+      if (!comp?.primary_advisor_id && !comp?.backup_advisor_id) {
+        setLoading(false);
+        return;
+      }
+
+      const advisorIds = [comp.primary_advisor_id, comp.backup_advisor_id].filter(Boolean);
+
+      const [advRes, availRes, blockedRes, bookRes] = await Promise.all([
+        supabase.from("profiles").select("id, name, teams_link").in("id", advisorIds),
+        supabase.from("advisor_availability").select("*").in("profile_id", advisorIds).eq("active", true),
+        supabase.from("advisor_blocked_dates").select("*").in("profile_id", advisorIds),
+        supabase.from("bookings").select("*").in("advisor_id", advisorIds).neq("status", "cancelled"),
+      ]);
+
+      setAdvisors(advRes.data || []);
+      setAvailability(availRes.data || []);
+      setBlockedDates(blockedRes.data || []);
+      setExistingBookings(bookRes.data || []);
+
+      // Pre-fill form
+      if (profile) {
+        setForm(f => ({ ...f, name: profile.name || "", email: profile.email || "" }));
+      }
+      if (comp) {
+        setForm(f => ({ ...f, company_name: comp.company_name || "" }));
+      }
+
+      setLoading(false);
+    };
+    load();
+  }, [profile]);
+
+  const generateSlots = (start: string, end: string) => {
+    const slots: string[] = [];
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    let mins = sh * 60 + sm;
+    const endMins = eh * 60 + em;
+    while (mins + 30 <= endMins) {
+      slots.push(`${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`);
+      mins += 30;
+    }
+    return slots;
+  };
+
+  const getAvailableSlots = (date: Date) => {
+    const dayOfWeek = date.getDay();
+    const dateStr = date.toISOString().split("T")[0];
+
+    const slots: { time: string; advisorId: string; advisorName: string }[] = [];
+
+    for (const adv of advisors) {
+      // Check blocked
+      if (blockedDates.some(b => b.profile_id === adv.id && b.blocked_date === dateStr)) continue;
+
+      // Get availability for this day
+      const dayAvail = availability.filter(a => a.profile_id === adv.id && a.day_of_week === dayOfWeek);
+      for (const a of dayAvail) {
+        const timeSlots = generateSlots(a.start_time, a.end_time);
+        for (const time of timeSlots) {
+          // Check if already booked
+          const booked = existingBookings.some(b => b.advisor_id === adv.id && b.booking_date === dateStr && b.booking_time === time + ":00");
+          if (!booked) {
+            slots.push({ time, advisorId: adv.id, advisorName: adv.name });
+          }
+        }
+      }
+    }
+
+    return slots.sort((a, b) => a.time.localeCompare(b.time));
+  };
+
+  const isDayDisabled = (date: Date) => {
+    if (date < new Date(new Date().toDateString())) return true;
+    return getAvailableSlots(date).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSlot || !selectedDate) return;
+    setSubmitting(true);
+
+    const dateStr = selectedDate.toISOString().split("T")[0];
+    const advisor = advisors.find(a => a.id === selectedSlot.advisorId);
+
+    await supabase.from("bookings").insert({
+      advisor_id: selectedSlot.advisorId,
+      booking_date: dateStr,
+      booking_time: selectedSlot.time + ":00",
+      customer_name: form.name,
+      customer_email: form.email,
+      customer_phone: form.phone,
+      company_name: form.company_name,
+      message: form.message || null,
+      teams_link: advisor?.teams_link || null,
+    });
+
+    setSuccess(true);
+    setSubmitting(false);
+  };
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
+
+  if (!company?.primary_advisor_id && !company?.backup_advisor_id) {
+    return (
+      <div className="glass rounded-2xl p-8 border border-border/20 text-center">
+        <CalendarDays size={32} className="text-muted-foreground/30 mx-auto mb-3" />
+        <h3 className="font-heading text-base mb-1">Book rådgiver</h3>
+        <p className="text-sm text-muted-foreground">Ingen rådgiver er tildelt ennå. Kontakt Avargo.</p>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        className="glass rounded-2xl p-8 border border-primary/20 bg-primary/5 text-center">
+        <CalendarDays size={32} className="text-primary mx-auto mb-3" />
+        <h3 className="font-heading text-lg mb-1">Booking mottatt!</h3>
+        <p className="text-sm text-muted-foreground">Vi bekrefter timen din på e-post.</p>
+      </motion.div>
+    );
+  }
+
+  const slotsForDate = selectedDate ? getAvailableSlots(selectedDate) : [];
+
+  return (
+    <div className="space-y-6">
+      <div className="glass rounded-2xl p-5 border border-border/20">
+        <p className="text-sm text-muted-foreground mb-1">Dine rådgivere</p>
+        <div className="flex gap-3">
+          {advisors.map(a => (
+            <div key={a.id} className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
+                {a.name?.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-medium">{a.name}</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {company.primary_advisor_id === a.id ? "Oppdragsansvarlig" : "Reserve"}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Calendar */}
+        <div className="glass rounded-2xl p-5 border border-border/20">
+          <h3 className="font-heading text-base mb-3">Velg dato</h3>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={d => { setSelectedDate(d); setSelectedSlot(null); }}
+            disabled={isDayDisabled}
+            className="p-3 pointer-events-auto"
+          />
+        </div>
+
+        {/* Slots + Form */}
+        <div className="space-y-4">
+          {selectedDate && (
+            <div className="glass rounded-2xl p-5 border border-border/20">
+              <h3 className="font-heading text-base mb-3">
+                Ledige tider {selectedDate.toLocaleDateString("no-NO", { weekday: "long", day: "numeric", month: "long" })}
+              </h3>
+              {slotsForDate.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Ingen ledige tider denne dagen.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {slotsForDate.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedSlot({ time: s.time, advisorId: s.advisorId })}
+                      className={`px-3 py-2 rounded-xl text-sm border transition-colors ${
+                        selectedSlot?.time === s.time && selectedSlot?.advisorId === s.advisorId
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border/30 hover:border-primary/40"
+                      }`}
+                    >
+                      <span className="font-medium">{s.time}</span>
+                      <span className="block text-[10px] opacity-70">{s.advisorName}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedSlot && (
+            <form onSubmit={handleSubmit} className="glass rounded-2xl p-5 border border-border/20 space-y-3">
+              <h3 className="font-heading text-base">Bekreft booking</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Navn *" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="E-post *" type="email" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Telefon *" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.company_name} onChange={e => setForm({ ...form, company_name: e.target.value })} placeholder="Bedrift *" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+              </div>
+              <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="Beskjed (valgfritt)" rows={2}
+                className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+              <button type="submit" disabled={submitting}
+                className="w-full py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50">
+                {submitting ? "Sender…" : "Bekreft booking"}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ========== PARTNERS PANEL ==========
 const PartnersPanel = () => {
