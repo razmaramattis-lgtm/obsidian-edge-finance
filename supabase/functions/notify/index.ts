@@ -1,0 +1,216 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+async function sendEmail(opts: {
+  hostname: string;
+  port: number;
+  username: string;
+  password: string;
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}) {
+  const conn = await Deno.connectTls({ hostname: opts.hostname, port: opts.port });
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  async function readResponse(): Promise<string> {
+    let result = "";
+    const buf = new Uint8Array(4096);
+    while (true) {
+      const n = await conn.read(buf);
+      if (!n) break;
+      result += decoder.decode(buf.subarray(0, n));
+      const lines = result.trim().split("\r\n");
+      const lastLine = lines[lines.length - 1];
+      if (/^\d{3} /.test(lastLine) || !/^\d{3}/.test(lastLine)) break;
+    }
+    return result;
+  }
+
+  async function send(cmd: string): Promise<string> {
+    await conn.write(encoder.encode(cmd + "\r\n"));
+    const resp = await readResponse();
+    return resp;
+  }
+
+  try {
+    await readResponse();
+    await send("EHLO localhost");
+    const authResp = await send("AUTH LOGIN");
+    if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed");
+    const userResp = await send(btoa(opts.username));
+    if (!userResp.startsWith("334")) throw new Error("AUTH username failed");
+    const passResp = await send(btoa(opts.password));
+    if (!passResp.startsWith("235")) throw new Error("AUTH password failed");
+    await send(`MAIL FROM:<${opts.from}>`);
+    await send(`RCPT TO:<${opts.to}>`);
+    await send("DATA");
+
+    const message = [
+      `From: Avargo <${opts.from}>`,
+      `To: ${opts.to}`,
+      `Subject: ${opts.subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      opts.html,
+      `.`,
+    ].join("\r\n");
+
+    await send(message);
+    await send("QUIT");
+  } finally {
+    try { conn.close(); } catch { /* ignore */ }
+  }
+}
+
+function wrapHtml(title: string, body: string) {
+  const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  return `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#fff;">
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
+      <h1 style="color:#fff;margin:0;font-size:20px;font-weight:600;">${title}</h1>
+      <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}</p>
+    </div>
+    <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+      ${body}
+      <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
+        <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong></p>
+      </div>
+    </div>
+  </div>`;
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { type, data } = await req.json();
+    const smtpUser = Deno.env.get("SMTP_USER");
+    const smtpPass = Deno.env.get("SMTP_PASS");
+    if (!smtpUser || !smtpPass) throw new Error("SMTP not configured");
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    const smtpOpts = {
+      hostname: "smtp.domeneshop.no",
+      port: 465,
+      username: smtpUser,
+      password: smtpPass,
+      from: "kontakt@avargo.no",
+    };
+
+    if (type === "booking_notification") {
+      // Send email to the advisor about the booking
+      const { advisor_id, customer_name, customer_email, customer_phone, company_name, booking_date, booking_time, message } = data;
+
+      // Get advisor email
+      const { data: advisor } = await supabase
+        .from("profiles")
+        .select("email, name")
+        .eq("id", advisor_id)
+        .single();
+
+      if (!advisor?.email) throw new Error("Advisor not found");
+
+      const body = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">📅 Bookingdetaljer</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Dato</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${booking_date}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Tidspunkt</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${booking_time}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Kunde</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${customer_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Selskap</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${company_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">E-post</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${customer_email}" style="color:#2563eb;">${customer_email}</a></td></tr>
+            ${customer_phone ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Telefon</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${customer_phone}</td></tr>` : ""}
+          </table>
+        </div>
+        ${message ? `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Melding:</strong><br/>${message}</div>` : ""}
+      `;
+
+      // Send to advisor
+      await sendEmail({
+        ...smtpOpts,
+        to: advisor.email,
+        subject: `Ny booking: ${customer_name} — ${booking_date} kl. ${booking_time}`,
+        html: wrapHtml("📅 Ny booking mottatt", body),
+      });
+
+      // Also send to kontakt@avargo.no
+      await sendEmail({
+        ...smtpOpts,
+        to: "kontakt@avargo.no",
+        subject: `Ny booking: ${customer_name} → ${advisor.name} — ${booking_date}`,
+        html: wrapHtml("📅 Ny booking mottatt", body),
+      });
+    }
+
+    if (type === "send_document") {
+      const { recipient_email, recipient_name, document_title, document_html } = data;
+
+      const body = `
+        <div style="margin-bottom:20px;">
+          <p style="font-size:14px;color:#0f172a;">Hei${recipient_name ? ` ${recipient_name}` : ""},</p>
+          <p style="font-size:14px;color:#475569;">Her er dokumentet <strong>${document_title}</strong> du har bedt om.</p>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;font-family:'Georgia',serif;font-size:13px;line-height:1.7;color:#1a1a1a;">
+          ${document_html}
+        </div>
+      `;
+
+      await sendEmail({
+        ...smtpOpts,
+        to: recipient_email,
+        subject: `Dokument: ${document_title} — Avargo`,
+        html: wrapHtml(`📄 ${document_title}`, body),
+      });
+    }
+
+    if (type === "employee_invitation") {
+      const { company_name, employee_name, employee_email, invited_by_name } = data;
+
+      const body = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">👤 Ny ansattinvitasjon</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Selskap</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${company_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Ansatt</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${employee_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">E-post</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${employee_email}" style="color:#2563eb;">${employee_email}</a></td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Invitert av</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${invited_by_name}</td></tr>
+          </table>
+        </div>
+        <p style="font-size:14px;color:#475569;">Denne invitasjonen krever godkjenning fra admin før brukeren får tilgang.</p>
+      `;
+
+      await sendEmail({
+        ...smtpOpts,
+        to: "kontakt@avargo.no",
+        subject: `Ny ansattinvitasjon: ${employee_name} — ${company_name}`,
+        html: wrapHtml("👤 Godkjenning påkrevd: Ny ansatt", body),
+      });
+    }
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("Notify error:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

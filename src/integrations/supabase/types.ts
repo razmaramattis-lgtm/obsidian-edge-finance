@@ -647,6 +647,60 @@ export type Database = {
           },
         ]
       }
+      customer_employee_invitations: {
+        Row: {
+          admin_note: string | null
+          company_id: string
+          created_at: string
+          employee_email: string
+          employee_name: string
+          id: string
+          invited_by: string
+          role: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          company_id: string
+          created_at?: string
+          employee_email: string
+          employee_name: string
+          id?: string
+          invited_by: string
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          company_id?: string
+          created_at?: string
+          employee_email?: string
+          employee_name?: string
+          id?: string
+          invited_by?: string
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_employee_invitations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_employee_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_financials: {
         Row: {
           admin_action_plan: string | null
