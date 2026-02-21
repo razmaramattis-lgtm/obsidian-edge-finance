@@ -385,6 +385,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground transition-colors">Guider</Link>
                 <Link to="/ressurser?tab=arkiv" className="text-foreground/70 hover:text-foreground transition-colors">Arkiv & maler</Link>
                 <Link to="/ressurser/skattekalender" className="text-foreground/70 hover:text-foreground transition-colors">Skattekalender</Link>
+                <Link to="/faq" className="text-foreground/70 hover:text-foreground transition-colors">Vanlige spørsmål</Link>
                 <Link to="/priser" className="text-foreground/70 hover:text-foreground transition-colors">Priser</Link>
                 <Link to="/metoden" className="text-foreground/70 hover:text-foreground transition-colors">Vår metode</Link>
               </div>
