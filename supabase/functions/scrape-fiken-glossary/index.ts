@@ -5,78 +5,128 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Complete list of Fiken glossary slugs (extracted from fiken.no/forklarer)
+// Corrected Fiken glossary slugs
 const ALL_SLUGS = [
   "a-konto","a-og-b-aksjer","a-melding","agio","aida-modellen","aksje","aksjebevis",
   "aksjeeierbok","aksjekapital","aksjesplitt","aksjonaer","aksjonaeravtale",
   "aksjonaermodellen","aksjonaerregisteret","aksjonaerregisteroppgave","aktiva",
-  "aktivering","aksjonaerlaan","aksjonaerutbytte","alminnelig-inntekt",
-  "amortisering","anbud","andre-driftsinntekter","andre-driftskostnader",
-  "anleggsmidler","annuitetslaan","ansattutlegg","ansiennitet","anskaffelseskost",
-  "ansvarlig-selskap","arbeidsgiver","arbeidsgiveravgift","arbeidskapital",
-  "arbeidskontrakt","arbeidstaker","avanse","avdrag","avgift","avkastning",
-  "avskriving","avsetning","avvikling","balanse","bankgaranti","bedriftskonto",
-  "betalingsbetingelser","betalingsforpliktelse","bilag","bokforing",
-  "bokforingsloven","bokfort-verdi","bransje","brutto","bruttofortjeneste",
-  "bruttolonn","bruttoomsetning","budsjett","bytte","cash-flow",
-  "daglig-leder","debet","dekningsbidrag","delingsmodellen","delvis-mva-fradrag",
-  "depositum","differensiert-arbeidsgiveravgift","direkte-kostnader","disponering",
-  "dividende","driftsinntekter","driftskostnader","driftsmargin","driftsresultat",
-  "ebitda","efaktura","egenkapital","eiendeler","ekstraordinaere-poster",
-  "emisjon","emisjonskurs","enk","enkeltpersonforetak","epostfaktura",
-  "etterbetaling","ettergivelse",
-  "feriepenger","ferietillegg","fifo","finansiell-leasing","finansinntekter",
-  "finanskostnader","firmabil","fisjon","fond","fordring","foretak",
-  "foretaksregisteret","forfall","forhandlingsplikt","forlik","forretningsplan",
-  "forsikring","forskuddsbetaling","forskuddsskatt","fortrinnsrett","fradrag",
-  "fremmedkapital","fri-egenkapital","frikort","frivillig-mva-registrering",
-  "fullmakt","fusjon","fysisk-inventar",
-  "garanti","generalforsamling","gjeld","gjeldsbrev","goodwill","grunnkapital",
-  "gjeldsgrad",
-  "halvaarlig-mva","handelsregister","holdingselskap","hovedbok","husleie",
-  "immaterielle-eiendeler","indirekte-kostnader","inflasjon","innberetning",
-  "innkjopspris","innovasjon-norge","inntekt","inntektsskatt","insolvent",
-  "investering","ipo",
-  "journal","juridisk-person",
-  "kalkulasjon","kapitalforhoeyelse","kapitalnedsettelse","kassekreditt",
-  "kjopesumsvurdering","klientmidler","kommandittselskap","kompensasjon",
-  "kongruensprinsippet","konkurs","konto","kontoplan","kontroll","konvertibelt-laan",
-  "kostnad","kostpris","kredit","kreditnota","kreditor","kredittvurdering","kurs",
-  "kurtasje","kvittering",
-  "leasing","levering","leverandoer","leverandoergjeld","lifo","likviditet",
-  "likviditetsbudsjett","loennsinnberetning","loennstrekk","lonn","lonnslipp",
-  "loepende-kostnader",
-  "merverdiavgift","minoritetsinteresser","moms","morselskap","morarente",
-  "mva-kompensasjon","mva-melding","mva-pliktig","mva-registrering","mva-satser",
-  "nedskriving","netto","nettolonn","nettoomsetning","nominell-verdi","noter",
-  "nullmva",
-  "obligasjon","omlopsmidler","omsetning","operasjonell-leasing","oppgjor",
-  "opptjent-egenkapital","opsjoner","ordinaert-resultat","organisasjonsnummer",
-  "overkurs","overskudd",
-  "paalydende","panterett","passiva","periodisering","person","personalkostnader",
-  "portefolje","premie","primaerdokumentasjon","produktivitet","profitt",
-  "proforma","prokura","prosent","purring",
-  "regnskap","regnskapsforer","regnskapskonto","regnskapsloven","regnskapspliktig",
-  "regnskapsprinsipp","regnskapsstandard","regnskapsar","reklamasjon",
-  "rekvisisjon","rentabilitet","rente","renteinntekt","rentekostnad",
-  "representasjon","restskatt","resultat","resultatregnskap","revisjon","revisor",
-  "risiko","royalty",
-  "saldoavskriving","saldoblanse","salg","salgsinntekt","sammenstillingsprinsippet",
-  "selskap","selvangivelse","skatt","skattemelding","skatteoppgjor","sktattepliktig",
-  "sluttavregning","soliditet","solvensvurdering","sperrekonto","spesifikasjon",
-  "standardkost","startkapital","stiftelsesdokument","styre","styrehonorar",
-  "styreleder","stoenad","stiftelse","subsidier","sum","sykepenger",
-  "tapsavsetning","terminoppgjor","tilbakebetaling","tilbakefoering",
-  "tilleggsavgift","tilleggsskatt","tilskudd","totalkapitalrentabilitet",
-  "transaksjon","trekkplikt",
-  "underskudd","utbytte","utdeling","utestaaende-fordringer","utlegg",
-  "varebeholdning","varekostnad","varelager","vederlag","veksel",
-  "verdipapir","verdsettelse","virksomhet","vurderingsprinsipp",
-  "aarsoppgjor","aarsregnskap","aarsresultat","faktura","inngaaende-balanse",
-  "utgaaende-balanse","bilagsfoering","dagbok","kontantprinsippet",
-  "opptjeningsprinsippet","transaksjonsprinsippet","forsiktighetsprinsippet",
-  "god-regnskapsskikk","bokforingsforskriften"
+  "aktivering","alminnelig-inntekt","amortisering","anleggsmidler",
+  "ansattutlegg","ansiennitet","anskaffelseskost","ansvarlig-selskap",
+  "arbeidsgiver","arbeidsgiveravgift","arbeidskapital","arbeidskontrakt",
+  "avanse","avkastning","avsetning","avskrivning",
+  "balanse","bankgaranti","bedriftskonto","bilag","bokforing","bokforingsloven",
+  "brutto","bruttofortjeneste","bruttolonn","budsjett",
+  "cash-flow","daglig-leder","debet","dekningsbidrag",
+  "driftsinntekter","driftskostnader","driftsresultat",
+  "efaktura","egenkapital","eiendeler","emisjon","enk","enkeltpersonforetak",
+  "feriepenger","firmabil","fond","fordring",
+  "foretaksregisteret","forretningsplan","forskuddsskatt","fradrag",
+  "fremmedkapital","frikort","fullmakt","fusjon",
+  "generalforsamling","gjeld","goodwill",
+  "holdingselskap","hovedbok",
+  "immaterielle-eiendeler","indirekte-kostnader","inflasjon",
+  "inntekt","investering",
+  "juridisk-person",
+  "kapitalforhoeyelse","kapitalnedsettelse","kassekreditt",
+  "konkurs","kostnad","kostpris","kredit","kreditnota","kreditor",
+  "kredittvurdering","kurtasje","kvittering",
+  "leasing","likviditet","likviditetsbudsjett","lonn",
+  "merverdiavgift","moms","morselskap","morarente",
+  "mva-melding","mva-registrering",
+  "netto","noter",
+  "omlopsmidler","omsetning","oppgjor",
+  "opptjent-egenkapital","organisasjonsnummer","overkurs","overskudd",
+  "periodisering","profitt","prokura","purring",
+  "regnskap","regnskapsforer","regnskapskonto","regnskapsloven",
+  "rente","representasjon","restskatt","resultat","resultatregnskap",
+  "revisjon","revisor","royalty",
+  "salg","sammenstillingsprinsippet",
+  "selvangivelse","skatt","skattemelding",
+  "soliditet","styrehonorar","styreleder","styre",
+  "sykepenger","totalkapitalrentabilitet","transaksjon",
+  "utbytte","varekostnad","varelager","vederlag","verdipapir","virksomhet",
+  "arsregnskap","arsoppgjor","arsresultat","faktura",
+  "god-regnskapsskikk","kontantprinsippet","palydende",
+  "regnskapsplikt","driftsinntekt","direkte-kostnader"
 ];
+
+function extractContent(html: string): { title: string; text: string } | null {
+  // Check for 404
+  if (html.includes("Beklager plunder og heft") || html.includes("fant visst ikke")) return null;
+
+  // Extract og:title or <title>
+  const ogT = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i);
+  const h1 = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  const tTag = html.match(/<title>([^<]+)<\/title>/i);
+  let title = ogT?.[1] || h1?.[1]?.trim() || tTag?.[1]?.replace(/\s*[-–|].*/, "").trim() || "";
+  title = title.replace(/&amp;/g, "&").replace(/&#\d+;/g, "").replace(/ - Fiken.*/, "").trim();
+
+  // Extract og:description or meta description
+  const ogDesc = html.match(/<meta\s+property="og:description"\s+content="([^"]+)"/i);
+  const metaDesc = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  const description = ogDesc?.[1] || metaDesc?.[1] || "";
+
+  // Try to get structured content from JSON-LD
+  const jsonLdMatch = html.match(/<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/i);
+  let jsonLdText = "";
+  if (jsonLdMatch) {
+    try {
+      const ld = JSON.parse(jsonLdMatch[1]);
+      if (ld.articleBody) jsonLdText = ld.articleBody;
+      if (ld.description && !description) jsonLdText = ld.description;
+    } catch {}
+  }
+
+  // Extract main content from HTML
+  let c = html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<svg[\s\S]*?<\/svg>/gi, "");
+
+  // Find article/main
+  const m = c.match(/<article[^>]*>([\s\S]*?)<\/article>/i) ||
+            c.match(/<main[^>]*>([\s\S]*?)<\/main>/i) ||
+            c.match(/<div[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (m) c = m[1];
+
+  // HTML to markdown-like text
+  c = c
+    .replace(/<h1[^>]*>/gi, "\n# ").replace(/<\/h1>/gi, "\n")
+    .replace(/<h2[^>]*>/gi, "\n## ").replace(/<\/h2>/gi, "\n")
+    .replace(/<h3[^>]*>/gi, "\n### ").replace(/<\/h3>/gi, "\n")
+    .replace(/<h[4-6][^>]*>/gi, "\n#### ").replace(/<\/h[4-6]>/gi, "\n")
+    .replace(/<p[^>]*>/gi, "\n").replace(/<\/p>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<li[^>]*>/gi, "\n- ").replace(/<\/li>/gi, "")
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/gi, "$2")
+    .replace(/<strong[^>]*>([^<]*)<\/strong>/gi, "**$1**")
+    .replace(/<b>([^<]*)<\/b>/gi, "**$1**")
+    .replace(/<em[^>]*>([^<]*)<\/em>/gi, "*$1*")
+    .replace(/<i>([^<]*)<\/i>/gi, "*$1*")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ").replace(/&quot;/g, '"').replace(/&#\d+;/g, "")
+    .replace(/\n{3,}/g, "\n\n").trim();
+
+  // Remove promo
+  for (const p of ["Superenkelt regnskap for", "Prøv Fiken gratis", "Med Fiken er det superenkelt", "Allerede registrert?"]) {
+    const idx = c.indexOf(p);
+    if (idx > 0) c = c.substring(0, idx).trim();
+  }
+
+  // Use best available content
+  let finalContent = "";
+  if (c.length > 100) {
+    finalContent = c;
+  } else if (jsonLdText.length > 50) {
+    finalContent = jsonLdText;
+  } else if (description.length > 30) {
+    finalContent = description;
+  }
+
+  if (!title || finalContent.length < 30) return null;
+  return { title, text: finalContent };
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -86,80 +136,26 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, serviceKey);
 
-    console.log(`Scraping ${ALL_SLUGS.length} Fiken glossary terms...`);
+    console.log(`Scraping ${ALL_SLUGS.length} Fiken terms...`);
 
-    const BATCH_SIZE = 10;
-    const results: { title: string; content: string; slug: string }[] = [];
+    const BATCH_SIZE = 5;
+    const results: { title: string; content: string }[] = [];
     const errors: string[] = [];
 
     for (let i = 0; i < ALL_SLUGS.length; i += BATCH_SIZE) {
       const batch = ALL_SLUGS.slice(i, i + BATCH_SIZE);
-      console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(ALL_SLUGS.length / BATCH_SIZE)} (${results.length} ok, ${errors.length} errors)`);
+      console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1} (${results.length} ok)`);
 
       const fetches = batch.map(async (slug) => {
         try {
           const res = await fetch(`https://fiken.no/forklarer/${slug}`, {
-            headers: { "User-Agent": "Mozilla/5.0" },
+            headers: { "Accept": "text/html" },
           });
           if (!res.ok) { errors.push(slug); return null; }
           const html = await res.text();
-
-          // Check for 404 / not found
-          if (html.includes("Beklager plunder og heft") || html.includes("fant visst ikke")) {
-            errors.push(slug);
-            return null;
-          }
-
-          // Extract title
-          const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
-          const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-          let title = h1Match?.[1]?.trim() || titleMatch?.[1]?.replace(/\s*[-–|].*/, "").trim() || slug;
-          title = title.replace(/&amp;/g, "&").replace(/&#\d+;/g, "").trim();
-
-          // Remove non-content elements
-          let content = html
-            .replace(/<script[\s\S]*?<\/script>/gi, "")
-            .replace(/<style[\s\S]*?<\/style>/gi, "")
-            .replace(/<nav[\s\S]*?<\/nav>/gi, "")
-            .replace(/<header[\s\S]*?<\/header>/gi, "")
-            .replace(/<footer[\s\S]*?<\/footer>/gi, "");
-
-          const articleMatch = content.match(/<article[^>]*>([\s\S]*?)<\/article>/i) ||
-                              content.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-          if (articleMatch) content = articleMatch[1];
-
-          // Convert HTML to text
-          content = content
-            .replace(/<h[1-6][^>]*>/gi, "\n## ")
-            .replace(/<\/h[1-6]>/gi, "\n")
-            .replace(/<p[^>]*>/gi, "\n")
-            .replace(/<\/p>/gi, "\n")
-            .replace(/<br\s*\/?>/gi, "\n")
-            .replace(/<li[^>]*>/gi, "\n- ")
-            .replace(/<\/li>/gi, "")
-            .replace(/<a[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/gi, "$2")
-            .replace(/<strong[^>]*>([^<]*)<\/strong>/gi, "**$1**")
-            .replace(/<em[^>]*>([^<]*)<\/em>/gi, "*$1*")
-            .replace(/<[^>]+>/g, "")
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&nbsp;/g, " ")
-            .replace(/&#\d+;/g, "")
-            .replace(/\n{3,}/g, "\n\n")
-            .trim();
-
-          // Remove Fiken promo
-          for (const promo of ["Superenkelt regnskap for små bedrifter", "Prøv Fiken gratis", "Med Fiken er det superenkelt"]) {
-            const idx = content.indexOf(promo);
-            if (idx > 0) content = content.substring(0, idx).trim();
-          }
-
-          if (content.length > 50) {
-            return { title, content: `# ${title}\n\n${content}`, slug };
-          }
-          errors.push(slug);
-          return null;
+          const parsed = extractContent(html);
+          if (!parsed) { errors.push(slug); return null; }
+          return { title: parsed.title, content: `# ${parsed.title}\n\n${parsed.text}` };
         } catch {
           errors.push(slug);
           return null;
@@ -170,11 +166,12 @@ Deno.serve(async (req) => {
       results.push(...batchResults.filter(Boolean) as any);
 
       if (i + BATCH_SIZE < ALL_SLUGS.length) {
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 400));
       }
     }
 
     console.log(`Done: ${results.length} ok, ${errors.length} errors`);
+    if (errors.length > 0) console.log("Failed slugs:", errors.join(", "));
 
     // Delete existing and insert fresh
     await sb.from("knowledge_materials").delete().eq("category", "Fiken Ordbok");
@@ -197,7 +194,7 @@ Deno.serve(async (req) => {
         imported: results.length,
         failed: errors.length,
         failed_slugs: errors,
-        sample: results.slice(0, 5).map(r => r.title),
+        sample: results.slice(0, 3).map(r => ({ title: r.title, preview: r.content.substring(0, 100) })),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
