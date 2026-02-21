@@ -242,6 +242,39 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          active: boolean | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hms_documents: {
         Row: {
           content: string | null
