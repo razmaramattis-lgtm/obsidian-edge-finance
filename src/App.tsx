@@ -44,6 +44,19 @@ import Helse from "./pages/bransjer/Helse";
 import Restaurant from "./pages/bransjer/Restaurant";
 import Frisor from "./pages/bransjer/Frisor";
 import Handverkere from "./pages/bransjer/Handverkere";
+import TransportLogistikk from "./pages/bransjer/TransportLogistikk";
+import IndustriProduksjon from "./pages/bransjer/IndustriProduksjon";
+import RenholdFacility from "./pages/bransjer/RenholdFacility";
+import KulturMedia from "./pages/bransjer/KulturMedia";
+import SportFritid from "./pages/bransjer/SportFritid";
+import UtdanningKurs from "./pages/bransjer/UtdanningKurs";
+import JuridiskAdvokat from "./pages/bransjer/JuridiskAdvokat";
+import ArkitekturDesign from "./pages/bransjer/ArkitekturDesign";
+import MarkedsforingReklame from "./pages/bransjer/MarkedsforingReklame";
+import BemanningRekruttering from "./pages/bransjer/BemanningRekruttering";
+import ReiselivTurisme from "./pages/bransjer/ReiselivTurisme";
+import BilVerksted from "./pages/bransjer/BilVerksted";
+import EnergiMiljo from "./pages/bransjer/EnergiMiljo";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +112,19 @@ const App = () => (
                     <Route path="/bransjer/restaurant" element={<Restaurant />} />
                     <Route path="/bransjer/frisor" element={<Frisor />} />
                     <Route path="/bransjer/handverkere" element={<Handverkere />} />
+                    <Route path="/bransjer/transport" element={<TransportLogistikk />} />
+                    <Route path="/bransjer/industri" element={<IndustriProduksjon />} />
+                    <Route path="/bransjer/renhold" element={<RenholdFacility />} />
+                    <Route path="/bransjer/kultur" element={<KulturMedia />} />
+                    <Route path="/bransjer/sport" element={<SportFritid />} />
+                    <Route path="/bransjer/utdanning" element={<UtdanningKurs />} />
+                    <Route path="/bransjer/juridisk" element={<JuridiskAdvokat />} />
+                    <Route path="/bransjer/arkitektur" element={<ArkitekturDesign />} />
+                    <Route path="/bransjer/markedsforing" element={<MarkedsforingReklame />} />
+                    <Route path="/bransjer/bemanning" element={<BemanningRekruttering />} />
+                    <Route path="/bransjer/reiseliv" element={<ReiselivTurisme />} />
+                    <Route path="/bransjer/bil" element={<BilVerksted />} />
+                    <Route path="/bransjer/energi" element={<EnergiMiljo />} />
                     <Route path="/metoden" element={<Metoden />} />
                     <Route path="/priser" element={<Pricing />} />
                     <Route path="/ressurser" element={<Ressurser />} />
