@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, BookOpen, Sparkles } from "lucide-react";
+import { Send, BookOpen, Sparkles, Download } from "lucide-react";
+import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -414,7 +415,22 @@ const KnowledgeBasePanel = () => {
                 }`}>
                   {msg.role === "assistant" ? (
                     <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed [&_p]:mb-2 [&_ul]:mb-2 [&_ol]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_li]:mb-0.5 [&_strong]:text-foreground">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown components={{
+                        a: ({ href, children }) => {
+                          const text = String(children);
+                          const isDownload = text.includes("📥") || (href && href.includes("/storage/"));
+                          if (isDownload && href) {
+                            return (
+                              <a href={href} target="_blank" rel="noreferrer"
+                                className="no-underline inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium mt-1 mb-1">
+                                <Download size={13} />
+                                {text.replace("📥 ", "")}
+                              </a>
+                            );
+                          }
+                          return <a href={href} target="_blank" rel="noreferrer" className="text-primary hover:underline">{children}</a>;
+                        }
+                      }}>{msg.content}</ReactMarkdown>
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap font-light leading-relaxed">{msg.content}</p>
