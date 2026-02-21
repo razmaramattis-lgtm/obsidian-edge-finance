@@ -1,0 +1,1 @@
+ALTER TABLE public.customer_documents ADD COLUMN category text DEFAULT 'Generelt';

@@ -248,7 +248,20 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
       const { error } = await supabase.from("customer_handbook_chapters").insert(rows);
       if (error) throw error;
 
-      toast.success("Personalhåndbok generert!");
+      // Save a document reference under category "HR"
+      const docTitle = `Personalhåndbok – ${form.companyName || "Bedrift"}`;
+      const moduleGroups = [...new Set(ALL_MODULES.filter(m => form.modules.includes(m.id)).map(m => m.group))];
+      const description = `Generert ${new Date().toLocaleDateString("no-NO")}. Inneholder: ${moduleGroups.join(", ")}.`;
+
+      await supabase.from("customer_documents").insert({
+        company_id: company.id,
+        title: docTitle,
+        description,
+        category: "HR",
+        visibility: "private",
+      });
+
+      toast.success("Personalhåndbok generert og lagret i Dokumenter!");
       onComplete?.();
     } catch (err) {
       console.error(err);
