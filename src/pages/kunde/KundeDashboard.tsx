@@ -9,7 +9,8 @@ import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
-  Download, Building2, Calculator, Trash2, Eye, MoreVertical
+  Download, Building2, Calculator, Trash2, Eye, MoreVertical,
+  Scale, AlertTriangle, ShieldCheck, Lock, Heart
 } from "lucide-react";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
@@ -39,11 +40,11 @@ const navItems: NavItem[] = [
   { id: "booking", label: "Book rådgiver", icon: CalendarDays },
   { id: "partners", label: "Fordelsavtaler", icon: Handshake },
   { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
-  { id: "arbeidsreglement", label: "Arbeidsreglement", icon: FileText, group: "HR og personal" },
-  { id: "varslingsrutiner", label: "Varslingsrutiner", icon: FileText, group: "HR og personal" },
-  { id: "gdpr", label: "GDPR & Personvern", icon: FileText, group: "HR og personal" },
-  { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: FileText, group: "HR og personal" },
-  { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: FileText, group: "HR og personal" },
+  { id: "arbeidsreglement", label: "Arbeidsreglement", icon: Scale, group: "HR og personal" },
+  { id: "varslingsrutiner", label: "Varslingsrutiner", icon: AlertTriangle, group: "HR og personal" },
+  { id: "gdpr", label: "GDPR & Personvern", icon: ShieldCheck, group: "HR og personal" },
+  { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: Lock, group: "HR og personal" },
+  { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: Heart, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
 ];
 
