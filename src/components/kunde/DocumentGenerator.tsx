@@ -157,7 +157,7 @@ const DocumentGenerator = ({ config }: Props) => {
       const html2pdf = (await import("html2pdf.js")).default;
       const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
 
-      const worker = html2pdf()
+      const pdfObj = await html2pdf()
         .set({
           margin: [15, 18, 15, 18],
           filename,
@@ -171,39 +171,28 @@ const DocumentGenerator = ({ config }: Props) => {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(docRef.current);
+        .from(docRef.current)
+        .toPdf()
+        .get("pdf");
 
-      // Try blob download first (works in most browsers)
-      try {
-        const pdfObj = await worker.toPdf().get("pdf");
-        const blob = pdfObj.output("blob");
-        const url = URL.createObjectURL(blob);
+      const blob = pdfObj.output("blob");
+      const url = URL.createObjectURL(blob);
+
+      // Open in new tab — works even inside iframes that block downloads
+      const newTab = window.open(url, "_blank");
+      if (!newTab) {
+        // Fallback: direct anchor download
         const a = document.createElement("a");
         a.href = url;
         a.download = filename;
-        a.style.display = "none";
+        a.target = "_blank";
         document.body.appendChild(a);
         a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 200);
-      } catch {
-        // Fallback: use html2pdf's built-in save
-        await html2pdf()
-          .set({
-            margin: [15, 18, 15, 18],
-            filename,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true },
-            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-          })
-          .from(docRef.current)
-          .save();
+        document.body.removeChild(a);
       }
 
-      toast.success("PDF lastet ned");
+      toast.success("PDF åpnet — bruk Ctrl+S / ⌘+S for å lagre");
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (err) {
       console.error("PDF error:", err);
       toast.error("Kunne ikke generere PDF — prøv igjen");
