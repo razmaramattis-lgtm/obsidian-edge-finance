@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Edit2, Download, Upload, Building2, User,
-  ChevronRight, DollarSign, FileText, Eye, X
+  ChevronRight, DollarSign, FileText, Eye, X, BookOpen, Save
 } from "lucide-react";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 
 interface CustomerCompany {
   id: string;
@@ -155,7 +156,7 @@ const CustomersPanel = () => {
 
 // ========== CUSTOMER DETAIL ==========
 const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack: () => void }) => {
-  const [tab, setTab] = useState<"financials" | "documents">("financials");
+  const [tab, setTab] = useState<"financials" | "documents" | "handbook">("financials");
   const [financials, setFinancials] = useState<Financial[]>([]);
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -310,24 +311,6 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
         </div>
       </div>
 
-      {/* Handbook init */}
-      {!handbookInitialized && (
-        <div className="glass rounded-2xl p-5 border border-border/20 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Personalhåndbok</p>
-            <p className="text-xs text-muted-foreground">Opprett kundens personalhåndbok fra Avargo-malen</p>
-          </div>
-          <button onClick={initHandbook} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
-            Opprett fra mal
-          </button>
-        </div>
-      )}
-      {handbookInitialized && (
-        <div className="glass rounded-2xl px-5 py-3 border border-emerald-500/20 bg-emerald-500/5">
-          <p className="text-xs text-emerald-600">✓ Personalhåndbok er opprettet – kunden kan nå redigere den i sin portal</p>
-        </div>
-      )}
-
       <div className="flex gap-2">
         <button onClick={() => setTab("financials")}
           className={`px-4 py-2 rounded-xl text-sm transition-colors ${tab === "financials" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50"}`}>
@@ -336,6 +319,10 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
         <button onClick={() => setTab("documents")}
           className={`px-4 py-2 rounded-xl text-sm transition-colors ${tab === "documents" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50"}`}>
           <FileText size={14} className="inline mr-1" /> Dokumenter
+        </button>
+        <button onClick={() => setTab("handbook")}
+          className={`px-4 py-2 rounded-xl text-sm transition-colors ${tab === "handbook" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50"}`}>
+          <BookOpen size={14} className="inline mr-1" /> Personalhåndbok
         </button>
       </div>
 
@@ -375,10 +362,8 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
                 <input value={finForm.assets} onChange={e => setFinForm({ ...finForm, assets: e.target.value })} placeholder="Eiendeler" type="number" className={inputCls} />
                 <input value={finForm.liabilities} onChange={e => setFinForm({ ...finForm, liabilities: e.target.value })} placeholder="Gjeld" type="number" className={inputCls} />
               </div>
-              <textarea value={finForm.notes} onChange={e => setFinForm({ ...finForm, notes: e.target.value })} placeholder="Notat" rows={2}
-                className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
-              <textarea value={finForm.admin_action_plan} onChange={e => setFinForm({ ...finForm, admin_action_plan: e.target.value })} placeholder="Tiltaksplan (synlig for kunden)" rows={3}
-                className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+              <textarea value={finForm.notes} onChange={e => setFinForm({ ...finForm, notes: e.target.value })} placeholder="Notater" className={`${inputCls} h-20 resize-none`} />
+              <textarea value={finForm.admin_action_plan} onChange={e => setFinForm({ ...finForm, admin_action_plan: e.target.value })} placeholder="Tiltaksplan (synlig for kunden)" className={`${inputCls} h-20 resize-none`} />
               <div className="flex gap-2">
                 <button type="submit" disabled={saving} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">Lagre</button>
                 <button type="button" onClick={() => setShowFinForm(false)} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
@@ -389,7 +374,7 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
           {financials.map(f => (
             <div key={f.id} className="glass rounded-2xl px-5 py-4 border border-border/20">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold">{f.period}</p>
+                <p className="text-sm font-medium">{f.period}</p>
                 <button onClick={() => delFinancial(f.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
               </div>
               <div className="grid grid-cols-3 gap-4 text-xs">
@@ -460,6 +445,165 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
           ))}
         </div>
       )}
+
+      {tab === "handbook" && (
+        <AdminHandbookEditor companyId={company.id} handbookInitialized={handbookInitialized} onInit={() => { initHandbook(); }} />
+      )}
+    </div>
+  );
+};
+
+// ========== ADMIN HANDBOOK EDITOR ==========
+const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit }: { companyId: string; handbookInitialized: boolean; onInit: () => void }) => {
+  const [chapters, setChapters] = useState<any[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const loadChapters = async () => {
+    const { data } = await supabase
+      .from("customer_handbook_chapters")
+      .select("*")
+      .eq("company_id", companyId)
+      .order("sort_order");
+    setChapters(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { loadChapters(); }, [companyId]);
+
+  const saveChapter = async () => {
+    const ch = chapters[activeIdx];
+    if (!ch) return;
+    setSaving(true);
+    await supabase.from("customer_handbook_chapters")
+      .update({ content: editContent, customized: true })
+      .eq("id", ch.id);
+    const updated = [...chapters];
+    updated[activeIdx] = { ...ch, content: editContent, customized: true };
+    setChapters(updated);
+    setEditing(false);
+    setSaving(false);
+    toast.success("Kapittel lagret");
+  };
+
+  const saveTitle = async (idx: number, newTitle: string) => {
+    const ch = chapters[idx];
+    if (!ch || !newTitle.trim()) return;
+    await supabase.from("customer_handbook_chapters")
+      .update({ title: newTitle.trim() })
+      .eq("id", ch.id);
+    const updated = [...chapters];
+    updated[idx] = { ...ch, title: newTitle.trim() };
+    setChapters(updated);
+    toast.success("Tittel oppdatert");
+  };
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
+
+  if (!handbookInitialized || chapters.length === 0) {
+    return (
+      <div className="glass rounded-2xl p-8 border border-border/20 text-center">
+        <BookOpen size={32} className="text-muted-foreground/30 mx-auto mb-3" />
+        <p className="text-sm font-medium mb-1">Personalhåndbok ikke opprettet</p>
+        <p className="text-xs text-muted-foreground mb-4">Opprett kundens personalhåndbok fra Avargo-malen</p>
+        <button onClick={() => { onInit(); setTimeout(loadChapters, 1500); }}
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
+          Opprett fra mal
+        </button>
+      </div>
+    );
+  }
+
+  const active = chapters[activeIdx];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-6">
+        {/* Chapter sidebar */}
+        <div className="w-52 shrink-0 hidden md:block space-y-0.5">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 mb-3 px-2">Kapitler</p>
+          {chapters.map((ch, i) => (
+            <button
+              key={ch.id}
+              onClick={() => { setActiveIdx(i); setEditing(false); }}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all ${
+                i === activeIdx ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span className="text-[9px] text-muted-foreground/40 w-3 text-right shrink-0">{i + 1}</span>
+                <span className="line-clamp-1">{ch.title}</span>
+              </span>
+              {ch.customized && <span className="ml-5 text-[8px] text-primary">Tilpasset</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Editor */}
+        <div className="flex-1 min-w-0 space-y-4">
+          <select
+            className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
+            value={activeIdx}
+            onChange={e => { setActiveIdx(Number(e.target.value)); setEditing(false); }}
+          >
+            {chapters.map((ch, i) => <option key={ch.id} value={i}>{i + 1}. {ch.title}</option>)}
+          </select>
+
+          <div className="glass rounded-2xl p-5 border border-border/20">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-primary mb-1">Kapittel {activeIdx + 1}</p>
+                <input
+                  defaultValue={active.title}
+                  onBlur={e => { if (e.target.value !== active.title) saveTitle(activeIdx, e.target.value); }}
+                  onKeyDown={e => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+                  className="font-heading text-xl w-full bg-transparent border-b border-transparent hover:border-border/30 focus:border-primary/50 focus:outline-none py-1 transition-colors"
+                />
+              </div>
+              {!editing ? (
+                <button onClick={() => { setEditing(true); setEditContent(active.content || ""); }}
+                  className="shrink-0 ml-3 flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors">
+                  <Edit2 size={12} /> Rediger
+                </button>
+              ) : (
+                <div className="shrink-0 ml-3 flex gap-2">
+                  <button onClick={saveChapter} disabled={saving}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-xl bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                    <Save size={12} /> {saving ? "Lagrer…" : "Lagre"}
+                  </button>
+                  <button onClick={() => setEditing(false)}
+                    className="px-3 py-1.5 text-xs rounded-xl border border-border/30 hover:bg-muted/50">Avbryt</button>
+                </div>
+              )}
+            </div>
+
+            {editing ? (
+              <textarea
+                value={editContent}
+                onChange={e => setEditContent(e.target.value)}
+                className="w-full min-h-[400px] rounded-xl border border-border/30 bg-muted/20 px-4 py-3 text-sm font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                placeholder="Skriv HTML-innhold her. Bruk [Bedriftsnavn], [Daglig leder] osv. som plassholdere."
+              />
+            ) : (
+              <div
+                className="article-content handbook-content prose prose-sm max-w-none text-foreground/90"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(active.content || "<p class='text-muted-foreground italic'>Ingen innhold ennå.</p>") }}
+              />
+            )}
+          </div>
+
+          {/* Prev/Next */}
+          <div className="flex justify-between">
+            <button onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }} disabled={activeIdx === 0}
+              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30">← Forrige</button>
+            <button onClick={() => { setActiveIdx(Math.min(chapters.length - 1, activeIdx + 1)); setEditing(false); }} disabled={activeIdx === chapters.length - 1}
+              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30">Neste →</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
