@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Download, Upload, FileText, Edit2, Search, ChevronLeft, ChevronRight,
-  BookOpen, Save, X, GripVertical, Eye
+  BookOpen, Save, X, Eye, Check, GripVertical
 } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 import DOMPurify from "dompurify";
@@ -64,7 +64,7 @@ const HrPanel = () => {
 };
 
 // ══════════════════════════════════════
-//  Personalhåndbok Tab
+//  Personalhåndbok Tab – Streamlined
 // ══════════════════════════════════════
 const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
   const [chapters, setChapters] = useState<HandbookChapter[]>([]);
@@ -76,7 +76,9 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
   const [showNew, setShowNew] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [saving, setSaving] = useState(false);
-  const [preview, setPreview] = useState(false);
+  const [titleEditing, setTitleEditing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const titleRef = useRef<HTMLInputElement>(null);
 
   const fetchChapters = async () => {
     const { data } = await supabase
@@ -106,6 +108,21 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
     setActive({ ...active, title: editTitle, content: editContent });
     setEditing(false);
     setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+    fetchChapters();
+  };
+
+  const saveTitle = async () => {
+    if (!active || !editTitle.trim()) return;
+    setSaving(true);
+    await supabase
+      .from("hr_handbook")
+      .update({ title: editTitle } as any)
+      .eq("id", active.id);
+    setActive({ ...active, title: editTitle });
+    setTitleEditing(false);
+    setSaving(false);
     fetchChapters();
   };
 
@@ -129,6 +146,14 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
   const prev = activeIdx > 0 ? chapters[activeIdx - 1] : null;
   const next = activeIdx < chapters.length - 1 ? chapters[activeIdx + 1] : null;
 
+  // Quick toggle edit
+  const startEditing = () => {
+    if (!active) return;
+    setEditing(true);
+    setEditContent(active.content || "");
+    setEditTitle(active.title);
+  };
+
   return (
     <div className="flex gap-5 h-[calc(100vh-14rem)]">
       {/* Sidebar */}
@@ -149,7 +174,7 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
           {filtered.map((ch, i) => (
             <button
               key={ch.id}
-              onClick={() => { setActive(ch); setEditing(false); setPreview(false); }}
+              onClick={() => { setActive(ch); setEditing(false); setTitleEditing(false); }}
               className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center gap-2 group ${
                 active?.id === ch.id
                   ? "bg-primary/10 text-primary"
@@ -207,39 +232,60 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
       <div className="flex-1 flex flex-col min-w-0 glass rounded-2xl border border-border/20 overflow-hidden">
         {active ? (
           <>
-            {/* Chapter header */}
-            <div className="px-5 py-3 border-b border-border/10 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Kapittel {activeIdx + 1}</p>
-                {editing ? (
-                  <input
-                    value={editTitle}
-                    onChange={e => setEditTitle(e.target.value)}
-                    className="text-lg font-heading font-medium bg-transparent border-b border-primary/30 focus:outline-none mt-0.5 w-full"
-                  />
+            {/* Chapter header — click title to rename */}
+            <div className="px-5 py-3 border-b border-border/10 flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5">Kapittel {activeIdx + 1}</p>
+                {titleEditing && isAdmin ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={titleRef}
+                      value={editTitle}
+                      onChange={e => setEditTitle(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") saveTitle(); if (e.key === "Escape") setTitleEditing(false); }}
+                      autoFocus
+                      className="text-lg font-heading font-medium bg-transparent border-b-2 border-primary/40 focus:outline-none w-full"
+                    />
+                    <button onClick={saveTitle} className="shrink-0 h-7 w-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90">
+                      <Check size={13} />
+                    </button>
+                    <button onClick={() => setTitleEditing(false)} className="shrink-0 h-7 w-7 rounded-lg border border-border/20 text-muted-foreground flex items-center justify-center hover:text-foreground">
+                      <X size={13} />
+                    </button>
+                  </div>
                 ) : (
-                  <h2 className="text-lg font-heading font-medium mt-0.5">{active.title}</h2>
+                  <h2
+                    className={`text-lg font-heading font-medium truncate ${isAdmin ? "cursor-pointer hover:text-primary transition-colors" : ""}`}
+                    onClick={() => {
+                      if (!isAdmin) return;
+                      setEditTitle(active.title);
+                      setTitleEditing(true);
+                    }}
+                    title={isAdmin ? "Klikk for å endre tittel" : ""}
+                  >
+                    {active.title}
+                    {isAdmin && <Edit2 size={11} className="inline ml-2 opacity-30" />}
+                  </h2>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                {saved && (
+                  <span className="text-[11px] text-emerald-500 flex items-center gap-1 animate-in fade-in">
+                    <Check size={12} /> Lagret
+                  </span>
+                )}
                 {isAdmin && !editing && (
                   <button
-                    onClick={() => { setEditing(true); setEditContent(active.content || ""); setEditTitle(active.title); setPreview(false); }}
+                    onClick={startEditing}
                     className="h-8 px-4 rounded-xl bg-primary/10 text-primary text-xs font-medium flex items-center gap-1.5 hover:bg-primary/20 transition-all"
                   >
-                    <Edit2 size={12} /> Rediger
+                    <Edit2 size={12} /> Rediger innhold
                   </button>
                 )}
                 {editing && (
                   <>
-                    <button
-                      onClick={() => setPreview(!preview)}
-                      className={`h-8 px-3 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
-                        preview ? "bg-primary/10 text-primary" : "border border-border/20 text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Eye size={12} /> Forhåndsvis
-                    </button>
                     <button
                       onClick={saveChapter}
                       disabled={saving}
@@ -260,21 +306,43 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
 
             {/* Chapter content */}
             <div className="flex-1 overflow-y-auto">
-              {editing && !preview ? (
+              {editing ? (
                 <RichTextEditor
                   content={editContent}
                   onChange={setEditContent}
                   placeholder="Skriv kapittelinnholdet her…"
                 />
               ) : (
-                <div className="p-6">
-                  {(editing ? editContent : active.content) ? (
-                    <div
-                      className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-heading prose-img:rounded-xl prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-a:text-primary"
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(editing ? editContent : active.content || "") }}
-                    />
+                <div
+                  className="p-6 cursor-pointer group"
+                  onDoubleClick={() => isAdmin && startEditing()}
+                  title={isAdmin ? "Dobbeltklikk for å redigere" : ""}
+                >
+                  {active.content ? (
+                    <>
+                      {isAdmin && (
+                        <p className="text-[10px] text-muted-foreground/40 mb-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Dobbeltklikk for å redigere
+                        </p>
+                      )}
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-heading prose-img:rounded-xl prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-a:text-primary"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(active.content) }}
+                      />
+                    </>
                   ) : (
-                    <p className="text-sm text-muted-foreground italic">Ingen innhold ennå. {isAdmin ? "Klikk \"Rediger\" for å legge til innhold." : ""}</p>
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                      <FileText size={32} strokeWidth={1} className="text-muted-foreground/20 mb-3" />
+                      <p className="text-sm text-muted-foreground">Ingen innhold ennå</p>
+                      {isAdmin && (
+                        <button
+                          onClick={startEditing}
+                          className="mt-3 px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-all"
+                        >
+                          <Edit2 size={12} className="inline mr-1.5" /> Legg til innhold
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -316,7 +384,7 @@ const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
 };
 
 // ══════════════════════════════════════
-//  HR Documents Tab
+//  HR Documents Tab (unchanged)
 // ══════════════════════════════════════
 const DocumentsTab = ({ isAdmin }: { isAdmin: boolean }) => {
   const [items, setItems] = useState<HrResource[]>([]);
