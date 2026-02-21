@@ -252,9 +252,8 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
           return (
             <div key={step.id} className="flex items-center flex-1 last:flex-initial">
               <button
-                onClick={() => i <= currentStep && setCurrentStep(i)}
+                onClick={() => setCurrentStep(i)}
                 className="flex flex-col items-center gap-1.5 group"
-                disabled={i > currentStep}
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                   active
