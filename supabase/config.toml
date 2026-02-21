@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.contact-submit]
 verify_jwt = false
+
+[functions.reset-password]
+verify_jwt = false
+
+[functions.sitemap]
+verify_jwt = false

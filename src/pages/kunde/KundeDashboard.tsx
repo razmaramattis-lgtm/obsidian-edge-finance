@@ -10,7 +10,8 @@ import {
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
   Download, Building2, Calculator, Trash2, Eye, MoreVertical,
-  Scale, AlertTriangle, ShieldCheck, Lock, Heart
+  Scale, AlertTriangle, ShieldCheck, Lock, Heart,
+  CheckSquare, Square, Key, Check, Settings
 } from "lucide-react";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
@@ -25,7 +26,7 @@ import {
   CartesianGrid, Tooltip, BarChart, Bar
 } from "recharts";
 
-type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
+type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator" | "settings";
 
 interface NavItem {
   id: Panel;
@@ -46,6 +47,7 @@ const navItems: NavItem[] = [
   { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: Lock, group: "HR og personal" },
   { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: Heart, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
+  { id: "settings", label: "Innstillinger", icon: Settings, group: "Konto" },
 ];
 
 const KundeDashboard = () => {
@@ -121,6 +123,7 @@ const KundeDashboard = () => {
       case "digital-sikkerhet": return <DocumentGenerator config={digitalSikkerhetConfig} />;
       case "psykososialt": return <DocumentGenerator config={psykososialtConfig} />;
       case "calculator": return <AnsettelsesKalkulator />;
+      case "settings": return <CustomerSettingsPanel />;
       case "booking": return <BookingPanel />;
       case "partners": return <PartnersPanel />;
       default: return <OverviewPanel />;
@@ -308,6 +311,61 @@ const OverviewPanel = () => {
   );
 };
 
+// ========== CUSTOMER SETTINGS PANEL ==========
+const CustomerSettingsPanel = () => {
+  const { profile } = useAuth();
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const changePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) { setError("Passordene stemmer ikke overens."); return; }
+    if (newPassword.length < 6) { setError("Passord må være minst 6 tegn."); return; }
+    setLoading(true); setError(""); setSuccess("");
+    const { error: err } = await supabase.auth.updateUser({ password: newPassword });
+    if (err) { setError("Kunne ikke oppdatere passordet."); }
+    else { setSuccess("Passordet er oppdatert!"); setNewPassword(""); setConfirmPassword(""); }
+    setLoading(false);
+  };
+
+  return (
+    <div className="space-y-6 max-w-md">
+      <div className="glass rounded-2xl p-5 border border-border/20">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
+            {profile?.name?.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="font-medium">{profile?.name}</p>
+            <p className="text-xs text-muted-foreground">{profile?.email}</p>
+          </div>
+        </div>
+      </div>
+      <div className="glass rounded-2xl p-5 border border-border/20">
+        <div className="flex items-center gap-2 mb-5">
+          <Key size={16} className="text-primary" strokeWidth={1.5} />
+          <h3 className="font-medium">Endre passord</h3>
+        </div>
+        <form onSubmit={changePassword} className="space-y-3">
+          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nytt passord" required
+            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Bekreft nytt passord" required
+            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          {error && <p className="text-destructive text-xs">{error}</p>}
+          {success && <div className="flex items-center gap-2 text-xs text-primary"><Check size={13} /> {success}</div>}
+          <button type="submit" disabled={loading}
+            className="w-full h-10 rounded-xl bg-primary text-primary-foreground text-sm hover:opacity-90 disabled:opacity-50 transition-all">
+            {loading ? "Oppdaterer…" : "Oppdater passord"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // ========== DOCUMENTS PANEL ==========
 const DocumentsPanel = () => {
   const [docs, setDocs] = useState<any[]>([]);
@@ -315,6 +373,7 @@ const DocumentsPanel = () => {
   const [activeCategory, setActiveCategory] = useState<string>("Alle");
   const [openDoc, setOpenDoc] = useState<any>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     const { data } = await supabase

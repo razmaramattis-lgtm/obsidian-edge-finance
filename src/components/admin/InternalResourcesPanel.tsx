@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Edit2, Download } from "lucide-react";
+import { Plus, Trash2, Edit2, Download, CheckSquare, Square } from "lucide-react";
+import { toast } from "sonner";
 
 interface InternalResource {
   id: string;
@@ -21,30 +22,27 @@ const InternalResourcesPanel = () => {
   const [form, setForm] = useState({ title: "", description: "", category: "Generelt" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  
 
-  const fetch = async () => {
+  const fetchData = async () => {
     const { data } = await supabase.from("internal_resources").select("*").order("created_at", { ascending: false });
     setItems((data as InternalResource[]) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
     let fileData: { file_url?: string; file_name?: string } = {};
-
     if (selectedFile) {
       const path = `internal/${Date.now()}-${selectedFile.name}`;
       const { data: ud } = await supabase.storage.from("internal-docs").upload(path, selectedFile);
-      if (ud) {
-        fileData = { file_url: path, file_name: selectedFile.name };
-      }
+      if (ud) fileData = { file_url: path, file_name: selectedFile.name };
     }
-
     if (editing) {
       await supabase.from("internal_resources").update({ ...form, ...fileData }).eq("id", editing.id);
     } else {
@@ -52,26 +50,68 @@ const InternalResourcesPanel = () => {
     }
     setShowForm(false); setEditing(null); setSelectedFile(null);
     setForm({ title: "", description: "", category: "Generelt" });
-    fetch();
+    fetchData();
     setUploading(false);
   };
 
   const del = async (id: string) => {
     if (!confirm("Slett ressurs?")) return;
     await supabase.from("internal_resources").delete().eq("id", id);
-    fetch();
+    fetchData();
+  };
+
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Slett ${selected.size} valgte ressurser?`)) return;
+    setDeleting(true);
+    for (const id of selected) {
+      await supabase.from("internal_resources").delete().eq("id", id);
+    }
+    toast.success(`${selected.size} ressurser slettet`);
+    setSelected(new Set());
+    fetchData();
+    setDeleting(false);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    setSelected(selected.size === items.length ? new Set() : new Set(items.map(i => i.id)));
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">Interne ressurser — for alle ansatte</p>
-        <button onClick={() => { setShowForm(true); setEditing(null); setForm({ title: "", description: "", category: "Generelt" }); }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90">
-          <Plus size={14} /> Legg til
-        </button>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Interne ressurser — for alle ansatte</p>
+          {selected.size > 0 && (
+            <button onClick={bulkDelete} disabled={deleting}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-50">
+              <Trash2 size={13} /> Slett {selected.size} valgte
+            </button>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {items.length > 0 && (
+            <button onClick={toggleAll}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              {selected.size === items.length ? <CheckSquare size={13} /> : <Square size={13} />}
+              {selected.size === items.length ? "Fjern alle" : "Velg alle"}
+            </button>
+          )}
+          <button onClick={() => { setShowForm(true); setEditing(null); setForm({ title: "", description: "", category: "Generelt" }); }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90">
+            <Plus size={14} /> Legg til
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -100,10 +140,17 @@ const InternalResourcesPanel = () => {
 
       <div className="space-y-2">
         {items.map(item => (
-          <div key={item.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium">{item.title}</p>
-              <p className="text-xs text-muted-foreground">{item.category}{item.description ? ` · ${item.description}` : ""}</p>
+          <div key={item.id} className={`glass rounded-2xl px-5 py-4 border flex items-center justify-between gap-4 transition-colors ${
+            selected.has(item.id) ? "border-primary/40 bg-primary/5" : "border-border/20"
+          }`}>
+            <div className="flex items-center gap-3">
+              <button onClick={() => toggleSelect(item.id)} className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                {selected.has(item.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
+              </button>
+              <div>
+                <p className="text-sm font-medium">{item.title}</p>
+                <p className="text-xs text-muted-foreground">{item.category}{item.description ? ` · ${item.description}` : ""}</p>
+              </div>
             </div>
             <div className="flex gap-2">
               {item.file_url && <button onClick={async () => { const { data } = await supabase.storage.from("internal-docs").createSignedUrl(item.file_url, 3600); if (data?.signedUrl) window.open(data.signedUrl, "_blank"); }} className="text-muted-foreground hover:text-primary"><Download size={14} /></button>}
