@@ -151,7 +151,7 @@ const Skattekalender = () => {
   return (
     <>
       <Helmet>
-        <title>Skattekalender – Alle frister for næringsdrivende</title>
+        <title>Skatteetatens kalender – Alle frister for næringsdrivende</title>
         <meta name="description" content="Komplett oversikt over skattefrister, mva-frister og innleveringsfrister for AS, ENK og arbeidsgivere. Alltid oppdatert fra Skatteetaten." />
       </Helmet>
 
@@ -166,7 +166,7 @@ const Skattekalender = () => {
             <div className="max-w-3xl">
               <div className="flex items-center gap-2 mb-4">
                 <CalendarClock size={18} className="text-primary" />
-                <span className="text-xs tracking-[0.2em] uppercase text-primary font-medium">Skattekalender</span>
+                <span className="text-xs tracking-[0.2em] uppercase text-primary font-medium">Skatteetatens kalender</span>
               </div>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-4">
                 Aldri gå glipp av en <span className="text-primary">frist</span>
