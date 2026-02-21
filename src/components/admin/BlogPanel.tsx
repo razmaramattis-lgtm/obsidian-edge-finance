@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Plus, Trash2, Edit2, Pin, Eye, EyeOff, ExternalLink, Share2,
-  Image as ImageIcon, X, ArrowLeft, Search, Filter
+  Image as ImageIcon, X, ArrowLeft, Search, Filter, MonitorPlay
 } from "lucide-react";
+import DOMPurify from "dompurify";
 import RichTextEditor from "./RichTextEditor";
 import SeoChecker from "./SeoChecker";
 
@@ -34,6 +35,7 @@ const BlogPanel = () => {
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [showSeo, setShowSeo] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "published" | "draft">("all");
@@ -153,6 +155,10 @@ const BlogPanel = () => {
             <ArrowLeft size={15} /> Tilbake til innlegg
           </button>
           <div className="flex items-center gap-2">
+            <button onClick={() => setShowPreview(!showPreview)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm border transition-colors ${showPreview ? "bg-secondary/20 text-secondary border-secondary/30" : "border-border/30 hover:bg-muted/50"}`}>
+              <MonitorPlay size={14} /> {showPreview ? "Rediger" : "Forhåndsvis"}
+            </button>
             <button onClick={() => { setForm({ ...form, published: false }); save(); }}
               className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50 transition-colors">
               Lagre utkast
@@ -163,6 +169,40 @@ const BlogPanel = () => {
             </button>
           </div>
         </div>
+
+        {/* Preview Mode */}
+        {showPreview ? (
+          <div className="glass rounded-2xl border border-border/20 p-6 md:p-10 max-w-3xl mx-auto">
+            {form.image_url && (
+              <img src={form.image_url} alt={form.title} className="w-full aspect-video object-cover rounded-2xl mb-6 border border-border/20" />
+            )}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-[9px] tracking-widest uppercase text-primary border border-primary/30 px-2.5 py-0.5 rounded-full">{form.category}</span>
+              {form.pinned && <span className="text-[9px] text-secondary">📌 Festet</span>}
+              <span className={`text-[9px] px-2 py-0.5 rounded-full ${form.published ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                {form.published ? "Publisert" : "Utkast"}
+              </span>
+            </div>
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-4">
+              {form.title || <span className="text-muted-foreground/30">Ingen tittel</span>}
+            </h1>
+            {form.excerpt && <p className="text-lg text-muted-foreground font-light leading-relaxed mb-6">{form.excerpt}</p>}
+            <div className="flex items-center gap-3 mb-8 pb-6 border-b border-border/20">
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-medium">A</div>
+              <div>
+                <p className="text-sm font-medium">Avargo</p>
+                <p className="text-xs text-muted-foreground">Forhåndsvisning</p>
+              </div>
+            </div>
+            <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-heading prose-a:text-primary prose-img:rounded-2xl prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-blockquote:py-1 prose-blockquote:px-6"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(form.content || "<p class='text-muted-foreground/30'>Ingen innhold ennå…</p>") }} />
+            {form.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-8 pt-6 border-t border-border/20">
+                {form.tags.map(t => <span key={t} className="text-[10px] px-2.5 py-1 rounded-lg border border-border/20 text-muted-foreground">{t}</span>)}
+              </div>
+            )}
+          </div>
+        ) : (
 
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
           {/* Main Editor Area */}
@@ -279,6 +319,7 @@ const BlogPanel = () => {
             </div>
           </div>
         </div>
+        )}
       </div>
     );
   }
