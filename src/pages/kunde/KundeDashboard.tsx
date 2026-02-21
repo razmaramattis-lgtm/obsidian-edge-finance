@@ -330,10 +330,10 @@ const HandbookPanel = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const load = async () => {
-      // First try customer-specific chapters
       const { data: custChapters } = await supabase
         .from("customer_handbook_chapters")
         .select("*")
@@ -343,7 +343,6 @@ const HandbookPanel = () => {
         setChapters(custChapters);
         setIsTemplate(false);
       } else {
-        // Fall back to the standard hr_handbook template (read-only until they edit)
         const { data: templateChapters } = await supabase
           .from("hr_handbook")
           .select("*")
@@ -357,7 +356,6 @@ const HandbookPanel = () => {
   }, []);
 
   const initAndEdit = async (chapterIdx: number) => {
-    // Copy all chapters from hr_handbook to customer_handbook_chapters first
     const { data: company } = await supabase
       .from("customer_companies")
       .select("id")
@@ -401,7 +399,23 @@ const HandbookPanel = () => {
     setChapters(updated);
     setEditing(false);
     setSaving(false);
+    toast.success("Kapittel lagret");
   };
+
+  // Strip HTML for plain-text search
+  const stripHtml = (html: string) => (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+
+  // Find chapters matching search
+  const matchingIndices = search.trim()
+    ? chapters
+        .map((ch, i) => {
+          const q = search.toLowerCase();
+          const inTitle = (ch.title || "").toLowerCase().includes(q);
+          const inContent = stripHtml(ch.content || "").toLowerCase().includes(q);
+          return inTitle || inContent ? i : -1;
+        })
+        .filter(i => i >= 0)
+    : [];
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
@@ -417,105 +431,210 @@ const HandbookPanel = () => {
 
   const active = chapters[activeIdx];
 
-  return (
-    <div className="space-y-4">
-      {isTemplate && (
-        <div className="glass rounded-2xl px-5 py-3 border border-amber-500/20 bg-amber-500/5">
-          <p className="text-xs text-amber-600">Du ser standardmalen fra Avargo. Klikk «Rediger» på et kapittel for å opprette din egen tilpassede versjon.</p>
-        </div>
-      )}
+  // Highlight editable placeholders like [Bedriftsnavn], [Daglig leder] etc.
+  const renderContentWithEditableFields = (html: string) => {
+    if (!html) return "<p class='text-muted-foreground italic'>Ingen innhold ennå.</p>";
+    // Replace [placeholder] patterns with styled spans
+    return html.replace(
+      /\[([^\]]+)\]/g,
+      '<span class="editable-field" data-field="$1" contenteditable="false">[$1]</span>'
+    );
+  };
 
-      <div className="flex gap-6">
-        {/* Sidebar */}
-        <div className="w-56 shrink-0 hidden md:block space-y-1">
-          {chapters.map((ch, i) => (
+  // Highlight search matches in rendered content
+  const highlightSearch = (html: string) => {
+    if (!search.trim()) return html;
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return html.replace(
+      new RegExp(`(${escaped})`, 'gi'),
+      '<mark class="bg-primary/20 text-foreground rounded px-0.5">$1</mark>'
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header with search */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="font-heading text-2xl md:text-3xl">Personalhåndbok</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            {isTemplate ? "Standardmal fra Avargo — klikk «Rediger» for å tilpasse." : `${chapters.filter(c => c.customized).length} av ${chapters.length} kapitler tilpasset`}
+          </p>
+        </div>
+        <div className="relative w-full sm:w-72">
+          <input
+            type="text"
+            placeholder="Søk i håndboken…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 placeholder:text-muted-foreground/50"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Search results */}
+      {search.trim() && (
+        <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
+          <p className="text-xs text-muted-foreground">{matchingIndices.length} treff for «{search}»</p>
+          {matchingIndices.length === 0 && (
+            <p className="text-sm text-muted-foreground/60 italic">Ingen kapitler inneholder søkeordet.</p>
+          )}
+          {matchingIndices.map(i => (
             <button
-              key={ch.id}
-              onClick={() => { setActiveIdx(i); setEditing(false); }}
-              className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
-                i === activeIdx ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              }`}
+              key={chapters[i].id}
+              onClick={() => { setActiveIdx(i); setEditing(false); setSearch(""); }}
+              className="w-full text-left px-4 py-2.5 rounded-xl hover:bg-muted/50 transition-colors"
             >
-              <span className="font-light">{ch.title}</span>
-              {ch.customized && <span className="ml-1 text-[9px] text-primary">●</span>}
+              <p className="text-sm font-medium">{chapters[i].title}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{stripHtml(chapters[i].content || "").slice(0, 120)}…</p>
             </button>
           ))}
         </div>
+      )}
 
-        {/* Content */}
-        <div className="flex-1 space-y-4">
+      {isTemplate && (
+        <div className="rounded-2xl px-5 py-3 border border-amber-500/20 bg-amber-500/5">
+          <p className="text-xs text-amber-600">Du ser standardmalen fra Avargo. Klikk «Rediger» på et kapittel for å opprette din egen tilpassede versjon. Felter markert med <span className="editable-field-preview">[klammeparentes]</span> bør tilpasses til din bedrift.</p>
+        </div>
+      )}
+
+      <div className="flex gap-8">
+        {/* Table of contents sidebar */}
+        <div className="w-56 shrink-0 hidden md:block">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 mb-3 px-3">Innhold</p>
+          <nav className="space-y-0.5">
+            {chapters.map((ch, i) => (
+              <button
+                key={ch.id}
+                onClick={() => { setActiveIdx(i); setEditing(false); }}
+                className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
+                  i === activeIdx
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50 font-light"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground/40 w-4 text-right shrink-0">{i + 1}</span>
+                  <span className="line-clamp-1">{ch.title}</span>
+                </span>
+                {ch.customized && <span className="ml-6 text-[9px] text-primary">Tilpasset</span>}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Article content area — blog-style */}
+        <div className="flex-1 min-w-0">
+          {/* Mobile chapter selector */}
           <select
-            className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
+            className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm mb-4"
             value={activeIdx}
             onChange={e => { setActiveIdx(Number(e.target.value)); setEditing(false); }}
           >
             {chapters.map((ch, i) => (
-              <option key={ch.id} value={i}>{ch.title}</option>
+              <option key={ch.id} value={i}>{i + 1}. {ch.title}</option>
             ))}
           </select>
 
-          <div className="glass rounded-2xl p-6 border border-border/20">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-heading text-lg">{active.title}</h3>
-              {!editing ? (
-                <button
-                  onClick={() => {
-                    if (isTemplate) {
-                      initAndEdit(activeIdx);
-                    } else {
-                      setEditing(true);
-                      setEditContent(active.content || "");
-                    }
-                  }}
-                  disabled={saving}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground disabled:opacity-50"
-                >
-                  {saving ? "Oppretter…" : "Rediger"}
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <button onClick={saveContent} disabled={saving}
-                    className="px-3 py-1.5 text-xs rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
-                    {saving ? "Lagrer…" : "Lagre"}
+          <motion.div
+            key={active.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Chapter header — newspaper/blog style */}
+            <div className="mb-8 pb-6 border-b border-border/20">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-[11px] tracking-[0.3em] uppercase font-semibold text-primary">
+                  Kapittel {activeIdx + 1}
+                </span>
+                {active.customized && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-primary/10 text-primary">Tilpasset</span>
+                )}
+              </div>
+
+              <h1 className="font-heading text-[2rem] sm:text-[2.5rem] md:text-[2.8rem] leading-[1.1] tracking-tight mb-4">
+                {active.title}
+              </h1>
+
+              <div className="flex items-center gap-4">
+                {!editing ? (
+                  <button
+                    onClick={() => {
+                      if (isTemplate) {
+                        initAndEdit(activeIdx);
+                      } else {
+                        setEditing(true);
+                        setEditContent(active.content || "");
+                      }
+                    }}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-xs rounded-xl border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    {saving ? "Oppretter…" : "Rediger kapittel"}
                   </button>
-                  <button onClick={() => setEditing(false)}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50">
-                    Avbryt
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={saveContent} disabled={saving}
+                      className="px-4 py-2 text-xs rounded-xl bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-colors">
+                      {saving ? "Lagrer…" : "Lagre endringer"}
+                    </button>
+                    <button onClick={() => setEditing(false)}
+                      className="px-4 py-2 text-xs rounded-xl border border-border/30 hover:bg-muted/50 transition-colors">
+                      Avbryt
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
+            {/* Chapter body */}
             {editing ? (
               <textarea
                 value={editContent}
                 onChange={e => setEditContent(e.target.value)}
-                className="w-full min-h-[400px] rounded-xl border border-border/30 bg-muted/30 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                className="w-full min-h-[500px] rounded-2xl border border-border/30 bg-muted/20 px-6 py-5 text-sm leading-relaxed font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                placeholder="Skriv innholdet her. Bruk [Bedriftsnavn], [Daglig leder] osv. som plassholdere kunden kan fylle inn."
               />
             ) : (
               <div
-                className="prose prose-sm max-w-none text-foreground/90"
-                dangerouslySetInnerHTML={{ __html: active.content || "<p class='text-muted-foreground'>Ingen innhold ennå.</p>" }}
+                className="article-content handbook-content"
+                dangerouslySetInnerHTML={{
+                  __html: highlightSearch(renderContentWithEditableFields(active.content || ""))
+                }}
               />
             )}
-          </div>
 
-          <div className="flex justify-between">
-            <button
-              onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }}
-              disabled={activeIdx === 0}
-              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
-            >
-              ← Forrige
-            </button>
-            <button
-              onClick={() => { setActiveIdx(Math.min(chapters.length - 1, activeIdx + 1)); setEditing(false); }}
-              disabled={activeIdx === chapters.length - 1}
-              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
-            >
-              Neste →
-            </button>
-          </div>
+            {/* Prev / Next navigation — blog style */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-border/20">
+              {activeIdx > 0 ? (
+                <button
+                  onClick={() => { setActiveIdx(activeIdx - 1); setEditing(false); }}
+                  className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all text-left"
+                >
+                  <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">← Forrige kapittel</span>
+                  <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2 font-heading text-base">
+                    {chapters[activeIdx - 1].title}
+                  </p>
+                </button>
+              ) : <div />}
+              {activeIdx < chapters.length - 1 ? (
+                <button
+                  onClick={() => { setActiveIdx(activeIdx + 1); setEditing(false); }}
+                  className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all text-right"
+                >
+                  <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">Neste kapittel →</span>
+                  <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2 font-heading text-base">
+                    {chapters[activeIdx + 1].title}
+                  </p>
+                </button>
+              ) : <div />}
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
