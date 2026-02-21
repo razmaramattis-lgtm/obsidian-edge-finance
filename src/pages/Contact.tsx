@@ -1,13 +1,136 @@
-import { useState } from "react";
-import { ArrowRight, Check, Shield } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const inputClass = "w-full bg-card/40 backdrop-blur-xl border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/30 focus:shadow-lg focus:shadow-primary/5 transition-all duration-500 font-light";
 const labelClass = "text-[10px] tracking-[0.25em] uppercase text-muted-foreground block mb-2";
 
+type BrregEnhet = {
+  organisasjonsnummer: string;
+  navn: string;
+  naeringskode1?: { kode: string; beskrivelse: string };
+  forretningsadresse?: { poststed?: string };
+  institusjonellSektorkode?: { beskrivelse: string };
+};
+
+type RolleGruppe = {
+  type: { kode: string; beskrivelse: string };
+  roller: { type: { beskrivelse: string }; person?: { navn: { fornavn?: string; mellomnavn?: string; etternavn?: string } } }[];
+};
+
 const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [companySearch, setCompanySearch] = useState("");
+  const [searchResults, setSearchResults] = useState<BrregEnhet[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
+  const [dagligLeder, setDagligLeder] = useState("");
+  const [loadingRoles, setLoadingRoles] = useState(false);
+  const [telefon, setTelefon] = useState("");
+  const [epost, setEpost] = useState("");
+  const [navn, setNavn] = useState("");
+  const [bransje, setBransje] = useState("");
+  const [omsetning, setOmsetning] = useState("");
+  const [frustrasjon, setFrustrasjon] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Search Brreg API
+  useEffect(() => {
+    if (companySearch.length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(
+          `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(companySearch)}&size=8&fraAntallAnsatte=0`
+        );
+        const data = await res.json();
+        const enheter: BrregEnhet[] = data._embedded?.enheter || [];
+        setSearchResults(enheter);
+        setShowDropdown(enheter.length > 0);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    };
+  }, [companySearch]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const fetchRoles = async (orgnr: string) => {
+    setLoadingRoles(true);
+    try {
+      const res = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgnr}/roller`);
+      const data = await res.json();
+      const rollegrupper: RolleGruppe[] = data?.rollegrupper || [];
+      const dagligLederGruppe = rollegrupper.find(
+        (rg) => rg.type?.kode === "DAGL" || rg.type?.beskrivelse?.toLowerCase().includes("daglig leder")
+      );
+      if (dagligLederGruppe?.roller?.[0]?.person?.navn) {
+        const n = dagligLederGruppe.roller[0].person.navn;
+        const parts = [n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean);
+        setDagligLeder(parts.join(" "));
+      } else {
+        setDagligLeder("");
+      }
+    } catch {
+      setDagligLeder("");
+    } finally {
+      setLoadingRoles(false);
+    }
+  };
+
+  const selectCompany = (enhet: BrregEnhet) => {
+    setSelectedCompany(enhet);
+    setCompanySearch(enhet.navn);
+    setShowDropdown(false);
+    fetchRoles(enhet.organisasjonsnummer);
+    // Pre-fill navn with daglig leder once loaded
+    if (enhet.naeringskode1?.beskrivelse) {
+      // Try to map naeringskode to a bransje option
+      const desc = enhet.naeringskode1.beskrivelse.toLowerCase();
+      if (desc.includes("tech") || desc.includes("program") || desc.includes("data") || desc.includes("it-")) setBransje("Tech & SaaS");
+      else if (desc.includes("eiendom") || desc.includes("utleie")) setBransje("Eiendom & Utvikling");
+      else if (desc.includes("holding") || desc.includes("invest")) setBransje("Holding & Investering");
+      else if (desc.includes("konsulent") || desc.includes("rådgiv")) setBransje("Consulting & Rådgivning");
+      else if (desc.includes("landbruk") || desc.includes("jord")) setBransje("Landbruk");
+      else if (desc.includes("handel") || desc.includes("butikk") || desc.includes("salg")) setBransje("Varehandel");
+      else if (desc.includes("bygg") || desc.includes("anlegg") || desc.includes("entre")) setBransje("Bygg & Anlegg");
+      else if (desc.includes("netthandel") || desc.includes("e-handel") || desc.includes("nettbutikk")) setBransje("Nettbutikk & E-commerce");
+      else if (desc.includes("helse") || desc.includes("lege") || desc.includes("tann") || desc.includes("velv")) setBransje("Helse & Velvære");
+      else setBransje("Annet");
+    }
+  };
+
+  const clearCompany = () => {
+    setSelectedCompany(null);
+    setCompanySearch("");
+    setDagligLeder("");
+    setBransje("");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,21 +210,153 @@ const Contact = () => {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
-                <div>
-                  <label className={labelClass}>Navn</label>
-                  <input required type="text" className={inputClass} placeholder="Ditt fulle navn" />
+                {/* Company Search */}
+                <div ref={dropdownRef} className="relative">
+                  <label className={labelClass}>Søk opp selskap</label>
+                  <div className="relative">
+                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                    <input
+                      type="text"
+                      value={companySearch}
+                      onChange={(e) => {
+                        setCompanySearch(e.target.value);
+                        if (selectedCompany) clearCompany();
+                      }}
+                      className={`${inputClass} pl-11`}
+                      placeholder="Skriv selskapets navn..."
+                    />
+                    {searching && (
+                      <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 animate-spin" />
+                    )}
+                  </div>
+
+                  {showDropdown && (
+                    <div className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden shadow-2xl">
+                      {searchResults.map((enhet) => (
+                        <button
+                          key={enhet.organisasjonsnummer}
+                          type="button"
+                          onClick={() => selectCompany(enhet)}
+                          className="w-full text-left px-4 py-3 hover:bg-primary/5 transition-colors border-b border-border/10 last:border-0"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Building2 size={14} className="text-primary/50 shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-foreground">{enhet.navn}</p>
+                              <p className="text-xs text-muted-foreground/60">
+                                Org.nr: {enhet.organisasjonsnummer}
+                                {enhet.forretningsadresse?.poststed && ` · ${enhet.forretningsadresse.poststed}`}
+                                {enhet.naeringskode1?.beskrivelse && ` · ${enhet.naeringskode1.beskrivelse}`}
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                {/* Selected company info */}
+                {selectedCompany && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-primary/5 border border-primary/10 rounded-2xl p-4 space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs tracking-[0.2em] uppercase text-primary/70 font-medium">Selskapsinformasjon</p>
+                      <button
+                        type="button"
+                        onClick={clearCompany}
+                        className="text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
+                      >
+                        Endre
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground/50 text-xs">Selskap</span>
+                        <p className="text-foreground font-medium">{selectedCompany.navn}</p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground/50 text-xs">Org.nr</span>
+                        <p className="text-foreground font-medium">{selectedCompany.organisasjonsnummer}</p>
+                      </div>
+                      {dagligLeder && (
+                        <div>
+                          <span className="text-muted-foreground/50 text-xs">Daglig leder</span>
+                          <p className="text-foreground font-medium">{dagligLeder}</p>
+                        </div>
+                      )}
+                      {loadingRoles && (
+                        <div className="flex items-center gap-2 text-muted-foreground/50 text-xs">
+                          <Loader2 size={12} className="animate-spin" /> Henter roller...
+                        </div>
+                      )}
+                      {selectedCompany.naeringskode1 && (
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground/50 text-xs">Næring</span>
+                          <p className="text-foreground font-medium text-xs">
+                            {selectedCompany.naeringskode1.kode} — {selectedCompany.naeringskode1.beskrivelse}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
                 <div>
-                  <label className={labelClass}>E-post</label>
-                  <input required type="email" className={inputClass} placeholder="din@epost.no" />
+                  <label className={labelClass}>Ditt navn</label>
+                  <input
+                    required
+                    type="text"
+                    value={navn}
+                    onChange={(e) => setNavn(e.target.value)}
+                    className={inputClass}
+                    placeholder="Ditt fulle navn"
+                  />
                 </div>
-                <div>
-                  <label className={labelClass}>Selskap</label>
-                  <input required type="text" className={inputClass} placeholder="Selskapets navn" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>E-post</label>
+                    <input
+                      required
+                      type="email"
+                      value={epost}
+                      onChange={(e) => setEpost(e.target.value)}
+                      className={inputClass}
+                      placeholder="din@epost.no"
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Telefon</label>
+                    <input
+                      required
+                      type="tel"
+                      value={telefon}
+                      onChange={(e) => setTelefon(e.target.value)}
+                      className={inputClass}
+                      placeholder="+47 000 00 000"
+                    />
+                  </div>
                 </div>
+
+                {!selectedCompany && (
+                  <div>
+                    <label className={labelClass}>Selskap</label>
+                    <input required type="text" className={inputClass} placeholder="Selskapets navn (eller søk ovenfor)" />
+                  </div>
+                )}
+
                 <div>
                   <label className={labelClass}>Bransje</label>
-                  <select required className={inputClass}>
+                  <select
+                    required
+                    value={bransje}
+                    onChange={(e) => setBransje(e.target.value)}
+                    className={inputClass}
+                  >
                     <option value="">Velg bransje</option>
                     <option>Tech & SaaS</option>
                     <option>Eiendom & Utvikling</option>
@@ -115,9 +370,15 @@ const Contact = () => {
                     <option>Annet</option>
                   </select>
                 </div>
+
                 <div>
                   <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
-                  <select required className={inputClass}>
+                  <select
+                    required
+                    value={omsetning}
+                    onChange={(e) => setOmsetning(e.target.value)}
+                    className={inputClass}
+                  >
                     <option value="">Velg ambisjonsnivå</option>
                     <option>Under 5 millioner</option>
                     <option>5–10 millioner</option>
@@ -126,15 +387,19 @@ const Contact = () => {
                     <option>Over 100 millioner</option>
                   </select>
                 </div>
+
                 <div>
                   <label className={labelClass}>Hva frustrerer deg mest med dagens regnskap?</label>
                   <textarea
                     required
                     rows={3}
+                    value={frustrasjon}
+                    onChange={(e) => setFrustrasjon(e.target.value)}
                     className={`${inputClass} resize-none`}
                     placeholder="Venter for lenge? Betaler for mye skatt? Føler du mangler kontroll?"
                   />
                 </div>
+
                 <button
                   type="submit"
                   className="group w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.01] transition-all duration-500 mt-2"
