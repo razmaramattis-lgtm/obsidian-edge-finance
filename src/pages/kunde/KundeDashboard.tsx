@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -331,6 +331,7 @@ const HandbookPanel = () => {
   const [saving, setSaving] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [search, setSearch] = useState("");
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -417,6 +418,106 @@ const HandbookPanel = () => {
         .filter(i => i >= 0)
     : [];
 
+  // Highlight editable placeholders like [Bedriftsnavn], [Daglig leder] etc.
+  const renderContentWithEditableFields = (html: string) => {
+    if (!html) return "<p class='text-muted-foreground italic'>Ingen innhold ennå.</p>";
+    return html.replace(
+      /\[([^\]]+)\]/g,
+      '<span class="editable-field" data-field="$1" role="button" tabindex="0" title="Klikk for å fylle inn">[$1]</span>'
+    );
+  };
+
+  // Handle inline field click — replace [placeholder] with user value directly in content
+  const handleFieldClick = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.classList.contains("editable-field")) return;
+    if (isTemplate) {
+      await initAndEdit(activeIdx);
+      return;
+    }
+
+    const fieldName = target.getAttribute("data-field") || "";
+    const currentText = target.textContent || "";
+    const isOriginal = currentText.startsWith("[") && currentText.endsWith("]");
+    
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = isOriginal ? "" : currentText;
+    input.placeholder = fieldName;
+    input.className = "inline-field-input";
+    input.style.cssText = `
+      display: inline-block;
+      min-width: 120px;
+      width: ${Math.max(120, fieldName.length * 10)}px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 2px solid hsl(var(--primary));
+      background: hsl(var(--primary) / 0.08);
+      color: hsl(var(--foreground));
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: 500;
+      outline: none;
+    `;
+
+    const saveField = async () => {
+      const newValue = input.value.trim();
+      if (!newValue) {
+        const span = document.createElement("span");
+        span.className = "editable-field";
+        span.setAttribute("data-field", fieldName);
+        span.setAttribute("role", "button");
+        span.setAttribute("tabindex", "0");
+        span.setAttribute("title", "Klikk for å fylle inn");
+        span.textContent = `[${fieldName}]`;
+        input.replaceWith(span);
+        return;
+      }
+
+      const span = document.createElement("span");
+      span.className = "editable-field editable-field--filled";
+      span.setAttribute("data-field", fieldName);
+      span.setAttribute("role", "button");
+      span.setAttribute("tabindex", "0");
+      span.setAttribute("title", `Klikk for å endre (${fieldName})`);
+      span.textContent = newValue;
+      input.replaceWith(span);
+
+      if (contentRef.current) {
+        const newHtml = contentRef.current.innerHTML;
+        const ch = chapters[activeIdx];
+        if (!ch) return;
+        await supabase.from("customer_handbook_chapters")
+          .update({ content: newHtml, customized: true })
+          .eq("id", ch.id);
+        const updated = [...chapters];
+        updated[activeIdx] = { ...ch, content: newHtml, customized: true };
+        setChapters(updated);
+        toast.success(`«${fieldName}» oppdatert`);
+      }
+    };
+
+    input.addEventListener("blur", saveField);
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") { ev.preventDefault(); input.blur(); }
+      if (ev.key === "Escape") { input.value = ""; input.blur(); }
+    });
+
+    target.replaceWith(input);
+    input.focus();
+    input.select();
+  }, [isTemplate, activeIdx, chapters]);
+
+  // Highlight search matches in rendered content
+  const highlightSearch = (html: string) => {
+    if (!search.trim()) return html;
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return html.replace(
+      new RegExp(`(${escaped})`, 'gi'),
+      '<mark class="bg-primary/20 text-foreground rounded px-0.5">$1</mark>'
+    );
+  };
+
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   if (chapters.length === 0) {
@@ -430,26 +531,6 @@ const HandbookPanel = () => {
   }
 
   const active = chapters[activeIdx];
-
-  // Highlight editable placeholders like [Bedriftsnavn], [Daglig leder] etc.
-  const renderContentWithEditableFields = (html: string) => {
-    if (!html) return "<p class='text-muted-foreground italic'>Ingen innhold ennå.</p>";
-    // Replace [placeholder] patterns with styled spans
-    return html.replace(
-      /\[([^\]]+)\]/g,
-      '<span class="editable-field" data-field="$1" contenteditable="false">[$1]</span>'
-    );
-  };
-
-  // Highlight search matches in rendered content
-  const highlightSearch = (html: string) => {
-    if (!search.trim()) return html;
-    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return html.replace(
-      new RegExp(`(${escaped})`, 'gi'),
-      '<mark class="bg-primary/20 text-foreground rounded px-0.5">$1</mark>'
-    );
-  };
 
   return (
     <div className="space-y-6">
@@ -602,6 +683,8 @@ const HandbookPanel = () => {
               />
             ) : (
               <div
+                ref={contentRef}
+                onClick={handleFieldClick}
                 className="article-content handbook-content"
                 dangerouslySetInnerHTML={{
                   __html: highlightSearch(renderContentWithEditableFields(active.content || ""))
