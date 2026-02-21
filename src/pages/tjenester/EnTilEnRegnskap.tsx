@@ -105,6 +105,7 @@ const EnTilEnRegnskap = () => {
     if (!selectedDate || !selectedTime || !selectedAdvisor) return;
     setSubmitting(true);
 
+    const bookingDate = format(selectedDate, "yyyy-MM-dd");
     const { error } = await supabase.from("bookings").insert({
       advisor_id: selectedAdvisor,
       customer_name: form.navn,
@@ -112,9 +113,27 @@ const EnTilEnRegnskap = () => {
       customer_phone: form.telefon,
       company_name: form.firma,
       message: form.melding || null,
-      booking_date: format(selectedDate, "yyyy-MM-dd"),
+      booking_date: bookingDate,
       booking_time: selectedTime,
     });
+
+    // Also send email notification
+    if (!error) {
+      try {
+        await supabase.functions.invoke("contact-submit", {
+          body: {
+            company_name: form.firma,
+            contact_person: form.navn,
+            email: form.epost,
+            phone: form.telefon,
+            message: `1-1 Regnskap booking: ${bookingDate} kl. ${selectedTime}${form.melding ? `\n\nMelding: ${form.melding}` : ""}`,
+            package: "1-1 Regnskap – Booking",
+          },
+        });
+      } catch (emailErr) {
+        console.error("Email notification error:", emailErr);
+      }
+    }
 
     setSubmitting(false);
     if (!error) setSubmitted(true);

@@ -90,7 +90,7 @@ const RichTextEditor = ({ content, onChange, onImageUpload, placeholder = "Skriv
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: "prose prose-lg dark:prose-invert max-w-none min-h-[400px] px-6 py-5 focus:outline-none prose-headings:font-heading prose-img:rounded-xl prose-img:my-6 prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:px-6 prose-a:text-primary prose-code:bg-muted/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm",
+        class: "prose prose-lg dark:prose-invert max-w-none min-h-[400px] px-6 py-5 focus:outline-none prose-headings:font-heading prose-headings:tracking-tight prose-h1:text-4xl prose-h1:mt-10 prose-h1:mb-4 prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-3 prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-2 prose-h4:text-xl prose-h4:mt-5 prose-h4:mb-2 prose-p:leading-relaxed prose-img:rounded-xl prose-img:my-6 prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:px-6 prose-a:text-primary prose-code:bg-muted/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-li:leading-relaxed",
       },
     },
   });

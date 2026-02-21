@@ -50,7 +50,20 @@ const KursDetalj = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await new Promise(r => setTimeout(r, 800));
+    try {
+      await supabase.functions.invoke("contact-submit", {
+        body: {
+          company_name: `Kursbestilling: ${course.name}`,
+          contact_person: form.name,
+          email: form.email,
+          phone: form.phone,
+          message: `Bestilling av kurs: ${course.name} (${course.category})`,
+          package: "Kursbestilling",
+        },
+      });
+    } catch (err) {
+      console.error("Submit error:", err);
+    }
     setSending(false);
     setSubmitted(true);
   };
