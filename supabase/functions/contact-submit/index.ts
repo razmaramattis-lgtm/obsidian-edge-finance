@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Minimal SMTP client using Deno TCP
+// Minimal SMTP client using Deno TLS
 async function sendEmail(opts: {
   hostname: string;
   port: number;
@@ -22,47 +22,67 @@ async function sendEmail(opts: {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
-  async function read(): Promise<string> {
+  async function readResponse(): Promise<string> {
+    let result = "";
     const buf = new Uint8Array(4096);
-    const n = await conn.read(buf);
-    return n ? decoder.decode(buf.subarray(0, n)) : "";
+    // Read until we get a complete response (line starting with "NNN " not "NNN-")
+    while (true) {
+      const n = await conn.read(buf);
+      if (!n) break;
+      result += decoder.decode(buf.subarray(0, n));
+      const lines = result.trim().split("\r\n");
+      const lastLine = lines[lines.length - 1];
+      // SMTP multi-line responses use "NNN-" continuation, final line uses "NNN "
+      if (/^\d{3} /.test(lastLine) || !/^\d{3}/.test(lastLine)) break;
+    }
+    return result;
   }
 
-  async function write(cmd: string): Promise<string> {
+  async function send(cmd: string): Promise<string> {
     await conn.write(encoder.encode(cmd + "\r\n"));
-    return await read();
+    const resp = await readResponse();
+    console.log(`SMTP > ${cmd.startsWith("AUTH") || cmd === btoa(opts.password) ? "[REDACTED]" : cmd}`);
+    console.log(`SMTP < ${resp.trim()}`);
+    return resp;
   }
 
-  // Read greeting
-  await read();
+  try {
+    // Read server greeting
+    const greeting = await readResponse();
+    console.log("SMTP greeting:", greeting.trim());
 
-  await write(`EHLO localhost`);
-  
-  // AUTH LOGIN
-  await write(`AUTH LOGIN`);
-  await write(btoa(opts.username));
-  await write(btoa(opts.password));
+    await send("EHLO localhost");
+    
+    const authResp = await send("AUTH LOGIN");
+    if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed: " + authResp);
+    
+    const userResp = await send(btoa(opts.username));
+    if (!userResp.startsWith("334")) throw new Error("AUTH username failed: " + userResp);
+    
+    const passResp = await send(btoa(opts.password));
+    if (!passResp.startsWith("235")) throw new Error("AUTH password failed: " + passResp);
 
-  await write(`MAIL FROM:<${opts.from}>`);
-  await write(`RCPT TO:<${opts.to}>`);
-  await write(`DATA`);
+    await send(`MAIL FROM:<${opts.from}>`);
+    await send(`RCPT TO:<${opts.to}>`);
+    await send("DATA");
 
-  const boundary = "boundary" + Date.now();
-  const message = [
-    `From: ${opts.from}`,
-    `To: ${opts.to}`,
-    `Subject: ${opts.subject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: text/html; charset=UTF-8`,
-    ``,
-    opts.html,
-    `.`,
-  ].join("\r\n");
+    const message = [
+      `From: ${opts.from}`,
+      `To: ${opts.to}`,
+      `Subject: ${opts.subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      opts.html,
+      `.`,
+    ].join("\r\n");
 
-  const resp = await write(message);
-  await write(`QUIT`);
-  conn.close();
-  return resp;
+    const result = await send(message);
+    await send("QUIT");
+    return result;
+  } finally {
+    try { conn.close(); } catch { /* ignore */ }
+  }
 }
 
 serve(async (req) => {
