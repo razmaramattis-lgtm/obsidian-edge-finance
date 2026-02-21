@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, UserCheck
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles
 } from "lucide-react";
 
 // Sub-panels
@@ -20,16 +20,17 @@ import ResourcesPanel from "@/components/admin/ResourcesPanel";
 import HmsPanel from "@/components/admin/HmsPanel";
 import InternalResourcesPanel from "@/components/admin/InternalResourcesPanel";
 import CollabPanel from "@/components/admin/CollabPanel";
-
 import SettingsPanel from "@/components/admin/SettingsPanel";
 import HrPanel from "@/components/admin/HrPanel";
 import OverviewPanel from "@/components/admin/OverviewPanel";
+import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
+  { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
   { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Nettside" },
   { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Nettside" },
   { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Nettside" },
@@ -41,7 +42,6 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
   { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
-  
   { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
       case "hms": return <HmsPanel />;
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
-      
+      case "knowledge": return <KnowledgeBasePanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }
@@ -133,12 +133,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col w-60 border-r border-border/10 bg-background/60 backdrop-blur shrink-0">
         <Sidebar />
       </aside>
 
-      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
@@ -148,7 +146,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Main content */}
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-10 flex items-center gap-3 px-4 md:px-6 h-14 border-b border-border/10 bg-background/80 backdrop-blur">
           <button
