@@ -1,10 +1,11 @@
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Globe, Building2, Landmark, Briefcase, Tractor, ShoppingCart,
   HardHat, Store, Heart, TrendingUp, Users, Zap, ChevronRight,
   Truck, Factory, Sparkles, Film, Dumbbell, GraduationCap, Scale,
-  Palette, Megaphone, UserPlus, Plane, Car, Leaf,
+  Palette, Megaphone, UserPlus, Plane, Car, Leaf, Search, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -36,7 +37,21 @@ const industries = [
   { icon: Leaf, name: "Energi & Miljø", slug: "energi", tagline: "Bærekraftig økonomi for bærekraftige selskaper", short: "Investeringsanalyser, Enova-tilskudd og ESG-rapportering for fremtidens bransjer." },
 ];
 
-const Bransjer = () => (
+const Bransjer = () => {
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return industries;
+    const q = search.toLowerCase();
+    return industries.filter(
+      (ind) =>
+        ind.name.toLowerCase().includes(q) ||
+        ind.tagline.toLowerCase().includes(q) ||
+        ind.short.toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  return (
   <>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -91,13 +106,30 @@ const Bransjer = () => (
             Velg din bransje og se{" "}
             <span className="italic text-gradient-teal">hva vi kan gjøre for deg.</span>
           </h2>
-          <p className="text-muted-foreground font-light text-sm md:text-base mb-14 md:mb-20 max-w-xl">
+          <p className="text-muted-foreground font-light text-sm md:text-base mb-8 md:mb-10 max-w-xl">
             Klikk på bransjen din for å se spesifikk informasjon om hva vi leverer, hvilke regler som gjelder, og hva kundene i din bransje vanligvis oppdager hos oss.
           </p>
+
+          {/* SEARCH */}
+          <div className="relative max-w-md mb-14 md:mb-20">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Søk etter bransje..."
+              className="w-full pl-11 pr-10 py-3 rounded-full bg-card/60 border border-border/30 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all duration-300 backdrop-blur-sm"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                <X size={14} />
+              </button>
+            )}
+          </div>
         </AnimatedSection>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-          {industries.map((ind, i) => (
+          {filtered.map((ind, i) => (
             <AnimatedSection key={ind.slug} delay={i * 0.05}>
               <Link
                 to={`/bransjer/${ind.slug}`}
@@ -117,6 +149,12 @@ const Bransjer = () => (
             </AnimatedSection>
           ))}
         </div>
+
+        {filtered.length === 0 && (
+          <div className="py-16 text-center">
+            <p className="text-muted-foreground font-light">Ingen bransjer matcher «{search}».</p>
+          </div>
+        )}
 
         <AnimatedSection delay={0.5}>
           <div className="mt-10 md:mt-14 p-7 md:p-10 glass rounded-3xl text-center">
@@ -186,6 +224,7 @@ const Bransjer = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default Bransjer;
