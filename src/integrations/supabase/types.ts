@@ -527,6 +527,39 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_materials: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          content: string | null
+          created_at: string
+          id: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pricing_plans: {
         Row: {
           active: boolean | null

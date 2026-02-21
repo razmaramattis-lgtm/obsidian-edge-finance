@@ -26,13 +26,15 @@ import OverviewPanel from "@/components/admin/OverviewPanel";
 import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
+import DataCenterPanel from "@/components/admin/DataCenterPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
   { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
+  { id: "datacenter", label: "Datasenter", icon: Building2, adminOnly: true, group: "Hoved" },
   { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Nettside" },
   { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Nettside" },
   { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Nettside" },
@@ -79,6 +81,7 @@ const AdminDashboard = () => {
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
       case "knowledge": return <KnowledgeBasePanel />;
+      case "datacenter": return <DataCenterPanel />;
       case "courses": return <CoursesPanel />;
       case "bookings": return <BookingsPanel />;
       case "settings": return <SettingsPanel />;

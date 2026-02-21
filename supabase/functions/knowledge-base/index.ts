@@ -19,7 +19,7 @@ serve(async (req) => {
     const sb = createClient(supabaseUrl, supabaseKey);
 
     // Fetch all resources for the knowledge base
-    const [hmsRes, resourcesRes, archiveRes, internalRes, collabRes, servicesRes, pricingRes] = await Promise.all([
+    const [hmsRes, resourcesRes, archiveRes, internalRes, collabRes, servicesRes, pricingRes, knowledgeRes] = await Promise.all([
       sb.from("hms_documents").select("title, content"),
       sb.from("resources").select("name, description, category, file_name"),
       sb.from("archive_files").select("name, description, category, file_name"),
@@ -27,6 +27,7 @@ serve(async (req) => {
       sb.from("collaboration_agreements").select("title, company, contact_name, offering, description"),
       sb.from("services").select("title, description, group_name"),
       sb.from("pricing_plans").select("name, description, price, price_suffix, features"),
+      sb.from("knowledge_materials").select("title, content, category").eq("active", true),
     ]);
 
     let context = "# OPPSLAGSVERK — Alt du trenger å vite\n\n";
@@ -53,6 +54,11 @@ serve(async (req) => {
     (pricingRes.data || []).forEach((d: any) => {
       const feats = Array.isArray(d.features) ? (d.features as string[]).join(", ") : "";
       context += `- **${d.name}**: ${d.price} kr${d.price_suffix} — ${d.description || ""}. Inkluderer: ${feats}\n`;
+    });
+
+    context += "\n## Datasenter (ekstra materiale)\n";
+    (knowledgeRes.data || []).forEach((d: any) => {
+      context += `### ${d.title} (${d.category || "Generelt"})\n${d.content || ""}\n\n`;
     });
 
     const systemPrompt = `Du er Avargo sitt interne oppslagsverk. Du hjelper ansatte med å finne informasjon fra alle bedriftens ressurser inkludert HMS-bok, maler, arkiv, samarbeidsavtaler, tjenester og priser.
