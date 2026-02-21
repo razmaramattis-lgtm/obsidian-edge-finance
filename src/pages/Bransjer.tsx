@@ -104,8 +104,8 @@ const Bransjer = () => (
                 className="group p-7 md:p-9 glass rounded-3xl card-lift relative overflow-hidden flex flex-col h-full"
               >
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-muted/60 flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/10 transition-colors duration-500">
-                  <ind.icon size={17} className="text-primary" strokeWidth={1.5} />
+                <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center mb-5 md:mb-6 group-hover:from-primary/20 group-hover:to-secondary/15 transition-all duration-500">
+                  <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <h3 className="font-heading text-xl md:text-2xl mb-1.5">{ind.name}</h3>
                 <p className="text-sm text-primary/60 italic mb-3 font-light">{ind.tagline}</p>

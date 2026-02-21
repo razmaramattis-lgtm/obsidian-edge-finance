@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Users, Bot, Shield, TrendingUp, Rocket, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Users, Bot, Shield, TrendingUp, Rocket, CheckCircle2, Handshake, Sparkles, Crown, Gem } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const starterPakker = [
@@ -139,17 +139,22 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
-              { icon: Users, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt, dedikert regnskapsfører som lærer selskapet ditt å kjenne. Ingen callsenter, ingen chatbot — et menneske som jobber for deg som om det var sitt eget selskap." },
-              { icon: Bot, num: "02", title: "AI som stille superkraft", desc: "Regnskapsføreren din bruker AI-verktøy som gjennomgår tusenvis av datapunkter. Du får fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget." },
-              { icon: Shield, num: "03", title: "Alt inkludert — virkelig alt", desc: "Bokføring, MVA, lønn, årsregnskap, skattemelding, aksjonærregisteroppgave, revisjonstøtte og rådgivning. Andre tar ekstra for halvparten. Vi tar ingenting ekstra." },
-              { icon: TrendingUp, num: "04", title: "Vi kjenner bransjen din", desc: "Vi har erfaring med over 25 bransjer — fra tech og eiendom til bygg, restaurant og helse. Din regnskapsfører forstår hverdagen din, ikke bare tallene." },
+              { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt, dedikert regnskapsfører som lærer selskapet ditt å kjenne. Ingen callsenter, ingen chatbot — et menneske som jobber for deg som om det var sitt eget selskap." },
+              { icon: Sparkles, num: "02", title: "AI som stille superkraft", desc: "Regnskapsføreren din bruker AI-verktøy som gjennomgår tusenvis av datapunkter. Du får fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget." },
+              { icon: Gem, num: "03", title: "Alt inkludert — virkelig alt", desc: "Bokføring, MVA, lønn, årsregnskap, skattemelding, aksjonærregisteroppgave, revisjonstøtte og rådgivning. Andre tar ekstra for halvparten. Vi tar ingenting ekstra." },
+              { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Vi har erfaring med over 25 bransjer — fra tech og eiendom til bygg, restaurant og helse. Din regnskapsfører forstår hverdagen din, ikke bare tallene." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.12}>
-                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
-                  <span className="font-heading text-5xl md:text-6xl text-primary/25">{v.num}</span>
-                  <v.icon size={20} className="text-primary mt-3 mb-4 md:mt-4 md:mb-5" strokeWidth={1.5} />
-                  <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{v.title}</h3>
-                  <p className="text-sm text-foreground/60 leading-relaxed font-light">{v.desc}</p>
+                <div className="group p-8 md:p-10 glass rounded-3xl card-lift h-full relative overflow-hidden">
+                  <div className="absolute -top-8 -right-8 w-28 h-28 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
+                  <div className="relative">
+                    <span className="font-heading text-5xl md:text-6xl text-primary/15">{v.num}</span>
+                    <div className="p-2.5 bg-gradient-to-br from-primary/15 to-primary/5 rounded-xl inline-block mt-3 mb-4 md:mt-4 md:mb-5">
+                      <v.icon size={20} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{v.title}</h3>
+                    <p className="text-sm text-foreground/60 leading-relaxed font-light">{v.desc}</p>
+                  </div>
                 </div>
               </AnimatedSection>
             ))}

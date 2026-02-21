@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
-  Tractor, ShoppingCart, HardHat, Heart, Store, Users, BarChart3, Bot,
-  FileCheck, CreditCard, Calculator, Clock, Lock, Headphones,
-  LayoutTemplate, Search, Megaphone, CheckCircle2, ChevronLeft, ChevronRight
+  Tractor, ShoppingCart, HardHat, Heart, Store, Users, Bot,
+  FileCheck, Calculator, Clock, Headphones,
+  LayoutTemplate, Search, ChevronLeft, ChevronRight,
+  Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
@@ -51,15 +52,15 @@ const Index = () => {
 
   const serviceBgs = [serviceBg1, serviceBg2, serviceBg3, serviceBg4, serviceBg5, serviceBg1, serviceBg2, serviceBg3, serviceBg4];
   const services = [
-    { icon: Users, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
-    { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader.", href: "/tjenester/hr" },
-    { icon: LayoutTemplate, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst.", href: "/tjenester/nettsider" },
-    { icon: Bot, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran.", href: "/tjenester/ai-innsikt" },
-    { icon: FileCheck, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Hos oss er ingenting «ekstra».", href: "/tjenester/en-til-en-regnskap" },
-    { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om og strukturerer selskapet smart.", href: "/tjenester/cfo" },
-    { icon: Search, title: "SEO & søkbarhet", desc: "Bli synlig på Google med strategisk søkemotoroptimalisering som bygger langsiktig organisk trafikk til bedriften din.", href: "/tjenester/seo" },
-    { icon: Headphones, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard hos Avargo, ikke et tillegg.", href: "/tjenester/cfo" },
-    { icon: Clock, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen.", href: "/tjenester/regnskapsforer" },
+    { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
+    { icon: Users, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader.", href: "/tjenester/hr" },
+    { icon: Flame, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst.", href: "/tjenester/nettsider" },
+    { icon: Sparkles, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran.", href: "/tjenester/ai-innsikt" },
+    { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Hos oss er ingenting «ekstra».", href: "/tjenester/en-til-en-regnskap" },
+    { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om og strukturerer selskapet smart.", href: "/tjenester/cfo" },
+    { icon: Eye, title: "SEO & søkbarhet", desc: "Bli synlig på Google med strategisk søkemotoroptimalisering som bygger langsiktig organisk trafikk til bedriften din.", href: "/tjenester/seo" },
+    { icon: Crown, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard hos Avargo, ikke et tillegg.", href: "/tjenester/cfo" },
+    { icon: Target, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen.", href: "/tjenester/regnskapsforer" },
   ];
 
   // Services carousel — one at a time
@@ -283,7 +284,7 @@ const Index = () => {
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="p-4 bg-primary/15 backdrop-blur-sm rounded-2xl border border-primary/10">
+                    <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm rounded-2xl border border-primary/10 shadow-lg shadow-primary/5">
                       <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
@@ -370,7 +371,8 @@ const Index = () => {
                 >
                   <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="p-2.5 md:p-3 bg-primary/10 rounded-2xl inline-block mb-4 md:mb-5">
+                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
+                    <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
                       <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
@@ -452,33 +454,45 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
               {
+                icon: Shield,
                 metric: "100%",
                 label: "fastpris — ingen tillegg",
                 text: "Hos oss er bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering. Ingen overraskelser. Du vet alltid hva det koster.",
               },
               {
+                icon: Handshake,
                 metric: "1 person",
                 label: "din dedikerte regnskapsfører",
                 text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte.",
               },
               {
+                icon: Sparkles,
                 metric: "AI-drevet",
                 label: "innsikt i sanntid",
                 text: "Regnskapsføreren din bruker AI-verktøy som scanner tusenvis av datapunkter. Resultatet? Fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget.",
               },
               {
+                icon: Zap,
                 metric: "24 timer",
                 label: "responstid, alltid",
                 text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi god rådgivning handler om tilgjengelighet — ikke bare kompetanse.",
               },
             ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.12}>
-                <div className="p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift">
-                  <div className="mb-5 md:mb-6">
-                    <span className="font-heading text-4xl md:text-5xl text-gradient-rose">{item.metric}</span>
-                    <p className="text-xs text-foreground/50 tracking-widest uppercase mt-1">{item.label}</p>
+                <div className="group p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift relative overflow-hidden">
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
+                  <div className="relative">
+                    <div className="flex items-center gap-4 mb-5 md:mb-6">
+                      <div className="p-2.5 bg-primary/10 rounded-xl">
+                        <item.icon size={18} className="text-primary" strokeWidth={1.5} />
+                      </div>
+                      <div>
+                        <span className="font-heading text-3xl md:text-4xl text-gradient-rose">{item.metric}</span>
+                        <p className="text-[10px] text-foreground/50 tracking-widest uppercase">{item.label}</p>
+                      </div>
+                    </div>
+                    <p className="text-foreground/70 leading-relaxed flex-1 font-light text-sm md:text-base">{item.text}</p>
                   </div>
-                  <p className="text-foreground/70 leading-relaxed flex-1 font-light text-sm md:text-base">{item.text}</p>
                 </div>
               </AnimatedSection>
             ))}
