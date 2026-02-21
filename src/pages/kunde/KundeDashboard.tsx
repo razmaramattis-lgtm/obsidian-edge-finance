@@ -9,19 +9,21 @@ import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
-  Download, Building2
+  Download, Building2, Wand2
 } from "lucide-react";
+import HrGenerator from "@/components/kunde/HrGenerator";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, BarChart, Bar
 } from "recharts";
 
-type Panel = "overview" | "documents" | "handbook" | "booking" | "partners";
+type Panel = "overview" | "documents" | "handbook" | "hr-generator" | "booking" | "partners";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard },
   { id: "documents", label: "Dokumenter", icon: FileText },
   { id: "handbook", label: "Personalhåndbok", icon: BookOpen },
+  { id: "hr-generator", label: "HR-generator", icon: Wand2 },
   { id: "booking", label: "Book rådgiver", icon: CalendarDays },
   { id: "partners", label: "Fordelsavtaler", icon: Handshake },
 ];
@@ -82,6 +84,7 @@ const KundeDashboard = () => {
     switch (activePanel) {
       case "documents": return <DocumentsPanel />;
       case "handbook": return <HandbookPanel />;
+      case "hr-generator": return <HrGenerator onComplete={() => setActivePanel("handbook")} />;
       case "booking": return <BookingPanel />;
       case "partners": return <PartnersPanel />;
       default: return <OverviewPanel />;
