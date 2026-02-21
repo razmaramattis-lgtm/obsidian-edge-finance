@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Tag, Pin } from "lucide-react";
+import { ArrowRight, Search, Tag, Pin, Clock } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,6 +10,7 @@ interface BlogPost {
   title: string;
   slug: string;
   excerpt: string;
+  content: string;
   category: string;
   image_url: string | null;
   tags: string[];
@@ -18,6 +19,11 @@ interface BlogPost {
   created_at: string;
 }
 
+const estimateReadTime = (content: string) => {
+  const words = (content || "").replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+};
+
 const BlogListing = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [search, setSearch] = useState("");
@@ -25,7 +31,7 @@ const BlogListing = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.from("blog_posts").select("id,title,slug,excerpt,category,image_url,tags,pinned,published,created_at")
+    supabase.from("blog_posts").select("id,title,slug,excerpt,content,category,image_url,tags,pinned,published,created_at")
       .eq("published", true).order("pinned", { ascending: false }).order("created_at", { ascending: false })
       .then(({ data }) => setPosts((data as BlogPost[]) || []));
   }, []);
@@ -41,6 +47,10 @@ const BlogListing = () => {
   });
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
+
+  // Featured post (first pinned or first post)
+  const featuredPost = filtered[0];
+  const remainingPosts = filtered.slice(1);
 
   return (
     <>
@@ -100,14 +110,54 @@ const BlogListing = () => {
             )}
           </AnimatedSection>
 
+          {/* Featured Hero Post */}
+          {featuredPost && (
+            <AnimatedSection>
+              <Link to={`/nyhet/${featuredPost.slug}`} className="block mb-12 group">
+                <div className="glass rounded-3xl overflow-hidden border border-border/20 card-lift">
+                  <div className="grid grid-cols-1 lg:grid-cols-2">
+                    {featuredPost.image_url && (
+                      <div className="aspect-[16/10] lg:aspect-auto overflow-hidden relative">
+                        <img src={featuredPost.image_url} alt={featuredPost.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-background/80" />
+                      </div>
+                    )}
+                    <div className={`p-8 md:p-10 lg:p-12 flex flex-col justify-center ${!featuredPost.image_url ? "lg:col-span-2" : ""}`}>
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-[9px] tracking-widest uppercase text-primary border border-primary/30 px-2.5 py-0.5 rounded-full">{featuredPost.category}</span>
+                        {featuredPost.pinned && <span className="flex items-center gap-1 text-[9px] text-secondary"><Pin size={10} /> Festet</span>}
+                      </div>
+                      <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-4 group-hover:text-primary transition-colors">
+                        {featuredPost.title}
+                      </h2>
+                      {featuredPost.excerpt && (
+                        <p className="text-base text-muted-foreground font-light leading-relaxed mb-6 line-clamp-3">{featuredPost.excerpt}</p>
+                      )}
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground/60">
+                        <span className="font-medium text-foreground/70">Avargo</span>
+                        <span>·</span>
+                        <span>{formatDate(featuredPost.created_at)}</span>
+                        <span>·</span>
+                        <span className="flex items-center gap-1"><Clock size={11} /> {estimateReadTime(featuredPost.content || "")} min lesetid</span>
+                        <ArrowRight size={16} className="text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ml-auto" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </AnimatedSection>
+          )}
+
           {/* Post grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((post, i) => (
+            {remainingPosts.map((post, i) => (
               <AnimatedSection key={post.id} delay={i * 0.05}>
                 <Link to={`/nyhet/${post.slug}`} className="glass rounded-2xl overflow-hidden border border-border/20 card-lift group block h-full">
                   {post.image_url && (
-                    <div className="aspect-[16/9] overflow-hidden">
+                    <div className="aspect-[16/9] overflow-hidden relative">
                       <img src={post.image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
                     </div>
                   )}
                   <div className="p-5 md:p-6">
@@ -115,12 +165,14 @@ const BlogListing = () => {
                       <span className="text-[9px] tracking-widest uppercase text-primary border border-primary/30 px-2 py-0.5 rounded-full">{post.category}</span>
                       {post.pinned && <Pin size={11} className="text-secondary" />}
                     </div>
-                    <h3 className="font-heading text-lg md:text-xl mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
-                    {post.excerpt && <p className="text-sm text-muted-foreground font-light line-clamp-2 mb-3">{post.excerpt}</p>}
+                    <h3 className="font-heading text-lg md:text-xl mb-2 group-hover:text-primary transition-colors leading-tight">{post.title}</h3>
+                    {post.excerpt && <p className="text-sm text-muted-foreground font-light line-clamp-2 mb-4">{post.excerpt}</p>}
                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60">
                       <span className="font-medium text-foreground/70">Avargo</span>
                       <span>·</span>
                       <span>{formatDate(post.created_at)}</span>
+                      <span>·</span>
+                      <span className="flex items-center gap-1"><Clock size={10} /> {estimateReadTime(post.content || "")} min</span>
                       <ArrowRight size={14} className="text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ml-auto" />
                     </div>
                     {(post.tags || []).length > 0 && (
