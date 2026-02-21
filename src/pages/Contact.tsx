@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
-const inputClass = "w-full bg-card/40 backdrop-blur-xl border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/30 focus:shadow-lg focus:shadow-primary/5 transition-all duration-500 font-light";
-const labelClass = "text-[10px] tracking-[0.25em] uppercase text-muted-foreground block mb-2";
+const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
+const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
 
 type BrregEnhet = {
   organisasjonsnummer: string;
@@ -22,6 +23,7 @@ type RolleGruppe = {
 };
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
   const [companySearch, setCompanySearch] = useState("");
   const [searchResults, setSearchResults] = useState<BrregEnhet[]>([]);
@@ -38,9 +40,16 @@ const Contact = () => {
   const [bransje, setBransje] = useState("");
   const [omsetning, setOmsetning] = useState("");
   const [frustrasjon, setFrustrasjon] = useState("");
+  const [valgtPakke, setValgtPakke] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Pre-fill package from URL
+  useEffect(() => {
+    const pakke = searchParams.get("pakke");
+    if (pakke) setValgtPakke(pakke);
+  }, [searchParams]);
 
   useEffect(() => {
     if (companySearch.length < 2) {
@@ -145,29 +154,29 @@ const Contact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Søknad</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Kom i gang</p>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl mb-6 md:mb-8 leading-snug">
-              De fleste betaler for mye og får for lite.{" "}
-              <span className="italic text-gradient-rose">Du trenger ikke være en av dem.</span>
+              Fortell oss om selskapet ditt.{" "}
+              <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
-            <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
-              Vi tar ikke inn alle. Ikke fordi vi er arrogante — men fordi vi gir hver klient en dedikert regnskapsfører som investerer seg i ditt selskap. Det fungerer bare når vi har kapasitet til å gjøre det skikkelig.
+            <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
+              Vi gir hver kunde en dedikert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så kontakter vi deg innen 24 timer med et tilpasset forslag.
             </p>
-            <p className="text-sm text-primary/70 italic font-light mb-8 md:mb-10">
-              Fyll ut skjemaet. Vi kontakter deg innen 24 timer med en uforpliktende vurdering.
+            <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
+              Helt uforpliktende. Ingen binding. Bare en god samtale om hva du trenger.
             </p>
             <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
-              {["Dedikert regnskapsfører fra dag én", "AI-drevet innsikt inkludert", "Alt i én fast pris — ingen overraskelser", "Spesialisert i din bransje"].map((item) => (
-                <div key={item} className="flex items-center gap-3 text-sm text-foreground/75 font-light">
+              {["Dedikert regnskapsfører fra dag én", "AI-drevet innsikt inkludert", "Alt i én fast pris — ingen overraskelser", "Tilpasset din bransje"].map((item) => (
+                <div key={item} className="flex items-center gap-3 text-sm text-foreground/70 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
                   {item}
                 </div>
               ))}
             </div>
-            <div className="space-y-3 text-sm text-muted-foreground/70 font-light">
-              <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>Oslo, Norge</span></div>
-              <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>post@avargo.no</span></div>
-              <div className="flex items-center gap-3"><div className="w-1 h-1 rounded-full bg-primary/40" /><span>+47 22 00 00 00</span></div>
+            <div className="space-y-3 text-sm text-foreground/60 font-light">
+              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Oslo, Norge</span></div>
+              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>post@avargo.no</span></div>
+              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>+47 22 00 00 00</span></div>
             </div>
           </AnimatedSection>
 
@@ -176,21 +185,28 @@ const Contact = () => {
             {submitted ? (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="flex items-center justify-center h-full min-h-[400px]">
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-primary/15 flex items-center justify-center">
                     <Shield size={24} className="text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-heading text-3xl mb-4">Søknad mottatt</h3>
-                  <p className="text-muted-foreground font-light leading-relaxed mb-4">Vi gjennomgår søknaden din og kontakter deg innen 24 timer.</p>
-                  <p className="text-sm text-primary/70 italic font-light">I mellomtiden taper din nåværende regnskapsfører deg penger. Bare så du vet.</p>
+                  <h3 className="font-heading text-3xl mb-4">Mottatt!</h3>
+                  <p className="text-foreground/60 font-light leading-relaxed mb-4">Vi gjennomgår informasjonen din og kontakter deg innen 24 timer med et tilpasset forslag.</p>
+                  <p className="text-sm text-primary italic font-light">Takk for at du vurderer Avargo.</p>
                 </div>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
+                {/* Package indicator */}
+                {valgtPakke && (
+                  <div className="px-4 py-3 rounded-2xl bg-primary/10 border border-primary/20 text-sm text-primary">
+                    Valgt pakke: <strong>{valgtPakke}</strong>
+                  </div>
+                )}
+
                 {/* Company Search */}
                 <div ref={dropdownRef} className="relative">
                   <label className={labelClass}>Søk opp selskap</label>
                   <div className="relative">
-                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40" />
                     <input
                       type="text"
                       value={companySearch}
@@ -198,17 +214,17 @@ const Contact = () => {
                       className={`${inputClass} pl-11`}
                       placeholder="Skriv selskapets navn..."
                     />
-                    {searching && <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 animate-spin" />}
+                    {searching && <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 animate-spin" />}
                   </div>
                   {showDropdown && (
-                    <div className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
+                    <div className="absolute z-50 w-full mt-2 bg-card/98 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
                       {searchResults.map((enhet) => (
-                        <button key={enhet.organisasjonsnummer} type="button" onClick={() => selectCompany(enhet)} className="w-full text-left px-4 py-3 hover:bg-primary/5 transition-colors border-b border-border/10 last:border-0">
+                        <button key={enhet.organisasjonsnummer} type="button" onClick={() => selectCompany(enhet)} className="w-full text-left px-4 py-3 hover:bg-primary/8 transition-colors border-b border-border/15 last:border-0">
                           <div className="flex items-center gap-3">
-                            <Building2 size={14} className="text-primary/50 shrink-0" />
+                            <Building2 size={14} className="text-primary/60 shrink-0" />
                             <div>
                               <p className="text-sm font-medium text-foreground">{enhet.navn}</p>
-                              <p className="text-xs text-muted-foreground/60">
+                              <p className="text-xs text-foreground/50">
                                 Org.nr: {enhet.organisasjonsnummer}
                                 {enhet.forretningsadresse?.poststed && ` · ${enhet.forretningsadresse.poststed}`}
                               </p>
@@ -233,7 +249,7 @@ const Contact = () => {
 
                 <div>
                   <label className={labelClass}>
-                    Daglig leder / kontaktperson
+                    Kontaktperson
                     {loadingRoles && <Loader2 size={10} className="inline ml-2 animate-spin" />}
                   </label>
                   <input required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt fulle navn" />
@@ -293,25 +309,25 @@ const Contact = () => {
                 <div>
                   <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
                   <select required value={omsetning} onChange={(e) => setOmsetning(e.target.value)} className={inputClass}>
-                    <option value="">Velg ambisjonsnivå</option>
-                    <option>Under 5 millioner</option>
+                    <option value="">Velg omsetningsnivå</option>
+                    <option>Under 1 million</option>
+                    <option>1–5 millioner</option>
                     <option>5–10 millioner</option>
                     <option>10–50 millioner</option>
-                    <option>50–100 millioner</option>
-                    <option>Over 100 millioner</option>
+                    <option>Over 50 millioner</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className={labelClass}>Hva frustrerer deg mest med dagens regnskap?</label>
-                  <textarea required rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="Venter for lenge? Betaler for mye skatt? Føler du mangler kontroll?" />
+                  <label className={labelClass}>Hva er viktigst for deg i en regnskapsfører?</label>
+                  <textarea required rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
                 </div>
 
                 <button type="submit" className="group w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.01] transition-all duration-500 mt-2">
-                  Send søknad
+                  Send henvendelse
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </button>
-                <p className="text-xs text-muted-foreground/40 text-center font-light">Helt uforpliktende. Vi kontakter deg innen 24 timer.</p>
+                <p className="text-xs text-foreground/40 text-center font-light">Helt uforpliktende. Vi kontakter deg innen 24 timer.</p>
               </form>
             )}
           </AnimatedSection>

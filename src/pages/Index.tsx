@@ -1,68 +1,59 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users, BarChart3, Bot,
-  FileCheck, CreditCard, Calculator, Clock, Lock, Headphones
+  FileCheck, CreditCard, Calculator, Clock, Lock, Headphones,
+  LayoutTemplate, Search, Megaphone, CheckCircle2
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import heroBg from "@/assets/hero-bg.jpg";
 
-
 const Index = () => {
   const industries = [
-    { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", desc: "Teknologiselskaper beveger seg raskt, og det skal vi også. Vi forstår hvordan en startup fungerer — fra de første kundene til man begynner å tenke på vekst og investorer. Du bygger produktet, vi holder styr på alt rundt det." },
-    { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", desc: "Enten du eier én leilighet eller en hel portefølje, hjelper vi deg å holde full kontroll. Vi sørger for at du til enhver tid vet hva du tjener, hva det koster, og hvordan du kan gjøre det smartere." },
-    { icon: Landmark, name: "Holding & Investering", slug: "holding", tagline: "Strukturen som beskytter deg", desc: "Mange som investerer i aksjer, eiendom eller andre selskaper oppdager fort at det fort blir komplisert å holde orden. Vi hjelper deg å bygge en ryddig og trygg struktur — slik at pengene dine er godt ivaretatt." },
-    { icon: Briefcase, name: "Consulting & Rådgivning", slug: "consulting", desc: "Konsulenter jobber gjerne alene eller i små team, og hverdagen er full av prosjekter, kunder og fakturering. Vi tar oss av alt det administrative, slik at du kan bruke tiden din på det du faktisk er god på.", tagline: "Mer tid til det du er best på" },
-    { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder for bønder og sørger for at du aldri går glipp av det du har krav på." },
-    { icon: ShoppingCart, name: "Varehandel", slug: "varehandel", tagline: "Alltid kontroll på varene og pengene", desc: "Butikk er mer enn salg — det handler om innkjøp, lager, svinn og marginer. Vi hjelper deg å forstå hva som faktisk lønner seg å selge, og gir deg et klart bilde av hvordan bedriften din går." },
-    { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Vi holder orden mens du bygger", desc: "Bygg- og anleggsbransjen er avhengig av at prosjekter går i pluss og at alt er på stell. Vi hjelper deg å ha god oversikt over hvert enkelt prosjekt, slik at du alltid vet om du tjener penger eller ikke." },
-    { icon: Store, name: "Nettbutikk & E-commerce", slug: "nettbutikk", tagline: "Skalér trygt — vi har ryggen din", desc: "Å drive nettbutikk kan vokse raskt, og det kan fort bli kaotisk. Vi hjelper deg å holde styr på inntekter, avgifter og kostnader — uansett om du selger til norske eller utenlandske kunder." },
-    { icon: Heart, name: "Helse & Velvære", slug: "helse", tagline: "Fokuser på menneskene du hjelper", desc: "Klinikker, treningssentre og helseforetak har nok å tenke på med kunder og pasienter. Vi ordner det økonomiske i bakgrunnen, slik at du kan gi full oppmerksomhet til dem du er der for." },
-    { icon: TrendingUp, name: "Restaurant & Uteliv", slug: "restaurant", tagline: "Vi hjelper deg å holde hjulene i gang", desc: "Restaurant og café er en bransje der marginene kan være tynne og hverdagen er hektisk. Vi gir deg god oversikt over driften, slik at du kan ta bedre beslutninger — og sove litt bedre om natten." },
-    { icon: Users, name: "Frisør & Skjønnhet", slug: "frisor", tagline: "Mer tid bak stolen, ikke ved skrivebordet", desc: "Frisører og andre i skjønnhetsbransjen er eksperter på sitt håndverk — men trenger ikke å bli eksperter på regnskap. Det tar vi oss av, fra A til Å." },
-    { icon: Zap, name: "Håndverkere & Fagfolk", slug: "handverkere", tagline: "Fagmann på jobb, vi tar resten", desc: "Enten du er elektriker, rørlegger, maler eller tømrer — vi vet at du vil bruke dagene ute hos kunder, ikke ved skrivebordet. Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
+    { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", desc: "Startups og tech-selskaper trenger en regnskapsfører som forstår vekst, investorer og SaaS-modeller. Det gjør vi." },
+    { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", desc: "Full kontroll over eiendomsporteføljen din — hva du tjener, hva det koster og hvordan du kan gjøre det smartere." },
+    { icon: Landmark, name: "Holding & Investering", slug: "holding", tagline: "Strukturen som beskytter deg", desc: "Vi hjelper deg å bygge en ryddig og trygg struktur for aksjer, eiendom og andre investeringer." },
+    { icon: Briefcase, name: "Consulting & Rådgivning", slug: "consulting", desc: "Vi tar oss av det administrative, slik at du kan bruke tiden din på det du faktisk er god på.", tagline: "Mer tid til det du er best på" },
+    { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Sesongsvingninger, støtteordninger og maskinpark — vi sørger for at du aldri går glipp av det du har krav på." },
+    { icon: ShoppingCart, name: "Varehandel", slug: "varehandel", tagline: "Kontroll på varene og pengene", desc: "Vi hjelper deg å forstå hva som lønner seg å selge og gir deg et klart bilde av driften." },
+    { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Vi holder orden mens du bygger", desc: "God oversikt over hvert prosjekt, slik at du alltid vet om du tjener penger." },
+    { icon: Store, name: "Nettbutikk & E-commerce", slug: "nettbutikk", tagline: "Skalér trygt", desc: "Styr på inntekter, avgifter og kostnader — uansett om du selger til Norge eller utlandet." },
+    { icon: Heart, name: "Helse & Velvære", slug: "helse", tagline: "Fokuser på menneskene", desc: "Vi ordner det økonomiske i bakgrunnen mens du gir full oppmerksomhet til dem du er der for." },
+    { icon: TrendingUp, name: "Restaurant & Uteliv", slug: "restaurant", tagline: "Hjulene i gang", desc: "God oversikt over driften slik at du kan ta bedre beslutninger og sove litt bedre om natten." },
+    { icon: Users, name: "Frisør & Skjønnhet", slug: "frisor", tagline: "Mer tid bak stolen", desc: "Du er ekspert på ditt håndverk — vi tar oss av regnskapet fra A til Å." },
+    { icon: Zap, name: "Håndverkere & Fagfolk", slug: "handverkere", tagline: "Fagmann på jobb, vi tar resten", desc: "Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
   ];
+
+  // Show 3 industries at a time, rotating every 10 seconds
+  const [industryPage, setIndustryPage] = useState(0);
+  const industriesPerPage = 3;
+  const totalPages = Math.ceil(industries.length / industriesPerPage);
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndustryPage((prev) => (prev + 1) % totalPages);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [totalPages]);
+
+  const visibleIndustries = industries.slice(
+    industryPage * industriesPerPage,
+    industryPage * industriesPerPage + industriesPerPage
+  );
 
   const services = [
-    { icon: Users, title: "Dedikert regnskapsfører", desc: "Ingen chatbot. Ingen callsenter. Du får én fast regnskapsfører som kjenner selskapet ditt like godt som du gjør. Alltid tilgjengelig. Alltid oppdatert." },
-    { icon: Bot, title: "AI som et verktøy for deg", desc: "Vi bruker AI til å forenkle og effektivisere prosessene rundt regnskap og økonomi — slik at hverdagen blir enklere for deg som kunde. Teknologien jobber i bakgrunnen, så du slipper å tenke på det." },
-    { icon: FileCheck, title: "Komplett regnskapsføring", desc: "Bokføring, årsregnskap, skattemelding, aksjonærregisteroppgave og mva-rapportering — alt inkludert. De fleste konkurrenter har skjulte priser og tilleggskostnader. Hos oss er alt i fastprisen fra dag én." },
-    { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepengeberegning, A-melding og arbeidsgiveravgift. Andre regnskapssystemer tar ekstra for dette. Hos oss er det inkludert." },
-    { icon: BarChart3, title: "Sanntidsdashbord", desc: "Se likviditet, resultat og balanse oppdatert i sanntid. Ikke vent til neste månedsrapport for å ta beslutninger — se alt akkurat nå." },
-    { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste eksisterte og strukturerer selskapet for minimal, lovlig skatt." },
-    { icon: Lock, title: "Revisjonstøtte & compliance", desc: "Vi forbereder alt for revisor, håndterer Brønnøysund-rapportering og sikrer at selskapet ditt alltid er compliant. Spar titusener i revisjonskostnader." },
-    { icon: Clock, title: "Frister? Vårt ansvar.", desc: "Aldri bekymre deg for mva-fristen, skattemeldingsfristen eller årsregnskapet igjen. Vi leverer alt — i tide, hver gang. Du sover godt om natten." },
-    { icon: Headphones, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, lån, fusjoner, fisjoner, exit — spør oss om hva som helst. Autorisert rådgivning er ikke et tillegg. Det er standard." },
-  ];
-
-  const testimonials = [
-    {
-      quote: "Vi byttet fra et tradisjonelt byrå. Etter tre måneder hadde Avargo spart oss 340 000 kr i skatt vi ikke visste vi betalte for mye av. Regnskapsføreren vår ringer oss med innsikt — vi trenger aldri ringe dem.",
-      author: "CEO, Nordisk SaaS-selskap",
-      metric: "340K",
-      label: "spart i skatt",
-    },
-    {
-      quote: "Likviditetsprediksjonen deres varslet oss om en krise 11 uker før den slo inn. Vi hadde tid til å handle. Konkurrenten vår gikk under i samme kvartal.",
-      author: "CFO, Eiendomskonsern Oslo",
-      metric: "11 uker",
-      label: "tidlig varsling",
-    },
-    {
-      quote: "Den forrige regnskapsføreren vår håndterte det billig, men da vi vokste trengte vi noen som faktisk forsto vekststrategi. Avargo erstattet tre leverandører med ett dashbord og én dedikert rådgiver.",
-      author: "Grunnlegger, Tech-holding",
-      metric: "3→1",
-      label: "leverandører",
-    },
-    {
-      quote: "Regnskapsføreren vår hos Avargo forstår landbruk. Han vet hva en kvote er, hva et jordbruksfradrag er, og hva sesongvariasjon gjør med likviditeten. Det er unikt.",
-      author: "Eier, Gårdsbruk i Trøndelag",
-      metric: "100%",
-      label: "bransjekunnskap",
-    },
+    { icon: Users, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter." },
+    { icon: Calculator, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader." },
+    { icon: LayoutTemplate, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst." },
+    { icon: Bot, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran." },
+    { icon: FileCheck, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Hos oss er ingenting «ekstra»." },
+    { icon: Shield, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om og strukturerer selskapet smart." },
+    { icon: Search, title: "SEO & søkbarhet", desc: "Bli synlig på Google med strategisk søkemotoroptimalisering som bygger langsiktig organisk trafikk til bedriften din." },
+    { icon: Headphones, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard hos Avargo, ikke et tillegg." },
+    { icon: Clock, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen." },
   ];
 
   return (
@@ -70,7 +61,7 @@ const Index = () => {
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-50" />
+          <img src={heroBg} alt="Avargo kontorlandskap" className="w-full h-full object-cover opacity-50" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
           <div className="absolute inset-0 ambient-glow" />
         </div>
@@ -86,9 +77,9 @@ const Index = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-muted-foreground mb-8 md:mb-12"
+              className="text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12"
             >
-              AI-drevet regnskap · Dedikert regnskapsfører · Alle bransjer
+              Regnskap · Rådgivning · Markedsføring · Alt i ett
             </motion.p>
 
             <motion.h1
@@ -106,18 +97,18 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light"
+              className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light"
             >
-              Andre gir deg et system og lar deg klare deg selv. Vi gir deg en dedikert, autorisert regnskapsfører — forsterket av AI som ser det ingen andre ser. Alt inkludert. Ingen overraskelser.
+              Du får en fast, autorisert regnskapsfører som kjenner selskapet ditt — forsterket av AI som ser det ingen andre ser. Regnskap, rådgivning og markedsføring. Alt inkludert. Ingen overraskelser.
             </motion.p>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.1, duration: 0.8 }}
-              className="text-sm text-primary/80 italic mb-10 md:mb-14 font-light"
+              className="text-sm text-primary italic mb-10 md:mb-14 font-light"
             >
-              Spørsmålet er ikke om du har råd til Avargo. Spørsmålet er om du har råd til å fortsette uten.
+              Fra 1 499 kr/mnd for nyoppstartede selskaper.
             </motion.p>
 
             <motion.div
@@ -130,18 +121,16 @@ const Index = () => {
                 to="/kontakt"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Søk om klientstatus
+                Kom i gang
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link
                 to="/priser"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/30 hover:text-foreground transition-all duration-500"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500"
               >
-                Se hva det gir tilbake
+                Se prisene
               </Link>
             </motion.div>
-
-            
           </motion.div>
         </div>
 
@@ -155,28 +144,26 @@ const Index = () => {
       </section>
 
       {/* MARQUEE BANDS */}
-      <div className="relative py-8 md:py-10 border-y border-border/10 overflow-hidden select-none">
+      <div className="relative py-8 md:py-10 border-y border-border/15 overflow-hidden select-none">
         <div className="absolute inset-0 ambient-glow opacity-30" />
-        {/* Band 1 — services */}
         <div className="relative flex overflow-hidden mb-4 md:mb-5">
           <div className="flex shrink-0 animate-marquee gap-10 md:gap-12 pr-10 md:pr-12">
             {[...services, ...services].map((s, i) => (
               <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
-                <s.icon size={12} className="text-primary/50 shrink-0" strokeWidth={1.5} />
+                <s.icon size={12} className="text-primary/60 shrink-0" strokeWidth={1.5} />
                 <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{s.title}</span>
-                <span className="text-primary/20 mx-2 md:mx-3">·</span>
+                <span className="text-primary/30 mx-2 md:mx-3">·</span>
               </div>
             ))}
           </div>
         </div>
-        {/* Band 2 — industries (reverse) */}
         <div className="relative flex overflow-hidden">
           <div className="flex shrink-0 animate-marquee-reverse gap-10 md:gap-12 pr-10 md:pr-12">
             {[...industries, ...industries].map((ind, i) => (
               <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
-                <ind.icon size={12} className="text-secondary/50 shrink-0" strokeWidth={1.5} />
-                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/50 font-light">{ind.name}</span>
-                <span className="text-secondary/20 mx-2 md:mx-3">·</span>
+                <ind.icon size={12} className="text-secondary/60 shrink-0" strokeWidth={1.5} />
+                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{ind.name}</span>
+                <span className="text-secondary/30 mx-2 md:mx-3">·</span>
               </div>
             ))}
           </div>
@@ -193,11 +180,11 @@ const Index = () => {
                 Hvert minutt du bruker på regnskap er et minutt du{" "}
                 <span className="italic text-gradient-teal">ikke bruker på å bygge</span>
               </h2>
-              <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
-                Andre ga deg et system og sa "lykke til". Noen ga deg en regnskapsfører til lav pris — men uten AI, uten strategi, uten alt du faktisk trenger. Hvem gir deg helheten?
+              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
+                De fleste bedriftseiere bruker timer hver uke på fakturering, bilag og oppfølging — tid som burde gått til kunder, salg og utvikling. Med Avargo slipper du alt det.
               </p>
-              <p className="text-primary/90 text-lg font-heading italic">
-                Det gjør vi. Og bare vi.
+              <p className="text-primary text-lg font-heading italic">
+                Vi tar regnskapet. Du tar veksten.
               </p>
             </div>
           </AnimatedSection>
@@ -212,29 +199,29 @@ const Index = () => {
           <AnimatedSection>
             <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
-              Andre selger deg deler.{" "}
-              <span className="italic text-gradient-rose">Vi gir deg helheten.</span>
+              Én fast pris.{" "}
+              <span className="italic text-gradient-rose">Alt du trenger.</span>
             </h2>
-            <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed max-w-2xl mb-4 md:mb-6">
-              Hos Avargo får du en dedikert, autorisert regnskapsfører som kjenner bransjen din — forsterket av AI-verktøy som oppdager muligheter og risiko du ikke ser selv. Dette er ikke et regnskapssystem. Det er en vekstpartner.
+            <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed max-w-2xl mb-4 md:mb-6">
+              Hos Avargo får du en dedikert regnskapsfører, AI-drevet innsikt, lønn, HR, markedsføring og rådgivning — samlet i én tjeneste med én fast pris. Ingen tillegg. Ingen overraskelser.
             </p>
-            <p className="text-sm text-muted-foreground/60 font-light mb-14 md:mb-20">
-              Andre tilbyr regnskapsfører til lav pris, men mangler mva-rapportering, lønn og revisjonstøtte. Noen gir deg et verktøy — uten noen til å bruke det for deg. Hos Avargo er <em>alt</em> inkludert fra dag én.
+            <p className="text-sm text-foreground/50 font-light mb-14 md:mb-20">
+              Andre tar ekstra for MVA, lønn og rådgivning. Hos oss er <em className="text-foreground/70">alt</em> inkludert fra dag én.
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {services.map((srv, i) => (
-              <AnimatedSection key={srv.title} delay={i * 0.1}>
+              <AnimatedSection key={srv.title} delay={i * 0.08}>
                 <div className="group p-6 md:p-8 glass rounded-3xl card-lift h-full relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="flex items-start gap-4 md:gap-5">
-                    <div className="p-2.5 md:p-3 bg-muted/50 rounded-2xl shrink-0">
+                    <div className="p-2.5 md:p-3 bg-primary/10 rounded-2xl shrink-0">
                       <srv.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <div>
                       <h3 className="font-heading text-lg md:text-xl mb-2">{srv.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed font-light">{srv.desc}</p>
+                      <p className="text-sm text-foreground/60 leading-relaxed font-light">{srv.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -246,48 +233,67 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* INDUSTRIES */}
+      {/* INDUSTRIES — rotating 3 at a time */}
       <section id="bransjer" className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Noen av våre spesialfelt</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bransjer vi dekker</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
               Vi kjenner bransjen din.{" "}
               <span className="italic text-gradient-rose">Ikke bare tallene.</span>
             </h2>
-            <p className="text-muted-foreground text-base md:text-lg font-light mb-4 md:mb-6 max-w-2xl">
-              Uansett hvilken bransje du er i, møter du noen hos oss som forstår hverdagen din — ikke bare tallene i regnskapet.
+            <p className="text-foreground/70 text-base md:text-lg font-light mb-4 md:mb-6 max-w-2xl">
+              Uansett hva du driver med, møter du en regnskapsfører hos oss som forstår hverdagen din — ikke bare tallene i regnskapet.
             </p>
-            <p className="text-sm text-primary/70 italic font-light mb-14 md:mb-20">
-              Driver du i en bransje du ikke ser her? Ring oss — vi tilpasser oss raskt.
+            <p className="text-sm text-primary/80 italic font-light mb-14 md:mb-20">
+              Vi dekker over 25 bransjer. Her er noen av dem.
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {industries.map((ind, i) => (
-              <AnimatedSection key={ind.name} delay={i * 0.08}>
-                <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <div className="p-2.5 md:p-3 bg-muted/50 rounded-2xl inline-block mb-4 md:mb-5">
-                    <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
-                  <p className="text-sm text-primary/70 italic mb-3">{ind.tagline}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-light">{ind.desc}</p>
-                  <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/60 group-hover:text-primary transition-colors duration-300 mt-4">
-                    Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
-                  </div>
-                </Link>
-              </AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[320px]">
+            <AnimatePresence mode="wait">
+              {visibleIndustries.map((ind) => (
+                <motion.div
+                  key={ind.slug + industryPage}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
+                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="p-2.5 md:p-3 bg-primary/10 rounded-2xl inline-block mb-4 md:mb-5">
+                      <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
+                    <p className="text-sm text-primary/80 italic mb-3">{ind.tagline}</p>
+                    <p className="text-sm text-foreground/60 leading-relaxed font-light">{ind.desc}</p>
+                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-4">
+                      Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {/* Page dots */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndustryPage(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`}
+              />
             ))}
           </div>
 
-          <AnimatedSection delay={0.5}>
-            <div className="mt-10 md:mt-12 p-6 md:p-8 glass rounded-3xl text-center">
-              <p className="text-muted-foreground font-light text-sm md:text-base">
-                Er bransjen din ikke på listen? <span className="text-foreground">Vi tar på oss alle typer bedrifter.</span> Ta kontakt — vi setter oss raskt inn i din hverdag og tilpasser tjenesten til deg.
-              </p>
+          <AnimatedSection delay={0.3}>
+            <div className="mt-8 text-center">
+              <Link to="/bransjer" className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
+                Se alle {industries.length}+ bransjer vi dekker →
+              </Link>
             </div>
           </AnimatedSection>
         </div>
@@ -304,10 +310,10 @@ const Index = () => {
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-4 md:mb-6 leading-snug">
                   Kommende <span className="italic text-gradient-rose">skattefrister</span>
                 </h2>
-                <p className="text-muted-foreground text-sm md:text-base font-light leading-relaxed mb-4">
-                  Hold deg oppdatert på de viktigste fristene fra Skatteetaten. Vi henter dem automatisk, så du aldri går glipp av en leveringsfrist.
+                <p className="text-foreground/60 text-sm md:text-base font-light leading-relaxed mb-4">
+                  Hold deg oppdatert på de viktigste fristene fra Skatteetaten. Vi henter dem automatisk, så du aldri går glipp av en frist.
                 </p>
-                <p className="text-xs text-primary/70 italic font-light">
+                <p className="text-xs text-primary/80 italic font-light">
                   Kilde: skatteetaten.no — oppdateres i sanntid.
                 </p>
               </div>
@@ -321,28 +327,49 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* SOCIAL PROOF */}
+      {/* CONVICTION SECTION (replaces fake testimonials) */}
       <section className="py-24 md:py-40 border-y border-border/15">
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
             <div className="text-center mb-14 md:mb-20">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Resultater</p>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl">
-                De byttet. <span className="italic text-gradient-rose">De angrer ikke.</span>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl max-w-3xl mx-auto leading-snug">
+                De fleste betaler for mye.{" "}
+                <span className="italic text-gradient-rose">Og får for lite tilbake.</span>
               </h2>
             </div>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {testimonials.map((t, i) => (
+            {[
+              {
+                metric: "100%",
+                label: "fastpris — ingen tillegg",
+                text: "Hos oss er bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering. Ingen overraskelser. Du vet alltid hva det koster.",
+              },
+              {
+                metric: "1 person",
+                label: "din dedikerte regnskapsfører",
+                text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte.",
+              },
+              {
+                metric: "AI-drevet",
+                label: "innsikt i sanntid",
+                text: "Regnskapsføreren din bruker AI-verktøy som scanner tusenvis av datapunkter. Resultatet? Fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget.",
+              },
+              {
+                metric: "24 timer",
+                label: "responstid, alltid",
+                text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi god rådgivning handler om tilgjengelighet — ikke bare kompetanse.",
+              },
+            ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.12}>
                 <div className="p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift">
                   <div className="mb-5 md:mb-6">
-                    <span className="font-heading text-4xl md:text-5xl text-gradient-rose">{t.metric}</span>
-                    <p className="text-xs text-muted-foreground tracking-widest uppercase mt-1">{t.label}</p>
+                    <span className="font-heading text-4xl md:text-5xl text-gradient-rose">{item.metric}</span>
+                    <p className="text-xs text-foreground/50 tracking-widest uppercase mt-1">{item.label}</p>
                   </div>
-                  <p className="text-foreground/85 leading-relaxed mb-6 md:mb-8 flex-1 font-light text-sm md:text-base">"{t.quote}"</p>
-                  <p className="text-xs text-muted-foreground tracking-wide">{t.author}</p>
+                  <p className="text-foreground/70 leading-relaxed flex-1 font-light text-sm md:text-base">{item.text}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -356,21 +383,21 @@ const Index = () => {
         <div className="container mx-auto px-4 md:px-6 text-center relative">
           <AnimatedSection>
             <div className="max-w-2xl mx-auto">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Gratis · Verdi 5 000 kr</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Gratis gjennomgang</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 leading-snug">
-                Hvor mye penger <span className="italic text-gradient-rose">blør selskapet ditt</span> akkurat nå?
+                Betaler du for mye <span className="italic text-gradient-rose">uten å vite det?</span>
               </h2>
-              <p className="text-muted-foreground text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
-                Bestill en gratis finansiell helse-sjekk. Vi avdekker skjulte fradrag, ineffektive strukturer og tapte muligheter.
+              <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
+                Vi gjennomgår regnskapet ditt gratis og viser deg konkret hva du kan spare — på skatt, kostnader og tid. Helt uforpliktende.
               </p>
-              <p className="text-sm text-primary/70 italic font-light mb-10 md:mb-12">
-                Helt uforpliktende. Men vanskelig å si nei etter du har sett tallene.
+              <p className="text-sm text-primary italic font-light mb-10 md:mb-12">
+                Én samtale. Konkrete tall. Ingen forpliktelser.
               </p>
               <Link
                 to="/kontakt"
                 className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Bestill gratis analyse
+                Bestill gratis gjennomgang
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </div>

@@ -32,7 +32,7 @@ const KundeDashboard = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/kunde/logg-inn");
+    navigate("/");
   };
 
   const Sidebar = () => (
