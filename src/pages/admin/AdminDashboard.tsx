@@ -64,7 +64,7 @@ const AdminDashboard = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/admin/logg-inn");
+    navigate("/");
   };
 
   const visibleItems = navItems.filter(item => !item.adminOnly || isAdmin);
