@@ -196,32 +196,47 @@ export type Database = {
       }
       collaboration_agreements: {
         Row: {
+          company: string | null
+          contact_name: string | null
           created_at: string
           description: string | null
+          email: string | null
           file_name: string | null
           file_url: string | null
           id: string
+          offering: string | null
           partner: string | null
+          phone: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          company?: string | null
+          contact_name?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           file_name?: string | null
           file_url?: string | null
           id?: string
+          offering?: string | null
           partner?: string | null
+          phone?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          company?: string | null
+          contact_name?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           file_name?: string | null
           file_url?: string | null
           id?: string
+          offering?: string | null
           partner?: string | null
+          phone?: string | null
           title?: string
           updated_at?: string
         }
