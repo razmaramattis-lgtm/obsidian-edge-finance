@@ -159,6 +159,7 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
   const [loading, setLoading] = useState(true);
   const [showFinForm, setShowFinForm] = useState(false);
   const [showDocForm, setShowDocForm] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(false);
   const [finForm, setFinForm] = useState({ period: "", revenue: "", costs: "", result: "", equity: "", assets: "", liabilities: "", notes: "", admin_action_plan: "" });
   const [docForm, setDocForm] = useState({ title: "", description: "", visibility: "private" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -269,18 +270,33 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
 
       {tab === "financials" && (
         <div className="space-y-4">
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setShowUploadForm(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-primary/30 text-primary rounded-xl text-sm hover:bg-primary/5">
+              <Upload size={14} /> Last opp fil (PDF/Excel)
+            </button>
             <button onClick={() => setShowFinForm(true)}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
-              <Plus size={14} /> Ny periode
+              <Plus size={14} /> Manuell registrering
             </button>
           </div>
 
+          {showUploadForm && (
+            <FinancialUploadForm
+              companyId={company.id}
+              onComplete={() => { setShowUploadForm(false); load(); }}
+              onCancel={() => setShowUploadForm(false)}
+            />
+          )}
+
           {showFinForm && (
             <form onSubmit={saveFinancial} className="glass rounded-2xl p-5 border border-border/20 space-y-3">
-              <h3 className="font-medium text-sm">Legg til økonomiperiode</h3>
+              <h3 className="font-medium text-sm">Manuell registrering av månedsdata</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <input value={finForm.period} onChange={e => setFinForm({ ...finForm, period: e.target.value })} placeholder="Periode (f.eks. 2025-Q1) *" required className={inputCls} />
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Måned *</label>
+                  <input value={finForm.period} onChange={e => setFinForm({ ...finForm, period: e.target.value })} type="month" required className={inputCls} />
+                </div>
                 <input value={finForm.revenue} onChange={e => setFinForm({ ...finForm, revenue: e.target.value })} placeholder="Inntekter" type="number" className={inputCls} />
                 <input value={finForm.costs} onChange={e => setFinForm({ ...finForm, costs: e.target.value })} placeholder="Kostnader" type="number" className={inputCls} />
                 <input value={finForm.result} onChange={e => setFinForm({ ...finForm, result: e.target.value })} placeholder="Resultat" type="number" className={inputCls} />
@@ -371,6 +387,129 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
               </div>
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ========== FINANCIAL UPLOAD FORM ==========
+const FinancialUploadForm = ({ companyId, onComplete, onCancel }: { companyId: string; onComplete: () => void; onCancel: () => void }) => {
+  const { session } = useAuth();
+  const [period, setPeriod] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [parsing, setParsing] = useState(false);
+  const [parsed, setParsed] = useState<any>(null);
+  const [notes, setNotes] = useState("");
+  const [actionPlan, setActionPlan] = useState("");
+  const [saving, setSaving] = useState(false);
+  const uploadRef = useRef<HTMLInputElement>(null);
+
+  const parseFile = async () => {
+    if (!file || !period) { toast.error("Velg måned og fil"); return; }
+    setParsing(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("company_id", companyId);
+      formData.append("period", period);
+
+      const res = await supabase.functions.invoke("parse-financials", {
+        body: formData,
+      });
+
+      if (res.error || res.data?.error) throw new Error(res.data?.error || "Parsing feilet");
+      setParsed(res.data);
+      toast.success("Tall hentet fra filen!");
+    } catch (err: any) {
+      toast.error(err.message || "Kunne ikke lese filen");
+    }
+    setParsing(false);
+  };
+
+  const saveToDb = async () => {
+    if (!parsed) return;
+    setSaving(true);
+    const { error } = await supabase.from("customer_financials").insert({
+      company_id: companyId,
+      period,
+      revenue: parsed.data.revenue,
+      costs: parsed.data.costs,
+      result: parsed.data.result,
+      equity: parsed.data.equity,
+      assets: parsed.data.assets,
+      liabilities: parsed.data.liabilities,
+      notes: notes || null,
+      admin_action_plan: actionPlan || null,
+    });
+    if (error) { toast.error("Lagring feilet"); setSaving(false); return; }
+    toast.success(`Økonomidata for ${period} lagret`);
+    setSaving(false);
+    onComplete();
+  };
+
+  return (
+    <div className="glass rounded-2xl p-5 border border-primary/20 space-y-4">
+      <h3 className="font-medium text-sm flex items-center gap-2">
+        <Upload size={14} className="text-primary" /> Last opp saldobalanse (PDF / Excel / CSV)
+      </h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Måned *</label>
+          <input type="month" value={period} onChange={e => setPeriod(e.target.value)} required className={inputCls} />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Fil *</label>
+          <div onClick={() => uploadRef.current?.click()}
+            className="h-10 border border-dashed border-border/30 rounded-xl px-3 flex items-center cursor-pointer hover:border-primary/40 transition-colors">
+            <p className="text-sm text-muted-foreground truncate">{file ? file.name : "Velg PDF, Excel eller CSV…"}</p>
+            <input ref={uploadRef} type="file" accept=".pdf,.xlsx,.xls,.csv,.txt" className="hidden"
+              onChange={e => { setFile(e.target.files?.[0] || null); setParsed(null); }} />
+          </div>
+        </div>
+      </div>
+
+      {!parsed && (
+        <div className="flex gap-2">
+          <button onClick={parseFile} disabled={parsing || !file || !period}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
+            {parsing ? "Analyserer fil…" : "Analyser fil med AI"}
+          </button>
+          <button onClick={onCancel} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
+        </div>
+      )}
+
+      {parsed && (
+        <div className="space-y-3">
+          <p className="text-xs text-emerald-500 font-medium">✓ Tall hentet fra {parsed.file_name}</p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: "Inntekter", key: "revenue" },
+              { label: "Kostnader", key: "costs" },
+              { label: "Resultat", key: "result" },
+              { label: "Egenkapital", key: "equity" },
+              { label: "Eiendeler", key: "assets" },
+              { label: "Gjeld", key: "liabilities" },
+            ].map(f => (
+              <div key={f.key} className="glass rounded-xl p-3 border border-border/10">
+                <p className="text-[10px] text-muted-foreground">{f.label}</p>
+                <p className="text-sm font-heading">{Number(parsed.data[f.key]).toLocaleString("no-NO")} kr</p>
+              </div>
+            ))}
+          </div>
+          <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notat (valgfritt)" rows={2}
+            className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+          <textarea value={actionPlan} onChange={e => setActionPlan(e.target.value)} placeholder="Tiltaksplan (synlig for kunden)" rows={3}
+            className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+          <div className="flex gap-2">
+            <button onClick={saveToDb} disabled={saving}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
+              {saving ? "Lagrer…" : "Lagre til kundens økonomi"}
+            </button>
+            <button onClick={() => setParsed(null)} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Analyser på nytt</button>
+            <button onClick={onCancel} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
+          </div>
         </div>
       )}
     </div>
