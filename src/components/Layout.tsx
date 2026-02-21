@@ -350,48 +350,77 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <footer className="border-t border-border/10 py-16 md:py-24 relative">
         <div className="absolute inset-0 ambient-glow opacity-20" />
         <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-14">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-8">
+            {/* Brand */}
             <div className="col-span-2 md:col-span-1">
-              <span className="font-heading text-2xl text-primary">Avargo</span>
+              <Link to="/" className="font-heading text-2xl text-primary">Avargo</Link>
               <p className="mt-4 text-sm text-muted-foreground leading-relaxed font-light">
                 Din finansielle arkitekt.<br />Presisjon. Innsikt. Vekst.
               </p>
+              <Link to="/kontakt" className="inline-block mt-5 px-5 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
+                Kom i gang
+              </Link>
             </div>
+
+            {/* Tjenester */}
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Tjenester</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
                 <Link to="/tjenester/regnskapsforer" className="text-foreground/60 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
-                <Link to="/tjenester/ai-innsikt" className="text-foreground/60 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
-                <Link to="/tjenester/hr-og-lonn" className="text-foreground/60 hover:text-foreground transition-colors">Lønn & HR</Link>
                 <Link to="/tjenester/cfo" className="text-foreground/60 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
-                <Link to="/tjenester" className="text-foreground/60 hover:text-foreground transition-colors">Se alle tjenester →</Link>
+                <Link to="/tjenester/hr-og-lonn" className="text-foreground/60 hover:text-foreground transition-colors">Lønn & HR</Link>
+                <Link to="/tjenester/nettsider" className="text-foreground/60 hover:text-foreground transition-colors">Nettsider</Link>
+                <Link to="/tjenester/seo" className="text-foreground/60 hover:text-foreground transition-colors">SEO & søkbarhet</Link>
+                <Link to="/tjenester/ai-automatisering" className="text-foreground/60 hover:text-foreground transition-colors">AI & automatisering</Link>
+                <Link to="/tjenester" className="text-primary/80 hover:text-primary transition-colors text-[13px] mt-1">Se alle tjenester →</Link>
               </div>
             </div>
+
+            {/* Bransjer */}
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Bransjer</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
                 <Link to="/bransjer/tech-saas" className="text-foreground/60 hover:text-foreground transition-colors">Tech & SaaS</Link>
-                <Link to="/bransjer/eiendom" className="text-foreground/60 hover:text-foreground transition-colors">Eiendom & Utvikling</Link>
-                <Link to="/bransjer/landbruk" className="text-foreground/60 hover:text-foreground transition-colors">Landbruk</Link>
+                <Link to="/bransjer/eiendom" className="text-foreground/60 hover:text-foreground transition-colors">Eiendom</Link>
                 <Link to="/bransjer/bygg-anlegg" className="text-foreground/60 hover:text-foreground transition-colors">Bygg & Anlegg</Link>
-                <Link to="/bransjer" className="text-foreground/60 hover:text-foreground transition-colors">Se alle bransjer →</Link>
+                <Link to="/bransjer/restaurant" className="text-foreground/60 hover:text-foreground transition-colors">Restaurant & Uteliv</Link>
+                <Link to="/bransjer/consulting" className="text-foreground/60 hover:text-foreground transition-colors">Consulting</Link>
+                <Link to="/bransjer" className="text-primary/80 hover:text-primary transition-colors text-[13px] mt-1">Se alle bransjer →</Link>
               </div>
             </div>
+
+            {/* Ressurser */}
             <div>
-              <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Kontakt</h4>
+              <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Ressurser</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
+                <Link to="/ressurser?tab=blogg" className="text-foreground/60 hover:text-foreground transition-colors">Blogg</Link>
+                <Link to="/ressurser?tab=guider" className="text-foreground/60 hover:text-foreground transition-colors">Guider</Link>
+                <Link to="/ressurser?tab=arkiv" className="text-foreground/60 hover:text-foreground transition-colors">Arkiv & maler</Link>
+                <Link to="/ressurser/skattekalender" className="text-foreground/60 hover:text-foreground transition-colors">Skattekalender</Link>
+                <Link to="/priser" className="text-foreground/60 hover:text-foreground transition-colors">Priser</Link>
+                <Link to="/metoden" className="text-foreground/60 hover:text-foreground transition-colors">Vår metode</Link>
+              </div>
+            </div>
+
+            {/* Selskapet */}
+            <div>
+              <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Selskapet</h4>
+              <div className="flex flex-col gap-3 text-sm font-light">
+                <Link to="/om-oss" className="text-foreground/60 hover:text-foreground transition-colors">Om Avargo</Link>
+                <Link to="/kontakt" className="text-foreground/60 hover:text-foreground transition-colors">Kontakt oss</Link>
+                <Link to="/kunde/logg-inn" className="text-foreground/60 hover:text-foreground transition-colors">Kundeportal</Link>
                 <a href="mailto:post@avargo.no" className="text-foreground/60 hover:text-foreground transition-colors">post@avargo.no</a>
                 <a href="tel:+4722000000" className="text-foreground/60 hover:text-foreground transition-colors">+47 22 00 00 00</a>
-                <Link to="/kontakt" className="text-foreground/60 hover:text-foreground transition-colors">Oslo, Norge</Link>
               </div>
             </div>
           </div>
+
           <div className="line-accent mt-12 mb-6" />
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground/50">
-            <span>© 2026 Avargo</span>
+            <span>© 2026 Avargo. Alle rettigheter reservert.</span>
             <div className="flex gap-8">
-              <span className="hover:text-foreground transition-colors cursor-pointer">Personvern</span>
-              <span className="hover:text-foreground transition-colors cursor-pointer">Vilkår</span>
+              <Link to="/om-oss" className="hover:text-foreground transition-colors">Personvern</Link>
+              <Link to="/om-oss" className="hover:text-foreground transition-colors">Vilkår</Link>
             </div>
           </div>
         </div>
