@@ -169,19 +169,6 @@ const BransjePage = ({
       </div>
     </section>
 
-    {/* QUOTE */}
-    {quote && (
-      <AnimatedSection>
-        <div className="container mx-auto px-4 md:px-6 pb-16 md:pb-24">
-          <div className="glass rounded-3xl p-8 md:p-14 text-center max-w-3xl mx-auto">
-            <p className="font-heading text-xl md:text-2xl italic text-foreground/80 leading-relaxed mb-5 md:mb-6">
-              "{quote.text}"
-            </p>
-            <p className="text-xs text-muted-foreground tracking-widest uppercase">{quote.author}</p>
-          </div>
-        </div>
-      </AnimatedSection>
-    )}
 
     {/* RELATED */}
     {relatedSlugs.length > 0 && (
