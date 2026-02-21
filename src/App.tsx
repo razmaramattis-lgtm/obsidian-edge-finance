@@ -14,6 +14,7 @@ import Metoden from "./pages/Metoden";
 import Tjenester from "./pages/Tjenester";
 import Bransjer from "./pages/Bransjer";
 import Ressurser from "./pages/Ressurser";
+import Skattekalender from "./pages/Skattekalender";
 import BlogListing from "./pages/BlogListing";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
@@ -132,6 +133,7 @@ const App = () => (
                     <Route path="/metoden" element={<Metoden />} />
                     <Route path="/priser" element={<Pricing />} />
                     <Route path="/ressurser" element={<Ressurser />} />
+                    <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
                     <Route path="/nyheter" element={<BlogListing />} />
                     <Route path="/nyhet/:slug" element={<BlogPost />} />
                     <Route path="/om-oss" element={<About />} />

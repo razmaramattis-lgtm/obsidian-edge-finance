@@ -294,13 +294,23 @@ const Ressurser = () => {
             </div>
           )}
 
-          {/* Skattefrister */}
+          {/* Skattekalender CTA */}
           <AnimatedSection className="mt-16">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Clock size={18} className="text-primary" />
-              Skattefrister
-            </h2>
-            <TaxDeadlineWidget limit={6} />
+            <Link
+              to="/ressurser/skattekalender"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Clock size={22} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm group-hover:text-primary transition-colors">Skattekalender</h3>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">Se alle frister for AS, ENK og arbeidsgivere i en visuell kalender</p>
+                </div>
+              </div>
+              <ArrowRight size={16} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
+            </Link>
           </AnimatedSection>
         </div>
       </section>
