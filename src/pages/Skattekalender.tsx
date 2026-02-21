@@ -151,8 +151,9 @@ const Skattekalender = () => {
   return (
     <>
       <Helmet>
-        <title>Skatteetatens kalender – Alle frister for næringsdrivende</title>
-        <meta name="description" content="Komplett oversikt over skattefrister, mva-frister og innleveringsfrister for AS, ENK og arbeidsgivere. Alltid oppdatert fra Skatteetaten." />
+        <title>Skattekalender 2026 | Alle frister for AS, ENK og arbeidsgivere</title>
+        <meta name="description" content="Komplett oversikt over skattefrister, MVA-frister og innleveringsfrister for AS, ENK og arbeidsgivere i 2026. Alltid oppdatert fra Skatteetaten." />
+        <link rel="canonical" href="https://avargo.no/skattekalender" />
       </Helmet>
 
       {/* Hero */}

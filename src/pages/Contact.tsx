@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useSearchParams } from "react-router-dom";
 import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -174,6 +175,12 @@ const Contact = () => {
   };
 
   return (
+    <>
+    <Helmet>
+      <title>Kontakt Avargo | Få tilbud på regnskapstjenester</title>
+      <meta name="description" content="Ta kontakt med Avargo for et uforpliktende tilbud på regnskap, rådgivning og skatteoptimalisering. Vi svarer innen 24 timer." />
+      <link rel="canonical" href="https://avargo.no/kontakt" />
+    </Helmet>
     <section className="py-24 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />
       <div className="container mx-auto px-4 md:px-6 relative">
@@ -363,6 +370,7 @@ const Contact = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 

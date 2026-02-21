@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -54,6 +55,11 @@ const Bransjer = () => {
 
   return (
   <>
+    <Helmet>
+      <title>Bransjer vi betjener | Regnskapsfører for din bransje — Avargo</title>
+      <meta name="description" content="Avargo tilbyr bransjespesialiserte regnskapstjenester for tech, eiendom, bygg, restaurant, helse, landbruk og 20+ andre bransjer i Norge." />
+      <link rel="canonical" href="https://avargo.no/bransjer" />
+    </Helmet>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />

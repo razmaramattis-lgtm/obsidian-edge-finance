@@ -1,4 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
@@ -134,6 +135,11 @@ const Ressurser = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Ressurser | Fagartikler, maler og verktøy for bedrifter — Avargo</title>
+        <meta name="description" content="Gratis ressurser fra Avargo: fagartikler om regnskap og skatt, nedlastbare maler, skattekalender og nyttige verktøy for norske bedrifter." />
+        <link rel="canonical" href="https://avargo.no/ressurser" />
+      </Helmet>
       {/* Hero */}
       <section className="py-28 md:py-44 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-30" />
