@@ -37,6 +37,7 @@ interface Course {
   name: string;
   description: string | null;
   category: string;
+  slug: string | null;
 }
 
 /* ───────── Hvem passer kursene for ───────── */
@@ -159,7 +160,7 @@ const Kurs = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const { data } = await supabase.from("courses").select("id, name, description, category").eq("active", true).order("category").order("sort_order");
+      const { data } = await supabase.from("courses").select("id, name, description, category, slug").eq("active", true).order("category").order("sort_order");
       setCourses((data as Course[]) || []);
       setLoading(false);
     };
@@ -322,19 +323,23 @@ const Kurs = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {items.map((course, i) => (
-                        <motion.button
+                        <motion.div
                           key={course.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: Math.min(i * 0.02, 0.3) }}
-                          onClick={() => setSelectedCourse(course)}
-                          className="group text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300"
                         >
-                          <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
-                          {course.description && (
-                            <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
-                          )}
-                        </motion.button>
+                          <Link
+                            to={course.slug ? `/tjenester/kurs/${course.slug}` : "#"}
+                            onClick={e => { if (!course.slug) { e.preventDefault(); setSelectedCourse(course); } }}
+                            className="group block text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
+                          >
+                            <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
+                            {course.description && (
+                              <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
+                            )}
+                          </Link>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -348,26 +353,30 @@ const Kurs = () => {
                 const conf = categoryConfig[course.category] || { icon: BookOpen, color: "from-primary/20 to-primary/10" };
                 const CatIcon = conf.icon;
                 return (
-                  <motion.button
+                  <motion.div
                     key={course.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: Math.min(i * 0.02, 0.4) }}
-                    onClick={() => setSelectedCourse(course)}
-                    className="group text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                        <CatIcon size={14} className="text-foreground/70" strokeWidth={1.5} />
+                    <Link
+                      to={course.slug ? `/tjenester/kurs/${course.slug}` : "#"}
+                      onClick={e => { if (!course.slug) { e.preventDefault(); setSelectedCourse(course); } }}
+                      className="group block text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                          <CatIcon size={14} className="text-foreground/70" strokeWidth={1.5} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
+                          {course.description && (
+                            <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
-                        {course.description && (
-                          <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
-                        )}
-                      </div>
-                    </div>
-                  </motion.button>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
