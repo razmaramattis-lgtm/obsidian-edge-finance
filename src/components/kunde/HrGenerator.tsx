@@ -102,31 +102,46 @@ const INITIAL_FORM: FormData = {
   actionPlanResponsible: "",
   modules: [
     "formaal", "ansettelse", "arbeidstid", "ferie", "sykdom",
-    "hjemmekontor", "lonn", "hms", "psykososialt", "risikovurdering", "kartlegging", "handlingsplan", "personvern", "avslutning"
+    "hjemmekontor", "lonn", "hms", "psykososialt", "risikovurdering",
+    "kartlegging", "handlingsplan", "personvern", "varsling",
+    "arbeidsreglement", "internkontroll", "gdpr", "digitalt", "avslutning"
   ],
 };
 
 const ALL_MODULES = [
-  { id: "formaal",      label: "Formål og omfang" },
-  { id: "ansettelse",   label: "Ansettelse og prøvetid" },
-  { id: "arbeidstid",   label: "Arbeidstid og fleksibilitet" },
-  { id: "ferie",        label: "Ferie og fridager" },
-  { id: "sykdom",       label: "Sykdom og fravær" },
-  { id: "hjemmekontor", label: "Hjemmekontor" },
-  { id: "lonn",         label: "Lønn og godtgjørelser" },
-  { id: "pensjon",      label: "Pensjon og forsikring" },
-  { id: "hms",          label: "HMS og arbeidsmiljø" },
-  { id: "psykososialt", label: "Psykososialt arbeidsmiljø (2026)" },
-  { id: "risikovurdering", label: "Risikovurdering (2026)" },
-  { id: "kartlegging",  label: "Kartlegging (2026)" },
-  { id: "handlingsplan", label: "Handlingsplaner (2026)" },
-  { id: "personvern",   label: "Personvern og IT" },
-  { id: "sosiale",      label: "Sosiale medier" },
-  { id: "kleskode",     label: "Kleskode" },
-  { id: "varsling",     label: "Varsling og etikk" },
-  { id: "kompetanse",   label: "Kompetanseutvikling" },
-  { id: "avslutning",   label: "Oppsigelse og avslutning" },
-  { id: "baerekraft",   label: "Bærekraft og samfunnsansvar" },
+  // — Personalhåndbok —
+  { id: "formaal",      label: "Formål og omfang",               group: "Personalhåndbok" },
+  { id: "ansettelse",   label: "Ansettelse og prøvetid",         group: "Personalhåndbok" },
+  { id: "arbeidstid",   label: "Arbeidstid og fleksibilitet",    group: "Personalhåndbok" },
+  { id: "ferie",        label: "Ferie og fridager",              group: "Personalhåndbok" },
+  { id: "sykdom",       label: "Sykdom og fravær",               group: "Personalhåndbok" },
+  { id: "hjemmekontor", label: "Hjemmekontor",                   group: "Personalhåndbok" },
+  { id: "lonn",         label: "Lønn og godtgjørelser",          group: "Personalhåndbok" },
+  { id: "pensjon",      label: "Pensjon og forsikring",          group: "Personalhåndbok" },
+  { id: "kompetanse",   label: "Kompetanseutvikling",            group: "Personalhåndbok" },
+  { id: "kleskode",     label: "Kleskode",                       group: "Personalhåndbok" },
+  { id: "sosiale",      label: "Sosiale medier",                 group: "Personalhåndbok" },
+  { id: "avslutning",   label: "Oppsigelse og avslutning",       group: "Personalhåndbok" },
+  { id: "baerekraft",   label: "Bærekraft og samfunnsansvar",    group: "Personalhåndbok" },
+  // — Arbeidsreglement —
+  { id: "arbeidsreglement", label: "Arbeidsreglement",           group: "Arbeidsreglement" },
+  // — Varslingsrutiner —
+  { id: "varsling",     label: "Varslingsrutiner",               group: "Varslingsrutiner" },
+  // — HMS & Internkontroll —
+  { id: "hms",          label: "HMS og arbeidsmiljø",            group: "HMS & Internkontroll" },
+  { id: "internkontroll", label: "Internkontroll (IK)",          group: "HMS & Internkontroll" },
+  { id: "psykososialt", label: "Psykososialt arbeidsmiljø (2026)", group: "HMS & Internkontroll" },
+  { id: "risikovurdering", label: "Risikovurdering (2026)",      group: "HMS & Internkontroll" },
+  { id: "kartlegging",  label: "Kartlegging (2026)",             group: "HMS & Internkontroll" },
+  { id: "handlingsplan", label: "Handlingsplaner (2026)",        group: "HMS & Internkontroll" },
+  // — GDPR —
+  { id: "personvern",   label: "Personvern og IT",               group: "GDPR-compliance" },
+  { id: "gdpr",         label: "GDPR-compliance",                group: "GDPR-compliance" },
+  { id: "databehandler", label: "Databehandleravtaler",          group: "GDPR-compliance" },
+  // — DIGIS-tillegg —
+  { id: "digitalt",     label: "Digital arbeidsplass",           group: "DIGIS-tillegg" },
+  { id: "airetningslinjer", label: "AI og automatisering",       group: "DIGIS-tillegg" },
+  { id: "hybridarbeid", label: "Hybridarbeid og fleksibilitet",  group: "DIGIS-tillegg" },
 ];
 
 const INDUSTRIES = [
@@ -673,35 +688,66 @@ const StepKrav2026 = ({ form, update }: { form: FormData; update: <K extends key
 );
 
 /* ───────── Step 7: Moduler ───────── */
-const StepModuler = ({ form, toggleModule }: { form: FormData; toggleModule: (id: string) => void }) => (
-  <div className="space-y-4">
-    <p className="text-sm text-muted-foreground">Velg hvilke kapitler som skal inngå i din personalhåndbok. Du kan alltid legge til eller fjerne kapitler senere.</p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-      {ALL_MODULES.map(mod => {
-        const selected = form.modules.includes(mod.id);
+const MODULE_GROUPS = [...new Set(ALL_MODULES.map(m => m.group))];
+
+const StepModuler = ({ form, toggleModule }: { form: FormData; toggleModule: (id: string) => void }) => {
+  const toggleGroup = (group: string) => {
+    const groupMods = ALL_MODULES.filter(m => m.group === group);
+    const allSelected = groupMods.every(m => form.modules.includes(m.id));
+    groupMods.forEach(m => {
+      const isSelected = form.modules.includes(m.id);
+      if (allSelected ? isSelected : !isSelected) toggleModule(m.id);
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">Velg hvilke dokumenter og kapitler som skal genereres. Du kan alltid legge til eller fjerne dem senere.</p>
+      {MODULE_GROUPS.map(group => {
+        const groupMods = ALL_MODULES.filter(m => m.group === group);
+        const selectedCount = groupMods.filter(m => form.modules.includes(m.id)).length;
         return (
-          <button
-            key={mod.id}
-            onClick={() => toggleModule(mod.id)}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-left transition-all duration-200 border ${
-              selected
-                ? "border-primary/30 bg-primary/5 text-foreground"
-                : "border-border/20 bg-muted/10 text-muted-foreground hover:border-border/40 hover:bg-muted/20"
-            }`}
-          >
-            <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
-              selected ? "bg-primary text-primary-foreground" : "bg-muted/50"
-            }`}>
-              {selected && <Check size={12} />}
+          <div key={group}>
+            <button onClick={() => toggleGroup(group)} className="flex items-center gap-2 mb-2 group/g">
+              <div className={`w-4 h-4 rounded flex items-center justify-center text-[10px] transition-colors ${
+                selectedCount === groupMods.length ? "bg-primary text-primary-foreground" : selectedCount > 0 ? "bg-primary/40 text-primary-foreground" : "bg-muted/50"
+              }`}>
+                {selectedCount === groupMods.length && <Check size={10} />}
+                {selectedCount > 0 && selectedCount < groupMods.length && <span>–</span>}
+              </div>
+              <span className="text-xs tracking-[0.15em] uppercase text-muted-foreground/70 group-hover/g:text-foreground transition-colors">{group}</span>
+              <span className="text-[10px] text-muted-foreground/40">{selectedCount}/{groupMods.length}</span>
+            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {groupMods.map(mod => {
+                const selected = form.modules.includes(mod.id);
+                return (
+                  <button
+                    key={mod.id}
+                    onClick={() => toggleModule(mod.id)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-left transition-all duration-200 border ${
+                      selected
+                        ? "border-primary/30 bg-primary/5 text-foreground"
+                        : "border-border/20 bg-muted/10 text-muted-foreground hover:border-border/40 hover:bg-muted/20"
+                    }`}
+                  >
+                    <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                      selected ? "bg-primary text-primary-foreground" : "bg-muted/50"
+                    }`}>
+                      {selected && <Check size={12} />}
+                    </div>
+                    {mod.label}
+                  </button>
+                );
+              })}
             </div>
-            {mod.label}
-          </button>
+          </div>
         );
       })}
+      <p className="text-xs text-muted-foreground">{form.modules.length} av {ALL_MODULES.length} seksjoner valgt</p>
     </div>
-    <p className="text-xs text-muted-foreground">{form.modules.length} av {ALL_MODULES.length} kapitler valgt</p>
-  </div>
-);
+  );
+};
 
 /* ───────── Step 7: Generer ───────── */
 const StepGenerer = ({ form }: { form: FormData }) => (
@@ -743,11 +789,17 @@ const StepGenerer = ({ form }: { form: FormData }) => (
         <SummaryRow label="Handlingsplaner" value={form.actionPlanEnabled ? "Ja" : "Nei"} />
       </SummarySection>
 
-      <SummarySection title="Moduler">
-        <p className="text-sm text-muted-foreground">
-          {form.modules.map(m => ALL_MODULES.find(a => a.id === m)?.label).filter(Boolean).join(" · ")}
-        </p>
-      </SummarySection>
+      {MODULE_GROUPS.map(group => {
+        const selected = ALL_MODULES.filter(m => m.group === group && form.modules.includes(m.id));
+        if (selected.length === 0) return null;
+        return (
+          <SummarySection key={group} title={group}>
+            <p className="text-sm text-muted-foreground">
+              {selected.map(m => m.label).join(" · ")}
+            </p>
+          </SummarySection>
+        );
+      })}
     </div>
   </div>
 );
@@ -853,6 +905,38 @@ function buildChapterContents(form: FormData) {
     baerekraft: () => ({
       title: "Bærekraft og samfunnsansvar",
       content: `<h2>Bærekraft og samfunnsansvar</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> tar bærekraft og samfunnsansvar på alvor. Vi jobber aktivt for å redusere vårt miljøavtrykk og bidra positivt til samfunnet.</p><h3>Miljø</h3><ul><li>Kildesortering og resirkulering på arbeidsplassen</li><li>Redusert papirbruk gjennom digitalisering</li><li>Miljøvennlige reisealternativer</li></ul><h3>Sosialt ansvar</h3><p>Vi støtter likestilling, mangfold og inkludering i alle deler av virksomheten. ${form.diversityStatement ? "Vi er forpliktet til å skape en arbeidsplass fri for diskriminering, der alle ansatte behandles med respekt og verdighet." : ""}</p>`,
+    }),
+    // — Arbeidsreglement —
+    arbeidsreglement: () => ({
+      title: "Arbeidsreglement",
+      content: `<h2>Arbeidsreglement</h2><p>Dette arbeidsreglementet gjelder for alle ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> og er fastsatt i henhold til arbeidsmiljøloven kapittel 14.</p><h3>Ordensregler</h3><ul><li>Alle ansatte plikter å overholde fastsatt arbeidstid og melde fra ved fravær.</li><li>Bedriftens utstyr og eiendeler skal behandles med forsiktighet.</li><li>Alkohol og andre rusmidler skal ikke inntas eller medbringes på arbeidsplassen.</li><li>Røyking er kun tillatt på anviste steder.</li></ul><h3>Adgangskontroll</h3><p>Adgangskort/nøkler er personlige og skal ikke lånes bort. Tap skal meldes umiddelbart til <span class="editable-field" data-field="Kontaktperson adgang">daglig leder</span>.</p><h3>Bruk av bedriftens eiendeler</h3><p>Bedriftens utstyr, verktøy og materiell skal kun brukes til arbeidsrelaterte formål med mindre annet er avtalt.</p><h3>Sanksjoner</h3><p>Brudd på arbeidsreglementet kan medføre muntlig eller skriftlig advarsel. Gjentatte eller grove brudd kan gi grunnlag for oppsigelse eller avskjed i henhold til arbeidsmiljøloven.</p><h3>Ikrafttredelse</h3><p>Reglementet trer i kraft fra <span class="editable-field" data-field="Ikrafttredelse">ansettelsesdato</span> og gjelder inntil det blir erstattet av nytt reglement.</p>`,
+    }),
+    // — HMS Internkontroll —
+    internkontroll: () => ({
+      title: "Internkontroll (IK-HMS)",
+      content: `<h2>Internkontroll — HMS</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har et systematisk internkontrollsystem i henhold til forskrift om systematisk helse-, miljø- og sikkerhetsarbeid (internkontrollforskriften).</p><h3>Organisering</h3><ul><li><strong>Daglig leder</strong> har det overordnede ansvaret for HMS og internkontroll.</li><li><strong>Verneombud:</strong> <span class="editable-field" data-field="Verneombud">[Navn]</span></li><li><strong>HMS-ansvarlig:</strong> <span class="editable-field" data-field="HMS-ansvarlig">[Navn]</span></li><li><strong>Bedriftshelsetjeneste:</strong> <span class="editable-field" data-field="BHT">[Leverandør]</span></li></ul><h3>IK-systemets innhold</h3><ol><li>Mål for HMS-arbeidet</li><li>Oversikt over organisasjon og ansvarsforhold</li><li>Kartlegging av farer og risikovurdering</li><li>Handlingsplaner med tiltak og tidsfrister</li><li>Rutiner for avvikshåndtering</li><li>Systematisk overvåking og gjennomgang</li><li>Dokumentasjon og arkivering</li></ol><h3>Avvikshåndtering</h3><p>Alle avvik, nestenulykker og uønskede hendelser skal rapporteres til <span class="editable-field" data-field="Avviksansvarlig">HMS-ansvarlig</span> via bedriftens avvikssystem. Avvik skal lukkes innen <span class="editable-field" data-field="Avviksfrist">14 dager</span>.</p><h3>Årlig gjennomgang</h3><p>Internkontrollsystemet gjennomgås minimum årlig av ledelsen i samarbeid med verneombud.</p>`,
+    }),
+    // — GDPR —
+    gdpr: () => ({
+      title: "GDPR-compliance",
+      content: `<h2>GDPR-compliance</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> behandler personopplysninger i samsvar med personvernforordningen (GDPR) og personopplysningsloven.</p><h3>Behandlingsansvarlig</h3><p>Behandlingsansvarlig er <span class="editable-field" data-field="Behandlingsansvarlig">${company}</span> ved daglig leder. Personvernombud kan kontaktes på <span class="editable-field" data-field="Personvernombud e-post">personvern@bedrift.no</span>.</p><h3>Behandlingsgrunnlag</h3><p>Personopplysninger behandles kun når det foreligger gyldig rettslig grunnlag:</p><ul><li>Oppfyllelse av arbeidsavtale (GDPR art. 6(1)(b))</li><li>Rettslig forpliktelse (GDPR art. 6(1)(c)) — f.eks. skattemelding, A-melding</li><li>Berettiget interesse (GDPR art. 6(1)(f)) — f.eks. adgangskontroll</li><li>Samtykke (GDPR art. 6(1)(a)) — kun der de øvrige ikke dekker</li></ul><h3>Ansattes rettigheter</h3><ul><li><strong>Innsyn</strong> — rett til å se hvilke opplysninger som er lagret</li><li><strong>Retting</strong> — rett til å få feilaktige opplysninger rettet</li><li><strong>Sletting</strong> — rett til å be om sletting når formålet er oppfylt</li><li><strong>Dataportabilitet</strong> — rett til å motta egne data i maskinlesbart format</li><li><strong>Innsigelse</strong> — rett til å protestere mot behandling</li></ul><h3>Lagringstid</h3><p>Personopplysninger lagres ikke lenger enn nødvendig for formålet. Etter avsluttet arbeidsforhold slettes personopplysninger innen <span class="editable-field" data-field="Slettefrist">3 måneder</span>, med unntak av lovpålagt oppbevaringsplikt (regnskap: 5 år, skatteforhold: 10 år).</p><h3>Sikkerhetsbrudd</h3><p>Ved brudd på personopplysningssikkerheten skal <span class="editable-field" data-field="Avviksansvarlig GDPR">personvernombud/daglig leder</span> varsles umiddelbart. Datatilsynet skal varsles innen 72 timer dersom bruddet utgjør en risiko for de registrertes rettigheter.</p>`,
+    }),
+    databehandler: () => ({
+      title: "Databehandleravtaler",
+      content: `<h2>Databehandleravtaler</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har inngått databehandleravtaler med alle tredjeparter som behandler personopplysninger på vegne av selskapet, i henhold til GDPR art. 28.</p><h3>Oversikt over databehandlere</h3><p>Følgende hovedkategorier av databehandlere benyttes:</p><ul><li>Regnskapssystem og lønnsleverandør</li><li>Skylagring og IT-infrastruktur</li><li>Rekrutteringsverktøy og HR-system</li><li>E-post og kommunikasjonsplattformer</li></ul><h3>Krav til databehandlere</h3><ul><li>Skriftlig databehandleravtale skal foreligge før behandling starter</li><li>Databehandlere skal ha tilfredsstillende sikkerhetstiltak</li><li>Overføring utenfor EØS krever tilleggsgarantier (GDPR kap. V)</li><li>Underleverandører krever forhåndsgodkjenning</li></ul><h3>Årlig gjennomgang</h3><p>Oversikten over databehandlere og tilhørende avtaler gjennomgås årlig av <span class="editable-field" data-field="GDPR-ansvarlig">personvernombud/daglig leder</span>.</p>`,
+    }),
+    // — DIGIS-tillegg —
+    digitalt: () => ({
+      title: "Digital arbeidsplass",
+      content: `<h2>Digital arbeidsplass — DIGIS-tillegg</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> legger til rette for en moderne, digital arbeidsplass som støtter fleksibilitet, samarbeid og bærekraft.</p><h3>Digitale verktøy</h3><p>Bedriften benytter følgende hovedverktøy:</p><ul><li><span class="editable-field" data-field="Kommunikasjonsverktøy">Microsoft Teams / Slack</span> for kommunikasjon</li><li><span class="editable-field" data-field="Prosjektverktøy">Asana / Trello / Jira</span> for prosjektstyring</li><li><span class="editable-field" data-field="Skylagring">OneDrive / Google Drive</span> for dokumentlagring</li></ul><h3>Digital kompetanse</h3><p>Alle ansatte skal ha grunnleggende digital kompetanse. Bedriften tilbyr opplæring ved behov og ved innføring av nye systemer.</p><h3>Cybersikkerhet</h3><ul><li>Totrinnsverifisering (2FA) er påkrevd på alle bedriftskontoer</li><li>Passord skal være minimum <span class="editable-field" data-field="Passordlengde">12 tegn</span> og unike</li><li>Ansatte skal ikke bruke offentlige Wi-Fi-nettverk uten VPN</li><li>Phishing-forsøk og mistenkelige e-poster meldes til <span class="editable-field" data-field="IT-ansvarlig">IT-ansvarlig</span></li></ul><h3>Digitalt samarbeid</h3><p>Møter kan gjennomføres digitalt der det er hensiktsmessig. Kamera forventes brukt i digitale møter for å fremme samarbeid.</p>`,
+    }),
+    airetningslinjer: () => ({
+      title: "AI og automatisering",
+      content: `<h2>AI og automatisering</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> anerkjenner verdien av kunstig intelligens og automatisering, og ønsker å benytte slike verktøy ansvarlig og i tråd med gjeldende regelverk.</p><h3>Retningslinjer for bruk av AI</h3><ul><li>AI-verktøy (ChatGPT, Copilot, Gemini etc.) kan brukes til å effektivisere arbeid som tekstproduksjon, analyse og idéutvikling.</li><li>Konfidensiell informasjon, personopplysninger eller forretningshemmeligheter skal <strong>ikke</strong> deles med eksterne AI-verktøy uten godkjenning.</li><li>AI-generert innhold skal alltid kvalitetssikres av en ansatt før publisering eller bruk eksternt.</li><li>Ansatte skal være transparente om bruk av AI der det er relevant.</li></ul><h3>Godkjente verktøy</h3><p>Bedriften har godkjent følgende AI-verktøy for intern bruk: <span class="editable-field" data-field="Godkjente AI-verktøy">Microsoft Copilot, ChatGPT Enterprise</span>. Andre verktøy krever godkjenning fra <span class="editable-field" data-field="AI-godkjenner">IT-ansvarlig / daglig leder</span>.</p><h3>Automatisering</h3><p>Automatisering av arbeidsoppgaver oppmuntres der det frigjør tid til verdiskapende arbeid. Prosesser som automatiseres skal dokumenteres og kvalitetssikres.</p>`,
+    }),
+    hybridarbeid: () => ({
+      title: "Hybridarbeid og fleksibilitet",
+      content: `<h2>Hybridarbeid og fleksibilitet</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> praktiserer en hybrid arbeidsmodell som kombinerer kontorarbeid og fjernarbeid for å gi ansatte økt fleksibilitet.</p><h3>Prinsipper</h3><ul><li>Hybridarbeid skal ikke gå på bekostning av samarbeid, kultur eller produktivitet.</li><li>Ledere og team avtaler felles kontordager for å sikre samhandling.</li><li>Kjernetid gjelder uavhengig av lokasjon: <span class="editable-field" data-field="Kjernetid hybrid">${form.coreHoursStart}–${form.coreHoursEnd}</span></li></ul><h3>Forventninger</h3><ul><li>Ansatte skal ha en egnet og ergonomisk arbeidsplass uansett lokasjon.</li><li>Digitale samarbeidsverktøy skal brukes aktivt for å holde alle informert.</li><li>Statusoppdatering i bedriftens kalender/system er påkrevd.</li></ul><h3>Evaluering</h3><p>Hybridmodellen evalueres <span class="editable-field" data-field="Evaluering hybrid">halvårlig</span> gjennom medarbeiderundersøkelser og lederevalueringer.</p>`,
     }),
   };
 
