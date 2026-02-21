@@ -12,7 +12,7 @@ import {
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
   Download, Building2, Calculator, Trash2, Eye, MoreVertical,
   Scale, AlertTriangle, ShieldCheck, Lock, Heart,
-  CheckSquare, Square, Key, Check, Settings
+  CheckSquare, Square, Key, Check, Settings, Mail, UserPlus, Users
 } from "lucide-react";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
@@ -27,7 +27,7 @@ import {
   CartesianGrid, Tooltip, BarChart, Bar
 } from "recharts";
 
-type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator" | "settings";
+type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator" | "settings" | "employees";
 
 interface NavItem {
   id: Panel;
@@ -48,6 +48,7 @@ const navItems: NavItem[] = [
   { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: Lock, group: "HR og personal" },
   { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: Heart, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
+  { id: "employees", label: "Ansatte", icon: Users, group: "Administrasjon" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Konto" },
 ];
 
@@ -125,6 +126,7 @@ const KundeDashboard = () => {
       case "psykososialt": return <DocumentGenerator config={psykososialtConfig} />;
       case "calculator": return <AnsettelsesKalkulator />;
       case "settings": return <CustomerSettingsPanel />;
+      case "employees": return <EmployeesPanel />;
       case "booking": return <BookingPanel />;
       case "partners": return <PartnersPanel />;
       default: return <OverviewPanel />;
@@ -460,6 +462,51 @@ const DocumentsPanel = () => {
     setBulkDeleting(false);
   };
 
+  const [sendingEmail, setSendingEmail] = useState<string | null>(null);
+
+  const handleSendEmail = async (doc: any) => {
+    setSendingEmail(doc.id);
+    try {
+      const { data: company } = await supabase.from("customer_companies").select("id").limit(1).maybeSingle();
+      let docHtml = "";
+      if (doc.category?.startsWith("HR") && company) {
+        const { data: chapter } = await supabase
+          .from("customer_handbook_chapters")
+          .select("content")
+          .eq("company_id", company.id)
+          .eq("title", doc.title)
+          .maybeSingle();
+        docHtml = chapter?.content || `<p>${doc.description || doc.title}</p>`;
+      } else {
+        docHtml = `<p>${doc.description || doc.title}</p><p>Kategori: ${doc.category || "Generelt"}</p>`;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("email, name")
+        .limit(1)
+        .maybeSingle();
+
+      if (!profile?.email) { toast.error("Ingen e-post funnet"); setSendingEmail(null); return; }
+
+      await supabase.functions.invoke("notify", {
+        body: {
+          type: "send_document",
+          data: {
+            recipient_email: profile.email,
+            recipient_name: profile.name,
+            document_title: doc.title,
+            document_html: docHtml,
+          },
+        },
+      });
+      toast.success(`Dokument sendt til ${profile.email}`);
+    } catch {
+      toast.error("Kunne ikke sende dokument");
+    }
+    setSendingEmail(null);
+  };
+
   const toggleSelect = (id: string) => {
     setSelected(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   };
@@ -600,6 +647,14 @@ const DocumentsPanel = () => {
                 <Download size={15} />
               </button>
             )}
+            <button
+              onClick={() => handleSendEmail(doc)}
+              disabled={sendingEmail === doc.id}
+              className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-50"
+              title="Send på e-post"
+            >
+              {sendingEmail === doc.id ? <span className="animate-spin text-xs">⏳</span> : <Mail size={15} />}
+            </button>
             <button onClick={() => handleDelete(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all" title="Slett">
               <Trash2 size={15} />
             </button>
@@ -1142,7 +1197,7 @@ const BookingPanel = () => {
     const dateStr = selectedDate.toISOString().split("T")[0];
     const advisor = advisors.find(a => a.id === selectedSlot.advisorId);
 
-    await supabase.from("bookings").insert({
+    const { error } = await supabase.from("bookings").insert({
       advisor_id: selectedSlot.advisorId,
       booking_date: dateStr,
       booking_time: selectedSlot.time + ":00",
@@ -1153,6 +1208,29 @@ const BookingPanel = () => {
       message: form.message || null,
       teams_link: advisor?.teams_link || null,
     });
+
+    if (!error) {
+      // Send email notification to advisor
+      try {
+        await supabase.functions.invoke("notify", {
+          body: {
+            type: "booking_notification",
+            data: {
+              advisor_id: selectedSlot.advisorId,
+              customer_name: form.name,
+              customer_email: form.email,
+              customer_phone: form.phone,
+              company_name: form.company_name,
+              booking_date: dateStr,
+              booking_time: selectedSlot.time,
+              message: form.message || null,
+            },
+          },
+        });
+      } catch (e) {
+        console.error("Notification error:", e);
+      }
+    }
 
     setSuccess(true);
     setSubmitting(false);
@@ -1434,6 +1512,172 @@ const PartnersPanel = () => {
           </div>
         );
       })}
+    </div>
+  );
+};
+
+// ========== EMPLOYEES PANEL ==========
+const EmployeesPanel = () => {
+  const { profile } = useAuth();
+  const [invitations, setInvitations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", role: "ansatt" });
+  const [submitting, setSubmitting] = useState(false);
+
+  const load = useCallback(async () => {
+    const { data } = await supabase
+      .from("customer_employee_invitations")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setInvitations(data || []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) return;
+    setSubmitting(true);
+
+    const { data: company } = await supabase.from("customer_companies").select("id, company_name").limit(1).maybeSingle();
+    if (!company) { toast.error("Ingen bedrift funnet"); setSubmitting(false); return; }
+
+    const { error } = await supabase.from("customer_employee_invitations").insert({
+      company_id: company.id,
+      invited_by: profile!.id,
+      employee_name: formData.name.trim(),
+      employee_email: formData.email.trim(),
+      role: formData.role,
+    });
+
+    if (error) {
+      toast.error("Kunne ikke sende invitasjon");
+    } else {
+      // Send notification to admin
+      try {
+        await supabase.functions.invoke("notify", {
+          body: {
+            type: "employee_invitation",
+            data: {
+              company_name: company.company_name,
+              employee_name: formData.name.trim(),
+              employee_email: formData.email.trim(),
+              invited_by_name: profile?.name || "Ukjent",
+            },
+          },
+        });
+      } catch (e) {
+        console.error("Notification error:", e);
+      }
+      toast.success("Invitasjon sendt — venter på godkjenning fra admin");
+      setFormData({ name: "", email: "", role: "ansatt" });
+      setShowForm(false);
+      load();
+    }
+    setSubmitting(false);
+  };
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
+
+  const statusLabel = (s: string) => {
+    if (s === "pending") return { text: "Venter på godkjenning", color: "text-amber-600 bg-amber-500/10" };
+    if (s === "approved") return { text: "Godkjent", color: "text-emerald-600 bg-emerald-500/10" };
+    if (s === "rejected") return { text: "Avslått", color: "text-destructive bg-destructive/10" };
+    return { text: s, color: "text-muted-foreground bg-muted/30" };
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-heading text-xl">Ansatte</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Legg til ansatte i portalen. Alle invitasjoner må godkjennes av admin.</p>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+        >
+          <UserPlus size={14} /> Legg til ansatt
+        </button>
+      </div>
+
+      {showForm && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="glass rounded-2xl p-5 border border-border/20">
+          <form onSubmit={handleInvite} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">Navn</label>
+                <input
+                  value={formData.name}
+                  onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Fullt navn"
+                  required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">E-post</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
+                  placeholder="ansatt@bedrift.no"
+                  required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button type="submit" disabled={submitting}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50 transition-all">
+                {submitting ? "Sender…" : "Send invitasjon"}
+              </button>
+              <button type="button" onClick={() => setShowForm(false)}
+                className="px-4 py-2 border border-border/30 rounded-xl text-sm hover:bg-muted/50 transition-colors">
+                Avbryt
+              </button>
+            </div>
+            <p className="text-[10px] text-muted-foreground">Invitasjonen sendes til admin for godkjenning. Den ansatte får tilgang først etter at admin har godkjent.</p>
+          </form>
+        </motion.div>
+      )}
+
+      {invitations.length === 0 ? (
+        <div className="glass rounded-2xl p-8 border border-border/20 text-center">
+          <Users size={32} className="text-muted-foreground/30 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Ingen ansatte lagt til ennå.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {invitations.map(inv => {
+            const status = statusLabel(inv.status);
+            return (
+              <div key={inv.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
+                    {inv.employee_name?.charAt(0)?.toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{inv.employee_name}</p>
+                    <p className="text-xs text-muted-foreground">{inv.employee_email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${status.color}`}>
+                    {status.text}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {new Date(inv.created_at).toLocaleDateString("no-NO")}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
