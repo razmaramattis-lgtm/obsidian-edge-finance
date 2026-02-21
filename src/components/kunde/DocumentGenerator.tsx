@@ -29,7 +29,6 @@ const DocumentGenerator = ({ config }: Props) => {
   const docRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize all groups as expanded
     const groups: Record<string, boolean> = {};
     config.fieldGroups.forEach((g, i) => { groups[g.title] = i < 3; });
     setExpandedGroups(groups);
@@ -85,7 +84,6 @@ const DocumentGenerator = ({ config }: Props) => {
           },
           { onConflict: "company_id,title" }
         );
-        // If upsert by unique fails, try insert
         if (error) {
           await supabase.from("customer_documents").insert({
             company_id: companyId,
@@ -97,10 +95,8 @@ const DocumentGenerator = ({ config }: Props) => {
           });
         }
       }
-      // Save chapters
       for (const section of config.sections) {
         const html = section.content(form);
-        // Check if chapter exists
         const { data: existing } = await supabase
           .from("customer_handbook_chapters")
           .select("id")
@@ -137,11 +133,12 @@ const DocumentGenerator = ({ config }: Props) => {
     const element = docRef.current;
     html2pdf()
       .set({
-        margin: [15, 15, 15, 15],
+        margin: [20, 20, 20, 20],
         filename: `${config.title}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 2, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
       })
       .from(element)
       .save();
@@ -225,13 +222,13 @@ const DocumentGenerator = ({ config }: Props) => {
                             <p className="text-[10px] text-muted-foreground/60">{group.description}</p>
                           )}
                           {group.fields.map(field => (
-                            <div key={field.id}>
+                            <div key={field.id} className="relative">
                               <div className="flex items-center gap-1.5 mb-1">
                                 <label className="text-[11px] font-medium text-muted-foreground">
                                   {field.label}
                                 </label>
                                 {field.helpText && field.type !== "checkbox" && (
-                                  <TooltipProvider delayDuration={200}>
+                                  <TooltipProvider delayDuration={100}>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
                                         <button
@@ -241,7 +238,12 @@ const DocumentGenerator = ({ config }: Props) => {
                                           <Info size={10} />
                                         </button>
                                       </TooltipTrigger>
-                                      <TooltipContent side="right" className="max-w-[260px] text-xs leading-relaxed">
+                                      <TooltipContent 
+                                        side="bottom" 
+                                        align="start"
+                                        sideOffset={4}
+                                        className="max-w-[calc(100%-2rem)] w-[320px] text-xs leading-relaxed p-3 z-50"
+                                      >
                                         {field.helpText}
                                       </TooltipContent>
                                     </Tooltip>
@@ -286,16 +288,16 @@ const DocumentGenerator = ({ config }: Props) => {
                                 </select>
                               )}
                               {field.type === "checkbox" && (
-                                <label className="flex items-center gap-2 cursor-pointer">
+                                <label className="flex items-start gap-2 cursor-pointer">
                                   <input
                                     type="checkbox"
                                     checked={!!form[field.id]}
                                     onChange={e => updateField(field.id, e.target.checked)}
-                                    className="rounded border-border/30"
+                                    className="rounded border-border/30 mt-0.5"
                                   />
-                                  <span className="text-xs text-muted-foreground">{field.helpText || "Ja"}</span>
+                                  <span className="text-xs text-muted-foreground flex-1">{field.helpText || "Ja"}</span>
                                   {field.helpText && (
-                                    <TooltipProvider delayDuration={200}>
+                                    <TooltipProvider delayDuration={100}>
                                       <Tooltip>
                                         <TooltipTrigger asChild>
                                           <button
@@ -305,7 +307,12 @@ const DocumentGenerator = ({ config }: Props) => {
                                             <Info size={10} />
                                           </button>
                                         </TooltipTrigger>
-                                        <TooltipContent side="right" className="max-w-[260px] text-xs leading-relaxed">
+                                        <TooltipContent 
+                                          side="bottom" 
+                                          align="start"
+                                          sideOffset={4}
+                                          className="max-w-[calc(100%-2rem)] w-[320px] text-xs leading-relaxed p-3 z-50"
+                                        >
                                           {field.helpText}
                                         </TooltipContent>
                                       </Tooltip>
@@ -347,36 +354,142 @@ const DocumentGenerator = ({ config }: Props) => {
             ))}
           </div>
 
-          {/* Document content */}
+          {/* Document content — styled for proper PDF output */}
           <div
             ref={docRef}
-            className="glass rounded-2xl border border-border/10 p-6 md:p-8 lg:p-10"
+            className="rounded-2xl border border-border/10 p-6 md:p-8 lg:p-10"
+            style={{ backgroundColor: "#ffffff", color: "#000000" }}
           >
-            <div className="prose prose-sm max-w-none dark:prose-invert
-              [&_h2]:font-heading [&_h2]:text-xl [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-foreground
-              [&_h3]:font-heading [&_h3]:text-base [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:text-foreground/90
-              [&_p]:text-sm [&_p]:text-muted-foreground [&_p]:leading-relaxed
-              [&_ul]:text-sm [&_ul]:text-muted-foreground [&_ol]:text-sm [&_ol]:text-muted-foreground
-              [&_li]:mb-1
-              [&_.merge-field]:bg-primary/10 [&_.merge-field]:text-primary [&_.merge-field]:px-1.5 [&_.merge-field]:py-0.5 [&_.merge-field]:rounded [&_.merge-field]:font-medium [&_.merge-field]:text-xs
-              [&_.editable-field]:bg-secondary/10 [&_.editable-field]:text-secondary [&_.editable-field]:px-1.5 [&_.editable-field]:py-0.5 [&_.editable-field]:rounded [&_.editable-field]:font-medium
-              [&_hr]:my-8 [&_hr]:border-border/20
-              [&_strong]:text-foreground
-            ">
+            <div
+              className="max-w-none"
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "13px",
+                lineHeight: "1.7",
+                color: "#1a1a1a",
+              }}
+            >
+              {/* Document title page */}
+              <div style={{ textAlign: "center", marginBottom: "2.5em", paddingBottom: "1.5em", borderBottom: "2px solid #333" }}>
+                <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#000", marginBottom: "8px", fontFamily: "'Georgia', serif" }}>
+                  {config.title}
+                </h1>
+                <p style={{ fontSize: "13px", color: "#555", margin: "4px 0" }}>
+                  {form.companyName || "[Bedriftsnavn]"}
+                </p>
+                {form.orgNumber && (
+                  <p style={{ fontSize: "11px", color: "#888" }}>Org.nr. {form.orgNumber}</p>
+                )}
+                <p style={{ fontSize: "11px", color: "#888", marginTop: "8px" }}>
+                  {new Date().toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" })}
+                </p>
+              </div>
+
+              {/* Table of contents */}
+              <div style={{ marginBottom: "2em", paddingBottom: "1.5em", borderBottom: "1px solid #ddd" }}>
+                <h2 style={{ fontSize: "16px", fontWeight: "bold", color: "#000", marginBottom: "12px" }}>Innholdsfortegnelse</h2>
+                <ol style={{ paddingLeft: "1.5em", color: "#333", fontSize: "12px", lineHeight: "2" }}>
+                  {config.sections.map((s, i) => (
+                    <li key={s.id} style={{ color: "#333" }}>{s.title}</li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* Sections */}
               {config.sections.map((section, i) => (
-                <div key={section.id} id={`section-${section.id}`}>
+                <div key={section.id} id={`section-${section.id}`} style={{ pageBreakInside: "avoid" }}>
                   <div
+                    className="pdf-content"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(section.content(form)),
                     }}
                   />
-                  {i < config.sections.length - 1 && <hr />}
+                  {i < config.sections.length - 1 && (
+                    <hr style={{ margin: "2em 0", border: "none", borderTop: "1px solid #ddd" }} />
+                  )}
                 </div>
               ))}
+
+              {/* Footer */}
+              <div style={{ marginTop: "3em", paddingTop: "1em", borderTop: "2px solid #333", textAlign: "center", fontSize: "10px", color: "#888" }}>
+                <p>{config.title} — {form.companyName || "[Bedriftsnavn]"} — Konfidensielt</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* PDF-specific styles */}
+      <style>{`
+        .pdf-content h2 {
+          font-size: 18px;
+          font-weight: bold;
+          color: #000;
+          margin: 1.5em 0 0.5em 0;
+          padding-bottom: 4px;
+          border-bottom: 1px solid #e0e0e0;
+          font-family: 'Georgia', serif;
+        }
+        .pdf-content h3 {
+          font-size: 14px;
+          font-weight: bold;
+          color: #1a1a1a;
+          margin: 1.2em 0 0.4em 0;
+          font-family: 'Georgia', serif;
+        }
+        .pdf-content p {
+          font-size: 13px;
+          color: #333;
+          line-height: 1.7;
+          margin: 0.5em 0;
+        }
+        .pdf-content ul, .pdf-content ol {
+          font-size: 13px;
+          color: #333;
+          line-height: 1.7;
+          padding-left: 1.5em;
+          margin: 0.5em 0;
+        }
+        .pdf-content li {
+          margin-bottom: 4px;
+        }
+        .pdf-content strong {
+          color: #000;
+        }
+        .pdf-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1em 0;
+          font-size: 12px;
+        }
+        .pdf-content table td, .pdf-content table th {
+          padding: 6px 8px;
+          border-bottom: 1px solid #e0e0e0;
+          color: #333;
+        }
+        .pdf-content table tr:first-child td {
+          font-weight: bold;
+          color: #000;
+          border-bottom: 2px solid #ccc;
+        }
+        .pdf-content em {
+          color: #666;
+        }
+        .pdf-content .merge-field {
+          background: #f0f0f0;
+          color: #666;
+          padding: 1px 6px;
+          border-radius: 3px;
+          font-size: 12px;
+          font-weight: 500;
+          border: 1px dashed #ccc;
+        }
+        .pdf-content hr {
+          margin: 2em 0;
+          border: none;
+          border-top: 1px solid #ddd;
+        }
+      `}</style>
     </div>
   );
 };
