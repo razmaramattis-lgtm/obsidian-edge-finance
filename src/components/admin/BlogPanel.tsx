@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Plus, Trash2, Edit2, Pin, Eye, EyeOff, ExternalLink, Share2,
-  Image as ImageIcon, X, ArrowLeft, Search, Filter, MonitorPlay
+  Image as ImageIcon, X, ArrowLeft, Search, Filter, MonitorPlay,
+  CheckSquare, Square
 } from "lucide-react";
 import DOMPurify from "dompurify";
 import RichTextEditor from "./RichTextEditor";
 import SeoChecker from "./SeoChecker";
+import { toast } from "sonner";
 
 interface BlogPost {
   id: string;
@@ -39,6 +41,8 @@ const BlogPanel = () => {
   const [tagInput, setTagInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "published" | "draft">("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
     title: "", slug: "", excerpt: "", content: "", category: "Nyheter",
     published: false, pinned: false, image_url: "", tags: [] as string[],
@@ -76,6 +80,31 @@ const BlogPanel = () => {
     if (!confirm("Slett innlegg?")) return;
     await supabase.from("blog_posts").delete().eq("id", id);
     fetchPosts();
+  };
+
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Slett ${selected.size} valgte innlegg?`)) return;
+    setDeleting(true);
+    for (const id of selected) {
+      await supabase.from("blog_posts").delete().eq("id", id);
+    }
+    setSelected(new Set());
+    toast.success(`${selected.size} innlegg slettet`);
+    fetchPosts();
+    setDeleting(false);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    setSelected(selected.size === filteredPosts.length ? new Set() : new Set(filteredPosts.map(p => p.id)));
   };
 
   const togglePublish = async (post: BlogPost) => {
@@ -207,26 +236,20 @@ const BlogPanel = () => {
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
           {/* Main Editor Area */}
           <div className="space-y-4">
-            {/* Title */}
             <input value={form.title} onChange={e => {
               const title = e.target.value;
               setForm({ ...form, title, slug: editing ? form.slug : generateSlug(title) });
             }} placeholder="Skriv tittel her…"
               className="w-full text-2xl md:text-3xl font-heading bg-transparent border-0 border-b-2 border-border/20 pb-3 focus:outline-none focus:border-primary/40 transition-colors placeholder:text-muted-foreground/30" />
-
-            {/* Excerpt */}
             <textarea value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })}
               placeholder="Kort sammendrag som vises i listingen og i søkeresultater…"
               rows={2}
               className="w-full rounded-xl border border-border/30 bg-muted/20 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none font-light" />
-
-            {/* Rich Text Content */}
             <RichTextEditor content={form.content} onChange={content => setForm(f => ({ ...f, content }))} onImageUpload={handleImageUpload} />
           </div>
 
           {/* Settings Sidebar */}
           <div className="space-y-4">
-            {/* Status */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-3">
               <h4 className="text-xs tracking-widest uppercase text-muted-foreground">Status</h4>
               <div className="flex flex-wrap gap-2">
@@ -240,8 +263,6 @@ const BlogPanel = () => {
                 </label>
               </div>
             </div>
-
-            {/* Category */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
               <h4 className="text-xs tracking-widest uppercase text-muted-foreground">Kategori</h4>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
@@ -249,8 +270,6 @@ const BlogPanel = () => {
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
-
-            {/* Featured Image */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
               <h4 className="text-xs tracking-widest uppercase text-muted-foreground">Fremhevet bilde</h4>
               {form.image_url ? (
@@ -269,8 +288,6 @@ const BlogPanel = () => {
                 </button>
               )}
             </div>
-
-            {/* Slug */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
               <h4 className="text-xs tracking-widest uppercase text-muted-foreground">Permalink</h4>
               <div className="flex items-center gap-1.5">
@@ -279,8 +296,6 @@ const BlogPanel = () => {
                   className="flex-1 h-8 rounded-lg border border-border/30 bg-muted/30 px-2 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary/40" />
               </div>
             </div>
-
-            {/* Tags */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
               <h4 className="text-xs tracking-widest uppercase text-muted-foreground">Tagger</h4>
               <div className="flex items-center gap-2">
@@ -299,8 +314,6 @@ const BlogPanel = () => {
                 </div>
               )}
             </div>
-
-            {/* SEO */}
             <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
               <button onClick={() => setShowSeo(!showSeo)} className="flex items-center justify-between w-full">
                 <h4 className="text-xs tracking-widest uppercase text-muted-foreground">SEO</h4>
@@ -329,7 +342,7 @@ const BlogPanel = () => {
     <div className="space-y-4">
       {/* Header toolbar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <button onClick={() => setFilterStatus("all")}
             className={`text-sm transition-colors ${filterStatus === "all" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}>
             Alle ({posts.length})
@@ -344,11 +357,29 @@ const BlogPanel = () => {
             className={`text-sm transition-colors ${filterStatus === "draft" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}>
             Utkast ({draftCount})
           </button>
+          {selected.size > 0 && (
+            <>
+              <span className="text-border">|</span>
+              <button onClick={bulkDelete} disabled={deleting}
+                className="flex items-center gap-1.5 text-sm text-destructive hover:text-destructive/80 transition-colors disabled:opacity-50">
+                <Trash2 size={13} /> Slett {selected.size} valgte
+              </button>
+            </>
+          )}
         </div>
-        <button onClick={() => { resetForm(); setShowEditor(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90 transition-all">
-          <Plus size={14} /> Nytt innlegg
-        </button>
+        <div className="flex items-center gap-2">
+          {filteredPosts.length > 0 && (
+            <button onClick={toggleAll}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              {selected.size === filteredPosts.length ? <CheckSquare size={13} /> : <Square size={13} />}
+              {selected.size === filteredPosts.length ? "Fjern alle" : "Velg alle"}
+            </button>
+          )}
+          <button onClick={() => { resetForm(); setShowEditor(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90 transition-all">
+            <Plus size={14} /> Nytt innlegg
+          </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -361,7 +392,8 @@ const BlogPanel = () => {
       {/* Posts table */}
       <div className="glass rounded-2xl border border-border/20 overflow-hidden">
         {/* Table header */}
-        <div className="hidden md:grid md:grid-cols-[1fr_100px_100px_120px_100px] gap-3 px-5 py-3 border-b border-border/10 text-[10px] tracking-widest uppercase text-muted-foreground/60">
+        <div className="hidden md:grid md:grid-cols-[32px_1fr_100px_100px_120px_100px] gap-3 px-5 py-3 border-b border-border/10 text-[10px] tracking-widest uppercase text-muted-foreground/60">
+          <span></span>
           <span>Tittel</span>
           <span>Kategori</span>
           <span>Status</span>
@@ -372,7 +404,16 @@ const BlogPanel = () => {
         {/* Table rows */}
         <div className="divide-y divide-border/10">
           {filteredPosts.map(post => (
-            <div key={post.id} className="grid grid-cols-1 md:grid-cols-[1fr_100px_100px_120px_100px] gap-2 md:gap-3 px-5 py-3 hover:bg-muted/20 transition-colors group">
+            <div key={post.id} className={`grid grid-cols-1 md:grid-cols-[32px_1fr_100px_100px_120px_100px] gap-2 md:gap-3 px-5 py-3 hover:bg-muted/20 transition-colors group ${
+              selected.has(post.id) ? "bg-primary/5" : ""
+            }`}>
+              {/* Checkbox */}
+              <div className="hidden md:flex items-center">
+                <button onClick={() => toggleSelect(post.id)} className="text-muted-foreground hover:text-primary transition-colors">
+                  {selected.has(post.id) ? <CheckSquare size={15} className="text-primary" /> : <Square size={15} />}
+                </button>
+              </div>
+
               {/* Title */}
               <div className="flex items-center gap-3 min-w-0">
                 {post.image_url && <img src={post.image_url} alt="" className="w-10 h-7 object-cover rounded-lg shrink-0 hidden sm:block" />}

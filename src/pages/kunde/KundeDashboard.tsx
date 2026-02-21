@@ -374,6 +374,28 @@ const DocumentsPanel = () => {
   const [openDoc, setOpenDoc] = useState<any>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const bulkDeleteDocs = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Slett ${selected.size} valgte dokumenter?`)) return;
+    setBulkDeleting(true);
+    for (const id of selected) {
+      await supabase.from("customer_documents").delete().eq("id", id);
+    }
+    toast.success(`${selected.size} dokumenter slettet`);
+    setSelected(new Set());
+    load();
+    setBulkDeleting(false);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+  };
+
+  const toggleAll = () => {
+    setSelected(selected.size === filtered.length ? new Set() : new Set(filtered.map(d => d.id)));
+  };
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -487,16 +509,31 @@ const DocumentsPanel = () => {
           </button>
         ))}
       </div>
-      <p className="text-sm text-muted-foreground">{filtered.length} dokumenter</p>
-      {filtered.length === 0 && (
-        <div className="glass rounded-2xl p-8 border border-border/20 text-center">
-          <FileText size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Ingen dokumenter i denne kategorien.</p>
-        </div>
-      )}
+      <div className="flex items-center gap-3 flex-wrap">
+        <p className="text-sm text-muted-foreground">{filtered.length} dokumenter</p>
+        {selected.size > 0 && (
+          <button onClick={bulkDeleteDocs} disabled={bulkDeleting}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-50">
+            <Trash2 size={13} /> Slett {selected.size} valgte
+          </button>
+        )}
+        {filtered.length > 0 && (
+          <button onClick={toggleAll}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+            {selected.size === filtered.length ? <CheckSquare size={13} /> : <Square size={13} />}
+            {selected.size === filtered.length ? "Fjern alle" : "Velg alle"}
+          </button>
+        )}
+      </div>
       {filtered.map(doc => (
-        <div key={doc.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between">
-          <div className="flex-1 min-w-0">
+        <div key={doc.id} className={`glass rounded-2xl px-5 py-4 border flex items-center justify-between transition-colors ${
+          selected.has(doc.id) ? "border-primary/40 bg-primary/5" : "border-border/20"
+        }`}>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <button onClick={() => toggleSelect(doc.id)} className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+              {selected.has(doc.id) ? <CheckSquare size={15} className="text-primary" /> : <Square size={15} />}
+            </button>
+            <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium truncate">{doc.title}</p>
               {doc.category && doc.category !== "Generelt" && (
@@ -505,6 +542,7 @@ const DocumentsPanel = () => {
             </div>
             {doc.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{doc.description}</p>}
             <p className="text-[10px] text-muted-foreground mt-1">{new Date(doc.created_at).toLocaleDateString("no-NO")}</p>
+          </div>
           </div>
           <div className="flex items-center gap-1 ml-3 shrink-0">
             <button onClick={() => setOpenDoc(doc)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all" title="Åpne">
