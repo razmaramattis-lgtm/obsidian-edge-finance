@@ -5,7 +5,7 @@ import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  Mail, Info, FileText, BookMarked, Newspaper, Lock,
+  Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive,
 } from "lucide-react";
 
 const tjenesterGroups = [
@@ -52,9 +52,10 @@ const selskapetLinks = [
 ];
 
 const ressurserLinks = [
-  { icon: FileText, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser" },
-  { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser" },
-  { icon: Newspaper, title: "Nyheter", desc: "Siste nytt fra Avargo", href: "/ressurser" },
+  { icon: Newspaper, title: "Nyheter", desc: "Siste nytt fra Avargo", href: "/ressurser?tab=nyheter" },
+  { icon: FileText, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
+  { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser?tab=guider" },
+  { icon: Archive, title: "Arkiv", desc: "Skjemaer og maler til nedlasting", href: "/ressurser?tab=arkiv" },
 ];
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
