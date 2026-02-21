@@ -4,11 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Building2, Clock, Home, Sparkles, Wallet, LayoutGrid, FileCheck,
-  ChevronRight, ChevronLeft, Check, Loader2
+  ChevronRight, ChevronLeft, Check, Loader2, ShieldAlert
 } from "lucide-react";
 
 /* ───────── Types ───────── */
-type StepId = "bedrift" | "arbeidstid" | "hjemmekontor" | "moderne" | "lonn" | "moduler" | "generer";
+type StepId = "bedrift" | "arbeidstid" | "hjemmekontor" | "moderne" | "lonn" | "krav2026" | "moduler" | "generer";
 
 interface StepDef {
   id: StepId;
@@ -22,6 +22,7 @@ const STEPS: StepDef[] = [
   { id: "hjemmekontor",  label: "Hjemmekontor",  icon: Home },
   { id: "moderne",       label: "Moderne",       icon: Sparkles },
   { id: "lonn",          label: "Lønn",          icon: Wallet },
+  { id: "krav2026",      label: "2026-krav",     icon: ShieldAlert },
   { id: "moduler",       label: "Moduler",       icon: LayoutGrid },
   { id: "generer",       label: "Generer",       icon: FileCheck },
 ];
@@ -57,6 +58,13 @@ interface FormData {
   insuranceIncluded: boolean;
   bonusScheme: string;
   otherBenefits: string;
+  // 2026-krav
+  psychosocialPolicy: boolean;
+  riskAssessmentFrequency: string;
+  employeeSurvey: boolean;
+  surveyFrequency: string;
+  actionPlanEnabled: boolean;
+  actionPlanResponsible: string;
   // Moduler
   modules: string[];
 }
@@ -86,9 +94,15 @@ const INITIAL_FORM: FormData = {
   insuranceIncluded: true,
   bonusScheme: "none",
   otherBenefits: "",
+  psychosocialPolicy: true,
+  riskAssessmentFrequency: "annual",
+  employeeSurvey: true,
+  surveyFrequency: "annual",
+  actionPlanEnabled: true,
+  actionPlanResponsible: "",
   modules: [
     "formaal", "ansettelse", "arbeidstid", "ferie", "sykdom",
-    "hjemmekontor", "lonn", "hms", "personvern", "avslutning"
+    "hjemmekontor", "lonn", "hms", "psykososialt", "risikovurdering", "kartlegging", "handlingsplan", "personvern", "avslutning"
   ],
 };
 
@@ -102,6 +116,10 @@ const ALL_MODULES = [
   { id: "lonn",         label: "Lønn og godtgjørelser" },
   { id: "pensjon",      label: "Pensjon og forsikring" },
   { id: "hms",          label: "HMS og arbeidsmiljø" },
+  { id: "psykososialt", label: "Psykososialt arbeidsmiljø (2026)" },
+  { id: "risikovurdering", label: "Risikovurdering (2026)" },
+  { id: "kartlegging",  label: "Kartlegging (2026)" },
+  { id: "handlingsplan", label: "Handlingsplaner (2026)" },
   { id: "personvern",   label: "Personvern og IT" },
   { id: "sosiale",      label: "Sosiale medier" },
   { id: "kleskode",     label: "Kleskode" },
@@ -218,6 +236,7 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
       case "hjemmekontor": return <StepHjemmekontor form={form} update={update} />;
       case "moderne": return <StepModerne form={form} update={update} />;
       case "lonn": return <StepLonn form={form} update={update} />;
+      case "krav2026": return <StepKrav2026 form={form} update={update} />;
       case "moduler": return <StepModuler form={form} toggleModule={toggleModule} />;
       case "generer": return <StepGenerer form={form} />;
     }
@@ -322,6 +341,7 @@ function stepDescription(step: number) {
     "Retningslinjer for hjemmekontor",
     "Kleskode, sosiale medier og bærekraft",
     "Lønn, pensjon, forsikring og goder",
+    "Nye 2026-krav: psykososialt arbeidsmiljø og risikovurdering",
     "Velg hvilke kapitler som skal inkluderes",
     "Se over og generer din personalhåndbok",
   ];
@@ -584,7 +604,76 @@ const StepLonn = ({ form, update }: { form: FormData; update: <K extends keyof F
   </div>
 );
 
-/* ───────── Step 6: Moduler ───────── */
+/* ───────── Step 6: 2026-krav ───────── */
+const StepKrav2026 = ({ form, update }: { form: FormData; update: <K extends keyof FormData>(k: K, v: FormData[K]) => void }) => (
+  <div className="space-y-5">
+    <div className="rounded-xl border border-secondary/20 bg-secondary/5 p-4 mb-2">
+      <p className="text-sm text-foreground/80 font-medium mb-1">🆕 Nye krav fra 2026</p>
+      <p className="text-xs text-muted-foreground">Fra 2026 stilles det strengere krav til systematisk arbeid med psykososialt arbeidsmiljø, risikovurdering, kartlegging og handlingsplaner. Disse seksjonene sikrer at din bedrift er compliant.</p>
+    </div>
+
+    <FieldToggle
+      label="Psykososialt arbeidsmiljø"
+      checked={form.psychosocialPolicy}
+      onChange={v => update("psychosocialPolicy", v)}
+      description="Inkluder retningslinjer for forebygging av mobbing, trakassering og psykiske belastninger på arbeidsplassen."
+    />
+
+    <div>
+      <FieldLabel>Risikovurdering — hyppighet</FieldLabel>
+      <FieldSelect
+        value={form.riskAssessmentFrequency}
+        onChange={v => update("riskAssessmentFrequency", v)}
+        options={[
+          { value: "annual", label: "Årlig" },
+          { value: "biannual", label: "Halvårlig" },
+          { value: "quarterly", label: "Kvartalsvis" },
+          { value: "continuous", label: "Kontinuerlig / ved endringer" },
+        ]}
+      />
+    </div>
+
+    <FieldToggle
+      label="Medarbeiderundersøkelser (kartlegging)"
+      checked={form.employeeSurvey}
+      onChange={v => update("employeeSurvey", v)}
+      description="Gjennomfør regelmessige undersøkelser for å kartlegge arbeidsmiljø, trivsel og psykososiale forhold."
+    />
+    {form.employeeSurvey && (
+      <div className="pl-13">
+        <FieldLabel>Hyppighet for kartlegging</FieldLabel>
+        <FieldSelect
+          value={form.surveyFrequency}
+          onChange={v => update("surveyFrequency", v)}
+          options={[
+            { value: "annual", label: "Årlig" },
+            { value: "biannual", label: "Halvårlig" },
+            { value: "quarterly", label: "Kvartalsvis" },
+          ]}
+        />
+      </div>
+    )}
+
+    <FieldToggle
+      label="Handlingsplaner"
+      checked={form.actionPlanEnabled}
+      onChange={v => update("actionPlanEnabled", v)}
+      description="Utarbeid konkrete handlingsplaner med tiltak, ansvarlige og frister basert på kartlegging og risikovurdering."
+    />
+    {form.actionPlanEnabled && (
+      <div className="pl-13">
+        <FieldLabel>Ansvarlig for oppfølging</FieldLabel>
+        <FieldInput
+          value={form.actionPlanResponsible}
+          onChange={v => update("actionPlanResponsible", v)}
+          placeholder="F.eks. HR-leder, daglig leder, verneombud"
+        />
+      </div>
+    )}
+  </div>
+);
+
+/* ───────── Step 7: Moduler ───────── */
 const StepModuler = ({ form, toggleModule }: { form: FormData; toggleModule: (id: string) => void }) => (
   <div className="space-y-4">
     <p className="text-sm text-muted-foreground">Velg hvilke kapitler som skal inngå i din personalhåndbok. Du kan alltid legge til eller fjerne kapitler senere.</p>
@@ -646,6 +735,13 @@ const StepGenerer = ({ form }: { form: FormData }) => (
         <SummaryRow label="Utbetaling" value={form.salaryFrequency === "monthly" ? "Månedlig" : "Annenhver uke"} />
         <SummaryRow label="Pensjon" value={form.pensionScheme} />
         <SummaryRow label="Forsikring" value={form.insuranceIncluded ? "Inkludert" : "Ikke inkludert"} />
+      </SummarySection>
+
+      <SummarySection title="2026-krav">
+        <SummaryRow label="Psykososialt" value={form.psychosocialPolicy ? "Inkludert" : "Ikke inkludert"} />
+        <SummaryRow label="Risikovurdering" value={form.riskAssessmentFrequency === "quarterly" ? "Kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "Halvårlig" : form.riskAssessmentFrequency === "continuous" ? "Kontinuerlig" : "Årlig"} />
+        <SummaryRow label="Kartlegging" value={form.employeeSurvey ? `Ja (${form.surveyFrequency === "quarterly" ? "kvartalsvis" : form.surveyFrequency === "biannual" ? "halvårlig" : "årlig"})` : "Nei"} />
+        <SummaryRow label="Handlingsplaner" value={form.actionPlanEnabled ? "Ja" : "Nei"} />
       </SummarySection>
 
       <SummarySection title="Moduler">
@@ -714,6 +810,22 @@ function buildChapterContents(form: FormData) {
     hms: () => ({
       title: "HMS og arbeidsmiljø",
       content: `<h2>HMS og arbeidsmiljø</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> er forpliktet til å sikre et trygt og godt arbeidsmiljø for alle ansatte, i henhold til arbeidsmiljøloven og internkontrollforskriften.</p><h3>Ansvar</h3><ul><li><strong>Arbeidsgiver</strong> har det overordnede ansvaret for HMS-arbeidet.</li><li><strong>Verneombud</strong> skal ivareta arbeidstakernes interesser i HMS-saker.</li><li><strong>Alle ansatte</strong> har plikt til å melde fra om farlige forhold.</li></ul><h3>Forebygging</h3><p>Det gjennomføres årlige vernerunder og risikovurderinger. Alle arbeidsulykker og nestenulykker skal rapporteres umiddelbart.</p>`,
+    }),
+    psykososialt: () => ({
+      title: "Psykososialt arbeidsmiljø (2026-krav)",
+      content: `<h2>Psykososialt arbeidsmiljø</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — arbeidsmiljøloven § 4-3</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal sikre at det psykososiale arbeidsmiljøet er fullt forsvarlig, og aktivt forebygge mobbing, trakassering, diskriminering og andre psykiske belastninger.</p><h3>Forebygging</h3><ul><li>Alle ansatte skal behandle hverandre med respekt og bidra til et inkluderende arbeidsmiljø.</li><li>Ledere har et særskilt ansvar for å følge opp det psykososiale arbeidsmiljøet.</li><li>Det skal gjennomføres regelmessige samtaler mellom leder og ansatt om trivsel og arbeidsbelastning.</li></ul><h3>Håndtering av konflikter</h3><p>Ved konflikter, mobbing eller trakassering skal saken meldes til nærmeste leder, verneombud eller <span class="editable-field" data-field="Varslingskanal psykososialt">HR-ansvarlig</span>. Alle henvendelser behandles konfidensielt.</p><h3>Oppfølging</h3><p>Bedriften skal dokumentere tiltak og evaluere effekten av disse minst <span class="editable-field" data-field="Evaluering psykososialt">${form.riskAssessmentFrequency === "quarterly" ? "kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "halvårlig" : "årlig"}</span>.</p>`,
+    }),
+    risikovurdering: () => ({
+      title: "Risikovurdering (2026-krav)",
+      content: `<h2>Risikovurdering</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — internkontrollforskriften § 5</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal gjennomføre systematiske risikovurderinger som dekker både fysiske og psykososiale risikofaktorer i arbeidsmiljøet.</p><h3>Hyppighet</h3><p>Risikovurderinger gjennomføres <span class="editable-field" data-field="Risikovurdering hyppighet">${form.riskAssessmentFrequency === "quarterly" ? "kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "halvårlig" : form.riskAssessmentFrequency === "continuous" ? "kontinuerlig og ved vesentlige endringer" : "årlig"}</span>, samt ved vesentlige endringer i organisasjon, arbeidsoppgaver eller arbeidsmiljø.</p><h3>Metode</h3><ul><li>Identifisere farekilder og risikoforhold</li><li>Vurdere sannsynlighet og konsekvens</li><li>Prioritere og iverksette tiltak</li><li>Dokumentere vurderinger og beslutninger</li></ul><h3>Ansvar</h3><p>Daglig leder har det overordnede ansvaret. Verneombud og ansatte skal medvirke i risikovurderingene. Resultatene skal dokumenteres og være tilgjengelige for Arbeidstilsynet.</p>`,
+    }),
+    kartlegging: () => ({
+      title: "Kartlegging av arbeidsmiljø (2026-krav)",
+      content: `<h2>Kartlegging av arbeidsmiljø</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — arbeidsmiljøloven § 3-1</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal gjennomføre regelmessige kartlegginger av arbeidsmiljøet for å avdekke faktorer som kan påvirke helse, trivsel og produktivitet.</p>${form.employeeSurvey ? `<h3>Medarbeiderundersøkelser</h3><p>Det gjennomføres medarbeiderundersøkelser <span class="editable-field" data-field="Kartlegging hyppighet">${form.surveyFrequency === "quarterly" ? "kvartalsvis" : form.surveyFrequency === "biannual" ? "halvårlig" : "årlig"}</span>. Undersøkelsene er anonyme og dekker:</p><ul><li>Psykososialt arbeidsmiljø og trivsel</li><li>Arbeidsbelastning og stressnivå</li><li>Fysisk arbeidsmiljø</li><li>Ledelse og kommunikasjon</li><li>Muligheter for faglig utvikling</li></ul>` : "<h3>Andre kartleggingsmetoder</h3><p>Kartlegging gjennomføres gjennom vernerunder, medarbeidersamtaler og observasjon.</p>"}<h3>Oppfølging av resultater</h3><p>Resultater fra kartleggingen presenteres for ansatte og danner grunnlag for handlingsplaner og tiltak. All kartlegging dokumenteres og arkiveres.</p>`,
+    }),
+    handlingsplan: () => ({
+      title: "Handlingsplaner (2026-krav)",
+      content: `<h2>Handlingsplaner</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — internkontrollforskriften § 5</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal utarbeide konkrete handlingsplaner basert på risikovurderinger og kartleggingsresultater.</p><h3>Innhold i handlingsplaner</h3><p>Hver handlingsplan skal inneholde:</p><ul><li><strong>Identifisert risiko/utfordring</strong> — hva er problemet?</li><li><strong>Konkrete tiltak</strong> — hva skal gjøres?</li><li><strong>Ansvarlig</strong> — hvem har ansvaret? (Standard: <span class="editable-field" data-field="Handlingsplan ansvarlig">${form.actionPlanResponsible || "daglig leder"}</span>)</li><li><strong>Tidsfrist</strong> — når skal tiltaket være gjennomført?</li><li><strong>Evaluering</strong> — hvordan måles effekten?</li></ul><h3>Oppfølging</h3><p>Handlingsplaner gjennomgås og oppdateres i forbindelse med hver risikovurdering. Status på tiltak rapporteres til ledelsen og verneombud.</p><h3>Dokumentasjon</h3><p>Alle handlingsplaner skal dokumenteres skriftlig og oppbevares tilgjengelig for ansatte og Arbeidstilsynet.</p>`,
     }),
     personvern: () => ({
       title: "Personvern og IT",
