@@ -5,7 +5,7 @@ import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive,
+  Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive, CalendarClock,
 } from "lucide-react";
 
 const tjenesterGroups = [
@@ -57,6 +57,7 @@ const ressurserLinks = [
   { icon: FileText, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
   { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser?tab=guider" },
   { icon: Archive, title: "Arkiv", desc: "Skjemaer og maler til nedlasting", href: "/ressurser?tab=arkiv" },
+  { icon: CalendarClock, title: "Skatteetatens kalender", desc: "Alle frister for næringsdrivende", href: "/ressurser/skattekalender" },
 ];
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

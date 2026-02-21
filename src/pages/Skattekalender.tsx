@@ -237,27 +237,34 @@ const Skattekalender = () => {
                         className={`
                           relative aspect-square rounded-xl flex flex-col items-center justify-center transition-all
                           ${hasDeadlines ? "cursor-pointer" : "cursor-default"}
-                          ${isSelected ? "bg-primary/20 border-primary/40 border ring-1 ring-primary/20" : ""}
-                          ${today && !isSelected ? "border border-primary/30" : ""}
-                          ${hasUrgent && !isSelected ? "bg-destructive/10" : ""}
-                          ${hasDeadlines && !isSelected && !hasUrgent ? "bg-muted/30 hover:bg-muted/60" : ""}
-                          ${isPast ? "opacity-40" : ""}
+                          ${isSelected ? "bg-primary/20 border-primary/40 border-2 ring-2 ring-primary/20 shadow-lg shadow-primary/10" : ""}
+                          ${today && !isSelected ? "border-2 border-primary/50 bg-primary/5" : ""}
+                          ${hasUrgent && !isSelected ? "bg-destructive/15 border border-destructive/30" : ""}
+                          ${hasDeadlines && !isSelected && !hasUrgent ? "bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/30" : ""}
+                          ${isPast && !isSelected ? "opacity-40" : ""}
                         `}
                       >
-                        <span className={`text-sm font-medium leading-none ${today ? "text-primary" : ""} ${isSelected ? "text-primary" : ""}`}>
+                        <span className={`text-sm font-semibold leading-none ${today ? "text-primary" : ""} ${isSelected ? "text-primary" : ""} ${hasDeadlines && !today && !isSelected ? "text-foreground" : ""}`}>
                           {day}
                         </span>
                         {hasDeadlines && (
-                          <div className="flex gap-0.5 mt-1">
-                            {dayDeadlines.slice(0, 3).map((_, idx) => (
+                          <div className="flex gap-0.5 mt-1.5">
+                            {dayDeadlines.slice(0, 3).map((dl, idx) => (
                               <div
                                 key={idx}
-                                className={`w-1 h-1 rounded-full ${hasUrgent ? "bg-destructive" : "bg-primary/60"}`}
+                                className={`w-1.5 h-1.5 rounded-full ${hasUrgent ? "bg-destructive animate-pulse" : "bg-primary"}`}
                               />
                             ))}
                             {dayDeadlines.length > 3 && (
-                              <span className="text-[7px] text-muted-foreground/60 leading-none ml-0.5">+</span>
+                              <span className="text-[8px] font-bold text-primary leading-none ml-0.5">+{dayDeadlines.length - 3}</span>
                             )}
+                          </div>
+                        )}
+                        {hasDeadlines && !isSelected && (
+                          <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold ${
+                            hasUrgent ? "bg-destructive text-white" : "bg-primary text-primary-foreground"
+                          }`}>
+                            {dayDeadlines.length}
                           </div>
                         )}
                       </motion.button>
