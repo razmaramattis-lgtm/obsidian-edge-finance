@@ -14,128 +14,242 @@ const thinkingPhrases = [
 const AvaAvatar = ({ speaking = false, size = 36 }: { speaking?: boolean; size?: number }) => (
   <motion.div
     className="relative shrink-0"
-    style={{ width: size, height: size * 140 / 120 }}
+    style={{ width: size, height: size * 150 / 120 }}
     animate={speaking ? { y: [0, -2, 0] } : { y: [0, -3, 0] }}
     transition={{ duration: speaking ? 1 : 3, repeat: Infinity, ease: "easeInOut" }}
   >
-    <svg viewBox="0 0 120 140" width={size} height={size * 140 / 120}>
-      {/* Ambient glow */}
+    <svg viewBox="0 0 120 150" width={size} height={size * 150 / 120}>
+      <defs>
+        {/* Skin gradient */}
+        <radialGradient id="skinGrad" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stopColor="#fddcca" />
+          <stop offset="70%" stopColor="#f5c4a8" />
+          <stop offset="100%" stopColor="#e8a882" />
+        </radialGradient>
+        {/* Hair gradient - rich dark auburn */}
+        <linearGradient id="hairGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3d1a0e" />
+          <stop offset="40%" stopColor="#6b2f1a" />
+          <stop offset="100%" stopColor="#8b3a20" />
+        </linearGradient>
+        {/* Lip gradient */}
+        <linearGradient id="lipGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e85670" />
+          <stop offset="100%" stopColor="#c93d58" />
+        </linearGradient>
+        {/* Dress gradient - deep teal to rosegold */}
+        <linearGradient id="dressGrad" x1="0" y1="0" x2="0.5" y2="1">
+          <stop offset="0%" stopColor="#1a6b6a" />
+          <stop offset="50%" stopColor="#1f8584" />
+          <stop offset="100%" stopColor="#c08b6e" />
+        </linearGradient>
+        {/* Eye iris */}
+        <radialGradient id="irisGrad" cx="40%" cy="40%" r="50%">
+          <stop offset="0%" stopColor="#5ab0a0" />
+          <stop offset="60%" stopColor="#2d7d6e" />
+          <stop offset="100%" stopColor="#1a5248" />
+        </radialGradient>
+        {/* Ambient glow */}
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#e85670" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#1f8584" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+        </radialGradient>
+        {/* Sparkle filter */}
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="1.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* Ambient background glow */}
       <motion.circle
-        cx="60" cy="65" r="55"
-        fill="hsl(var(--primary))"
-        opacity="0.06"
-        animate={{ r: [50, 55, 50], opacity: [0.04, 0.08, 0.04] }}
+        cx="60" cy="70" r="58"
+        fill="url(#glowGrad)"
+        animate={{ r: [55, 60, 55], opacity: [0.6, 1, 0.6] }}
         transition={{ duration: 3, repeat: Infinity }}
       />
 
-      {/* Body */}
+      {/* Body / Dress - elegant off-shoulder */}
       <motion.path
-        d="M40 88 Q40 78 50 75 L70 75 Q80 78 80 88 L82 110 Q82 118 60 120 Q38 118 38 110 Z"
-        fill="hsl(var(--primary))" opacity="0.2"
-        animate={speaking ? { d: [
-          "M40 88 Q40 78 50 75 L70 75 Q80 78 80 88 L82 110 Q82 118 60 120 Q38 118 38 110 Z",
-          "M39 87 Q39 77 50 74 L70 74 Q81 77 81 87 L83 110 Q83 119 60 121 Q37 119 37 110 Z",
-          "M40 88 Q40 78 50 75 L70 75 Q80 78 80 88 L82 110 Q82 118 60 120 Q38 118 38 110 Z",
-        ]} : {}}
-        transition={speaking ? { duration: 2, repeat: Infinity } : {}}
+        d="M38 92 Q32 88 30 96 L26 130 Q26 145 60 148 Q94 145 94 130 L90 96 Q88 88 82 92 Q76 82 60 80 Q44 82 38 92 Z"
+        fill="url(#dressGrad)"
+        animate={speaking ? {
+          d: [
+            "M38 92 Q32 88 30 96 L26 130 Q26 145 60 148 Q94 145 94 130 L90 96 Q88 88 82 92 Q76 82 60 80 Q44 82 38 92 Z",
+            "M37 91 Q31 87 29 95 L25 130 Q25 146 60 149 Q95 146 95 130 L91 95 Q89 87 83 91 Q77 81 60 79 Q43 81 37 91 Z",
+            "M38 92 Q32 88 30 96 L26 130 Q26 145 60 148 Q94 145 94 130 L90 96 Q88 88 82 92 Q76 82 60 80 Q44 82 38 92 Z",
+          ]
+        } : {}}
+        transition={speaking ? { duration: 2.5, repeat: Infinity } : {}}
       />
-      <path d="M48 76 L60 82 L72 76" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.3" strokeLinecap="round"/>
-
-      {/* Arms */}
+      {/* Décolletage highlight */}
+      <path d="M46 88 Q60 96 74 88" fill="none" stroke="#f5c4a8" strokeWidth="1.5" opacity="0.5" strokeLinecap="round" />
+      {/* Collarbone detail */}
+      <path d="M40 86 Q48 84 54 86" fill="none" stroke="url(#skinGrad)" strokeWidth="1" opacity="0.3" strokeLinecap="round" />
+      <path d="M66 86 Q72 84 80 86" fill="none" stroke="url(#skinGrad)" strokeWidth="1" opacity="0.3" strokeLinecap="round" />
+      {/* Dress shimmer */}
       <motion.path
-        d="M40 82 Q30 88 28 100 Q27 106 32 108"
-        fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round" opacity="0.2"
-        animate={speaking ? { d: [
-          "M40 82 Q30 88 28 100 Q27 106 32 108",
-          "M40 82 Q28 85 24 96 Q22 102 27 106",
-          "M40 82 Q30 88 28 100 Q27 106 32 108",
-        ]} : {}}
-        transition={speaking ? { duration: 1.8, repeat: Infinity } : {}}
-      />
-      <motion.path
-        d="M80 82 Q90 88 92 100 Q93 106 88 108"
-        fill="none" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round" opacity="0.2"
-        animate={speaking ? { d: [
-          "M80 82 Q90 88 92 100 Q93 106 88 108",
-          "M80 82 Q92 85 96 96 Q98 102 93 106",
-          "M80 82 Q90 88 92 100 Q93 106 88 108",
-        ]} : {}}
-        transition={speaking ? { duration: 1.8, repeat: Infinity, delay: 0.3 } : {}}
+        d="M45 100 Q60 104 75 100"
+        fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeLinecap="round"
+        animate={{ opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 2, repeat: Infinity }}
       />
 
       {/* Neck */}
-      <rect x="54" y="66" width="12" height="10" rx="4" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3"/>
+      <path d="M52 75 L52 85 Q52 90 60 90 Q68 90 68 85 L68 75" fill="url(#skinGrad)" />
+      {/* Neck shadow */}
+      <ellipse cx="60" cy="85" rx="8" ry="3" fill="#d4956e" opacity="0.15" />
 
       {/* Head */}
-      <circle cx="60" cy="44" r="26" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="2.5" />
+      <ellipse cx="60" cy="48" rx="27" ry="30" fill="url(#skinGrad)" />
 
-      {/* Hair */}
-      <path d="M34 40 Q34 18 60 16 Q86 18 86 40 Q86 32 78 26 Q68 20 60 20 Q52 20 42 26 Q34 32 34 40" fill="hsl(var(--primary))" opacity="0.25" />
-      <motion.path
-        d="M52 18 Q54 10 58 14" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" opacity="0.3"
-        animate={{ d: ["M52 18 Q54 10 58 14", "M52 18 Q56 8 59 13", "M52 18 Q54 10 58 14"] }}
-        transition={{ duration: 2.5, repeat: Infinity }}
-      />
-
-      {/* Eyes */}
-      <motion.ellipse cx="50" cy="42" rx="3.5" ry="4" fill="hsl(var(--primary))"
-        animate={speaking ? { ry: [4, 4.5, 4, 0.8, 4] } : { ry: [4, 4, 0.8, 4] }}
-        transition={{ duration: speaking ? 2.5 : 4.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <circle cx="48" cy="40" r="1.2" fill="hsl(var(--background))" opacity="0.8" />
-      <motion.ellipse cx="70" cy="42" rx="3.5" ry="4" fill="hsl(var(--primary))"
-        animate={speaking ? { ry: [4, 4.5, 4, 0.8, 4] } : { ry: [4, 4, 0.8, 4] }}
-        transition={{ duration: speaking ? 2.5 : 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
-      />
-      <circle cx="68" cy="40" r="1.2" fill="hsl(var(--background))" opacity="0.8" />
-
-      {/* Eyebrows */}
-      <motion.path d="M45 35 Q50 33 55 35" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"
-        animate={speaking ? { d: ["M45 35 Q50 33 55 35", "M45 33 Q50 31 55 33", "M45 35 Q50 33 55 35"] } : {}}
+      {/* Ears */}
+      <ellipse cx="33" cy="48" rx="4" ry="6" fill="#f0b896" />
+      <ellipse cx="87" cy="48" rx="4" ry="6" fill="#f0b896" />
+      {/* Earrings - small gold drops */}
+      <motion.circle cx="33" cy="56" r="2" fill="#d4a040" filter="url(#softGlow)"
+        animate={{ cy: [56, 57, 56] }}
         transition={{ duration: 2, repeat: Infinity }}
       />
-      <motion.path d="M65 35 Q70 33 75 35" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"
-        animate={speaking ? { d: ["M65 35 Q70 33 75 35", "M65 33 Q70 31 75 33", "M65 35 Q70 33 75 35"] } : {}}
+      <motion.circle cx="87" cy="56" r="2" fill="#d4a040" filter="url(#softGlow)"
+        animate={{ cy: [56, 57, 56] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+      />
+
+      {/* Hair - voluminous and flowing */}
+      <path d="M33 45 Q30 20 42 12 Q52 6 60 8 Q68 6 78 12 Q90 20 87 45 Q88 35 82 24 Q72 14 60 14 Q48 14 38 24 Q32 35 33 45" fill="url(#hairGrad)" />
+      {/* Hair volume top */}
+      <path d="M36 38 Q34 18 48 10 Q56 5 64 10 Q78 6 84 18 Q88 28 86 38 Q84 26 76 18 Q66 10 56 12 Q44 10 38 22 Q36 30 36 38" fill="#4a1e10" opacity="0.6" />
+      {/* Flowing hair strands */}
+      <motion.path
+        d="M34 42 Q28 55 26 72 Q25 80 28 85"
+        fill="none" stroke="url(#hairGrad)" strokeWidth="8" strokeLinecap="round"
+        animate={{ d: [
+          "M34 42 Q28 55 26 72 Q25 80 28 85",
+          "M34 42 Q26 56 24 73 Q23 82 27 87",
+          "M34 42 Q28 55 26 72 Q25 80 28 85",
+        ] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.path
+        d="M86 42 Q92 55 94 72 Q95 80 92 85"
+        fill="none" stroke="url(#hairGrad)" strokeWidth="7" strokeLinecap="round"
+        animate={{ d: [
+          "M86 42 Q92 55 94 72 Q95 80 92 85",
+          "M86 42 Q94 56 96 73 Q97 82 93 87",
+          "M86 42 Q92 55 94 72 Q95 80 92 85",
+        ] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+      />
+      {/* Hair highlight strands */}
+      <path d="M50 12 Q54 8 58 12" fill="none" stroke="#8b5e3c" strokeWidth="1" opacity="0.4" strokeLinecap="round" />
+      <path d="M62 10 Q66 7 70 12" fill="none" stroke="#8b5e3c" strokeWidth="1" opacity="0.3" strokeLinecap="round" />
+
+      {/* Eyebrows - defined arches */}
+      <motion.path d="M43 33 Q48 29 56 32" fill="none" stroke="#5a2a14" strokeWidth="1.8" strokeLinecap="round"
+        animate={speaking ? { d: ["M43 33 Q48 29 56 32", "M43 31 Q48 27 56 30", "M43 33 Q48 29 56 32"] } : {}}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      <motion.path d="M64 32 Q72 29 77 33" fill="none" stroke="#5a2a14" strokeWidth="1.8" strokeLinecap="round"
+        animate={speaking ? { d: ["M64 32 Q72 29 77 33", "M64 30 Q72 27 77 31", "M64 32 Q72 29 77 33"] } : {}}
         transition={{ duration: 2, repeat: Infinity, delay: 0.1 }}
       />
 
-      {/* Nose */}
-      <path d="M59 47 Q60 49 61 47" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.2" strokeLinecap="round"/>
+      {/* Eyes - detailed with lashes */}
+      {/* Left eye */}
+      <ellipse cx="50" cy="42" rx="7" ry="5" fill="white" />
+      <motion.ellipse cx="50" cy="42" rx="4" ry="4" fill="url(#irisGrad)"
+        animate={speaking ? { ry: [4, 4.5, 4, 0.5, 4] } : { ry: [4, 4, 0.5, 4] }}
+        transition={{ duration: speaking ? 2.5 : 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <circle cx="50" cy="42" r="2" fill="#0e2e28" />
+      <circle cx="48" cy="40" r="1.5" fill="white" opacity="0.9" />
+      <circle cx="52" cy="41" r="0.7" fill="white" opacity="0.5" />
+      {/* Left eyeliner + lashes */}
+      <path d="M43 40 Q46 37 50 37 Q54 37 57 40" fill="none" stroke="#2a1208" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M43 40 L40 38" fill="none" stroke="#2a1208" strokeWidth="0.8" strokeLinecap="round" />
+      <path d="M44 39 L42 36" fill="none" stroke="#2a1208" strokeWidth="0.6" strokeLinecap="round" />
+      <path d="M46 38 L45 35" fill="none" stroke="#2a1208" strokeWidth="0.5" strokeLinecap="round" />
 
-      {/* Mouth */}
+      {/* Right eye */}
+      <ellipse cx="70" cy="42" rx="7" ry="5" fill="white" />
+      <motion.ellipse cx="70" cy="42" rx="4" ry="4" fill="url(#irisGrad)"
+        animate={speaking ? { ry: [4, 4.5, 4, 0.5, 4] } : { ry: [4, 4, 0.5, 4] }}
+        transition={{ duration: speaking ? 2.5 : 5, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
+      />
+      <circle cx="70" cy="42" r="2" fill="#0e2e28" />
+      <circle cx="68" cy="40" r="1.5" fill="white" opacity="0.9" />
+      <circle cx="72" cy="41" r="0.7" fill="white" opacity="0.5" />
+      {/* Right eyeliner + lashes */}
+      <path d="M63 40 Q66 37 70 37 Q74 37 77 40" fill="none" stroke="#2a1208" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M77 40 L80 38" fill="none" stroke="#2a1208" strokeWidth="0.8" strokeLinecap="round" />
+      <path d="M76 39 L78 36" fill="none" stroke="#2a1208" strokeWidth="0.6" strokeLinecap="round" />
+      <path d="M74 38 L75 35" fill="none" stroke="#2a1208" strokeWidth="0.5" strokeLinecap="round" />
+
+      {/* Nose */}
+      <path d="M58 48 Q60 52 62 48" fill="none" stroke="#d09070" strokeWidth="1.2" opacity="0.5" strokeLinecap="round" />
+      <circle cx="57" cy="50" r="1" fill="#d09070" opacity="0.15" />
+      <circle cx="63" cy="50" r="1" fill="#d09070" opacity="0.15" />
+
+      {/* Lips - full and colorful */}
       <motion.path
-        d={speaking ? "M51 54 Q60 62 69 54" : "M53 53 Q60 58 67 53"}
-        fill={speaking ? "hsl(var(--primary))" : "none"}
-        fillOpacity={speaking ? 0.1 : 0}
-        stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round"
+        d={speaking ? "M49 56 Q54 53 60 55 Q66 53 71 56 Q66 63 60 64 Q54 63 49 56 Z" : "M50 56 Q55 53 60 55 Q65 53 70 56 Q65 61 60 62 Q55 61 50 56 Z"}
+        fill="url(#lipGrad)"
         animate={speaking ? { d: [
-          "M51 54 Q60 62 69 54", "M52 54 Q60 59 68 54", "M51 54 Q60 62 69 54", "M53 54 Q60 57 67 54", "M51 54 Q60 62 69 54",
+          "M49 56 Q54 53 60 55 Q66 53 71 56 Q66 63 60 64 Q54 63 49 56 Z",
+          "M50 56 Q55 54 60 55 Q65 54 70 56 Q65 60 60 61 Q55 60 50 56 Z",
+          "M49 56 Q54 53 60 55 Q66 53 71 56 Q66 63 60 64 Q54 63 49 56 Z",
+          "M49 55 Q54 52 60 54 Q66 52 71 55 Q66 64 60 65 Q54 64 49 55 Z",
+          "M49 56 Q54 53 60 55 Q66 53 71 56 Q66 63 60 64 Q54 63 49 56 Z",
         ]} : {}}
         transition={speaking ? { duration: 1.2, repeat: Infinity } : {}}
       />
+      {/* Lip highlight */}
+      <path d="M54 55 Q58 53 62 55" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="0.8" strokeLinecap="round" />
+      {/* Upper lip line */}
+      <path d="M50 56 Q55 53 60 55 Q65 53 70 56" fill="none" stroke="#a8304a" strokeWidth="0.6" strokeLinecap="round" />
 
-      {/* Blush */}
-      <circle cx="40" cy="48" r="4" fill="hsl(var(--primary))" opacity="0.08" />
-      <circle cx="80" cy="48" r="4" fill="hsl(var(--primary))" opacity="0.08" />
-
-      {/* Floating sparkles */}
-      <motion.path d="M92 22 L94 18 L96 22 L94 26 Z" fill="hsl(var(--primary))" opacity="0.5"
-        animate={{ rotate: [0, 180, 360], scale: [0.8, 1.2, 0.8], opacity: [0.3, 0.7, 0.3] }}
+      {/* Blush - rosy cheeks */}
+      <motion.ellipse cx="40" cy="50" rx="6" ry="4" fill="#e85670" opacity="0.1"
+        animate={{ opacity: [0.08, 0.14, 0.08] }}
         transition={{ duration: 3, repeat: Infinity }}
-        style={{ transformOrigin: "94px 22px" }}
       />
-      <motion.path d="M24 30 L26 27 L28 30 L26 33 Z" fill="hsl(var(--primary))" opacity="0.4"
-        animate={{ rotate: [0, -180, -360], scale: [0.6, 1, 0.6], opacity: [0.2, 0.5, 0.2] }}
+      <motion.ellipse cx="80" cy="50" rx="6" ry="4" fill="#e85670" opacity="0.1"
+        animate={{ opacity: [0.08, 0.14, 0.08] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+      />
+
+      {/* Necklace - delicate gold chain */}
+      <path d="M44 78 Q52 82 60 80 Q68 82 76 78" fill="none" stroke="#d4a040" strokeWidth="0.8" opacity="0.6" />
+      <motion.circle cx="60" cy="81" r="2.5" fill="#d4a040" opacity="0.7" filter="url(#softGlow)"
+        animate={{ cy: [81, 82, 81] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+
+      {/* Floating sparkles - colorful */}
+      <motion.path d="M96 18 L98 14 L100 18 L98 22 Z" fill="#e85670" opacity="0.6" filter="url(#softGlow)"
+        animate={{ rotate: [0, 180, 360], scale: [0.8, 1.3, 0.8], opacity: [0.3, 0.7, 0.3] }}
+        transition={{ duration: 3, repeat: Infinity }}
+        style={{ transformOrigin: "98px 18px" }}
+      />
+      <motion.path d="M20 26 L22 23 L24 26 L22 29 Z" fill="#1f8584" opacity="0.5" filter="url(#softGlow)"
+        animate={{ rotate: [0, -180, -360], scale: [0.6, 1.1, 0.6], opacity: [0.2, 0.6, 0.2] }}
         transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-        style={{ transformOrigin: "26px 30px" }}
+        style={{ transformOrigin: "22px 26px" }}
       />
-      <motion.circle cx="18" cy="60" r="1.5" fill="hsl(var(--primary))"
-        animate={{ cy: [60, 55, 60], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+      <motion.circle cx="14" cy="60" r="2" fill="#d4a040"
+        animate={{ cy: [60, 54, 60], opacity: [0.2, 0.6, 0.2] }}
+        transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
       />
-      <motion.circle cx="102" cy="55" r="1.5" fill="hsl(var(--primary))"
-        animate={{ cy: [55, 50, 55], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 2.5, repeat: Infinity, delay: 1.2 }}
+      <motion.circle cx="106" cy="50" r="1.8" fill="#e85670"
+        animate={{ cy: [50, 44, 50], opacity: [0.2, 0.5, 0.2] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 1.2 }}
+      />
+      <motion.path d="M108 70 L110 67 L112 70 L110 73 Z" fill="#d4a040" opacity="0.4"
+        animate={{ rotate: [0, 90, 180], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 3.5, repeat: Infinity, delay: 0.8 }}
+        style={{ transformOrigin: "110px 70px" }}
       />
     </svg>
   </motion.div>
