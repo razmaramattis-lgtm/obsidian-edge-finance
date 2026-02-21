@@ -100,6 +100,35 @@ const Index = () => {
         <title>Avargo | Regnskapsfører og rådgiver for ambisiøse selskaper</title>
         <meta name="description" content="Avargo er regnskapsbyrået som kombinerer dedikerte regnskapsførere med AI-drevet innsikt. Regnskap, skatteoptimalisering og rådgivning for vekstselskaper." />
         <link rel="canonical" href="https://avargo.no" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AccountingService",
+          "name": "Avargo",
+          "description": "AI-drevet regnskapsbyrå med dedikerte regnskapsførere, skatteoptimalisering og rådgivning for ambisiøse selskaper i Norge.",
+          "url": "https://avargo.no",
+          "logo": "https://avargo.no/favicon.ico",
+          "email": "firmapost@avargo.no",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "NO"
+          },
+          "areaServed": {
+            "@type": "Country",
+            "name": "Norway"
+          },
+          "priceRange": "Fra 1 499 kr/mnd",
+          "serviceType": ["Regnskap", "Skatteoptimalisering", "CFO-rådgivning", "Lønnskjøring", "HR", "Digital markedsføring"],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Regnskapstjenester",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oppstart", "description": "For nyoppstartede selskaper", "url": "https://avargo.no/priser" }},
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Vekst", "description": "For selskaper i vekst", "url": "https://avargo.no/priser" }},
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rådgivning", "description": "Kun rådgivning og sparring", "url": "https://avargo.no/priser" }}
+            ]
+          },
+          "sameAs": []
+        })}</script>
       </Helmet>
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
