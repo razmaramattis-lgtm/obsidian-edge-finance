@@ -86,6 +86,30 @@ const DocumentGenerator = ({ config }: Props) => {
     if (logoInputRef.current) logoInputRef.current.value = "";
   };
 
+  const buildFullHtml = useCallback(() => {
+    const date = new Date().toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
+    let html = `<div style="text-align:center;margin-bottom:2.5em;padding-bottom:1.5em;border-bottom:2px solid #333;">
+      <h1 style="font-size:24px;font-weight:bold;color:#000;margin-bottom:8px;font-family:'Georgia',serif;">${config.title}</h1>
+      <p style="font-size:13px;color:#555;margin:4px 0;">${form.companyName || "[Bedriftsnavn]"}</p>
+      ${form.orgNumber ? `<p style="font-size:11px;color:#888;">Org.nr. ${form.orgNumber}</p>` : ""}
+      <p style="font-size:11px;color:#888;margin-top:8px;">${date}</p>
+    </div>`;
+    html += `<div style="margin-bottom:2em;padding-bottom:1.5em;border-bottom:1px solid #ddd;">
+      <h2 style="font-size:16px;font-weight:bold;color:#000;margin-bottom:12px;">Innholdsfortegnelse</h2>
+      <ol style="padding-left:1.5em;color:#333;font-size:12px;line-height:2.2;">
+        ${config.sections.map(s => `<li>${s.title}</li>`).join("")}
+      </ol>
+    </div>`;
+    config.sections.forEach((section, i) => {
+      html += `<div style="${i > 0 ? 'page-break-before:always;' : ''}">${section.content(form)}</div>`;
+      if (i < config.sections.length - 1) html += `<hr style="margin:2em 0;border:none;border-top:1px solid #ddd;" />`;
+    });
+    html += `<div style="margin-top:3em;padding-top:1em;border-top:2px solid #333;text-align:center;font-size:10px;color:#888;">
+      <p>${config.title} — ${form.companyName || "[Bedriftsnavn]"} — Konfidensielt</p>
+    </div>`;
+    return html;
+  }, [config, form]);
+
   const handleSave = async () => {
     if (!companyId) {
       toast.error("Ingen bedrift funnet");
@@ -93,53 +117,54 @@ const DocumentGenerator = ({ config }: Props) => {
     }
     setSaving(true);
     try {
-      for (const section of config.sections) {
-        const { title, content } = section;
-        const html = content(form);
-        const { error } = await supabase.from("customer_documents").upsert(
-          {
-            company_id: companyId,
-            title,
-            description: `${config.title} — ${title}`,
-            category: config.documentCategory,
-            file_name: `${title}.html`,
-            visibility: "private",
-          },
-          { onConflict: "company_id,title" }
-        );
-        if (error) {
-          await supabase.from("customer_documents").insert({
-            company_id: companyId,
-            title,
-            description: `Generert fra ${config.title}`,
-            category: config.documentCategory,
-            file_name: `${title}.html`,
-            visibility: "private",
-          });
-        }
-      }
-      for (const section of config.sections) {
-        const html = section.content(form);
-        const { data: existing } = await supabase
-          .from("customer_handbook_chapters")
-          .select("id")
-          .eq("company_id", companyId)
-          .eq("title", section.title)
-          .maybeSingle();
+      const fullHtml = buildFullHtml();
+      const docTitle = config.title;
 
-        if (existing) {
-          await supabase
-            .from("customer_handbook_chapters")
-            .update({ content: html })
-            .eq("id", existing.id);
-        } else {
-          await supabase.from("customer_handbook_chapters").insert({
-            company_id: companyId,
-            title: section.title,
-            content: html,
-            sort_order: config.sections.indexOf(section),
-          });
-        }
+      // Upsert one single document entry
+      const { data: existingDoc } = await supabase
+        .from("customer_documents")
+        .select("id")
+        .eq("company_id", companyId)
+        .eq("title", docTitle)
+        .eq("category", config.documentCategory)
+        .maybeSingle();
+
+      if (existingDoc) {
+        await supabase.from("customer_documents").update({
+          description: `Komplett ${config.title}`,
+          file_name: `${docTitle}.html`,
+          updated_at: new Date().toISOString(),
+        }).eq("id", existingDoc.id);
+      } else {
+        await supabase.from("customer_documents").insert({
+          company_id: companyId,
+          title: docTitle,
+          description: `Komplett ${config.title}`,
+          category: config.documentCategory,
+          file_name: `${docTitle}.html`,
+          visibility: "private",
+        });
+      }
+
+      // Save full combined content as one handbook chapter
+      const { data: existingChapter } = await supabase
+        .from("customer_handbook_chapters")
+        .select("id")
+        .eq("company_id", companyId)
+        .eq("title", docTitle)
+        .maybeSingle();
+
+      if (existingChapter) {
+        await supabase.from("customer_handbook_chapters")
+          .update({ content: fullHtml })
+          .eq("id", existingChapter.id);
+      } else {
+        await supabase.from("customer_handbook_chapters").insert({
+          company_id: companyId,
+          title: docTitle,
+          content: fullHtml,
+          sort_order: 0,
+        });
       }
 
       setSaved(true);
