@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays
 } from "lucide-react";
 
 // Sub-panels
@@ -25,9 +25,10 @@ import HrPanel from "@/components/admin/HrPanel";
 import OverviewPanel from "@/components/admin/OverviewPanel";
 import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
+import BookingsPanel from "@/components/admin/BookingsPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -37,6 +38,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Nettside" },
   { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Nettside" },
   { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Nettside" },
+  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -78,6 +80,7 @@ const AdminDashboard = () => {
       case "collab": return <CollabPanel />;
       case "knowledge": return <KnowledgeBasePanel />;
       case "courses": return <CoursesPanel />;
+      case "bookings": return <BookingsPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }

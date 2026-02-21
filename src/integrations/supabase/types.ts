@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      advisor_availability: {
+        Row: {
+          active: boolean
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          profile_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          day_of_week: number
+          end_time?: string
+          id?: string
+          profile_id: string
+          start_time?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          profile_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_availability_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_blocked_dates: {
+        Row: {
+          blocked_date: string
+          created_at: string
+          id: string
+          profile_id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_date: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_blocked_dates_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       archive_categories: {
         Row: {
           created_at: string
@@ -127,6 +200,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      bookings: {
+        Row: {
+          advisor_id: string
+          booking_date: string
+          booking_time: string
+          company_name: string
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          message: string | null
+          status: string
+          teams_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          advisor_id: string
+          booking_date: string
+          booking_time: string
+          company_name: string
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          message?: string | null
+          status?: string
+          teams_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          advisor_id?: string
+          booking_date?: string
+          booking_time?: string
+          company_name?: string
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          message?: string | null
+          status?: string
+          teams_link?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chat_categories: {
         Row: {
