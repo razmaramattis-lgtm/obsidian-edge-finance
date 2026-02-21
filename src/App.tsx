@@ -22,6 +22,7 @@ const Bransjer = lazy(() => import("./pages/Bransjer"));
 const Ressurser = lazy(() => import("./pages/Ressurser"));
 const Skattekalender = lazy(() => import("./pages/Skattekalender"));
 const BlogListing = lazy(() => import("./pages/BlogListing"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -167,6 +168,7 @@ const App = () => (
                         <Route path="/ressurser" element={<Ressurser />} />
                         <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
                         <Route path="/nyheter" element={<BlogListing />} />
+                        <Route path="/faq" element={<FAQ />} />
                         <Route path="/nyhet/:slug" element={<BlogPost />} />
                         <Route path="/om-oss" element={<About />} />
                         <Route path="/kontakt" element={<Contact />} />

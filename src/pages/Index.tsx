@@ -129,6 +129,16 @@ const Index = () => {
           },
           "sameAs": []
         })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Avargo — Regnskapsfører og rådgiver",
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": ["h1", ".hero-description", ".hero-tagline"]
+          },
+          "url": "https://avargo.no"
+        })}</script>
       </Helmet>
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">

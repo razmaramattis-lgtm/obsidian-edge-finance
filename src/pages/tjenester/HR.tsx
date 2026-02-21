@@ -50,6 +50,16 @@ const HR = () => (
       <title>HR & Lønn — Personaladministrasjon for bedrifter | Avargo</title>
       <meta name="description" content="Komplett HR- og lønnstjeneste. Ansettelseskontrakter, lønnskjøring, personalforsikringer og rådgivning for norske arbeidsgivere." />
       <link rel="canonical" href="https://avargo.no/tjenester/hr-og-lonn" />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Hva koster lønnskjøring?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo er lønnskjøring inkludert i HR-pakken. Du betaler én fast månedspris som dekker lønnskjøring, A-melding, feriepengeavregning, skattetrekk, arbeidskontrakter og arbeidsrettslig rådgivning — uten skjulte tillegg." }},
+          { "@type": "Question", "name": "Hva er A-melding?", "acceptedAnswer": { "@type": "Answer", "text": "A-meldingen er en månedlig rapportering til Skatteetaten, NAV og SSB som inneholder opplysninger om lønn, skattetrekk, arbeidsgiveravgift og arbeidsforhold. Avargo håndterer A-meldingen automatisk som del av lønnskjøringen." }},
+          { "@type": "Question", "name": "Trenger bedriften min HMS-dokumentasjon?", "acceptedAnswer": { "@type": "Answer", "text": "Ja, alle norske bedrifter er pålagt å ha HMS-dokumentasjon og internkontroll. Avargo hjelper deg med å opprette og vedlikeholde nødvendig HMS-dokumentasjon slik at bedriften alltid er compliant." }},
+          { "@type": "Question", "name": "Hva bør en arbeidskontrakt inneholde?", "acceptedAnswer": { "@type": "Answer", "text": "En arbeidskontrakt skal inneholde: partenes identitet, arbeidssted, stillingsbeskrivelse, tiltredelsestidspunkt, prøvetid, lønn, arbeidstid, ferie og oppsigelsesfrister. Avargo lager profesjonelle arbeidskontrakter som oppfyller alle krav i arbeidsmiljøloven." }}
+        ]
+      })}</script>
     </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture3} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
