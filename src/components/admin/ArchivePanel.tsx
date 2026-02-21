@@ -50,7 +50,8 @@ const ArchivePanel = () => {
     e.preventDefault();
     if (!selectedFile) return;
     setUploading(true);
-    const path = `${Date.now()}-${selectedFile.name}`;
+    const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${Date.now()}-${safeName}`;
     const { data: uploadData, error } = await supabase.storage.from("archive-files").upload(path, selectedFile);
     if (!error && uploadData) {
       const { data: { publicUrl } } = supabase.storage.from("archive-files").getPublicUrl(path);
