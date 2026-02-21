@@ -27,9 +27,10 @@ import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import DataCenterPanel from "@/components/admin/DataCenterPanel";
+import MyBookingSettingsPanel from "@/components/admin/MyBookingSettingsPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -48,6 +49,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
   { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
+  { id: "mybooking", label: "Min tilgjengelighet", icon: CalendarDays, group: "Internt" },
   { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
@@ -84,6 +86,7 @@ const AdminDashboard = () => {
       case "datacenter": return <DataCenterPanel />;
       case "courses": return <CoursesPanel />;
       case "bookings": return <BookingsPanel />;
+      case "mybooking": return <MyBookingSettingsPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }
