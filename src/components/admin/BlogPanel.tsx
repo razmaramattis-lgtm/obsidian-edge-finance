@@ -194,7 +194,7 @@ const BlogPanel = () => {
                 <p className="text-xs text-muted-foreground">Forhåndsvisning</p>
               </div>
             </div>
-            <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-heading prose-headings:tracking-tight prose-h1:text-4xl prose-h1:mt-10 prose-h1:mb-4 prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:pb-2 prose-h2:border-b prose-h2:border-border/20 prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-2 prose-h4:text-xl prose-h4:mt-5 prose-h4:mb-2 prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-2xl prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-blockquote:py-1 prose-blockquote:px-6 prose-table:border-collapse prose-th:bg-muted/30 prose-th:p-3 prose-th:text-left prose-th:border prose-th:border-border/20 prose-td:p-3 prose-td:border prose-td:border-border/20"
+            <div className="article-content"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(form.content || "<p class='text-muted-foreground/30'>Ingen innhold ennå…</p>") }} />
             {form.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-8 pt-6 border-t border-border/20">

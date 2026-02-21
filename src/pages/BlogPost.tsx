@@ -45,7 +45,6 @@ const BlogPost = () => {
         setLoading(false);
 
         if (p) {
-          // Fetch prev/next posts
           Promise.all([
             supabase.from("blog_posts").select("slug,title").eq("published", true)
               .lt("created_at", p.created_at).order("created_at", { ascending: false }).limit(1),
@@ -56,7 +55,6 @@ const BlogPost = () => {
             setNextPost(next?.[0] ? { slug: next[0].slug!, title: next[0].title } : null);
           });
 
-          // Fetch related posts by tags or category
           supabase.from("blog_posts")
             .select("id,title,slug,excerpt,content,category,image_url,tags,pinned,created_at")
             .eq("published", true)
@@ -111,57 +109,60 @@ const BlogPost = () => {
         })}</script>
       </Helmet>
 
-      {/* Hero Image */}
+      {/* Hero Image — full-bleed newspaper style */}
       {post.image_url && (
-        <div className="relative w-full h-[40vh] md:h-[55vh] overflow-hidden">
+        <div className="relative w-full h-[45vh] md:h-[60vh] overflow-hidden">
           <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
         </div>
       )}
 
-      <article className={`${post.image_url ? "pt-0 -mt-24 relative" : "pt-28 md:pt-40"} pb-16 md:pb-24`}>
+      <article className={`${post.image_url ? "pt-0 -mt-32 relative" : "pt-28 md:pt-40"} pb-16 md:pb-24`}>
         <div className="container mx-auto px-4 md:px-6">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-[720px] mx-auto">
             <Link to="/nyheter" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
               <ArrowLeft size={14} /> Tilbake til nyheter
             </Link>
 
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-[10px] tracking-widest uppercase text-primary border border-primary/30 px-2.5 py-0.5 rounded-full">{post.category}</span>
+            {/* Category badge row */}
+            <div className="flex items-center gap-3 mb-5">
+              <span className="text-[11px] tracking-[0.3em] uppercase font-semibold text-primary">{post.category}</span>
               {post.pinned && <span className="flex items-center gap-1 text-[10px] text-secondary"><Pin size={10} /> Festet</span>}
             </div>
 
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl leading-[1.05] mb-6">{post.title}</h1>
+            {/* Headline — newspaper style, large and commanding */}
+            <h1 className="font-heading text-[2.5rem] sm:text-[3.2rem] md:text-[3.8rem] leading-[1.08] tracking-tight mb-5">{post.title}</h1>
 
-            {post.excerpt && <p className="text-lg text-muted-foreground font-light leading-relaxed mb-6">{post.excerpt}</p>}
+            {/* Lead / ingress — slightly larger, semi-bold like VG */}
+            {post.excerpt && (
+              <p className="text-xl md:text-2xl text-foreground/80 font-medium leading-snug mb-8">{post.excerpt}</p>
+            )}
 
             {/* Author & Meta Row */}
-            <div className="flex flex-wrap items-center gap-4 mb-10 pb-8 border-b border-border/20">
+            <div className="flex flex-wrap items-center gap-4 mb-10 pb-6 border-b border-border/30">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-medium">A</div>
+                <div className="w-11 h-11 rounded-full bg-primary/15 flex items-center justify-center text-primary text-sm font-bold">A</div>
                 <div>
-                  <p className="text-sm font-medium">Avargo</p>
+                  <p className="text-sm font-semibold">Avargo</p>
                   <p className="text-xs text-muted-foreground">{formatDate(post.created_at)}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
-                <Clock size={13} />
-                <span>{readTime} min lesetid</span>
+              <div className="flex items-center gap-3 ml-auto">
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock size={13} />
+                  {readTime} min lesetid
+                </span>
+                <a href={fbShare} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-border/30 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors">
+                  Facebook
+                </a>
+                <a href={liShare} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-border/30 text-muted-foreground hover:border-secondary/40 hover:text-secondary transition-colors">
+                  LinkedIn
+                </a>
               </div>
             </div>
 
-            {/* Article Content */}
-            <div className="prose prose-lg dark:prose-invert max-w-none mb-12
-              prose-headings:font-heading prose-headings:tracking-tight
-              prose-h1:text-4xl prose-h1:mt-10 prose-h1:mb-4
-              prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:pb-2 prose-h2:border-b prose-h2:border-border/20
-              prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-2
-              prose-h4:text-xl prose-h4:mt-5 prose-h4:mb-2
-              prose-p:leading-relaxed prose-li:leading-relaxed
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-img:rounded-2xl prose-img:border prose-img:border-border/20
-              prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-blockquote:py-1 prose-blockquote:px-6
-              prose-table:border-collapse prose-th:bg-muted/30 prose-th:p-3 prose-th:text-left prose-th:border prose-th:border-border/20 prose-td:p-3 prose-td:border prose-td:border-border/20"
+            {/* Article Content — newspaper-grade typography */}
+            <div className="article-content mb-12"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
 
             {/* Tags */}
@@ -169,23 +170,12 @@ const BlogPost = () => {
               <div className="flex flex-wrap items-center gap-2 mb-8 pt-6 border-t border-border/20">
                 <Tag size={14} className="text-muted-foreground" />
                 {post.tags.map(t => (
-                  <Link key={t} to={`/nyheter?tag=${encodeURIComponent(t)}`} className="text-[10px] px-2.5 py-1 rounded-lg border border-border/20 text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors">
+                  <Link key={t} to={`/nyheter?tag=${encodeURIComponent(t)}`} className="text-[11px] px-3 py-1 rounded-lg border border-border/20 text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors">
                     {t}
                   </Link>
                 ))}
               </div>
             )}
-
-            {/* Share */}
-            <div className="flex items-center gap-3 pt-6 border-t border-border/20">
-              <span className="text-xs text-muted-foreground flex items-center gap-1.5"><Share2 size={13} /> Del:</span>
-              <a href={fbShare} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-border/30 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors">
-                Facebook
-              </a>
-              <a href={liShare} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-lg border border-border/30 text-muted-foreground hover:border-secondary/40 hover:text-secondary transition-colors">
-                LinkedIn
-              </a>
-            </div>
 
             {/* Prev / Next navigation */}
             {(prevPost || nextPost) && (

@@ -159,3 +159,227 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(15 55% 65% / 0.4);
 }
+
+/* ─── Article Content — Newspaper-grade typography ─── */
+.article-content {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: hsl(var(--foreground));
+  letter-spacing: 0.01em;
+}
+
+.article-content > *:first-child {
+  margin-top: 0;
+}
+
+/* Headings — bold, prominent, with generous spacing */
+.article-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-top: 3.5rem;
+  margin-bottom: 1.2rem;
+  color: hsl(var(--foreground));
+}
+
+.article-content h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+.article-content h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 2.5rem;
+  margin-bottom: 0.8rem;
+  color: hsl(var(--foreground));
+}
+
+.article-content h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  color: hsl(var(--foreground) / 0.9);
+}
+
+/* Paragraphs */
+.article-content p {
+  margin-bottom: 1.5rem;
+}
+
+/* Lead paragraph (first paragraph after title) */
+.article-content > p:first-of-type {
+  font-size: 1.25rem;
+  line-height: 1.75;
+  font-weight: 300;
+  color: hsl(var(--foreground) / 0.85);
+}
+
+/* Links */
+.article-content a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: opacity 0.2s;
+}
+.article-content a:hover {
+  opacity: 0.8;
+}
+
+/* Lists */
+.article-content ul,
+.article-content ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+.article-content li {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+}
+.article-content ul > li {
+  list-style-type: disc;
+}
+.article-content ol > li {
+  list-style-type: decimal;
+}
+
+/* Blockquotes — editorial pull-quote style */
+.article-content blockquote {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid hsl(var(--primary) / 0.5);
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 0 0.75rem 0.75rem 0;
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: hsl(var(--foreground) / 0.85);
+}
+.article-content blockquote p {
+  margin-bottom: 0.5rem;
+}
+.article-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Images */
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin: 2rem auto;
+  display: block;
+  border: 1px solid hsl(var(--border) / 0.2);
+}
+
+/* Horizontal rule — elegant separator */
+.article-content hr {
+  margin: 2.5rem auto;
+  border: none;
+  height: 1px;
+  max-width: 120px;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+}
+
+/* Tables — clean, professional */
+.article-content table {
+  width: 100%;
+  margin: 2rem 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.article-content th {
+  background: hsl(var(--muted) / 0.4);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid hsl(var(--border) / 0.3);
+  color: hsl(var(--foreground) / 0.7);
+}
+.article-content td {
+  padding: 0.75rem 1rem;
+  border: 1px solid hsl(var(--border) / 0.2);
+  vertical-align: top;
+}
+.article-content tr:nth-child(even) td {
+  background: hsl(var(--muted) / 0.15);
+}
+
+/* Code blocks */
+.article-content pre {
+  margin: 2rem 0;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: hsl(var(--muted) / 0.5);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.article-content code {
+  font-size: 0.9em;
+  background: hsl(var(--muted) / 0.5);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+}
+.article-content pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Strong & emphasis */
+.article-content strong {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+.article-content em {
+  font-style: italic;
+}
+
+/* YouTube / iframe embeds */
+.article-content iframe {
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+/* TipTap placeholder */
+.article-content .is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground) / 0.4);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .article-content {
+    font-size: 1rem;
+  }
+  .article-content h1 { font-size: 2rem; }
+  .article-content h2 { font-size: 1.6rem; }
+  .article-content h3 { font-size: 1.35rem; }
+  .article-content h4 { font-size: 1.15rem; }
+}
