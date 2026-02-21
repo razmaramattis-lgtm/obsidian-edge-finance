@@ -151,32 +151,28 @@ const DocumentGenerator = ({ config }: Props) => {
   };
 
   const handleDownloadPdf = async () => {
-    if (!docRef.current) return;
+    if (!docRef.current) {
+      toast.error("Ingen dokumentinnhold funnet");
+      return;
+    }
     setDownloading(true);
     try {
       const html2pdf = (await import("html2pdf.js")).default;
       const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
 
-      // Build a self-contained HTML string for reliable PDF generation
-      const styles = docRef.current.querySelector('style')?.outerHTML || '';
-      const htmlContent = `
-        <div style="background:#ffffff;color:#000000;font-family:'Georgia','Times New Roman',serif;font-size:13px;line-height:1.7;">
-          ${docRef.current.innerHTML}
-        </div>
-        <style>
-          * { background: #ffffff !important; color: #1a1a1a !important; }
-          a { color: #1a56db !important; }
-          .merge-field { background: #f0f0f0 !important; color: #666 !important; border: 1px dashed #ccc; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
-        </style>
-      `;
+      // Clone content into an off-screen container with forced white styling
+      const clone = docRef.current.cloneNode(true) as HTMLElement;
+      clone.style.cssText = "position:absolute;left:-9999px;top:0;width:794px;background:#fff;color:#000;z-index:-1;padding:20px;";
+      // Force all nested elements to have white bg and dark text
+      clone.querySelectorAll("*").forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.backgroundColor = "transparent";
+        htmlEl.style.color = htmlEl.style.color || "#1a1a1a";
+      });
+      clone.style.backgroundColor = "#ffffff";
+      document.body.appendChild(clone);
 
-      // Create a temporary off-screen container for clean capture
-      const tempContainer = document.createElement("div");
-      tempContainer.style.cssText = "position:fixed;left:-9999px;top:0;width:794px;background:#ffffff;z-index:-1;";
-      tempContainer.innerHTML = htmlContent;
-      document.body.appendChild(tempContainer);
-
-      const pdfObj = await html2pdf()
+      await html2pdf()
         .set({
           margin: [15, 18, 15, 18],
           filename,
@@ -191,21 +187,10 @@ const DocumentGenerator = ({ config }: Props) => {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(tempContainer)
-        .toPdf()
-        .get("pdf");
+        .from(clone)
+        .save();
 
-      document.body.removeChild(tempContainer);
-
-      // Convert to base64 data URI — works even in sandboxed iframes
-      const dataUri = pdfObj.output("datauristring");
-      const a = document.createElement("a");
-      a.href = dataUri;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
+      document.body.removeChild(clone);
       toast.success("PDF lastet ned");
     } catch (err) {
       console.error("PDF error:", err);
