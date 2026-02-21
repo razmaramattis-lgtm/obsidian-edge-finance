@@ -47,10 +47,10 @@ const bransjerItems = [
 ];
 
 const selskapetLinks = [
-  { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt" },
-  { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss" },
   { icon: Users, title: "Kundeportal", desc: "Logg inn som kunde", href: "/kunde/logg-inn" },
   { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-ansatte", href: "/admin/logg-inn" },
+  { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt" },
+  { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss" },
 ];
 
 const ressurserLinks = [
