@@ -294,6 +294,7 @@ const OverviewPanel = () => {
 const DocumentsPanel = () => {
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string>("Alle");
 
   useEffect(() => {
     const load = async () => {
@@ -309,19 +310,42 @@ const DocumentsPanel = () => {
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
+  const categories = ["Alle", ...Array.from(new Set(docs.map(d => d.category || "Generelt")))];
+  const filtered = activeCategory === "Alle" ? docs : docs.filter(d => (d.category || "Generelt") === activeCategory);
+
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">{docs.length} dokumenter</p>
-      {docs.length === 0 && (
+      <div className="flex items-center gap-2 flex-wrap">
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+              activeCategory === cat
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground">{filtered.length} dokumenter</p>
+      {filtered.length === 0 && (
         <div className="glass rounded-2xl p-8 border border-border/20 text-center">
           <FileText size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Ingen dokumenter ennå.</p>
+          <p className="text-sm text-muted-foreground">Ingen dokumenter i denne kategorien.</p>
         </div>
       )}
-      {docs.map(doc => (
+      {filtered.map(doc => (
         <div key={doc.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium">{doc.title}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium">{doc.title}</p>
+              {doc.category && doc.category !== "Generelt" && (
+                <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-medium">{doc.category}</span>
+              )}
+            </div>
             {doc.description && <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>}
             <p className="text-[10px] text-muted-foreground mt-1">{new Date(doc.created_at).toLocaleDateString("no-NO")}</p>
           </div>
