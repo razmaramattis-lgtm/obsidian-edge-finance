@@ -333,11 +333,13 @@ export type Database = {
           file_name: string | null
           file_url: string | null
           id: string
+          logo_url: string | null
           offering: string | null
           partner: string | null
           phone: string | null
           title: string
           updated_at: string
+          website: string | null
         }
         Insert: {
           company?: string | null
@@ -348,11 +350,13 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          logo_url?: string | null
           offering?: string | null
           partner?: string | null
           phone?: string | null
           title: string
           updated_at?: string
+          website?: string | null
         }
         Update: {
           company?: string | null
@@ -363,11 +367,13 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          logo_url?: string | null
           offering?: string | null
           partner?: string | null
           phone?: string | null
           title?: string
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
