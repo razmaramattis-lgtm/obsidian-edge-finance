@@ -54,8 +54,15 @@ interface FormData {
   diversityStatement: boolean;
   // Lønn
   salaryFrequency: string;
+  salaryPayDay: string;
   pensionScheme: string;
-  insuranceIncluded: boolean;
+  pensionPercent: string;
+  insuranceYrkesskadeforsikring: boolean;
+  insuranceGruppeliv: boolean;
+  insuranceReise: boolean;
+  insuranceHelse: boolean;
+  insuranceTannhelse: boolean;
+  insuranceUforhet: boolean;
   bonusScheme: string;
   otherBenefits: string;
   // 2026-krav
@@ -90,8 +97,15 @@ const INITIAL_FORM: FormData = {
   sustainabilityFocus: true,
   diversityStatement: true,
   salaryFrequency: "monthly",
+  salaryPayDay: "25",
   pensionScheme: "obligatorisk",
-  insuranceIncluded: true,
+  pensionPercent: "2",
+  insuranceYrkesskadeforsikring: true,
+  insuranceGruppeliv: true,
+  insuranceReise: true,
+  insuranceHelse: true,
+  insuranceTannhelse: false,
+  insuranceUforhet: false,
   bonusScheme: "none",
   otherBenefits: "",
   psychosocialPolicy: true,
@@ -102,7 +116,7 @@ const INITIAL_FORM: FormData = {
   actionPlanResponsible: "",
   modules: [
     "formaal", "ansettelse", "arbeidstid", "ferie", "sykdom",
-    "hjemmekontor", "lonn", "hms", "psykososialt", "risikovurdering",
+    "hjemmekontor", "lonn", "pensjon", "hms", "psykososialt", "risikovurdering",
     "kartlegging", "handlingsplan", "personvern", "varsling",
     "arbeidsreglement", "internkontroll", "gdpr", "digitalt", "avslutning"
   ],
@@ -393,10 +407,11 @@ const FieldSelect = ({ value, onChange, options, placeholder }: { value: string;
 
 const FieldToggle = ({ label, checked, onChange, description }: { label: string; checked: boolean; onChange: (v: boolean) => void; description?: string }) => (
   <label className="flex items-start gap-3 cursor-pointer group py-2">
-    <div className={`w-10 h-6 rounded-full flex items-center shrink-0 transition-colors mt-0.5 ${checked ? "bg-primary" : "bg-muted"}`}>
+    <div className={`w-10 h-6 rounded-full flex items-center shrink-0 transition-colors mt-0.5 ${checked ? "bg-primary" : "bg-muted"}`}
+      onClick={(e) => { e.preventDefault(); onChange(!checked); }}>
       <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${checked ? "translate-x-5" : "translate-x-1"}`} />
     </div>
-    <div>
+    <div onClick={(e) => { e.preventDefault(); onChange(!checked); }}>
       <span className="text-sm">{label}</span>
       {description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
     </div>
@@ -581,23 +596,92 @@ const StepLonn = ({ form, update }: { form: FormData; update: <K extends keyof F
       />
     </div>
     <div>
+      <FieldLabel>Utbetalingsdato</FieldLabel>
+      <FieldSelect
+        value={form.salaryPayDay}
+        onChange={v => update("salaryPayDay", v)}
+        options={[
+          { value: "15", label: "Den 15. hver måned" },
+          { value: "20", label: "Den 20. hver måned" },
+          { value: "25", label: "Den 25. hver måned" },
+          { value: "last", label: "Siste virkedag i måneden" },
+          { value: "custom", label: "Annen dato" },
+        ]}
+      />
+    </div>
+    <div>
       <FieldLabel>Pensjonsordning</FieldLabel>
       <FieldSelect
         value={form.pensionScheme}
         onChange={v => update("pensionScheme", v)}
         options={[
           { value: "obligatorisk", label: "Obligatorisk tjenestepensjon (OTP) – minstekrav" },
-          { value: "utvidet", label: "Utvidet pensjonsordning (inntil 7%)" },
+          { value: "utvidet", label: "Utvidet pensjonsordning" },
           { value: "innskudd", label: "Innskuddsbasert med høyere sparing" },
         ]}
       />
     </div>
-    <FieldToggle
-      label="Forsikringer inkludert"
-      checked={form.insuranceIncluded}
-      onChange={v => update("insuranceIncluded", v)}
-      description="Yrkesskadeforsikring, gruppelivsforsikring og helseforsikring."
-    />
+    <div>
+      <FieldLabel>Pensjonsprosent</FieldLabel>
+      <FieldSelect
+        value={form.pensionPercent}
+        onChange={v => update("pensionPercent", v)}
+        options={[
+          { value: "2", label: "2% (lovpålagt minimum)" },
+          { value: "3", label: "3%" },
+          { value: "4", label: "4%" },
+          { value: "5", label: "5%" },
+          { value: "5.5", label: "5,5%" },
+          { value: "6", label: "6%" },
+          { value: "7", label: "7% (maks innskudd)" },
+        ]}
+      />
+    </div>
+
+    {/* Forsikringer – individuelle toggles */}
+    <div>
+      <FieldLabel>Forsikringer inkludert</FieldLabel>
+      <p className="text-xs text-muted-foreground mb-3">Velg hvilke forsikringer bedriften tilbyr ansatte.</p>
+      <div className="space-y-1 pl-1">
+        <FieldToggle
+          label="Yrkesskadeforsikring"
+          checked={form.insuranceYrkesskadeforsikring}
+          onChange={v => update("insuranceYrkesskadeforsikring", v)}
+          description="Lovpålagt forsikring for alle ansatte."
+        />
+        <FieldToggle
+          label="Gruppelivsforsikring"
+          checked={form.insuranceGruppeliv}
+          onChange={v => update("insuranceGruppeliv", v)}
+          description="Utbetaling til etterlatte ved dødsfall."
+        />
+        <FieldToggle
+          label="Reiseforsikring"
+          checked={form.insuranceReise}
+          onChange={v => update("insuranceReise", v)}
+          description="Dekker tjenestereiser og eventuelt privatreiser."
+        />
+        <FieldToggle
+          label="Helseforsikring"
+          checked={form.insuranceHelse}
+          onChange={v => update("insuranceHelse", v)}
+          description="Behandlingsgaranti og raskere tilgang til spesialist."
+        />
+        <FieldToggle
+          label="Tannhelseforsikring"
+          checked={form.insuranceTannhelse}
+          onChange={v => update("insuranceTannhelse", v)}
+          description="Dekker tannbehandling utover det offentlige."
+        />
+        <FieldToggle
+          label="Uføreforsikring"
+          checked={form.insuranceUforhet}
+          onChange={v => update("insuranceUforhet", v)}
+          description="Ekstra utbetaling ved varig arbeidsuførhet."
+        />
+      </div>
+    </div>
+
     <div>
       <FieldLabel>Bonusordning</FieldLabel>
       <FieldSelect
@@ -749,60 +833,74 @@ const StepModuler = ({ form, toggleModule }: { form: FormData; toggleModule: (id
   );
 };
 
-/* ───────── Step 7: Generer ───────── */
-const StepGenerer = ({ form }: { form: FormData }) => (
-  <div className="space-y-6">
-    <p className="text-sm text-muted-foreground">Se over valgene dine før du genererer personalhåndboken. Du kan gå tilbake og endre om nødvendig.</p>
+/* ───────── Step 8: Generer ───────── */
+const StepGenerer = ({ form }: { form: FormData }) => {
+  const selectedInsurances = [
+    form.insuranceYrkesskadeforsikring && "Yrkesskade",
+    form.insuranceGruppeliv && "Gruppeliv",
+    form.insuranceReise && "Reise",
+    form.insuranceHelse && "Helse",
+    form.insuranceTannhelse && "Tannhelse",
+    form.insuranceUforhet && "Uførhet",
+  ].filter(Boolean);
 
-    <div className="space-y-4">
-      <SummarySection title="Bedrift">
-        <SummaryRow label="Selskap" value={form.companyName} />
-        <SummaryRow label="Org.nr" value={form.orgNumber || "—"} />
-        <SummaryRow label="Ansatte" value={form.employeeCount} />
-        <SummaryRow label="Bransje" value={form.industry} />
-      </SummarySection>
+  const payDayLabel = form.salaryPayDay === "last" ? "Siste virkedag" : form.salaryPayDay === "custom" ? "Annen dato" : `Den ${form.salaryPayDay}.`;
 
-      <SummarySection title="Arbeidstid">
-        <SummaryRow label="Normal uke" value={`${form.normalHours} timer`} />
-        <SummaryRow label="Fleksitid" value={form.flexTime ? `Ja (${form.coreHoursStart}–${form.coreHoursEnd})` : "Nei"} />
-        <SummaryRow label="Overtid" value={form.overtimePolicy === "compensation" ? "Betaling" : form.overtimePolicy === "timeoff" ? "Avspasering" : "Valgfritt"} />
-      </SummarySection>
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">Se over valgene dine før du genererer personalhåndboken. Du kan gå tilbake og endre om nødvendig.</p>
 
-      <SummarySection title="Hjemmekontor">
-        <SummaryRow label="Tillatt" value={form.homeOfficeAllowed ? "Ja" : "Nei"} />
-        {form.homeOfficeAllowed && <>
-          <SummaryRow label="Dager/uke" value={form.homeOfficeDays === "flexible" ? "Fleksibelt" : form.homeOfficeDays} />
-          <SummaryRow label="Utstyr dekkes" value={form.homeOfficeEquipment ? "Ja" : "Nei"} />
-        </>}
-      </SummarySection>
+      <div className="space-y-4">
+        <SummarySection title="Bedrift">
+          <SummaryRow label="Selskap" value={form.companyName} />
+          <SummaryRow label="Org.nr" value={form.orgNumber || "—"} />
+          <SummaryRow label="Ansatte" value={form.employeeCount} />
+          <SummaryRow label="Bransje" value={form.industry} />
+        </SummarySection>
 
-      <SummarySection title="Lønn & goder">
-        <SummaryRow label="Utbetaling" value={form.salaryFrequency === "monthly" ? "Månedlig" : "Annenhver uke"} />
-        <SummaryRow label="Pensjon" value={form.pensionScheme} />
-        <SummaryRow label="Forsikring" value={form.insuranceIncluded ? "Inkludert" : "Ikke inkludert"} />
-      </SummarySection>
+        <SummarySection title="Arbeidstid">
+          <SummaryRow label="Normal uke" value={`${form.normalHours} timer`} />
+          <SummaryRow label="Fleksitid" value={form.flexTime ? `Ja (${form.coreHoursStart}–${form.coreHoursEnd})` : "Nei"} />
+          <SummaryRow label="Overtid" value={form.overtimePolicy === "compensation" ? "Betaling" : form.overtimePolicy === "timeoff" ? "Avspasering" : "Valgfritt"} />
+        </SummarySection>
 
-      <SummarySection title="2026-krav">
-        <SummaryRow label="Psykososialt" value={form.psychosocialPolicy ? "Inkludert" : "Ikke inkludert"} />
-        <SummaryRow label="Risikovurdering" value={form.riskAssessmentFrequency === "quarterly" ? "Kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "Halvårlig" : form.riskAssessmentFrequency === "continuous" ? "Kontinuerlig" : "Årlig"} />
-        <SummaryRow label="Kartlegging" value={form.employeeSurvey ? `Ja (${form.surveyFrequency === "quarterly" ? "kvartalsvis" : form.surveyFrequency === "biannual" ? "halvårlig" : "årlig"})` : "Nei"} />
-        <SummaryRow label="Handlingsplaner" value={form.actionPlanEnabled ? "Ja" : "Nei"} />
-      </SummarySection>
+        <SummarySection title="Hjemmekontor">
+          <SummaryRow label="Tillatt" value={form.homeOfficeAllowed ? "Ja" : "Nei"} />
+          {form.homeOfficeAllowed && <>
+            <SummaryRow label="Dager/uke" value={form.homeOfficeDays === "flexible" ? "Fleksibelt" : form.homeOfficeDays} />
+            <SummaryRow label="Utstyr dekkes" value={form.homeOfficeEquipment ? "Ja" : "Nei"} />
+          </>}
+        </SummarySection>
 
-      {MODULE_GROUPS.map(group => {
-        const selected = ALL_MODULES.filter(m => m.group === group && form.modules.includes(m.id));
-        if (selected.length === 0) return null;
-        return (
-          <SummarySection key={group} title={group}>
-            <p className="text-sm text-muted-foreground">
-              {selected.map(m => m.label).join(" · ")}
-            </p>
-          </SummarySection>
-        );
-      })}
+        <SummarySection title="Lønn & goder">
+          <SummaryRow label="Utbetaling" value={form.salaryFrequency === "monthly" ? "Månedlig" : "Annenhver uke"} />
+          <SummaryRow label="Utbetalingsdato" value={payDayLabel} />
+          <SummaryRow label="Pensjon" value={`${form.pensionScheme} (${form.pensionPercent}%)`} />
+          <SummaryRow label="Forsikringer" value={selectedInsurances.length > 0 ? selectedInsurances.join(", ") : "Ingen valgt"} />
+        </SummarySection>
+
+        <SummarySection title="2026-krav">
+          <SummaryRow label="Psykososialt" value={form.psychosocialPolicy ? "Inkludert" : "Ikke inkludert"} />
+          <SummaryRow label="Risikovurdering" value={form.riskAssessmentFrequency === "quarterly" ? "Kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "Halvårlig" : form.riskAssessmentFrequency === "continuous" ? "Kontinuerlig" : "Årlig"} />
+          <SummaryRow label="Kartlegging" value={form.employeeSurvey ? `Ja (${form.surveyFrequency === "quarterly" ? "kvartalsvis" : form.surveyFrequency === "biannual" ? "halvårlig" : "årlig"})` : "Nei"} />
+          <SummaryRow label="Handlingsplaner" value={form.actionPlanEnabled ? "Ja" : "Nei"} />
+        </SummarySection>
+
+        {MODULE_GROUPS.map(group => {
+          const selected = ALL_MODULES.filter(m => m.group === group && form.modules.includes(m.id));
+          if (selected.length === 0) return null;
+          return (
+            <SummarySection key={group} title={group}>
+              <p className="text-sm text-muted-foreground">
+                {selected.map(m => m.label).join(" · ")}
+              </p>
+            </SummarySection>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SummarySection = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="rounded-xl border border-border/20 bg-muted/10 p-4">
@@ -822,6 +920,16 @@ const SummaryRow = ({ label, value }: { label: string; value: string }) => (
 function buildChapterContents(form: FormData) {
   const company = form.companyName || "[Bedriftsnavn]";
   const chapters: { title: string; content: string }[] = [];
+
+  const payDayText = form.salaryPayDay === "last" ? "siste virkedag i måneden" : form.salaryPayDay === "custom" ? "avtalt dato" : `den ${form.salaryPayDay}. hver måned`;
+
+  const selectedInsurances: string[] = [];
+  if (form.insuranceYrkesskadeforsikring) selectedInsurances.push("Yrkesskadeforsikring (lovpålagt)");
+  if (form.insuranceGruppeliv) selectedInsurances.push("Gruppelivsforsikring");
+  if (form.insuranceReise) selectedInsurances.push("Reiseforsikring for tjenestereiser");
+  if (form.insuranceHelse) selectedInsurances.push("Helseforsikring med behandlingsgaranti");
+  if (form.insuranceTannhelse) selectedInsurances.push("Tannhelseforsikring");
+  if (form.insuranceUforhet) selectedInsurances.push("Uføreforsikring");
 
   const moduleMap: Record<string, () => { title: string; content: string }> = {
     formaal: () => ({
@@ -852,11 +960,11 @@ function buildChapterContents(form: FormData) {
     }),
     lonn: () => ({
       title: "Lønn og godtgjørelser",
-      content: `<h2>Lønn og godtgjørelser</h2><p>Lønn i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> utbetales <span class="editable-field" data-field="Lønnsutbetaling">${form.salaryFrequency === "monthly" ? "månedlig, den siste virkedagen i måneden" : "annenhver uke"}</span>.</p><h3>Lønnsfastsettelse</h3><p>Lønn fastsettes individuelt basert på stilling, kompetanse, erfaring og ansvar. Årlige lønnsforhandlinger gjennomføres normalt i <span class="editable-field" data-field="Lønnsforhandling-måned">april/mai</span>.</p>${form.bonusScheme !== "none" ? `<h3>Bonus</h3><p>${form.bonusScheme === "annual" ? "Bedriften har en årlig resultatbasert bonusordning." : form.bonusScheme === "quarterly" ? "Bedriften har en kvartalsvis bonusordning knyttet til avdelingsmål." : "Bonus vurderes skjønnsmessig basert på individuelle prestasjoner."}</p>` : ""}<h3>Reisegodtgjørelse</h3><p>Reiseutgifter i forbindelse med jobb dekkes etter gjeldende satser. Reiser skal forhåndsgodkjennes av leder.</p>${form.otherBenefits ? `<h3>Andre goder</h3><p>${form.otherBenefits}</p>` : ""}`,
+      content: `<h2>Lønn og godtgjørelser</h2><p>Lønn i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> utbetales <span class="editable-field" data-field="Lønnsutbetaling">${form.salaryFrequency === "monthly" ? `månedlig, ${payDayText}` : "annenhver uke"}</span>.</p><h3>Lønnsfastsettelse</h3><p>Lønn fastsettes individuelt basert på stilling, kompetanse, erfaring og ansvar. Årlige lønnsforhandlinger gjennomføres normalt i <span class="editable-field" data-field="Lønnsforhandling-måned">april/mai</span>.</p>${form.bonusScheme !== "none" ? `<h3>Bonus</h3><p>${form.bonusScheme === "annual" ? "Bedriften har en årlig resultatbasert bonusordning." : form.bonusScheme === "quarterly" ? "Bedriften har en kvartalsvis bonusordning knyttet til avdelingsmål." : "Bonus vurderes skjønnsmessig basert på individuelle prestasjoner."}</p>` : ""}<h3>Reisegodtgjørelse</h3><p>Reiseutgifter i forbindelse med jobb dekkes etter gjeldende satser. Reiser skal forhåndsgodkjennes av leder.</p>${form.otherBenefits ? `<h3>Andre goder</h3><p>${form.otherBenefits}</p>` : ""}`,
     }),
     pensjon: () => ({
       title: "Pensjon og forsikring",
-      content: `<h2>Pensjon og forsikring</h2><h3>Pensjonsordning</h3><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har ${form.pensionScheme === "obligatorisk" ? "obligatorisk tjenestepensjon (OTP) med minimum 2% av lønn" : form.pensionScheme === "utvidet" ? "utvidet pensjonsordning med inntil 7% av lønn" : "innskuddsbasert pensjon med høyere sparesats"}. Pensjonsordningen gjelder for alle ansatte over 20 år med stilling over 20%.</p>${form.insuranceIncluded ? `<h3>Forsikringer</h3><ul><li>Yrkesskadeforsikring (lovpålagt)</li><li>Gruppelivsforsikring</li><li>Reiseforsikring for tjenestereiser</li><li>Helseforsikring med behandlingsgaranti</li></ul>` : "<h3>Forsikringer</h3><p>Lovpålagt yrkesskadeforsikring er inkludert. Ta kontakt med HR for informasjon om eventuelle tilleggsforsikringer.</p>"}`,
+      content: `<h2>Pensjon og forsikring</h2><h3>Pensjonsordning</h3><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har ${form.pensionScheme === "obligatorisk" ? `obligatorisk tjenestepensjon (OTP) med <span class="editable-field" data-field="Pensjonsprosent">${form.pensionPercent}%</span> av lønn` : form.pensionScheme === "utvidet" ? `utvidet pensjonsordning med <span class="editable-field" data-field="Pensjonsprosent">${form.pensionPercent}%</span> av lønn` : `innskuddsbasert pensjon med <span class="editable-field" data-field="Pensjonsprosent">${form.pensionPercent}%</span> sparesats`}. Pensjonsordningen gjelder for alle ansatte over 20 år med stilling over 20%.</p>${selectedInsurances.length > 0 ? `<h3>Forsikringer</h3><ul>${selectedInsurances.map(ins => `<li>${ins}</li>`).join("")}</ul>` : "<h3>Forsikringer</h3><p>Lovpålagt yrkesskadeforsikring er inkludert. Ta kontakt med HR for informasjon om eventuelle tilleggsforsikringer.</p>"}`,
     }),
     hms: () => ({
       title: "HMS og arbeidsmiljø",

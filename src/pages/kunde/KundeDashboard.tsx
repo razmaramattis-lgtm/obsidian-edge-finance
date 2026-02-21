@@ -19,11 +19,18 @@ import {
 
 type Panel = "overview" | "documents" | "handbook" | "hr-generator" | "booking" | "partners";
 
-const navItems: { id: Panel; label: string; icon: React.ElementType }[] = [
+interface NavItem {
+  id: Panel;
+  label: string;
+  icon: React.ElementType;
+  group?: string;
+}
+
+const navItems: NavItem[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard },
   { id: "documents", label: "Dokumenter", icon: FileText },
-  { id: "handbook", label: "Personalhåndbok", icon: BookOpen },
-  { id: "hr-generator", label: "HR-generator", icon: Wand2 },
+  { id: "hr-generator", label: "HR-generator", icon: Wand2, group: "HR og personal" },
+  { id: "handbook", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
   { id: "booking", label: "Book rådgiver", icon: CalendarDays },
   { id: "partners", label: "Fordelsavtaler", icon: Handshake },
 ];
@@ -46,21 +53,32 @@ const KundeDashboard = () => {
         <p className="text-xs text-muted-foreground mt-0.5">Kundeportal</p>
       </div>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-        {navItems.map(item => (
-          <button
-            key={item.id}
-            onClick={() => { setActivePanel(item.id); setSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-              activePanel === item.id
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
-            <span className="font-light">{item.label}</span>
-            {activePanel === item.id && <ChevronRight size={12} className="ml-auto" />}
-          </button>
-        ))}
+        {(() => {
+          let lastGroup: string | undefined = undefined;
+          return navItems.map(item => {
+            const showGroupLabel = item.group && item.group !== lastGroup;
+            lastGroup = item.group;
+            return (
+              <div key={item.id}>
+                {showGroupLabel && (
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mt-4 mb-1 px-3">{item.group}</p>
+                )}
+                <button
+                  onClick={() => { setActivePanel(item.id); setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                    activePanel === item.id
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
+                  <span className="font-light">{item.label}</span>
+                  {activePanel === item.id && <ChevronRight size={12} className="ml-auto" />}
+                </button>
+              </div>
+            );
+          });
+        })()}
       </nav>
       <div className="p-4 border-t border-border/10">
         <div className="flex items-center gap-3 mb-3">
