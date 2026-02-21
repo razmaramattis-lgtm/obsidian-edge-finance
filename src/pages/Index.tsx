@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -95,6 +96,11 @@ const Index = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Avargo | Regnskapsfører og rådgiver for ambisiøse selskaper</title>
+        <meta name="description" content="Avargo er regnskapsbyrået som kombinerer dedikerte regnskapsførere med AI-drevet innsikt. Regnskap, skatteoptimalisering og rådgivning for vekstselskaper." />
+        <link rel="canonical" href="https://avargo.no" />
+      </Helmet>
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">

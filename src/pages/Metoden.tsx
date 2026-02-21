@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
@@ -138,6 +139,11 @@ const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | 
 const Metoden = () => {
   return (
     <>
+      <Helmet>
+        <title>Metoden vår | Slik jobber Avargo med regnskap og rådgivning</title>
+        <meta name="description" content="Les om Avargos unike metode: et tverrfaglig team av regnskapsførere, HR-spesialister, markedsførere og utviklere som jobber sammen for din vekst." />
+        <link rel="canonical" href="https://avargo.no/metoden" />
+      </Helmet>
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">

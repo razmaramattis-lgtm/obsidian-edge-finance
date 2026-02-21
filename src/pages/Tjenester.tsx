@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -143,6 +144,11 @@ const categories = [
 const Tjenester = () => {
   return (
     <>
+      <Helmet>
+        <title>Tjenester | Regnskap, rådgivning og digital markedsføring — Avargo</title>
+        <meta name="description" content="Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning, HR, SEO, Google Ads, nettsider og AI-automatisering for norske bedrifter." />
+        <link rel="canonical" href="https://avargo.no/tjenester" />
+      </Helmet>
       {/* HERO */}
       <section className="py-28 md:py-44 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-30" />

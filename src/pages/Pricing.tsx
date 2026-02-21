@@ -37,8 +37,9 @@ const Pricing = () => {
   return (
     <>
       <Helmet>
-        <title>Priser — Regnskap fra 1 499 kr/mnd | Avargo</title>
-        <meta name="description" content="Fast pris, ingen overraskelser. Regnskap, rådgivning og markedsføring — alt inkludert. Se våre pakker." />
+        <title>Priser | Regnskap fra 1 499 kr/mnd — Avargo</title>
+        <meta name="description" content="Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert. Se våre pakker og kom i gang i dag." />
+        <link rel="canonical" href="https://avargo.no/priser" />
       </Helmet>
 
       <section className="py-24 md:py-40 relative">

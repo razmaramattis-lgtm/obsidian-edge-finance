@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, Tag, Pin, Clock } from "lucide-react";
@@ -54,6 +55,11 @@ const BlogListing = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Blogg | Artikler om regnskap, skatt og bedriftsdrift — Avargo</title>
+        <meta name="description" content="Les Avargos fagartikler om regnskap, skatteoptimalisering, MVA, likviditetsstyring og tips for norske bedrifter. Oppdatert og praktisk." />
+        <link rel="canonical" href="https://avargo.no/blogg" />
+      </Helmet>
       <section className="py-28 md:py-44 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-4 md:px-6 relative">
