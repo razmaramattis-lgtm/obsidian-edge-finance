@@ -28,9 +28,10 @@ import CoursesPanel from "@/components/admin/CoursesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import DataCenterPanel from "@/components/admin/DataCenterPanel";
 import MyBookingSettingsPanel from "@/components/admin/MyBookingSettingsPanel";
+import CustomersPanel from "@/components/admin/CustomersPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -42,6 +43,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Nettside" },
   { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Nettside" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Nettside" },
+  { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -87,6 +89,7 @@ const AdminDashboard = () => {
       case "courses": return <CoursesPanel />;
       case "bookings": return <BookingsPanel />;
       case "mybooking": return <MyBookingSettingsPanel />;
+      case "customers": return <CustomersPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface Profile {
   id: string;
   user_id: string;
-  role: "admin" | "employee";
+  role: "admin" | "employee" | "customer";
   name: string;
   email: string;
 }
@@ -18,6 +18,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  isCustomer: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => ({ error: null }),
   signOut: async () => {},
   isAdmin: false,
+  isCustomer: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -82,6 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user, session, profile, loading,
       signIn, signOut,
       isAdmin: profile?.role === "admin",
+      isCustomer: profile?.role === "customer",
     }}>
       {children}
     </AuthContext.Provider>

@@ -16,9 +16,11 @@ interface Agreement {
   file_name: string;
   logo_url: string | null;
   website: string | null;
+  price: string | null;
+  target_audience: string;
 }
 
-const emptyForm = { title: "", company: "", contact_name: "", phone: "", email: "", offering: "", description: "", partner: "", website: "" };
+const emptyForm = { title: "", company: "", contact_name: "", phone: "", email: "", offering: "", description: "", partner: "", website: "", price: "", target_audience: "all" };
 
 const CollabPanel = () => {
   const [items, setItems] = useState<Agreement[]>([]);
@@ -106,6 +108,8 @@ const CollabPanel = () => {
       description: item.description || "",
       partner: item.partner || "",
       website: item.website || "",
+      price: item.price || "",
+      target_audience: item.target_audience || "all",
     });
     if (item.logo_url) {
       const { data } = supabase.storage.from("internal-docs").getPublicUrl(item.logo_url);
@@ -165,6 +169,13 @@ const CollabPanel = () => {
           </div>
 
           <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Avtalenavn" required className={inputCls} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} placeholder="Pris (valgfritt, f.eks. '20% rabatt')" className={inputCls} />
+            <select value={form.target_audience} onChange={e => setForm({ ...form, target_audience: e.target.value })} className={inputCls}>
+              <option value="all">Synlig for kunder og admin</option>
+              <option value="admin_only">Kun synlig for admin/ansatte</option>
+            </select>
+          </div>
           <textarea value={form.offering} onChange={e => setForm({ ...form, offering: e.target.value })} placeholder="Hva tilbyr de? (tjenester, rabatter, produkter…)" rows={3}
             className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
           <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Intern merknad (valgfritt)" className={inputCls} />
@@ -209,6 +220,12 @@ const CollabPanel = () => {
                     {item.website && <a href={item.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary"><Globe size={12} /> Nettside</a>}
                   </div>
                   {item.offering && <p className="text-xs mt-2 text-foreground/80"><span className="text-muted-foreground">Tilbyr:</span> {item.offering}</p>}
+                  {item.price && <p className="text-xs mt-1 text-primary font-medium">Pris: {item.price}</p>}
+                  <div className="flex gap-2 mt-1">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${item.target_audience === "admin_only" ? "bg-orange-500/10 text-orange-500" : "bg-emerald-500/10 text-emerald-500"}`}>
+                      {item.target_audience === "admin_only" ? "Kun admin/ansatte" : "Alle (inkl. kunder)"}
+                    </span>
+                  </div>
                   {item.description && <p className="text-xs text-muted-foreground mt-1 italic">{item.description}</p>}
                 </div>
               </div>
