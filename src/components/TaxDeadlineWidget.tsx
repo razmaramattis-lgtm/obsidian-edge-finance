@@ -3,6 +3,14 @@ import { motion } from "framer-motion";
 import { CalendarClock, ExternalLink, AlertTriangle, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+type CompanyType = "as" | "enk" | "arbeidsgiver";
+
+const TYPE_LABELS: Record<CompanyType, string> = {
+  as: "AS",
+  enk: "ENK",
+  arbeidsgiver: "Arbeidsgiver",
+};
+
 interface Deadline {
   date: string;
   day: number;
@@ -10,16 +18,13 @@ interface Deadline {
   year: number;
   title: string;
   url: string;
+  types?: CompanyType[];
 }
 
 interface TaxDeadlineWidgetProps {
-  /** Max items to show */
   limit?: number;
-  /** Compact mode for dashboard cards */
   compact?: boolean;
-  /** Show header */
   showHeader?: boolean;
-  /** Extra CSS classes */
   className?: string;
 }
 
@@ -44,13 +49,20 @@ const TaxDeadlineWidget = ({
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTypes, setActiveTypes] = useState<CompanyType[]>([]);
+
+  const toggleType = (type: CompanyType) => {
+    setActiveTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
 
   const fetchDeadlines = async () => {
     setLoading(true);
     setError(null);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("tax-deadlines", {
-        body: { limit: limit + 5, filterRelevant: true },
+        body: { limit: limit + 10, filterRelevant: true, types: activeTypes },
       });
       if (fnError) throw new Error(fnError.message);
       setDeadlines((data?.deadlines || []).slice(0, limit));
@@ -64,7 +76,7 @@ const TaxDeadlineWidget = ({
 
   useEffect(() => {
     fetchDeadlines();
-  }, [limit]);
+  }, [limit, activeTypes]);
 
   if (loading) {
     return (
@@ -99,7 +111,7 @@ const TaxDeadlineWidget = ({
   return (
     <div className={`glass rounded-2xl border border-border/20 ${compact ? "p-4" : "p-5"} ${className}`}>
       {showHeader && (
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <CalendarClock size={15} className="text-primary" strokeWidth={1.5} />
             <h3 className={compact ? "font-medium text-xs" : "font-medium text-sm"}>
@@ -116,6 +128,36 @@ const TaxDeadlineWidget = ({
           </a>
         </div>
       )}
+
+      {/* Filter toggles */}
+      <div className="flex gap-1.5 mb-3 flex-wrap">
+        {(Object.keys(TYPE_LABELS) as CompanyType[]).map(type => {
+          const isActive = activeTypes.length === 0 || activeTypes.includes(type);
+          return (
+            <button
+              key={type}
+              onClick={() => toggleType(type)}
+              className={`text-[10px] px-2.5 py-1 rounded-full border transition-all ${
+                activeTypes.includes(type)
+                  ? "bg-primary/15 border-primary/30 text-primary font-medium"
+                  : activeTypes.length === 0
+                  ? "bg-muted/30 border-border/20 text-muted-foreground hover:border-primary/20"
+                  : "bg-muted/20 border-border/10 text-muted-foreground/40 hover:border-border/30"
+              }`}
+            >
+              {TYPE_LABELS[type]}
+            </button>
+          );
+        })}
+        {activeTypes.length > 0 && (
+          <button
+            onClick={() => setActiveTypes([])}
+            className="text-[10px] px-2 py-1 text-muted-foreground/50 hover:text-primary transition-colors"
+          >
+            Vis alle
+          </button>
+        )}
+      </div>
 
       {deadlines.length === 0 ? (
         <p className="text-xs text-muted-foreground text-center py-4">Ingen kommende frister funnet</p>

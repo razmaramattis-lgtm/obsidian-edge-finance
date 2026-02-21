@@ -5,97 +5,96 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+type CompanyType = "as" | "enk" | "arbeidsgiver";
+
 interface DeadlineTemplate {
-  day: number;       // day of month
-  months: number[];  // 0-indexed months when this applies (empty = every month)
+  day: number;
+  months: number[];
   title: string;
   url: string;
   description?: string;
+  types: CompanyType[]; // which company types this applies to
 }
 
 // Standard recurring deadlines from Skatteetaten for næringsdrivende
 // Source: https://www.skatteetaten.no/bedrift-og-organisasjon/starte-og-drive/frister-gebyrer-og-tilleggsskatt/frister-og-oppgaver/
 const TEMPLATES: DeadlineTemplate[] = [
-  // A-melding - 5. every month (for previous month)
   {
-    day: 5,
-    months: [],
+    day: 5, months: [],
     title: "A-melding – frist for levering",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/arbeidsgiver/a-meldingen/",
     description: "Rapporter lønn, arbeidsgiveravgift og forskuddstrekk for forrige måned",
+    types: ["arbeidsgiver"],
   },
-  // MVA-melding - 10. in feb (4.kv), apr (1.kv), jul (2.kv), okt (3.kv) for alminnelig
-  // Simplified: every 10th for bi-monthly/quarterly reporting
   {
-    day: 10,
-    months: [1, 3, 5, 7, 9, 11], // feb, apr, jun, aug, okt, des
+    day: 10, months: [1, 3, 5, 7, 9, 11],
     title: "Mva-melding – frist for levering og betaling",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/avgifter/mva/mva-melding/",
     description: "Lever mva-melding og betal skyldig merverdiavgift",
+    types: ["as", "enk"],
   },
-  // Forskuddsskatt - 15. mars, juni, sept, des
   {
-    day: 15,
-    months: [2, 5, 8, 11], // mar, jun, sep, des
+    day: 15, months: [2, 5, 8, 11],
     title: "Forskuddsskatt – frist for betaling",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/forskuddsskatt/",
     description: "Betal forskuddsskatt for inneværende termin",
+    types: ["enk"],
   },
-  // Særavgiftsmelding - 18. every month
   {
-    day: 18,
-    months: [],
+    day: 15, months: [2, 5, 8, 11],
+    title: "Forskuddsskatt AS – frist for betaling",
+    url: "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/forskuddsskatt/",
+    description: "Betal forskuddsskatt for aksjeselskap",
+    types: ["as"],
+  },
+  {
+    day: 18, months: [],
     title: "Særavgiftsmelding – leveringsfrist",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/avgifter/saravgifter/rapportere/saravgiftsmelding/",
     description: "Fristen for å rapportere og betale særavgift",
+    types: ["as", "enk"],
   },
-  // Skattemelding for næringsdrivende (ENK) - 31. mai
   {
-    day: 31,
-    months: [4], // mai
+    day: 31, months: [4],
     title: "Skattemelding for næringsdrivende – frist for levering",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naering/",
-    description: "Lever skattemeldingen for enkeltpersonforetak og selskap",
+    description: "Lever skattemeldingen for enkeltpersonforetak",
+    types: ["enk"],
   },
-  // Aksjonærregisteroppgave - 31. januar
   {
-    day: 31,
-    months: [0], // jan
+    day: 31, months: [0],
     title: "Aksjonærregisteroppgave – frist for levering",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/aksjonarregisteroppgaven/",
     description: "Rapporter endringer i aksjekapital, utbytte og aksjonærer",
+    types: ["as"],
   },
-  // Årsregnskap - 31. juli (for forrige år)
   {
-    day: 31,
-    months: [6], // juli
+    day: 31, months: [6],
     title: "Årsregnskap – frist for innsending til Regnskapsregisteret",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/starte-og-drive/arsregnskap/",
     description: "Send inn godkjent årsregnskap til Brønnøysundregistrene",
+    types: ["as"],
   },
-  // Skattemelding AS - 31. mai
   {
-    day: 31,
-    months: [4], // mai
+    day: 31, months: [4],
     title: "Skattemelding for aksjeselskap – frist for levering",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naering/",
     description: "Lever skattemeldingen for aksjeselskap (RF-1028)",
+    types: ["as"],
   },
-  // Arbeidsgiveravgift terminoppgave - tied to a-melding, just emphasize quarterly
   {
-    day: 15,
-    months: [0, 2, 4, 6, 8, 10], // jan, mar, mai, jul, sep, nov
+    day: 15, months: [0, 2, 4, 6, 8, 10],
     title: "Arbeidsgiveravgift – frist for betaling",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/arbeidsgiver/arbeidsgiveravgift/",
     description: "Betal arbeidsgiveravgift for forrige termin",
+    types: ["arbeidsgiver"],
   },
-  // Forskuddstrekk betaling - 15. every other month
   {
-    day: 15,
-    months: [0, 2, 4, 6, 8, 10],
+    day: 15, months: [0, 2, 4, 6, 8, 10],
     title: "Forskuddstrekk – frist for betaling",
     url: "https://www.skatteetaten.no/bedrift-og-organisasjon/arbeidsgiver/forskuddstrekk/",
     description: "Betal forskuddstrekk for forrige termin",
+    types: ["arbeidsgiver"],
   },
 ];
 
@@ -110,6 +109,7 @@ function generateDeadlines(monthsAhead: number = 6) {
     title: string;
     url: string;
     description?: string;
+    types: CompanyType[];
   }[] = [];
 
   const monthNames = [
@@ -139,6 +139,7 @@ function generateDeadlines(monthsAhead: number = 6) {
         year: y,
         title: tmpl.title,
         url: tmpl.url,
+        types: tmpl.types,
         ...(tmpl.description ? { description: tmpl.description } : {}),
       });
     }
@@ -161,12 +162,20 @@ serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const limit = body.limit || 10;
+    const filterTypes: string[] = body.types || []; // e.g. ["as","arbeidsgiver"]
 
-    const deadlines = generateDeadlines(12);
+    let deadlines = generateDeadlines(12);
+
+    if (filterTypes.length > 0) {
+      deadlines = deadlines.filter(d => 
+        d.types.some((t: string) => filterTypes.includes(t))
+      );
+    }
 
     return new Response(JSON.stringify({
       deadlines: deadlines.slice(0, limit),
       total: deadlines.length,
+      availableTypes: ["as", "enk", "arbeidsgiver"],
       lastUpdated: new Date().toISOString(),
       source: "skatteetaten.no",
     }), {
