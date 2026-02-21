@@ -377,9 +377,16 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          duration: string | null
+          highlights: Json | null
           id: string
+          long_description: string | null
+          meta_description: string | null
+          meta_title: string | null
           name: string
+          slug: string | null
           sort_order: number | null
+          target_audience: string | null
           updated_at: string
         }
         Insert: {
@@ -387,9 +394,16 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          duration?: string | null
+          highlights?: Json | null
           id?: string
+          long_description?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name: string
+          slug?: string | null
           sort_order?: number | null
+          target_audience?: string | null
           updated_at?: string
         }
         Update: {
@@ -397,9 +411,16 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          duration?: string | null
+          highlights?: Json | null
           id?: string
+          long_description?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name?: string
+          slug?: string | null
           sort_order?: number | null
+          target_audience?: string | null
           updated_at?: string
         }
         Relationships: []
