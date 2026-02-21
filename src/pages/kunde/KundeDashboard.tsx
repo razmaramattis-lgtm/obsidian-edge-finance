@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import DOMPurify from "dompurify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -366,6 +367,76 @@ const CustomerSettingsPanel = () => {
   );
 };
 
+// ========== DOCUMENT VIEWER ==========
+const DocumentViewer = ({ doc, onClose }: { doc: any; onClose: () => void }) => {
+  const [htmlContent, setHtmlContent] = useState<string | null>(null);
+  const [loadingContent, setLoadingContent] = useState(false);
+  const isHr = doc.category?.startsWith("HR");
+
+  useEffect(() => {
+    if (!isHr) return;
+    const fetchContent = async () => {
+      setLoadingContent(true);
+      const { data: company } = await supabase.from("customer_companies").select("id").limit(1).maybeSingle();
+      if (!company) { setLoadingContent(false); return; }
+      const { data: chapter } = await supabase
+        .from("customer_handbook_chapters")
+        .select("content")
+        .eq("company_id", company.id)
+        .eq("title", doc.title)
+        .maybeSingle();
+      if (chapter?.content) setHtmlContent(chapter.content);
+      setLoadingContent(false);
+    };
+    fetchContent();
+  }, [doc.title, isHr]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-border/30 rounded-2xl p-8 shadow-xl mx-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-heading text-lg text-black">{doc.title}</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-black text-sm">✕</button>
+        </div>
+        {isHr && loadingContent && <p className="text-sm text-gray-500">Laster dokument…</p>}
+        {isHr && htmlContent && (
+          <div
+            className="pdf-content"
+            style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontSize: "13px", lineHeight: "1.7", color: "#1a1a1a" }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }}
+          />
+        )}
+        {isHr && !loadingContent && !htmlContent && (
+          <p className="text-sm text-gray-500">Ingen innhold lagret ennå. Gå til generatoren og klikk «Lagre alle» for å generere dokumentet.</p>
+        )}
+        {!isHr && (
+          <div>
+            {doc.description && <p className="text-sm text-gray-600 mb-4">{doc.description}</p>}
+            <p className="text-xs text-gray-500">
+              Opprettet: {new Date(doc.created_at).toLocaleDateString("no-NO")} · 
+              Oppdatert: {new Date(doc.updated_at).toLocaleDateString("no-NO")}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Kategori: {doc.category || "Generelt"}</p>
+          </div>
+        )}
+      </div>
+      <style>{`
+        .pdf-content h2 { font-size:18px;font-weight:bold;color:#000;margin:1.5em 0 0.5em 0;padding-bottom:4px;border-bottom:1px solid #e0e0e0;font-family:'Georgia',serif; }
+        .pdf-content h3 { font-size:14px;font-weight:bold;color:#1a1a1a;margin:1.2em 0 0.4em 0;font-family:'Georgia',serif; }
+        .pdf-content p { font-size:13px;color:#333;line-height:1.7;margin:0.5em 0; }
+        .pdf-content ul,.pdf-content ol { font-size:13px;color:#333;line-height:1.7;padding-left:1.5em;margin:0.5em 0; }
+        .pdf-content li { margin-bottom:4px; }
+        .pdf-content strong { color:#000; }
+        .pdf-content table { width:100%;border-collapse:collapse;margin:1em 0;font-size:12px; }
+        .pdf-content table td,.pdf-content table th { padding:6px 8px;border-bottom:1px solid #e0e0e0;color:#333; }
+        .pdf-content table tr:first-child td { font-weight:bold;color:#000;border-bottom:2px solid #ccc; }
+        .pdf-content .merge-field { background:#f0f0f0;color:#666;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:500;border:1px dashed #ccc; }
+        .pdf-content hr { margin:2em 0;border:none;border-top:1px solid #ddd; }
+      `}</style>
+    </div>
+  );
+};
+
 // ========== DOCUMENTS PANEL ==========
 const DocumentsPanel = () => {
   const [docs, setDocs] = useState<any[]>([]);
@@ -425,43 +496,29 @@ const DocumentsPanel = () => {
   };
 
   const handleDownloadPdf = async (doc: any) => {
-    // For HR-generated docs, find related handbook chapters and generate PDF
     const { data: company } = await supabase.from("customer_companies").select("id").limit(1).maybeSingle();
     if (!company) return;
-    const { data: chapters } = await supabase
+    const { data: chapter } = await supabase
       .from("customer_handbook_chapters")
-      .select("*")
+      .select("content")
       .eq("company_id", company.id)
-      .order("sort_order");
-    if (!chapters || chapters.length === 0) { toast.error("Ingen kapitler funnet"); return; }
+      .eq("title", doc.title)
+      .maybeSingle();
+    if (!chapter?.content) { toast.error("Ingen innhold funnet — lagre dokumentet først"); return; }
 
     try {
       const html2pdf = (await import("html2pdf.js")).default;
       const container = document.createElement("div");
-      container.style.cssText = "width:210mm;padding:20mm;font-family:'Segoe UI',Arial,sans-serif;font-size:12pt;line-height:1.6;color:#1a1a2e;";
-
-      container.innerHTML = `
-        <div style="text-align:center;padding:60mm 0 40mm;">
-          <h1 style="font-size:28pt;margin-bottom:8mm;color:#1a1a2e;">${doc.title}</h1>
-          <p style="color:#999;font-size:10pt;margin-top:8mm;">Generert: ${new Date(doc.updated_at || doc.created_at).toLocaleDateString("no-NO")}</p>
-        </div>
-        <div style="page-break-after:always;"></div>
-      `;
-
-      chapters.forEach((ch: any, i: number) => {
-        const cleaned = (ch.content || "")
-          .replace(/class="editable-field"/g, '')
-          .replace(/data-field="[^"]*"/g, '');
-        container.innerHTML += `<div style="${i > 0 ? 'page-break-before:always;' : ''}">${cleaned}</div>`;
-      });
+      container.style.cssText = "width:210mm;padding:20mm;font-family:'Georgia','Times New Roman',serif;font-size:13px;line-height:1.7;color:#1a1a1a;";
+      container.innerHTML = chapter.content;
 
       await html2pdf().set({
-        margin: 0,
+        margin: [15, 18, 15, 18],
         filename: `${doc.title.replace(/\s+/g, "-")}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"], before: ".page-break" },
+        pagebreak: { mode: ["css", "legacy"] },
       }).from(container).save();
       toast.success("PDF lastet ned!");
     } catch { toast.error("Kunne ikke generere PDF"); }
@@ -477,22 +534,7 @@ const DocumentsPanel = () => {
   return (
     <div className="space-y-4">
       {/* View document modal */}
-      {openDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={() => setOpenDoc(null)}>
-          <div className="w-full max-w-3xl max-h-[80vh] overflow-y-auto bg-background border border-border/30 rounded-2xl p-6 shadow-xl mx-4" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-heading text-lg">{openDoc.title}</h2>
-              <button onClick={() => setOpenDoc(null)} className="text-muted-foreground hover:text-foreground text-sm">✕</button>
-            </div>
-            {openDoc.description && <p className="text-sm text-muted-foreground mb-4">{openDoc.description}</p>}
-            <p className="text-xs text-muted-foreground">
-              Opprettet: {new Date(openDoc.created_at).toLocaleDateString("no-NO")} · 
-              Oppdatert: {new Date(openDoc.updated_at).toLocaleDateString("no-NO")}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Kategori: {openDoc.category || "Generelt"}</p>
-          </div>
-        </div>
-      )}
+      {openDoc && <DocumentViewer doc={openDoc} onClose={() => setOpenDoc(null)} />}
 
       <div className="flex items-center gap-2 flex-wrap">
         {categories.map(cat => (
