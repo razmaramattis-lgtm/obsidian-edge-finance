@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap
 } from "lucide-react";
 
 // Sub-panels
@@ -24,9 +24,10 @@ import SettingsPanel from "@/components/admin/SettingsPanel";
 import HrPanel from "@/components/admin/HrPanel";
 import OverviewPanel from "@/components/admin/OverviewPanel";
 import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
+import CoursesPanel from "@/components/admin/CoursesPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -35,6 +36,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Nettside" },
   { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Nettside" },
   { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Nettside" },
+  { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -75,6 +77,7 @@ const AdminDashboard = () => {
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
       case "knowledge": return <KnowledgeBasePanel />;
+      case "courses": return <CoursesPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }
