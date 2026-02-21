@@ -155,20 +155,15 @@ const DocumentGenerator = ({ config }: Props) => {
     setDownloading(true);
     try {
       const html2pdf = (await import("html2pdf.js")).default;
-      const clone = docRef.current.cloneNode(true) as HTMLElement;
-      
-      // Ensure all styles are inlined for PDF
-      clone.style.backgroundColor = "#ffffff";
-      clone.style.color = "#000000";
-      clone.style.padding = "0";
-      
-      await html2pdf()
+      const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
+
+      const blob: Blob = await html2pdf()
         .set({
           margin: [15, 18, 15, 18],
-          filename: `${config.title} - ${form.companyName || "Bedrift"}.pdf`,
+          filename,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { 
-            scale: 2, 
+          html2canvas: {
+            scale: 2,
             backgroundColor: "#ffffff",
             useCORS: true,
             logging: false,
@@ -176,9 +171,19 @@ const DocumentGenerator = ({ config }: Props) => {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(clone)
-        .save();
-      
+        .from(docRef.current)
+        .outputPdf("blob");
+
+      // Manual download via blob URL to bypass iframe restrictions
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
       toast.success("PDF lastet ned");
     } catch (err) {
       console.error("PDF error:", err);
