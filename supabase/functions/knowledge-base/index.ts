@@ -22,7 +22,7 @@ serve(async (req) => {
     const [hmsRes, resourcesRes, archiveRes, internalRes, collabRes, servicesRes, pricingRes, knowledgeRes] = await Promise.all([
       sb.from("hms_documents").select("title, content"),
       sb.from("resources").select("name, description, category, file_name"),
-      sb.from("archive_files").select("name, description, category, file_name"),
+      sb.from("archive_files").select("name, description, category, file_name, file_url"),
       sb.from("internal_resources").select("title, description, category, file_name"),
       sb.from("collaboration_agreements").select("title, company, contact_name, offering, description"),
       sb.from("services").select("title, description, group_name"),
@@ -39,7 +39,7 @@ serve(async (req) => {
     (resourcesRes.data || []).forEach((d: any) => { context += `- **${d.name}** (${d.category}): ${d.description || ""} — Fil: ${d.file_name || "Ingen"}\n`; });
 
     context += "\n## Arkivfiler\n";
-    (archiveRes.data || []).forEach((d: any) => { context += `- **${d.name}** (${d.category}): ${d.description || ""} — Fil: ${d.file_name || "Ingen"}\n`; });
+    (archiveRes.data || []).forEach((d: any) => { context += `- **${d.name}** (${d.category}): ${d.description || ""} — Fil: ${d.file_name || "Ingen"}${d.file_url ? ` — Nedlasting: ${d.file_url}` : ""}\n`; });
 
     context += "\n## Interne ressurser\n";
     (internalRes.data || []).forEach((d: any) => { context += `- **${d.title}** (${d.category}): ${d.description || ""} — Fil: ${d.file_name || "Ingen"}\n`; });
@@ -68,6 +68,7 @@ Retningslinjer:
 - Når du finner relevant informasjon, analyser den kort og gi et konkret, tydelig svar.
 - Henvis ALLTID til kilden: f.eks. "Ifølge kontoplanen (konto 6300)…", "I HMS-håndboken kapittel 3 står det at…", "I samarbeidsavtalen med [firma]…"
 - Bruk markdown-formatering: **fet skrift** for viktige begreper, lister for opplistinger, overskrifter for å strukturere lange svar.
+- VIKTIG: Når du nevner et skjema eller en fil fra arkivet som har en nedlastingslenke, ALLTID inkluder en nedlastingslenke med denne formateringen: [📥 Last ned FILNAVN](URL)
 - Hvis du ikke finner svaret i ressursene, si det ærlig: "Jeg finner dessverre ikke dette i våre ressurser. Du bør sjekke med [relevant person/kilde]."
 - Vær analytisk: ikke bare gjengi informasjon — forklar hva det betyr i praksis.
 - Hold svarene konsise men grundige. Bruk korte avsnitt.
