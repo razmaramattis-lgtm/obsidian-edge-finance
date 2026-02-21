@@ -30,9 +30,10 @@ import DataCenterPanel from "@/components/admin/DataCenterPanel";
 import MyBookingSettingsPanel from "@/components/admin/MyBookingSettingsPanel";
 import CustomersPanel from "@/components/admin/CustomersPanel";
 import PartnerRequestsPanel from "@/components/admin/PartnerRequestsPanel";
+import AdvisorRequestsPanel from "@/components/admin/AdvisorRequestsPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -46,6 +47,7 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Nettside" },
   { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Kunder" },
+  { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -93,6 +95,7 @@ const AdminDashboard = () => {
       case "mybooking": return <MyBookingSettingsPanel />;
       case "customers": return <CustomersPanel />;
       case "partner_requests": return <PartnerRequestsPanel />;
+      case "advisor_requests": return <AdvisorRequestsPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }

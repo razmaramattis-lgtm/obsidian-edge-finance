@@ -329,18 +329,65 @@ const HandbookPanel = () => {
   const [editContent, setEditContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isTemplate, setIsTemplate] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
+      // First try customer-specific chapters
+      const { data: custChapters } = await supabase
         .from("customer_handbook_chapters")
         .select("*")
         .order("sort_order");
-      setChapters(data || []);
+
+      if (custChapters && custChapters.length > 0) {
+        setChapters(custChapters);
+        setIsTemplate(false);
+      } else {
+        // Fall back to the standard hr_handbook template (read-only until they edit)
+        const { data: templateChapters } = await supabase
+          .from("hr_handbook")
+          .select("*")
+          .order("sort_order");
+        setChapters(templateChapters || []);
+        setIsTemplate(true);
+      }
       setLoading(false);
     };
     load();
   }, []);
+
+  const initAndEdit = async (chapterIdx: number) => {
+    // Copy all chapters from hr_handbook to customer_handbook_chapters first
+    const { data: company } = await supabase
+      .from("customer_companies")
+      .select("id")
+      .limit(1)
+      .maybeSingle();
+    if (!company) { toast.error("Ingen bedrift funnet"); return; }
+
+    setSaving(true);
+    const rows = chapters.map(ch => ({
+      company_id: company.id,
+      source_chapter_id: ch.id,
+      title: ch.title,
+      content: ch.content,
+      sort_order: ch.sort_order,
+      customized: false,
+    }));
+    const { data: inserted } = await supabase
+      .from("customer_handbook_chapters")
+      .insert(rows)
+      .select();
+
+    if (inserted && inserted.length > 0) {
+      setChapters(inserted);
+      setIsTemplate(false);
+      setActiveIdx(chapterIdx);
+      setEditContent(inserted[chapterIdx]?.content || "");
+      setEditing(true);
+    }
+    setSaving(false);
+  };
 
   const saveContent = async () => {
     const ch = chapters[activeIdx];
@@ -363,7 +410,7 @@ const HandbookPanel = () => {
       <div className="glass rounded-2xl p-8 border border-border/20 text-center">
         <BookOpen size={32} className="text-muted-foreground/30 mx-auto mb-3" />
         <h3 className="font-heading text-base mb-1">Personalhåndbok</h3>
-        <p className="text-sm text-muted-foreground">Din personalhåndbok er ikke opprettet ennå. Kontakt din rådgiver.</p>
+        <p className="text-sm text-muted-foreground">Ingen standard personalhåndbok er tilgjengelig ennå.</p>
       </div>
     );
   }
@@ -371,90 +418,104 @@ const HandbookPanel = () => {
   const active = chapters[activeIdx];
 
   return (
-    <div className="flex gap-6">
-      {/* Sidebar */}
-      <div className="w-56 shrink-0 hidden md:block space-y-1">
-        {chapters.map((ch, i) => (
-          <button
-            key={ch.id}
-            onClick={() => { setActiveIdx(i); setEditing(false); }}
-            className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
-              i === activeIdx ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <span className="font-light">{ch.title}</span>
-            {ch.customized && <span className="ml-1 text-[9px] text-primary">●</span>}
-          </button>
-        ))}
-      </div>
+    <div className="space-y-4">
+      {isTemplate && (
+        <div className="glass rounded-2xl px-5 py-3 border border-amber-500/20 bg-amber-500/5">
+          <p className="text-xs text-amber-600">Du ser standardmalen fra Avargo. Klikk «Rediger» på et kapittel for å opprette din egen tilpassede versjon.</p>
+        </div>
+      )}
 
-      {/* Content */}
-      <div className="flex-1 space-y-4">
-        {/* Mobile chapter selector */}
-        <select
-          className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
-          value={activeIdx}
-          onChange={e => { setActiveIdx(Number(e.target.value)); setEditing(false); }}
-        >
+      <div className="flex gap-6">
+        {/* Sidebar */}
+        <div className="w-56 shrink-0 hidden md:block space-y-1">
           {chapters.map((ch, i) => (
-            <option key={ch.id} value={i}>{ch.title}</option>
+            <button
+              key={ch.id}
+              onClick={() => { setActiveIdx(i); setEditing(false); }}
+              className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
+                i === activeIdx ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              <span className="font-light">{ch.title}</span>
+              {ch.customized && <span className="ml-1 text-[9px] text-primary">●</span>}
+            </button>
           ))}
-        </select>
+        </div>
 
-        <div className="glass rounded-2xl p-6 border border-border/20">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-heading text-lg">{active.title}</h3>
-            {!editing ? (
-              <button
-                onClick={() => { setEditing(true); setEditContent(active.content || ""); }}
-                className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-              >
-                Rediger
-              </button>
+        {/* Content */}
+        <div className="flex-1 space-y-4">
+          <select
+            className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
+            value={activeIdx}
+            onChange={e => { setActiveIdx(Number(e.target.value)); setEditing(false); }}
+          >
+            {chapters.map((ch, i) => (
+              <option key={ch.id} value={i}>{ch.title}</option>
+            ))}
+          </select>
+
+          <div className="glass rounded-2xl p-6 border border-border/20">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-heading text-lg">{active.title}</h3>
+              {!editing ? (
+                <button
+                  onClick={() => {
+                    if (isTemplate) {
+                      initAndEdit(activeIdx);
+                    } else {
+                      setEditing(true);
+                      setEditContent(active.content || "");
+                    }
+                  }}
+                  disabled={saving}
+                  className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground disabled:opacity-50"
+                >
+                  {saving ? "Oppretter…" : "Rediger"}
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button onClick={saveContent} disabled={saving}
+                    className="px-3 py-1.5 text-xs rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                    {saving ? "Lagrer…" : "Lagre"}
+                  </button>
+                  <button onClick={() => setEditing(false)}
+                    className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50">
+                    Avbryt
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {editing ? (
+              <textarea
+                value={editContent}
+                onChange={e => setEditContent(e.target.value)}
+                className="w-full min-h-[400px] rounded-xl border border-border/30 bg-muted/30 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+              />
             ) : (
-              <div className="flex gap-2">
-                <button onClick={saveContent} disabled={saving}
-                  className="px-3 py-1.5 text-xs rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
-                  {saving ? "Lagrer…" : "Lagre"}
-                </button>
-                <button onClick={() => setEditing(false)}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50">
-                  Avbryt
-                </button>
-              </div>
+              <div
+                className="prose prose-sm max-w-none text-foreground/90"
+                dangerouslySetInnerHTML={{ __html: active.content || "<p class='text-muted-foreground'>Ingen innhold ennå.</p>" }}
+              />
             )}
           </div>
 
-          {editing ? (
-            <textarea
-              value={editContent}
-              onChange={e => setEditContent(e.target.value)}
-              className="w-full min-h-[400px] rounded-xl border border-border/30 bg-muted/30 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
-            />
-          ) : (
-            <div
-              className="prose prose-sm max-w-none text-foreground/90"
-              dangerouslySetInnerHTML={{ __html: active.content || "<p class='text-muted-foreground'>Ingen innhold ennå.</p>" }}
-            />
-          )}
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-between">
-          <button
-            onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }}
-            disabled={activeIdx === 0}
-            className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
-          >
-            ← Forrige
-          </button>
-          <button
-            onClick={() => { setActiveIdx(Math.min(chapters.length - 1, activeIdx + 1)); setEditing(false); }}
-            disabled={activeIdx === chapters.length - 1}
-            className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
-          >
-            Neste →
-          </button>
+          <div className="flex justify-between">
+            <button
+              onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }}
+              disabled={activeIdx === 0}
+              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
+            >
+              ← Forrige
+            </button>
+            <button
+              onClick={() => { setActiveIdx(Math.min(chapters.length - 1, activeIdx + 1)); setEditing(false); }}
+              disabled={activeIdx === chapters.length - 1}
+              className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30"
+            >
+              Neste →
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -474,11 +535,15 @@ const BookingPanel = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [advisorRequest, setAdvisorRequest] = useState<any>(null);
+  const [requestMessage, setRequestMessage] = useState("");
+  const [sendingRequest, setSendingRequest] = useState(false);
   const { profile } = useAuth();
+
+  const hasAdvisors = company?.primary_advisor_id || company?.backup_advisor_id;
 
   useEffect(() => {
     const load = async () => {
-      // Get customer company with assigned advisors
       const { data: comp } = await supabase
         .from("customer_companies")
         .select("*")
@@ -486,26 +551,34 @@ const BookingPanel = () => {
         .maybeSingle();
       setCompany(comp);
 
-      if (!comp?.primary_advisor_id && !comp?.backup_advisor_id) {
-        setLoading(false);
-        return;
+      // Check for existing advisor request
+      if (comp) {
+        const { data: reqData } = await supabase
+          .from("advisor_requests")
+          .select("*")
+          .eq("company_id", comp.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        setAdvisorRequest(reqData);
       }
 
-      const advisorIds = [comp.primary_advisor_id, comp.backup_advisor_id].filter(Boolean);
+      if (comp?.primary_advisor_id || comp?.backup_advisor_id) {
+        const advisorIds = [comp.primary_advisor_id, comp.backup_advisor_id].filter(Boolean);
 
-      const [advRes, availRes, blockedRes, bookRes] = await Promise.all([
-        supabase.from("profiles").select("id, name, teams_link").in("id", advisorIds),
-        supabase.from("advisor_availability").select("*").in("profile_id", advisorIds).eq("active", true),
-        supabase.from("advisor_blocked_dates").select("*").in("profile_id", advisorIds),
-        supabase.from("bookings").select("*").in("advisor_id", advisorIds).neq("status", "cancelled"),
-      ]);
+        const [advRes, availRes, blockedRes, bookRes] = await Promise.all([
+          supabase.from("profiles").select("id, name, teams_link").in("id", advisorIds),
+          supabase.from("advisor_availability").select("*").in("profile_id", advisorIds).eq("active", true),
+          supabase.from("advisor_blocked_dates").select("*").in("profile_id", advisorIds),
+          supabase.from("bookings").select("*").in("advisor_id", advisorIds).neq("status", "cancelled"),
+        ]);
 
-      setAdvisors(advRes.data || []);
-      setAvailability(availRes.data || []);
-      setBlockedDates(blockedRes.data || []);
-      setExistingBookings(bookRes.data || []);
+        setAdvisors(advRes.data || []);
+        setAvailability(availRes.data || []);
+        setBlockedDates(blockedRes.data || []);
+        setExistingBookings(bookRes.data || []);
+      }
 
-      // Pre-fill form
       if (profile) {
         setForm(f => ({ ...f, name: profile.name || "", email: profile.email || "" }));
       }
@@ -517,6 +590,22 @@ const BookingPanel = () => {
     };
     load();
   }, [profile]);
+
+  const sendAdvisorRequest = async () => {
+    if (!company) return;
+    setSendingRequest(true);
+    const { error } = await supabase.from("advisor_requests").insert({
+      company_id: company.id,
+      message: requestMessage || null,
+    });
+    if (error) {
+      toast.error("Kunne ikke sende forespørsel");
+    } else {
+      setAdvisorRequest({ status: "pending", message: requestMessage });
+      toast.success("Forespørsel sendt til Avargo!");
+    }
+    setSendingRequest(false);
+  };
 
   const generateSlots = (start: string, end: string) => {
     const slots: string[] = [];
@@ -534,27 +623,19 @@ const BookingPanel = () => {
   const getAvailableSlots = (date: Date) => {
     const dayOfWeek = date.getDay();
     const dateStr = date.toISOString().split("T")[0];
-
     const slots: { time: string; advisorId: string; advisorName: string }[] = [];
 
     for (const adv of advisors) {
-      // Check blocked
       if (blockedDates.some(b => b.profile_id === adv.id && b.blocked_date === dateStr)) continue;
-
-      // Get availability for this day
       const dayAvail = availability.filter(a => a.profile_id === adv.id && a.day_of_week === dayOfWeek);
       for (const a of dayAvail) {
         const timeSlots = generateSlots(a.start_time, a.end_time);
         for (const time of timeSlots) {
-          // Check if already booked
           const booked = existingBookings.some(b => b.advisor_id === adv.id && b.booking_date === dateStr && b.booking_time === time + ":00");
-          if (!booked) {
-            slots.push({ time, advisorId: adv.id, advisorName: adv.name });
-          }
+          if (!booked) slots.push({ time, advisorId: adv.id, advisorName: adv.name });
         }
       }
     }
-
     return slots.sort((a, b) => a.time.localeCompare(b.time));
   };
 
@@ -567,7 +648,6 @@ const BookingPanel = () => {
     e.preventDefault();
     if (!selectedSlot || !selectedDate) return;
     setSubmitting(true);
-
     const dateStr = selectedDate.toISOString().split("T")[0];
     const advisor = advisors.find(a => a.id === selectedSlot.advisorId);
 
@@ -589,16 +669,6 @@ const BookingPanel = () => {
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
-  if (!company?.primary_advisor_id && !company?.backup_advisor_id) {
-    return (
-      <div className="glass rounded-2xl p-8 border border-border/20 text-center">
-        <CalendarDays size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-        <h3 className="font-heading text-base mb-1">Book rådgiver</h3>
-        <p className="text-sm text-muted-foreground">Ingen rådgiver er tildelt ennå. Kontakt Avargo.</p>
-      </div>
-    );
-  }
-
   if (success) {
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
@@ -614,41 +684,83 @@ const BookingPanel = () => {
 
   return (
     <div className="space-y-6">
-      <div className="glass rounded-2xl p-5 border border-border/20">
-        <p className="text-sm text-muted-foreground mb-1">Dine rådgivere</p>
-        <div className="flex gap-3">
-          {advisors.map(a => (
-            <div key={a.id} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
-                {a.name?.charAt(0)}
+      {/* Advisor info / request section */}
+      {hasAdvisors ? (
+        <div className="glass rounded-2xl p-5 border border-border/20">
+          <p className="text-sm text-muted-foreground mb-1">Dine rådgivere</p>
+          <div className="flex gap-3">
+            {advisors.map(a => (
+              <div key={a.id} className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
+                  {a.name?.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-sm font-medium">{a.name}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {company.primary_advisor_id === a.id ? "Oppdragsansvarlig" : "Reserve"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium">{a.name}</p>
-                <p className="text-[10px] text-muted-foreground">
-                  {company.primary_advisor_id === a.id ? "Oppdragsansvarlig" : "Reserve"}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="glass rounded-2xl p-6 border border-amber-500/20 bg-amber-500/5 space-y-3">
+          <div className="flex items-start gap-3">
+            <CalendarDays size={24} className="text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-heading text-base mb-1">Ingen rådgiver tildelt</h3>
+              <p className="text-sm text-muted-foreground">Du har ikke fått tildelt en rådgiver ennå. Send en forespørsel til Avargo, så tildeler vi deg en rådgiver.</p>
+            </div>
+          </div>
 
+          {advisorRequest?.status === "pending" ? (
+            <div className="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 text-xs">
+              ⏳ Forespørsel sendt – venter på svar fra Avargo
+            </div>
+          ) : advisorRequest?.status === "approved" ? (
+            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs">
+              ✓ Forespørsel godkjent – rådgiver blir tildelt
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <input
+                value={requestMessage}
+                onChange={e => setRequestMessage(e.target.value)}
+                placeholder="Melding til Avargo (valgfritt)"
+                className="w-full h-9 rounded-xl border border-border/30 bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+              <button onClick={sendAdvisorRequest} disabled={sendingRequest}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
+                {sendingRequest ? "Sender…" : "Be om rådgiver"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Calendar & booking - always shown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Calendar */}
         <div className="glass rounded-2xl p-5 border border-border/20">
           <h3 className="font-heading text-base mb-3">Velg dato</h3>
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={d => { setSelectedDate(d); setSelectedSlot(null); }}
-            disabled={isDayDisabled}
-            className="p-3 pointer-events-auto"
-          />
+          {hasAdvisors ? (
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={d => { setSelectedDate(d); setSelectedSlot(null); }}
+              disabled={isDayDisabled}
+              className="p-3 pointer-events-auto"
+            />
+          ) : (
+            <div className="text-center py-8">
+              <CalendarDays size={28} className="text-muted-foreground/20 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Kalenderen blir tilgjengelig når du har en rådgiver.</p>
+            </div>
+          )}
         </div>
 
-        {/* Slots + Form */}
         <div className="space-y-4">
-          {selectedDate && (
+          {selectedDate && hasAdvisors && (
             <div className="glass rounded-2xl p-5 border border-border/20">
               <h3 className="font-heading text-base mb-3">
                 Ledige tider {selectedDate.toLocaleDateString("no-NO", { weekday: "long", day: "numeric", month: "long" })}
@@ -696,6 +808,12 @@ const BookingPanel = () => {
                 {submitting ? "Sender…" : "Bekreft booking"}
               </button>
             </form>
+          )}
+
+          {!hasAdvisors && !selectedDate && (
+            <div className="glass rounded-2xl p-5 border border-border/20 text-center">
+              <p className="text-sm text-muted-foreground">Booking av tid krever at du har en tildelt rådgiver. Send en forespørsel ovenfor.</p>
+            </div>
           )}
         </div>
       </div>

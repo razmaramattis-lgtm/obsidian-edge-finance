@@ -87,6 +87,44 @@ export type Database = {
           },
         ]
       }
+      advisor_requests: {
+        Row: {
+          admin_note: string | null
+          company_id: string
+          created_at: string
+          id: string
+          message: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       archive_categories: {
         Row: {
           created_at: string
