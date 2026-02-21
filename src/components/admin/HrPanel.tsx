@@ -45,7 +45,7 @@ const HrPanel = () => {
           }`}
         >
           <BookOpen size={13} className="inline mr-1.5" />
-          Personalhåndbok
+          Avargo Personalhåndbok
         </button>
         <button
           onClick={() => setTab("documents")}
