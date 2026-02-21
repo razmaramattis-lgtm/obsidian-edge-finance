@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Database, Plus, Pencil, Trash2, Save, X, Search, FileText } from "lucide-react";
+import { Database, Plus, Pencil, Trash2, Save, X, Search, FileText, CheckSquare, Square } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 
@@ -23,6 +23,8 @@ const DataCenterPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Material | null>(null);
   const [form, setForm] = useState({ title: "", content: "", category: "Generelt" });
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -40,7 +42,6 @@ const DataCenterPanel = () => {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
-
     if (editing) {
       const { error } = await supabase
         .from("knowledge_materials")
@@ -68,6 +69,27 @@ const DataCenterPanel = () => {
     fetchItems();
   };
 
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Slett ${selected.size} valgte materialer?`)) return;
+    setDeleting(true);
+    for (const id of selected) {
+      await supabase.from("knowledge_materials").delete().eq("id", id);
+    }
+    toast.success(`${selected.size} materialer slettet`);
+    setSelected(new Set());
+    fetchItems();
+    setDeleting(false);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+  };
+
+  const toggleAll = () => {
+    setSelected(selected.size === filtered.length ? new Set() : new Set(filtered.map(i => i.id)));
+  };
+
   const startEdit = (item: Material) => {
     setEditing(item);
     setForm({ title: item.title, content: item.content || "", category: item.category || "Generelt" });
@@ -91,8 +113,8 @@ const DataCenterPanel = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
@@ -101,6 +123,19 @@ const DataCenterPanel = () => {
             className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
+        {selected.size > 0 && (
+          <button onClick={bulkDelete} disabled={deleting}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-50">
+            <Trash2 size={13} /> Slett {selected.size} valgte
+          </button>
+        )}
+        {filtered.length > 0 && (
+          <button onClick={toggleAll}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+            {selected.size === filtered.length ? <CheckSquare size={13} /> : <Square size={13} />}
+            {selected.size === filtered.length ? "Fjern alle" : "Velg alle"}
+          </button>
+        )}
         <button
           onClick={() => { setShowForm(true); setEditing(null); setForm({ title: "", content: "", category: "Generelt" }); }}
           className="h-9 px-4 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1.5 hover:opacity-90 transition-all"
@@ -157,7 +192,12 @@ const DataCenterPanel = () => {
       ) : (
         <div className="space-y-2">
           {filtered.map(item => (
-            <div key={item.id} className="glass rounded-xl border border-border/10 p-4 flex items-start gap-3 group">
+            <div key={item.id} className={`glass rounded-xl border p-4 flex items-start gap-3 group transition-colors ${
+              selected.has(item.id) ? "border-primary/40 bg-primary/5" : "border-border/10"
+            }`}>
+              <button onClick={() => toggleSelect(item.id)} className="text-muted-foreground hover:text-primary transition-colors shrink-0 mt-0.5">
+                {selected.has(item.id) ? <CheckSquare size={15} className="text-primary" /> : <Square size={15} />}
+              </button>
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                 <FileText size={14} className="text-primary" />
               </div>
