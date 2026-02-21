@@ -604,29 +604,35 @@ export type Database = {
       }
       profiles: {
         Row: {
+          booking_active: boolean
           created_at: string
           email: string
           id: string
           name: string
           role: Database["public"]["Enums"]["app_role"]
+          teams_link: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          booking_active?: boolean
           created_at?: string
           email: string
           id?: string
           name: string
           role?: Database["public"]["Enums"]["app_role"]
+          teams_link?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          booking_active?: boolean
           created_at?: string
           email?: string
           id?: string
           name?: string
           role?: Database["public"]["Enums"]["app_role"]
+          teams_link?: string | null
           updated_at?: string
           user_id?: string
         }
