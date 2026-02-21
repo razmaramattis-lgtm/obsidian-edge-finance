@@ -113,9 +113,14 @@ const DataCenterPanel = () => {
         <form onSubmit={save} className="glass rounded-2xl border border-border/20 p-5 space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium">{editing ? "Rediger materiale" : "Nytt materiale"}</p>
-            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="text-muted-foreground hover:text-foreground">
-              <X size={16} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button type="submit" className="h-8 px-4 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1.5 hover:opacity-90">
+                <Save size={13} /> {editing ? "Oppdater" : "Lagre"}
+              </button>
+              <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="text-muted-foreground hover:text-foreground">
+                <X size={16} />
+              </button>
+            </div>
           </div>
           <input
             value={form.title}
