@@ -202,6 +202,48 @@ serve(async (req) => {
       });
     }
 
+    if (type === "admin_update") {
+      const { customer_email, customer_name, company_name, admin_name, action_type, action_detail } = data;
+
+      const actionLabels: Record<string, string> = {
+        financial: "📊 Økonomidata",
+        document: "📄 Dokument",
+        handbook: "📘 Personalhåndbok",
+      };
+
+      const label = actionLabels[action_type] || "📝 Oppdatering";
+
+      const body = `
+        <div style="margin-bottom:20px;">
+          <p style="font-size:14px;color:#0f172a;">Hei ${customer_name} 👋</p>
+          <p style="font-size:14px;color:#475569;line-height:1.7;">
+            Din regnskapsfører <strong>${admin_name}</strong> har lagt til noe nytt på kontoen til <strong>${company_name}</strong>:
+          </p>
+        </div>
+        <div style="background:#f0f9ff;border-left:4px solid #2563eb;padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:20px;">
+          <p style="font-size:13px;color:#64748b;margin:0 0 4px;font-weight:600;">${label}</p>
+          <p style="font-size:14px;color:#0f172a;margin:0;line-height:1.6;">${action_detail}</p>
+        </div>
+        <div style="margin-bottom:20px;">
+          <p style="font-size:14px;color:#475569;line-height:1.7;">
+            Logg inn på kundeportalen for å se oppdateringen:
+          </p>
+          <a href="https://obsidian-edge-finance.lovable.app/kunde/logg-inn" 
+             style="display:inline-block;margin-top:10px;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
+            Gå til kundeportalen →
+          </a>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.6;">Vi jobber alltid for at du skal ha full oversikt. Ta kontakt dersom du har spørsmål! 😊</p>
+      `;
+
+      await sendEmail({
+        ...smtpOpts,
+        to: customer_email,
+        subject: `${label}: Ny oppdatering fra ${admin_name} — ${company_name}`,
+        html: wrapHtml(`${label} — Oppdatering fra din regnskapsfører`, body),
+      });
+    }
+
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
