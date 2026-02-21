@@ -32,6 +32,19 @@ export const arbeidsreglementConfig: GeneratorConfig = {
     socialMediaPolicy: "Unngå konfidensiell informasjon — følg sunn fornuft",
     sideJobPolicy: "Tillatt etter skriftlig godkjenning",
     giftPolicy: "Maks verdi 500 kr — skal meldes til leder",
+    flexitimeBalance: "±20 timer",
+    officeHoursStart: "07:00",
+    officeHoursEnd: "18:00",
+    nightWorkPolicy: "Ikke tillatt uten særskilt avtale",
+    sundayWorkPolicy: "Kun ved spesielle behov med forhåndsgodkjenning",
+    travelTimeCompensation: "Reisetid utover normal arbeidstid kompenseres etter avtale",
+    standbyPolicy: "Beredskapsvakt kompenseres med 1/5 av normal timelønn",
+    phoneUsePolicy: "Begrenset privat bruk i arbeidstiden",
+    parkingPolicy: "Parkering tilgjengelig for ansatte",
+    personalPropertyPolicy: "Bedriften er ikke ansvarlig for private eiendeler",
+    environmentalRules: "Kildesortering og energisparing er obligatorisk",
+    visitorPolicy: "Besøkende registreres i resepsjonen og følges av ansatt",
+    petPolicy: "Husdyr tillates ikke på arbeidsplassen med mindre avtalt",
   },
   fieldGroups: [
     {
@@ -85,6 +98,29 @@ export const arbeidsreglementConfig: GeneratorConfig = {
       fields: [
         { id: "aiPolicy", label: "AI-bruk retningslinjer", type: "text", helpText: "Retningslinjer for bruk av kunstig intelligens i arbeidet. Viktig å avklare hvilke verktøy som er godkjent og hva slags data som kan brukes." },
         { id: "socialMediaPolicy", label: "Sosiale medier-policy", type: "text", helpText: "Retningslinjer for hva ansatte kan dele om bedriften i sosiale medier. Vern om forretningshemmeligheter og bedriftens omdømme." },
+        { id: "phoneUsePolicy", label: "Privat mobilbruk", type: "text", helpText: "Retningslinjer for bruk av privat mobiltelefon i arbeidstiden. Overdreven bruk kan påvirke produktivitet og sikkerhet." },
+      ],
+    },
+    {
+      title: "Arbeidstidsordninger (utvidet)",
+      fields: [
+        { id: "flexitimeBalance", label: "Fleksitidssaldo maks", type: "text", helpText: "Maksimal pluss/minus-saldo for fleksitid. Vanlig er ±20 eller ±40 timer." },
+        { id: "officeHoursStart", label: "Kontortid åpner", type: "text", helpText: "Tidspunktet kontoret åpner for arbeid. Ansatte kan ikke arbeide før dette uten avtale." },
+        { id: "officeHoursEnd", label: "Kontortid stenger", type: "text", helpText: "Tidspunktet kontoret stenger. Arbeid etter dette krever forhåndsgodkjenning." },
+        { id: "nightWorkPolicy", label: "Nattarbeid-policy", type: "text", helpText: "Regler for nattarbeid (kl. 21–06). Nattarbeid er kun tillatt når arbeidets art gjør det nødvendig (aml. § 10-11)." },
+        { id: "sundayWorkPolicy", label: "Søndagsarbeid-policy", type: "text", helpText: "Regler for søn- og helgedagsarbeid. Kun tillatt når arbeidets art gjør det nødvendig (aml. § 10-10)." },
+        { id: "travelTimeCompensation", label: "Reisetidskompensasjon", type: "text", helpText: "Hvordan reisetid utover normal pendletid kompenseres. Ikke lovpålagt, men vanlig å regulere." },
+        { id: "standbyPolicy", label: "Beredskapsvakt", type: "text", helpText: "Kompensasjon og regler for beredskapsvakt/tilkallingsordning. Passiv beredskapsvakt teller som 1/5 arbeidstid." },
+      ],
+    },
+    {
+      title: "Lokaler og miljø",
+      fields: [
+        { id: "parkingPolicy", label: "Parkering", type: "text", helpText: "Parkeringsordning for ansatte. Spesifiser om det er gratis, avgiftsbelagt eller begrenset antall plasser." },
+        { id: "visitorPolicy", label: "Besøkspolicy", type: "text", helpText: "Regler for besøkende til arbeidsplassen. Registrering, følge og sikkerhetssjekk." },
+        { id: "personalPropertyPolicy", label: "Personlige eiendeler", type: "text", helpText: "Ansvarsforhold for private eiendeler på arbeidsplassen. Bedriften er normalt ikke erstatningsansvarlig." },
+        { id: "environmentalRules", label: "Miljøregler", type: "text", helpText: "Regler for kildesortering, energisparing og bærekraft på arbeidsplassen." },
+        { id: "petPolicy", label: "Husdyr-policy", type: "text", helpText: "Om husdyr tillates på arbeidsplassen. Hensyn til allergier og arbeidsmiljø." },
       ],
     },
     {
