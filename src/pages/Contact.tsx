@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const inputClass = "w-full bg-card/40 backdrop-blur-xl border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/30 focus:shadow-lg focus:shadow-primary/5 transition-all duration-500 font-light";
+const readonlyInputClass = "w-full bg-card/20 backdrop-blur-xl border border-border/10 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground/80 font-light cursor-default focus:outline-none";
 const labelClass = "text-[10px] tracking-[0.25em] uppercase text-muted-foreground block mb-2";
 
 type BrregEnhet = {
@@ -12,6 +13,9 @@ type BrregEnhet = {
   naeringskode1?: { kode: string; beskrivelse: string };
   forretningsadresse?: { poststed?: string };
   institusjonellSektorkode?: { beskrivelse: string };
+  epostadresse?: string;
+  telefon?: string;
+  mobil?: string;
 };
 
 type RolleGruppe = {
@@ -28,12 +32,18 @@ const Contact = () => {
   const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
   const [dagligLeder, setDagligLeder] = useState("");
   const [loadingRoles, setLoadingRoles] = useState(false);
+
+  // Editable form fields
+  const [selskapsnavn, setSelskapsnavn] = useState("");
+  const [orgnummer, setOrgnummer] = useState("");
+  const [naering, setNaering] = useState("");
+  const [kontaktperson, setKontaktperson] = useState("");
   const [telefon, setTelefon] = useState("");
   const [epost, setEpost] = useState("");
-  const [navn, setNavn] = useState("");
   const [bransje, setBransje] = useState("");
   const [omsetning, setOmsetning] = useState("");
   const [frustrasjon, setFrustrasjon] = useState("");
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -92,7 +102,9 @@ const Contact = () => {
       if (dagligLederGruppe?.roller?.[0]?.person?.navn) {
         const n = dagligLederGruppe.roller[0].person.navn;
         const parts = [n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean);
-        setDagligLeder(parts.join(" "));
+        const fullName = parts.join(" ");
+        setDagligLeder(fullName);
+        setKontaktperson(fullName);
       } else {
         setDagligLeder("");
       }
@@ -103,32 +115,54 @@ const Contact = () => {
     }
   };
 
+  const mapBransje = (beskrivelse: string): string => {
+    const desc = beskrivelse.toLowerCase();
+    if (desc.includes("tech") || desc.includes("program") || desc.includes("data") || desc.includes("it-")) return "Tech & SaaS";
+    if (desc.includes("eiendom") || desc.includes("utleie")) return "Eiendom & Utvikling";
+    if (desc.includes("holding") || desc.includes("invest")) return "Holding & Investering";
+    if (desc.includes("konsulent") || desc.includes("rådgiv")) return "Consulting & Rådgivning";
+    if (desc.includes("landbruk") || desc.includes("jord")) return "Landbruk";
+    if (desc.includes("handel") || desc.includes("butikk") || desc.includes("salg")) return "Varehandel";
+    if (desc.includes("bygg") || desc.includes("anlegg") || desc.includes("entre")) return "Bygg & Anlegg";
+    if (desc.includes("netthandel") || desc.includes("e-handel") || desc.includes("nettbutikk")) return "Nettbutikk & E-commerce";
+    if (desc.includes("helse") || desc.includes("lege") || desc.includes("tann") || desc.includes("velv")) return "Helse & Velvære";
+    return "Annet";
+  };
+
   const selectCompany = (enhet: BrregEnhet) => {
     setSelectedCompany(enhet);
     setCompanySearch(enhet.navn);
     setShowDropdown(false);
-    fetchRoles(enhet.organisasjonsnummer);
-    // Pre-fill navn with daglig leder once loaded
+
+    // Fill editable fields
+    setSelskapsnavn(enhet.navn);
+    setOrgnummer(enhet.organisasjonsnummer);
+    setNaering(enhet.naeringskode1 ? `${enhet.naeringskode1.kode} — ${enhet.naeringskode1.beskrivelse}` : "");
+
+    // Fill e-post and telefon if available from Brreg
+    if (enhet.epostadresse) setEpost(enhet.epostadresse);
+    if (enhet.telefon) setTelefon(enhet.telefon);
+    else if (enhet.mobil) setTelefon(enhet.mobil);
+
+    // Map bransje
     if (enhet.naeringskode1?.beskrivelse) {
-      // Try to map naeringskode to a bransje option
-      const desc = enhet.naeringskode1.beskrivelse.toLowerCase();
-      if (desc.includes("tech") || desc.includes("program") || desc.includes("data") || desc.includes("it-")) setBransje("Tech & SaaS");
-      else if (desc.includes("eiendom") || desc.includes("utleie")) setBransje("Eiendom & Utvikling");
-      else if (desc.includes("holding") || desc.includes("invest")) setBransje("Holding & Investering");
-      else if (desc.includes("konsulent") || desc.includes("rådgiv")) setBransje("Consulting & Rådgivning");
-      else if (desc.includes("landbruk") || desc.includes("jord")) setBransje("Landbruk");
-      else if (desc.includes("handel") || desc.includes("butikk") || desc.includes("salg")) setBransje("Varehandel");
-      else if (desc.includes("bygg") || desc.includes("anlegg") || desc.includes("entre")) setBransje("Bygg & Anlegg");
-      else if (desc.includes("netthandel") || desc.includes("e-handel") || desc.includes("nettbutikk")) setBransje("Nettbutikk & E-commerce");
-      else if (desc.includes("helse") || desc.includes("lege") || desc.includes("tann") || desc.includes("velv")) setBransje("Helse & Velvære");
-      else setBransje("Annet");
+      setBransje(mapBransje(enhet.naeringskode1.beskrivelse));
     }
+
+    // Fetch daglig leder
+    fetchRoles(enhet.organisasjonsnummer);
   };
 
   const clearCompany = () => {
     setSelectedCompany(null);
     setCompanySearch("");
+    setSelskapsnavn("");
+    setOrgnummer("");
+    setNaering("");
     setDagligLeder("");
+    setKontaktperson("");
+    setTelefon("");
+    setEpost("");
     setBransje("");
   };
 
@@ -231,7 +265,7 @@ const Contact = () => {
                   </div>
 
                   {showDropdown && (
-                    <div className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden shadow-2xl">
+                    <div className="absolute z-50 w-full mt-2 bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
                       {searchResults.map((enhet) => (
                         <button
                           key={enhet.organisasjonsnummer}
@@ -256,62 +290,99 @@ const Contact = () => {
                   )}
                 </div>
 
-                {/* Selected company info */}
+                {/* Fetched company fields — all editable */}
                 {selectedCompany && (
                   <motion.div
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-primary/5 border border-primary/10 rounded-2xl p-4 space-y-2"
+                    className="space-y-4 bg-primary/5 border border-primary/10 rounded-2xl p-4"
                   >
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs tracking-[0.2em] uppercase text-primary/70 font-medium">Selskapsinformasjon</p>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs tracking-[0.2em] uppercase text-primary/70 font-medium">Hentet fra Brønnøysund</p>
                       <button
                         type="button"
                         onClick={clearCompany}
                         className="text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
                       >
-                        Endre
+                        Nullstill
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <span className="text-muted-foreground/50 text-xs">Selskap</span>
-                        <p className="text-foreground font-medium">{selectedCompany.navn}</p>
+                        <label className={labelClass}>Selskapsnavn</label>
+                        <input
+                          type="text"
+                          value={selskapsnavn}
+                          onChange={(e) => setSelskapsnavn(e.target.value)}
+                          className={inputClass}
+                        />
                       </div>
                       <div>
-                        <span className="text-muted-foreground/50 text-xs">Org.nr</span>
-                        <p className="text-foreground font-medium">{selectedCompany.organisasjonsnummer}</p>
+                        <label className={labelClass}>Org.nummer</label>
+                        <input
+                          type="text"
+                          value={orgnummer}
+                          onChange={(e) => setOrgnummer(e.target.value)}
+                          className={inputClass}
+                        />
                       </div>
-                      {dagligLeder && (
-                        <div>
-                          <span className="text-muted-foreground/50 text-xs">Daglig leder</span>
-                          <p className="text-foreground font-medium">{dagligLeder}</p>
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Daglig leder</label>
+                      {loadingRoles ? (
+                        <div className="flex items-center gap-2 py-3.5 px-4 text-muted-foreground/50 text-sm">
+                          <Loader2 size={14} className="animate-spin" /> Henter fra Brønnøysund...
                         </div>
-                      )}
-                      {loadingRoles && (
-                        <div className="flex items-center gap-2 text-muted-foreground/50 text-xs">
-                          <Loader2 size={12} className="animate-spin" /> Henter roller...
-                        </div>
-                      )}
-                      {selectedCompany.naeringskode1 && (
-                        <div className="col-span-2">
-                          <span className="text-muted-foreground/50 text-xs">Næring</span>
-                          <p className="text-foreground font-medium text-xs">
-                            {selectedCompany.naeringskode1.kode} — {selectedCompany.naeringskode1.beskrivelse}
-                          </p>
-                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={kontaktperson}
+                          onChange={(e) => setKontaktperson(e.target.value)}
+                          className={inputClass}
+                          placeholder="Daglig leder ikke funnet — skriv inn manuelt"
+                        />
                       )}
                     </div>
+
+                    {naering && (
+                      <div>
+                        <label className={labelClass}>Næringsområde</label>
+                        <input
+                          type="text"
+                          value={naering}
+                          onChange={(e) => setNaering(e.target.value)}
+                          className={inputClass}
+                        />
+                      </div>
+                    )}
                   </motion.div>
                 )}
 
+                {/* Manual company name if not searched */}
+                {!selectedCompany && (
+                  <div>
+                    <label className={labelClass}>Selskap</label>
+                    <input
+                      required
+                      type="text"
+                      value={selskapsnavn}
+                      onChange={(e) => setSelskapsnavn(e.target.value)}
+                      className={inputClass}
+                      placeholder="Selskapets navn (eller søk ovenfor)"
+                    />
+                  </div>
+                )}
+
+                {/* Contact info — pre-filled from Brreg if available, always editable */}
                 <div>
-                  <label className={labelClass}>Ditt navn</label>
+                  <label className={labelClass}>Kontaktperson</label>
                   <input
                     required
                     type="text"
-                    value={navn}
-                    onChange={(e) => setNavn(e.target.value)}
+                    value={kontaktperson}
+                    onChange={(e) => setKontaktperson(e.target.value)}
                     className={inputClass}
                     placeholder="Ditt fulle navn"
                   />
@@ -319,7 +390,12 @@ const Contact = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>E-post</label>
+                    <label className={labelClass}>
+                      E-post
+                      {selectedCompany?.epostadresse && (
+                        <span className="ml-2 text-primary/50 normal-case tracking-normal">· hentet</span>
+                      )}
+                    </label>
                     <input
                       required
                       type="email"
@@ -330,7 +406,12 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Telefon</label>
+                    <label className={labelClass}>
+                      Telefon
+                      {(selectedCompany?.telefon || selectedCompany?.mobil) && (
+                        <span className="ml-2 text-primary/50 normal-case tracking-normal">· hentet</span>
+                      )}
+                    </label>
                     <input
                       required
                       type="tel"
@@ -341,13 +422,6 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-
-                {!selectedCompany && (
-                  <div>
-                    <label className={labelClass}>Selskap</label>
-                    <input required type="text" className={inputClass} placeholder="Selskapets navn (eller søk ovenfor)" />
-                  </div>
-                )}
 
                 <div>
                   <label className={labelClass}>Bransje</label>
