@@ -8,52 +8,87 @@ export const gdprConfig: GeneratorConfig = {
   subtitle: "Internkontroll, behandlingsoversikt og rutiner for personopplysninger",
   documentCategory: "HR-GDPR",
   defaultValues: {
-    companyName: "", orgNumber: "", ceoName: "",
+    companyName: "", orgNumber: "", ceoName: "", address: "",
     dpoName: "", dpoEmail: "", dpoPhone: "",
+    dpoRequired: false,
     dataProcessors: "Visma, Tripletex",
+    subProcessorsApproval: "Forhåndsgodkjenning kreves",
     legalBasis: "Avtale, samtykke, berettiget interesse, rettslig forpliktelse",
     retentionPeriodEmployees: "5 år etter avsluttet arbeidsforhold",
     retentionPeriodCustomers: "5 år etter siste transaksjon",
     retentionPeriodMarketing: "Til samtykke trekkes tilbake",
+    retentionPeriodAccounting: "5 år (bokføringsloven)",
+    retentionPeriodCVs: "6 måneder etter avsluttet rekruttering",
+    thirdCountryTransfer: false,
+    thirdCountryBasis: "EUs standardkontrakter (SCC)",
     breachContact: "Daglig leder",
     breachNotifyHours: "72",
+    breachTeam: "",
+    dpiaFrequency: "Ved nye systemer og årlig for høyrisiko",
     securityMeasures: "Kryptering, tilgangsstyring, 2FA, logging",
+    physicalSecurity: "Låste kontorer, makulering av dokumenter, adgangskontroll",
+    auditFrequency: "Årlig",
+    privacyTrainingFrequency: "Årlig",
+    dataSubjectResponseDays: "30",
+    consentManagementTool: "",
+    cookiePolicy: true,
     adoptedDate: "",
   },
   fieldGroups: [
     {
       title: "Bedriftsinformasjon",
       fields: [
-        { id: "companyName", label: "Bedriftsnavn", type: "text" },
-        { id: "orgNumber", label: "Org.nummer", type: "text" },
-        { id: "ceoName", label: "Daglig leder", type: "text" },
+        { id: "companyName", label: "Bedriftsnavn", type: "text", helpText: "Offisielt firmanavn. Er behandlingsansvarlig for alle personopplysninger bedriften samler inn." },
+        { id: "orgNumber", label: "Org.nummer", type: "text", helpText: "9-sifret organisasjonsnummer." },
+        { id: "ceoName", label: "Daglig leder", type: "text", helpText: "Daglig leder har det overordnede ansvaret for at GDPR etterleves i virksomheten." },
+        { id: "address", label: "Forretningsadresse", type: "text", helpText: "Offisiell forretningsadresse som angis i personvernerklæringen." },
       ],
     },
     {
-      title: "Personvernombud",
-      description: "Kun påkrevd for offentlige virksomheter og visse private",
+      title: "Personvernombud (DPO)",
+      description: "Påkrevd for offentlige virksomheter, bedrifter som behandler særlige kategorier i stor skala, eller systematisk overvåking",
       fields: [
-        { id: "dpoName", label: "Personvernombud (navn)", type: "text", placeholder: "Valgfritt" },
-        { id: "dpoEmail", label: "E-post personvernombud", type: "text" },
-        { id: "dpoPhone", label: "Telefon personvernombud", type: "text" },
+        { id: "dpoRequired", label: "Personvernombud påkrevd", type: "checkbox", helpText: "Bedrifter som behandler sensitive data i stor skala, utfører systematisk overvåking, eller er offentlige, plikter å ha personvernombud (GDPR art. 37)." },
+        { id: "dpoName", label: "Personvernombud (navn)", type: "text", placeholder: "Valgfritt", helpText: "Navn på bedriftens personvernombud (DPO). Kan være intern ansatt eller ekstern konsulent." },
+        { id: "dpoEmail", label: "E-post personvernombud", type: "text", helpText: "Dedikert e-postadresse for personvernhenvendelser. Bør være enkel å finne for registrerte." },
+        { id: "dpoPhone", label: "Telefon personvernombud", type: "text", helpText: "Telefonnummer til personvernombudet for hastesaker." },
       ],
     },
     {
       title: "Behandling og lagring",
       fields: [
-        { id: "dataProcessors", label: "Databehandlere", type: "text", helpText: "Kommaseparert liste over leverandører som behandler data" },
-        { id: "retentionPeriodEmployees", label: "Lagringstid ansattdata", type: "text" },
-        { id: "retentionPeriodCustomers", label: "Lagringstid kundedata", type: "text" },
-        { id: "retentionPeriodMarketing", label: "Lagringstid markedsføring", type: "text" },
+        { id: "legalBasis", label: "Behandlingsgrunnlag", type: "text", helpText: "De rettsgrunnlagene bedriften benytter for behandling av personopplysninger (GDPR art. 6): avtale, samtykke, berettiget interesse, rettslig forpliktelse, allmennhetens interesse eller vitale interesser." },
+        { id: "dataProcessors", label: "Databehandlere", type: "text", helpText: "Kommaseparert liste over leverandører som behandler personopplysninger på vegne av bedriften. Alle skal ha databehandleravtale (GDPR art. 28)." },
+        { id: "subProcessorsApproval", label: "Underdatabehandlere", type: "text", helpText: "Krav til godkjenning av underdatabehandlere. Vanlig å kreve forhåndsgodkjenning eller generell godkjenning med varslingsrett." },
+        { id: "retentionPeriodEmployees", label: "Lagringstid ansattdata", type: "text", helpText: "Hvor lenge personopplysninger om ansatte lagres etter avsluttet arbeidsforhold. Typisk 5 år pga. foreldelsesfrister." },
+        { id: "retentionPeriodCustomers", label: "Lagringstid kundedata", type: "text", helpText: "Hvor lenge kundedata lagres etter siste transaksjon. Må balansere forretningsbehov mot dataminimering." },
+        { id: "retentionPeriodMarketing", label: "Lagringstid markedsføring", type: "text", helpText: "Lagringstid for data brukt til markedsføring. Ved samtykke: til samtykke trekkes tilbake." },
+        { id: "retentionPeriodAccounting", label: "Lagringstid regnskapsdata", type: "text", helpText: "Bokføringsloven krever oppbevaring av regnskapsmateriale i 5 år. Noen dokumenter krever 10 år." },
+        { id: "retentionPeriodCVs", label: "Lagringstid søknader/CV-er", type: "text", helpText: "Hvor lenge CVer og søknader lagres etter avsluttet rekrutteringsprosess. Typisk 6 måneder med mindre samtykke gis." },
       ],
     },
     {
-      title: "Sikkerhet og brudd",
+      title: "Overføring og tredjeland",
       fields: [
-        { id: "securityMeasures", label: "Sikkerhetstiltak", type: "text" },
-        { id: "breachContact", label: "Kontaktperson ved brudd", type: "text" },
-        { id: "breachNotifyHours", label: "Varslingsfrist Datatilsynet (timer)", type: "text" },
-        { id: "adoptedDate", label: "Vedtatt dato", type: "text" },
+        { id: "thirdCountryTransfer", label: "Overføring utenfor EØS", type: "checkbox", helpText: "Om personopplysninger overføres til land utenfor EØS. Krever ekstra beskyttelsestiltak (GDPR kap. V)." },
+        { id: "thirdCountryBasis", label: "Overføringsgrunnlag", type: "text", helpText: "Grunnlag for eventuell overføring utenfor EØS: EUs standardkontrakter (SCC), adekvansbeslutning, eller bindende virksomhetsregler (BCR)." },
+      ],
+    },
+    {
+      title: "Sikkerhet og avvikshåndtering",
+      fields: [
+        { id: "securityMeasures", label: "Tekniske sikkerhetstiltak", type: "text", helpText: "Tekniske tiltak for å beskytte personopplysninger: kryptering, 2FA, tilgangsstyring, logging, brannmur, endepunktsikkerhet." },
+        { id: "physicalSecurity", label: "Fysiske sikkerhetstiltak", type: "text", helpText: "Fysiske tiltak: låste kontorer, makulering, adgangskontroll, sikker avhending av lagringsmedier." },
+        { id: "breachContact", label: "Kontaktperson ved brudd", type: "text", helpText: "Person som varsles først ved brudd på personopplysningssikkerheten. Skal iverksette vurdering og eventuell varsling." },
+        { id: "breachTeam", label: "Beredskapsteam", type: "text", helpText: "Team eller personer som involveres ved alvorlige sikkerhetsbrudd (IT, juridisk, kommunikasjon, ledelse)." },
+        { id: "breachNotifyHours", label: "Varslingsfrist Datatilsynet (timer)", type: "text", helpText: "GDPR art. 33 krever varsling til Datatilsynet innen 72 timer dersom bruddet medfører risiko for de registrerte." },
+        { id: "dpiaFrequency", label: "DPIA-frekvens", type: "text", helpText: "Hvor ofte personvernkonsekvensvurdering (DPIA) gjennomføres. Påkrevd ved nye systemer og høyrisiko-behandling (GDPR art. 35)." },
+        { id: "auditFrequency", label: "Internrevisjon frekvens", type: "select", options: ["Årlig", "Halvårlig", "Kvartalsvis"], helpText: "Hvor ofte det gjennomføres internrevisjon av personvernpraksisen for å sikre etterlevelse." },
+        { id: "privacyTrainingFrequency", label: "Personvernopplæring", type: "select", options: ["Årlig", "Halvårlig", "Ved ansettelse", "Ved behov"], helpText: "Hvor ofte ansatte får opplæring i GDPR og personvern. Anbefales minimum årlig." },
+        { id: "dataSubjectResponseDays", label: "Svarfrist innsynskrav (dager)", type: "text", helpText: "Antall dager for å besvare henvendelser fra registrerte (innsyn, retting, sletting). GDPR krever svar innen 30 dager." },
+        { id: "consentManagementTool", label: "Samtykkehåndteringsverktøy", type: "text", helpText: "Eventuelt verktøy for å håndtere og dokumentere samtykker (f.eks. Cookiebot, OneTrust, egenutviklet)." },
+        { id: "cookiePolicy", label: "Cookie-policy på nettside", type: "checkbox", helpText: "Om bedriften har implementert cookie-banner og cookie-policy på nettsiden iht. ekomloven og GDPR." },
+        { id: "adoptedDate", label: "Vedtatt dato", type: "text", helpText: "Dato GDPR-rutinene ble vedtatt og trådte i kraft." },
       ],
     },
   ],
@@ -68,8 +103,8 @@ export const gdprConfig: GeneratorConfig = {
 <h3>Virkeområde</h3>
 <p>Gjelder for all behandling av personopplysninger om ansatte, kunder, leverandører, partnere og andre som bedriften har kontakt med.</p>
 <h3>Ansvarlig</h3>
-<p><strong>Behandlingsansvarlig:</strong> ${f(form.companyName, "Bedriftsnavn")} v/ ${f(form.ceoName, "Daglig leder")}</p>
-${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.dpoEmail || "—"})</p>` : ""}`,
+<p><strong>Behandlingsansvarlig:</strong> ${f(form.companyName, "Bedriftsnavn")} v/ ${f(form.ceoName, "Daglig leder")}, ${f(form.address, "Adresse")}</p>
+${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.dpoEmail || "—"}${form.dpoPhone ? `, tlf: ${form.dpoPhone}` : ""})</p>` : form.dpoRequired ? `<p><strong>Merk:</strong> Bedriften plikter å utpeke et personvernombud.</p>` : ""}`,
     },
     {
       id: "prinsipper",
@@ -99,12 +134,14 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Navn, adresse, fødselsnr.</td><td style="padding:6px;">Lønnskjøring, rapportering</td><td style="padding:6px;">Rettslig forpliktelse</td><td style="padding:6px;">${f(form.retentionPeriodEmployees, "Tid")}</td></tr>
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Kontaktopplysninger</td><td style="padding:6px;">Kommunikasjon</td><td style="padding:6px;">Avtale</td><td style="padding:6px;">Aktiv ansettelse + 6 mnd</td></tr>
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Helseopplysninger</td><td style="padding:6px;">Sykefraværsoppfølging</td><td style="padding:6px;">Rettslig forpliktelse</td><td style="padding:6px;">I henhold til arkivloven</td></tr>
-<tr><td style="padding:6px;">Bilde/video</td><td style="padding:6px;">Intranett, nettsider</td><td style="padding:6px;">Samtykke</td><td style="padding:6px;">Til samtykke trekkes</td></tr>
+<tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Bilde/video</td><td style="padding:6px;">Intranett, nettsider</td><td style="padding:6px;">Samtykke</td><td style="padding:6px;">Til samtykke trekkes</td></tr>
+<tr><td style="padding:6px;">CV-er og søknader</td><td style="padding:6px;">Rekruttering</td><td style="padding:6px;">Samtykke/berettiget interesse</td><td style="padding:6px;">${f(form.retentionPeriodCVs, "6 mnd")}</td></tr>
 </table>
 <h3>Kundeopplysninger</h3>
 <table style="width:100%;border-collapse:collapse;margin:1em 0;font-size:0.9em;">
 <tr style="border-bottom:2px solid #e5e7eb;"><td style="padding:6px;font-weight:bold;">Kategori</td><td style="padding:6px;font-weight:bold;">Formål</td><td style="padding:6px;font-weight:bold;">Grunnlag</td><td style="padding:6px;font-weight:bold;">Lagringstid</td></tr>
 <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Kontaktinfo</td><td style="padding:6px;">Kundeforhold</td><td style="padding:6px;">Avtale</td><td style="padding:6px;">${f(form.retentionPeriodCustomers, "Tid")}</td></tr>
+<tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:6px;">Regnskapsdata</td><td style="padding:6px;">Bokføring</td><td style="padding:6px;">Rettslig forpliktelse</td><td style="padding:6px;">${f(form.retentionPeriodAccounting, "5 år")}</td></tr>
 <tr><td style="padding:6px;">E-post, preferanser</td><td style="padding:6px;">Markedsføring</td><td style="padding:6px;">Samtykke</td><td style="padding:6px;">${f(form.retentionPeriodMarketing, "Tid")}</td></tr>
 </table>`,
     },
@@ -124,7 +161,7 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li><strong>Rett til å trekke samtykke</strong> — Når som helst, uten at det påvirker lovligheten av tidligere behandling</li>
 </ul>
 <h3>Håndtering av henvendelser</h3>
-<p>Henvendelser om rettigheter rettes til ${f(form.dpoName || form.ceoName, "Kontaktperson")} og besvares innen <strong>30 dager</strong>.</p>`,
+<p>Henvendelser om rettigheter rettes til ${f(form.dpoName || form.ceoName, "Kontaktperson")}${form.dpoEmail ? ` (${form.dpoEmail})` : ""} og besvares innen <strong>${f(form.dataSubjectResponseDays, "30")} dager</strong>.</p>`,
     },
     {
       id: "databehandleravtaler",
@@ -133,6 +170,8 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <p>${f(form.companyName, "Bedriftsnavn")} har inngått databehandleravtaler med alle leverandører som behandler personopplysninger på vegne av bedriften, jf. GDPR art. 28.</p>
 <h3>Oversikt over databehandlere</h3>
 <p><strong>Nåværende databehandlere:</strong> ${f(form.dataProcessors, "Leverandører")}</p>
+<h3>Underdatabehandlere</h3>
+<p>${f(form.subProcessorsApproval, "Forhåndsgodkjenning kreves")}.</p>
 <h3>Krav til databehandleravtalen</h3>
 <p>Databehandleravtalen skal regulere:</p>
 <ul>
@@ -146,7 +185,7 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li>Revisjon og kontrollrett</li>
 </ul>
 <h3>Overføring til tredjeland</h3>
-<p>Personopplysninger overføres ikke utenfor EØS uten at tilstrekkelig beskyttelsesnivå er sikret (f.eks. gjennom EUs standardkontrakter eller adekvansbeslutning).</p>`,
+${form.thirdCountryTransfer ? `<p>Personopplysninger overføres til land utenfor EØS. Overføringsgrunnlag: <strong>${f(form.thirdCountryBasis, "Grunnlag")}</strong>. Tilstrekkelig beskyttelsesnivå er sikret.</p>` : `<p>Personopplysninger overføres ikke utenfor EØS uten at tilstrekkelig beskyttelsesnivå er sikret (f.eks. gjennom EUs standardkontrakter eller adekvansbeslutning).</p>`}`,
     },
     {
       id: "internkontroll",
@@ -159,16 +198,18 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li>Risikovurdering av behandlingsaktiviteter</li>
 <li>Dokumenterte rutiner for å ivareta de registrertes rettigheter</li>
 <li>Rutiner for avvikshåndtering</li>
-<li>Årlig gjennomgang og oppdatering</li>
+<li>Internrevisjon gjennomføres <strong>${f(form.auditFrequency, "Årlig").toLowerCase()}</strong></li>
 </ol>
 <h3>Risikovurdering (DPIA)</h3>
-<p>Personvernkonsekvensvurdering (DPIA) gjennomføres:</p>
+<p>Personvernkonsekvensvurdering (DPIA) gjennomføres: <strong>${f(form.dpiaFrequency, "Ved nye systemer")}</strong>.</p>
 <ul>
 <li>Ved innføring av nye systemer eller behandlingsaktiviteter</li>
 <li>Ved vesentlig endring av eksisterende behandling</li>
 <li>Når behandlingen innebærer høy risiko for de registrerte</li>
 <li>Minimum årlig for eksisterende behandlingsaktiviteter med særlige kategorier av data</li>
-</ul>`,
+</ul>
+<h3>Opplæring</h3>
+<p>Alle ansatte gjennomgår personvernopplæring <strong>${f(form.privacyTrainingFrequency, "Årlig").toLowerCase()}</strong>.</p>`,
     },
     {
       id: "sikkerhet",
@@ -182,6 +223,10 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li>Regelmessig sikkerhetskopiering</li>
 <li>Endepunktsikkerhet (antivirus, EDR)</li>
 <li>Automatiske sikkerhetsoppdateringer</li>
+</ul>
+<h3>Fysiske tiltak</h3>
+<ul>
+<li>${f(form.physicalSecurity, "Fysiske tiltak")}</li>
 </ul>
 <h3>Organisatoriske tiltak</h3>
 <ul>
@@ -208,7 +253,7 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 </ul>
 <h3>Prosedyre</h3>
 <ol>
-<li><strong>Oppdage og melde:</strong> Alle ansatte plikter å melde brudd umiddelbart til ${f(form.breachContact, "Kontaktperson")}</li>
+<li><strong>Oppdage og melde:</strong> Alle ansatte plikter å melde brudd umiddelbart til ${f(form.breachContact, "Kontaktperson")}${form.breachTeam ? ` og beredskapsteamet (${form.breachTeam})` : ""}</li>
 <li><strong>Vurdere:</strong> Alvorlighetsgrad og risiko for de registrerte vurderes</li>
 <li><strong>Varsle Datatilsynet:</strong> Innen <strong>${f(form.breachNotifyHours, "Timer")} timer</strong> dersom bruddet sannsynligvis medfører risiko for fysiske personers rettigheter (GDPR art. 33)</li>
 <li><strong>Varsle de registrerte:</strong> Dersom bruddet sannsynligvis medfører <em>høy</em> risiko (GDPR art. 34)</li>
@@ -229,6 +274,7 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li><strong>Utvetydig</strong> — Aktiv handling (ikke forhåndsavkryssede bokser)</li>
 <li><strong>Dokumenterbart</strong> — Bedriften kan bevise at samtykke er gitt</li>
 </ul>
+${form.consentManagementTool ? `<p>Samtykker håndteres og dokumenteres via <strong>${form.consentManagementTool}</strong>.</p>` : ""}
 <h3>Informasjonsplikt</h3>
 <p>Ved innsamling av personopplysninger skal de registrerte informeres om:</p>
 <ul>
@@ -239,7 +285,8 @@ ${form.dpoName ? `<p><strong>Personvernombud:</strong> ${form.dpoName} (${form.d
 <li>Lagringstid</li>
 <li>Rettigheter (innsyn, retting, sletting, etc.)</li>
 <li>Retten til å klage til Datatilsynet</li>
-</ul>`,
+</ul>
+${form.cookiePolicy ? `<h3>Informasjonskapsler (cookies)</h3><p>Bedriftens nettside har implementert cookie-banner og cookie-policy i henhold til ekomloven og GDPR. Brukere gis mulighet til å akseptere, avvise eller tilpasse bruk av informasjonskapsler.</p>` : ""}`,
     },
   ],
 };

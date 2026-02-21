@@ -12,59 +12,91 @@ export const arbeidsreglementConfig: GeneratorConfig = {
     numEmployees: "", normalHours: "37.5",
     coreHoursStart: "09:00", coreHoursEnd: "15:00",
     lunchDuration: "30", lunchPaid: false,
+    overtimeMax7: "10", overtimeMax4w: "25", overtimeMax52w: "200",
     sickSelfDays: "3", noticePeriod: "3",
-    probationMonths: "6",
+    probationMonths: "6", probationNotice: "14",
     smokingPolicy: "Kun på anviste steder",
     alcoholPolicy: "Nulltoleranse i arbeidstiden",
+    drugTestPolicy: false,
     dressCode: "Passende for arbeidssituasjonen",
+    cleanDeskPolicy: true,
+    accessCardPolicy: "Personlig — skal ikke lånes ut",
+    idBadgeRequired: false,
     sanctionContact: "Daglig leder",
     adoptedDate: "", adoptedBy: "Daglig leder",
     employeeRepresentative: "",
+    previousVersion: "",
+    effectiveDate: "",
+    distributionMethod: "E-post og dokumentarkiv",
+    aiPolicy: "Kun godkjente AI-verktøy med bedriftskonto",
+    socialMediaPolicy: "Unngå konfidensiell informasjon — følg sunn fornuft",
+    sideJobPolicy: "Tillatt etter skriftlig godkjenning",
+    giftPolicy: "Maks verdi 500 kr — skal meldes til leder",
   },
   fieldGroups: [
     {
       title: "Bedriftsinformasjon",
       fields: [
-        { id: "companyName", label: "Bedriftsnavn", type: "text", placeholder: "AS Eksempel" },
-        { id: "orgNumber", label: "Org.nummer", type: "text" },
-        { id: "ceoName", label: "Daglig leder", type: "text" },
-        { id: "address", label: "Adresse", type: "text" },
-        { id: "numEmployees", label: "Antall ansatte", type: "number" },
+        { id: "companyName", label: "Bedriftsnavn", type: "text", placeholder: "AS Eksempel", helpText: "Offisielt firmanavn som registrert i Brønnøysundregistrene." },
+        { id: "orgNumber", label: "Org.nummer", type: "text", helpText: "9-sifret organisasjonsnummer fra Enhetsregisteret." },
+        { id: "ceoName", label: "Daglig leder", type: "text", helpText: "Navn på daglig leder som har delegert ansvar for at reglementet overholdes." },
+        { id: "address", label: "Forretningsadresse", type: "text", helpText: "Offisiell forretningsadresse. Viktig for å angi reglementets virkeområde." },
+        { id: "numEmployees", label: "Antall ansatte", type: "number", helpText: "Bedrifter med 10+ ansatte er lovpålagt å ha arbeidsreglement (aml. § 14-16)." },
       ],
     },
     {
-      title: "Arbeidstid",
+      title: "Arbeidstid og overtid",
       fields: [
-        { id: "normalHours", label: "Ukentlig arbeidstid", type: "text" },
-        { id: "coreHoursStart", label: "Kjernetid fra", type: "text" },
-        { id: "coreHoursEnd", label: "Kjernetid til", type: "text" },
-        { id: "lunchDuration", label: "Lunsjpause (min)", type: "text" },
-        { id: "lunchPaid", label: "Betalt lunsj", type: "checkbox" },
+        { id: "normalHours", label: "Ukentlig arbeidstid", type: "text", helpText: "Normal ukentlig arbeidstid i timer. Lovens maksimum er 40 timer. Vanligst er 37,5 timer." },
+        { id: "coreHoursStart", label: "Kjernetid fra", type: "text", helpText: "Start på kjernetid der alle ansatte skal være tilgjengelige." },
+        { id: "coreHoursEnd", label: "Kjernetid til", type: "text", helpText: "Slutt på kjernetid. Utenfor kjernetiden gjelder fleksitid." },
+        { id: "lunchDuration", label: "Lunsjpause (min)", type: "text", helpText: "Pausens lengde i minutter. Lovens minimum er 30 minutter ved arbeidsdager over 5,5 timer." },
+        { id: "lunchPaid", label: "Betalt lunsj", type: "checkbox", helpText: "Om lunsjpausen er inkludert i arbeidstiden (betalt) eller kommer i tillegg (ubetalt)." },
+        { id: "overtimeMax7", label: "Maks overtid/7 dager", type: "text", helpText: "Lovens grense for overtid per 7 dager. Standard er 10 timer (aml. § 10-6)." },
+        { id: "overtimeMax4w", label: "Maks overtid/4 uker", type: "text", helpText: "Lovens grense for overtid per 4 uker. Standard er 25 timer." },
+        { id: "overtimeMax52w", label: "Maks overtid/52 uker", type: "text", helpText: "Lovens grense for overtid per 52 uker. Standard er 200 timer, kan utvides til 300 ved avtale med tillitsvalgt." },
       ],
     },
     {
       title: "Ansettelsesvilkår",
       fields: [
-        { id: "probationMonths", label: "Prøvetid (måneder)", type: "text" },
-        { id: "noticePeriod", label: "Oppsigelsestid (måneder)", type: "text" },
-        { id: "sickSelfDays", label: "Egenmeldingsdager", type: "text" },
+        { id: "probationMonths", label: "Prøvetid (måneder)", type: "text", helpText: "Lengden på prøvetiden. Maks 6 måneder iht. aml. § 15-6." },
+        { id: "probationNotice", label: "Oppsigelse i prøvetid (dager)", type: "text", helpText: "Oppsigelsestid i prøvetiden. Lovens standard er 14 dager gjensidig." },
+        { id: "noticePeriod", label: "Oppsigelsestid (måneder)", type: "text", helpText: "Gjensidig oppsigelsestid etter prøvetiden. Regnes fra den 1. i måneden etter mottak av oppsigelse." },
+        { id: "sickSelfDays", label: "Egenmeldingsdager", type: "text", helpText: "Antall kalenderdager egenmelding per fraværsperiode. Standard 3 dager, IA-bedrifter inntil 8." },
+        { id: "sideJobPolicy", label: "Bierverv-policy", type: "text", helpText: "Retningslinjer for om ansatte kan ha bierverv/sidejobber. Vanlig å kreve forhåndsgodkjenning for å unngå interessekonflikt." },
       ],
     },
     {
-      title: "Ordensregler",
+      title: "Ordensregler og atferd",
       fields: [
-        { id: "smokingPolicy", label: "Røykepolicy", type: "text" },
-        { id: "alcoholPolicy", label: "Rusmiddelpolicy", type: "text" },
-        { id: "dressCode", label: "Kleskode", type: "text" },
+        { id: "smokingPolicy", label: "Røykepolicy", type: "text", helpText: "Regler for røyking/snusing på arbeidsplassen. Må overholde røykeloven. Angi anviste steder." },
+        { id: "alcoholPolicy", label: "Rusmiddelpolicy", type: "text", helpText: "Bedriftens policy for alkohol og rusmidler. Nulltoleranse i arbeidstiden er vanligst. Vurder policy for representasjon." },
+        { id: "drugTestPolicy", label: "Rusmiddeltesting", type: "checkbox", helpText: "Om bedriften har rett til rusmiddeltesting. Krever saklig grunn og hjemmel (f.eks. sikkerhetsrelaterte stillinger)." },
+        { id: "dressCode", label: "Kleskode", type: "text", helpText: "Krav til påkledning. Bør være tydelig og tilpasset bransje og eventuelle kundekontakter." },
+        { id: "cleanDeskPolicy", label: "Clean desk-policy", type: "checkbox", helpText: "Om ansatte skal rydde pulten ved arbeidsdagens slutt. Viktig for sikkerhet og profesjonelt miljø." },
+        { id: "accessCardPolicy", label: "Adgangskort-regler", type: "text", helpText: "Regler for bruk av adgangskort/nøkler. Normalt personlig og skal ikke utlånes." },
+        { id: "idBadgeRequired", label: "ID-brikke synlig", type: "checkbox", helpText: "Om ansatte må bære synlig ID-brikke på arbeidsplassen. Relevant for sikkerhetsmessige årsaker." },
+        { id: "giftPolicy", label: "Policy for gaver/representasjon", type: "text", helpText: "Maks verdi for gaver fra/til kunder/leverandører og krav om rapportering. Viktig for anti-korrupsjon." },
+      ],
+    },
+    {
+      title: "Digitale retningslinjer",
+      fields: [
+        { id: "aiPolicy", label: "AI-bruk retningslinjer", type: "text", helpText: "Retningslinjer for bruk av kunstig intelligens i arbeidet. Viktig å avklare hvilke verktøy som er godkjent og hva slags data som kan brukes." },
+        { id: "socialMediaPolicy", label: "Sosiale medier-policy", type: "text", helpText: "Retningslinjer for hva ansatte kan dele om bedriften i sosiale medier. Vern om forretningshemmeligheter og bedriftens omdømme." },
       ],
     },
     {
       title: "Formelle forhold",
       fields: [
-        { id: "sanctionContact", label: "Sanksjonskontakt", type: "text" },
-        { id: "adoptedDate", label: "Vedtatt dato", type: "text", placeholder: "01.01.2026" },
-        { id: "adoptedBy", label: "Vedtatt av", type: "text" },
-        { id: "employeeRepresentative", label: "Tillitsvalgt/representant", type: "text" },
+        { id: "sanctionContact", label: "Sanksjonskontakt", type: "text", helpText: "Person spørsmål om disiplinære prosedyrer rettes til. Vanligvis daglig leder, HR-sjef eller juridisk ansvarlig." },
+        { id: "adoptedDate", label: "Vedtatt dato", type: "text", placeholder: "01.01.2026", helpText: "Dato reglementet ble vedtatt. Reglementet trer i kraft fra denne datoen." },
+        { id: "effectiveDate", label: "Ikrafttredelsesdato", type: "text", helpText: "Dato reglementet trer i kraft fra, dersom annet enn vedtaksdato. Ansatte skal varsles i rimelig tid." },
+        { id: "adoptedBy", label: "Vedtatt av", type: "text", helpText: "Rolle/person som har vedtatt reglementet (normalt daglig leder eller styret)." },
+        { id: "employeeRepresentative", label: "Tillitsvalgt/representant", type: "text", helpText: "Navn på tillitsvalgt eller ansattrepresentant som har drøftet reglementet. Påkrevd ved drøfting jf. aml. § 14-17." },
+        { id: "previousVersion", label: "Erstatter versjon", type: "text", helpText: "Referanse til forrige versjon av reglementet (dato eller versjonsnummer)." },
+        { id: "distributionMethod", label: "Kunngjøringsmetode", type: "text", helpText: "Hvordan reglementet gjøres kjent for ansatte (e-post, intranett, oppslag). Krav om kunngjøring jf. aml. § 14-19." },
       ],
     },
   ],
@@ -75,7 +107,8 @@ export const arbeidsreglementConfig: GeneratorConfig = {
       content: (form) => `<h2>§ 1. Formål og virkeområde</h2>
 <p>Dette arbeidsreglementet er fastsatt i henhold til arbeidsmiljøloven kapittel 14 og gjelder for alle ansatte i <strong>${f(form.companyName, "Bedriftsnavn")}</strong> (org.nr. ${f(form.orgNumber, "Org.nr.")}), med forretningsadresse ${f(form.address, "Adresse")}.</p>
 <p>Reglementet gjelder uavhengig av stillingstype og stillingsbrøk, og supplerer den individuelle arbeidskontrakten. Ved motstrid gjelder arbeidskontrakten.</p>
-<p>Reglementet er vedtatt ${f(form.adoptedDate, "Dato")} av ${f(form.adoptedBy, "Vedtatt av")}${form.employeeRepresentative ? ` i samarbeid med tillitsvalgt ${form.employeeRepresentative}` : ""}, og trer i kraft fra vedtaksdato.</p>`,
+<p>Reglementet er vedtatt ${f(form.adoptedDate, "Dato")} av ${f(form.adoptedBy, "Vedtatt av")}${form.employeeRepresentative ? ` i samarbeid med tillitsvalgt ${form.employeeRepresentative}` : ""}, og trer i kraft fra ${form.effectiveDate || form.adoptedDate || "vedtaksdato"}.${form.previousVersion ? ` Erstatter versjon ${form.previousVersion}.` : ""}</p>
+<p>Kunngjort via: ${f(form.distributionMethod, "Metode")}.</p>`,
     },
     {
       id: "ansettelse",
@@ -84,11 +117,13 @@ export const arbeidsreglementConfig: GeneratorConfig = {
 <h3>2.1 Tilsetting</h3>
 <p>Ansettelser foretas av ${f(form.ceoName, "Daglig leder")} eller den som er delegert myndighet. Alle ansatte skal ha skriftlig arbeidskontrakt som oppfyller kravene i aml. § 14-6.</p>
 <h3>2.2 Prøvetid</h3>
-<p>Prøvetiden er ${f(form.probationMonths, "Måneder")} måneder med 14 dagers gjensidig oppsigelsestid. Prøvetiden kan forlenges ved fravær som ikke skyldes arbeidsgiver.</p>
+<p>Prøvetiden er ${f(form.probationMonths, "Måneder")} måneder med ${f(form.probationNotice, "14")} dagers gjensidig oppsigelsestid. Prøvetiden kan forlenges ved fravær som ikke skyldes arbeidsgiver.</p>
 <h3>2.3 Oppsigelse</h3>
 <p>Gjensidig oppsigelsestid er ${f(form.noticePeriod, "Måneder")} måneder, regnet fra den 1. i måneden etter at oppsigelsen ble mottatt. Oppsigelse skal være skriftlig.</p>
 <h3>2.4 Avskjed</h3>
-<p>Ved grovt pliktbrudd eller vesentlig mislighold kan arbeidsgiver gi avskjed med umiddelbar fratreden, jf. aml. § 15-14. Drøftingsmøte skal gjennomføres på forhånd.</p>`,
+<p>Ved grovt pliktbrudd eller vesentlig mislighold kan arbeidsgiver gi avskjed med umiddelbar fratreden, jf. aml. § 15-14. Drøftingsmøte skal gjennomføres på forhånd.</p>
+<h3>2.5 Bierverv</h3>
+<p>${f(form.sideJobPolicy, "Tillatt etter skriftlig godkjenning")}. Bierverv som kan medføre interessekonflikt eller påvirke arbeidsytelsen negativt, vil normalt ikke bli godkjent.</p>`,
     },
     {
       id: "arbeidstid",
@@ -101,7 +136,7 @@ export const arbeidsreglementConfig: GeneratorConfig = {
 <h3>3.3 Pauser</h3>
 <p>Lunsjpause er ${f(form.lunchDuration, "Min")} minutter${form.lunchPaid ? " og er inkludert i arbeidstiden" : " og kommer i tillegg til arbeidstiden"}. Ved arbeidsdager over 8 timer har ansatte krav på minst 30 minutters pause.</p>
 <h3>3.4 Overtid</h3>
-<p>Overtid skal alltid godkjennes av leder på forhånd. Lovens grenser for overtid gjelder: maks 10 timer/7 dager, 25 timer/4 uker, 200 timer/52 uker. Overtidstillegg utbetales iht. lov/avtale.</p>
+<p>Overtid skal alltid godkjennes av leder på forhånd. Lovens grenser for overtid gjelder: maks ${f(form.overtimeMax7, "10")} timer/7 dager, ${f(form.overtimeMax4w, "25")} timer/4 uker, ${f(form.overtimeMax52w, "200")} timer/52 uker. Overtidstillegg utbetales iht. lov/avtale.</p>
 <h3>3.5 Tidsregistrering</h3>
 <p>Alle ansatte plikter å registrere arbeidstid korrekt og daglig. Mangelfulle eller feilaktige registreringer kan få konsekvenser for lønnsutbetaling.</p>`,
     },
@@ -131,8 +166,9 @@ export const arbeidsreglementConfig: GeneratorConfig = {
       content: (form) => `<h2>§ 5. Ordensregler og atferd</h2>
 <h3>5.1 Generelle ordensregler</h3>
 <ul>
-<li>Arbeidsplassen skal holdes ryddig og ordentlig</li>
-<li>Adgangskort og nøkler er personlige og skal ikke lånes ut</li>
+<li>Arbeidsplassen skal holdes ryddig og ordentlig${form.cleanDeskPolicy ? " — clean desk-policy gjelder ved arbeidsdagens slutt" : ""}</li>
+<li>Adgangskort og nøkler: ${f(form.accessCardPolicy, "Personlig — skal ikke lånes ut")}</li>
+${form.idBadgeRequired ? "<li>ID-brikke skal bæres synlig på arbeidsplassen</li>" : ""}
 <li>Bedriftens utstyr og eiendeler skal behandles med forsiktighet</li>
 <li>Ansatte skal opptre høflig og respektfullt overfor alle</li>
 </ul>
@@ -141,8 +177,10 @@ export const arbeidsreglementConfig: GeneratorConfig = {
 <h3>5.3 Røyking</h3>
 <p>${f(form.smokingPolicy, "Røykepolicy")}.</p>
 <h3>5.4 Rusmidler</h3>
-<p>${f(form.alcoholPolicy, "Rusmiddelpolicy")}. Ansatte skal ikke møte på jobb påvirket av alkohol eller andre rusmidler. Medisinbruk som kan påvirke arbeidsevnen skal meldes til leder.</p>
-<h3>5.5 Atferd</h3>
+<p>${f(form.alcoholPolicy, "Rusmiddelpolicy")}. Ansatte skal ikke møte på jobb påvirket av alkohol eller andre rusmidler. Medisinbruk som kan påvirke arbeidsevnen skal meldes til leder.${form.drugTestPolicy ? " Bedriften forbeholder seg retten til rusmiddeltesting i henhold til gjeldende regelverk." : ""}</p>
+<h3>5.5 Gaver og representasjon</h3>
+<p>${f(form.giftPolicy, "Maks verdi 500 kr — skal meldes til leder")}. Gaver skal ikke påvirke beslutninger eller skape interessekonflikter.</p>
+<h3>5.6 Atferd</h3>
 <p>${f(form.companyName, "Bedriftsnavn")} har nulltoleranse for:</p>
 <ul>
 <li>Mobbing, trakassering og diskriminering</li>
@@ -167,8 +205,8 @@ export const arbeidsreglementConfig: GeneratorConfig = {
     },
     {
       id: "it-bruk",
-      title: "IT-bruk og utstyr",
-      content: (form) => `<h2>§ 7. IT-bruk og utstyr</h2>
+      title: "IT-bruk, AI og sosiale medier",
+      content: (form) => `<h2>§ 7. IT-bruk, AI og sosiale medier</h2>
 <p>IT-utstyr utlevert av ${f(form.companyName, "Bedriftsnavn")} er bedriftens eiendom.</p>
 <h3>7.1 Regler</h3>
 <ul>
@@ -178,13 +216,17 @@ export const arbeidsreglementConfig: GeneratorConfig = {
 <li>Nedlasting av ulovlig, støtende eller skadelig innhold er strengt forbudt</li>
 <li>Passord er personlige og skal ikke deles</li>
 </ul>
-<h3>7.2 E-post og kommunikasjon</h3>
+<h3>7.2 Bruk av kunstig intelligens (AI)</h3>
+<p>${f(form.aiPolicy, "Kun godkjente AI-verktøy med bedriftskonto")}. Konfidensiell bedriftsinformasjon, personopplysninger og kundedata skal ikke mates inn i AI-verktøy uten forhåndsgodkjenning.</p>
+<h3>7.3 Sosiale medier</h3>
+<p>${f(form.socialMediaPolicy, "Retningslinjer")}. Ansatte er selv ansvarlige for publiseringer i sosiale medier, også på fritiden. Konfidensielt materiale skal aldri deles.</p>
+<h3>7.4 E-post og kommunikasjon</h3>
 <ul>
 <li>Bedriftens e-post skal brukes profesjonelt</li>
 <li>Sensitiv informasjon skal krypteres ved sending eksternt</li>
 <li>Automatisk videresending til private e-postkontoer er ikke tillatt</li>
 </ul>
-<h3>7.3 Ved avslutning</h3>
+<h3>7.5 Ved avslutning</h3>
 <p>Alt IT-utstyr skal leveres tilbake siste arbeidsdag. Private filer fjernes i rimelig tid før fratredelse.</p>`,
     },
     {
@@ -240,7 +282,8 @@ export const arbeidsreglementConfig: GeneratorConfig = {
 <hr />
 <p><em>Vedtatt: ${f(form.adoptedDate, "Dato")}</em></p>
 <p><em>Vedtatt av: ${f(form.adoptedBy, "Rolle")}</em></p>
-${form.employeeRepresentative ? `<p><em>Tillitsvalgt/representant: ${form.employeeRepresentative}</em></p>` : ""}`,
+${form.employeeRepresentative ? `<p><em>Tillitsvalgt/representant: ${form.employeeRepresentative}</em></p>` : ""}
+${form.previousVersion ? `<p><em>Erstatter: ${form.previousVersion}</em></p>` : ""}`,
     },
   ],
 };

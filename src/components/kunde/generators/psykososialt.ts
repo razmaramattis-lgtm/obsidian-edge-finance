@@ -9,49 +9,103 @@ export const psykososialtConfig: GeneratorConfig = {
   documentCategory: "HR-Psykososialt",
   defaultValues: {
     companyName: "", ceoName: "", numEmployees: "",
-    verneombud: "", hmsAnsvarlig: "",
-    bhtProvider: "", bhtContact: "",
+    verneombud: "", hmsAnsvarlig: "", hrContact: "",
+    amuExists: false, amuChair: "",
+    bhtProvider: "", bhtContact: "", bhtPhone: "",
+    bhtAgreementType: "Lovpålagt",
     surveyFrequency: "Årlig",
     surveyTool: "Spørreundersøkelse",
+    surveyAnonymous: true,
+    surveyProvider: "",
     followUpPerson: "Nærmeste leder",
+    followUpDeadlineDays: "3",
     conflictMediator: "HR-ansvarlig",
+    externalMediator: "",
     reportingPeriod: "Årlig",
     reportRecipient: "Styret/ledelsen",
+    sickLeaveTarget: "",
+    turnoverTarget: "",
+    enpsTarget: "",
+    medarbeidersamtaleFrequency: "2 ganger per år",
+    bekymringssamtaleDeadline: "Innen 5 virkedager",
+    leaderTrainingFrequency: "Årlig",
+    leaderTrainingTopics: "Relasjonsledelse, konflikthåndtering, psykisk helse",
+    wellbeingPrograms: "",
+    ergonomicsPolicy: "Tilpasset arbeidsplass etter behov",
+    workLifeBalance: "Fleksibel arbeidstid og mulighet for hjemmekontor",
+    returnToWorkProgram: true,
+    preventionBudget: "",
     adoptedDate: "",
   },
   fieldGroups: [
     {
       title: "Bedrift og ansvarlige",
       fields: [
-        { id: "companyName", label: "Bedriftsnavn", type: "text" },
-        { id: "ceoName", label: "Daglig leder", type: "text" },
-        { id: "numEmployees", label: "Antall ansatte", type: "number" },
-        { id: "verneombud", label: "Verneombud", type: "text" },
-        { id: "hmsAnsvarlig", label: "HMS-ansvarlig", type: "text" },
+        { id: "companyName", label: "Bedriftsnavn", type: "text", helpText: "Offisielt firmanavn. Arbeidsgiver har plikt til å sikre et fullt forsvarlig psykososialt arbeidsmiljø (aml. § 4-3)." },
+        { id: "ceoName", label: "Daglig leder", type: "text", helpText: "Daglig leder har det overordnede ansvaret for arbeidsmiljøet i virksomheten." },
+        { id: "numEmployees", label: "Antall ansatte", type: "number", helpText: "Totalt antall ansatte. Påvirker krav til verneombud (10+), AMU (50+) og bedriftshelsetjeneste." },
+        { id: "verneombud", label: "Verneombud", type: "text", helpText: "Verneombudet er arbeidstakernes representant i HMS-arbeid. Lovpålagt for bedrifter med 10+ ansatte." },
+        { id: "hmsAnsvarlig", label: "HMS-ansvarlig", type: "text", helpText: "Person som koordinerer det systematiske HMS-arbeidet, inkludert psykososialt arbeidsmiljø." },
+        { id: "hrContact", label: "HR-ansvarlig", type: "text", helpText: "HR-ansvarlig som håndterer personalrelaterte spørsmål, konflikter og oppfølgingssamtaler." },
+        { id: "amuExists", label: "AMU etablert", type: "checkbox", helpText: "Arbeidsmiljøutvalg (AMU) er lovpålagt for bedrifter med 50+ ansatte. Kan opprettes frivillig ved færre ansatte." },
+        { id: "amuChair", label: "AMU-leder", type: "text", helpText: "Leder av arbeidsmiljøutvalget. AMU-leder alternerer vanligvis mellom arbeidsgiver- og arbeidstakerrepresentant." },
       ],
     },
     {
-      title: "Bedriftshelsetjeneste",
+      title: "Bedriftshelsetjeneste (BHT)",
       fields: [
-        { id: "bhtProvider", label: "BHT-leverandør", type: "text", placeholder: "F.eks. Stamina, Avonova" },
-        { id: "bhtContact", label: "BHT-kontaktperson", type: "text" },
+        { id: "bhtProvider", label: "BHT-leverandør", type: "text", placeholder: "F.eks. Stamina, Avonova", helpText: "Bedriftshelsetjenesten bistår med kartlegging, risikovurdering og tiltak for arbeidsmiljøet. Lovpålagt for visse bransjer." },
+        { id: "bhtContact", label: "BHT-kontaktperson", type: "text", helpText: "Hovedkontakt hos bedriftshelsetjenesten for psykososiale henvendelser." },
+        { id: "bhtPhone", label: "BHT-telefon", type: "text", helpText: "Telefonnummer til bedriftshelsetjenesten for hastesaker." },
+        { id: "bhtAgreementType", label: "BHT-avtale type", type: "select", options: ["Lovpålagt", "Frivillig", "Utvidet"], helpText: "Type BHT-avtale. Lovpålagt for bransjer i forskriften. Utvidet gir tilgang til flere tjenester." },
       ],
     },
     {
-      title: "Kartlegging og rapportering",
+      title: "Kartlegging og metoder",
       fields: [
-        { id: "surveyFrequency", label: "Kartleggingsfrekvens", type: "select", options: ["Årlig", "Halvårlig", "Kvartalsvis"] },
-        { id: "surveyTool", label: "Kartleggingsverktøy", type: "text" },
-        { id: "reportingPeriod", label: "Rapporteringsperiode", type: "select", options: ["Årlig", "Halvårlig"] },
-        { id: "reportRecipient", label: "Rapportmottaker", type: "text" },
+        { id: "surveyFrequency", label: "Kartleggingsfrekvens", type: "select", options: ["Årlig", "Halvårlig", "Kvartalsvis"], helpText: "Hvor ofte arbeidsmiljøkartlegging gjennomføres. 2026-kravene skjerper kravet til systematisk og jevnlig kartlegging." },
+        { id: "surveyTool", label: "Kartleggingsverktøy", type: "text", helpText: "Verktøy eller metode brukt for kartlegging (f.eks. QPS Nordic, 10-faktor, egenutviklet spørreundersøkelse)." },
+        { id: "surveyAnonymous", label: "Anonym kartlegging", type: "checkbox", helpText: "Om kartleggingen er anonym. Anonymitet gir normalt høyere svarprosent og mer ærlige svar." },
+        { id: "surveyProvider", label: "Ekstern kartleggingspartner", type: "text", helpText: "Eventuell ekstern partner som gjennomfører kartleggingen (f.eks. BHT, konsulentfirma)." },
+        { id: "reportingPeriod", label: "Rapporteringsperiode", type: "select", options: ["Årlig", "Halvårlig"], helpText: "Hvor ofte det utarbeides formell rapport om psykososialt arbeidsmiljø til ledelsen/styret." },
+        { id: "reportRecipient", label: "Rapportmottaker", type: "text", helpText: "Hvem som mottar den formelle rapporten om psykososialt arbeidsmiljø." },
       ],
     },
     {
-      title: "Oppfølging og konflikthåndtering",
+      title: "Oppfølging og samtaler",
       fields: [
-        { id: "followUpPerson", label: "Oppfølgingsansvarlig", type: "text" },
-        { id: "conflictMediator", label: "Konflikthåndterer", type: "text" },
-        { id: "adoptedDate", label: "Vedtatt dato", type: "text" },
+        { id: "followUpPerson", label: "Oppfølgingsansvarlig", type: "text", helpText: "Person som er ansvarlig for oppfølging av enkeltsaker knyttet til arbeidsmiljø, trakassering eller konflikter." },
+        { id: "followUpDeadlineDays", label: "Oppfølgingsfrist (virkedager)", type: "text", helpText: "Antall virkedager innen oppfølgingssamtale skal gjennomføres etter meldt hendelse." },
+        { id: "medarbeidersamtaleFrequency", label: "Medarbeidersamtaler", type: "text", helpText: "Hvor ofte medarbeidersamtaler gjennomføres. Minimum to ganger per år anbefales. Dekker trivsel, mål og utvikling." },
+        { id: "bekymringssamtaleDeadline", label: "Bekymringssamtale frist", type: "text", helpText: "Hvor raskt leder skal initiere samtale ved tegn på mistrivsel, økt fravær eller endret atferd." },
+      ],
+    },
+    {
+      title: "Konflikthåndtering",
+      fields: [
+        { id: "conflictMediator", label: "Intern konflikthåndterer", type: "text", helpText: "Person som fasiliterer konflikthåndtering internt. Bør ha opplæring i mekling og nøytral posisjon." },
+        { id: "externalMediator", label: "Ekstern mekler/bistand", type: "text", helpText: "Ekstern part som kan bistå ved alvorlige konflikter (f.eks. BHT, advokat, organisasjonspsykolog)." },
+      ],
+    },
+    {
+      title: "Mål og indikatorer",
+      fields: [
+        { id: "sickLeaveTarget", label: "Sykefraværsmål (%)", type: "text", placeholder: "F.eks. Under 4%", helpText: "Bedriftens mål for totalt sykefravær. Gir referansepunkt for evaluering av arbeidsmiljøtiltak." },
+        { id: "turnoverTarget", label: "Turnover-mål (%)", type: "text", placeholder: "F.eks. Under 10%", helpText: "Mål for årlig turnover. Høy turnover kan indikere arbeidsmiljøproblemer." },
+        { id: "enpsTarget", label: "eNPS-mål", type: "text", placeholder: "F.eks. Over 30", helpText: "Mål for Employee Net Promoter Score. Måler i hvilken grad ansatte vil anbefale arbeidsplassen." },
+      ],
+    },
+    {
+      title: "Forebygging og tilrettelegging",
+      fields: [
+        { id: "leaderTrainingFrequency", label: "Lederopplæring frekvens", type: "select", options: ["Årlig", "Halvårlig", "Ved behov"], helpText: "Hvor ofte ledere gjennomgår opplæring i psykososialt arbeidsmiljø, konflikthåndtering og relasjonsledelse." },
+        { id: "leaderTrainingTopics", label: "Lederopplæringstema", type: "text", helpText: "Temaer som dekkes i lederopplæringen. Bør inkludere relasjonsledelse, konflikthåndtering og psykisk førstehjelp." },
+        { id: "wellbeingPrograms", label: "Trivselstiltak", type: "text", placeholder: "F.eks. Treningsabonnement, sosiale arrangementer", helpText: "Programmer og tiltak for å fremme trivsel og velvære blant ansatte." },
+        { id: "ergonomicsPolicy", label: "Ergonomi-policy", type: "text", helpText: "Retningslinjer for ergonomisk tilrettelegging av arbeidsplass (hev-senk-pult, skjerm, stol etc.)." },
+        { id: "workLifeBalance", label: "Balanse arbeid/fritid", type: "text", helpText: "Tiltak for å fremme god balanse mellom arbeid og privatliv (fleksitid, hjemmekontor, avspasering)." },
+        { id: "returnToWorkProgram", label: "Tilbake-til-jobb program", type: "checkbox", helpText: "Om bedriften har et strukturert program for tilbakeføring etter langtidsfravær (gradert sykemelding, tilpassede oppgaver)." },
+        { id: "preventionBudget", label: "Forebyggingsbudsjett", type: "text", placeholder: "F.eks. 5 000 kr/ansatt", helpText: "Årlig budsjett per ansatt til forebyggende arbeidsmiljøtiltak." },
+        { id: "adoptedDate", label: "Vedtatt dato", type: "text", helpText: "Dato dokumentet ble vedtatt og trådte i kraft." },
       ],
     },
   ],
@@ -73,6 +127,8 @@ export const psykososialtConfig: GeneratorConfig = {
 <li><strong>Daglig leder:</strong> ${f(form.ceoName, "Daglig leder")} — overordnet ansvar</li>
 <li><strong>HMS-ansvarlig:</strong> ${f(form.hmsAnsvarlig, "HMS")} — koordinering og oppfølging</li>
 <li><strong>Verneombud:</strong> ${f(form.verneombud, "Verneombud")} — arbeidstakernes representant</li>
+${form.hrContact ? `<li><strong>HR-ansvarlig:</strong> ${form.hrContact} — personalrelaterte saker</li>` : ""}
+${form.amuExists ? `<li><strong>AMU-leder:</strong> ${f(form.amuChair, "AMU-leder")} — arbeidsmiljøutvalgets leder</li>` : ""}
 <li><strong>Alle ledere:</strong> Ansvar for eget team</li>
 <li><strong>Alle ansatte:</strong> Bidra til godt arbeidsmiljø og melde fra om bekymringer</li>
 </ul>`,
@@ -81,7 +137,7 @@ export const psykososialtConfig: GeneratorConfig = {
       id: "kartlegging",
       title: "Kartlegging av arbeidsmiljø",
       content: (form) => `<h2>2. Kartlegging av arbeidsmiljø</h2>
-<p>Kartlegging av psykososialt arbeidsmiljø gjennomføres <strong>${f(form.surveyFrequency, "Frekvens")}</strong> med ${f(form.surveyTool, "Verktøy")}.</p>
+<p>Kartlegging av psykososialt arbeidsmiljø gjennomføres <strong>${f(form.surveyFrequency, "Frekvens")}</strong> med ${f(form.surveyTool, "Verktøy")}${form.surveyAnonymous ? " (anonym)" : ""}.${form.surveyProvider ? ` Ekstern partner: <strong>${form.surveyProvider}</strong>.` : ""}</p>
 <h3>Hva kartlegges</h3>
 <ul>
 <li>Arbeidsbelastning og stressnivå</li>
@@ -103,7 +159,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <li>Sykefraværsstatistikk og trendanalyser</li>
 </ul>
 <h3>Resultatbehandling</h3>
-<p>Resultater presenteres for ledelsen og AMU/verneombudet. Alle avdelinger får tilbakemelding på sine resultater. Tiltak planlegges og iverksettes basert på funn.</p>`,
+<p>Resultater presenteres for ledelsen${form.amuExists ? " og AMU" : ""}/verneombudet. Alle avdelinger får tilbakemelding på sine resultater. Tiltak planlegges og iverksettes basert på funn.</p>`,
     },
     {
       id: "risikofaktorer",
@@ -144,6 +200,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <li>Tilrettelegging for fleksibel arbeidstid</li>
 <li>Opplæring i konflikthåndtering for alle ledere</li>
 <li>Etablering av mentorordning</li>
+${form.wellbeingPrograms ? `<li>${form.wellbeingPrograms}</li>` : ""}
 </ul>`,
     },
     {
@@ -158,10 +215,11 @@ export const psykososialtConfig: GeneratorConfig = {
 </ul>
 <h3>Periodiske rutiner</h3>
 <ul>
-<li><strong>Medarbeidersamtaler:</strong> Minimum to ganger per år</li>
+<li><strong>Medarbeidersamtaler:</strong> ${f(form.medarbeidersamtaleFrequency, "Frekvens")}</li>
 <li><strong>Arbeidsmiljøkartlegging:</strong> ${f(form.surveyFrequency, "Frekvens")}</li>
 <li><strong>Vernerunder:</strong> Halvårlig, med psykososialt fokus</li>
 <li><strong>Teamsamlinger:</strong> For å styrke samhold og kommunikasjon</li>
+<li><strong>Lederopplæring:</strong> ${f(form.leaderTrainingFrequency, "Frekvens")} — ${f(form.leaderTrainingTopics, "Tema")}</li>
 </ul>
 <h3>Strukturelle tiltak</h3>
 <ul>
@@ -169,7 +227,10 @@ export const psykososialtConfig: GeneratorConfig = {
 <li>Onboarding-program for nye ansatte</li>
 <li>Kompetanseutvikling og karrieremuligheter</li>
 <li>Rettferdig og transparent lønnspolitikk</li>
-<li>Tilrettelegging for balanse mellom jobb og privatliv</li>
+<li>Tilrettelegging: ${f(form.workLifeBalance, "Tiltak")}</li>
+<li>Ergonomi: ${f(form.ergonomicsPolicy, "Policy")}</li>
+${form.wellbeingPrograms ? `<li>Trivselstiltak: ${form.wellbeingPrograms}</li>` : ""}
+${form.preventionBudget ? `<li>Forebyggingsbudsjett: ${form.preventionBudget} per ansatt</li>` : ""}
 </ul>`,
     },
     {
@@ -179,7 +240,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <h3>Mobbing og trakassering</h3>
 <ol>
 <li>Hendelsen meldes til ${f(form.followUpPerson, "Ansvarlig")} eller verneombud</li>
-<li>Samtale med den som opplever seg utsatt — innen 3 virkedager</li>
+<li>Samtale med den som opplever seg utsatt — innen <strong>${f(form.followUpDeadlineDays, "3")} virkedager</strong></li>
 <li>Kartlegging av situasjonen med alle involverte parter</li>
 <li>Iverksetting av tiltak (omplassering, opplæring, mekling)</li>
 <li>Oppfølging for å sikre at tiltakene virker</li>
@@ -190,16 +251,17 @@ export const psykososialtConfig: GeneratorConfig = {
 <ul>
 <li>Umiddelbar sikring av den utsatte</li>
 <li>Varsling til politi ved straffbare forhold</li>
-<li>Bistand fra bedriftshelsetjenesten: ${f(form.bhtProvider, "BHT")} v/ ${f(form.bhtContact, "Kontakt")}</li>
+<li>Bistand fra bedriftshelsetjenesten: ${f(form.bhtProvider, "BHT")} v/ ${f(form.bhtContact, "Kontakt")}${form.bhtPhone ? ` (tlf: ${form.bhtPhone})` : ""}</li>
 <li>Oppfølgingssamtaler og eventuell profesjonell debriefing</li>
-</ul>`,
+</ul>
+${form.returnToWorkProgram ? `<h3>Tilbake-til-jobb</h3><p>Ved langtidsfravær som følge av arbeidsmiljørelaterte hendelser, tilbys et strukturert tilbake-til-jobb program med gradert oppstart og tilpassede oppgaver.</p>` : ""}`,
     },
     {
       id: "samtaler",
       title: "Samtaler og oppfølging",
       content: (form) => `<h2>7. Samtaler og oppfølging</h2>
 <h3>Medarbeidersamtaler</h3>
-<p>Gjennomføres minimum to ganger årlig og dekker:</p>
+<p>Gjennomføres ${f(form.medarbeidersamtaleFrequency, "frekvens")} og dekker:</p>
 <ul>
 <li>Trivsel og arbeidsmiljø</li>
 <li>Arbeidsbelastning og stressnivå</li>
@@ -209,7 +271,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <li>Balanse mellom arbeid og privatliv</li>
 </ul>
 <h3>Bekymringssamtaler</h3>
-<p>Ledere skal initiere samtale ved tegn på mistrivsel:</p>
+<p>Ledere skal initiere samtale ${f(form.bekymringssamtaleDeadline, "frist")} ved tegn på mistrivsel:</p>
 <ul>
 <li>Endret atferd eller tilbaketrekking</li>
 <li>Økt fravær eller hyppige korttidsfravær</li>
@@ -229,7 +291,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <li><strong>Tidlig inngripen:</strong> Ledere adresserer gnisninger før de eskalerer</li>
 <li><strong>Direkte dialog:</strong> Partene oppfordres til å snakke sammen med støtte fra leder</li>
 <li><strong>Mekling:</strong> ${f(form.conflictMediator, "Konflikthåndterer")} fasiliterer strukturert dialog</li>
-<li><strong>Formell behandling:</strong> Ved alvorlige konflikter involveres ekstern bistand</li>
+<li><strong>Formell behandling:</strong> ${form.externalMediator ? `Ekstern bistand via ${form.externalMediator}` : "Ved alvorlige konflikter involveres ekstern bistand"}</li>
 </ol>
 <h3>Konflikthåndtererens rolle</h3>
 <ul>
@@ -248,11 +310,11 @@ export const psykososialtConfig: GeneratorConfig = {
 <p>${f(form.companyName, "Bedriftsnavn")} måler det psykososiale arbeidsmiljøet gjennom:</p>
 <ul>
 <li>Arbeidsmiljøundersøkelser (score og trender)</li>
-<li>Sykefraværsstatistikk — totalt og korttidsfravær</li>
-<li>Turnover-rate</li>
+<li>Sykefraværsstatistikk — totalt og korttidsfravær${form.sickLeaveTarget ? ` (mål: ${form.sickLeaveTarget})` : ""}</li>
+<li>Turnover-rate${form.turnoverTarget ? ` (mål: ${form.turnoverTarget})` : ""}</li>
 <li>Antall varslingssaker og konfliktsaker</li>
 <li>Resultater fra medarbeidersamtaler</li>
-<li>eNPS (Employee Net Promoter Score) dersom benyttet</li>
+<li>eNPS (Employee Net Promoter Score)${form.enpsTarget ? ` (mål: ${form.enpsTarget})` : ""}</li>
 </ul>
 <h3>Evaluering</h3>
 <p>Resultatene evalueres ${f(form.reportingPeriod, "Periode")} av ${f(form.hmsAnsvarlig, "HMS-ansvarlig")} i samarbeid med verneombudet og presenteres for ${f(form.reportRecipient, "Mottaker")}.</p>
@@ -279,7 +341,7 @@ export const psykososialtConfig: GeneratorConfig = {
 <p>Rapporten presenteres for ${f(form.reportRecipient, "Mottaker")} og gjøres tilgjengelig for:</p>
 <ul>
 <li>Ledelsen og styret</li>
-<li>Verneombudet og AMU</li>
+<li>Verneombudet${form.amuExists ? " og AMU" : ""}</li>
 <li>Bedriftshelsetjenesten</li>
 <li>Arbeidstilsynet ved forespørsel</li>
 </ul>`,
@@ -299,11 +361,9 @@ export const psykososialtConfig: GeneratorConfig = {
 <li>Delta i lederopplæring om psykososialt arbeidsmiljø</li>
 </ul>
 <h3>Kompetansekrav</h3>
-<p>Alle ledere skal gjennomgå opplæring i:</p>
+<p>Alle ledere gjennomgår opplæring ${f(form.leaderTrainingFrequency, "Frekvens").toLowerCase()} i:</p>
 <ul>
-<li>Relasjonsledelse og kommunikasjon</li>
-<li>Konflikthåndtering</li>
-<li>Psykisk helse og førstehjelp</li>
+${(form.leaderTrainingTopics || "Relasjonsledelse, konflikthåndtering, psykisk helse").split(",").map((t: string) => `<li>${t.trim()}</li>`).join("\n")}
 <li>Forebygging av trakassering og diskriminering</li>
 <li>Arbeidsmiljøloven og arbeidsgivers plikter</li>
 </ul>
