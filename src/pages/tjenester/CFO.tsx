@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, Briefcase, ChevronRight, ArrowLeft, CheckCircle2, TrendingUp } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -41,6 +42,11 @@ const RelatedServices = [
 
 const CFO = () => (
   <>
+    <Helmet>
+      <title>CFO-as-a-Service — Strategisk finansiell ledelse | Avargo</title>
+      <meta name="description" content="Seniorkompetanse uten heltidsansettelsen. CFO-tjeneste for vekstselskaper, investeringsrunder, exit og strategiske veivalg." />
+      <link rel="canonical" href="https://avargo.no/tjenester/cfo" />
+    </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
