@@ -119,22 +119,58 @@ serve(async (req) => {
 
     if (smtpUser && smtpPass) {
       try {
+        const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+        
         const htmlBody = `
-          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-            <h2 style="color:#1a1a1a;border-bottom:2px solid #e5e5e5;padding-bottom:10px;">Ny henvendelse fra kontaktskjemaet</h2>
-            ${pkg ? `<div style="background:#f0f4ff;padding:10px 15px;border-radius:8px;margin-bottom:20px;"><strong>Valgt pakke:</strong> ${pkg}</div>` : ""}
-            <table style="width:100%;border-collapse:collapse;">
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;width:160px;"><strong>Selskapsnavn</strong></td><td style="padding:10px 0;">${company_name || "—"}</td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Org.nummer</strong></td><td style="padding:10px 0;">${org_number || "—"}</td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Kontaktperson</strong></td><td style="padding:10px 0;">${contact_person || "—"}</td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>E-post</strong></td><td style="padding:10px 0;"><a href="mailto:${email}">${email || "—"}</a></td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Telefon</strong></td><td style="padding:10px 0;"><a href="tel:${phone}">${phone || "—"}</a></td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Bransje</strong></td><td style="padding:10px 0;">${industry || "—"}</td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Næringskode</strong></td><td style="padding:10px 0;">${industry_code || "—"}</td></tr>
-              <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 0;color:#666;"><strong>Omsetningsmål</strong></td><td style="padding:10px 0;">${revenue_target || "—"}</td></tr>
-            </table>
-            ${message ? `<div style="margin-top:20px;"><strong style="color:#666;">Hva er viktigst for kunden:</strong><div style="background:#f9f9f9;padding:15px;border-radius:8px;margin-top:8px;line-height:1.6;">${message}</div></div>` : ""}
-            <div style="margin-top:30px;padding-top:15px;border-top:1px solid #eee;font-size:12px;color:#999;">Sendt fra kontaktskjemaet på avargo.no</div>
+          <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;">
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
+              <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:-0.3px;">📬 Ny henvendelse</h1>
+              <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}</p>
+            </div>
+
+            <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+              <!-- Pakke-badge -->
+              ${pkg ? `<div style="display:inline-block;background:#eef2ff;color:#4338ca;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px;">🏷️ ${pkg}</div>` : ""}
+
+              <!-- Selskapsinfo -->
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+                <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">🏢 Selskap</h2>
+                <div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:4px;">${company_name || "Ikke oppgitt"}</div>
+                ${org_number ? `<div style="font-size:13px;color:#64748b;">Org.nr: ${org_number}</div>` : ""}
+                ${industry ? `<div style="margin-top:8px;"><span style="display:inline-block;background:#f1f5f9;color:#475569;padding:3px 10px;border-radius:12px;font-size:12px;">${industry}</span></div>` : ""}
+                ${industry_code ? `<div style="margin-top:4px;font-size:12px;color:#94a3b8;">Næringskode: ${industry_code}</div>` : ""}
+              </div>
+
+              <!-- Kontaktinfo -->
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+                <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">👤 Kontaktperson</h2>
+                <div style="font-size:16px;font-weight:600;color:#0f172a;margin-bottom:10px;">${contact_person || "Ikke oppgitt"}</div>
+                <table style="border-collapse:collapse;">
+                  ${email ? `<tr><td style="padding:4px 12px 4px 0;color:#64748b;font-size:13px;">📧</td><td style="padding:4px 0;"><a href="mailto:${email}" style="color:#2563eb;text-decoration:none;font-size:14px;">${email}</a></td></tr>` : ""}
+                  ${phone ? `<tr><td style="padding:4px 12px 4px 0;color:#64748b;font-size:13px;">📱</td><td style="padding:4px 0;"><a href="tel:${phone}" style="color:#2563eb;text-decoration:none;font-size:14px;">${phone}</a></td></tr>` : ""}
+                </table>
+              </div>
+
+              <!-- Omsetningsmål -->
+              ${revenue_target ? `
+              <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+                <span style="font-size:13px;color:#92400e;font-weight:600;">💰 Omsetningsmål:</span>
+                <span style="font-size:14px;color:#78350f;margin-left:6px;">${revenue_target}</span>
+              </div>` : ""}
+
+              <!-- Melding -->
+              ${message ? `
+              <div style="margin-bottom:20px;">
+                <h2 style="margin:0 0 10px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">💬 Melding fra kunden</h2>
+                <div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;">${message}</div>
+              </div>` : ""}
+
+              <!-- Footer -->
+              <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
+                <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra kontaktskjemaet på <strong>avargo.no</strong></p>
+              </div>
+            </div>
           </div>`;
 
         await sendEmail({
