@@ -315,18 +315,35 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
       const { error } = await supabase.from("customer_handbook_chapters").insert(rows);
       if (error) throw error;
 
-      // Save a document reference under category "HR"
+      // Save or update document reference under category "HR"
       const docTitle = `Personalhåndbok – ${form.companyName || "Bedrift"}`;
       const moduleGroups = [...new Set(ALL_MODULES.filter(m => form.modules.includes(m.id)).map(m => m.group))];
       const description = `Generert ${new Date().toLocaleDateString("no-NO")}. Inneholder: ${moduleGroups.join(", ")}.`;
 
-      await supabase.from("customer_documents").insert({
-        company_id: company.id,
-        title: docTitle,
-        description,
-        category: "HR",
-        visibility: "private",
-      });
+      // Check if an HR document already exists for this company
+      const { data: existingDoc } = await supabase
+        .from("customer_documents")
+        .select("id")
+        .eq("company_id", company.id)
+        .eq("category", "HR")
+        .limit(1)
+        .maybeSingle();
+
+      if (existingDoc) {
+        await supabase.from("customer_documents").update({
+          title: docTitle,
+          description,
+          updated_at: new Date().toISOString(),
+        }).eq("id", existingDoc.id);
+      } else {
+        await supabase.from("customer_documents").insert({
+          company_id: company.id,
+          title: docTitle,
+          description,
+          category: "HR",
+          visibility: "private",
+        });
+      }
 
       setGeneratedChapters(chapterContents);
       toast.success("Personalhåndbok generert og lagret i Dokumenter!");
