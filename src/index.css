@@ -383,3 +383,58 @@ html {
   .article-content h3 { font-size: 1.35rem; }
   .article-content h4 { font-size: 1.15rem; }
 }
+
+/* Handbook editable fields */
+.handbook-content .editable-field {
+  display: inline;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px dashed hsl(var(--primary) / 0.3);
+  border-radius: 6px;
+  padding: 1px 8px;
+  color: hsl(var(--primary));
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9em;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.handbook-content .editable-field:hover {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+.editable-field-preview {
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 4px;
+  padding: 0 4px;
+  color: hsl(var(--primary));
+  font-weight: 500;
+}
+
+/* Handbook article spacing overrides */
+.handbook-content {
+  line-height: 1.85;
+}
+
+.handbook-content p {
+  margin-bottom: 1.25em;
+}
+
+.handbook-content h2 {
+  margin-top: 2.5em;
+}
+
+.handbook-content h3 {
+  margin-top: 2em;
+}
+
+.handbook-content ul,
+.handbook-content ol {
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+}
+
+.handbook-content li {
+  margin-bottom: 0.5em;
+}
