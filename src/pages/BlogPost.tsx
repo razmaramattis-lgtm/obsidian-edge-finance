@@ -32,6 +32,8 @@ const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [prevPost, setPrevPost] = useState<{ slug: string; title: string } | null>(null);
+  const [nextPost, setNextPost] = useState<{ slug: string; title: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,8 +44,19 @@ const BlogPost = () => {
         setPost(p);
         setLoading(false);
 
-        // Fetch related posts by tags or category
         if (p) {
+          // Fetch prev/next posts
+          Promise.all([
+            supabase.from("blog_posts").select("slug,title").eq("published", true)
+              .lt("created_at", p.created_at).order("created_at", { ascending: false }).limit(1),
+            supabase.from("blog_posts").select("slug,title").eq("published", true)
+              .gt("created_at", p.created_at).order("created_at", { ascending: true }).limit(1),
+          ]).then(([{ data: prev }, { data: next }]) => {
+            setPrevPost(prev?.[0] ? { slug: prev[0].slug!, title: prev[0].title } : null);
+            setNextPost(next?.[0] ? { slug: next[0].slug!, title: next[0].title } : null);
+          });
+
+          // Fetch related posts by tags or category
           supabase.from("blog_posts")
             .select("id,title,slug,excerpt,content,category,image_url,tags,pinned,created_at")
             .eq("published", true)
@@ -167,6 +180,24 @@ const BlogPost = () => {
                 LinkedIn
               </a>
             </div>
+
+            {/* Prev / Next navigation */}
+            {(prevPost || nextPost) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10 pt-8 border-t border-border/20">
+                {prevPost ? (
+                  <Link to={`/nyhet/${prevPost.slug}`} className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all">
+                    <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">← Forrige</span>
+                    <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2">{prevPost.title}</p>
+                  </Link>
+                ) : <div />}
+                {nextPost ? (
+                  <Link to={`/nyhet/${nextPost.slug}`} className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all text-right">
+                    <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">Neste →</span>
+                    <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2">{nextPost.title}</p>
+                  </Link>
+                ) : <div />}
+              </div>
+            )}
           </motion.div>
         </div>
       </article>
