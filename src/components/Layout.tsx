@@ -16,6 +16,7 @@ const tjenesterGroups = [
       { icon: Briefcase, title: "CFO-as-a-Service", href: "/tjenester/cfo" },
       { icon: Users, title: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
       { icon: BookOpen, title: "Regnskapskurs", href: "/tjenester/kurs" },
+      { icon: BookOpen, title: "1-1 Regnskap", href: "/tjenester/1-1-regnskap" },
     ],
   },
   {

@@ -40,6 +40,13 @@ const categories = [
         desc: "Praktiske kurs i bokføring, MVA, skattemelding og årsregnskap — levert av autoriserte regnskapsførere. Fra grunnkurs til skreddersydde bedriftspakker.",
         sub: ["Bokføring & bilagshåndtering", "MVA-loven i praksis", "Skattemelding & årsregnskap", "System & internkontroll"],
       },
+      {
+        icon: BookOpen,
+        href: "/tjenester/1-1-regnskap",
+        title: "1-1 Regnskap",
+        desc: "Book en personlig gjennomgang av regnskapet med en statsautorisert rådgiver. Skreddersydd innsikt, konkrete anbefalinger og handlingsplan for din bedrift.",
+        sub: ["Personlig regnskapsgjennomgang", "Resultat- og balanseanalyse", "Skatteoptimalisering", "Handlingsplan & neste steg"],
+      },
     ],
   },
   {
