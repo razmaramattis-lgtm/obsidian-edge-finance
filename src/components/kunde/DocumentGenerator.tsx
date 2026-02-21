@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Save, Download, ChevronDown, ChevronRight, FileText,
-  CheckCircle2, AlertCircle, Eye, EyeOff, PanelLeftClose, PanelLeft, Info
+  CheckCircle2, AlertCircle, Eye, EyeOff, PanelLeftClose, PanelLeft, Info, ImagePlus, X
 } from "lucide-react";
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
@@ -26,7 +26,10 @@ const DocumentGenerator = ({ config }: Props) => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showForm, setShowForm] = useState(true);
+  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
   const docRef = useRef<HTMLDivElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const groups: Record<string, boolean> = {};
@@ -62,6 +65,26 @@ const DocumentGenerator = ({ config }: Props) => {
   const toggleGroup = useCallback((title: string) => {
     setExpandedGroups(prev => ({ ...prev, [title]: !prev[title] }));
   }, []);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Velg en bildefil (PNG, JPG, SVG)");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Logo må være under 2 MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setLogoDataUrl(reader.result as string);
+      toast.success("Logo lastet opp");
+    };
+    reader.readAsDataURL(file);
+    if (logoInputRef.current) logoInputRef.current.value = "";
+  };
 
   const handleSave = async () => {
     if (!companyId) {
@@ -129,24 +152,40 @@ const DocumentGenerator = ({ config }: Props) => {
 
   const handleDownloadPdf = async () => {
     if (!docRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    const element = docRef.current;
-    html2pdf()
-      .set({
-        margin: [20, 20, 20, 20],
-        filename: `${config.title}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-      })
-      .from(element)
-      .save();
+    setDownloading(true);
+    try {
+      const html2pdf = (await import("html2pdf.js")).default;
+      const clone = docRef.current.cloneNode(true) as HTMLElement;
+      
+      // Ensure all styles are inlined for PDF
+      clone.style.backgroundColor = "#ffffff";
+      clone.style.color = "#000000";
+      clone.style.padding = "0";
+      
+      await html2pdf()
+        .set({
+          margin: [15, 18, 15, 18],
+          filename: `${config.title} - ${form.companyName || "Bedrift"}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { 
+            scale: 2, 
+            backgroundColor: "#ffffff",
+            useCORS: true,
+            logging: false,
+          },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+        })
+        .from(clone)
+        .save();
+      
+      toast.success("PDF lastet ned");
+    } catch (err) {
+      console.error("PDF error:", err);
+      toast.error("Kunne ikke generere PDF");
+    }
+    setDownloading(false);
   };
-
-  const fullDocument = useMemo(() => {
-    return config.sections.map(s => s.content(form)).join('<hr style="margin:2em 0;border:none;border-top:1px solid #e5e7eb;" />');
-  }, [config.sections, form]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)]">
@@ -164,11 +203,39 @@ const DocumentGenerator = ({ config }: Props) => {
             {showForm ? <PanelLeftClose size={14} /> : <PanelLeft size={14} />}
             {showForm ? "Skjul skjema" : "Vis skjema"}
           </button>
+          
+          {/* Logo upload */}
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            className="hidden"
+          />
           <button
-            onClick={handleDownloadPdf}
+            onClick={() => logoInputRef.current?.click()}
             className="inline-flex items-center gap-1.5 px-3 py-2 text-xs rounded-xl border border-border/20 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Download size={14} /> Last ned PDF
+            <ImagePlus size={14} />
+            {logoDataUrl ? "Bytt logo" : "Last opp logo"}
+          </button>
+          {logoDataUrl && (
+            <button
+              onClick={() => { setLogoDataUrl(null); toast.info("Logo fjernet"); }}
+              className="inline-flex items-center gap-1.5 px-2 py-2 text-xs rounded-xl border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+              title="Fjern logo"
+            >
+              <X size={14} />
+            </button>
+          )}
+          
+          <button
+            onClick={handleDownloadPdf}
+            disabled={downloading}
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs rounded-xl border border-border/20 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+          >
+            {downloading ? <span className="animate-spin">⏳</span> : <Download size={14} />}
+            {downloading ? "Genererer…" : "Last ned PDF"}
           </button>
           <button
             onClick={handleSave}
@@ -371,6 +438,15 @@ const DocumentGenerator = ({ config }: Props) => {
             >
               {/* Document title page */}
               <div style={{ textAlign: "center", marginBottom: "2.5em", paddingBottom: "1.5em", borderBottom: "2px solid #333" }}>
+                {logoDataUrl && (
+                  <div style={{ marginBottom: "16px" }}>
+                    <img
+                      src={logoDataUrl}
+                      alt="Bedriftslogo"
+                      style={{ maxHeight: "80px", maxWidth: "200px", margin: "0 auto", display: "block", objectFit: "contain" }}
+                    />
+                  </div>
+                )}
                 <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#000", marginBottom: "8px", fontFamily: "'Georgia', serif" }}>
                   {config.title}
                 </h1>
@@ -385,19 +461,42 @@ const DocumentGenerator = ({ config }: Props) => {
                 </p>
               </div>
 
-              {/* Table of contents */}
+              {/* Table of contents with hyperlinks */}
               <div style={{ marginBottom: "2em", paddingBottom: "1.5em", borderBottom: "1px solid #ddd" }}>
                 <h2 style={{ fontSize: "16px", fontWeight: "bold", color: "#000", marginBottom: "12px" }}>Innholdsfortegnelse</h2>
-                <ol style={{ paddingLeft: "1.5em", color: "#333", fontSize: "12px", lineHeight: "2" }}>
+                <ol style={{ paddingLeft: "1.5em", color: "#333", fontSize: "12px", lineHeight: "2.2" }}>
                   {config.sections.map((s, i) => (
-                    <li key={s.id} style={{ color: "#333" }}>{s.title}</li>
+                    <li key={s.id}>
+                      <a
+                        href={`#pdf-section-${s.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          document.getElementById(`section-${s.id}`)?.scrollIntoView({ behavior: "smooth" });
+                          setActiveSection(s.id);
+                        }}
+                        style={{
+                          color: "#1a56db",
+                          textDecoration: "underline",
+                          textUnderlineOffset: "2px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {s.title}
+                      </a>
+                    </li>
                   ))}
                 </ol>
               </div>
 
               {/* Sections */}
               {config.sections.map((section, i) => (
-                <div key={section.id} id={`section-${section.id}`} style={{ pageBreakInside: "avoid" }}>
+                <div
+                  key={section.id}
+                  id={`section-${section.id}`}
+                  style={{ pageBreakBefore: i > 0 ? "always" : undefined }}
+                >
+                  {/* Anchor for PDF internal links */}
+                  <a id={`pdf-section-${section.id}`} style={{ display: "block", height: 0, visibility: "hidden" }} />
                   <div
                     className="pdf-content"
                     dangerouslySetInnerHTML={{
