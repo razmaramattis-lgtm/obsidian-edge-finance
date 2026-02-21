@@ -157,6 +157,25 @@ const DocumentGenerator = ({ config }: Props) => {
       const html2pdf = (await import("html2pdf.js")).default;
       const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
 
+      // Build a self-contained HTML string for reliable PDF generation
+      const styles = docRef.current.querySelector('style')?.outerHTML || '';
+      const htmlContent = `
+        <div style="background:#ffffff;color:#000000;font-family:'Georgia','Times New Roman',serif;font-size:13px;line-height:1.7;">
+          ${docRef.current.innerHTML}
+        </div>
+        <style>
+          * { background: #ffffff !important; color: #1a1a1a !important; }
+          a { color: #1a56db !important; }
+          .merge-field { background: #f0f0f0 !important; color: #666 !important; border: 1px dashed #ccc; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+        </style>
+      `;
+
+      // Create a temporary off-screen container for clean capture
+      const tempContainer = document.createElement("div");
+      tempContainer.style.cssText = "position:fixed;left:-9999px;top:0;width:794px;background:#ffffff;z-index:-1;";
+      tempContainer.innerHTML = htmlContent;
+      document.body.appendChild(tempContainer);
+
       const pdfObj = await html2pdf()
         .set({
           margin: [15, 18, 15, 18],
@@ -167,32 +186,27 @@ const DocumentGenerator = ({ config }: Props) => {
             backgroundColor: "#ffffff",
             useCORS: true,
             logging: false,
+            windowWidth: 794,
           },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(docRef.current)
+        .from(tempContainer)
         .toPdf()
         .get("pdf");
 
-      const blob = pdfObj.output("blob");
-      const url = URL.createObjectURL(blob);
+      document.body.removeChild(tempContainer);
 
-      // Open in new tab — works even inside iframes that block downloads
-      const newTab = window.open(url, "_blank");
-      if (!newTab) {
-        // Fallback: direct anchor download
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.target = "_blank";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
+      // Convert to base64 data URI — works even in sandboxed iframes
+      const dataUri = pdfObj.output("datauristring");
+      const a = document.createElement("a");
+      a.href = dataUri;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-      toast.success("PDF åpnet — bruk Ctrl+S / ⌘+S for å lagre");
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      toast.success("PDF lastet ned");
     } catch (err) {
       console.error("PDF error:", err);
       toast.error("Kunne ikke generere PDF — prøv igjen");
