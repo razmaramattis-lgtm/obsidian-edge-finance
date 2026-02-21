@@ -458,6 +458,33 @@ export type Database = {
         }
         Relationships: []
       }
+      hr_handbook: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       industries: {
         Row: {
           active: boolean | null
