@@ -6,6 +6,7 @@ import {
   Download, FileSpreadsheet, Clock, Pin, Tag, Filter
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import { supabase } from "@/integrations/supabase/client";
 
 interface BlogPost {
@@ -292,6 +293,15 @@ const Ressurser = () => {
               )}
             </div>
           )}
+
+          {/* Skattefrister */}
+          <AnimatedSection className="mt-16">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Clock size={18} className="text-primary" />
+              Skattefrister
+            </h2>
+            <TaxDeadlineWidget limit={6} />
+          </AnimatedSection>
         </div>
       </section>
     </>
