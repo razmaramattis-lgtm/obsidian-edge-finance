@@ -50,7 +50,7 @@ const About = () => {
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.12}>
                 <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
-                  <span className="font-heading text-5xl md:text-6xl text-primary/8">{v.num}</span>
+                  <span className="font-heading text-5xl md:text-6xl text-primary/20">{v.num}</span>
                   <v.icon size={20} className="text-primary mt-3 mb-4 md:mt-4 md:mb-5" strokeWidth={1.5} />
                   <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{v.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light">{v.desc}</p>
@@ -79,7 +79,7 @@ const About = () => {
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.15}>
                 <div className="p-8 md:p-10 glass rounded-3xl card-lift">
-                  <span className="font-heading text-5xl md:text-6xl text-primary/8">{v.num}</span>
+                  <span className="font-heading text-5xl md:text-6xl text-primary/20">{v.num}</span>
                   <h3 className="font-heading text-xl md:text-2xl mt-5 md:mt-6 mb-3 md:mb-4">{v.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light">{v.desc}</p>
                 </div>

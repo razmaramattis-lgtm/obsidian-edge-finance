@@ -85,7 +85,7 @@ const Pricing = () => {
                     </div>
                     <ul className="flex flex-col gap-3 mb-8 md:mb-10 flex-1">
                       {(plan.features || []).map((f) => (
-                        <li key={f} className="flex items-start gap-3 text-sm text-foreground/60 font-light">
+                        <li key={f} className="flex items-start gap-3 text-sm text-foreground/75 font-light">
                           <Check size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
                           {f}
                         </li>
@@ -96,7 +96,7 @@ const Pricing = () => {
                       className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${
                         plan.highlighted
                           ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose"
-                          : "border border-border/30 text-foreground/60 hover:border-primary/30 hover:text-foreground"
+                          : "border border-border/30 text-foreground/70 hover:border-primary/30 hover:text-foreground"
                       }`}
                     >
                       Velg {plan.name}
@@ -150,11 +150,11 @@ const Pricing = () => {
                   <h3 className="font-heading text-xl md:text-2xl mb-4 md:mb-5">{comp.name}</h3>
                   <div className="flex-1">
                     {comp.body.split("\n\n").map((para, j) => (
-                      <p key={j} className="text-sm text-foreground/35 font-light leading-relaxed mb-3">{para}</p>
+                      <p key={j} className="text-sm text-foreground/55 font-light leading-relaxed mb-3">{para}</p>
                     ))}
                   </div>
                   <div className="h-px bg-border/15 my-4 md:my-5" />
-                  <p className="text-sm text-foreground/70 font-light leading-relaxed mb-3">{comp.us}</p>
+                  <p className="text-sm text-foreground/80 font-light leading-relaxed mb-3">{comp.us}</p>
                   <p className="text-xs text-primary/70 italic font-light">{comp.tag}</p>
                 </div>
               </AnimatedSection>

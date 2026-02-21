@@ -12,18 +12,18 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
   const industries = [
-    { icon: Globe, name: "Tech & SaaS", tagline: "Vi vokser i takt med deg", desc: "Teknologiselskaper beveger seg raskt, og det skal vi også. Vi forstår hvordan en startup fungerer — fra de første kundene til man begynner å tenke på vekst og investorer. Du bygger produktet, vi holder styr på alt rundt det." },
-    { icon: Building2, name: "Eiendom & Utvikling", tagline: "Oversikt fra kjøp til salg", desc: "Enten du eier én leilighet eller en hel portefølje, hjelper vi deg å holde full kontroll. Vi sørger for at du til enhver tid vet hva du tjener, hva det koster, og hvordan du kan gjøre det smartere." },
-    { icon: Landmark, name: "Holding & Investering", tagline: "Strukturen som beskytter deg", desc: "Mange som investerer i aksjer, eiendom eller andre selskaper oppdager fort at det fort blir komplisert å holde orden. Vi hjelper deg å bygge en ryddig og trygg struktur — slik at pengene dine er godt ivaretatt." },
-    { icon: Briefcase, name: "Consulting & Rådgivning", desc: "Konsulenter jobber gjerne alene eller i små team, og hverdagen er full av prosjekter, kunder og fakturering. Vi tar oss av alt det administrative, slik at du kan bruke tiden din på det du faktisk er god på.", tagline: "Mer tid til det du er best på" },
-    { icon: Tractor, name: "Landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder for bønder og sørger for at du aldri går glipp av det du har krav på." },
-    { icon: ShoppingCart, name: "Varehandel", tagline: "Alltid kontroll på varene og pengene", desc: "Butikk er mer enn salg — det handler om innkjøp, lager, svinn og marginer. Vi hjelper deg å forstå hva som faktisk lønner seg å selge, og gir deg et klart bilde av hvordan bedriften din går." },
-    { icon: HardHat, name: "Bygg & Anlegg", tagline: "Vi holder orden mens du bygger", desc: "Bygg- og anleggsbransjen er avhengig av at prosjekter går i pluss og at alt er på stell. Vi hjelper deg å ha god oversikt over hvert enkelt prosjekt, slik at du alltid vet om du tjener penger eller ikke." },
-    { icon: Store, name: "Nettbutikk & E-commerce", tagline: "Skalér trygt — vi har ryggen din", desc: "Å drive nettbutikk kan vokse raskt, og det kan fort bli kaotisk. Vi hjelper deg å holde styr på inntekter, avgifter og kostnader — uansett om du selger til norske eller utenlandske kunder." },
-    { icon: Heart, name: "Helse & Velvære", tagline: "Fokuser på menneskene du hjelper", desc: "Klinikker, treningssentre og helseforetak har nok å tenke på med kunder og pasienter. Vi ordner det økonomiske i bakgrunnen, slik at du kan gi full oppmerksomhet til dem du er der for." },
-    { icon: TrendingUp, name: "Restaurant & Uteliv", tagline: "Vi hjelper deg å holde hjulene i gang", desc: "Restaurant og café er en bransje der marginene kan være tynne og hverdagen er hektisk. Vi gir deg god oversikt over driften, slik at du kan ta bedre beslutninger — og sove litt bedre om natten." },
-    { icon: Users, name: "Frisør & Skjønnhet", tagline: "Mer tid bak stolen, ikke ved skrivebordet", desc: "Frisører og andre i skjønnhetsbransjen er eksperter på sitt håndverk — men trenger ikke å bli eksperter på regnskap. Det tar vi oss av, fra A til Å." },
-    { icon: Zap, name: "Håndverkere & Fagfolk", tagline: "Fagmann på jobb, vi tar resten", desc: "Enten du er elektriker, rørlegger, maler eller tømrer — vi vet at du vil bruke dagene ute hos kunder, ikke ved skrivebordet. Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
+    { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", desc: "Teknologiselskaper beveger seg raskt, og det skal vi også. Vi forstår hvordan en startup fungerer — fra de første kundene til man begynner å tenke på vekst og investorer. Du bygger produktet, vi holder styr på alt rundt det." },
+    { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", desc: "Enten du eier én leilighet eller en hel portefølje, hjelper vi deg å holde full kontroll. Vi sørger for at du til enhver tid vet hva du tjener, hva det koster, og hvordan du kan gjøre det smartere." },
+    { icon: Landmark, name: "Holding & Investering", slug: "holding", tagline: "Strukturen som beskytter deg", desc: "Mange som investerer i aksjer, eiendom eller andre selskaper oppdager fort at det fort blir komplisert å holde orden. Vi hjelper deg å bygge en ryddig og trygg struktur — slik at pengene dine er godt ivaretatt." },
+    { icon: Briefcase, name: "Consulting & Rådgivning", slug: "consulting", desc: "Konsulenter jobber gjerne alene eller i små team, og hverdagen er full av prosjekter, kunder og fakturering. Vi tar oss av alt det administrative, slik at du kan bruke tiden din på det du faktisk er god på.", tagline: "Mer tid til det du er best på" },
+    { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder for bønder og sørger for at du aldri går glipp av det du har krav på." },
+    { icon: ShoppingCart, name: "Varehandel", slug: "varehandel", tagline: "Alltid kontroll på varene og pengene", desc: "Butikk er mer enn salg — det handler om innkjøp, lager, svinn og marginer. Vi hjelper deg å forstå hva som faktisk lønner seg å selge, og gir deg et klart bilde av hvordan bedriften din går." },
+    { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Vi holder orden mens du bygger", desc: "Bygg- og anleggsbransjen er avhengig av at prosjekter går i pluss og at alt er på stell. Vi hjelper deg å ha god oversikt over hvert enkelt prosjekt, slik at du alltid vet om du tjener penger eller ikke." },
+    { icon: Store, name: "Nettbutikk & E-commerce", slug: "nettbutikk", tagline: "Skalér trygt — vi har ryggen din", desc: "Å drive nettbutikk kan vokse raskt, og det kan fort bli kaotisk. Vi hjelper deg å holde styr på inntekter, avgifter og kostnader — uansett om du selger til norske eller utenlandske kunder." },
+    { icon: Heart, name: "Helse & Velvære", slug: "helse", tagline: "Fokuser på menneskene du hjelper", desc: "Klinikker, treningssentre og helseforetak har nok å tenke på med kunder og pasienter. Vi ordner det økonomiske i bakgrunnen, slik at du kan gi full oppmerksomhet til dem du er der for." },
+    { icon: TrendingUp, name: "Restaurant & Uteliv", slug: "restaurant", tagline: "Vi hjelper deg å holde hjulene i gang", desc: "Restaurant og café er en bransje der marginene kan være tynne og hverdagen er hektisk. Vi gir deg god oversikt over driften, slik at du kan ta bedre beslutninger — og sove litt bedre om natten." },
+    { icon: Users, name: "Frisør & Skjønnhet", slug: "frisor", tagline: "Mer tid bak stolen, ikke ved skrivebordet", desc: "Frisører og andre i skjønnhetsbransjen er eksperter på sitt håndverk — men trenger ikke å bli eksperter på regnskap. Det tar vi oss av, fra A til Å." },
+    { icon: Zap, name: "Håndverkere & Fagfolk", slug: "handverkere", tagline: "Fagmann på jobb, vi tar resten", desc: "Enten du er elektriker, rørlegger, maler eller tømrer — vi vet at du vil bruke dagene ute hos kunder, ikke ved skrivebordet. Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
   ];
 
   const services = [
@@ -135,7 +135,7 @@ const Index = () => {
               </Link>
               <Link
                 to="/priser"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/60 tracking-wider rounded-full border border-border/30 hover:border-primary/30 hover:text-foreground transition-all duration-500"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/30 hover:text-foreground transition-all duration-500"
               >
                 Se hva det gir tilbake
               </Link>
@@ -163,7 +163,7 @@ const Index = () => {
             {[...services, ...services].map((s, i) => (
               <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
                 <s.icon size={12} className="text-primary/50 shrink-0" strokeWidth={1.5} />
-                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/35 font-light">{s.title}</span>
+                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{s.title}</span>
                 <span className="text-primary/20 mx-2 md:mx-3">·</span>
               </div>
             ))}
@@ -175,7 +175,7 @@ const Index = () => {
             {[...industries, ...industries].map((ind, i) => (
               <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
                 <ind.icon size={12} className="text-secondary/50 shrink-0" strokeWidth={1.5} />
-                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/25 font-light">{ind.name}</span>
+                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/50 font-light">{ind.name}</span>
                 <span className="text-secondary/20 mx-2 md:mx-3">·</span>
               </div>
             ))}
@@ -267,7 +267,7 @@ const Index = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {industries.map((ind, i) => (
               <AnimatedSection key={ind.name} delay={i * 0.08}>
-                <div className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full">
+                <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="p-2.5 md:p-3 bg-muted/50 rounded-2xl inline-block mb-4 md:mb-5">
                     <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
@@ -275,7 +275,10 @@ const Index = () => {
                   <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
                   <p className="text-sm text-primary/70 italic mb-3">{ind.tagline}</p>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light">{ind.desc}</p>
-                </div>
+                  <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/60 group-hover:text-primary transition-colors duration-300 mt-4">
+                    Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </div>
+                </Link>
               </AnimatedSection>
             ))}
           </div>
@@ -338,7 +341,7 @@ const Index = () => {
                     <span className="font-heading text-4xl md:text-5xl text-gradient-rose">{t.metric}</span>
                     <p className="text-xs text-muted-foreground tracking-widest uppercase mt-1">{t.label}</p>
                   </div>
-                  <p className="text-foreground/75 leading-relaxed mb-6 md:mb-8 flex-1 font-light text-sm md:text-base">"{t.quote}"</p>
+                  <p className="text-foreground/85 leading-relaxed mb-6 md:mb-8 flex-1 font-light text-sm md:text-base">"{t.quote}"</p>
                   <p className="text-xs text-muted-foreground tracking-wide">{t.author}</p>
                 </div>
               </AnimatedSection>

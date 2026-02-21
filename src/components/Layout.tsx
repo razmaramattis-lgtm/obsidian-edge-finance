@@ -360,34 +360,34 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Tjenester</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
-                <Link to="/tjenester/regnskapsforer" className="text-foreground/40 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
-                <Link to="/tjenester/ai-innsikt" className="text-foreground/40 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
-                <Link to="/tjenester/hr-og-lonn" className="text-foreground/40 hover:text-foreground transition-colors">Lønn & HR</Link>
-                <Link to="/tjenester/cfo" className="text-foreground/40 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
-                <Link to="/tjenester" className="text-foreground/40 hover:text-foreground transition-colors">Se alle tjenester →</Link>
+                <Link to="/tjenester/regnskapsforer" className="text-foreground/60 hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
+                <Link to="/tjenester/ai-innsikt" className="text-foreground/60 hover:text-foreground transition-colors">AI-drevet innsikt</Link>
+                <Link to="/tjenester/hr-og-lonn" className="text-foreground/60 hover:text-foreground transition-colors">Lønn & HR</Link>
+                <Link to="/tjenester/cfo" className="text-foreground/60 hover:text-foreground transition-colors">CFO-as-a-Service</Link>
+                <Link to="/tjenester" className="text-foreground/60 hover:text-foreground transition-colors">Se alle tjenester →</Link>
               </div>
             </div>
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Bransjer</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
-                <Link to="/bransjer/tech-saas" className="text-foreground/40 hover:text-foreground transition-colors">Tech & SaaS</Link>
-                <Link to="/bransjer/eiendom" className="text-foreground/40 hover:text-foreground transition-colors">Eiendom & Utvikling</Link>
-                <Link to="/bransjer/landbruk" className="text-foreground/40 hover:text-foreground transition-colors">Landbruk</Link>
-                <Link to="/bransjer/bygg-anlegg" className="text-foreground/40 hover:text-foreground transition-colors">Bygg & Anlegg</Link>
-                <Link to="/bransjer" className="text-foreground/40 hover:text-foreground transition-colors">Se alle bransjer →</Link>
+                <Link to="/bransjer/tech-saas" className="text-foreground/60 hover:text-foreground transition-colors">Tech & SaaS</Link>
+                <Link to="/bransjer/eiendom" className="text-foreground/60 hover:text-foreground transition-colors">Eiendom & Utvikling</Link>
+                <Link to="/bransjer/landbruk" className="text-foreground/60 hover:text-foreground transition-colors">Landbruk</Link>
+                <Link to="/bransjer/bygg-anlegg" className="text-foreground/60 hover:text-foreground transition-colors">Bygg & Anlegg</Link>
+                <Link to="/bransjer" className="text-foreground/60 hover:text-foreground transition-colors">Se alle bransjer →</Link>
               </div>
             </div>
             <div>
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-5">Kontakt</h4>
               <div className="flex flex-col gap-3 text-sm font-light">
-                <a href="mailto:post@avargo.no" className="text-foreground/40 hover:text-foreground transition-colors">post@avargo.no</a>
-                <a href="tel:+4722000000" className="text-foreground/40 hover:text-foreground transition-colors">+47 22 00 00 00</a>
-                <Link to="/kontakt" className="text-foreground/40 hover:text-foreground transition-colors">Oslo, Norge</Link>
+                <a href="mailto:post@avargo.no" className="text-foreground/60 hover:text-foreground transition-colors">post@avargo.no</a>
+                <a href="tel:+4722000000" className="text-foreground/60 hover:text-foreground transition-colors">+47 22 00 00 00</a>
+                <Link to="/kontakt" className="text-foreground/60 hover:text-foreground transition-colors">Oslo, Norge</Link>
               </div>
             </div>
           </div>
           <div className="line-accent mt-12 mb-6" />
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground/30">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground/50">
             <span>© 2026 Avargo</span>
             <div className="flex gap-8">
               <span className="hover:text-foreground transition-colors cursor-pointer">Personvern</span>

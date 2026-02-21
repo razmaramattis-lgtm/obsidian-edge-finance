@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Layout from "./components/Layout";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import About from "./pages/About";
@@ -89,6 +90,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
+            <ScrollToTop />
             <Routes>
               {/* Admin routes (no Layout wrapper) */}
               <Route path="/admin/logg-inn" element={<AdminLogin />} />
