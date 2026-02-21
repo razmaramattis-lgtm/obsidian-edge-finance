@@ -33,6 +33,13 @@ const categories = [
         desc: "Du får én navngitt regnskapsfører som kjenner selskapet ditt ut og inn. Ingen saksbehandlere. Ingen ventelinjer. Et menneske som proaktivt følger opp, stiller de riktige spørsmålene — og som du faktisk kan ringe.",
         sub: ["Løpende bokføring & MVA", "Årsregnskap & skattemelding", "Aksjonærregisteroppgave", "Revisjonstøtte & dokumentasjon"],
       },
+      {
+        icon: BookOpen,
+        href: "/tjenester/kurs",
+        title: "Regnskapskurs",
+        desc: "Praktiske kurs i bokføring, MVA, skattemelding og årsregnskap — levert av autoriserte regnskapsførere. Fra grunnkurs til skreddersydde bedriftspakker.",
+        sub: ["Bokføring & bilagshåndtering", "MVA-loven i praksis", "Skattemelding & årsregnskap", "System & internkontroll"],
+      },
     ],
   },
   {
