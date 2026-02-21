@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, ChevronDown, ChevronLeft, ChevronRight, Clock, CheckCircle2, Send, ShieldCheck, User, Phone, Mail, Building2, FileText } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Link } from "react-router-dom";
+import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfWeek, isBefore, isToday, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -133,6 +134,7 @@ const EnTilEnRegnskap = () => {
 
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-background via-background to-muted/20">
+        <img src={ambientTexture4} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.06] pointer-events-none select-none" />
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="container mx-auto px-6 py-24 text-center relative z-10">
           <AnimatedSection>

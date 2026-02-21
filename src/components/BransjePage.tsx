@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, CheckCircle2, ChevronRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { LucideIcon } from "lucide-react";
+import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
+import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 
 interface BransjePageProps {
   icon: LucideIcon;
@@ -34,6 +36,7 @@ const BransjePage = ({
   <>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
+      <img src={ambientTexture1} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div
@@ -115,6 +118,7 @@ const BransjePage = ({
 
     {/* CHALLENGES */}
     <section className="py-24 md:py-40 border-y border-border/10 relative">
+      <img src={ambientTexture4} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-[0.06] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>

@@ -8,6 +8,7 @@ import {
   Palette, Megaphone, UserPlus, Plane, Car, Leaf, Search, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
 
 const industries = [
   { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", short: "Fra pre-revenue til scale-up. Vi forstår investorrunder, MRR-rapportering og alt mellom." },
@@ -55,6 +56,7 @@ const Bransjer = () => {
   <>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
+      <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div

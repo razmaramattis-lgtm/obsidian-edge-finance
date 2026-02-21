@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Bot, ChevronRight, ArrowLeft, CheckCircle2, Cpu } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 
 const deliverables = [
   "Prosessautomatisering og arbeidsflyt-design",
@@ -30,6 +31,7 @@ const RelatedServices = [
 const AiAutomatisering = () => (
   <>
     <section className="py-28 md:py-44 relative overflow-hidden">
+      <img src={ambientTexture3} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="max-w-4xl">
