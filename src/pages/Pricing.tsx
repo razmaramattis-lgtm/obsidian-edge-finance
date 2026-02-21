@@ -1,70 +1,46 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { supabase } from "@/integrations/supabase/client";
+import { Helmet } from "react-helmet-async";
 
-const plans = [
-  {
-    name: "Basis",
-    price: "4 500",
-    period: " kr/mnd",
-    desc: "For selskaper som vil ha kontroll og struktur fra dag én.",
-    features: [
-      "Løpende bokføring og bankavstemming",
-      "MVA-rapportering",
-      "Årsregnskap og skattemelding",
-      "Aksjonærregisteroppgave",
-      "Lønn for inntil 5 ansatte",
-      "Månedlig standard rapportpakke",
-      "Rådgivning",
-      "Regnskapsystemkostnad inkludert",
-    ],
-    cta: "Velg Basis",
-    highlighted: false,
-  },
-  {
-    name: "Vekst",
-    price: "6 000",
-    period: " kr/mnd",
-    desc: "For selskaper i vekst som trenger en strategisk partner.",
-    inherits: "Alt i Basis, pluss:",
-    features: [
-      "Lønn for opptil 10 ansatte",
-      "Kvartalsvis gjennomgang",
-      "Likviditetsoversikt og prognose",
-      "Skatteoptimalisering og strukturvurdering",
-      "Gratis oppsett av integrasjonsløsninger",
-      "SEO-støtte for din bedrift",
-      "Hjelp med styreromsrapportering",
-      "Kontrakter og HR-støtte",
-      "Prioritert rådgivning",
-      "Integrasjoner mot bank og fakturasystem",
-    ],
-    cta: "Velg Vekst",
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "8 000",
-    period: " kr/mnd",
-    desc: "For selskaper som vil ha total oversikt. Din finansielle partner.",
-    badge: "Anbefalt",
-    inherits: "Alt i Vekst, pluss:",
-    features: [
-      "Månedlig rapportering",
-      "Budsjett",
-      "CFO-løsning",
-      "Oppsett av nettside",
-      "SOME-annonsering",
-      "Integrasjon av e-postsystem mot SOME og andre kanaler",
-    ],
-    cta: "Velg Pro",
-    highlighted: true,
-  },
-];
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+  price_suffix: string;
+  description: string;
+  features: string[];
+  highlighted: boolean;
+  active: boolean;
+  sort_order: number;
+}
 
 const Pricing = () => {
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const { data } = await supabase
+        .from("pricing_plans")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      setPlans((data as PricingPlan[]) || []);
+      setLoading(false);
+    };
+    fetchPlans();
+  }, []);
+
   return (
     <>
+      <Helmet>
+        <title>Priser — Regnskapstjenester fra kr 4 500/mnd | Avargo</title>
+        <meta name="description" content="Fast pris, ingen overraskelser. Velg mellom Basis, Vekst og Pro — og få full kontroll over regnskapet ditt." />
+      </Helmet>
+
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-4 md:px-6 relative">
@@ -82,54 +58,55 @@ const Pricing = () => {
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-            {plans.map((plan, i) => (
-              <AnimatedSection key={plan.name} delay={i * 0.15}>
-                <div
-                  className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${
-                    plan.highlighted
-                      ? "glass glow-rose border-primary/20"
-                      : "glass"
-                  }`}
-                >
-                  {plan.badge && (
-                    <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
-                      {plan.badge}
-                    </div>
-                  )}
-                  <h3 className="font-heading text-2xl md:text-3xl mb-2">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground font-light mb-6 md:mb-8">{plan.desc}</p>
-                  <div className="mb-6 md:mb-8">
-                    <span className="text-sm text-muted-foreground font-light mr-1">Fra</span>
-                    <span className="font-heading text-4xl md:text-5xl">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
-                  </div>
-                  {('inherits' in plan && plan.inherits) && (
-                    <p className="text-xs text-primary/80 font-medium tracking-wide mb-4">{plan.inherits}</p>
-                  )}
-                  <ul className="flex flex-col gap-3 mb-8 md:mb-10 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3 text-sm text-foreground/60 font-light">
-                        <Check size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to="/kontakt"
-                    className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${
+          {loading ? (
+            <div className="text-center text-muted-foreground text-sm py-12">Laster prisplaner…</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+              {plans.map((plan, i) => (
+                <AnimatedSection key={plan.id} delay={i * 0.15}>
+                  <div
+                    className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${
                       plan.highlighted
-                        ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose"
-                        : "border border-border/30 text-foreground/60 hover:border-primary/30 hover:text-foreground"
+                        ? "glass glow-rose border-primary/20"
+                        : "glass"
                     }`}
                   >
-                    {plan.cta}
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+                    {plan.highlighted && (
+                      <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
+                        Anbefalt
+                      </div>
+                    )}
+                    <h3 className="font-heading text-2xl md:text-3xl mb-2">{plan.name}</h3>
+                    <p className="text-sm text-muted-foreground font-light mb-6 md:mb-8">{plan.description}</p>
+                    <div className="mb-6 md:mb-8">
+                      <span className="text-sm text-muted-foreground font-light mr-1">Fra</span>
+                      <span className="font-heading text-4xl md:text-5xl">{plan.price.toLocaleString("nb-NO")}</span>
+                      <span className="text-muted-foreground text-sm"> kr{plan.price_suffix}</span>
+                    </div>
+                    <ul className="flex flex-col gap-3 mb-8 md:mb-10 flex-1">
+                      {(plan.features || []).map((f) => (
+                        <li key={f} className="flex items-start gap-3 text-sm text-foreground/60 font-light">
+                          <Check size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to="/kontakt"
+                      className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${
+                        plan.highlighted
+                          ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose"
+                          : "border border-border/30 text-foreground/60 hover:border-primary/30 hover:text-foreground"
+                      }`}
+                    >
+                      Velg {plan.name}
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -184,7 +161,6 @@ const Pricing = () => {
             ))}
           </div>
 
-          {/* Closing */}
           <AnimatedSection delay={0.4}>
             <div className="max-w-xl mx-auto text-center mt-16 md:mt-20">
               <p className="text-muted-foreground font-light leading-relaxed mb-2 text-sm md:text-base">
