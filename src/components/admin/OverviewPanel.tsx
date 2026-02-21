@@ -7,6 +7,7 @@ import {
   FolderOpen, Handshake, MessageSquare, Eye, EyeOff,
   Clock, TrendingUp, PenLine, ArrowRight, Building2
 } from "lucide-react";
+import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 
 interface Stats {
   totalPosts: number;
@@ -201,6 +202,15 @@ const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: 
           </div>
         </motion.div>
       </div>
+
+      {/* Tax Deadlines */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <TaxDeadlineWidget limit={5} compact />
+      </motion.div>
 
       {/* Quick Navigation */}
       <div>

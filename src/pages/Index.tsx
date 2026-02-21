@@ -6,6 +6,7 @@ import {
   FileCheck, CreditCard, Calculator, Clock, Lock, Headphones
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import heroBg from "@/assets/hero-bg.jpg";
 
 
@@ -288,6 +289,34 @@ const Index = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* SKATTEFRISTER */}
+      <section className="py-24 md:py-40 relative">
+        <div className="absolute inset-0 ambient-glow opacity-30" />
+        <div className="container mx-auto px-4 md:px-6 relative">
+          <AnimatedSection>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12 items-start">
+              <div className="lg:col-span-2">
+                <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alltid oppdatert</p>
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-4 md:mb-6 leading-snug">
+                  Kommende <span className="italic text-gradient-rose">skattefrister</span>
+                </h2>
+                <p className="text-muted-foreground text-sm md:text-base font-light leading-relaxed mb-4">
+                  Hold deg oppdatert på de viktigste fristene fra Skatteetaten. Vi henter dem automatisk, så du aldri går glipp av en leveringsfrist.
+                </p>
+                <p className="text-xs text-primary/70 italic font-light">
+                  Kilde: skatteetaten.no — oppdateres i sanntid.
+                </p>
+              </div>
+              <div className="lg:col-span-3">
+                <TaxDeadlineWidget limit={6} />
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* SOCIAL PROOF */}
       <section className="py-24 md:py-40 border-y border-border/15">
