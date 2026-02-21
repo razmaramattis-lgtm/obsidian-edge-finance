@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar } from "@/components/ui/calendar";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
@@ -705,45 +706,125 @@ const BookingPanel = () => {
 // ========== PARTNERS PANEL ==========
 const PartnersPanel = () => {
   const [partners, setPartners] = useState<any[]>([]);
+  const [requests, setRequests] = useState<any[]>([]);
+  const [company, setCompany] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [requestingId, setRequestingId] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from("collaboration_agreements")
-        .select("*")
-        .neq("target_audience", "admin_only")
-        .order("created_at", { ascending: false });
-      setPartners(data || []);
+      const [partRes, compRes] = await Promise.all([
+        supabase.from("collaboration_agreements").select("*").neq("target_audience", "admin_only").order("created_at", { ascending: false }),
+        supabase.from("customer_companies").select("*").limit(1).maybeSingle(),
+      ]);
+      setPartners(partRes.data || []);
+      setCompany(compRes.data);
+
+      if (compRes.data) {
+        const { data: reqs } = await supabase
+          .from("partnership_requests")
+          .select("*")
+          .eq("company_id", compRes.data.id);
+        setRequests(reqs || []);
+      }
       setLoading(false);
     };
     load();
   }, []);
 
+  const sendRequest = async (agreementId: string) => {
+    if (!company) return;
+    const { error } = await supabase.from("partnership_requests").insert({
+      agreement_id: agreementId,
+      company_id: company.id,
+      message: message || null,
+    });
+    if (error) {
+      if (error.code === "23505") {
+        toast.info("Du har allerede sendt en forespørsel for denne avtalen");
+      } else {
+        toast.error("Kunne ikke sende forespørsel");
+      }
+      setRequestingId(null);
+      return;
+    }
+    setRequests([...requests, { agreement_id: agreementId, company_id: company.id, status: "pending" }]);
+    setRequestingId(null);
+    setMessage("");
+    toast.success("Forespørsel sendt til Avargo!");
+  };
+
+  const getRequestStatus = (agreementId: string) => {
+    return requests.find(r => r.agreement_id === agreementId);
+  };
+
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">{partners.length} fordelsavtaler</p>
-      {partners.map(p => (
-        <div key={p.id} className="glass rounded-2xl px-5 py-4 border border-border/20">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg border border-border/10 bg-muted/20 flex items-center justify-center shrink-0">
-              <Building2 size={16} className="text-muted-foreground/40" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold">{p.title}</p>
-              {p.company && <p className="text-xs text-muted-foreground">{p.company}</p>}
-              {p.offering && <p className="text-xs mt-1">{p.offering}</p>}
-              {p.price && <p className="text-xs text-primary font-medium mt-1">{p.price}</p>}
-              {p.website && (
-                <a href={p.website} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline mt-1 inline-block">Besøk nettside →</a>
-              )}
+      <p className="text-sm text-muted-foreground">{partners.length} fordelsavtaler tilgjengelig</p>
+      {partners.map(p => {
+        const req = getRequestStatus(p.id);
+        return (
+          <div key={p.id} className="glass rounded-2xl px-5 py-4 border border-border/20">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg border border-border/10 bg-muted/20 flex items-center justify-center shrink-0">
+                <Building2 size={16} className="text-muted-foreground/40" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{p.title}</p>
+                {p.company && <p className="text-xs text-muted-foreground">{p.company}</p>}
+                {p.description && <p className="text-xs mt-1 text-foreground/80">{p.description}</p>}
+                {p.offering && <p className="text-xs mt-1">{p.offering}</p>}
+                {p.price && <p className="text-xs text-primary font-medium mt-1">{p.price}</p>}
+                {p.website && (
+                  <a href={p.website} target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline mt-1 inline-block">Besøk nettside →</a>
+                )}
+
+                {/* Request status / button */}
+                <div className="mt-3">
+                  {req ? (
+                    <span className={`text-xs px-3 py-1 rounded-full ${
+                      req.status === "pending" ? "bg-amber-500/10 text-amber-600" :
+                      req.status === "approved" ? "bg-emerald-500/10 text-emerald-600" :
+                      "bg-destructive/10 text-destructive"
+                    }`}>
+                      {req.status === "pending" ? "⏳ Forespørsel sendt" :
+                       req.status === "approved" ? "✓ Godkjent" : "✕ Avslått"}
+                    </span>
+                  ) : requestingId === p.id ? (
+                    <div className="space-y-2">
+                      <input
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        placeholder="Melding til Avargo (valgfritt)"
+                        className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      />
+                      <div className="flex gap-2">
+                        <button onClick={() => sendRequest(p.id)}
+                          className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs hover:opacity-90">
+                          Send forespørsel
+                        </button>
+                        <button onClick={() => { setRequestingId(null); setMessage(""); }}
+                          className="px-3 py-1.5 rounded-lg text-xs border border-border/30 hover:bg-muted/50">
+                          Avbryt
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => setRequestingId(p.id)}
+                      className="px-3 py-1.5 border border-primary/30 text-primary rounded-lg text-xs hover:bg-primary/5 transition-colors">
+                      Jeg ønsker denne avtalen
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
