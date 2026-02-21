@@ -180,10 +180,10 @@ const INITIAL_FORM: FormData = {
     "formaal", "ansettelse", "arbeidstid", "ferie", "sykdom",
     "hjemmekontor", "lonn", "pensjon", "kompetanse", "reise",
     "kleskode", "sosiale", "konflikter", "avslutning", "baerekraft",
-    "arbeidsreglement",
-    "varsling",
-    "hms", "internkontroll", "psykososialt", "risikovurdering",
-    "kartlegging", "handlingsplan",
+    "arb_ordensregler", "arb_arbeidstid", "arb_fravaer", "arb_atferd", "arb_rusmiddel", "arb_sanksjoner", "arb_itbruk",
+    "varsling_innledning", "varsling_kanal", "varsling_behandling", "varsling_vern", "varsling_ekstern", "varsling_etikk",
+    "hms", "internkontroll", "hms_brannvern", "hms_forstehjelp", "hms_ergonomi", "hms_avvik",
+    "psykososialt", "risikovurdering", "kartlegging", "handlingsplan",
     "digitalt", "airetningslinjer", "hybridarbeid"
   ],
 };
@@ -207,16 +207,31 @@ const ALL_MODULES = [
   { id: "avslutning",   label: "Oppsigelse og avslutning",       group: "Personalhåndbok" },
   { id: "baerekraft",   label: "Bærekraft og samfunnsansvar",    group: "Personalhåndbok" },
   // — Arbeidsreglement —
-  { id: "arbeidsreglement", label: "Arbeidsreglement",           group: "Arbeidsreglement" },
+  { id: "arb_ordensregler", label: "Ordensregler",                 group: "Arbeidsreglement" },
+  { id: "arb_arbeidstid",   label: "Arbeidstid og pauser",         group: "Arbeidsreglement" },
+  { id: "arb_fravaer",      label: "Fravær og permisjon",          group: "Arbeidsreglement" },
+  { id: "arb_atferd",       label: "Atferd og oppførsel",          group: "Arbeidsreglement" },
+  { id: "arb_rusmiddel",    label: "Rusmiddelpolicy",              group: "Arbeidsreglement" },
+  { id: "arb_sanksjoner",   label: "Sanksjoner og konsekvenser",   group: "Arbeidsreglement" },
+  { id: "arb_itbruk",       label: "IT-bruk og utstyr",            group: "Arbeidsreglement" },
   // — Varslingsrutiner —
-  { id: "varsling",     label: "Varslingsrutiner",               group: "Varslingsrutiner" },
+  { id: "varsling_innledning", label: "Innledning og formål",      group: "Varslingsrutiner" },
+  { id: "varsling_kanal",     label: "Varslingskanaler",           group: "Varslingsrutiner" },
+  { id: "varsling_behandling", label: "Behandling av varsler",     group: "Varslingsrutiner" },
+  { id: "varsling_vern",      label: "Vern mot gjengjeldelse",     group: "Varslingsrutiner" },
+  { id: "varsling_ekstern",   label: "Ekstern varsling",           group: "Varslingsrutiner" },
+  { id: "varsling_etikk",     label: "Etiske retningslinjer",      group: "Varslingsrutiner" },
   // — HMS & Internkontroll —
-  { id: "hms",          label: "HMS og arbeidsmiljø",            group: "HMS & Internkontroll" },
-  { id: "internkontroll", label: "Internkontroll (IK)",          group: "HMS & Internkontroll" },
-  { id: "psykososialt", label: "Psykososialt arbeidsmiljø (2026)", group: "HMS & Internkontroll" },
-  { id: "risikovurdering", label: "Risikovurdering (2026)",      group: "HMS & Internkontroll" },
-  { id: "kartlegging",  label: "Kartlegging (2026)",             group: "HMS & Internkontroll" },
-  { id: "handlingsplan", label: "Handlingsplaner (2026)",        group: "HMS & Internkontroll" },
+  { id: "hms",              label: "HMS og arbeidsmiljø",           group: "HMS & Internkontroll" },
+  { id: "internkontroll",   label: "Internkontroll (IK)",          group: "HMS & Internkontroll" },
+  { id: "hms_brannvern",    label: "Brannvern og beredskap",       group: "HMS & Internkontroll" },
+  { id: "hms_forstehjelp",  label: "Førstehjelp",                  group: "HMS & Internkontroll" },
+  { id: "hms_ergonomi",     label: "Ergonomi og tilrettelegging",  group: "HMS & Internkontroll" },
+  { id: "hms_avvik",        label: "Avvikshåndtering",             group: "HMS & Internkontroll" },
+  { id: "psykososialt",     label: "Psykososialt arbeidsmiljø (2026)", group: "HMS & Internkontroll" },
+  { id: "risikovurdering",  label: "Risikovurdering (2026)",       group: "HMS & Internkontroll" },
+  { id: "kartlegging",      label: "Kartlegging (2026)",           group: "HMS & Internkontroll" },
+  { id: "handlingsplan",    label: "Handlingsplaner (2026)",       group: "HMS & Internkontroll" },
   // — DIGIS-tillegg —
   { id: "digitalt",     label: "Digital arbeidsplass",           group: "DIGIS-tillegg" },
   { id: "airetningslinjer", label: "AI og automatisering",       group: "DIGIS-tillegg" },
@@ -1447,26 +1462,7 @@ function buildChapterContents(form: FormData) {
       title: "Konflikthåndtering",
       content: `<h2>Konflikthåndtering</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> ønsker et arbeidsmiljø fritt for uløste konflikter som påvirker trivsel og produktivitet.</p><h3>Fremgangsmåte</h3><ol><li><strong>Direkte dialog</strong> — Partene oppfordres til å løse konflikten seg imellom.</li><li><strong>Lederinvolvering</strong> — Dersom direkte dialog ikke fører frem, involveres nærmeste leder.</li><li><strong>${form.conflictPolicy === "external" ? "Ekstern mekler/BHT" : form.conflictPolicy === "committee" ? "Konflikthåndteringsutvalg" : "HR-mekling"}</strong> — ${form.conflictPolicy === "external" ? "Ved behov benyttes ekstern mekler eller bedriftshelsetjenesten." : form.conflictPolicy === "committee" ? "Saken kan løftes til bedriftens konflikthåndteringsutvalg." : "HR bistår med mekling og tilrettelegging."}</li></ol><h3>Dokumentasjon</h3><p>Alle formelle konfliktsaker dokumenteres skriftlig og oppbevares konfidensielt av HR.</p>`,
     }),
-    hms: () => ({
-      title: "HMS og arbeidsmiljø",
-      content: `<h2>HMS og arbeidsmiljø</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> er forpliktet til å sikre et trygt og godt arbeidsmiljø for alle ansatte, i henhold til arbeidsmiljøloven og internkontrollforskriften.</p><h3>Ansvar</h3><ul><li><strong>Arbeidsgiver</strong> har det overordnede ansvaret for HMS-arbeidet.</li><li><strong>Verneombud</strong> skal ivareta arbeidstakernes interesser i HMS-saker.</li><li><strong>Alle ansatte</strong> har plikt til å melde fra om farlige forhold.</li></ul><h3>Forebygging</h3><p>Det gjennomføres årlige vernerunder og risikovurderinger. Alle arbeidsulykker og nestenulykker skal rapporteres umiddelbart.</p>`,
-    }),
-    psykososialt: () => ({
-      title: "Psykososialt arbeidsmiljø (2026-krav)",
-      content: `<h2>Psykososialt arbeidsmiljø</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — arbeidsmiljøloven § 4-3</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal sikre at det psykososiale arbeidsmiljøet er fullt forsvarlig, og aktivt forebygge mobbing, trakassering, diskriminering og andre psykiske belastninger.</p><h3>Forebygging</h3><ul><li>Alle ansatte skal behandle hverandre med respekt og bidra til et inkluderende arbeidsmiljø.</li><li>Ledere har et særskilt ansvar for å følge opp det psykososiale arbeidsmiljøet.</li><li>Det skal gjennomføres regelmessige samtaler mellom leder og ansatt om trivsel og arbeidsbelastning.</li></ul><h3>Håndtering</h3><p>Ved konflikter, mobbing eller trakassering skal saken meldes til nærmeste leder, verneombud eller <span class="editable-field" data-field="Varslingskanal psykososialt">${form.whistleblowerChannel}</span>.</p><h3>Oppfølging</h3><p>Bedriften skal dokumentere tiltak og evaluere effekten minst <span class="editable-field" data-field="Evaluering psykososialt">${form.riskAssessmentFrequency === "quarterly" ? "kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "halvårlig" : "årlig"}</span>.</p>`,
-    }),
-    risikovurdering: () => ({
-      title: "Risikovurdering (2026-krav)",
-      content: `<h2>Risikovurdering</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — internkontrollforskriften § 5</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal gjennomføre systematiske risikovurderinger som dekker både fysiske og psykososiale risikofaktorer.</p><h3>Hyppighet</h3><p>Risikovurderinger gjennomføres <span class="editable-field" data-field="Risikovurdering hyppighet">${form.riskAssessmentFrequency === "quarterly" ? "kvartalsvis" : form.riskAssessmentFrequency === "biannual" ? "halvårlig" : form.riskAssessmentFrequency === "continuous" ? "kontinuerlig og ved vesentlige endringer" : "årlig"}</span>.</p><h3>Metode</h3><ul><li>Identifisere farekilder og risikoforhold</li><li>Vurdere sannsynlighet og konsekvens</li><li>Prioritere og iverksette tiltak</li><li>Dokumentere vurderinger og beslutninger</li></ul><h3>Ansvar</h3><p>${form.ceoName || "Daglig leder"} har det overordnede ansvaret. Verneombud og ansatte skal medvirke. Resultatene skal dokumenteres og være tilgjengelige for Arbeidstilsynet.</p>`,
-    }),
-    kartlegging: () => ({
-      title: "Kartlegging av arbeidsmiljø (2026-krav)",
-      content: `<h2>Kartlegging av arbeidsmiljø</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — arbeidsmiljøloven § 3-1</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal gjennomføre regelmessige kartlegginger av arbeidsmiljøet.</p>${form.employeeSurvey ? `<h3>Medarbeiderundersøkelser</h3><p>Det gjennomføres medarbeiderundersøkelser <span class="editable-field" data-field="Kartlegging hyppighet">${form.surveyFrequency === "quarterly" ? "kvartalsvis" : form.surveyFrequency === "biannual" ? "halvårlig" : "årlig"}</span>. Undersøkelsene er anonyme og dekker:</p><ul><li>Psykososialt arbeidsmiljø og trivsel</li><li>Arbeidsbelastning og stressnivå</li><li>Fysisk arbeidsmiljø</li><li>Ledelse og kommunikasjon</li><li>Muligheter for faglig utvikling</li></ul>` : "<h3>Andre kartleggingsmetoder</h3><p>Kartlegging gjennomføres gjennom vernerunder, medarbeidersamtaler og observasjon.</p>"}<h3>Oppfølging</h3><p>Resultater presenteres for ansatte og danner grunnlag for handlingsplaner og tiltak.</p>`,
-    }),
-    handlingsplan: () => ({
-      title: "Handlingsplaner (2026-krav)",
-      content: `<h2>Handlingsplaner</h2><p class="text-sm italic" style="color:#0d9488;margin-bottom:1em;">🆕 Nytt krav fra 2026 — internkontrollforskriften § 5</p><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal utarbeide konkrete handlingsplaner basert på risikovurderinger og kartlegging.</p><h3>Innhold</h3><ul><li><strong>Identifisert risiko</strong> — hva er problemet?</li><li><strong>Konkrete tiltak</strong> — hva skal gjøres?</li><li><strong>Ansvarlig:</strong> <span class="editable-field" data-field="Handlingsplan ansvarlig">${form.actionPlanResponsible || form.ceoName || "daglig leder"}</span></li><li><strong>Tidsfrist</strong> — når skal tiltaket være gjennomført?</li><li><strong>Evaluering</strong> — hvordan måles effekten?</li></ul><h3>Dokumentasjon</h3><p>Alle handlingsplaner dokumenteres og oppbevares tilgjengelig for ansatte og Arbeidstilsynet.</p>`,
-    }),
+    // old hms/psykososialt/risikovurdering/kartlegging/handlingsplan moved to new expanded section below
     sosiale: () => ({
       title: "Sosiale medier",
       content: `<h2>Sosiale medier</h2><p>Ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> ${form.socialMediaPolicy === "strict" ? "skal ikke publisere firmarelatert innhold på sosiale medier uten forhåndsgodkjenning" : form.socialMediaPolicy === "oppmuntret" ? "oppfordres til å dele positive bedriftsopplevelser som del av ambassadørprogrammet" : "forventes å utvise godt skjønn ved omtale av bedriften på sosiale medier"}.</p><h3>Retningslinjer</h3><ul><li>Ikke del konfidensielt materiale, interne diskusjoner eller kundeinformasjon.</li><li>Vær tydelig på at meninger er dine egne.</li><li>Vis respekt for kollegaer, kunder og samarbeidspartnere.</li></ul>`,
@@ -1475,11 +1471,30 @@ function buildChapterContents(form: FormData) {
       title: "Kleskode",
       content: `<h2>Kleskode</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har ${form.dressCode === "formal" ? "en formell kleskode. Ansatte forventes å kle seg i dress/drakt" : form.dressCode === "business-casual" ? "en business casual kleskode. Ansatte forventes å kle seg pent, men behagelig" : form.dressCode === "casual" ? "en uformell kleskode. Ansatte kan kle seg avslappet, men ryddig" : "ingen spesifikke krav til kleskode, men forventer passende antrekk"}.</p><p>Ved kundemøter og representasjon forventes et profesjonelt antrekk.</p>`,
     }),
-    varsling: () => ({
-      title: "Varsling og etikk",
-      content: `<h2>Varsling og etikk</h2><p>Ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> har rett og plikt til å varsle om kritikkverdige forhold, jf. arbeidsmiljøloven kapittel 2A.</p><h3>Hva kan varsles om?</h3><ul><li>Brudd på lover og regler</li><li>Korrupsjon, underslag eller økonomisk kriminalitet</li><li>Trakassering, mobbing eller diskriminering</li><li>Fare for liv og helse</li></ul><h3>Varslingskanal</h3><p>Varsling kan gjøres til nærmeste leder, verneombud eller direkte til <span class="editable-field" data-field="Varslingskanal">${form.whistleblowerChannel}</span>. Varsler behandles konfidensielt, og det er forbudt å gjengjelde.</p>`,
+    varsling_innledning: () => ({
+      title: "Varslingsrutiner — Innledning og formål",
+      content: `<h2>Varslingsrutiner — Innledning og formål</h2><p>Disse varslingsrutinene gjelder for alle ansatte, innleide, konsulenter og andre som utfører arbeid for <span class="editable-field" data-field="Bedriftsnavn">${company}</span>.</p><h3>Formål</h3><p>Rutinene skal sikre at kritikkverdige forhold avdekkes og håndteres forsvarlig, jf. arbeidsmiljøloven kapittel 2A.</p><h3>Hva er kritikkverdige forhold?</h3><ul><li>Brudd på lover, regler eller interne retningslinjer</li><li>Fare for liv, helse eller sikkerhet</li><li>Korrupsjon, underslag eller økonomisk kriminalitet</li><li>Trakassering, diskriminering eller mobbing</li><li>Uforsvarlig arbeidsmiljø</li><li>Brudd på etiske retningslinjer</li></ul>`,
     }),
-    // (konflikter already defined above)
+    varsling_kanal: () => ({
+      title: "Varslingskanaler",
+      content: `<h2>Varslingskanaler</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har etablert følgende varslingskanaler:</p><h3>Intern varsling</h3><ol><li><strong>Nærmeste leder</strong> — Førstevalg for de fleste saker.</li><li><strong>Overordnet leder</strong> — Dersom saken gjelder nærmeste leder.</li><li><strong>Verneombud</strong> — For HMS-relaterte forhold.</li><li><strong>${form.whistleblowerChannel || "Daglig leder"}</strong> — Dedikert varslingskontakt.</li></ol><h3>Anonym varsling</h3><p>Det er mulig å varsle anonymt. Merk at anonym varsling kan gjøre det vanskeligere å undersøke saken.</p><h3>Skriftlig varsling</h3><p>Varsling bør fortrinnsvis skje skriftlig. Varselet bør inneholde:</p><ul><li>Beskrivelse av det kritikkverdige forholdet</li><li>Tidspunkt og sted</li><li>Eventuelle vitner eller dokumentasjon</li></ul>`,
+    }),
+    varsling_behandling: () => ({
+      title: "Behandling av varsler",
+      content: `<h2>Behandling av varsler</h2><h3>Mottak og registrering</h3><p>Alle varsler registreres og behandles konfidensielt. Mottaker skal:</p><ol><li>Bekrefte mottak innen <span class="editable-field" data-field="Varsling bekreftelse">3 virkedager</span></li><li>Vurdere om varselet gjelder et kritikkverdig forhold</li><li>Iverksette undersøkelse dersom det er grunnlag for det</li></ol><h3>Undersøkelse</h3><ul><li>Saken undersøkes av en upartisk person</li><li>Den/de det varsles om, skal få mulighet til å uttale seg</li><li>Undersøkelsen skal gjennomføres uten unødig opphold</li></ul><h3>Avslutning</h3><p>Varsleren informeres om utfallet innen rimelig tid. Tiltak iverksettes der det er nødvendig.</p>`,
+    }),
+    varsling_vern: () => ({
+      title: "Vern mot gjengjeldelse",
+      content: `<h2>Vern mot gjengjeldelse</h2><p>Det er forbudt å gjengjelde mot arbeidstaker som varsler, jf. arbeidsmiljøloven § 2A-4.</p><h3>Hva er gjengjeldelse?</h3><ul><li>Oppsigelse, suspensjon eller avskjed</li><li>Omplassering eller degradering</li><li>Trusler, trakassering eller forskjellsbehandling</li><li>Sosial ekskludering eller utfrysing</li><li>Endring av arbeidsoppgaver eller arbeidstid</li></ul><h3>${company}s forpliktelse</h3><p>Ledelsen skal aktivt forebygge gjengjeldelse og sikre at varslerens arbeidsmiljø ikke forringes.</p>`,
+    }),
+    varsling_ekstern: () => ({
+      title: "Ekstern varsling",
+      content: `<h2>Ekstern varsling</h2><p>Ansatte har alltid rett til å varsle eksternt til offentlige tilsynsmyndigheter.</p><h3>Tilsynsmyndigheter</h3><ul><li><strong>Arbeidstilsynet</strong> — arbeidsmiljø og HMS</li><li><strong>Datatilsynet</strong> — personvern</li><li><strong>Økokrim</strong> — økonomisk kriminalitet</li><li><strong>Likestillings- og diskrimineringsombudet</strong> — diskriminering</li></ul><h3>Til media/offentligheten</h3><p>Varsling til media kan være lovlig dersom intern varsling ikke har ført frem og varslingsinteressen klart veier tyngre enn arbeidsgivers interesse.</p>`,
+    }),
+    varsling_etikk: () => ({
+      title: "Etiske retningslinjer",
+      content: `<h2>Etiske retningslinjer</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> forventer at alle ansatte opptrer med integritet.</p><h3>Kjerneverdier</h3><ul><li><strong>Ærlighet</strong> — Åpne og ærlige i all kommunikasjon</li><li><strong>Respekt</strong> — Alle behandles med verdighet</li><li><strong>Ansvarlighet</strong> — Vi tar ansvar for våre handlinger</li><li><strong>Integritet</strong> — Vi handler i samsvar med lover og regler</li></ul><h3>Interessekonflikter</h3><p>Potensielle interessekonflikter skal meldes til nærmeste leder.</p><h3>Gaver og fordeler</h3><p>Ansatte skal ikke motta gaver som kan påvirke tjenstlige handlinger. Oppmerksomheter under <span class="editable-field" data-field="Gavegrense">500 kr</span> kan aksepteres.</p>`,
+    }),
     avslutning: () => ({
       title: "Oppsigelse og avslutning",
       content: `<h2>Oppsigelse og avslutning</h2><p>Oppsigelse av arbeidsforhold i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> følger arbeidsmiljølovens bestemmelser.</p><h3>Oppsigelsestid</h3><p>Den gjensidige oppsigelsestiden er <span class="editable-field" data-field="Oppsigelsestid">${form.noticePeriod} måneder</span> med mindre annet er avtalt.</p><h3>Sluttrutiner</h3><ul><li>Tilbakelevering av utstyr, nøkler og tilgangskortet</li><li>Deaktivering av IT-tilganger</li><li>Sluttoppgjør inkludert eventuelle feriepenger</li><li>Sluttsamtale med leder</li></ul><h3>Attest</h3><p>Alle ansatte har rett til en skriftlig sluttattest.</p>`,
@@ -1488,13 +1503,57 @@ function buildChapterContents(form: FormData) {
       title: "Bærekraft og samfunnsansvar",
       content: `<h2>Bærekraft og samfunnsansvar</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> tar bærekraft og samfunnsansvar på alvor.</p><h3>Miljø</h3><ul><li>Kildesortering og resirkulering på arbeidsplassen</li><li>Redusert papirbruk gjennom digitalisering</li><li>Miljøvennlige reisealternativer</li></ul><h3>Sosialt ansvar</h3><p>Vi støtter likestilling, mangfold og inkludering. ${form.diversityStatement ? "Vi er forpliktet til å skape en arbeidsplass fri for diskriminering." : ""}</p>`,
     }),
-    arbeidsreglement: () => ({
-      title: "Arbeidsreglement",
-      content: `<h2>Arbeidsreglement</h2><p>Dette arbeidsreglementet gjelder for alle ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> og er fastsatt i henhold til arbeidsmiljøloven kapittel 14.</p><h3>Ordensregler</h3><ul><li>Alle ansatte plikter å overholde fastsatt arbeidstid og melde fra ved fravær.</li><li>Bedriftens utstyr og eiendeler skal behandles med forsiktighet.</li><li>Alkohol og rusmidler skal ikke inntas eller medbringes på arbeidsplassen.</li><li>Røyking er kun tillatt på anviste steder.</li></ul><h3>Adgangskontroll</h3><p>Adgangskort/nøkler er personlige og skal ikke lånes bort.</p><h3>Sanksjoner</h3><p>Brudd kan medføre advarsel. Gjentatte eller grove brudd kan gi grunnlag for oppsigelse.</p>`,
+    arb_ordensregler: () => ({
+      title: "Ordensregler",
+      content: `<h2>Arbeidsreglement — Ordensregler</h2><p>Dette arbeidsreglementet gjelder for alle ansatte i <span class="editable-field" data-field="Bedriftsnavn">${company}</span>, fastsatt i henhold til arbeidsmiljøloven kapittel 14.</p><h3>Generelle ordensregler</h3><ul><li>Alle ansatte plikter å overholde fastsatt arbeidstid og melde fra ved fravær</li><li>Bedriftens utstyr og eiendeler skal behandles med forsiktighet</li><li>Arbeidsplassen skal holdes ryddig og ordentlig</li><li>Adgangskort/nøkler er personlige og skal ikke lånes bort</li><li>Ansatte skal opptre høflig og respektfullt</li></ul>`,
+    }),
+    arb_arbeidstid: () => ({
+      title: "Arbeidsreglement — Arbeidstid og pauser",
+      content: `<h2>Arbeidstid og pauser</h2><p>Regler for arbeidstid i <span class="editable-field" data-field="Bedriftsnavn">${company}</span> fastsettes i henhold til arbeidsmiljøloven.</p><h3>Alminnelig arbeidstid</h3><p>Normal arbeidstid er <span class="editable-field" data-field="Arbeidstid">${form.normalHours} timer</span> per uke.</p><h3>Tidsregistrering</h3><p>Alle ansatte plikter å registrere arbeidstid korrekt.</p><h3>Pauser</h3><ul><li>Lunsjpause: ${form.lunchDuration} minutter${form.lunchPaid ? " (betalt)" : " (ubetalt)"}</li><li>Ved arbeidsdager over 8 timer: minst 30 minutters pause</li></ul>`,
+    }),
+    arb_fravaer: () => ({
+      title: "Arbeidsreglement — Fravær og permisjon",
+      content: `<h2>Fravær og permisjon</h2><h3>Meldeplikt</h3><p>Alt fravær skal meldes til nærmeste leder så tidlig som mulig, senest innen arbeidstidens start.</p><h3>Dokumentasjon</h3><ul><li>Egenmelding: inntil ${form.sickSelfDays} kalenderdager</li><li>Sykemelding kreves utover egenmeldingsperioden</li><li>Permisjon utover lovfestet rett krever skriftlig søknad</li></ul><h3>Ulovlig fravær</h3><p>Fravær uten gyldig grunn kan medføre trekk i lønn og disiplinære tiltak.</p>`,
+    }),
+    arb_atferd: () => ({
+      title: "Arbeidsreglement — Atferd og oppførsel",
+      content: `<h2>Atferd og oppførsel</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> forventer profesjonell og respektfull atferd.</p><h3>Forventet atferd</h3><ul><li>Behandle alle med respekt</li><li>Bidra til et inkluderende arbeidsmiljø</li><li>Holde avtaler og overholde tidsfrister</li><li>Kommunisere åpent og konstruktivt</li></ul><h3>Uakseptabel atferd</h3><ul><li>Mobbing, trakassering eller diskriminering</li><li>Trusler, vold eller truende adferd</li><li>Seksuell trakassering</li><li>Baksnakking eller ryktespredning</li></ul>`,
+    }),
+    arb_rusmiddel: () => ({
+      title: "Arbeidsreglement — Rusmiddelpolicy",
+      content: `<h2>Rusmiddelpolicy</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har nulltoleranse for bruk av rusmidler i arbeidstiden.</p><h3>Regler</h3><ul><li>Alkohol og rusmidler skal ikke inntas eller medbringes på arbeidsplassen</li><li>Ansatte skal ikke møte på jobb påvirket av rusmidler</li><li>Medisinbruk som påvirker arbeidsevnen, skal meldes til nærmeste leder</li></ul><h3>Hjelpetilbud</h3><p>${company} tilbyr støtte til ansatte med rusproblemer. AKAN-modellen benyttes ved behov.</p>`,
+    }),
+    arb_sanksjoner: () => ({
+      title: "Arbeidsreglement — Sanksjoner og konsekvenser",
+      content: `<h2>Sanksjoner og konsekvenser</h2><p>Brudd på arbeidsreglementet kan medføre:</p><ol><li><strong>Muntlig tilbakemelding</strong> — Ved mindre brudd</li><li><strong>Skriftlig advarsel</strong> — Ved gjentatte eller alvorlige brudd</li><li><strong>Oppsigelse</strong> — Ved gjentatte brudd etter advarsel</li><li><strong>Avskjed</strong> — Ved grovt pliktbrudd, jf. aml. § 15-14</li></ol><h3>Rettssikkerhet</h3><ul><li>Ansatte har rett til å uttale seg før formell reaksjon</li><li>Ansatte kan la seg bistå av tillitsvalgt</li><li>Alle formelle reaksjoner dokumenteres</li></ul>`,
+    }),
+    arb_itbruk: () => ({
+      title: "Arbeidsreglement — IT-bruk og utstyr",
+      content: `<h2>IT-bruk og utstyr</h2><h3>Bedriftens utstyr</h3><p>IT-utstyr fra <span class="editable-field" data-field="Bedriftsnavn">${company}</span> er bedriftens eiendom og skal primært benyttes til arbeidsrelaterte formål.</p><h3>Regler</h3><ul><li>Begrenset privat bruk tillates</li><li>Programvareinstallasjon krever godkjenning</li><li>Nedlasting av ulovlig innhold er forbudt</li><li>Passord er personlige og skal ikke deles</li></ul><h3>E-post</h3><ul><li>Profesjonell bruk av bedriftens e-post</li><li>Sensitiv informasjon skal krypteres</li><li>Automatisk videresending til private kontoer er ikke tillatt</li></ul>`,
+    }),
+    hms: () => ({
+      title: "HMS og arbeidsmiljø",
+      content: `<h2>HMS og arbeidsmiljø</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> er forpliktet til å sikre et trygt og godt arbeidsmiljø, i henhold til arbeidsmiljøloven og internkontrollforskriften.</p><h3>Ansvar</h3><ul><li><strong>Arbeidsgiver</strong> har det overordnede ansvaret</li><li><strong>Verneombud</strong> ivaretar arbeidstakernes interesser</li><li><strong>Alle ansatte</strong> plikter å melde fra om farlige forhold</li></ul><h3>Forebygging</h3><p>Årlige vernerunder og risikovurderinger gjennomføres. Alle ulykker og nestenulykker rapporteres umiddelbart.</p>`,
     }),
     internkontroll: () => ({
       title: "Internkontroll (IK-HMS)",
       content: `<h2>Internkontroll — HMS</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har et systematisk internkontrollsystem i henhold til internkontrollforskriften.</p><h3>Organisering</h3><ul><li><strong>Daglig leder:</strong> ${form.ceoName || "[Navn]"}</li><li><strong>Verneombud:</strong> <span class="editable-field" data-field="Verneombud">[Navn]</span></li><li><strong>HMS-ansvarlig:</strong> <span class="editable-field" data-field="HMS-ansvarlig">[Navn]</span></li></ul><h3>IK-systemets innhold</h3><ol><li>Mål for HMS-arbeidet</li><li>Oversikt over organisasjon og ansvarsforhold</li><li>Kartlegging av farer og risikovurdering</li><li>Handlingsplaner med tiltak og tidsfrister</li><li>Rutiner for avvikshåndtering</li><li>Systematisk overvåking og gjennomgang</li><li>Dokumentasjon og arkivering</li></ol>`,
+    }),
+    hms_brannvern: () => ({
+      title: "Brannvern og beredskap",
+      content: `<h2>Brannvern og beredskap</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal ha en beredskapsplan for nødsituasjoner.</p><h3>Brannforebygging</h3><ul><li>Rømningsveier skal holdes frie og merket</li><li>Brannslokkingsutstyr kontrolleres <span class="editable-field" data-field="Brannkontroll">årlig</span></li><li>Brannøvelse minst <span class="editable-field" data-field="Brannøvelse">én gang per år</span></li><li>Brannvernansvarlig: <span class="editable-field" data-field="Brannvernansvarlig">[Navn]</span></li></ul><h3>Ved brann eller evakuering</h3><ol><li>Varsle alle — aktiver brannalarm</li><li>Slokk dersom mulig uten fare</li><li>Evakuer til oppmøteplass: <span class="editable-field" data-field="Oppmøteplass">[Sted]</span></li><li>Ring 110 (brann) eller 113 (medisinsk nødhjelp)</li></ol>`,
+    }),
+    hms_forstehjelp: () => ({
+      title: "Førstehjelp",
+      content: `<h2>Førstehjelp</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> skal ha tilstrekkelig førstehjelpsutstyr og kompetanse.</p><h3>Utstyr</h3><ul><li>Førstehjelpsskrin ved <span class="editable-field" data-field="Førstehjelp plassering">[angi steder]</span></li><li>Hjertestarter (AED) ved <span class="editable-field" data-field="Hjertestarter">[angi sted]</span></li></ul><h3>Ved ulykke</h3><ol><li>Sikre skadestedet</li><li>Gi livreddende førstehjelp</li><li>Ring 113 ved alvorlig skade</li><li>Varsle nærmeste leder</li><li>Registrer hendelsen i avvikssystemet</li></ol>`,
+    }),
+    hms_ergonomi: () => ({
+      title: "Ergonomi og tilrettelegging",
+      content: `<h2>Ergonomi og tilrettelegging</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> tilrettelegger for å forebygge muskel- og skjelettplager.</p><h3>Kontorarbeidsplass</h3><ul><li>Hev-/senkepult tilgjengelig</li><li>Ergonomisk kontorstol</li><li>Riktig skjermplassering</li><li>Tilstrekkelig belysning</li></ul><h3>Tilrettelegging</h3><ul><li>Ansatte med spesielle behov kan søke om tilpasset utstyr</li><li>Ergonomisk vurdering ved nye arbeidsplasser</li><li>Gravide og ansatte med redusert arbeidsevne har rett til tilrettelegging</li></ul>`,
+    }),
+    hms_avvik: () => ({
+      title: "Avvikshåndtering",
+      content: `<h2>Avvikshåndtering</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> har rutiner for systematisk håndtering av avvik.</p><h3>Meldeplikt</h3><p>Alle ansatte plikter å melde avvik via <span class="editable-field" data-field="Avvikssystem">bedriftens avvikssystem</span>.</p><h3>Behandling</h3><ol><li><strong>Registrering</strong> — Dokumenter beskrivelse, tidspunkt og konsekvenser</li><li><strong>Vurdering</strong> — HMS-ansvarlig vurderer alvorlighetsgrad</li><li><strong>Tiltak</strong> — Korrigerende og forebyggende tiltak iverksettes</li><li><strong>Oppfølging</strong> — Tiltakene evalueres</li><li><strong>Lukking</strong> — Avviket lukkes når tiltak er verifisert</li></ol>`,
     }),
     digitalt: () => ({
       title: "Digital arbeidsplass",
@@ -1506,7 +1565,7 @@ function buildChapterContents(form: FormData) {
     }),
     hybridarbeid: () => ({
       title: "Hybridarbeid og fleksibilitet",
-      content: `<h2>Hybridarbeid og fleksibilitet</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> praktiserer en hybrid arbeidsmodell.</p><h3>Prinsipper</h3><ul><li>Hybridarbeid skal ikke gå på bekostning av samarbeid eller produktivitet.</li><li>Ledere og team avtaler felles kontordager.</li><li>Kjernetid gjelder uansett lokasjon: ${form.coreHoursStart}–${form.coreHoursEnd}</li></ul><h3>Evaluering</h3><p>Hybridmodellen evalueres <span class="editable-field" data-field="Evaluering hybrid">halvårlig</span>.</p>`,
+      content: `<h2>Hybridarbeid og fleksibilitet</h2><p><span class="editable-field" data-field="Bedriftsnavn">${company}</span> praktiserer en hybrid arbeidsmodell.</p><h3>Prinsipper</h3><ul><li>Hybridarbeid skal ikke gå på bekostning av samarbeid eller produktivitet.</li><li>Ledere og team avtaler felles kontordager.</li><li>Kjernetid gjelder uansett lokasjon: ${form.coreHoursStart}\u2013${form.coreHoursEnd}</li></ul><h3>Evaluering</h3><p>Hybridmodellen evalueres <span class="editable-field" data-field="Evaluering hybrid">halvårlig</span>.</p>`,
     }),
   };
 
