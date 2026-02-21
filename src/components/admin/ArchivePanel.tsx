@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical } from "lucide-react";
+import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical, Globe, Lock } from "lucide-react";
 
 interface ArchiveFile {
   id: string;
@@ -75,6 +75,11 @@ const ArchivePanel = () => {
       if (storagePath) await supabase.storage.from("archive-files").remove([storagePath]);
     }
     await supabase.from("archive_files").delete().eq("id", file.id);
+    fetchAll();
+  };
+
+  const toggleVisibility = async (file: ArchiveFile) => {
+    await supabase.from("archive_files").update({ active: !file.active }).eq("id", file.id);
     fetchAll();
   };
 
@@ -190,6 +195,18 @@ const ArchivePanel = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleVisibility(file)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${
+                        file.active
+                          ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20"
+                          : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                      }`}
+                      title={file.active ? "Synlig på forsiden – klikk for å skjule" : "Kun i dashbordet – klikk for å publisere"}
+                    >
+                      {file.active ? <Globe size={11} /> : <Lock size={11} />}
+                      {file.active ? "Offentlig" : "Kun intern"}
+                    </button>
                     {file.file_url && (
                       <a href={file.file_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                         <Download size={14} />
