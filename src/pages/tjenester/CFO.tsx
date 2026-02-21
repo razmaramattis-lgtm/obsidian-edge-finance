@@ -46,6 +46,15 @@ const CFO = () => (
       <title>CFO-as-a-Service — Strategisk finansiell ledelse | Avargo</title>
       <meta name="description" content="Seniorkompetanse uten heltidsansettelsen. CFO-tjeneste for vekstselskaper, investeringsrunder, exit og strategiske veivalg." />
       <link rel="canonical" href="https://avargo.no/tjenester/cfo" />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Hva er CFO-as-a-Service?", "acceptedAnswer": { "@type": "Answer", "text": "CFO-as-a-Service gir deg tilgang til strategisk finansiell ledelse fra senioreksperter — uten å ansette en CFO på heltid. Du får kapitalstrukturstrategi, investor-kommunikasjon, budsjettering, scenarioanalyse og beslutningsstøtte tilpasset din fase og ditt behov." }},
+          { "@type": "Question", "name": "Når trenger man en CFO?", "acceptedAnswer": { "@type": "Answer", "text": "Du trenger en CFO når selskapet står overfor strategiske veivalg: investeringsrunder, exit/fusjon, kraftig vekst eller behov for styrerettet rapportering. Med CFO-as-a-Service fra Avargo får du seniorkompetanse akkurat når det trengs — uten fast ansettelse." }},
+          { "@type": "Question", "name": "Hva koster CFO-as-a-Service?", "acceptedAnswer": { "@type": "Answer", "text": "Prisen avhenger av omfanget — fra kvartalsvise strategiøkter til løpende engasjement. Kontakt oss for et skreddersydd tilbud basert på selskapets fase og behov." }}
+        ]
+      })}</script>
     </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
