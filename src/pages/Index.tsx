@@ -108,6 +108,32 @@ const FaqAccordion = ({ question, answer }: { question: string; answer: string }
   );
 };
 
+const StickyMobileCta = () => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
+      const pastHero = scrollY > winHeight * 0.6;
+      const nearBottom = scrollY + winHeight > docHeight - 200;
+      setVisible(pastHero && !nearBottom);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className={`fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/20 p-3 safe-area-bottom transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}>
+      <Link to="/kontakt" className="flex items-center justify-center gap-2 w-full py-3.5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose">
+        Få et uforpliktende tilbud
+        <ArrowRight size={14} />
+      </Link>
+    </div>
+  );
+};
+
 const Index = () => {
   const [lowestPrice, setLowestPrice] = useState<string | null>(null);
 
@@ -591,13 +617,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Sticky mobile CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/20 p-3 safe-area-bottom">
-        <Link to="/kontakt" className="flex items-center justify-center gap-2 w-full py-3.5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose">
-          Få et uforpliktende tilbud
-          <ArrowRight size={14} />
-        </Link>
-      </div>
+      {/* Sticky mobile CTA — hides when near footer */}
+      <StickyMobileCta />
     </>
   );
 };
