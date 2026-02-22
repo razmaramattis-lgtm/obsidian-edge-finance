@@ -6,7 +6,7 @@ import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2
 } from "lucide-react";
 
 // Sub-panels
@@ -112,6 +112,7 @@ const AdminDashboard = () => {
   const [activePanel, setActivePanel] = useState<Panel>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingSidebar, setEditingSidebar] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [bellOpen, setBellOpen] = useState(false);
   const [dismissedNotifications, setDismissedNotifications] = useState<string[]>(loadDismissed);
   const bellRef = useRef<HTMLDivElement>(null);
@@ -275,9 +276,12 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      <nav className="flex-1 overflow-y-auto p-3 space-y-4">
+      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {groups.map(group => {
           const groupItems = visibleItems.filter(i => i.group === group);
+          const isCollapsed = collapsedGroups[group] ?? false;
+          const hasActiveItem = groupItems.some(i => i.id === activePanel);
+          const groupBadgeCount = groupItems.reduce((sum, i) => sum + (badgeMap[i.id] || 0), 0);
 
           if (editingSidebar) {
             return (
@@ -294,7 +298,7 @@ const AdminDashboard = () => {
                       <div className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground bg-muted/20 border border-border/10">
                         <GripVertical size={13} className="text-muted-foreground/40 shrink-0" />
                         <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
-                        <span className="font-light flex-1">{item.label}</span>
+                        <span className="font-light flex-1 text-left">{item.label}</span>
                       </div>
                     </Reorder.Item>
                   ))}
@@ -305,27 +309,48 @@ const AdminDashboard = () => {
 
           return (
             <div key={group}>
-              <p className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground/40 px-2 mb-1">{group}</p>
-              {groupItems.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => { setActivePanel(item.id); setSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                    activePanel === item.id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  }`}
-                >
-                  <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
-                  <span className="font-light flex-1">{item.label}</span>
-                  {(badgeMap[item.id] || 0) > 0 && (
-                    <span className="ml-auto mr-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
-                      {badgeMap[item.id]}
-                    </span>
-                  )}
-                  {activePanel === item.id && <ChevronRight size={12} className="ml-auto" />}
-                </button>
-              ))}
+              <button
+                onClick={() => setCollapsedGroups(prev => ({ ...prev, [group]: !prev[group] }))}
+                className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+              >
+                <ChevronDown
+                  size={12}
+                  className={`shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
+                />
+                <span className="flex-1 text-left">{group}</span>
+                {isCollapsed && groupBadgeCount > 0 && (
+                  <span className="min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[8px] font-bold px-1">
+                    {groupBadgeCount}
+                  </span>
+                )}
+                {isCollapsed && hasActiveItem && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                )}
+              </button>
+              {!isCollapsed && (
+                <div className="space-y-0.5 mt-0.5">
+                  {groupItems.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => { setActivePanel(item.id); setSidebarOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 text-left ${
+                        activePanel === item.id
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      }`}
+                    >
+                      <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
+                      <span className="font-light flex-1 text-left">{item.label}</span>
+                      {(badgeMap[item.id] || 0) > 0 && (
+                        <span className="ml-auto mr-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
+                          {badgeMap[item.id]}
+                        </span>
+                      )}
+                      {activePanel === item.id && <ChevronRight size={12} className="ml-auto" />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
@@ -448,7 +473,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="p-4 md:p-6 lg:p-8">
+        <div className="p-4 md:p-6 lg:p-8 text-left">
           {renderPanel()}
         </div>
       </main>
