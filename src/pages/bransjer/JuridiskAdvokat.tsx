@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const JuridiskAdvokat = () => (
   <BransjePage
+    href="/bransjer/juridisk"
     icon={Scale}
     name="Juridisk & Advokat"
     tagline="Du håndterer juss — vi håndterer regnskapet"

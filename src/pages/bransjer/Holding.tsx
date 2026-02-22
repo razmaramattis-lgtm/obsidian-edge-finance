@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Holding = () => (
   <BransjePage
+    href="/bransjer/holding"
     icon={Landmark}
     name="Holding & Investering"
     tagline="Strukturen som beskytter deg"

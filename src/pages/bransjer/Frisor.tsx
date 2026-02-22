@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Frisor = () => (
   <BransjePage
+    href="/bransjer/frisor"
     icon={Users}
     name="Frisør & Skjønnhet"
     tagline="Mer tid bak stolen, ikke ved skrivebordet"

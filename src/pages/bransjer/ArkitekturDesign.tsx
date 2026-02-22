@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const ArkitekturDesign = () => (
   <BransjePage
+    href="/bransjer/arkitektur"
     icon={Palette}
     name="Arkitektur & Design"
     tagline="Du tegner fremtiden — vi holder orden bak kulissene"

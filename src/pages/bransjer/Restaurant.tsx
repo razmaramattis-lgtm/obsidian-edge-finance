@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Restaurant = () => (
   <BransjePage
+    href="/bransjer/restaurant"
     icon={TrendingUp}
     name="Restaurant & Uteliv"
     tagline="Vi hjelper deg å holde hjulene i gang"

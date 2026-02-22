@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Varehandel = () => (
   <BransjePage
+    href="/bransjer/varehandel"
     icon={ShoppingCart}
     name="Varehandel"
     tagline="Alltid kontroll på varene og pengene"

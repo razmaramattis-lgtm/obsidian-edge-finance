@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const ReiselivTurisme = () => (
   <BransjePage
+    href="/bransjer/reiseliv"
     icon={Plane}
     name="Reiseliv & Turisme"
     tagline="Vi styrer økonomien — du skaper opplevelsene"

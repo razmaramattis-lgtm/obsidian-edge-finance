@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const SportFritid = () => (
   <BransjePage
+    href="/bransjer/sport"
     icon={Dumbbell}
     name="Sport & Fritid"
     tagline="Fokus på trening — vi tar tallene"

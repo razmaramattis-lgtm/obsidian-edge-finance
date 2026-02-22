@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const NettbutikkBransje = () => (
   <BransjePage
+    href="/bransjer/nettbutikk"
     icon={Store}
     name="Nettbutikk & E-commerce"
     tagline="Skalér trygt — vi har ryggen din"

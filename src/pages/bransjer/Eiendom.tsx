@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Eiendom = () => (
   <BransjePage
+    href="/bransjer/eiendom"
     icon={Building2}
     name="Eiendom & Utvikling"
     tagline="Oversikt fra kjøp til salg"

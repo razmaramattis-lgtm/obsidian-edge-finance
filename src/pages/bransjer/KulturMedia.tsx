@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const KulturMedia = () => (
   <BransjePage
+    href="/bransjer/kultur"
     icon={Film}
     name="Kultur, Media & Underholdning"
     tagline="Kreativiteten er din — økonomien er vår"

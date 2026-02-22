@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const RenholdFacility = () => (
   <BransjePage
+    href="/bransjer/renhold"
     icon={Sparkles}
     name="Renhold & Facility"
     tagline="Rene tall for ren drift"

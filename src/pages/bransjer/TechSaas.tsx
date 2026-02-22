@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const TechSaas = () => (
   <BransjePage
+    href="/bransjer/tech-saas"
     icon={Globe}
     name="Tech & SaaS"
     tagline="Vi vokser i takt med deg"
