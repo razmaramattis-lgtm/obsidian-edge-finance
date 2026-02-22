@@ -13,21 +13,48 @@ const tjenesterGroups = [
     label: "Regnskap & Økonomi",
     items: [
       { icon: BookOpen, title: "Dedikert regnskapsfører", href: "/tjenester/regnskapsforer" },
+      { icon: Users, title: "Lønn & lønnskjøring", href: "/tjenester/lonn" },
+      { icon: BookOpen, title: "Årsregnskap & skattemelding", href: "/tjenester/arsregnskap" },
       { icon: Briefcase, title: "CFO-as-a-Service", href: "/tjenester/cfo" },
-      { icon: Users, title: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
-      { icon: BookOpen, title: "Regnskapskurs", href: "/tjenester/kurs" },
+      { icon: BookOpen, title: "Fakturering & innkreving", href: "/tjenester/fakturering" },
+      { icon: TrendingUp, title: "Skatteplanlegging", href: "/tjenester/skatteplanlegging" },
       { icon: BookOpen, title: "1-1 Regnskap", href: "/tjenester/1-1-regnskap" },
+      { icon: LayoutTemplate, title: "Avargo Dashboard", href: "/tjenester/dashboard" },
+    ],
+  },
+  {
+    label: "HR & Personal",
+    items: [
+      { icon: Users, title: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
+      { icon: Users, title: "Ansettelse & rekruttering", href: "/tjenester/ansettelse" },
+      { icon: BookOpen, title: "Personalhåndbok", href: "/tjenester/personalhandbok" },
+      { icon: Briefcase, title: "Arbeidsrett & HMS", href: "/tjenester/arbeidsrett" },
     ],
   },
   {
     label: "Markedsføring & Vekst",
     items: [
-      { icon: LayoutTemplate, title: "Nettsider & digitale flater", href: "/tjenester/nettsider" },
       { icon: Search, title: "SEO & søkbarhet", href: "/tjenester/seo" },
       { icon: Megaphone, title: "Meta-annonser", href: "/tjenester/meta-annonser" },
       { icon: Globe, title: "Google Ads", href: "/tjenester/google-ads" },
       { icon: ShoppingCart, title: "Nettbutikk & e-handel", href: "/tjenester/nettbutikk" },
+    ],
+  },
+  {
+    label: "IT & Utvikling",
+    items: [
+      { icon: LayoutTemplate, title: "Skreddersydde nettsider", href: "/tjenester/nettsider" },
+      { icon: Bot, title: "AI-chatbot & kundeservice", href: "/tjenester/chatbot" },
+      { icon: Bot, title: "Interne systemer", href: "/tjenester/internsystemer" },
       { icon: Bot, title: "AI & automatisering", href: "/tjenester/ai-automatisering" },
+    ],
+  },
+  {
+    label: "Kurs & Opplæring",
+    items: [
+      { icon: BookOpen, title: "Regnskapskurs", href: "/tjenester/kurs" },
+      { icon: Users, title: "HR & arbeidsgiveransvar", href: "/tjenester/hr-kurs" },
+      { icon: TrendingUp, title: "Skreddersydde bedriftskurs", href: "/tjenester/bedriftskurs" },
     ],
   },
 ];
@@ -109,9 +136,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <AnimatePresence>
                 {tjenesterOpen && (
                   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-5"
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[780px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-5"
                   >
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-4">
                       {tjenesterGroups.map((group) => (
                         <div key={group.label}>
                           <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>

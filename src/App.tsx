@@ -48,6 +48,18 @@ const AiAutomatisering = lazy(() => import("./pages/tjenester/AiAutomatisering")
 const Kurs = lazy(() => import("./pages/tjenester/Kurs"));
 const EnTilEnRegnskap = lazy(() => import("./pages/tjenester/EnTilEnRegnskap"));
 const KursDetalj = lazy(() => import("./pages/tjenester/KursDetalj"));
+const Lonn = lazy(() => import("./pages/tjenester/Lonn"));
+const Arsregnskap = lazy(() => import("./pages/tjenester/Arsregnskap"));
+const Fakturering = lazy(() => import("./pages/tjenester/Fakturering"));
+const Skatteplanlegging = lazy(() => import("./pages/tjenester/Skatteplanlegging"));
+const DashboardPage = lazy(() => import("./pages/tjenester/Dashboard"));
+const Ansettelse = lazy(() => import("./pages/tjenester/Ansettelse"));
+const Personalhandbok = lazy(() => import("./pages/tjenester/Personalhandbok"));
+const Arbeidsrett = lazy(() => import("./pages/tjenester/Arbeidsrett"));
+const Chatbot = lazy(() => import("./pages/tjenester/Chatbot"));
+const Internsystemer = lazy(() => import("./pages/tjenester/Internsystemer"));
+const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
+const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
 
 // Bransje-undersider
 const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
@@ -141,6 +153,18 @@ const App = () => (
                         <Route path="/tjenester/kurs" element={<Kurs />} />
                         <Route path="/tjenester/kurs/:slug" element={<KursDetalj />} />
                         <Route path="/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
+                        <Route path="/tjenester/lonn" element={<Lonn />} />
+                        <Route path="/tjenester/arsregnskap" element={<Arsregnskap />} />
+                        <Route path="/tjenester/fakturering" element={<Fakturering />} />
+                        <Route path="/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
+                        <Route path="/tjenester/dashboard" element={<DashboardPage />} />
+                        <Route path="/tjenester/ansettelse" element={<Ansettelse />} />
+                        <Route path="/tjenester/personalhandbok" element={<Personalhandbok />} />
+                        <Route path="/tjenester/arbeidsrett" element={<Arbeidsrett />} />
+                        <Route path="/tjenester/chatbot" element={<Chatbot />} />
+                        <Route path="/tjenester/internsystemer" element={<Internsystemer />} />
+                        <Route path="/tjenester/hr-kurs" element={<HrKurs />} />
+                        <Route path="/tjenester/bedriftskurs" element={<Bedriftskurs />} />
                         <Route path="/bransjer" element={<Bransjer />} />
                         <Route path="/bransjer/tech-saas" element={<TechSaas />} />
                         <Route path="/bransjer/eiendom" element={<Eiendom />} />
