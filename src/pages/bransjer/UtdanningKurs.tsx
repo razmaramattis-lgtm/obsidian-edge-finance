@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const UtdanningKurs = () => (
   <BransjePage
+    href="/bransjer/utdanning"
     icon={GraduationCap}
     name="Utdanning & Kurs"
     tagline="Du lærer bort — vi holder orden"

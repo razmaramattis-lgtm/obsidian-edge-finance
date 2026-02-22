@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const BemanningRekruttering = () => (
   <BransjePage
+    href="/bransjer/bemanning"
     icon={UserPlus}
     name="Bemanning & Rekruttering"
     tagline="Du finner folkene — vi ordner tallene"

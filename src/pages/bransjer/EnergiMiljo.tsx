@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const EnergiMiljo = () => (
   <BransjePage
+    href="/bransjer/energi"
     icon={Leaf}
     name="Energi & Miljø"
     tagline="Bærekraftig økonomi for bærekraftige selskaper"

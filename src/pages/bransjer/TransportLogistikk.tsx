@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const TransportLogistikk = () => (
   <BransjePage
+    href="/bransjer/transport"
     icon={Truck}
     name="Transport & Logistikk"
     tagline="Vi holder oversikt mens du holder hjulene i gang"

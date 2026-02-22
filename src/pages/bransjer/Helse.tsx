@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Helse = () => (
   <BransjePage
+    href="/bransjer/helse"
     icon={Heart}
     name="Helse & Velvære"
     tagline="Fokuser på menneskene du hjelper"

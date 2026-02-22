@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Consulting = () => (
   <BransjePage
+    href="/bransjer/consulting"
     icon={Briefcase}
     name="Consulting & Rådgivning"
     tagline="Mer tid til det du er best på"

@@ -6,8 +6,10 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { LucideIcon } from "lucide-react";
 import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
 import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
+import { useIndustryContent } from "@/hooks/useIndustryContent";
 
 interface BransjePageProps {
+  href: string;
   icon: LucideIcon;
   name: string;
   tagline: string;
@@ -22,18 +24,27 @@ interface BransjePageProps {
 }
 
 const BransjePage = ({
+  href,
   icon: Icon,
   name,
-  tagline,
-  intro,
-  body,
-  deliverables,
+  tagline: defaultTagline,
+  intro: defaultIntro,
+  body: defaultBody,
+  deliverables: defaultDeliverables,
   challenges,
   whyAvargo,
   quote,
   relatedSlugs,
-  ctaHeadline,
-}: BransjePageProps) => (
+  ctaHeadline: defaultCtaHeadline,
+}: BransjePageProps) => {
+  const dbContent = useIndustryContent(href);
+  const tagline = dbContent?.tagline || defaultTagline;
+  const intro = dbContent?.intro || defaultIntro;
+  const body = dbContent?.body || defaultBody;
+  const deliverables = dbContent?.deliverables || defaultDeliverables;
+  const ctaHeadline = dbContent?.cta_headline || defaultCtaHeadline;
+
+  return (
   <>
     <Helmet>
       <title>Regnskapsfører for {name} | Avargo</title>
@@ -214,6 +225,7 @@ const BransjePage = ({
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default BransjePage;

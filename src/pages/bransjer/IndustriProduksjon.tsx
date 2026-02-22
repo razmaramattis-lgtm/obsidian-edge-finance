@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const IndustriProduksjon = () => (
   <BransjePage
+    href="/bransjer/industri"
     icon={Factory}
     name="Industri & Produksjon"
     tagline="Orden i regnskapet gir orden i produksjonen"

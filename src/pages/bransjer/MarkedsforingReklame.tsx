@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const MarkedsforingReklame = () => (
   <BransjePage
+    href="/bransjer/markedsforing"
     icon={Megaphone}
     name="Markedsføring & Reklame"
     tagline="Du bygger merkevarer — vi bygger bunnlinjen"

@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const ByggAnlegg = () => (
   <BransjePage
+    href="/bransjer/bygg-anlegg"
     icon={HardHat}
     name="Bygg & Anlegg"
     tagline="Vi holder orden mens du bygger"

@@ -3,6 +3,7 @@ import BransjePage from "@/components/BransjePage";
 
 const Handverkere = () => (
   <BransjePage
+    href="/bransjer/handverkere"
     icon={Zap}
     name="Håndverkere & Fagfolk"
     tagline="Fagmann på jobb, vi tar resten"

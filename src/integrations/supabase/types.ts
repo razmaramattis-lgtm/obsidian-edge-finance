@@ -1263,34 +1263,49 @@ export type Database = {
       industries: {
         Row: {
           active: boolean | null
+          body: string | null
           created_at: string
+          cta_headline: string | null
+          deliverables: string[] | null
           description: string | null
           href: string | null
           icon: string | null
           id: string
+          intro: string | null
           sort_order: number | null
+          tagline: string | null
           title: string
           updated_at: string
         }
         Insert: {
           active?: boolean | null
+          body?: string | null
           created_at?: string
+          cta_headline?: string | null
+          deliverables?: string[] | null
           description?: string | null
           href?: string | null
           icon?: string | null
           id?: string
+          intro?: string | null
           sort_order?: number | null
+          tagline?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           active?: boolean | null
+          body?: string | null
           created_at?: string
+          cta_headline?: string | null
+          deliverables?: string[] | null
           description?: string | null
           href?: string | null
           icon?: string | null
           id?: string
+          intro?: string | null
           sort_order?: number | null
+          tagline?: string | null
           title?: string
           updated_at?: string
         }
