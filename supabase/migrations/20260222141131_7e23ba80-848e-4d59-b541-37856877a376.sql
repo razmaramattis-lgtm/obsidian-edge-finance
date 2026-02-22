@@ -1,0 +1,8 @@
+
+-- Add new profile fields
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS phone text,
+ADD COLUMN IF NOT EXISTS avatar_url text,
+ADD COLUMN IF NOT EXISTS title text,
+ADD COLUMN IF NOT EXISTS specialty text,
+ADD COLUMN IF NOT EXISTS bio text;

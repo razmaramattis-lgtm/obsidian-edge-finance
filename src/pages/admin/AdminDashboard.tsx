@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 // Sub-panels
-import EmployeesPanel from "@/components/admin/EmployeesPanel";
+// EmployeesPanel is now inside SettingsPanel
 import ChatPanel from "@/components/admin/ChatPanel";
 import BlogPanel from "@/components/admin/BlogPanel";
 import ServicesPanel from "@/components/admin/ServicesPanel";
@@ -28,7 +28,7 @@ import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import DataCenterPanel from "@/components/admin/DataCenterPanel";
-import MyBookingSettingsPanel from "@/components/admin/MyBookingSettingsPanel";
+// MyBookingSettingsPanel is now inside SettingsPanel
 import CustomersPanel from "@/components/admin/CustomersPanel";
 import PartnerRequestsPanel from "@/components/admin/PartnerRequestsPanel";
 import AdvisorRequestsPanel from "@/components/admin/AdvisorRequestsPanel";
@@ -41,8 +41,8 @@ import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
 import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 
-type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions";
+type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions";
 
 interface NavItem {
   id: Panel;
@@ -90,10 +90,8 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
-  { id: "mybooking", label: "Min tilgjengelighet", icon: CalendarDays, group: "Internt" },
 
   // Admin
-  { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
 
@@ -210,7 +208,6 @@ const AdminDashboard = () => {
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "employees": return <EmployeesPanel />;
       case "chat": return <ChatPanel />;
       case "blog": return <BlogPanel />;
       case "services": return <ServicesPanel />;
@@ -226,7 +223,6 @@ const AdminDashboard = () => {
       case "datacenter": return <DataCenterPanel />;
       case "courses": return <CoursesPanel />;
       case "bookings": return <BookingsPanel onStatusChange={refreshNotifications} />;
-      case "mybooking": return <MyBookingSettingsPanel />;
       case "customers": return <CustomersPanel />;
       case "partner_requests": return <PartnerRequestsPanel onStatusChange={refreshNotifications} />;
       case "advisor_requests": return <AdvisorRequestsPanel onStatusChange={refreshNotifications} />;
