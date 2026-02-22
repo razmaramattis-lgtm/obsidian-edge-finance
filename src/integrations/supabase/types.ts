@@ -159,6 +159,7 @@ export type Database = {
           name: string
           sort_order: number | null
           updated_at: string
+          visibility: string
         }
         Insert: {
           active?: boolean | null
@@ -172,6 +173,7 @@ export type Database = {
           name: string
           sort_order?: number | null
           updated_at?: string
+          visibility?: string
         }
         Update: {
           active?: boolean | null
@@ -185,6 +187,7 @@ export type Database = {
           name?: string
           sort_order?: number | null
           updated_at?: string
+          visibility?: string
         }
         Relationships: []
       }
