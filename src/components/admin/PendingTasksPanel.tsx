@@ -91,12 +91,13 @@ const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
         break;
       case "contact_submissions":
         if (d.contact_person) fields.push({ label: "Kontaktperson", value: d.contact_person });
-        if (d.company_name) fields.push({ label: "Selskap", value: d.company_name });
+        if (d.company_name) fields.push({ label: "Selskap", value: d.company_name + (d.org_number ? ` (${d.org_number})` : "") });
         if (d.email) fields.push({ label: "E-post", value: d.email });
         if (d.phone) fields.push({ label: "Telefon", value: d.phone });
+        if (d.industry) fields.push({ label: "Bransje", value: d.industry + (d.industry_code ? ` (${d.industry_code})` : "") });
+        if (d.package) fields.push({ label: "Valgt pakke", value: d.package });
+        if (d.revenue_target) fields.push({ label: "Omsetningsmål", value: d.revenue_target });
         if (d.message) fields.push({ label: "Melding", value: d.message });
-        if (d.package) fields.push({ label: "Pakke", value: d.package });
-        if (d.industry) fields.push({ label: "Bransje", value: d.industry });
         break;
       case "bookings":
         if (d.customer_name) fields.push({ label: "Kunde", value: d.customer_name });
