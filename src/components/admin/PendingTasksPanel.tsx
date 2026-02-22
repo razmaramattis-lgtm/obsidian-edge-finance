@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminNotifications, PendingItem } from "@/hooks/useAdminNotifications";
 import {
   Check, X, ChevronDown, ChevronUp, Inbox, Users, UserPlus,
-  Handshake, CalendarDays, Mail, AlertCircle, Loader2, ExternalLink
+  Handshake, CalendarDays, Mail, AlertCircle, Loader2, ExternalLink, AlertTriangle
 } from "lucide-react";
 
 const categoryConfig: Record<string, { label: string; icon: React.ElementType }> = {
@@ -14,6 +14,7 @@ const categoryConfig: Record<string, { label: string; icon: React.ElementType }>
   benefit_applications: { label: "Fordelsavtale-søknader", icon: Handshake },
   bookings: { label: "Ventende bookinger", icon: CalendarDays },
   contact_submissions: { label: "Nye henvendelser", icon: Mail },
+  account_feedback: { label: "Kontohjelp-meldinger", icon: AlertTriangle },
 };
 
 interface Props {
@@ -106,6 +107,11 @@ const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
         if (d.booking_time) fields.push({ label: "Tid", value: d.booking_time });
         if (d.message) fields.push({ label: "Melding", value: d.message });
         break;
+      case "account_feedback":
+        if (d.search_term) fields.push({ label: "Søkeord", value: d.search_term });
+        if (d.top_result_account) fields.push({ label: "Beste treff", value: `${d.top_result_account} – ${d.top_result_name || ""}` });
+        if (d.message) fields.push({ label: "Melding", value: d.message });
+        break;
     }
 
     if (fields.length === 0) {
@@ -113,13 +119,24 @@ const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
     }
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 py-2">
-        {fields.map(f => (
-          <div key={f.label}>
-            <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">{f.label}</p>
-            <p className="text-xs text-foreground break-words">{f.value}</p>
-          </div>
-        ))}
+      <div className="space-y-3 py-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+          {fields.map(f => (
+            <div key={f.label}>
+              <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">{f.label}</p>
+              <p className="text-xs text-foreground break-words">{f.value}</p>
+            </div>
+          ))}
+        </div>
+        {item.table === "account_feedback" && d.top_result_account && onNavigate && (
+          <button
+            onClick={() => onNavigate("account_entries")}
+            className="flex items-center gap-1.5 text-[11px] text-primary hover:underline"
+          >
+            <ExternalLink size={11} />
+            Åpne konto {d.top_result_account} i Kontohjelp
+          </button>
+        )}
       </div>
     );
   };
