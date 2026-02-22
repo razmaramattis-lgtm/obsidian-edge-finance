@@ -12,7 +12,7 @@ interface AccountEntry {
   name: string;
   slug: string;
   description: string | null;
-  examples: string | null;
+  examples: string[];
   category_group: string | null;
   tags: string[];
   mva_status: string;
@@ -65,7 +65,7 @@ const Kontohjelp = () => {
         e.account_number.includes(q) ||
         e.name.toLowerCase().includes(q) ||
         (e.description && e.description.toLowerCase().includes(q)) ||
-        (e.examples && e.examples.toLowerCase().includes(q)) ||
+        (e.examples && e.examples.some(ex => ex.toLowerCase().includes(q))) ||
         (e.tags && e.tags.some(t => t.toLowerCase().includes(q)))
       );
     }

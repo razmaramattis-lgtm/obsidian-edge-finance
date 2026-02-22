@@ -22,7 +22,7 @@ export type Database = {
           category_group: string | null
           created_at: string
           description: string | null
-          examples: string | null
+          examples: string[] | null
           id: string
           mva_status: string
           name: string
@@ -38,7 +38,7 @@ export type Database = {
           category_group?: string | null
           created_at?: string
           description?: string | null
-          examples?: string | null
+          examples?: string[] | null
           id?: string
           mva_status?: string
           name: string
@@ -54,7 +54,7 @@ export type Database = {
           category_group?: string | null
           created_at?: string
           description?: string | null
-          examples?: string | null
+          examples?: string[] | null
           id?: string
           mva_status?: string
           name?: string
