@@ -22,8 +22,8 @@ interface Stats {
   recentPosts: { id: string; title: string; published: boolean; created_at: string }[];
 }
 
-type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "pending_tasks";
+type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "pending_tasks";
 
 type WidgetId = "notifications" | "stats" | "quickdraft" | "recentposts" | "taxdeadlines" | "quicknav";
 
