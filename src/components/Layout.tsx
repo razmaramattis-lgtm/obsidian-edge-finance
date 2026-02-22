@@ -380,7 +380,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Din finansielle arkitekt.<br />Presisjon. Innsikt. Vekst.
               </p>
               <p className="mt-2 text-xs text-foreground/40 font-light leading-relaxed">
-                Oscars gate 2B, 3714 Skien<br />firmapost@avargo.no
+                Oscars gate 2B, 3714 Skien<br />+47 986 42 391<br />firmapost@avargo.no
               </p>
               <Link to="/kontakt" className="inline-block mt-4 px-5 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 tracking-wide">
                 Kom i gang
