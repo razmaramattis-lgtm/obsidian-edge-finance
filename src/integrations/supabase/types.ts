@@ -26,6 +26,7 @@ export type Database = {
           id: string
           mva_status: string
           name: string
+          related_accounts: string[]
           slug: string
           sort_order: number | null
           tags: string[]
@@ -42,6 +43,7 @@ export type Database = {
           id?: string
           mva_status?: string
           name: string
+          related_accounts?: string[]
           slug: string
           sort_order?: number | null
           tags?: string[]
@@ -58,6 +60,7 @@ export type Database = {
           id?: string
           mva_status?: string
           name?: string
+          related_accounts?: string[]
           slug?: string
           sort_order?: number | null
           tags?: string[]

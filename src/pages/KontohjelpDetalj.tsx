@@ -14,6 +14,7 @@ interface AccountEntry {
   examples: string[];
   category_group: string | null;
   tags: string[];
+  related_accounts: string[];
 }
 
 const KontohjelpDetalj = () => {
@@ -66,6 +67,12 @@ const KontohjelpDetalj = () => {
   // Related accounts: same category_group or overlapping tags
   const related = useMemo(() => {
     if (!entry) return [];
+    // Prioritize manually set related accounts
+    const manual = (entry.related_accounts || [])
+      .map(acc => allEntries.find(e => e.account_number === acc))
+      .filter(Boolean) as AccountEntry[];
+    if (manual.length > 0) return manual;
+    // Fallback: auto-calculate from shared category/tags
     return allEntries
       .filter(e => e.id !== entry.id)
       .map(e => {
