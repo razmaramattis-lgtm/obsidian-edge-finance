@@ -105,10 +105,17 @@ const MyBookingSettingsPanel = () => {
   const toggleDay = (dayIndex: number) => {
     const daySlots = slotsByDay[dayIndex];
     if (daySlots.length === 0) {
+      // No slots exist for this day — add a default one
       setAvailability(prev => [...prev, { day_of_week: dayIndex, start_time: "09:00", end_time: "17:00", active: true }]);
     } else {
-      const allActive = daySlots.every(s => s.active);
-      setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, active: !allActive } : a));
+      const anyActive = daySlots.some(s => s.active);
+      if (anyActive) {
+        // Turn day OFF — remove all slots for this day
+        setAvailability(prev => prev.filter(a => a.day_of_week !== dayIndex));
+      } else {
+        // Turn day back ON — re-enable all slots
+        setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, active: true } : a));
+      }
     }
   };
 
