@@ -36,7 +36,7 @@ interface CreateCustomerForm {
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   new: { label: "Ny", color: "bg-destructive/10 text-destructive", icon: Clock },
-  contacted: { label: "Kontaktet", color: "bg-primary/10 text-primary", icon: CheckCircle },
+  contacted: { label: "Kundearkiv", color: "bg-primary/10 text-primary", icon: CheckCircle },
   archived: { label: "Arkivert", color: "bg-muted text-muted-foreground", icon: ArchiveIcon },
 };
 
@@ -55,6 +55,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "new" | "contacted" | "archived">("all");
+  const [viewTarget, setViewTarget] = useState<Submission | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   // Create customer state
@@ -77,7 +78,12 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
 
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("contact_submissions").update({ status }).eq("id", id);
-    toast.success(status === "contacted" ? "Markert som kontaktet" : status === "archived" ? "Arkivert" : "Status oppdatert");
+    if (status === "contacted") {
+      toast.success("Markert som kontaktet – flyttet til kundearkiv");
+      setFilter("contacted");
+    } else {
+      toast.success(status === "archived" ? "Arkivert" : "Status oppdatert");
+    }
     await load();
     onStatusChange?.();
   };
@@ -178,7 +184,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: "Nye", count: newCount, color: "text-destructive", filterKey: "new" as const },
-          { label: "Kontaktet", count: contactedCount, color: "text-primary", filterKey: "contacted" as const },
+          { label: "Kundearkiv", count: contactedCount, color: "text-primary", filterKey: "contacted" as const },
           { label: "Arkivert", count: archivedCount, color: "text-muted-foreground", filterKey: "archived" as const },
         ].map(s => (
           <button
@@ -339,13 +345,15 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                       </>
                     )}
                     {s.status === "contacted" && (
-                      <button
-                        onClick={() => updateStatus(s.id, "archived")}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                      >
-                        <Archive size={11} />
-                        Arkiver
-                      </button>
+                      <>
+                        <button
+                          onClick={() => openCreateDialog(s)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          <UserPlus size={11} />
+                          Opprett som kunde
+                        </button>
+                      </>
                     )}
                     {s.status === "archived" && (
                       <button
@@ -357,8 +365,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                       </button>
                     )}
 
-                    {/* Create customer button - available for contacted and new */}
-                    {(s.status === "new" || s.status === "contacted") && (
+                    {s.status === "new" && (
                       <button
                         onClick={() => openCreateDialog(s)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors"
