@@ -357,15 +357,15 @@ const Kontohjelp = () => {
                             {item.description && (
                               <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 font-light">{item.description}</p>
                             )}
-                            {item.tags && item.tags.length > 0 && (
+                            {isSearching && item.tags && item.tags.length > 0 && (
                               <div className="flex gap-1 mt-1.5 flex-wrap">
-                                {item.tags.slice(0, 4).map(tag => (
+                                {item.tags.slice(0, 6).map(tag => (
                                   <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-md bg-muted/60 text-muted-foreground/70">
                                     {tag}
                                   </span>
                                 ))}
-                                {item.tags.length > 4 && (
-                                  <span className="text-[9px] text-muted-foreground/40">+{item.tags.length - 4}</span>
+                                {item.tags.length > 6 && (
+                                  <span className="text-[9px] text-muted-foreground/40">+{item.tags.length - 6}</span>
                                 )}
                               </div>
                             )}
