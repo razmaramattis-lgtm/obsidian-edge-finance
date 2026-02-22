@@ -27,6 +27,7 @@ import OverviewPanel from "@/components/admin/OverviewPanel";
 import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
 import PageChangesPanel from "@/components/admin/PageChangesPanel";
+import OrgResourcesPanel from "@/components/admin/OrgResourcesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import DataCenterPanel from "@/components/admin/DataCenterPanel";
 // MyBookingSettingsPanel is now inside SettingsPanel
@@ -43,7 +44,7 @@ import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources";
 
 interface NavItem {
   id: Panel;
@@ -69,19 +70,10 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Avtaler" },
   { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Avtaler" },
 
-  // Innhold (nettside)
+  // Innhold
   { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Innhold" },
   { id: "page_changes", label: "Sideendringer", icon: Briefcase, adminOnly: true, group: "Innhold" },
-
-  // Organisasjonsressurser
-  { id: "datacenter", label: "Datasenter", icon: Building2, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Organisasjonsressurser" },
-  { id: "hms", label: "HMS-bok", icon: Shield, group: "Organisasjonsressurser" },
+  { id: "org_resources", label: "Organisasjonsressurser", icon: FolderOpen, adminOnly: true, group: "Innhold" },
 
   // Internt
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
@@ -172,6 +164,7 @@ const AdminDashboard = () => {
     contact_submissions: notifications.contactSubmissions,
     overview: notifications.contactSubmissions,
     account_feedback: notifications.accountFeedback,
+    org_resources: notifications.accountFeedback,
   };
 
   const visibleItems = orderedNavItems.filter(item => !item.adminOnly || isAdmin);
@@ -233,6 +226,7 @@ const AdminDashboard = () => {
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
+      case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
