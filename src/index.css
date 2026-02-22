@@ -507,3 +507,14 @@ html {
   from { width: 0%; }
   to { width: 100%; }
 }
+
+/* Sticky CTA safe area for mobile */
+.safe-area-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 4.5rem;
+  }
+}
