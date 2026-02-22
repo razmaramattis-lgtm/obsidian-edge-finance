@@ -136,9 +136,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <AnimatePresence>
                 {tjenesterOpen && (
                   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[780px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-5"
+                    className="fixed top-[72px] left-0 right-0 bg-card/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl p-6"
                   >
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="container mx-auto">
+                    <div className="grid grid-cols-5 gap-6">
                       {tjenesterGroups.map((group) => (
                         <div key={group.label}>
                           <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>
@@ -159,6 +160,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     </div>
                     <div className="mt-3 pt-3 border-t border-border/15">
                       <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle tjenester →</Link>
+                    </div>
                     </div>
                   </motion.div>
                 )}
