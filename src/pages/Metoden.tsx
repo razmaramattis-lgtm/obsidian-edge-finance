@@ -254,16 +254,13 @@ const Metoden = () => {
             <div className="absolute inset-0 ambient-glow opacity-30" />
             <div className="relative z-10">
               <AnimatedSection>
-                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Din egen avdeling</p>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Ditt team</p>
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-                  En hel økonomiavdeling.{" "}
-                  <span className="italic text-gradient-rose">Uten å ansette noen.</span>
+                  Ikke én person.{" "}
+                  <span className="italic text-gradient-rose">Et helt hus.</span>
                 </h2>
-                <p className="text-muted-foreground font-light leading-relaxed mb-4 max-w-md text-sm md:text-base">
-                  Store selskaper har egne team for regnskap, HR, skatt og markedsføring. Det koster millioner i året. Hos Avargo får du den samme kompetansen — koordinert, dedikert og til en brøkdel av kostnaden.
-                </p>
-                <p className="text-xs text-primary/80 italic font-light mb-8 md:mb-10 max-w-md">
-                  Å ansette en regnskapsfører, en HR-rådgiver og en markedsfører koster fort 2,5 millioner i året. Hos Avargo starter du fra noen tusen i måneden.
+                <p className="text-muted-foreground font-light leading-relaxed mb-8 md:mb-10 max-w-md text-sm md:text-base">
+                  Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert rundt selskapet ditt. Vi vurderer hva du faktisk trenger — og setter inn riktig kompetanse.
                 </p>
 
                 <div className="flex flex-col gap-3 md:gap-4">
@@ -283,7 +280,7 @@ const Metoden = () => {
                 </div>
 
                 <p className="text-xs text-muted-foreground/50 italic font-light mt-7 md:mt-8">
-                  Én kontaktperson. Fem fagfelt. Null ekstra ansatte. Samme ressurser som selskaper med 50+ ansatte.
+                  Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører.
                 </p>
               </AnimatedSection>
             </div>

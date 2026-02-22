@@ -19,6 +19,75 @@ import serviceBg3 from "@/assets/service-bg-3.jpg";
 import serviceBg4 from "@/assets/service-bg-4.jpg";
 import serviceBg5 from "@/assets/service-bg-5.jpg";
 
+const hookSlides = [
+  {
+    heading: <>Store selskaper har hele avdelinger.{" "}<span className="italic text-gradient-teal">Nå har du det også.</span></>,
+    body: "Regnskapsfører, HR-rådgiver, skatteekspert, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.",
+    tagline: "Du trenger ikke bli stor for å ha ressursene til det.",
+  },
+  {
+    heading: <>Du startet bedriften for å bygge noe.{" "}<span className="italic text-gradient-teal">Ikke for å sitte med bilag.</span></>,
+    body: "De fleste bedriftseiere bruker timer hver uke på fakturering, rapporter og frister — tid som burde gått til kunder, ansatte og vekst. Med Avargo overlater du alt det til noen som faktisk brenner for det.",
+    tagline: "Vi tar ansvaret. Du tar beslutningene.",
+  },
+  {
+    heading: <>Samme trygghet som de store.{" "}<span className="italic text-gradient-teal">Uten byråkratiet.</span></>,
+    body: "Storkonsern har egne økonomiavdelinger, HR-team og rådgivere. Du har Avargo. Samme kompetanse, samme tilgjengelighet — men uten faste ansatte, kontorlokaler og millionbudsjetter.",
+    tagline: "Alt du trenger. Ingenting du ikke trenger.",
+  },
+];
+
+const RotatingHook = () => {
+  const [hookIndex, setHookIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHookIndex((prev) => (prev + 1) % hookSlides.length);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const slide = hookSlides[hookIndex];
+
+  return (
+    <section className="py-24 md:py-40 relative">
+      <div className="absolute inset-0 ambient-glow opacity-60" />
+      <div className="container mx-auto px-4 md:px-6 relative">
+        <div className="max-w-3xl mx-auto text-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={hookIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
+                {slide.heading}
+              </h2>
+              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
+                {slide.body}
+              </p>
+              <p className="text-primary text-lg font-heading italic">
+                {slide.tagline}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+          <div className="flex items-center justify-center gap-2 mt-8">
+            {hookSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setHookIndex(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === hookIndex ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Index = () => {
   const [lowestPrice, setLowestPrice] = useState<string | null>(null);
 
@@ -283,26 +352,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* THE HOOK */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-60" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
-              Store selskaper har hele avdelinger.{" "}
-                <span className="italic text-gradient-teal">Nå har du det også.</span>
-              </h2>
-              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
-                Regnskapsfører, HR-rådgiver, skatteekspert, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.
-              </p>
-              <p className="text-primary text-lg font-heading italic">
-                Du trenger ikke bli stor for å ha ressursene til det.
-              </p>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
+      {/* THE HOOK — rotating */}
+      <RotatingHook />
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
@@ -519,10 +570,10 @@ const Index = () => {
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
             <div className="text-center mb-14 md:mb-20">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Stordrift — uten storkonsern</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl max-w-3xl mx-auto leading-snug">
-                Alt en stor bedrift har.{" "}
-                <span className="italic text-gradient-rose">Uten å ansette en eneste person.</span>
+                De fleste betaler for mye.{" "}
+                <span className="italic text-gradient-rose">Og får for lite tilbake.</span>
               </h2>
             </div>
           </AnimatedSection>
@@ -587,7 +638,7 @@ const Index = () => {
                 Usikker på om du får nok <span className="italic text-gradient-rose">tilbake fra regnskapsføreren din?</span>
               </h2>
               <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
-                Finn ut hva en hel økonomiavdeling ville kostet deg — og se hva du får hos Avargo til en brøkdel av prisen. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
+                Vi gjennomgår regnskapet ditt gratis og viser deg konkret hva du kan spare — på skatt, kostnader og tid. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
               </p>
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">
                 Helt uforpliktende. Ingen binding. Bare en god samtale.
