@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -90,9 +90,44 @@ const EnergiMiljo = lazy(() => import("./pages/bransjer/EnergiMiljo"));
 
 const queryClient = new QueryClient();
 
+// Prefetch critical routes after initial load for instant navigation
+const prefetchRoutes = () => {
+  const prefetch = (fn: () => Promise<unknown>) => fn().catch(() => {});
+  // Priority 1: Most visited pages from nav
+  prefetch(() => import("./pages/Pricing"));
+  prefetch(() => import("./pages/Contact"));
+  prefetch(() => import("./pages/Metoden"));
+  prefetch(() => import("./pages/Tjenester"));
+  prefetch(() => import("./pages/About"));
+  prefetch(() => import("./pages/Bransjer"));
+  prefetch(() => import("./pages/Ressurser"));
+  prefetch(() => import("./pages/FAQ"));
+  prefetch(() => import("./pages/admin/AdminLogin"));
+  prefetch(() => import("./pages/kunde/KundeLogin"));
+
+  // Priority 2: Popular sub-pages (delayed)
+  setTimeout(() => {
+    prefetch(() => import("./pages/tjenester/Regnskapsforer"));
+    prefetch(() => import("./pages/tjenester/CFO"));
+    prefetch(() => import("./pages/tjenester/Lonn"));
+    prefetch(() => import("./pages/tjenester/Arsregnskap"));
+    prefetch(() => import("./pages/tjenester/Nettsider"));
+    prefetch(() => import("./pages/tjenester/SEO"));
+    prefetch(() => import("./pages/tjenester/AiAutomatisering"));
+    prefetch(() => import("./pages/tjenester/HR"));
+    prefetch(() => import("./pages/bransjer/TechSaas"));
+    prefetch(() => import("./pages/bransjer/Eiendom"));
+    prefetch(() => import("./pages/bransjer/ByggAnlegg"));
+    prefetch(() => import("./pages/bransjer/Consulting"));
+    prefetch(() => import("./pages/Skattekalender"));
+    prefetch(() => import("./pages/Kontohjelp"));
+    prefetch(() => import("./pages/BlogListing"));
+  }, 1500);
+};
+
 const PageFallback = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="text-muted-foreground text-sm">Laster…</div>
+    <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
   </div>
 );
 
@@ -112,6 +147,18 @@ const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const PrefetchTrigger = () => {
+  useEffect(() => {
+    // Prefetch after initial paint + idle time
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(prefetchRoutes, { timeout: 3000 });
+    } else {
+      setTimeout(prefetchRoutes, 2000);
+    }
+  }, []);
+  return null;
+};
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
@@ -121,6 +168,7 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <ScrollToTop />
+            <PrefetchTrigger />
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Admin routes (no Layout wrapper) */}
