@@ -22,7 +22,7 @@ import serviceBg5 from "@/assets/service-bg-5.jpg";
 const hookSlides = [
   {
     heading: <>Store selskaper har hele avdelinger.{" "}<span className="italic text-gradient-teal">Nå har du det også.</span></>,
-    body: "Regnskapsfører, HR-rådgiver, skatteekspert, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.",
+    body: "Regnskapsfører, HR-rådgiver, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.",
     tagline: "Bygget for små og mellomstore bedrifter som fortjener mer.",
   },
   {
