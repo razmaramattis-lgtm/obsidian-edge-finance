@@ -308,7 +308,7 @@ const Index = () => {
           onClick={nextService}
         />
 
-        <div className="relative z-10 py-24 md:py-40">
+        <div className="relative z-30 py-24 md:py-40 pointer-events-none">
           <div className="container mx-auto px-4 md:px-6">
             <AnimatedSection>
               <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
