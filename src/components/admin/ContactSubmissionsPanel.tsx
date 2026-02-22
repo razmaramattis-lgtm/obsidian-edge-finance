@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2, UserPlus, Eye, EyeOff, Shuffle } from "lucide-react";
+import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2, UserPlus, Eye, EyeOff, Shuffle, CheckSquare, Square } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -57,6 +57,8 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const [filter, setFilter] = useState<"all" | "new" | "contacted" | "archived">("all");
   const [viewTarget, setViewTarget] = useState<Submission | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   // Create customer state
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -95,6 +97,34 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
     setExpandedId(null);
     await load();
     onStatusChange?.();
+  };
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    await supabase.from("contact_submissions").delete().in("id", ids);
+    toast.success(`${ids.length} henvendelse(r) slettet permanent`);
+    setSelected(new Set());
+    setBulkDeleteOpen(false);
+    setExpandedId(null);
+    await load();
+    onStatusChange?.();
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === filtered.length && filtered.length > 0) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map(s => s.id)));
+    }
   };
 
   const openCreateDialog = (s: Submission) => {
@@ -209,6 +239,31 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
         />
       </div>
 
+      {/* Bulk actions */}
+      {filtered.length > 0 && (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggleSelectAll}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            {selected.size === filtered.length && filtered.length > 0 ? <CheckSquare size={13} /> : <Square size={13} />}
+            {selected.size === filtered.length && filtered.length > 0 ? "Fjern alle" : "Velg alle"}
+          </button>
+          {selected.size > 0 && (
+            <button
+              onClick={() => setBulkDeleteOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+            >
+              <Trash2 size={11} />
+              Slett {selected.size} valgte
+            </button>
+          )}
+          {selected.size > 0 && (
+            <span className="text-[10px] text-muted-foreground">{selected.size} av {filtered.length} valgt</span>
+          )}
+        </div>
+      )}
+
       {/* List */}
       <div className="space-y-2">
         {filtered.length === 0 && (
@@ -221,12 +276,19 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
           const dateStr = format(new Date(s.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb });
 
           return (
-            <div key={s.id} className="glass rounded-xl border border-border/20 overflow-hidden">
+            <div key={s.id} className={`glass rounded-xl border overflow-hidden ${selected.has(s.id) ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
               {/* Header */}
-              <button
-                onClick={() => setExpandedId(expanded ? null : s.id)}
-                className="w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-muted/20 transition-colors"
-              >
+              <div className="flex items-center">
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleSelect(s.id); }}
+                  className="pl-4 pr-1 py-3.5 text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                >
+                  {selected.has(s.id) ? <CheckSquare size={15} className="text-primary" /> : <Square size={15} />}
+                </button>
+                <button
+                  onClick={() => setExpandedId(expanded ? null : s.id)}
+                  className="flex-1 flex items-center gap-3 pr-5 py-3.5 text-left hover:bg-muted/20 transition-colors"
+                >
                 {expanded ? <ChevronUp size={13} className="text-muted-foreground/50 shrink-0" /> : <ChevronDown size={13} className="text-muted-foreground/50 shrink-0" />}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -244,6 +306,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                   {cfg.label}
                 </span>
               </button>
+              </div>
 
               {/* Detail */}
               {expanded && (
@@ -406,6 +469,27 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Slett permanent
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk delete confirmation dialog */}
+      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Slett {selected.size} henvendelse(r)?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Denne handlingen kan ikke angres. Alle valgte henvendelser vil bli permanent slettet fra systemet.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={bulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Slett {selected.size} permanent
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
