@@ -284,13 +284,15 @@ const Kontohjelp = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: gi * 0.05 }}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Hash size={14} className="text-primary" />
+                {!(isSearching && !showAll) && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Hash size={14} className="text-primary" />
+                    </div>
+                    <h2 className="text-lg font-heading text-foreground/90">{group}</h2>
+                    <span className="text-[10px] text-muted-foreground/50 bg-muted/50 px-2 py-0.5 rounded-full">{items.length}</span>
                   </div>
-                  <h2 className="text-lg font-heading text-foreground/90">{group}</h2>
-                  <span className="text-[10px] text-muted-foreground/50 bg-muted/50 px-2 py-0.5 rounded-full">{items.length}</span>
-                </div>
+                )}
                 <div className="space-y-2">
                   {items.map((item, i) => (
                     <motion.div
