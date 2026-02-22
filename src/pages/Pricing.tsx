@@ -63,7 +63,7 @@ const Pricing = () => {
           {loading ? (
             <div className="text-center text-foreground/50 text-sm py-12">Laster prisplaner…</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 max-w-6xl mx-auto">
               {plans.map((plan, i) => (
                 <AnimatedSection key={plan.id} delay={i * 0.15}>
                   <div
