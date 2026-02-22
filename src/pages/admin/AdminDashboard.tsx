@@ -226,7 +226,7 @@ const AdminDashboard = () => {
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
-      case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} />;
+      case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
@@ -322,7 +322,16 @@ const AdminDashboard = () => {
                   {groupItems.map(item => (
                     <button
                       key={item.id}
-                      onClick={() => { setActivePanel(item.id); setSidebarOpen(false); }}
+                      onClick={() => {
+                        // If org_resources has badge from account_feedback, auto-open that tab
+                        if (item.id === "org_resources" && (badgeMap["account_feedback"] || 0) > 0) {
+                          setPanelContext({ tab: "account_feedback" });
+                        } else {
+                          setPanelContext(null);
+                        }
+                        setActivePanel(item.id);
+                        setSidebarOpen(false);
+                      }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 text-left ${
                         activePanel === item.id
                           ? "bg-primary/10 text-primary"
