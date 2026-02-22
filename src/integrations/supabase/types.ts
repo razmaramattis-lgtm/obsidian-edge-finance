@@ -818,9 +818,12 @@ export type Database = {
       }
       customer_companies: {
         Row: {
+          accounting_system: string | null
           address: string | null
+          annual_revenue: string | null
           auditor: string | null
           backup_advisor_id: string | null
+          bank: string | null
           city: string | null
           company_name: string
           company_type: string | null
@@ -828,23 +831,31 @@ export type Database = {
           country: string | null
           created_at: string
           description: string | null
+          employer_registered: boolean | null
           fiscal_year_end: string | null
           founding_date: string | null
           id: string
           industry: string | null
+          insurance_company: string | null
+          internal_notes: string | null
           logo_url: string | null
+          num_employees: number | null
           org_number: string | null
           postal_code: string | null
           primary_advisor_id: string | null
           profile_id: string
           share_capital: number | null
           updated_at: string
+          vat_registered: boolean | null
           website: string | null
         }
         Insert: {
+          accounting_system?: string | null
           address?: string | null
+          annual_revenue?: string | null
           auditor?: string | null
           backup_advisor_id?: string | null
+          bank?: string | null
           city?: string | null
           company_name: string
           company_type?: string | null
@@ -852,23 +863,31 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          employer_registered?: boolean | null
           fiscal_year_end?: string | null
           founding_date?: string | null
           id?: string
           industry?: string | null
+          insurance_company?: string | null
+          internal_notes?: string | null
           logo_url?: string | null
+          num_employees?: number | null
           org_number?: string | null
           postal_code?: string | null
           primary_advisor_id?: string | null
           profile_id: string
           share_capital?: number | null
           updated_at?: string
+          vat_registered?: boolean | null
           website?: string | null
         }
         Update: {
+          accounting_system?: string | null
           address?: string | null
+          annual_revenue?: string | null
           auditor?: string | null
           backup_advisor_id?: string | null
+          bank?: string | null
           city?: string | null
           company_name?: string
           company_type?: string | null
@@ -876,17 +895,22 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          employer_registered?: boolean | null
           fiscal_year_end?: string | null
           founding_date?: string | null
           id?: string
           industry?: string | null
+          insurance_company?: string | null
+          internal_notes?: string | null
           logo_url?: string | null
+          num_employees?: number | null
           org_number?: string | null
           postal_code?: string | null
           primary_advisor_id?: string | null
           profile_id?: string
           share_capital?: number | null
           updated_at?: string
+          vat_registered?: boolean | null
           website?: string | null
         }
         Relationships: [

@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Key, Check, Building2, Plus, Trash2, Save, Upload, User, Users, Globe, Calendar, Search, Loader2
+  Key, Check, Building2, Plus, Trash2, Save, Upload, User, Users, Globe, Calendar, Search, Loader2, CreditCard, Shield, Hash, Landmark, FileText
 } from "lucide-react";
 
 const inputCls = "w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -141,6 +141,14 @@ const CustomerSettingsPanel = () => {
         auditor: (comp as any).auditor || "",
         description: (comp as any).description || "",
         logo_url: (comp as any).logo_url || "",
+        accounting_system: (comp as any).accounting_system || "",
+        bank: (comp as any).bank || "",
+        insurance_company: (comp as any).insurance_company || "",
+        num_employees: (comp as any).num_employees || "",
+        annual_revenue: (comp as any).annual_revenue || "",
+        vat_registered: (comp as any).vat_registered ?? false,
+        employer_registered: (comp as any).employer_registered ?? false,
+        internal_notes: (comp as any).internal_notes || "",
       });
 
       const [ownRes, boardRes, contactRes] = await Promise.all([
@@ -176,6 +184,14 @@ const CustomerSettingsPanel = () => {
       fiscal_year_end: companyForm.fiscal_year_end || null,
       auditor: companyForm.auditor || null,
       description: companyForm.description || null,
+      accounting_system: companyForm.accounting_system || null,
+      bank: companyForm.bank || null,
+      insurance_company: companyForm.insurance_company || null,
+      num_employees: companyForm.num_employees ? Number(companyForm.num_employees) : null,
+      annual_revenue: companyForm.annual_revenue || null,
+      vat_registered: companyForm.vat_registered ?? false,
+      employer_registered: companyForm.employer_registered ?? false,
+      internal_notes: companyForm.internal_notes || null,
     } as any).eq("id", company.id);
     if (error) toast.error("Kunne ikke lagre"); else toast.success("Bedriftsinformasjon lagret");
     setSavingCompany(false);
@@ -360,9 +376,53 @@ const CustomerSettingsPanel = () => {
             <div><label className={labelCls}>Stiftelsesdato</label><input type="date" value={companyForm.founding_date} onChange={e => setCompanyForm((f: any) => ({ ...f, founding_date: e.target.value }))} className={inputCls} /></div>
             <div><label className={labelCls}>Regnskapsår slutt</label><input value={companyForm.fiscal_year_end} onChange={e => setCompanyForm((f: any) => ({ ...f, fiscal_year_end: e.target.value }))} placeholder="31.12" className={inputCls} /></div>
             <div><label className={labelCls}>Revisor</label><input value={companyForm.auditor} onChange={e => setCompanyForm((f: any) => ({ ...f, auditor: e.target.value }))} className={inputCls} /></div>
+            <div><label className={labelCls}>Regnskapssystem</label>
+              <select value={companyForm.accounting_system} onChange={e => setCompanyForm((f: any) => ({ ...f, accounting_system: e.target.value }))} className={inputCls}>
+                <option value="">Velg…</option>
+                <option value="Tripletex">Tripletex</option>
+                <option value="Fiken">Fiken</option>
+                <option value="Visma eAccounting">Visma eAccounting</option>
+                <option value="Visma Business">Visma Business</option>
+                <option value="PowerOffice Go">PowerOffice Go</option>
+                <option value="Xledger">Xledger</option>
+                <option value="24SevenOffice">24SevenOffice</option>
+                <option value="Duett">Duett</option>
+                <option value="Annet">Annet</option>
+              </select>
+            </div>
+            <div><label className={labelCls}>Bankforbindelse</label><input value={companyForm.bank} onChange={e => setCompanyForm((f: any) => ({ ...f, bank: e.target.value }))} placeholder="f.eks. DNB, Nordea…" className={inputCls} /></div>
+            <div><label className={labelCls}>Forsikringsselskap</label><input value={companyForm.insurance_company} onChange={e => setCompanyForm((f: any) => ({ ...f, insurance_company: e.target.value }))} placeholder="f.eks. Gjensidige, If…" className={inputCls} /></div>
+            <div><label className={labelCls}>Antall ansatte</label><input type="number" value={companyForm.num_employees} onChange={e => setCompanyForm((f: any) => ({ ...f, num_employees: e.target.value }))} placeholder="0" className={inputCls} /></div>
+            <div><label className={labelCls}>Årlig omsetning</label>
+              <select value={companyForm.annual_revenue} onChange={e => setCompanyForm((f: any) => ({ ...f, annual_revenue: e.target.value }))} className={inputCls}>
+                <option value="">Velg…</option>
+                <option value="Under 1 MNOK">Under 1 MNOK</option>
+                <option value="1-5 MNOK">1–5 MNOK</option>
+                <option value="5-20 MNOK">5–20 MNOK</option>
+                <option value="20-50 MNOK">20–50 MNOK</option>
+                <option value="50-100 MNOK">50–100 MNOK</option>
+                <option value="Over 100 MNOK">Over 100 MNOK</option>
+              </select>
+            </div>
           </div>
+
+          {/* Toggles */}
+          <div className="flex flex-wrap gap-4 pt-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={companyForm.vat_registered} onChange={e => setCompanyForm((f: any) => ({ ...f, vat_registered: e.target.checked }))} className="rounded border-border/40 text-primary focus:ring-primary/40" />
+              <span className="text-sm">MVA-registrert</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={companyForm.employer_registered} onChange={e => setCompanyForm((f: any) => ({ ...f, employer_registered: e.target.checked }))} className="rounded border-border/40 text-primary focus:ring-primary/40" />
+              <span className="text-sm">Registrert arbeidsgiver</span>
+            </label>
+          </div>
+
           <div><label className={labelCls}>Beskrivelse</label>
-            <textarea value={companyForm.description} onChange={e => setCompanyForm((f: any) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+            <textarea value={companyForm.description} onChange={e => setCompanyForm((f: any) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" placeholder="Kort beskrivelse av bedriften…" />
+          </div>
+          <div><label className={labelCls}>Interne notater (kun synlig for bedriften)</label>
+            <textarea value={companyForm.internal_notes} onChange={e => setCompanyForm((f: any) => ({ ...f, internal_notes: e.target.value }))} rows={2} className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" placeholder="Notater, påminnelser…" />
           </div>
           <button onClick={saveCompany} disabled={savingCompany} className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
             <Save size={14} /> {savingCompany ? "Lagrer…" : "Lagre bedriftsinformasjon"}
