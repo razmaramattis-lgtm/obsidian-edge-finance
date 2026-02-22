@@ -11,7 +11,7 @@ interface AccountEntry {
   name: string;
   slug: string;
   description: string | null;
-  examples: string | null;
+  examples: string[];
   category_group: string | null;
   tags: string[];
 }
@@ -125,7 +125,7 @@ const KontohjelpDetalj = () => {
               )}
 
               {/* Examples */}
-              {entry.examples && (
+              {entry.examples && entry.examples.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -135,10 +135,13 @@ const KontohjelpDetalj = () => {
                   <h2 className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
                     <Lightbulb size={15} className="text-primary" /> Eksempler
                   </h2>
-                  <div className="bg-muted/30 rounded-2xl p-5 border border-border/10">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {entry.examples}
-                    </p>
+                  <div className="bg-muted/30 rounded-2xl p-5 border border-border/10 space-y-2">
+                    {entry.examples.map((ex, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <span className="text-primary/60 font-mono text-xs mt-0.5 shrink-0">{i + 1}.</span>
+                        <span className="leading-relaxed">{ex}</span>
+                      </div>
+                    ))}
                   </div>
                 </motion.div>
               )}
