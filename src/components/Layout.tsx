@@ -269,97 +269,85 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         {/* Mobile menu */}
         <AnimatePresence>
           {menuOpen && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.15 }}
               className="md:hidden border-t border-border/15 bg-background/98 backdrop-blur-2xl overflow-y-auto max-h-[calc(100dvh-64px)]"
             >
-              <div className="flex flex-col gap-0 p-5 pb-8">
-                <Link to="/" onClick={() => setMenuOpen(false)} className="py-4 text-[15px] text-foreground/80 hover:text-foreground transition-colors border-b border-border/15 tracking-wide">Hjem</Link>
-                <Link to="/metoden" onClick={() => setMenuOpen(false)} className="py-4 text-[15px] text-foreground/80 hover:text-foreground transition-colors border-b border-border/15 tracking-wide">Metoden</Link>
+              <div className="flex flex-col p-5 pb-8">
+                <Link to="/" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Hjem</Link>
+                <Link to="/metoden" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Metoden</Link>
 
-                <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-4 text-[15px] text-foreground/80 border-b border-border/15 tracking-wide w-full">
-                  Tjenester <ChevronDown size={14} className={`transition-transform duration-300 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
+                {/* Tjenester – bare kategorilenker på mobil */}
+                <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
+                  Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
                   {mobileTjenesterOpen && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                      <div className="py-2 pl-3 flex flex-col gap-0.5">
-                        {tjenesterGroups.map((group) => (
-                          <div key={group.label} className="mb-3">
-                            <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2 mb-1.5 font-medium">{group.label}</p>
-                            {group.items.map((item) => (
-                              <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                                className="flex items-center gap-2.5 px-2 py-3 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 hover:text-foreground transition-colors"
-                              >
-                                <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                              </Link>
-                            ))}
-                          </div>
-                        ))}
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.15 }} className="overflow-hidden">
+                      <div className="py-2 pl-2 flex flex-col gap-0.5">
+                        {tjenesterGroups.map((group) => {
+                          const Icon = group.items[0].icon;
+                          return (
+                            <Link key={group.label} to="/tjenester" onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
+                            >
+                              <Icon size={14} className="text-primary shrink-0" strokeWidth={1.5} />
+                              {group.label}
+                            </Link>
+                          );
+                        })}
+                        <Link to="/tjenester" onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                          className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
+                          Se alle tjenester →
+                        </Link>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-4 text-[15px] text-foreground/80 border-b border-border/15 tracking-wide w-full">
-                  Bransjer <ChevronDown size={14} className={`transition-transform duration-300 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
+                {/* Bransjer – forenklet, bare top 5 + se alle */}
+                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
+                  Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
                   {mobileBransjerOpen && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                      <div className="py-2 pl-3 flex flex-col gap-0.5">
-                        {bransjerItems.map((item) => (
-                          <Link key={item.href + item.title} to={item.href} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
-                            className="flex items-center gap-2.5 px-2 py-3 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 hover:text-foreground transition-colors"
-                          >
-                            <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <Link to="/priser" onClick={() => setMenuOpen(false)} className="py-4 text-[15px] text-foreground/80 hover:text-foreground transition-colors border-b border-border/15 tracking-wide">Priser</Link>
-
-                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-4 text-[15px] text-foreground/80 border-b border-border/15 tracking-wide w-full">
-                  Selskapet <ChevronDown size={14} className={`transition-transform duration-300 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
-                </button>
-                <AnimatePresence>
-                  {mobileSelskapetOpen && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                      <div className="py-2 pl-3 flex flex-col gap-0.5">
-                        {selskapetLinks.map((item) => (
-                          <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileSelskapetOpen(false); }}
-                            className="flex items-center gap-2.5 px-2 py-3 rounded-xl text-[14px] text-foreground/70 hover:text-foreground transition-colors"
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.15 }} className="overflow-hidden">
+                      <div className="py-2 pl-2 flex flex-col gap-0.5">
+                        {bransjerItems.slice(0, 5).map((item) => (
+                          <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                            className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
                           >
                             <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
                           </Link>
                         ))}
+                        <Link to="/bransjer" onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                          className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
+                          Se alle bransjer →
+                        </Link>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                <button onClick={() => setMobileRessurserOpen(!mobileRessurserOpen)} className="flex items-center justify-between py-4 text-[15px] text-foreground/80 border-b border-border/15 tracking-wide w-full">
-                  Ressurser <ChevronDown size={14} className={`transition-transform duration-300 ${mobileRessurserOpen ? "rotate-180" : ""}`} />
-                </button>
-                <AnimatePresence>
-                  {mobileRessurserOpen && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                      <div className="py-2 pl-3 flex flex-col gap-0.5">
-                        {ressurserLinks.map((item) => (
-                          <Link key={item.title} to={item.href} onClick={() => { setMenuOpen(false); setMobileRessurserOpen(false); }}
-                            className="flex items-center gap-2.5 px-2 py-3 rounded-xl text-[14px] text-foreground/70 hover:text-foreground transition-colors"
-                          >
-                            <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <Link to="/priser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
 
-                <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-5 px-5 py-4 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all">
+                {/* Selskapet – flat, ingen dropdown */}
+                <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
+                <Link to="/om-oss" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
+
+                {/* Ressurser – flat, ingen dropdown */}
+                <Link to="/ressurser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
+
+                {/* Portaler */}
+                <div className="flex gap-3 mt-4">
+                  <Link to="/kunde/logg-inn" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-[13px] font-medium text-foreground/70 border border-border/20 rounded-xl text-center active:bg-muted/30 transition-colors">
+                    Kundeportal
+                  </Link>
+                  <Link to="/admin/logg-inn" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-[13px] font-medium text-foreground/70 border border-border/20 rounded-xl text-center active:bg-muted/30 transition-colors">
+                    Ansatt-login
+                  </Link>
+                </div>
+
+                <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-3 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all">
                   Få tilbud
                 </Link>
               </div>
