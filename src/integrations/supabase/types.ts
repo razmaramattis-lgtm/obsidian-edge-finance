@@ -28,6 +28,7 @@ export type Database = {
           name: string
           slug: string
           sort_order: number | null
+          tags: string[]
           updated_at: string
         }
         Insert: {
@@ -43,6 +44,7 @@ export type Database = {
           name: string
           slug: string
           sort_order?: number | null
+          tags?: string[]
           updated_at?: string
         }
         Update: {
@@ -58,6 +60,7 @@ export type Database = {
           name?: string
           slug?: string
           sort_order?: number | null
+          tags?: string[]
           updated_at?: string
         }
         Relationships: []

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Edit2, Trash2, Search, CheckSquare, Square } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, CheckSquare, Square, Tag, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface AccountEntry {
@@ -11,7 +11,7 @@ interface AccountEntry {
   description: string | null;
   examples: string | null;
   category_group: string | null;
-  business_types: string[];
+  tags: string[];
   mva_status: string;
   active: boolean;
 }
@@ -27,8 +27,9 @@ const AccountEntriesPanel = () => {
   const [editing, setEditing] = useState<AccountEntry | null>(null);
   const [form, setForm] = useState({
     account_number: "", name: "", slug: "", description: "", examples: "",
-    category_group: "", business_types: ["AS"] as string[], mva_status: "med_mva", active: true,
+    category_group: "", tags: [] as string[], mva_status: "med_mva", active: true,
   });
+  const [tagInput, setTagInput] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
 
@@ -39,6 +40,18 @@ const AccountEntriesPanel = () => {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const addTag = () => {
+    const tag = tagInput.trim().toLowerCase();
+    if (tag && !form.tags.includes(tag)) {
+      setForm(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+    }
+    setTagInput("");
+  };
+
+  const removeTag = (tag: string) => {
+    setForm(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }));
+  };
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +65,8 @@ const AccountEntriesPanel = () => {
       toast.success("Konto lagt til");
     }
     setShowForm(false); setEditing(null);
-    setForm({ account_number: "", name: "", slug: "", description: "", examples: "", category_group: "", business_types: ["AS"], mva_status: "med_mva", active: true });
+    setForm({ account_number: "", name: "", slug: "", description: "", examples: "", category_group: "", tags: [], mva_status: "med_mva", active: true });
+    setTagInput("");
     fetchData();
   };
 
@@ -73,15 +87,6 @@ const AccountEntriesPanel = () => {
     setDeleting(false);
   };
 
-  const toggleBizType = (t: string) => {
-    setForm(prev => ({
-      ...prev,
-      business_types: prev.business_types.includes(t)
-        ? prev.business_types.filter(x => x !== t)
-        : [...prev.business_types, t],
-    }));
-  };
-
   const toggleSelect = (id: string) => {
     setSelected(prev => {
       const next = new Set(prev);
@@ -95,7 +100,7 @@ const AccountEntriesPanel = () => {
   const filteredItems = items.filter(i => {
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    return i.account_number.includes(q) || i.name.toLowerCase().includes(q);
+    return i.account_number.includes(q) || i.name.toLowerCase().includes(q) || (i.tags || []).some(t => t.includes(q));
   });
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
@@ -120,7 +125,7 @@ const AccountEntriesPanel = () => {
               {selected.size === filteredItems.length ? "Fjern alle" : "Velg alle"}
             </button>
           )}
-          <button onClick={() => { setShowForm(true); setEditing(null); setForm({ account_number: "", name: "", slug: "", description: "", examples: "", category_group: "", business_types: ["AS"], mva_status: "med_mva", active: true }); }}
+          <button onClick={() => { setShowForm(true); setEditing(null); setForm({ account_number: "", name: "", slug: "", description: "", examples: "", category_group: "", tags: [], mva_status: "med_mva", active: true }); setTagInput(""); }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90">
             <Plus size={14} /> Ny konto
           </button>
@@ -129,7 +134,7 @@ const AccountEntriesPanel = () => {
 
       <div className="relative max-w-md">
         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søk kontonr. eller navn…"
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søk kontonr., navn eller tag…"
           className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/30 bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
       </div>
 
@@ -144,18 +149,42 @@ const AccountEntriesPanel = () => {
           </div>
           <input value={form.category_group} onChange={e => setForm({ ...form, category_group: e.target.value })} placeholder="Kontogruppe (feks 65 Verktøy)"
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-          <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse / veiledning" rows={4}
+          <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse / veiledning (150-400 ord)" rows={6}
             className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
           <input value={form.examples} onChange={e => setForm({ ...form, examples: e.target.value })} placeholder="Eksempler (kommaseparert)"
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-          <div className="flex gap-2 flex-wrap">
-            {["AS", "ENK", "Landbruk"].map(t => (
-              <button type="button" key={t} onClick={() => toggleBizType(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${form.business_types.includes(t) ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground"}`}>
-                {t}
+          
+          {/* Tags input */}
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <Tag size={12} /> Søketags (brukes for å finne kontoen via søk)
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={tagInput}
+                onChange={e => setTagInput(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
+                placeholder="Skriv en tag og trykk Enter…"
+                className="flex-1 h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+              <button type="button" onClick={addTag} className="px-3 py-1.5 rounded-xl text-xs bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                Legg til
               </button>
-            ))}
+            </div>
+            {form.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {form.tags.map(tag => (
+                  <span key={tag} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-xs">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-destructive">
+                      <X size={11} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
+
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">Lagre</button>
             <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
@@ -166,16 +195,36 @@ const AccountEntriesPanel = () => {
       <div className="space-y-2">
         {filteredItems.map(item => (
           <div key={item.id} className={`glass rounded-2xl px-5 py-3 border flex items-center justify-between gap-4 transition-colors ${selected.has(item.id) ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <button onClick={() => toggleSelect(item.id)} className="text-muted-foreground hover:text-primary shrink-0">
                 {selected.has(item.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
               </button>
               <span className="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded">{item.account_number}</span>
-              <p className="text-sm font-medium">{item.name}</p>
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{item.name}</p>
+                {item.tags && item.tags.length > 0 && (
+                  <div className="flex gap-1 mt-0.5 flex-wrap">
+                    {item.tags.slice(0, 5).map(tag => (
+                      <span key={tag} className="text-[9px] px-1 py-0.5 rounded bg-muted/50 text-muted-foreground/60">{tag}</span>
+                    ))}
+                    {item.tags.length > 5 && <span className="text-[9px] text-muted-foreground/40">+{item.tags.length - 5}</span>}
+                  </div>
+                )}
+              </div>
               {!item.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 rounded">Inaktiv</span>}
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => { setEditing(item); setForm({ account_number: item.account_number, name: item.name, slug: item.slug, description: item.description || "", examples: item.examples || "", category_group: item.category_group || "", business_types: item.business_types || ["AS"], mva_status: item.mva_status, active: item.active }); setShowForm(true); }}
+            <div className="flex gap-2 shrink-0">
+              <button onClick={() => {
+                setEditing(item);
+                setForm({
+                  account_number: item.account_number, name: item.name, slug: item.slug,
+                  description: item.description || "", examples: item.examples || "",
+                  category_group: item.category_group || "", tags: item.tags || [],
+                  mva_status: item.mva_status, active: item.active,
+                });
+                setTagInput("");
+                setShowForm(true);
+              }}
                 className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
               <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
             </div>

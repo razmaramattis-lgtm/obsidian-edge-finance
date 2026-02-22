@@ -13,7 +13,7 @@ import {
   Download, Building2, Calculator, Trash2, Eye, MoreVertical,
   Scale, AlertTriangle, ShieldCheck, Lock, Heart,
   CheckSquare, Square, Key, Check, Settings, Mail, UserPlus, Users,
-  FolderOpen, Sparkles, Send
+  FolderOpen, Sparkles, Send, Search
 } from "lucide-react";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
@@ -34,7 +34,7 @@ import {
 
 type Panel = "overview" | "documents" | "booking" | "partners" | "benefit_apply"
   | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt"
-  | "calculator" | "doc_generator" | "maler" | "settings" | "employees";
+  | "calculator" | "doc_generator" | "maler" | "settings" | "employees" | "regnskapsord";
 
 interface NavItem {
   id: Panel;
@@ -58,6 +58,7 @@ const navItems: NavItem[] = [
   { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: Lock, group: "HR og personal" },
   { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: Heart, group: "HR og personal" },
   { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "HR og personal" },
+  { id: "regnskapsord", label: "Regnskapsordbok", icon: BookOpen, group: "Ressurser" },
   { id: "employees", label: "Ansatte", icon: Users, group: "Administrasjon" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Konto" },
 ];
@@ -155,6 +156,7 @@ const KundeDashboard = () => {
       case "benefit_apply": return <BenefitApplicationPanel />;
       case "doc_generator": return <CustomerDocGeneratorPanel />;
       case "maler": return <MalerPanel />;
+      case "regnskapsord": return <RegnskapsordPanel />;
       default: return <OverviewPanel />;
     }
   };
@@ -1478,6 +1480,90 @@ const EmployeesPanel = () => {
               </div>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ========== REGNSKAPSORD PANEL ==========
+const RegnskapsordPanel = () => {
+  const [terms, setTerms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from("glossary_terms")
+        .select("*")
+        .eq("active", true)
+        .order("term", { ascending: true });
+      setTerms(data || []);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  const filtered = terms.filter(t => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return t.term.toLowerCase().includes(q) || (t.description || "").toLowerCase().includes(q);
+  });
+
+  const grouped = filtered.reduce((acc, t) => {
+    const letter = t.term.charAt(0).toUpperCase();
+    if (!acc[letter]) acc[letter] = [];
+    acc[letter].push(t);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  const letters = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "nb"));
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster ordbok…</div>;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-heading text-2xl mb-1">Regnskapsordbok</h2>
+        <p className="text-sm text-muted-foreground">Søk etter begreper og finn klare forklaringer.</p>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søk etter et regnskapsbegrep…"
+          className="w-full h-10 pl-9 pr-3 rounded-xl border border-border/30 bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+      </div>
+
+      <div className="flex flex-wrap gap-1">
+        {letters.map(l => (
+          <a key={l} href={`#glossary-${l}`} className="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium hover:bg-primary/10 hover:text-primary transition-colors">
+            {l}
+          </a>
+        ))}
+      </div>
+
+      <p className="text-xs text-muted-foreground">{filtered.length} begreper</p>
+
+      {letters.length === 0 ? (
+        <p className="text-muted-foreground text-sm py-8 text-center">Ingen treff.</p>
+      ) : (
+        <div className="space-y-6">
+          {letters.map(letter => (
+            <div key={letter} id={`glossary-${letter}`}>
+              <h3 className="text-xl font-bold text-primary mb-2">{letter}</h3>
+              <div className="space-y-2">
+                {grouped[letter].map((item: any) => (
+                  <div key={item.id} className="glass rounded-2xl px-5 py-4 border border-border/20">
+                    <p className="text-sm font-medium">{item.term}</p>
+                    {item.description && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-3">{item.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

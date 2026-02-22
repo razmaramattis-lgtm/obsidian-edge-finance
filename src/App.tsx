@@ -173,8 +173,7 @@ const App = () => (
                         <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
                         <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
                         <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
-                        <Route path="/ressurser/regnskapsord" element={<Regnskapsord />} />
-                        <Route path="/ressurser/regnskapsord/:slug" element={<RegnskapsordDetalj />} />
+                        {/* Regnskapsord moved to customer portal */}
                         <Route path="/nyheter" element={<BlogListing />} />
                         <Route path="/faq" element={<FAQ />} />
                         <Route path="/nyhet/:slug" element={<BlogPost />} />
