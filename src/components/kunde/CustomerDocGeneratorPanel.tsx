@@ -143,7 +143,11 @@ const CustomerDocGeneratorPanel = () => {
       const html2pdf = (await import("html2pdf.js")).default;
       const container = document.createElement("div");
       container.style.cssText = "width:210mm;padding:20mm;font-family:'Georgia','Times New Roman',serif;font-size:13px;line-height:1.7;color:#1a1a1a;";
-      container.innerHTML = getRenderedContent();
+      let logoHtml = "";
+      if (company?.logo_url) {
+        logoHtml = `<div style="text-align:center;margin-bottom:16px;"><img src="${company.logo_url}" alt="Logo" style="max-height:80px;max-width:200px;object-fit:contain;" /></div>`;
+      }
+      container.innerHTML = logoHtml + getRenderedContent();
       await html2pdf().set({
         margin: [15, 18, 15, 18],
         filename: `${selectedTemplate.title.replace(/\s+/g, "-")}.pdf`,
@@ -256,6 +260,11 @@ const CustomerDocGeneratorPanel = () => {
         {/* Right: preview */}
         <div className="flex-1 min-w-0">
           <div ref={docRef} className="glass rounded-2xl p-8 border border-border/20 bg-white min-h-[600px]">
+            {company?.logo_url && (
+              <div style={{ textAlign: "center", marginBottom: "16px" }}>
+                <img src={company.logo_url} alt="Logo" style={{ maxHeight: "80px", maxWidth: "200px", margin: "0 auto", display: "block", objectFit: "contain" }} />
+              </div>
+            )}
             <div className="pdf-content" style={{ fontFamily: "'Georgia','Times New Roman',serif", fontSize: "13px", lineHeight: "1.7", color: "#1a1a1a" }}
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getRenderedContent()) }} />
           </div>
