@@ -38,9 +38,10 @@ import BenefitApplicationsPanel from "@/components/admin/BenefitApplicationsPane
 import AccountEntriesPanel from "@/components/admin/AccountEntriesPanel";
 import GlossaryPanel from "@/components/admin/GlossaryPanel";
 import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
+import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks";
 
 interface NavItem {
   id: Panel;
@@ -216,6 +217,7 @@ const AdminDashboard = () => {
       case "account_entries": return <AccountEntriesPanel />;
       case "glossary": return <GlossaryPanel />;
       case "account_feedback": return <AccountFeedbackPanel />;
+      case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
@@ -409,48 +411,47 @@ const AdminDashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: -8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="absolute right-0 top-full mt-2 w-96 rounded-2xl border border-border/20 bg-background shadow-2xl z-50 overflow-hidden"
+                className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-border/20 bg-background shadow-2xl z-50 overflow-hidden"
               >
-                <div className="px-4 py-3 border-b border-border/10">
+                <div className="px-4 py-3 border-b border-border/10 flex items-center justify-between">
                   <h3 className="text-sm font-medium">Varsler ({activeTotal})</h3>
+                  {activeTotal > 0 && (
+                    <button
+                      onClick={() => { setActivePanel("pending_tasks"); setBellOpen(false); }}
+                      className="text-[10px] text-primary hover:underline"
+                    >
+                      Åpne alle →
+                    </button>
+                  )}
                 </div>
-                <div className="max-h-96 overflow-y-auto divide-y divide-border/5">
+                <div className="max-h-80 overflow-y-auto divide-y divide-border/5">
                   {notifications.items.length === 0 ? (
                     <div className="px-4 py-8 text-center">
                       <Bell size={20} className="mx-auto text-muted-foreground/30 mb-2" />
                       <p className="text-xs text-muted-foreground">Ingen ventende oppgaver</p>
                     </div>
                   ) : (
-                    notifications.items.map(item => (
-                      <div
+                    notifications.items.slice(0, 8).map(item => (
+                      <button
                         key={item.id}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors group"
+                        onClick={() => { setActivePanel("pending_tasks"); setBellOpen(false); }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left"
                       >
-                        <button
-                          onClick={() => { setActivePanel(item.category as Panel); setBellOpen(false); }}
-                          className="flex-1 min-w-0 text-left"
-                        >
-                          <p className="text-xs font-medium truncate">{item.label}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{item.sublabel}</p>
-                        </button>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            onClick={async (e) => { e.stopPropagation(); await notifications.approve(item); }}
-                            className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-green-600 hover:bg-green-500/10 transition-colors"
-                            title="Godkjenn"
-                          >
-                            <Check size={13} />
-                          </button>
-                          <button
-                            onClick={async (e) => { e.stopPropagation(); await notifications.reject(item); }}
-                            className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                            title="Avslå"
-                          >
-                            <X size={13} />
-                          </button>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium truncate">{item.sublabel}</p>
+                          <p className="text-[10px] text-muted-foreground">{item.label}</p>
                         </div>
-                      </div>
+                        <ArrowRight size={11} className="text-muted-foreground/30 shrink-0" />
+                      </button>
                     ))
+                  )}
+                  {notifications.items.length > 8 && (
+                    <button
+                      onClick={() => { setActivePanel("pending_tasks"); setBellOpen(false); }}
+                      className="w-full px-4 py-3 text-center text-[11px] text-primary hover:bg-muted/20 transition-colors"
+                    >
+                      + {notifications.items.length - 8} flere...
+                    </button>
                   )}
                 </div>
               </motion.div>
