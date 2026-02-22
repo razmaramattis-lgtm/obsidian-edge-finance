@@ -112,6 +112,7 @@ const CollabPanel = () => {
   };
 
   const startEdit = (item: Agreement) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(item);
     setForm({
       title: item.title || "", company: item.company || "", contact_name: item.contact_name || "",

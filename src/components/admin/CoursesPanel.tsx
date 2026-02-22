@@ -106,6 +106,7 @@ const CoursesPanel = () => {
   };
 
   const startEdit = (c: Course) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(c);
     setForm({
       name: c.name, description: c.description || "", category: c.category, slug: c.slug || "",

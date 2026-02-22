@@ -118,6 +118,7 @@ const BlogPanel = () => {
   };
 
   const startEdit = (post: BlogPost) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(post);
     setForm({
       title: post.title, slug: post.slug || "", excerpt: post.excerpt || "", content: post.content || "",

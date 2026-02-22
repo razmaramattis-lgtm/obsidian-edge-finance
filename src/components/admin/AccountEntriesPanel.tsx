@@ -236,6 +236,7 @@ const AccountEntriesPanel = () => {
             </div>
             <div className="flex gap-2 shrink-0">
               <button onClick={() => {
+                document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
                 setEditing(item);
                 setForm({
                   account_number: item.account_number, name: item.name, slug: item.slug,

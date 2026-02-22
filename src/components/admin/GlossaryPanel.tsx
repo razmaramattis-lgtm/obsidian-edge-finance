@@ -144,7 +144,7 @@ const GlossaryPanel = () => {
               {!item.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 rounded">Inaktiv</span>}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => { setEditing(item); setForm({ term: item.term, slug: item.slug, description: item.description || "", active: item.active }); setShowForm(true); }}
+              <button onClick={() => { document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' }); setEditing(item); setForm({ term: item.term, slug: item.slug, description: item.description || "", active: item.active }); setShowForm(true); }}
                 className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
               <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
             </div>

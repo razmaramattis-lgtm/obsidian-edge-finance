@@ -47,6 +47,7 @@ const PricingPanel = () => {
   };
 
   const startEdit = (plan: Plan) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(plan);
     setForm({ name: plan.name, price: plan.price, price_suffix: plan.price_suffix, description: plan.description || "", features: (plan.features || []).join("\n"), highlighted: plan.highlighted, active: plan.active });
     setShowForm(true);

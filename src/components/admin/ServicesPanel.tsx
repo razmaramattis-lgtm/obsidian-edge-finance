@@ -44,6 +44,7 @@ const ServicesPanel = () => {
   };
 
   const startEdit = (item: Service) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(item);
     setForm({ title: item.title, description: item.description || "", group_name: item.group_name, href: item.href || "", active: item.active });
     setShowForm(true);
