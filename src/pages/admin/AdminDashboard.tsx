@@ -26,6 +26,7 @@ import HrPanel from "@/components/admin/HrPanel";
 import OverviewPanel from "@/components/admin/OverviewPanel";
 import KnowledgeBasePanel from "@/components/admin/KnowledgeBasePanel";
 import CoursesPanel from "@/components/admin/CoursesPanel";
+import PageChangesPanel from "@/components/admin/PageChangesPanel";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import DataCenterPanel from "@/components/admin/DataCenterPanel";
 // MyBookingSettingsPanel is now inside SettingsPanel
@@ -42,7 +43,7 @@ import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes";
 
 interface NavItem {
   id: Panel;
@@ -70,10 +71,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Innhold (nettside)
   { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Innhold" },
-  { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Innhold" },
-  { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Innhold" },
-  { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Innhold" },
-  { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Innhold" },
+  { id: "page_changes", label: "Sideendringer", icon: Briefcase, adminOnly: true, group: "Innhold" },
   { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Innhold" },
   { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Innhold" },
   { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Innhold" },
@@ -213,6 +211,7 @@ const AdminDashboard = () => {
       case "services": return <ServicesPanel />;
       case "industries": return <IndustriesPanel />;
       case "pricing": return <PricingPanel />;
+      case "page_changes": return <PageChangesPanel />;
       case "archive": return <ArchivePanel />;
       case "resources": return <ResourcesPanel />;
       case "hr": return <HrPanel />;
