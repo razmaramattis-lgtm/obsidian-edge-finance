@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Key, Check, Building2, Plus, Trash2, Save, Upload, User, Users, Globe, Calendar
+  Key, Check, Building2, Plus, Trash2, Save, Upload, User, Users, Globe, Calendar, Search, Loader2
 } from "lucide-react";
 
 const inputCls = "w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -38,6 +38,87 @@ const CustomerSettingsPanel = () => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", role: "Kontaktperson", is_primary: false });
   const [showContactForm, setShowContactForm] = useState(false);
+
+  // Brreg search
+  const [brregQuery, setBrregQuery] = useState("");
+  const [brregResults, setBrregResults] = useState<any[]>([]);
+  const [brregLoading, setBrregLoading] = useState(false);
+  const [showBrregDropdown, setShowBrregDropdown] = useState(false);
+  const brregRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (brregRef.current && !brregRef.current.contains(e.target as Node)) setShowBrregDropdown(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  useEffect(() => {
+    if (brregQuery.length < 2) { setBrregResults([]); return; }
+    const timeout = setTimeout(async () => {
+      setBrregLoading(true);
+      try {
+        const isOrgNr = /^\d{9}$/.test(brregQuery.trim());
+        const url = isOrgNr
+          ? `https://data.brreg.no/enhetsregisteret/api/enheter/${brregQuery.trim()}`
+          : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(brregQuery)}&size=8`;
+        const res = await fetch(url);
+        if (!res.ok) { setBrregResults([]); setBrregLoading(false); return; }
+        const data = await res.json();
+        if (isOrgNr) {
+          setBrregResults(data?.organisasjonsnummer ? [data] : []);
+        } else {
+          setBrregResults(data?._embedded?.enheter || []);
+        }
+        setShowBrregDropdown(true);
+      } catch { setBrregResults([]); }
+      setBrregLoading(false);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [brregQuery]);
+
+  const mapCompanyType = (code: string | undefined) => {
+    const map: Record<string, string> = { AS: "AS", ENK: "ENK", ANS: "ANS", DA: "DA", NUF: "NUF" };
+    return map[code || ""] || "Annet";
+  };
+
+  const selectBrregCompany = async (enhet: any) => {
+    setShowBrregDropdown(false);
+    setBrregQuery("");
+
+    // Fetch roller for revisor
+    let revisor = "";
+    try {
+      const rolleRes = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`);
+      if (rolleRes.ok) {
+        const rolleData = await rolleRes.json();
+        const revisorGruppe = (rolleData?.rollegrupper || []).find((g: any) => g?.type?.kode === "REVI");
+        if (revisorGruppe?.roller?.[0]?.person?.navn) {
+          const n = revisorGruppe.roller[0].person.navn;
+          revisor = [n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean).join(" ");
+        }
+      }
+    } catch {}
+
+    const addr = enhet.forretningsadresse || enhet.postadresse || {};
+    setCompanyForm((f: any) => ({
+      ...f,
+      company_name: enhet.navn || f.company_name,
+      org_number: enhet.organisasjonsnummer || f.org_number,
+      company_type: mapCompanyType(enhet.organisasjonsform?.kode),
+      industry: enhet.naeringskode1?.beskrivelse || f.industry,
+      address: addr.adresse?.[0] || f.address,
+      postal_code: addr.postnummer || f.postal_code,
+      city: addr.poststed || f.city,
+      country: addr.land || "Norge",
+      website: enhet.hjemmeside || f.website,
+      contact_phone: enhet.telefon || f.contact_phone,
+      founding_date: enhet.stiftelsesdato || f.founding_date,
+      auditor: revisor || f.auditor,
+    }));
+    toast.success("Bedriftsinformasjon hentet fra Brønnøysundregistrene");
+  };
 
   const load = useCallback(async () => {
     const { data: comp } = await supabase.from("customer_companies").select("*").limit(1).maybeSingle();
@@ -224,6 +305,41 @@ const CustomerSettingsPanel = () => {
             <Building2 size={16} className="text-primary" strokeWidth={1.5} />
             <h3 className="font-medium">Bedriftsinformasjon</h3>
           </div>
+
+          {/* Brreg search */}
+          <div ref={brregRef} className="relative">
+            <label className={labelCls}>Hent fra Brønnøysundregistrene</label>
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={brregQuery}
+                onChange={e => setBrregQuery(e.target.value)}
+                placeholder="Søk på firmanavn eller org.nr…"
+                className={`${inputCls} pl-9`}
+              />
+              {brregLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin" />}
+            </div>
+            {showBrregDropdown && brregResults.length > 0 && (
+              <div className="absolute z-50 mt-1 w-full bg-background border border-border/30 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                {brregResults.map((e: any) => (
+                  <button
+                    key={e.organisasjonsnummer}
+                    onClick={() => selectBrregCompany(e)}
+                    className="w-full text-left px-3 py-2 hover:bg-muted/50 transition-colors border-b border-border/10 last:border-0"
+                  >
+                    <p className="text-sm font-medium">{e.navn}</p>
+                    <p className="text-xs text-muted-foreground">Org.nr: {e.organisasjonsnummer} · {e.organisasjonsform?.beskrivelse}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+            {showBrregDropdown && brregResults.length === 0 && !brregLoading && brregQuery.length >= 2 && (
+              <div className="absolute z-50 mt-1 w-full bg-background border border-border/30 rounded-xl shadow-lg p-3 text-xs text-muted-foreground">
+                Ingen treff
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div><label className={labelCls}>Bedriftsnavn</label><input value={companyForm.company_name} onChange={e => setCompanyForm((f: any) => ({ ...f, company_name: e.target.value }))} className={inputCls} /></div>
             <div><label className={labelCls}>Org.nr</label><input value={companyForm.org_number} onChange={e => setCompanyForm((f: any) => ({ ...f, org_number: e.target.value }))} className={inputCls} /></div>
