@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Check, X, Clock, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 
-const EmployeeInvitationsPanel = () => {
+const EmployeeInvitationsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [invitations, setInvitations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,12 +22,14 @@ const EmployeeInvitationsPanel = () => {
     await supabase.from("customer_employee_invitations").update({ status: "approved" }).eq("id", id);
     toast.success("Invitasjon godkjent");
     load();
+    onStatusChange?.();
   };
 
   const handleReject = async (id: string) => {
     await supabase.from("customer_employee_invitations").update({ status: "rejected" }).eq("id", id);
     toast.success("Invitasjon avslått");
     load();
+    onStatusChange?.();
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;

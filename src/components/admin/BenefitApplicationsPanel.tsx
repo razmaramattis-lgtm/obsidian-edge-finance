@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Check, X, Search, Handshake } from "lucide-react";
 
-const BenefitApplicationsPanel = () => {
+const BenefitApplicationsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -52,6 +52,7 @@ const BenefitApplicationsPanel = () => {
     setNoteId(null);
     setNote("");
     load();
+    onStatusChange?.();
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;

@@ -15,7 +15,7 @@ interface PartnerRequest {
   company?: { company_name: string };
 }
 
-const PartnerRequestsPanel = () => {
+const PartnerRequestsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [requests, setRequests] = useState<PartnerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [noteInputs, setNoteInputs] = useState<Record<string, string>>({});
@@ -36,6 +36,7 @@ const PartnerRequestsPanel = () => {
     await supabase.from("partnership_requests").update({ status, admin_note: note }).eq("id", id);
     toast.success(status === "approved" ? "Godkjent" : "Avslått");
     load();
+    onStatusChange?.();
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
