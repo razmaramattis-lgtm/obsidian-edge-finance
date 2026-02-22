@@ -538,20 +538,20 @@ const Index = () => {
               {
                 icon: Handshake,
                 metric: "1 person",
-                label: "din dedikerte regnskapsfører",
-                text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte.",
+                label: "din statsautoriserte regnskapsfører",
+                text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte.",
               },
               {
                 icon: Sparkles,
-                metric: "AI-drevet",
-                label: "innsikt i sanntid",
-                text: "Regnskapsføreren din bruker AI-verktøy som scanner tusenvis av datapunkter. Resultatet? Fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget.",
+                metric: "25+",
+                label: "bransjer vi dekker",
+                text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen din. Du slipper å forklare det grunnleggende hver gang.",
               },
               {
                 icon: Zap,
                 metric: "24 timer",
-                label: "responstid, alltid",
-                text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi god rådgivning handler om tilgjengelighet — ikke bare kompetanse.",
+                label: "svar — alltid",
+                text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi trygghet handler om å vite at noen er der når du trenger det.",
               },
             ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.12}>
