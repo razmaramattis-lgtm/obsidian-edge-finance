@@ -144,7 +144,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         <div key={group.label}>
                           <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>
                           <div className="flex flex-col gap-0.5">
-                            {group.items.map((item) => (
+                            {group.items.slice(0, 4).map((item) => (
                               <Link key={item.href} to={item.href} onClick={() => setTjenesterOpen(false)}
                                 className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                               >
