@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, Reorder } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink
 } from "lucide-react";
 
 // Sub-panels
@@ -257,10 +257,10 @@ const AdminDashboard = () => {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       <div className="p-5 border-b border-border/10 flex items-center justify-between">
-        <div>
+        <Link to="/" className="group">
           <span className="font-heading text-2xl text-primary">Avargo</span>
-          <p className="text-xs text-muted-foreground mt-0.5">Internpanel</p>
-        </div>
+          <p className="text-xs text-muted-foreground mt-0.5 group-hover:text-primary transition-colors">Se nettside →</p>
+        </Link>
         <button
           onClick={() => setEditingSidebar(!editingSidebar)}
           className={`p-1.5 rounded-lg transition-all ${editingSidebar ? "bg-primary text-primary-foreground" : "text-muted-foreground/40 hover:text-muted-foreground"}`}
@@ -406,6 +406,14 @@ const AdminDashboard = () => {
           <h1 className="font-heading text-lg flex-1">
             {visibleItems.find(i => i.id === activePanel)?.label ?? "Oversikt"}
           </h1>
+
+          <Link
+            to="/"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+          >
+            <ExternalLink size={14} strokeWidth={1.5} />
+            <span className="hidden sm:inline">Se nettside</span>
+          </Link>
 
           {/* Bell notification dropdown */}
           <div ref={bellRef} className="relative">
