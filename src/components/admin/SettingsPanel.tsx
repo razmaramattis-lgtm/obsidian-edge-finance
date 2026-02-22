@@ -385,114 +385,127 @@ const AvailabilityTab = () => {
         </div>
       )}
 
-      {/* Calendar integration */}
-      <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
-        <div className="flex items-center gap-2"><Link2 size={14} className="text-primary" /><span className="text-sm font-medium">Kalenderintegrasjon</span></div>
-        <p className="text-xs text-muted-foreground">Koble dine bookinger og blokkerte datoer til Outlook, Google Calendar eller Apple Calendar — uten API-oppsett.</p>
+      {/* ── STEG-FOR-STEG KALENDEROPPSETT ── */}
+      <div className="glass rounded-2xl border border-border/20 p-5 space-y-5">
+        <div className="flex items-center gap-2 mb-1"><CalendarIcon size={16} className="text-primary" /><span className="text-sm font-semibold">Kalenderoppsett — steg for steg</span></div>
+        <p className="text-xs text-muted-foreground">To enkle oppsett gjør at kalenderen din alltid er oppdatert — ingen teknisk kunnskap kreves.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <button onClick={() => window.open(outlookSubscribeUrl)} className="flex items-center gap-3 p-4 rounded-xl border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all text-left">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><CalendarIcon size={18} className="text-primary" /></div>
+        {/* ── DEL 1: Bookinger → Outlook ── */}
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0">1</div>
             <div>
-              <p className="text-xs font-medium">Abonner i Outlook / Apple Calendar</p>
-              <p className="text-[10px] text-muted-foreground">Åpner automatisk i din kalenderapp.</p>
+              <p className="text-sm font-semibold">Bookinger → Din kalender</p>
+              <p className="text-[11px] text-muted-foreground">Alle bekreftede bookinger og blokkerte datoer vises automatisk i Outlook.</p>
             </div>
-          </button>
-          <button onClick={copyFeedLink} className="flex items-center gap-3 p-4 rounded-xl border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all text-left">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">{copiedLink ? <Check size={18} className="text-primary" /> : <Copy size={18} className="text-primary" />}</div>
-            <div>
-              <p className="text-xs font-medium">{copiedLink ? "Kopiert!" : "Kopier kalender-URL"}</p>
-              <p className="text-[10px] text-muted-foreground">For Google Calendar: «Legg til URL».</p>
-            </div>
-          </button>
-        </div>
-
-        <div className="rounded-xl bg-muted/20 border border-border/10 p-4 space-y-2">
-          <p className="text-xs font-medium">Slik kobler du til Outlook:</p>
-          <ol className="text-[11px] text-muted-foreground space-y-1 list-decimal list-inside">
-            <li>Klikk «Abonner i Outlook» over, eller kopier URL-en.</li>
-            <li>I Outlook: Fil → Kontoinnstillinger → Internett-kalendere → Ny.</li>
-            <li>Lim inn URL-en og gi kalenderen et navn.</li>
-            <li>Alle bookinger og blokkerte datoer synkroniseres automatisk.</li>
-          </ol>
-        </div>
-      </div>
-
-      {/* Outlook import / sync */}
-      <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2"><RefreshCw size={14} className="text-primary" /><span className="text-sm font-medium">Outlook-kalender → Tilgjengelighet</span></div>
-          {outlookCalUrl && (
-            <button onClick={syncOutlookCalendar} disabled={syncingOutlook} className="h-8 px-4 rounded-xl bg-primary text-primary-foreground text-[11px] font-medium flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all">
-              {syncingOutlook ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-              {syncingOutlook ? "Synkroniserer…" : "Synk nå"}
-            </button>
-          )}
-        </div>
-        <p className="text-xs text-muted-foreground">Importer opptatte dager fra din Outlook-kalender automatisk, slik at kunder ikke kan booke deg når du allerede har avtaler.</p>
-
-        {syncResult && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-            <CheckCircle2 size={14} className="text-green-600 shrink-0" />
-            <p className="text-xs text-green-700">Synkronisert! {syncResult.added} nye blokkerte datoer lagt til, {syncResult.removed} fjernet.</p>
           </div>
-        )}
-        {syncError && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
-            <AlertCircle size={14} className="text-destructive shrink-0" />
-            <p className="text-xs text-destructive">{syncError}</p>
-          </div>
-        )}
 
-        {!outlookCalUrl && !showOutlookWizard && (
-          <button onClick={() => setShowOutlookWizard(true)} className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all text-left">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><Plus size={18} className="text-primary" /></div>
-            <div>
-              <p className="text-xs font-medium">Koble til Outlook-kalender</p>
-              <p className="text-[10px] text-muted-foreground">Veiviser for å hente opptatte tider fra kalenderen din.</p>
-            </div>
-          </button>
-        )}
-
-        {(showOutlookWizard || outlookCalUrl) && (
-          <div className="space-y-4">
-            <div className="rounded-xl bg-muted/20 border border-border/10 p-4 space-y-3">
-              <p className="text-xs font-semibold flex items-center gap-2"><ExternalLink size={12} /> Slik publiserer du Outlook-kalenderen din:</p>
-              <ol className="text-[11px] text-muted-foreground space-y-2 list-decimal list-inside">
-                <li>Åpne <strong>Outlook på nett</strong> (outlook.office.com eller outlook.live.com).</li>
-                <li>Gå til <strong>Innstillinger</strong> (tannhjulet) → <strong>Vis alle Outlook-innstillinger</strong>.</li>
-                <li>Velg <strong>Kalender</strong> → <strong>Delte kalendere</strong>.</li>
-                <li>Under «Publiser en kalender», velg din kalender og velg <strong>«Kan vise alle detaljer»</strong>.</li>
-                <li>Klikk <strong>Publiser</strong>. Kopier <strong>ICS-lenken</strong> (ikke HTML).</li>
-                <li>Lim inn URL-en under og klikk «Lagre og synk».</li>
-              </ol>
-            </div>
-
+          <div className="rounded-xl bg-background/80 border border-border/20 p-4 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">1</span> Kopier kalender-URL-en under</div>
             <div className="flex gap-2">
+              <input readOnly value={calendarFeedUrl} className="flex-1 h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-[11px] text-muted-foreground select-all focus:outline-none" onClick={e => (e.target as HTMLInputElement).select()} />
+              <button onClick={copyFeedLink} className="h-9 px-4 rounded-xl bg-primary text-primary-foreground text-[11px] font-medium flex items-center gap-1.5 hover:opacity-90 transition-all shrink-0">
+                {copiedLink ? <><Check size={12} /> Kopiert!</> : <><Copy size={12} /> Kopier</>}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-medium mt-2"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span> Åpne Outlook på nett</div>
+            <p className="text-[11px] text-muted-foreground ml-7">Gå til <strong>outlook.office.com</strong> → logg inn med din jobbkonto.</p>
+
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">3</span> Legg til kalenderen</div>
+            <div className="ml-7 space-y-1">
+              <p className="text-[11px] text-muted-foreground">Klikk <strong>«Legg til kalender»</strong> i venstre panel.</p>
+              <p className="text-[11px] text-muted-foreground">Velg <strong>«Abonner fra nett»</strong>.</p>
+              <p className="text-[11px] text-muted-foreground">Lim inn URL-en du kopierte, og gi den navnet <strong>«Avargo Bookinger»</strong>.</p>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">4</span> Ferdig! ✅</div>
+            <p className="text-[11px] text-muted-foreground ml-7">Bookingene dine oppdateres automatisk i Outlook. Nye bookinger vises innen noen minutter.</p>
+          </div>
+
+          <div className="flex gap-2">
+            <button onClick={() => window.open(outlookSubscribeUrl)} className="h-9 px-4 rounded-xl border border-border/20 text-xs font-medium flex items-center gap-2 hover:bg-primary/5 transition-all">
+              <CalendarIcon size={13} /> Åpne direkte i Outlook
+            </button>
+            <button onClick={() => downloadBookingIcs(bookings.find(b => b.status === "confirmed")?.id || "")} disabled={!bookings.some(b => b.status === "confirmed")} className="h-9 px-4 rounded-xl border border-border/20 text-xs font-medium flex items-center gap-2 hover:bg-primary/5 transition-all disabled:opacity-40">
+              <Download size={13} /> Last ned .ics (test)
+            </button>
+          </div>
+        </div>
+
+        {/* ── DEL 2: Outlook → Tilgjengelighet ── */}
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0">2</div>
+            <div>
+              <p className="text-sm font-semibold">Din kalender → Tilgjengelighet</p>
+              <p className="text-[11px] text-muted-foreground">Opptatte dager i Outlook blokkerer automatisk bookinger for deg.</p>
+            </div>
+          </div>
+
+          {syncResult && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+              <CheckCircle2 size={14} className="text-green-600 shrink-0" />
+              <p className="text-xs text-green-700">Synkronisert! {syncResult.added} datoer blokkert, {syncResult.removed} fjernet.</p>
+            </div>
+          )}
+          {syncError && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+              <AlertCircle size={14} className="text-destructive shrink-0" />
+              <p className="text-xs text-destructive">{syncError}</p>
+            </div>
+          )}
+
+          <div className="rounded-xl bg-background/80 border border-border/20 p-4 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">1</span> Publiser kalenderen din i Outlook</div>
+            <div className="ml-7 space-y-1">
+              <p className="text-[11px] text-muted-foreground">Gå til <strong>outlook.office.com</strong> → <strong>Innstillinger</strong> (⚙️) → <strong>Vis alle Outlook-innstillinger</strong>.</p>
+              <p className="text-[11px] text-muted-foreground">Velg <strong>Kalender</strong> → <strong>Delte kalendere</strong>.</p>
+              <p className="text-[11px] text-muted-foreground">Under «Publiser en kalender»: velg din kalender, velg <strong>«Kan vise alle detaljer»</strong>.</p>
+              <p className="text-[11px] text-muted-foreground">Klikk <strong>Publiser</strong>.</p>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span> Kopier ICS-lenken</div>
+            <p className="text-[11px] text-muted-foreground ml-7">Det vises to lenker — kopier den som slutter på <strong>.ics</strong> (ikke HTML-lenken).</p>
+
+            <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">3</span> Lim inn URL-en her og klikk «Lagre og synk»</div>
+            <div className="ml-7 flex gap-2 mt-1">
               <input
                 value={outlookCalUrl}
                 onChange={e => setOutlookCalUrl(e.target.value)}
                 placeholder="https://outlook.office365.com/owa/calendar/…/reachcalendar.ics"
                 className="flex-1 h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
-              <button onClick={saveAndSyncOutlook} disabled={syncingOutlook || !outlookCalUrl} className="h-10 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-all whitespace-nowrap">
+              <button onClick={saveAndSyncOutlook} disabled={syncingOutlook || !outlookCalUrl} className="h-10 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-all whitespace-nowrap flex items-center gap-2">
+                {syncingOutlook ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
                 {syncingOutlook ? "Synkroniserer…" : "Lagre og synk"}
               </button>
             </div>
 
             {outlookCalUrl && (
-              <button onClick={removeOutlookSync} className="text-[11px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1">
-                <Trash2 size={10} /> Fjern Outlook-synkronisering
-              </button>
+              <>
+                <div className="flex items-center gap-2 text-xs font-medium"><span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">4</span> Ferdig! ✅</div>
+                <p className="text-[11px] text-muted-foreground ml-7">Opptatte dager fra Outlook er nå blokkert (merket med 📅). Klikk «Synk nå» når som helst for å oppdatere.</p>
+              </>
             )}
           </div>
-        )}
 
-        {outlookCalUrl && (
+          {outlookCalUrl && (
+            <div className="flex items-center justify-between">
+              <button onClick={syncOutlookCalendar} disabled={syncingOutlook} className="h-9 px-4 rounded-xl bg-primary text-primary-foreground text-[11px] font-medium flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all">
+                {syncingOutlook ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                {syncingOutlook ? "Synkroniserer…" : "Synk nå"}
+              </button>
+              <button onClick={removeOutlookSync} className="text-[11px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1">
+                <Trash2 size={10} /> Fjern synkronisering
+              </button>
+            </div>
+          )}
+
           <div className="rounded-xl bg-muted/20 border border-border/10 p-3">
-            <p className="text-[10px] text-muted-foreground">💡 Datoer importert fra Outlook merkes med 📅 og synkroniseres hver gang du klikker «Synk nå». Manuelt blokkerte datoer påvirkes ikke.</p>
+            <p className="text-[10px] text-muted-foreground">💡 Manuelt blokkerte datoer påvirkes aldri av synkroniseringen. Kun automatisk importerte datoer (📅) oppdateres.</p>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
