@@ -23,7 +23,7 @@ interface Stats {
 }
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "pending_tasks";
 
 type WidgetId = "notifications" | "stats" | "quickdraft" | "recentposts" | "taxdeadlines" | "quicknav";
 
@@ -175,6 +175,9 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
               <span className="ml-auto min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5">
                 {notifications.total}
               </span>
+              <button onClick={() => onNavigate("pending_tasks")} className="text-[10px] text-primary hover:underline ml-2">
+                Åpne alle →
+              </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {[
@@ -189,7 +192,7 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
                 .map(item => (
                   <button
                     key={item.label}
-                    onClick={() => onNavigate(item.panel)}
+                    onClick={() => onNavigate("pending_tasks")}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/60 border border-border/20 hover:border-primary/30 transition-all text-left group"
                   >
                     <item.icon size={14} className="text-muted-foreground group-hover:text-primary shrink-0" strokeWidth={1.5} />
