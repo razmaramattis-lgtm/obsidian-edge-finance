@@ -26,6 +26,7 @@ const EmployeesPanel = () => {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [empSpecialties, setEmpSpecialties] = useState<{id: string; name: string; description: string | null}[]>([]);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -78,6 +79,16 @@ const EmployeesPanel = () => {
     await supabase.from("profiles").update({ role: newRole } as any).eq("id", emp.id);
     setEmployees(prev => prev.map(e => e.id === emp.id ? { ...e, role: newRole } : e));
     if (selectedEmployee?.id === emp.id) setSelectedEmployee(prev => prev ? { ...prev, role: newRole } : null);
+  };
+
+  const loadSpecialties = async (profileId: string) => {
+    const { data } = await supabase.from("profile_specialties").select("*").eq("profile_id", profileId).order("sort_order");
+    setEmpSpecialties((data || []) as any);
+  };
+
+  const selectEmployee = (emp: Employee) => {
+    setSelectedEmployee(emp);
+    loadSpecialties(emp.id);
   };
 
   const filtered = employees.filter(e => {
@@ -162,13 +173,24 @@ const EmployeesPanel = () => {
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Stillingstittel</p>
                 <p className="text-sm">{emp.title || "Ikke angitt"}</p>
               </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Spesialfelt</p>
-                <p className="text-sm">{emp.specialty || "Ikke angitt"}</p>
-              </div>
             </div>
           </div>
         </div>
+
+        {/* Specialties */}
+        {empSpecialties.length > 0 && (
+          <div className="glass rounded-2xl border border-border/20 p-5 space-y-3">
+            <h4 className="text-sm font-medium flex items-center gap-2"><Sparkles size={14} className="text-primary" /> Spesialfelt</h4>
+            <div className="space-y-2">
+              {empSpecialties.map(spec => (
+                <div key={spec.id} className="rounded-xl border border-border/10 bg-muted/10 p-3">
+                  <p className="text-sm font-medium">{spec.name}</p>
+                  {spec.description && <p className="text-xs text-muted-foreground mt-1">{spec.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {emp.bio && (
           <div className="glass rounded-2xl border border-border/20 p-5">
@@ -248,7 +270,7 @@ const EmployeesPanel = () => {
         {filtered.map(emp => (
           <div
             key={emp.id}
-            onClick={() => setSelectedEmployee(emp)}
+            onClick={() => selectEmployee(emp)}
             className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between cursor-pointer hover:border-primary/20 hover:bg-primary/[0.02] transition-all"
           >
             <div className="flex items-center gap-3">

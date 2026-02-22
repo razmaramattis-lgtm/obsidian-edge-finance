@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus } from "lucide-react";
+import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -170,17 +170,30 @@ const AvailabilityTab = () => {
 
 /* ─────────── Profile tab ─────────── */
 
+interface Specialty {
+  id?: string;
+  name: string;
+  description: string;
+  sort_order: number;
+  isNew?: boolean;
+}
+
 const ProfileTab = () => {
   const { profile } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [title, setTitle] = useState("");
-  const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // Specialties
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
+  const [newSpecName, setNewSpecName] = useState("");
+  const [newSpecDesc, setNewSpecDesc] = useState("");
+  const [expandedSpec, setExpandedSpec] = useState<string | null>(null);
 
   // Password
   const [newPassword, setNewPassword] = useState("");
@@ -192,6 +205,7 @@ const ProfileTab = () => {
   useEffect(() => {
     if (!profile) return;
     loadProfile();
+    loadSpecialties();
   }, [profile]);
 
   const loadProfile = async () => {
@@ -202,10 +216,15 @@ const ProfileTab = () => {
       setEmail(data.email || "");
       setPhone((data as any).phone || "");
       setTitle((data as any).title || "");
-      setSpecialty((data as any).specialty || "");
       setBio((data as any).bio || "");
       setAvatarUrl((data as any).avatar_url || "");
     }
+  };
+
+  const loadSpecialties = async () => {
+    if (!profile) return;
+    const { data } = await supabase.from("profile_specialties").select("*").eq("profile_id", profile.id).order("sort_order");
+    if (data) setSpecialties(data.map(s => ({ id: s.id, name: s.name, description: s.description || "", sort_order: s.sort_order ?? 0 })));
   };
 
   const saveProfile = async (e: React.FormEvent) => {
@@ -213,9 +232,37 @@ const ProfileTab = () => {
     if (!profile) return;
     setSaving(true);
     await supabase.from("profiles").update({
-      name, phone, title, specialty, bio, avatar_url: avatarUrl || null
+      name, phone, title, bio, avatar_url: avatarUrl || null
     } as any).eq("id", profile.id);
     setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000);
+  };
+
+  const addSpecialty = async () => {
+    if (!profile || !newSpecName.trim()) return;
+    const { data } = await supabase.from("profile_specialties").insert({
+      profile_id: profile.id,
+      name: newSpecName.trim(),
+      description: newSpecDesc.trim() || null,
+      sort_order: specialties.length,
+    }).select().single();
+    if (data) {
+      setSpecialties(prev => [...prev, { id: data.id, name: data.name, description: data.description || "", sort_order: data.sort_order ?? 0 }]);
+      setNewSpecName("");
+      setNewSpecDesc("");
+    }
+  };
+
+  const updateSpecialty = async (id: string, updates: Partial<Specialty>) => {
+    setSpecialties(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
+    await supabase.from("profile_specialties").update({
+      name: updates.name,
+      description: updates.description || null,
+    } as any).eq("id", id);
+  };
+
+  const removeSpecialty = async (id: string) => {
+    await supabase.from("profile_specialties").delete().eq("id", id);
+    setSpecialties(prev => prev.filter(s => s.id !== id));
   };
 
   const changePassword = async (e: React.FormEvent) => {
@@ -301,15 +348,88 @@ const ProfileTab = () => {
             <input value={title} onChange={e => setTitle(e.target.value)} className={inputClass} placeholder="Regnskapsfører" />
           </div>
           <div className="sm:col-span-2">
-            <label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5"><Sparkles size={12} /> Spesialfelt</label>
-            <input value={specialty} onChange={e => setSpecialty(e.target.value)} className={inputClass} placeholder="Skatteplanlegging, MVA, lønn…" />
-          </div>
-          <div className="sm:col-span-2">
             <label className="text-xs text-muted-foreground mb-1.5">Kort bio</label>
             <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none" placeholder="Fortell litt om deg selv og din erfaring…" />
           </div>
         </div>
       </form>
+
+      {/* Specialties list */}
+      <div className="glass rounded-2xl border border-border/20 p-6 space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles size={15} className="text-primary" strokeWidth={1.5} />
+          <h3 className="font-medium text-sm">Spesialfelt</h3>
+        </div>
+        <p className="text-xs text-muted-foreground -mt-2">Legg til dine kompetanseområder med en dypere beskrivelse.</p>
+
+        {specialties.length > 0 && (
+          <div className="space-y-2">
+            {specialties.map(spec => (
+              <div key={spec.id} className="rounded-xl border border-border/20 bg-muted/10 overflow-hidden">
+                <div
+                  className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/20 transition-colors"
+                  onClick={() => setExpandedSpec(expandedSpec === spec.id ? null : (spec.id || null))}
+                >
+                  <Sparkles size={13} className="text-primary shrink-0" />
+                  <span className="text-sm font-medium flex-1">{spec.name}</span>
+                  <button
+                    onClick={e => { e.stopPropagation(); removeSpecialty(spec.id!); }}
+                    className="text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                  {expandedSpec === spec.id ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+                </div>
+                {expandedSpec === spec.id && (
+                  <div className="px-4 pb-4 pt-1 border-t border-border/10 space-y-2">
+                    <input
+                      value={spec.name}
+                      onChange={e => setSpecialties(prev => prev.map(s => s.id === spec.id ? { ...s, name: e.target.value } : s))}
+                      onBlur={() => updateSpecialty(spec.id!, { name: spec.name, description: spec.description })}
+                      className="w-full h-9 rounded-lg border border-border/30 bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/40"
+                      placeholder="Navn på spesialfelt"
+                    />
+                    <textarea
+                      value={spec.description}
+                      onChange={e => setSpecialties(prev => prev.map(s => s.id === spec.id ? { ...s, description: e.target.value } : s))}
+                      onBlur={() => updateSpecialty(spec.id!, { name: spec.name, description: spec.description })}
+                      rows={3}
+                      className="w-full rounded-lg border border-border/30 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none"
+                      placeholder="Beskriv din kompetanse innen dette feltet…"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex gap-2 items-start">
+          <div className="flex-1 space-y-2">
+            <input
+              value={newSpecName}
+              onChange={e => setNewSpecName(e.target.value)}
+              placeholder="Nytt spesialfelt, f.eks. «Skatteplanlegging»"
+              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+            <textarea
+              value={newSpecDesc}
+              onChange={e => setNewSpecDesc(e.target.value)}
+              placeholder="Beskrivelse (valgfritt) — hva innebærer dette spesialfeltet for deg?"
+              rows={2}
+              className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={addSpecialty}
+            disabled={!newSpecName.trim()}
+            className="h-9 px-4 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 disabled:opacity-50 flex items-center gap-1.5 transition-all shrink-0"
+          >
+            <Plus size={12} /> Legg til
+          </button>
+        </div>
+      </div>
 
       {/* Password */}
       <div className="glass rounded-2xl border border-border/20 p-6">
