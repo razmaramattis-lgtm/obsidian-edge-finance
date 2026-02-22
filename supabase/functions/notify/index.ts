@@ -157,6 +157,84 @@ serve(async (req) => {
       });
     }
 
+    if (type === "booking_confirmed") {
+      const { advisor_id, advisor_name, customer_name, customer_email, customer_phone, company_name, booking_date, booking_time, message, teams_link } = data;
+
+      // Get advisor email
+      const { data: advisor } = await supabase
+        .from("profiles")
+        .select("email, name")
+        .eq("id", advisor_id)
+        .single();
+
+      const formattedDate = new Date(booking_date).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const formattedTime = booking_time?.slice(0, 5) || booking_time;
+
+      // ── Email to CUSTOMER ──
+      const customerBody = `
+        <div style="margin-bottom:20px;">
+          <p style="font-size:14px;color:#0f172a;">Hei ${customer_name} 👋</p>
+          <p style="font-size:14px;color:#475569;line-height:1.7;">
+            Din booking er nå <strong style="color:#22c55e;">bekreftet</strong>! Her er møtedetaljene dine:
+          </p>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">📅 Dato</td><td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:600;">${formattedDate}</td></tr>
+            <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">🕐 Tidspunkt</td><td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:600;">kl. ${formattedTime}</td></tr>
+            <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">👤 Rådgiver</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">${advisor_name || advisor?.name || "Din rådgiver"}</td></tr>
+            <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">⏱️ Varighet</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">30 minutter</td></tr>
+          </table>
+        </div>
+        ${teams_link ? `
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:20px;margin-bottom:20px;text-align:center;">
+          <p style="font-size:13px;color:#64748b;margin:0 0 12px;">Møtet gjennomføres via Microsoft Teams:</p>
+          <a href="${teams_link}" style="display:inline-block;background:linear-gradient(135deg,#5b5fc7,#7b83eb);color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
+            📹 Bli med i Teams-møtet
+          </a>
+          <p style="font-size:11px;color:#94a3b8;margin:12px 0 0;">Klikk på knappen ovenfor når møtet starter. Du trenger ikke laste ned Teams.</p>
+        </div>` : ""}
+        <p style="font-size:13px;color:#94a3b8;line-height:1.6;">Vi gleder oss til møtet! Ta gjerne kontakt på <a href="mailto:firmapost@avargo.no" style="color:#2563eb;">firmapost@avargo.no</a> hvis du har spørsmål.</p>
+      `;
+
+      await sendEmail({
+        ...smtpOpts,
+        to: customer_email,
+        subject: `✅ Booking bekreftet: ${formattedDate} kl. ${formattedTime} — Avargo`,
+        html: wrapHtml("✅ Din booking er bekreftet!", customerBody),
+      });
+
+      // ── Email to ADVISOR ──
+      if (advisor?.email) {
+        const advisorBody = `
+          <div style="margin-bottom:20px;">
+            <p style="font-size:14px;color:#0f172a;">Hei ${advisor.name} 👋</p>
+            <p style="font-size:14px;color:#475569;line-height:1.7;">
+              Du har bekreftet en booking. Kunden har fått tilsendt møtedetaljene og Teams-lenken.
+            </p>
+          </div>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+            <table style="border-collapse:collapse;width:100%;">
+              <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">📅 Dato</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">${formattedDate}</td></tr>
+              <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">🕐 Tidspunkt</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">kl. ${formattedTime}</td></tr>
+              <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">👤 Kunde</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">${customer_name}</td></tr>
+              <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">🏢 Selskap</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">${company_name}</td></tr>
+              <tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">📧 E-post</td><td style="padding:8px 0;font-size:14px;"><a href="mailto:${customer_email}" style="color:#2563eb;">${customer_email}</a></td></tr>
+              ${customer_phone ? `<tr><td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;">📞 Telefon</td><td style="padding:8px 0;font-size:14px;color:#0f172a;">${customer_phone}</td></tr>` : ""}
+            </table>
+          </div>
+          ${teams_link ? `<p style="font-size:13px;color:#475569;">Teams-møte: <a href="${teams_link}" style="color:#2563eb;">${teams_link}</a></p>` : ""}
+        `;
+
+        await sendEmail({
+          ...smtpOpts,
+          to: advisor.email,
+          subject: `✅ Booking bekreftet: ${customer_name} — ${formattedDate} kl. ${formattedTime}`,
+          html: wrapHtml("✅ Booking bekreftet", advisorBody),
+        });
+      }
+    }
+
     if (type === "send_document") {
       const { recipient_email, recipient_name, document_title, document_html } = data;
 

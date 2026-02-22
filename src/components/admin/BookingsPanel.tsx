@@ -79,6 +79,39 @@ const BookingsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
 
   const updateBookingStatus = async (id: string, status: string) => {
     await supabase.from("bookings").update({ status }).eq("id", id);
+
+    // Send confirmation emails when booking is confirmed
+    if (status === "confirmed") {
+      const booking = bookings.find(b => b.id === id);
+      if (booking) {
+        // Get advisor's Teams link from profile
+        const { data: advisorProfile } = await supabase.from("profiles").select("name, teams_link").eq("id", booking.advisor_id).single();
+        const teamsLink = (advisorProfile as any)?.teams_link || booking.teams_link || "";
+
+        try {
+          await supabase.functions.invoke("notify", {
+            body: {
+              type: "booking_confirmed",
+              data: {
+                advisor_id: booking.advisor_id,
+                advisor_name: advisorProfile?.name || "",
+                customer_name: booking.customer_name,
+                customer_email: booking.customer_email,
+                customer_phone: booking.customer_phone,
+                company_name: booking.company_name,
+                booking_date: booking.booking_date,
+                booking_time: booking.booking_time,
+                message: booking.message,
+                teams_link: teamsLink,
+              },
+            },
+          });
+        } catch (e) {
+          console.error("Failed to send confirmation email:", e);
+        }
+      }
+    }
+
     fetchAll();
     onStatusChange?.();
   };
