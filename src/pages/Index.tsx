@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users,
@@ -50,10 +49,12 @@ const hookSlides = [
 
 const RotatingHook = () => {
   const [hookIndex, setHookIndex] = useState(0);
+  const [fadeKey, setFadeKey] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setHookIndex((prev) => (prev + 1) % hookSlides.length);
+      setFadeKey((prev) => prev + 1);
     }, 12000);
     return () => clearInterval(timer);
   }, []);
@@ -65,25 +66,17 @@ const RotatingHook = () => {
       <div className="absolute inset-0 ambient-glow opacity-60" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <div className="max-w-3xl mx-auto text-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={hookIndex}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
-                {slide.heading}
-              </h2>
-              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
-                {slide.body}
-              </p>
-              <p className="text-primary text-lg font-heading italic">
-                {slide.tagline}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          <div key={fadeKey} className="css-fade-in">
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
+              {slide.heading}
+            </h2>
+            <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
+              {slide.body}
+            </p>
+            <p className="text-primary text-lg font-heading italic">
+              {slide.tagline}
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -107,6 +100,7 @@ const Index = () => {
     };
     fetchLowest();
   }, []);
+
   const industries = [
     { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", desc: "Startups og tech-selskaper trenger en regnskapsfører som forstår vekst, investorer og SaaS-modeller. Det gjør vi." },
     { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", desc: "Full kontroll over eiendomsporteføljen din — hva du tjener, hva det koster og hvordan du kan gjøre det smartere." },
@@ -122,7 +116,6 @@ const Index = () => {
     { icon: Zap, name: "Håndverkere & Fagfolk", slug: "handverkere", tagline: "Fagmann på jobb, vi tar resten", desc: "Vi sørger for at alt det administrative er i orden mens du gjør jobben din." },
   ];
 
-  // Show 3 industries at a time, rotating every 10 seconds
   const [industryPage, setIndustryPage] = useState(0);
   const industriesPerPage = 3;
   const totalPages = Math.ceil(industries.length / industriesPerPage);
@@ -151,23 +144,24 @@ const Index = () => {
     { icon: Target, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang. Du trenger aldri bekymre deg for en frist igjen.", href: "/tjenester/regnskapsforer" },
   ];
 
-  // Services carousel — one at a time
   const [activeService, setActiveService] = useState(0);
   const [serviceAutoplay, setServiceAutoplay] = useState(true);
+  const [serviceKey, setServiceKey] = useState(0);
   const serviceBgSrc = useServiceBg(activeService);
 
   useEffect(() => {
     if (!serviceAutoplay) return;
     const timer = setInterval(() => {
       setActiveService((prev) => (prev + 1) % services.length);
+      setServiceKey((prev) => prev + 1);
     }, 5000);
     return () => clearInterval(timer);
   }, [serviceAutoplay, services.length]);
 
   const goToService = useCallback((index: number) => {
     setActiveService(index);
+    setServiceKey((prev) => prev + 1);
     setServiceAutoplay(false);
-    // Resume autoplay after 15s of inactivity
     setTimeout(() => setServiceAutoplay(true), 15000);
   }, []);
 
@@ -199,102 +193,63 @@ const Index = () => {
           "image": "https://avargo.no/og-image.jpg",
           "email": "firmapost@avargo.no",
           "telephone": "+4798642391",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Oscars gate 2B",
-            "addressLocality": "Skien",
-            "postalCode": "3714",
-            "addressRegion": "Vestfold og Telemark",
-            "addressCountry": "NO"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 59.2084,
-            "longitude": 9.6069
-          },
-          "openingHoursSpecification": [
-            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "16:00" }
-          ],
-          "areaServed": [
-            { "@type": "Country", "name": "Norway" },
-            { "@type": "City", "name": "Skien" },
-            { "@type": "City", "name": "Oslo" },
-            { "@type": "City", "name": "Bergen" },
-            { "@type": "City", "name": "Trondheim" }
-          ],
+          "address": { "@type": "PostalAddress", "streetAddress": "Oscars gate 2B", "addressLocality": "Skien", "postalCode": "3714", "addressRegion": "Vestfold og Telemark", "addressCountry": "NO" },
+          "geo": { "@type": "GeoCoordinates", "latitude": 59.2084, "longitude": 9.6069 },
+          "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "16:00" }],
+          "areaServed": [{ "@type": "Country", "name": "Norway" }, { "@type": "City", "name": "Skien" }, { "@type": "City", "name": "Oslo" }, { "@type": "City", "name": "Bergen" }, { "@type": "City", "name": "Trondheim" }],
           "priceRange": lowestPrice ? `Fra ${lowestPrice} kr/mnd` : "Fra 1 499 kr/mnd",
           "currenciesAccepted": "NOK",
           "paymentAccepted": "Faktura",
           "serviceType": ["Regnskap", "Regnskapsfører", "Skatteoptimalisering", "CFO-rådgivning", "Lønnskjøring", "HR", "Årsregnskap", "Skattemelding", "MVA-rapportering", "Bokføring"],
           "knowsAbout": ["Regnskap", "Skatteplanlegging", "Aksjeselskap", "Enkeltpersonforetak", "MVA", "Lønn", "HR", "Årsoppgjør"],
           "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Regnskapstjenester",
+            "@type": "OfferCatalog", "name": "Regnskapstjenester",
             "itemListElement": [
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oppstart", "description": "Regnskapsfører for nyoppstartede selskaper", "url": "https://avargo.no/priser" }},
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Vekst", "description": "Regnskapsfører for selskaper i vekst", "url": "https://avargo.no/priser" }},
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rådgivning", "description": "CFO-rådgivning og skatteplanlegging", "url": "https://avargo.no/priser" }}
             ]
           },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5",
-            "bestRating": "5",
-            "ratingCount": "12"
-          },
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "bestRating": "5", "ratingCount": "12" },
           "sameAs": []
         })}</script>
         <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebPage",
+          "@context": "https://schema.org", "@type": "WebPage",
           "name": "Avargo — Regnskapsfører og rådgiver",
-          "speakable": {
-            "@type": "SpeakableSpecification",
-            "cssSelector": ["h1", ".hero-description", ".hero-tagline"]
-          },
+          "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".hero-description", ".hero-tagline"] },
           "url": "https://avargo.no"
         })}</script>
       </Helmet>
-      {/* HERO — CSS animations for faster FCP/LCP */}
+
+      {/* HERO — Pure CSS animations */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="Avargo kontorlandskap" className="w-full h-full object-cover opacity-50" fetchPriority="high" />
+          <img src={heroBg} alt="Avargo kontorlandskap" className="w-full h-full object-cover opacity-50" width={1920} height={1080} fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
           <div className="absolute inset-0 ambient-glow" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
-          <div className="max-w-4xl mx-auto hero-stagger">
+          <div className="max-w-4xl mx-auto">
             <p className="hero-fade hero-delay-1 text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12">
               For små og mellomstore bedrifter som ønsker trygghet
             </p>
-
             <h1 className="hero-fade hero-delay-2 font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.05] mb-6 md:mb-8">
-              Regnskapet ditt
-              <br />
+              Regnskapet ditt<br />
               <span className="text-gradient-rose italic">fortjener bedre.</span>
             </h1>
-
-            <p className="hero-fade hero-delay-3 text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light">
+            <p className="hero-fade hero-delay-3 hero-description text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light">
               Du får en fast, statsautorisert regnskapsfører som kjenner selskapet ditt — støttet av et helt team som tar seg av regnskap, rådgivning og det du ikke har tid til selv. Alt inkludert. Ingen overraskelser.
             </p>
-
-            <p className="hero-fade hero-delay-4 text-sm text-primary italic mb-10 md:mb-14 font-light">
+            <p className="hero-fade hero-delay-4 hero-tagline text-sm text-primary italic mb-10 md:mb-14 font-light">
               {lowestPrice ? `Fra ${lowestPrice} kr/mnd for nyoppstartede selskaper.` : "Fast pris for nyoppstartede selskaper."}
             </p>
-
             <div className="hero-fade hero-delay-5 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-12 md:mb-16">
-              <Link
-                to="/kontakt"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-              >
+              <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link
-                to="/metoden"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500"
-              >
+              <Link to="/metoden" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
                 Slik jobber vi
               </Link>
             </div>
@@ -338,116 +293,65 @@ const Index = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* SERVICES — immersive fullwidth carousel */}
+      {/* SERVICES — immersive fullwidth carousel, CSS-only transitions */}
       <section id="tjenester" className="relative overflow-hidden">
-        {/* Background image with crossfade */}
-        <AnimatePresence mode="wait">
-          {serviceBgSrc && (
-            <motion.div
-              key={`bg-${activeService}`}
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="absolute inset-0"
-            >
-              <img
-                src={serviceBgSrc}
-                alt=""
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {/* Dark overlay for readability */}
+        {/* Background image with CSS crossfade */}
+        {serviceBgSrc && (
+          <div key={`bg-${activeService}`} className="absolute inset-0 css-fade-in">
+            <img src={serviceBgSrc} alt="" className="w-full h-full object-cover" loading="lazy" width={1920} height={1080} />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
 
-        {/* Click zones — left half prev, right half next (invisible) */}
-        <button
-          aria-label="Forrige tjeneste"
-          className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize bg-transparent border-0"
-          onClick={prevService}
-        />
-        <button
-          aria-label="Neste tjeneste"
-          className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize bg-transparent border-0"
-          onClick={nextService}
-        />
+        <button aria-label="Forrige tjeneste" className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize bg-transparent border-0" onClick={prevService} />
+        <button aria-label="Neste tjeneste" className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize bg-transparent border-0" onClick={nextService} />
 
         <div className="relative z-30 py-24 md:py-40 pointer-events-none">
           <div className="container mx-auto px-4 md:px-6">
             <AnimatedSection>
               <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
-                Én fast pris.{" "}
-                <span className="italic text-gradient-rose">Alt du trenger.</span>
+                Én fast pris.{" "}<span className="italic text-gradient-rose">Alt du trenger.</span>
               </h2>
             </AnimatedSection>
 
-            {/* Active service content */}
             <div className="max-w-2xl relative z-30 pointer-events-none">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeService}
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 30 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm rounded-2xl border border-primary/10 shadow-lg shadow-primary/5">
-                      <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
-                    </div>
-                    <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
-                      {String(activeService + 1).padStart(2, "0")}
-                    </span>
+              <div key={serviceKey} className="css-slide-in">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm rounded-2xl border border-primary/10 shadow-lg shadow-primary/5">
+                    <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
                   </div>
-
-                  <h3 className="font-heading text-3xl md:text-5xl mb-4 md:mb-6">
-                    {current.title}
-                  </h3>
-
-                  <p className="text-foreground/80 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10 max-w-lg">
-                    {current.desc}
-                  </p>
-
-                  <Link
-                    to={current.href}
-                    className="pointer-events-auto group inline-flex items-center gap-3 px-8 py-3.5 bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm tracking-wider rounded-full hover:bg-primary/20 transition-all duration-500"
-                  >
-                    Les mer
-                    <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                  </Link>
-                </motion.div>
-              </AnimatePresence>
+                  <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
+                    {String(activeService + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="font-heading text-3xl md:text-5xl mb-4 md:mb-6">{current.title}</h3>
+                <p className="text-foreground/80 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10 max-w-lg">{current.desc}</p>
+                <Link to={current.href} className="pointer-events-auto group inline-flex items-center gap-3 px-8 py-3.5 bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm tracking-wider rounded-full hover:bg-primary/20 transition-all duration-500">
+                  Les mer
+                  <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </Link>
+              </div>
             </div>
 
-            {/* Minimal progress dots at bottom */}
             <div className="flex items-center gap-1.5 mt-16 md:mt-20">
               {services.map((_, i) => (
-                <div
-                  key={i}
-                  className={`rounded-full transition-all duration-500 ${
-                    i === activeService
-                      ? "w-8 h-1.5 bg-primary"
-                      : "w-1.5 h-1.5 bg-foreground/20"
-                  }`}
-                />
+                <div key={i} className={`rounded-full transition-all duration-500 ${i === activeService ? "w-8 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-foreground/20"}`} />
               ))}
             </div>
           </div>
         </div>
 
-        {/* Progress bar */}
+        {/* Progress bar — CSS animation */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/10 z-30">
-          <motion.div
-            className="h-full bg-gradient-to-r from-primary to-rose-glow"
-            initial={{ width: "0%" }}
-            animate={{ width: "100%" }}
-            transition={{ duration: serviceAutoplay ? 5 : 0, ease: "linear" }}
+          <div
             key={`progress-${activeService}-${serviceAutoplay}`}
+            className="h-full bg-gradient-to-r from-primary to-rose-glow"
+            style={{
+              animation: serviceAutoplay ? "progressBar 5s linear forwards" : "none",
+              width: serviceAutoplay ? undefined : "0%",
+            }}
           />
         </div>
       </section>
@@ -461,8 +365,7 @@ const Index = () => {
           <AnimatedSection>
             <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bransjer vi dekker</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
-              Vi kjenner bransjen din.{" "}
-              <span className="italic text-gradient-rose">Ikke bare tallene.</span>
+              Vi kjenner bransjen din.{" "}<span className="italic text-gradient-rose">Ikke bare tallene.</span>
             </h2>
             <p className="text-foreground/70 text-base md:text-lg font-light mb-4 md:mb-6 max-w-2xl">
               Uansett hva du driver med, møter du en regnskapsfører hos oss som forstår hverdagen din — ikke bare tallene i regnskapet.
@@ -473,42 +376,29 @@ const Index = () => {
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[320px]">
-            <AnimatePresence mode="wait">
-              {visibleIndustries.map((ind) => (
-                <motion.div
-                  key={ind.slug + industryPage}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
-                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
-                    <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
-                      <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
-                    </div>
-                    <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
-                    <p className="text-sm text-primary/80 italic mb-3">{ind.tagline}</p>
-                    <p className="text-sm text-foreground/60 leading-relaxed font-light">{ind.desc}</p>
-                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-4">
-                      Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {visibleIndustries.map((ind) => (
+              <div key={ind.slug + industryPage} className="css-fade-in">
+                <Link to={`/bransjer/${ind.slug}`} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
+                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
+                  <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
+                    <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
+                  <p className="text-sm text-primary/80 italic mb-3">{ind.tagline}</p>
+                  <p className="text-sm text-foreground/60 leading-relaxed font-light">{ind.desc}</p>
+                  <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-4">
+                    Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </div>
+                </Link>
+              </div>
+            ))}
           </div>
 
-          {/* Page dots */}
           <div className="flex items-center justify-center gap-2 mt-8">
             {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Bransje-side ${i + 1}`}
-                onClick={() => setIndustryPage(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`}
-              />
+              <button key={i} aria-label={`Bransje-side ${i + 1}`} onClick={() => setIndustryPage(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`} />
             ))}
           </div>
 
@@ -559,38 +449,17 @@ const Index = () => {
             <div className="text-center mb-14 md:mb-20">
               <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl max-w-3xl mx-auto leading-snug">
-                De fleste betaler for mye.{" "}
-                <span className="italic text-gradient-rose">Og får for lite tilbake.</span>
+                De fleste betaler for mye.{" "}<span className="italic text-gradient-rose">Og får for lite tilbake.</span>
               </h2>
             </div>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
-              {
-                icon: Shield,
-                metric: "100%",
-                label: "fastpris — ingen tillegg",
-                text: "Hos oss er bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering. Ingen overraskelser. Du vet alltid hva det koster.",
-              },
-              {
-                icon: Handshake,
-                metric: "1 person",
-                label: "din statsautoriserte regnskapsfører",
-                text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte.",
-              },
-              {
-                icon: Sparkles,
-                metric: "25+",
-                label: "bransjer vi dekker",
-                text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen din. Du slipper å forklare det grunnleggende hver gang.",
-              },
-              {
-                icon: Zap,
-                metric: "24 timer",
-                label: "svar — alltid",
-                text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi trygghet handler om å vite at noen er der når du trenger det.",
-              },
+              { icon: Shield, metric: "100%", label: "fastpris — ingen tillegg", text: "Hos oss er bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering. Ingen overraskelser. Du vet alltid hva det koster." },
+              { icon: Handshake, metric: "1 person", label: "din statsautoriserte regnskapsfører", text: "Du slipper callsenter og tilfeldige saksbehandlere. Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine — og som du kan ringe direkte." },
+              { icon: Sparkles, metric: "25+", label: "bransjer vi dekker", text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen din. Du slipper å forklare det grunnleggende hver gang." },
+              { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid. Fordi trygghet handler om å vite at noen er der når du trenger det." },
             ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.12}>
                 <div className="group p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift relative overflow-hidden">
@@ -630,10 +499,7 @@ const Index = () => {
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">
                 Helt uforpliktende. Ingen binding. Bare en god samtale.
               </p>
-              <Link
-                to="/kontakt"
-                className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-              >
+              <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 Bestill din gratis gjennomgang
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>

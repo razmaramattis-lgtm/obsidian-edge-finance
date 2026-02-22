@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { CalendarClock, ExternalLink, AlertTriangle, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,11 +26,6 @@ interface TaxDeadlineWidgetProps {
   showHeader?: boolean;
   className?: string;
 }
-
-const formatDate = (dateStr: string) => {
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
-};
 
 const daysUntil = (dateStr: string) => {
   const now = new Date();
@@ -169,54 +163,33 @@ const TaxDeadlineWidget = ({
             const isSoon = days <= 14;
 
             return (
-              <motion.a
+              <a
                 key={`${d.date}-${i}`}
                 href={d.url}
                 target="_blank"
                 rel="noreferrer"
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
                 className={`flex items-center gap-3 rounded-xl px-3 py-2.5 group hover:bg-muted/40 transition-all ${
                   isUrgent ? "border border-destructive/20 bg-destructive/5" : ""
                 }`}
+                style={{
+                  opacity: 0,
+                  animation: `fadeSlideIn 0.3s ease-out ${i * 0.05}s forwards`,
+                }}
               >
-                {/* Date badge */}
                 <div className={`w-10 h-10 rounded-xl flex flex-col items-center justify-center shrink-0 text-center ${
-                  isUrgent
-                    ? "bg-destructive/15 text-destructive"
-                    : isSoon
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted/50 text-muted-foreground"
+                  isUrgent ? "bg-destructive/15 text-destructive" : isSoon ? "bg-primary/15 text-primary" : "bg-muted/50 text-muted-foreground"
                 }`}>
                   <span className="text-sm font-bold leading-none">{d.day}</span>
-                  <span className="text-[8px] uppercase tracking-wider leading-none mt-0.5">
-                    {d.month.substring(0, 3)}
-                  </span>
+                  <span className="text-[8px] uppercase tracking-wider leading-none mt-0.5">{d.month.substring(0, 3)}</span>
                 </div>
-
-                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs leading-snug group-hover:text-primary transition-colors ${
-                    compact ? "line-clamp-1" : "line-clamp-2"
-                  }`}>
-                    {d.title}
-                  </p>
-                  <p className={`text-[10px] mt-0.5 ${
-                    isUrgent
-                      ? "text-destructive font-medium"
-                      : "text-muted-foreground/60"
-                  }`}>
-                    {days === 0
-                      ? "I dag!"
-                      : days === 1
-                      ? "I morgen"
-                      : `om ${days} dager`}
+                  <p className={`text-xs leading-snug group-hover:text-primary transition-colors ${compact ? "line-clamp-1" : "line-clamp-2"}`}>{d.title}</p>
+                  <p className={`text-[10px] mt-0.5 ${isUrgent ? "text-destructive font-medium" : "text-muted-foreground/60"}`}>
+                    {days === 0 ? "I dag!" : days === 1 ? "I morgen" : `om ${days} dager`}
                   </p>
                 </div>
-
                 <ExternalLink size={11} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
-              </motion.a>
+              </a>
             );
           })}
         </div>
