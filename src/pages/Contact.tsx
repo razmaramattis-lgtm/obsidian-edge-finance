@@ -187,7 +187,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Kom i gang</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Uforpliktende henvendelse</p>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl mb-6 md:mb-8 leading-snug">
               Fortell oss om selskapet ditt.{" "}
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>

@@ -392,14 +392,14 @@ const FAQ = () => {
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
               Fant du ikke svaret ditt?
             </h2>
-            <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-              Ta kontakt med oss — vi svarer gjerne på alle spørsmål om regnskap, skatt og rådgivning.
-            </p>
-            <Link
-              to="/kontakt"
-              className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-            >
-              Kontakt oss
+             <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
+               En av våre statsautoriserte regnskapsførere svarer deg innen 24 timer. Helt uforpliktende.
+             </p>
+             <Link
+               to="/kontakt"
+               className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+             >
+               Snakk med en regnskapsfører
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
           </AnimatedSection>

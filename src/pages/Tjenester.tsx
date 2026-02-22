@@ -281,7 +281,7 @@ const Tjenester = () => {
                 to="/kontakt"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Snakk med oss
+                Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link
@@ -389,7 +389,7 @@ const Tjenester = () => {
                   to="/kontakt"
                   className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500 whitespace-nowrap"
                 >
-                  Snakk med oss
+                  Få et uforpliktende tilbud
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </Link>
               </div>
@@ -403,20 +403,20 @@ const Tjenester = () => {
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-6 md:mb-8">Kom i gang</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug max-w-3xl mx-auto">
-              Ikke alle tjenestene passer alle.{" "}
-              <span className="italic text-gradient-rose">La oss finne din kombinasjon.</span>
-            </h2>
-            <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">
-              Vi setter opp det du trenger — og ingenting mer. En samtale er nok til å finne ut hva som skaper mest verdi for deg.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/kontakt"
-                className="group inline-flex items-center justify-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-              >
-                Book en gjennomgang
+             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-6 md:mb-8">Uforpliktende samtale</p>
+             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug max-w-3xl mx-auto">
+               Ikke alle tjenestene passer alle.{" "}
+               <span className="italic text-gradient-rose">La oss finne din kombinasjon.</span>
+             </h2>
+             <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">
+               Vi setter opp det du trenger — og ingenting mer. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
+             </p>
+             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+               <Link
+                 to="/kontakt"
+                 className="group inline-flex items-center justify-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+               >
+                 Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link

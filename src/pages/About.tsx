@@ -8,8 +8,8 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>Om Avargo | Regnskapsbyrå med AI-drevet rådgivning</title>
-        <meta name="description" content="Møt Avargo — regnskapsbyrået som kombinerer autoriserte regnskapsførere, HR-spesialister og teknologi for å gi deg full kontroll over økonomi og vekst." />
+        <title>Om Avargo | Regnskapsbyrå for små og mellomstore bedrifter</title>
+        <meta name="description" content="Møt Avargo — regnskapsbyrået med statsautoriserte regnskapsførere som gir små og mellomstore bedrifter trygghet, oversikt og rom til å vokse." />
         <link rel="canonical" href="https://avargo.no/om-oss" />
       </Helmet>
       <section className="py-24 md:py-40 relative">
@@ -23,13 +23,13 @@ const About = () => {
                 <span className="italic text-gradient-rose">gjøre det bedre.</span>
               </h1>
               <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-5 md:mb-6 font-light">
-                Vi er autoriserte regnskapsførere som ble lei av å se bedriftseiere slite med dårlig oppfølging, skjulte kostnader og regnskapsførere som aldri tok telefonen. Vi visste at det gikk an å gjøre det bedre — mer tilgjengelig, mer proaktivt og mer forståelig.
+                Vi er statsautoriserte regnskapsførere som ble lei av å se bedriftseiere slite med dårlig oppfølging, skjulte kostnader og regnskapsførere som aldri tok telefonen. Vi visste at det gikk an å gjøre det bedre — mer tilgjengelig, mer proaktivt og mer forståelig.
               </p>
               <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-5 md:mb-6 font-light">
-                Derfor startet vi Avargo. Et regnskapsbyrå bygget rundt mennesker, ikke systemer. Der du får én fast regnskapsfører som faktisk kjenner selskapet ditt, forsterket av AI-verktøy som gjør at vi oppdager ting andre overser.
+                Derfor startet vi Avargo. Et regnskapsbyrå bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall. Der du får én fast regnskapsfører som faktisk kjenner selskapet ditt, og et helt team som jobber for at du skal ha full kontroll.
               </p>
               <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-light italic">
-                Vi startet Avargo fordi vi som autoriserte regnskapsførere så hva markedet manglet — og bygde det selv.
+                Vi bygde Avargo fordi vi som statsautoriserte regnskapsførere så hva markedet manglet — og bestemte oss for å gjøre noe med det.
               </p>
             </div>
           </AnimatedSection>
@@ -50,8 +50,8 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
-              { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt, dedikert regnskapsfører som lærer selskapet ditt å kjenne. Ingen callsenter, ingen chatbot — et menneske som jobber for deg som om det var sitt eget selskap." },
-              { icon: Sparkles, num: "02", title: "AI som stille superkraft", desc: "Regnskapsføreren din bruker AI-verktøy som gjennomgår tusenvis av datapunkter. Du får fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget." },
+              { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt, statsautorisert regnskapsfører som lærer selskapet ditt å kjenne. Ingen callsenter, ingen chatbot — et menneske som jobber for deg som om det var sitt eget selskap." },
+              { icon: Sparkles, num: "02", title: "Teknologi som stille superkraft", desc: "Regnskapsføreren din bruker smarte verktøy som gjennomgår tusenvis av datapunkter. Du får fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget." },
               { icon: Gem, num: "03", title: "Alt inkludert — virkelig alt", desc: "Bokføring, MVA, lønn, årsregnskap, skattemelding, aksjonærregisteroppgave, revisjonstøtte og rådgivning. Andre tar ekstra for halvparten. Vi tar ingenting ekstra." },
               { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Vi har erfaring med over 25 bransjer — fra tech og eiendom til bygg, restaurant og helse. Din regnskapsfører forstår hverdagen din, ikke bare tallene." },
             ].map((v, i) => (
@@ -105,20 +105,20 @@ const About = () => {
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-              Klar til å gjøre regnskapet til en{" "}
-              <span className="italic text-gradient-rose">styrke</span>?
-            </h2>
-            <p className="text-foreground/60 font-light mb-8 md:mb-10 max-w-lg mx-auto text-sm md:text-base">
-              Dedikert. Autorisert. Klar til å hjelpe deg fra dag én.
-            </p>
-            <Link
-              to="/kontakt"
-              className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-            >
-              Kom i gang
-              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-            </Link>
+             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
+               Klar for en regnskapsfører som{" "}
+               <span className="italic text-gradient-rose">faktisk bryr seg</span>?
+             </h2>
+             <p className="text-foreground/60 font-light mb-8 md:mb-10 max-w-lg mx-auto text-sm md:text-base">
+               Statsautorisert. Dedikert. Klar fra dag én. En av våre regnskapsførere kontakter deg innen 24 timer.
+             </p>
+             <Link
+               to="/kontakt"
+               className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+             >
+               Få et uforpliktende tilbud
+               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+             </Link>
           </AnimatedSection>
         </div>
       </section>
