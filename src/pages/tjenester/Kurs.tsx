@@ -39,6 +39,8 @@ interface Course {
   description: string | null;
   category: string;
   slug: string | null;
+  coming_soon: boolean;
+  has_certificate: boolean;
 }
 
 /* ───────── Hvem passer kursene for ───────── */
@@ -174,7 +176,7 @@ const Kurs = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const { data } = await supabase.from("courses").select("id, name, description, category, slug").eq("active", true).order("category").order("sort_order");
+      const { data } = await supabase.from("courses").select("id, name, description, category, slug, coming_soon, has_certificate").eq("active", true).order("category").order("sort_order");
       setCourses((data as Course[]) || []);
       setLoading(false);
     };
@@ -349,7 +351,15 @@ const Kurs = () => {
                             onClick={e => { if (!course.slug) { e.preventDefault(); setSelectedCourse(course); } }}
                             className="group block text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
                           >
-                            <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <p className="text-sm font-medium group-hover:text-primary transition-colors">{course.name}</p>
+                              {course.coming_soon && (
+                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">Kommer snart</span>
+                              )}
+                              {course.has_certificate && (
+                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-medium">Kursbevis</span>
+                              )}
+                            </div>
                             {course.description && (
                               <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
                             )}
@@ -384,7 +394,15 @@ const Kurs = () => {
                           <CatIcon size={14} className="text-foreground/70" strokeWidth={1.5} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium group-hover:text-primary transition-colors mb-1">{course.name}</p>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <p className="text-sm font-medium group-hover:text-primary transition-colors">{course.name}</p>
+                            {course.coming_soon && (
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">Kommer snart</span>
+                            )}
+                            {course.has_certificate && (
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-medium">Kursbevis</span>
+                            )}
+                          </div>
                           {course.description && (
                             <p className="text-xs text-muted-foreground font-light leading-relaxed line-clamp-2">{course.description}</p>
                           )}

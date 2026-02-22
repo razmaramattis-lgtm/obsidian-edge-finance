@@ -18,6 +18,8 @@ interface Course {
   duration: string | null;
   meta_title: string | null;
   meta_description: string | null;
+  coming_soon: boolean;
+  has_certificate: boolean;
 }
 
 const CATEGORIES = [
@@ -36,6 +38,7 @@ const emptyForm = {
   name: "", description: "", category: CATEGORIES[0], slug: "",
   long_description: "", highlights: [] as string[], target_audience: "",
   duration: "2-3 timer", meta_title: "", meta_description: "",
+  coming_soon: true, has_certificate: false,
 };
 
 const CoursesPanel = () => {
@@ -68,6 +71,7 @@ const CoursesPanel = () => {
       long_description: form.long_description || null, highlights: form.highlights.length > 0 ? form.highlights : null,
       target_audience: form.target_audience || null, duration: form.duration || null,
       meta_title: form.meta_title || null, meta_description: form.meta_description || null,
+      coming_soon: form.coming_soon, has_certificate: form.has_certificate,
     };
     if (editing) {
       await supabase.from("courses").update(payload).eq("id", editing.id);
@@ -113,6 +117,7 @@ const CoursesPanel = () => {
       long_description: c.long_description || "", highlights: Array.isArray(c.highlights) ? c.highlights : [],
       target_audience: c.target_audience || "", duration: c.duration || "2-3 timer",
       meta_title: c.meta_title || "", meta_description: c.meta_description || "",
+      coming_soon: c.coming_soon ?? true, has_certificate: c.has_certificate ?? false,
     });
     setShowForm(true);
   };
@@ -202,10 +207,22 @@ const CoursesPanel = () => {
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            <div>
+          <div>
               <label className={labelCls}>Varighet</label>
               <input value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} placeholder="2-3 timer" className={inputCls} />
             </div>
+          </div>
+          <div className="flex flex-wrap gap-6">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={form.coming_soon} onChange={e => setForm({ ...form, coming_soon: e.target.checked })} className="accent-primary" />
+              <span className="text-muted-foreground">Kommer snart</span>
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">Badge</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={form.has_certificate} onChange={e => setForm({ ...form, has_certificate: e.target.checked })} className="accent-primary" />
+              <span className="text-muted-foreground">Kursbevis</span>
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Badge</span>
+            </label>
           </div>
           <div>
             <label className={labelCls}>Kort beskrivelse (vises i liste)</label>
@@ -291,6 +308,8 @@ const CoursesPanel = () => {
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium">{course.name}</p>
                           {course.long_description && <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">Innhold</span>}
+                          {course.coming_soon && <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400">Kommer snart</span>}
+                          {course.has_certificate && <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400">Kursbevis</span>}
                         </div>
                         {course.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{course.description}</p>}
                         {course.slug && <p className="text-[10px] text-muted-foreground/50 mt-0.5">/tjenester/kurs/{course.slug}</p>}
