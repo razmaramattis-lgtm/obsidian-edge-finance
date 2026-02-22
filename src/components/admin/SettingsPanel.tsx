@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Link2, Download, Copy } from "lucide-react";
+import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Link2, Download, Copy, RefreshCw, ExternalLink, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -52,13 +52,19 @@ const AvailabilityTab = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [newBlockReason, setNewBlockReason] = useState("");
   const [showReasonFor, setShowReasonFor] = useState<string | null>(null);
+  // Outlook sync
+  const [outlookCalUrl, setOutlookCalUrl] = useState("");
+  const [syncingOutlook, setSyncingOutlook] = useState(false);
+  const [syncResult, setSyncResult] = useState<{ added: number; removed: number } | null>(null);
+  const [syncError, setSyncError] = useState("");
+  const [showOutlookWizard, setShowOutlookWizard] = useState(false);
 
   useEffect(() => { if (profile) loadData(); }, [profile]);
 
   const loadData = async () => {
     if (!profile) return;
-    const { data: prof } = await supabase.from("profiles").select("booking_active, teams_link").eq("id", profile.id).single();
-    if (prof) { setBookingActive((prof as any).booking_active ?? false); setTeamsLink((prof as any).teams_link ?? ""); }
+    const { data: prof } = await supabase.from("profiles").select("booking_active, teams_link, outlook_calendar_url").eq("id", profile.id).single();
+    if (prof) { setBookingActive((prof as any).booking_active ?? false); setTeamsLink((prof as any).teams_link ?? ""); setOutlookCalUrl((prof as any).outlook_calendar_url ?? ""); }
 
     const { data: avail } = await supabase.from("advisor_availability").select("*").eq("profile_id", profile.id).order("day_of_week");
     if (avail && avail.length > 0) {
@@ -122,6 +128,37 @@ const AvailabilityTab = () => {
     navigator.clipboard.writeText(calendarFeedUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const syncOutlookCalendar = async () => {
+    if (!profile) return;
+    setSyncingOutlook(true); setSyncError(""); setSyncResult(null);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-outlook-calendar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_id: profile.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Synkronisering feilet");
+      setSyncResult({ added: data.added, removed: data.removed });
+      loadData();
+    } catch (err: any) {
+      setSyncError(err.message || "Kunne ikke synkronisere");
+    } finally { setSyncingOutlook(false); }
+  };
+
+  const saveAndSyncOutlook = async () => {
+    if (!profile) return;
+    await supabase.from("profiles").update({ outlook_calendar_url: outlookCalUrl || null } as any).eq("id", profile.id);
+    await syncOutlookCalendar();
+  };
+
+  const removeOutlookSync = async () => {
+    if (!profile) return;
+    setOutlookCalUrl("");
+    await supabase.from("profiles").update({ outlook_calendar_url: null } as any).eq("id", profile.id);
+    setSyncResult(null);
   };
 
   const downloadBookingIcs = (bookingId: string) => {
@@ -379,6 +416,83 @@ const AvailabilityTab = () => {
             <li>Alle bookinger og blokkerte datoer synkroniseres automatisk.</li>
           </ol>
         </div>
+      </div>
+
+      {/* Outlook import / sync */}
+      <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2"><RefreshCw size={14} className="text-primary" /><span className="text-sm font-medium">Outlook-kalender → Tilgjengelighet</span></div>
+          {outlookCalUrl && (
+            <button onClick={syncOutlookCalendar} disabled={syncingOutlook} className="h-8 px-4 rounded-xl bg-primary text-primary-foreground text-[11px] font-medium flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all">
+              {syncingOutlook ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+              {syncingOutlook ? "Synkroniserer…" : "Synk nå"}
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">Importer opptatte dager fra din Outlook-kalender automatisk, slik at kunder ikke kan booke deg når du allerede har avtaler.</p>
+
+        {syncResult && (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+            <CheckCircle2 size={14} className="text-green-600 shrink-0" />
+            <p className="text-xs text-green-700">Synkronisert! {syncResult.added} nye blokkerte datoer lagt til, {syncResult.removed} fjernet.</p>
+          </div>
+        )}
+        {syncError && (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+            <AlertCircle size={14} className="text-destructive shrink-0" />
+            <p className="text-xs text-destructive">{syncError}</p>
+          </div>
+        )}
+
+        {!outlookCalUrl && !showOutlookWizard && (
+          <button onClick={() => setShowOutlookWizard(true)} className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all text-left">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><Plus size={18} className="text-primary" /></div>
+            <div>
+              <p className="text-xs font-medium">Koble til Outlook-kalender</p>
+              <p className="text-[10px] text-muted-foreground">Veiviser for å hente opptatte tider fra kalenderen din.</p>
+            </div>
+          </button>
+        )}
+
+        {(showOutlookWizard || outlookCalUrl) && (
+          <div className="space-y-4">
+            <div className="rounded-xl bg-muted/20 border border-border/10 p-4 space-y-3">
+              <p className="text-xs font-semibold flex items-center gap-2"><ExternalLink size={12} /> Slik publiserer du Outlook-kalenderen din:</p>
+              <ol className="text-[11px] text-muted-foreground space-y-2 list-decimal list-inside">
+                <li>Åpne <strong>Outlook på nett</strong> (outlook.office.com eller outlook.live.com).</li>
+                <li>Gå til <strong>Innstillinger</strong> (tannhjulet) → <strong>Vis alle Outlook-innstillinger</strong>.</li>
+                <li>Velg <strong>Kalender</strong> → <strong>Delte kalendere</strong>.</li>
+                <li>Under «Publiser en kalender», velg din kalender og velg <strong>«Kan vise alle detaljer»</strong>.</li>
+                <li>Klikk <strong>Publiser</strong>. Kopier <strong>ICS-lenken</strong> (ikke HTML).</li>
+                <li>Lim inn URL-en under og klikk «Lagre og synk».</li>
+              </ol>
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                value={outlookCalUrl}
+                onChange={e => setOutlookCalUrl(e.target.value)}
+                placeholder="https://outlook.office365.com/owa/calendar/…/reachcalendar.ics"
+                className="flex-1 h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <button onClick={saveAndSyncOutlook} disabled={syncingOutlook || !outlookCalUrl} className="h-10 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-all whitespace-nowrap">
+                {syncingOutlook ? "Synkroniserer…" : "Lagre og synk"}
+              </button>
+            </div>
+
+            {outlookCalUrl && (
+              <button onClick={removeOutlookSync} className="text-[11px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1">
+                <Trash2 size={10} /> Fjern Outlook-synkronisering
+              </button>
+            )}
+          </div>
+        )}
+
+        {outlookCalUrl && (
+          <div className="rounded-xl bg-muted/20 border border-border/10 p-3">
+            <p className="text-[10px] text-muted-foreground">💡 Datoer importert fra Outlook merkes med 📅 og synkroniseres hver gang du klikker «Synk nå». Manuelt blokkerte datoer påvirkes ikke.</p>
+          </div>
+        )}
       </div>
     </div>
   );

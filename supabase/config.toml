@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.calendar-feed]
 verify_jwt = false
+
+[functions.sync-outlook-calendar]
+verify_jwt = false
