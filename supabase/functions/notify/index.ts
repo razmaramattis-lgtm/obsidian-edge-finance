@@ -244,6 +244,28 @@ serve(async (req) => {
       });
     }
 
+    if (type === "account_feedback") {
+      const { search_term, top_result_account, top_result_name, message } = data;
+
+      const body = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">🔍 Kontohjelp-tilbakemelding</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Søkeord</td><td style="padding:6px 0;font-size:14px;color:#0f172a;font-weight:600;">«${search_term}»</td></tr>
+            ${top_result_account ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Beste treff</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${top_result_account} – ${top_result_name || "Ukjent"}</td></tr>` : `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Beste treff</td><td style="padding:6px 0;font-size:14px;color:#ef4444;">Ingen treff funnet</td></tr>`}
+          </table>
+        </div>
+        ${message ? `<div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Brukerens kommentar:</strong><br/>${message}</div>` : ""}
+        <p style="font-size:14px;color:#475569;">En bruker rapporterer at søkeordet «<strong>${search_term}</strong>» ikke ga riktig resultat i kontoplanen. Vurder å oppdatere tags eller beskrivelser.</p>
+      `;
+
+      await sendEmail({
+        ...smtpOpts,
+        to: "kontakt@avargo.no",
+        subject: `Kontohjelp: Manglende treff for «${search_term}»`,
+        html: wrapHtml("🔍 Kontohjelp-tilbakemelding", body),
+      });
+    }
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

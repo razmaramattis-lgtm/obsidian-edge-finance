@@ -65,6 +65,42 @@ export type Database = {
         }
         Relationships: []
       }
+      account_feedback: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          id: string
+          message: string | null
+          search_term: string
+          status: string
+          top_result_account: string | null
+          top_result_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          search_term: string
+          status?: string
+          top_result_account?: string | null
+          top_result_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          search_term?: string
+          status?: string
+          top_result_account?: string | null
+          top_result_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       advisor_availability: {
         Row: {
           active: boolean

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, BookOpen, ChevronRight, Sparkles, Hash, X } from "lucide-react";
+import { Search, BookOpen, ChevronRight, Sparkles, Hash, X, AlertTriangle, Send, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -55,11 +55,49 @@ const Kontohjelp = () => {
   }, []);
 
   const [showAll, setShowAll] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackSending, setFeedbackSending] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
-  // Reset showAll whenever search changes
+  // Reset showAll and feedback form whenever search changes
   useEffect(() => {
     setShowAll(false);
+    setShowFeedback(false);
+    setFeedbackSent(false);
+    setFeedbackMessage("");
   }, [search]);
+
+  const submitFeedback = async () => {
+    if (feedbackSending || !search.trim()) return;
+    setFeedbackSending(true);
+    const topResult = filtered[0] || null;
+    try {
+      await supabase.from("account_feedback" as any).insert([{
+        search_term: search.trim(),
+        top_result_account: topResult?.account_number || null,
+        top_result_name: topResult?.name || null,
+        message: feedbackMessage.trim() || null,
+      }]);
+      // Also notify admin via email
+      await supabase.functions.invoke("notify", {
+        body: {
+          type: "account_feedback",
+          data: {
+            search_term: search.trim(),
+            top_result_account: topResult?.account_number || null,
+            top_result_name: topResult?.name || null,
+            message: feedbackMessage.trim() || null,
+          },
+        },
+      });
+      setFeedbackSent(true);
+      setShowFeedback(false);
+    } catch {
+      // silently fail
+    }
+    setFeedbackSending(false);
+  };
 
   const isResultAccount = (num: string) => {
     const n = parseInt(num, 10);
@@ -353,6 +391,70 @@ const Kontohjelp = () => {
                   Vis alle {filtered.length} treff
                   <ChevronRight size={14} />
                 </button>
+              </motion.div>
+            )}
+
+            {/* Feedback section - show when searching */}
+            {isSearching && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center pt-8 space-y-3"
+              >
+                {feedbackSent ? (
+                  <div className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-sm border border-emerald-500/20">
+                    <CheckCircle size={16} />
+                    Takk for tilbakemeldingen! Vi ser på det.
+                  </div>
+                ) : !showFeedback ? (
+                  <button
+                    onClick={() => setShowFeedback(true)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border/20 hover:border-primary/20 transition-all duration-200"
+                  >
+                    <AlertTriangle size={13} />
+                    Fant du ikke riktig konto? Meld fra her
+                  </button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="max-w-lg mx-auto glass rounded-2xl p-5 border border-primary/20 space-y-3 text-left"
+                  >
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <AlertTriangle size={14} className="text-primary" />
+                      Meld manglende konto
+                    </div>
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p><span className="font-medium text-foreground/80">Søkeord:</span> {search}</p>
+                      {filtered[0] && (
+                        <p><span className="font-medium text-foreground/80">Beste treff:</span> {filtered[0].account_number} – {filtered[0].name}</p>
+                      )}
+                    </div>
+                    <textarea
+                      value={feedbackMessage}
+                      onChange={e => setFeedbackMessage(e.target.value)}
+                      placeholder="Beskriv hva du lette etter (valgfritt)…"
+                      rows={2}
+                      className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        onClick={() => setShowFeedback(false)}
+                        className="px-4 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50 transition-colors"
+                      >
+                        Avbryt
+                      </button>
+                      <button
+                        onClick={submitFeedback}
+                        disabled={feedbackSending}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90 disabled:opacity-50 transition-all"
+                      >
+                        <Send size={12} />
+                        {feedbackSending ? "Sender…" : "Send tilbakemelding"}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </div>
