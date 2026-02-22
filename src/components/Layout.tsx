@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import AdminFloatingBar from "@/components/AdminFloatingBar";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
@@ -443,7 +444,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
         </div>
-      </footer>
+    </footer>
+      <AdminFloatingBar />
     </div>
   );
 };
