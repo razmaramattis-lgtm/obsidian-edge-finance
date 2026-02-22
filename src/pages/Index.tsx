@@ -114,8 +114,8 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo | Regnskapsfører og rådgiver for ambisiøse selskaper</title>
-        <meta name="description" content="Avargo er regnskapsbyrået som kombinerer dedikerte regnskapsførere med AI-drevet innsikt. Regnskap, skatteoptimalisering og rådgivning for vekstselskaper." />
+        <title>Avargo | Regnskapsfører for små og mellomstore bedrifter</title>
+        <meta name="description" content="Avargo er regnskapsbyrået for SMB-bedrifter som ønsker trygghet. Dedikert statsautorisert regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert i fast pris." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -192,7 +192,7 @@ const Index = () => {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12"
             >
-              Regnskap · Rådgivning · Markedsføring · Alt i ett
+              For små og mellomstore bedrifter som ønsker trygghet
             </motion.p>
 
             <motion.h1
@@ -212,7 +212,7 @@ const Index = () => {
               transition={{ delay: 0.9, duration: 0.8 }}
               className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light"
             >
-              Du får en fast, autorisert regnskapsfører som kjenner selskapet ditt — forsterket av AI som ser det ingen andre ser. Regnskap, rådgivning og markedsføring. Alt inkludert. Ingen overraskelser.
+              Du får en fast, statsautorisert regnskapsfører som kjenner selskapet ditt — støttet av et helt team som tar seg av regnskap, rådgivning og det du ikke har tid til selv. Alt inkludert. Ingen overraskelser.
             </motion.p>
 
             <motion.p
@@ -234,14 +234,14 @@ const Index = () => {
                 to="/kontakt"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Kom i gang
+                Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link
-                to="/priser"
+                to="/metoden"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500"
               >
-                Se prisene
+                Slik jobber vi
               </Link>
             </motion.div>
           </motion.div>
@@ -290,14 +290,14 @@ const Index = () => {
           <AnimatedSection>
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
-                Hvert minutt du bruker på regnskap er et minutt du{" "}
-                <span className="italic text-gradient-teal">ikke bruker på å bygge</span>
+              Du startet bedriften for å bygge noe.{" "}
+                <span className="italic text-gradient-teal">Ikke for å sitte med bilag.</span>
               </h2>
               <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
-                De fleste bedriftseiere bruker timer hver uke på fakturering, bilag og oppfølging — tid som burde gått til kunder, salg og utvikling. Med Avargo slipper du alt det.
+                De fleste bedriftseiere bruker timer hver uke på fakturering, rapporter og frister — tid som burde gått til kunder, ansatte og vekst. Med Avargo overlater du alt det til noen som faktisk brenner for det.
               </p>
               <p className="text-primary text-lg font-heading italic">
-                Vi tar regnskapet. Du tar veksten.
+                Vi tar ansvaret. Du tar beslutningene.
               </p>
             </div>
           </AnimatedSection>
@@ -582,21 +582,21 @@ const Index = () => {
         <div className="container mx-auto px-4 md:px-6 text-center relative">
           <AnimatedSection>
             <div className="max-w-2xl mx-auto">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Gratis gjennomgang</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Uforpliktende gjennomgang</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 leading-snug">
-                Betaler du for mye <span className="italic text-gradient-rose">uten å vite det?</span>
+                Usikker på om du får nok <span className="italic text-gradient-rose">tilbake fra regnskapsføreren din?</span>
               </h2>
               <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
-                Vi gjennomgår regnskapet ditt gratis og viser deg konkret hva du kan spare — på skatt, kostnader og tid. Helt uforpliktende.
+                Vi gjennomgår regnskapet ditt gratis og viser deg konkret hva du kan spare — på skatt, kostnader og tid. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
               </p>
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">
-                Én samtale. Konkrete tall. Ingen forpliktelser.
+                Helt uforpliktende. Ingen binding. Bare en god samtale.
               </p>
               <Link
                 to="/kontakt"
                 className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Bestill gratis gjennomgang
+                Bestill din gratis gjennomgang
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </div>
