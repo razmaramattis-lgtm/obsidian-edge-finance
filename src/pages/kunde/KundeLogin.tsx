@@ -146,7 +146,7 @@ const KundeLogin = () => {
             <p className="text-xs text-muted-foreground">
               Kontakt din regnskapsfører for tilgang
             </p>
-            <button type="button" onClick={() => navigate(-1)}
+            <button type="button" onClick={() => navigate("/")}
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft size={13} /> Gå tilbake
             </button>
