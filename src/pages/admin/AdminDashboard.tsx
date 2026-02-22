@@ -157,6 +157,7 @@ const AdminDashboard = () => {
     employee_invitations: notifications.employeeInvitations,
     benefit_applications: notifications.benefitApplications,
     bookings: notifications.pendingBookings,
+    overview: notifications.contactSubmissions,
   };
 
   const visibleItems = orderedNavItems.filter(item => !item.adminOnly || isAdmin);
@@ -217,7 +218,7 @@ const AdminDashboard = () => {
       case "account_entries": return <AccountEntriesPanel />;
       case "glossary": return <GlossaryPanel />;
       case "account_feedback": return <AccountFeedbackPanel />;
-      case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} />;
+      case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p) => setActivePanel(p as Panel)} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }

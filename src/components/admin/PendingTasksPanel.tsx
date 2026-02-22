@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminNotifications, PendingItem } from "@/hooks/useAdminNotifications";
 import {
   Check, X, ChevronDown, ChevronUp, Inbox, Users, UserPlus,
-  Handshake, CalendarDays, Mail, AlertCircle, Loader2
+  Handshake, CalendarDays, Mail, AlertCircle, Loader2, ExternalLink
 } from "lucide-react";
 
 const categoryConfig: Record<string, { label: string; icon: React.ElementType }> = {
@@ -18,9 +18,10 @@ const categoryConfig: Record<string, { label: string; icon: React.ElementType }>
 
 interface Props {
   onStatusChange?: () => void;
+  onNavigate?: (panel: string) => void;
 }
 
-const PendingTasksPanel = ({ onStatusChange }: Props) => {
+const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
   const notifications = useAdminNotifications();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -182,6 +183,15 @@ const PendingTasksPanel = ({ onStatusChange }: Props) => {
                       </div>
                     </button>
                     <div className="flex items-center gap-1.5 shrink-0">
+                      {onNavigate && (
+                        <button
+                          onClick={() => onNavigate(item.category)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        >
+                          <ExternalLink size={11} />
+                          Gå til
+                        </button>
+                      )}
                       <button
                         onClick={() => handleAction(item, "approve")}
                         disabled={loadingId === item.id}
