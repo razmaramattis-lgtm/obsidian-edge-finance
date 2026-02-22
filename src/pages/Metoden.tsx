@@ -15,7 +15,7 @@ const team = [
   {
     icon: Headphones,
     role: "Regnskapsførere",
-    desc: "Autoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — alltid tilgjengelig, alltid oppdatert.",
+    desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — alltid tilgjengelig, alltid oppdatert.",
   },
   {
     icon: Users,
@@ -170,7 +170,7 @@ const Metoden = () => {
               transition={{ delay: 0.4, duration: 1.4 }}
               className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-8 md:mb-12"
             >
-              En reise. Ikke en tjeneste.
+              Slik sikrer vi at du alltid har kontroll
             </motion.p>
 
             <motion.h1
@@ -190,7 +190,7 @@ const Metoden = () => {
               transition={{ delay: 1.2, duration: 1 }}
               className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto mb-5 md:mb-6"
             >
-              Hos Avargo møter du ikke ett menneske — du møter et helt team. Regnskapsførere, HR-spesialister, markedsførere og utviklere som analyserer selskapet ditt og iverksetter det som trengs. Alt etter ditt behov. Skreddersydd. Sømløst.
+              Hos Avargo får du ikke bare en regnskapsfører — du får et helt team med statsautoriserte regnskapsførere, HR-spesialister og rådgivere som jobber sammen for at du skal sove godt om natten. Vi tar oss av alt det du ikke har tid til.
             </motion.p>
 
             <motion.p
@@ -199,7 +199,7 @@ const Metoden = () => {
               transition={{ delay: 1.5, duration: 1 }}
               className="text-sm text-primary/70 italic font-light mb-12 md:mb-16"
             >
-              Du trenger ikke tenke på noe annet enn å bygge selskapet ditt.
+              Bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall.
             </motion.p>
 
             <motion.div
@@ -212,7 +212,7 @@ const Metoden = () => {
                 to="/kontakt"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Start reisen
+                Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <a
@@ -355,28 +355,28 @@ const Metoden = () => {
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <AnimatedSection>
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Løftet</p>
+               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">Vårt løfte til deg</p>
               <h2 className="font-heading text-4xl sm:text-5xl md:text-7xl leading-[1.02] mb-8 md:mb-10">
-                Du trenger ikke{" "}
-                <span className="italic text-gradient-rose">noe mer.</span>
+                Du skal aldri trenge å{" "}
+                <span className="italic text-gradient-rose">bekymre deg.</span>
               </h2>
               <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed mb-5 md:mb-6 max-w-2xl mx-auto">
-                Regnskap. HR. Markedsføring. Teknologi. Strategi. Alt samlet under ett tak, koordinert av et team som kjenner selskapet ditt like godt som du gjør selv. Du overlater. Vi leverer.
+                Regnskap, skattemelding, lønn og rådgivning — alt håndtert av statsautoriserte regnskapsførere som kjenner selskapet ditt. Du slipper å tenke på frister, rapporter eller papirarbeid. Vi tar alt.
               </p>
               <p className="text-primary/70 italic font-light mb-12 md:mb-16 text-sm">
-                Ikke en regnskapsfører. Ikke et byrå. En partner for hele reisen.
+                Én fast kontaktperson. Hele teamet i ryggen. Ingen overraskelser.
               </p>
 
               <Link
                 to="/kontakt"
                 className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Overlat alt til oss
+                Snakk med en regnskapsfører
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
 
               <div className="mt-12 md:mt-16 flex flex-wrap gap-6 md:gap-10 justify-center">
-                {["5 virkedager til fullt operativt regnskap", "Én kontaktperson. Helt team.", "Ring oss når du vil — gratis"].map((signal) => (
+                {["Statsautoriserte regnskapsførere", "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"].map((signal) => (
                   <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/60 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />
                     {signal}

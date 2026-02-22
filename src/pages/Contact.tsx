@@ -193,13 +193,13 @@ const Contact = () => {
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
             <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
-              Vi gir hver kunde en dedikert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så kontakter vi deg innen 24 timer med et tilpasset forslag.
+              Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt innen 24 timer med et tilpasset forslag — helt uforpliktende.
             </p>
             <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
-              Helt uforpliktende. Ingen binding. Bare en god samtale om hva du trenger.
+              Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger.
             </p>
             <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
-              {["Dedikert regnskapsfører fra dag én", "AI-drevet innsikt inkludert", "Alt i én fast pris — ingen overraskelser", "Tilpasset din bransje"].map((item) => (
+              {["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Svar innen 24 timer — alltid"].map((item) => (
                 <div key={item} className="flex items-center gap-3 text-sm text-foreground/70 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
                   {item}
@@ -361,10 +361,12 @@ const Contact = () => {
                   {submitting ? (
                     <><Loader2 size={15} className="animate-spin" /> Sender...</>
                   ) : (
-                    <>Send henvendelse <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
+                    <>Send søknad <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
                   )}
                 </button>
-                <p className="text-xs text-foreground/40 text-center font-light">Helt uforpliktende. Vi kontakter deg innen 24 timer.</p>
+                <p className="text-xs text-foreground/40 text-center font-light">
+                  Ved å sende inn bekrefter du at en av våre <strong className="text-foreground/60">statsautoriserte regnskapsførere</strong> vil gjennomgå henvendelsen din og ta kontakt innen 24 timer. Helt uforpliktende.
+                </p>
               </form>
             )}
           </AnimatedSection>

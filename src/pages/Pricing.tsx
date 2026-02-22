@@ -102,7 +102,7 @@ const Pricing = () => {
                           : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"
                       }`}
                     >
-                      Velg {plan.name}
+                      Få tilbud på {plan.name}
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>
@@ -214,7 +214,7 @@ const Pricing = () => {
                 to="/kontakt"
                 className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Kom i gang
+                Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </div>

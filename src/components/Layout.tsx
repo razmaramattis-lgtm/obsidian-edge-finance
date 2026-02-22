@@ -257,7 +257,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <Link to="/kontakt" className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
-              Kom i gang
+              Få tilbud
             </Link>
           </div>
 
@@ -360,7 +360,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </AnimatePresence>
 
                 <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-5 px-5 py-4 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all">
-                  Kom i gang
+                  Få tilbud
                 </Link>
               </div>
             </motion.div>
@@ -377,13 +377,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
               <Link to="/" className="font-heading text-2xl text-primary">Avargo</Link>
               <p className="mt-3 text-sm text-foreground/60 leading-relaxed font-light">
-                Din finansielle arkitekt.<br />Presisjon. Innsikt. Vekst.
+                Regnskapsbyrået for små og mellomstore bedrifter.<br />Trygghet. Oversikt. Vekst.
               </p>
               <p className="mt-2 text-xs text-foreground/40 font-light leading-relaxed">
                 Oscars gate 2B, 3714 Skien<br />+47 986 42 391<br />firmapost@avargo.no
               </p>
               <Link to="/kontakt" className="inline-block mt-4 px-5 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 tracking-wide">
-                Kom i gang
+                Få tilbud
               </Link>
             </div>
 
