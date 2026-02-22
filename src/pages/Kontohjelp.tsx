@@ -54,6 +54,8 @@ const Kontohjelp = () => {
     load();
   }, []);
 
+  const [showAll, setShowAll] = useState(false);
+
   const filtered = useMemo(() => {
     let result = entries;
     if (activeClass) {
@@ -61,26 +63,51 @@ const Kontohjelp = () => {
     }
     if (search.trim()) {
       const q = search.toLowerCase();
-      result = result.filter(e =>
-        e.account_number.includes(q) ||
-        e.name.toLowerCase().includes(q) ||
-        (e.description && e.description.toLowerCase().includes(q)) ||
-        (e.examples && e.examples.some(ex => ex.toLowerCase().includes(q))) ||
-        (e.tags && e.tags.some(t => t.toLowerCase().includes(q)))
-      );
+      const scored = entries
+        .map(e => {
+          let score = 0;
+          const nameL = e.name.toLowerCase();
+          const numL = e.account_number;
+          // Exact account number match
+          if (numL === q) score += 100;
+          else if (numL.startsWith(q)) score += 60;
+          else if (numL.includes(q)) score += 30;
+          // Name match
+          if (nameL === q) score += 90;
+          else if (nameL.startsWith(q)) score += 50;
+          else if (nameL.includes(q)) score += 25;
+          // Tag exact match
+          if (e.tags?.some(t => t.toLowerCase() === q)) score += 40;
+          else if (e.tags?.some(t => t.toLowerCase().includes(q))) score += 15;
+          // Examples match
+          if (e.examples?.some(ex => ex.toLowerCase().includes(q))) score += 10;
+          // Description match
+          if (e.description?.toLowerCase().includes(q)) score += 5;
+          return { entry: e, score };
+        })
+        .filter(s => s.score > 0)
+        .sort((a, b) => b.score - a.score);
+      result = scored.map(s => s.entry);
+      if (activeClass) {
+        result = result.filter(e => e.account_number.startsWith(activeClass));
+      }
     }
     return result;
   }, [entries, search, activeClass]);
 
+  const isSearching = search.trim().length > 0;
+  const displayedResults = isSearching && !showAll ? filtered.slice(0, 1) : filtered;
+  const hasMore = isSearching && filtered.length > 1;
+
   const groups = useMemo(() => {
     const map = new Map<string, AccountEntry[]>();
-    filtered.forEach(e => {
+    displayedResults.forEach(e => {
       const group = e.category_group || "Annet";
       if (!map.has(group)) map.set(group, []);
       map.get(group)!.push(e);
     });
     return Array.from(map.entries());
-  }, [filtered]);
+  }, [displayedResults]);
 
   const classCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -142,7 +169,7 @@ const Kontohjelp = () => {
               <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input
                 value={search}
-                onChange={e => { setSearch(e.target.value); setActiveClass(null); }}
+                onChange={e => { setSearch(e.target.value); setActiveClass(null); setShowAll(false); }}
                 placeholder="Søk etter konto, utgift eller begrep..."
                 className="w-full h-16 pl-14 pr-12 rounded-2xl border border-border/30 bg-card text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 shadow-lg shadow-primary/5 transition-all"
               />
@@ -207,12 +234,14 @@ const Kontohjelp = () => {
 
           {/* Result count */}
           <motion.p
-            key={`${search}-${activeClass}`}
+            key={`${search}-${activeClass}-${showAll}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center text-xs text-muted-foreground"
           >
-            {filtered.length} kontoer {search ? `for «${search}»` : activeClass ? `i klasse ${activeClass}` : "totalt"}
+            {isSearching && !showAll
+              ? `Viser beste treff av ${filtered.length} kontoer for «${search}»`
+              : `${filtered.length} kontoer ${search ? `for «${search}»` : activeClass ? `i klasse ${activeClass}` : "totalt"}`}
           </motion.p>
         </div>
 
@@ -296,6 +325,21 @@ const Kontohjelp = () => {
                 </div>
               </motion.div>
             ))}
+            {hasMore && !showAll && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center pt-6"
+              >
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-muted/50 text-sm text-muted-foreground hover:bg-primary/10 hover:text-primary border border-border/30 hover:border-primary/20 transition-all duration-200"
+                >
+                  Vis alle {filtered.length} treff
+                  <ChevronRight size={14} />
+                </button>
+              </motion.div>
+            )}
           </div>
         )}
       </section>
