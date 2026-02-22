@@ -53,33 +53,46 @@ interface NavItem {
 }
 
 const DEFAULT_NAV_ITEMS: NavItem[] = [
+  // Hoved
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
-  { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
   { id: "datacenter", label: "Datasenter", icon: Building2, adminOnly: true, group: "Hoved" },
-  { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Nettside" },
-  { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Nettside" },
-  { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Nettside" },
-  { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Nettside" },
-  { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Nettside" },
-  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Nettside" },
+
+  // Kunder
   { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, group: "Kunder" },
-  { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Kunder" },
-  { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
-  { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Kunder" },
-  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Nettside" },
-  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Nettside" },
-  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Nettside" },
-  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Nettside" },
+  { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
+
+  // Avtaler
+  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Avtaler" },
+  { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Avtaler" },
+  { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Avtaler" },
+
+  // Innhold (nettside)
+  { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Innhold" },
+  { id: "services", label: "Tjenester", icon: Briefcase, adminOnly: true, group: "Innhold" },
+  { id: "industries", label: "Bransjer", icon: Building2, adminOnly: true, group: "Innhold" },
+  { id: "pricing", label: "Priser", icon: DollarSign, adminOnly: true, group: "Innhold" },
+  { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Innhold" },
+  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Innhold" },
+  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Innhold" },
+  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Innhold" },
+  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Innhold" },
+
+  // Ressurser
+  { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Ressurser" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
+
+  // Internt
   { id: "hms", label: "HMS-bok", icon: Shield, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
-  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Internt" },
   { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
+  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
   { id: "mybooking", label: "Min tilgjengelighet", icon: CalendarDays, group: "Internt" },
+
+  // Admin
   { id: "employees", label: "Ansatte", icon: Users, adminOnly: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
