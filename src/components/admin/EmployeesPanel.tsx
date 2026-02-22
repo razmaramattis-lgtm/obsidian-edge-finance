@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, UserPlus } from "lucide-react";
+import { Trash2, UserPlus, ChevronLeft, Shield, ShieldOff, User, Mail, Phone, Briefcase, Sparkles, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Employee {
   id: string;
@@ -8,19 +10,29 @@ interface Employee {
   name: string;
   email: string;
   role: "admin" | "employee";
+  phone: string | null;
+  title: string | null;
+  specialty: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  booking_active: boolean;
+  teams_link: string | null;
   created_at: string;
 }
 
 const EmployeesPanel = () => {
+  const { profile: currentProfile } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState<"admin" | "employee">("employee");
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   const fetchEmployees = async () => {
     const { data } = await supabase.from("profiles").select("*").order("created_at");
@@ -37,11 +49,9 @@ const EmployeesPanel = () => {
     try {
       const session = (await supabase.auth.getSession()).data.session;
       if (!session) { setError("Ikke innlogget."); setAdding(false); return; }
-
       const res = await supabase.functions.invoke("create-employee", {
         body: { email: newEmail, password: newPassword, name: newName, role: newRole },
       });
-
       if (res.error || res.data?.error) {
         setError(res.data?.error || "Noe gikk galt.");
       } else {
@@ -58,15 +68,142 @@ const EmployeesPanel = () => {
   const deleteEmployee = async (id: string) => {
     if (!confirm("Er du sikker på at du vil slette denne ansatte?")) return;
     await supabase.from("profiles").delete().eq("id", id);
+    if (selectedEmployee?.id === id) setSelectedEmployee(null);
     fetchEmployees();
   };
 
+  const toggleRole = async (emp: Employee) => {
+    if (emp.id === currentProfile?.id) return;
+    const newRole = emp.role === "admin" ? "employee" : "admin";
+    await supabase.from("profiles").update({ role: newRole } as any).eq("id", emp.id);
+    setEmployees(prev => prev.map(e => e.id === emp.id ? { ...e, role: newRole } : e));
+    if (selectedEmployee?.id === emp.id) setSelectedEmployee(prev => prev ? { ...prev, role: newRole } : null);
+  };
+
+  const filtered = employees.filter(e => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return e.name.toLowerCase().includes(q) || e.email.toLowerCase().includes(q) || (e.title || "").toLowerCase().includes(q);
+  });
+
   if (loading) return <div className="text-muted-foreground text-sm">Laster ansatte…</div>;
 
+  // ── Employee detail view ──
+  if (selectedEmployee) {
+    const emp = selectedEmployee;
+    return (
+      <div className="space-y-6">
+        <button onClick={() => setSelectedEmployee(null)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <ChevronLeft size={14} /> Tilbake til ansattliste
+        </button>
+
+        <div className="glass rounded-2xl border border-border/20 p-6">
+          <div className="flex items-start gap-5">
+            <Avatar className="w-20 h-20 border-2 border-border/20">
+              <AvatarImage src={emp.avatar_url || ""} />
+              <AvatarFallback className="text-2xl font-medium bg-primary/10 text-primary">
+                {emp.name?.charAt(0)?.toUpperCase() || "?"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h3 className="font-medium text-lg">{emp.name}</h3>
+              <p className="text-sm text-muted-foreground">{emp.email}</p>
+              {emp.title && <p className="text-xs text-muted-foreground mt-0.5">{emp.title}</p>}
+              <div className="flex items-center gap-2 mt-2">
+                <span className={`text-[10px] tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${emp.role === "admin" ? "border-primary/30 text-primary bg-primary/10" : "border-border/30 text-muted-foreground"}`}>
+                  {emp.role === "admin" ? "Administrator" : "Ansatt"}
+                </span>
+                {emp.booking_active && (
+                  <span className="text-[10px] tracking-widest uppercase px-2.5 py-0.5 rounded-full border border-green-500/30 text-green-600 bg-green-500/10">
+                    Tilgjengelig for booking
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {emp.id !== currentProfile?.id && (
+                <button
+                  onClick={() => toggleRole(emp)}
+                  className={`h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
+                    emp.role === "admin"
+                      ? "bg-muted text-muted-foreground hover:bg-muted/80 border border-border/30"
+                      : "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
+                  }`}
+                >
+                  {emp.role === "admin" ? <><ShieldOff size={13} /> Gjør til ansatt</> : <><Shield size={13} /> Gjør til admin</>}
+                </button>
+              )}
+              <button onClick={() => deleteEmployee(emp.id)} className="h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 transition-all">
+                <Trash2 size={13} /> Slett
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="glass rounded-2xl border border-border/20 p-5 space-y-3">
+            <h4 className="text-sm font-medium flex items-center gap-2"><User size={14} className="text-primary" /> Kontaktinformasjon</h4>
+            <div className="space-y-2">
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">E-post</p>
+                <p className="text-sm">{emp.email}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Telefon</p>
+                <p className="text-sm">{emp.phone || "Ikke angitt"}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass rounded-2xl border border-border/20 p-5 space-y-3">
+            <h4 className="text-sm font-medium flex items-center gap-2"><Briefcase size={14} className="text-primary" /> Stilling & kompetanse</h4>
+            <div className="space-y-2">
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Stillingstittel</p>
+                <p className="text-sm">{emp.title || "Ikke angitt"}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Spesialfelt</p>
+                <p className="text-sm">{emp.specialty || "Ikke angitt"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {emp.bio && (
+          <div className="glass rounded-2xl border border-border/20 p-5">
+            <h4 className="text-sm font-medium mb-2">Biografi</h4>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{emp.bio}</p>
+          </div>
+        )}
+
+        {emp.teams_link && (
+          <div className="glass rounded-2xl border border-border/20 p-5">
+            <h4 className="text-sm font-medium mb-2">Teams-lenke</h4>
+            <a href={emp.teams_link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline break-all">{emp.teams_link}</a>
+          </div>
+        )}
+
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <p className="text-[10px] text-muted-foreground">Opprettet: {new Date(emp.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" })}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── List view ──
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-sm">{employees.length} ansatte registrert</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 flex-1">
+          <p className="text-muted-foreground text-sm shrink-0">{employees.length} ansatte</p>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Søk etter navn, e-post…"
+            className="flex-1 max-w-xs h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
         <button
           onClick={() => setShowAdd(!showAdd)}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90 transition-all"
@@ -78,7 +215,10 @@ const EmployeesPanel = () => {
 
       {showAdd && (
         <form onSubmit={addEmployee} className="glass rounded-2xl p-5 border border-border/20 space-y-3">
-          <h3 className="font-medium text-sm mb-4">Ny ansatt</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-sm">Ny ansatt</h3>
+            <button type="button" onClick={() => setShowAdd(false)} className="text-muted-foreground hover:text-foreground"><X size={14} /></button>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Fullt navn" required
               className="h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
@@ -105,22 +245,38 @@ const EmployeesPanel = () => {
       )}
 
       <div className="space-y-2">
-        {employees.map(emp => (
-          <div key={emp.id} className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium">{emp.name}</p>
-              <p className="text-xs text-muted-foreground">{emp.email}</p>
+        {filtered.map(emp => (
+          <div
+            key={emp.id}
+            onClick={() => setSelectedEmployee(emp)}
+            className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between cursor-pointer hover:border-primary/20 hover:bg-primary/[0.02] transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <Avatar className="w-9 h-9 border border-border/20">
+                <AvatarImage src={emp.avatar_url || ""} />
+                <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
+                  {emp.name?.charAt(0)?.toUpperCase() || "?"}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">{emp.name}</p>
+                <p className="text-xs text-muted-foreground">{emp.email}{emp.title ? ` · ${emp.title}` : ""}</p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full border ${emp.role === "admin" ? "border-primary/30 text-primary bg-primary/10" : "border-border/30 text-muted-foreground"}`}>
                 {emp.role === "admin" ? "Admin" : "Ansatt"}
               </span>
-              <button onClick={() => deleteEmployee(emp.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+              <button
+                onClick={e => { e.stopPropagation(); deleteEmployee(emp.id); }}
+                className="text-muted-foreground hover:text-destructive transition-colors"
+              >
                 <Trash2 size={14} />
               </button>
             </div>
           </div>
         ))}
+        {filtered.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Ingen ansatte funnet</p>}
       </div>
     </div>
   );
