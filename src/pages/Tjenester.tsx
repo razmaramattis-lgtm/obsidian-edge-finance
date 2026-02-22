@@ -90,7 +90,7 @@ const categories = [
         icon: Monitor,
         href: "/tjenester/regnskapsforer",
         title: "Avargo Dashboard",
-        desc: "Ditt eget dashboard på Avargo.no gir deg full oversikt over økonomien i sanntid. Se tall, last ned rapporter og kommuniser med regnskapsføreren — alt på ett sted.",
+        desc: "Et kommende ressurspanel på Avargo.no som gir deg full oversikt over økonomien, rapporter og direkte kommunikasjon med regnskapsføreren — alt på ett sted. Lanseres august 2026.",
         sub: ["Sanntidsoversikt over økonomi", "Rapporter & nøkkeltall", "Direkte kommunikasjon med rådgiver", "Dokumentdeling & signering"],
       },
     ],
