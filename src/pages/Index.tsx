@@ -290,14 +290,14 @@ const Index = () => {
           <AnimatedSection>
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">
-              Du startet bedriften for å bygge noe.{" "}
-                <span className="italic text-gradient-teal">Ikke for å sitte med bilag.</span>
+              Store selskaper har hele avdelinger.{" "}
+                <span className="italic text-gradient-teal">Nå har du det også.</span>
               </h2>
               <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">
-                De fleste bedriftseiere bruker timer hver uke på fakturering, rapporter og frister — tid som burde gått til kunder, ansatte og vekst. Med Avargo overlater du alt det til noen som faktisk brenner for det.
+                Regnskapsfører, HR-rådgiver, skatteekspert, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.
               </p>
               <p className="text-primary text-lg font-heading italic">
-                Vi tar ansvaret. Du tar beslutningene.
+                Du trenger ikke bli stor for å ha ressursene til det.
               </p>
             </div>
           </AnimatedSection>
@@ -519,10 +519,10 @@ const Index = () => {
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
             <div className="text-center mb-14 md:mb-20">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Stordrift — uten storkonsern</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl max-w-3xl mx-auto leading-snug">
-                De fleste betaler for mye.{" "}
-                <span className="italic text-gradient-rose">Og får for lite tilbake.</span>
+                Alt en stor bedrift har.{" "}
+                <span className="italic text-gradient-rose">Uten å ansette en eneste person.</span>
               </h2>
             </div>
           </AnimatedSection>
@@ -587,7 +587,7 @@ const Index = () => {
                 Usikker på om du får nok <span className="italic text-gradient-rose">tilbake fra regnskapsføreren din?</span>
               </h2>
               <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
-                Vi gjennomgår regnskapet ditt gratis og viser deg konkret hva du kan spare — på skatt, kostnader og tid. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
+                Finn ut hva en hel økonomiavdeling ville kostet deg — og se hva du får hos Avargo til en brøkdel av prisen. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
               </p>
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">
                 Helt uforpliktende. Ingen binding. Bare en god samtale.
