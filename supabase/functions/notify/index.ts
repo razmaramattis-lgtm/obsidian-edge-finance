@@ -16,6 +16,7 @@ async function sendEmail(opts: {
   to: string;
   subject: string;
   html: string;
+  icsAttachment?: string;
 }) {
   const conn = await Deno.connectTls({ hostname: opts.hostname, port: opts.port });
   const encoder = new TextEncoder();
@@ -54,22 +55,102 @@ async function sendEmail(opts: {
     await send(`RCPT TO:<${opts.to}>`);
     await send("DATA");
 
-    const message = [
-      `From: Avargo <${opts.from}>`,
-      `To: ${opts.to}`,
-      `Subject: ${opts.subject}`,
-      `MIME-Version: 1.0`,
-      `Content-Type: text/html; charset=UTF-8`,
-      ``,
-      opts.html,
-      `.`,
-    ].join("\r\n");
+    let message: string;
+    if (opts.icsAttachment) {
+      const boundary = "----=_AvargoMail_" + Date.now();
+      message = [
+        `From: Avargo <${opts.from}>`,
+        `To: ${opts.to}`,
+        `Subject: ${opts.subject}`,
+        `MIME-Version: 1.0`,
+        `Content-Type: multipart/mixed; boundary="${boundary}"`,
+        ``,
+        `--${boundary}`,
+        `Content-Type: text/html; charset=UTF-8`,
+        `Content-Transfer-Encoding: 7bit`,
+        ``,
+        opts.html,
+        ``,
+        `--${boundary}`,
+        `Content-Type: text/calendar; charset=UTF-8; method=REQUEST`,
+        `Content-Transfer-Encoding: 7bit`,
+        `Content-Disposition: attachment; filename="meeting.ics"`,
+        ``,
+        opts.icsAttachment,
+        ``,
+        `--${boundary}--`,
+        `.`,
+      ].join("\r\n");
+    } else {
+      message = [
+        `From: Avargo <${opts.from}>`,
+        `To: ${opts.to}`,
+        `Subject: ${opts.subject}`,
+        `MIME-Version: 1.0`,
+        `Content-Type: text/html; charset=UTF-8`,
+        ``,
+        opts.html,
+        `.`,
+      ].join("\r\n");
+    }
 
     await send(message);
     await send("QUIT");
   } finally {
     try { conn.close(); } catch { /* ignore */ }
   }
+}
+
+function generateICS(opts: {
+  date: string;
+  time: string;
+  durationMinutes: number;
+  summary: string;
+  description: string;
+  location?: string;
+  organizerEmail: string;
+  organizerName: string;
+  attendeeEmail: string;
+  attendeeName: string;
+  teamsLink?: string;
+  uid: string;
+}): string {
+  // Parse date "2026-03-15" and time "09:00"
+  const d = opts.date.replace(/-/g, "");
+  const t = (opts.time.slice(0, 5)).replace(":", "") + "00";
+  const startHour = parseInt(opts.time.slice(0, 2));
+  const startMin = parseInt(opts.time.slice(3, 5));
+  const endMin = startMin + opts.durationMinutes;
+  const endHour = startHour + Math.floor(endMin / 60);
+  const endMinFinal = endMin % 60;
+  const endT = String(endHour).padStart(2, "0") + String(endMinFinal).padStart(2, "0") + "00";
+  const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Avargo//Booking//NO",
+    "CALSCALE:GREGORIAN",
+    "METHOD:REQUEST",
+    "BEGIN:VEVENT",
+    `UID:${opts.uid}`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${d}T${t}`,
+    `DTEND:${d}T${endT}`,
+    `SUMMARY:${opts.summary}`,
+    `DESCRIPTION:${opts.description}${opts.teamsLink ? "\\n\\nTeams-møte: " + opts.teamsLink : ""}`,
+    `ORGANIZER;CN=${opts.organizerName}:mailto:${opts.organizerEmail}`,
+    `ATTENDEE;CN=${opts.attendeeName};RSVP=TRUE:mailto:${opts.attendeeEmail}`,
+  ];
+  if (opts.teamsLink) {
+    lines.push(`LOCATION:${opts.teamsLink}`);
+    lines.push(`URL:${opts.teamsLink}`);
+    lines.push(`X-MICROSOFT-CDO-BUSYSTATUS:BUSY`);
+  }
+  lines.push("STATUS:CONFIRMED");
+  lines.push("END:VEVENT");
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
 }
 
 function wrapHtml(title: string, body: string) {
@@ -197,11 +278,42 @@ serve(async (req) => {
         <p style="font-size:13px;color:#94a3b8;line-height:1.6;">Vi gleder oss til møtet! Ta gjerne kontakt på <a href="mailto:firmapost@avargo.no" style="color:#2563eb;">firmapost@avargo.no</a> hvis du har spørsmål.</p>
       `;
 
+      // Generate ICS calendar event
+      const meetingUid = `booking-${Date.now()}@avargo.no`;
+      const icsForCustomer = generateICS({
+        date: booking_date,
+        time: formattedTime,
+        durationMinutes: 30,
+        summary: `Møte med ${advisor_name || advisor?.name || "Avargo"}`,
+        description: `Rådgivningsmøte med ${advisor_name || advisor?.name || "Avargo"} for ${company_name}.`,
+        organizerEmail: advisor?.email || "kontakt@avargo.no",
+        organizerName: advisor_name || advisor?.name || "Avargo",
+        attendeeEmail: customer_email,
+        attendeeName: customer_name,
+        teamsLink: teams_link,
+        uid: meetingUid,
+      });
+
+      const icsForAdvisor = generateICS({
+        date: booking_date,
+        time: formattedTime,
+        durationMinutes: 30,
+        summary: `Møte: ${customer_name} — ${company_name}`,
+        description: `Rådgivningsmøte med ${customer_name} (${company_name}).\\nE-post: ${customer_email}${customer_phone ? "\\nTlf: " + customer_phone : ""}`,
+        organizerEmail: advisor?.email || "kontakt@avargo.no",
+        organizerName: advisor?.name || "Avargo",
+        attendeeEmail: customer_email,
+        attendeeName: customer_name,
+        teamsLink: teams_link,
+        uid: meetingUid,
+      });
+
       await sendEmail({
         ...smtpOpts,
         to: customer_email,
         subject: `✅ Booking bekreftet: ${formattedDate} kl. ${formattedTime} — Avargo`,
         html: wrapHtml("✅ Din booking er bekreftet!", customerBody),
+        icsAttachment: icsForCustomer,
       });
 
       // ── Email to ADVISOR ──
@@ -231,6 +343,7 @@ serve(async (req) => {
           to: advisor.email,
           subject: `✅ Booking bekreftet: ${customer_name} — ${formattedDate} kl. ${formattedTime}`,
           html: wrapHtml("✅ Booking bekreftet", advisorBody),
+          icsAttachment: icsForAdvisor,
         });
       }
     }
