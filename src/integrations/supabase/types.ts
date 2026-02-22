@@ -1541,6 +1541,7 @@ export type Database = {
           email: string
           id: string
           name: string
+          outlook_calendar_url: string | null
           phone: string | null
           role: Database["public"]["Enums"]["app_role"]
           specialty: string | null
@@ -1557,6 +1558,7 @@ export type Database = {
           email: string
           id?: string
           name: string
+          outlook_calendar_url?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           specialty?: string | null
@@ -1573,6 +1575,7 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+          outlook_calendar_url?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           specialty?: string | null
