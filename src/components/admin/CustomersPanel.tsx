@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Edit2, Download, Upload, Building2, User,
-  ChevronRight, DollarSign, FileText, Eye, X, BookOpen, Save
+  ChevronRight, DollarSign, FileText, Eye, X, BookOpen, Save, Search, Phone, Globe, MapPin, Hash, Landmark, Shield, CreditCard
 } from "lucide-react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
@@ -64,6 +64,7 @@ interface Financial {
 }
 
 const inputCls = "w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
+const labelCls = "text-xs text-muted-foreground mb-1 block";
 
 const CustomersPanel = () => {
   const { session } = useAuth();
@@ -73,6 +74,7 @@ const CustomersPanel = () => {
   const [selectedCompany, setSelectedCompany] = useState<CustomerCompany | null>(null);
   const [createForm, setCreateForm] = useState({ email: "", password: "", name: "", company_name: "", org_number: "", industry: "", contact_phone: "" });
   const [creating, setCreating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchCompanies = async () => {
     const { data } = await supabase
@@ -94,7 +96,6 @@ const CustomersPanel = () => {
       });
       if (res.error || res.data?.error) throw new Error(res.data?.error || "Feil ved opprettelse");
 
-      // Create company record
       const { data: profileData } = await supabase
         .from("profiles")
         .select("id")
@@ -121,6 +122,18 @@ const CustomersPanel = () => {
     setCreating(false);
   };
 
+  const filtered = companies.filter(c => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      c.company_name?.toLowerCase().includes(q) ||
+      c.org_number?.toLowerCase().includes(q) ||
+      c.industry?.toLowerCase().includes(q) ||
+      (c as any).profile?.name?.toLowerCase().includes(q) ||
+      (c as any).profile?.email?.toLowerCase().includes(q)
+    );
+  });
+
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   if (selectedCompany) {
@@ -129,12 +142,23 @@ const CustomersPanel = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{companies.length} kunder</p>
-        <button onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
-          <Plus size={14} /> Ny kunde
-        </button>
+      <div className="flex items-center justify-between gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Søk på firma, kontakt, org.nr…"
+            className={`${inputCls} pl-9`}
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground hidden sm:block">{filtered.length} kunder</p>
+          <button onClick={() => setShowCreateForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">
+            <Plus size={14} /> Ny kunde
+          </button>
+        </div>
       </div>
 
       {showCreateForm && (
@@ -159,7 +183,7 @@ const CustomersPanel = () => {
       )}
 
       <div className="space-y-2">
-        {companies.map(c => (
+        {filtered.map(c => (
           <button
             key={c.id}
             onClick={() => setSelectedCompany(c)}
@@ -172,11 +196,337 @@ const CustomersPanel = () => {
               <div>
                 <p className="text-sm font-medium">{c.company_name}</p>
                 <p className="text-xs text-muted-foreground">{(c as any).profile?.name} · {(c as any).profile?.email}</p>
+                {c.org_number && <p className="text-[10px] text-muted-foreground/60">Org.nr: {c.org_number}</p>}
               </div>
             </div>
             <ChevronRight size={16} className="text-muted-foreground" />
           </button>
         ))}
+        {filtered.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground text-sm">
+            {searchQuery ? "Ingen kunder matcher søket" : "Ingen kunder ennå"}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ========== CUSTOMER PROFILE TAB ==========
+const CustomerProfileTab = ({ companyId }: { companyId: string }) => {
+  const [form, setForm] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [owners, setOwners] = useState<any[]>([]);
+  const [board, setBoard] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [showOwnerForm, setShowOwnerForm] = useState(false);
+  const [showBoardForm, setShowBoardForm] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [ownerForm, setOwnerForm] = useState({ name: "", email: "", phone: "", ownership_percent: "", role: "Eier" });
+  const [boardForm, setBoardForm] = useState({ name: "", email: "", phone: "", position: "Styremedlem" });
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", role: "Kontaktperson", is_primary: false });
+  const logoRef = useRef<HTMLInputElement>(null);
+
+  const load = async () => {
+    const { data: comp } = await supabase.from("customer_companies").select("*").eq("id", companyId).single();
+    if (comp) {
+      setForm({
+        company_name: comp.company_name || "",
+        org_number: comp.org_number || "",
+        industry: comp.industry || "",
+        contact_phone: comp.contact_phone || "",
+        address: comp.address || "",
+        postal_code: comp.postal_code || "",
+        city: comp.city || "",
+        country: comp.country || "Norge",
+        website: comp.website || "",
+        company_type: comp.company_type || "AS",
+        share_capital: comp.share_capital || "",
+        founding_date: comp.founding_date || "",
+        fiscal_year_end: comp.fiscal_year_end || "31.12",
+        auditor: comp.auditor || "",
+        description: comp.description || "",
+        logo_url: comp.logo_url || "",
+        accounting_system: comp.accounting_system || "",
+        bank: comp.bank || "",
+        insurance_company: comp.insurance_company || "",
+        num_employees: comp.num_employees || "",
+        annual_revenue: comp.annual_revenue || "",
+        vat_registered: comp.vat_registered ?? false,
+        employer_registered: comp.employer_registered ?? false,
+        internal_notes: comp.internal_notes || "",
+      });
+      const [ownRes, boardRes, contactRes] = await Promise.all([
+        supabase.from("company_owners").select("*").eq("company_id", companyId).order("created_at"),
+        supabase.from("company_board_members").select("*").eq("company_id", companyId).order("created_at"),
+        supabase.from("company_contacts").select("*").eq("company_id", companyId).order("created_at"),
+      ]);
+      setOwners(ownRes.data || []);
+      setBoard(boardRes.data || []);
+      setContacts(contactRes.data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [companyId]);
+
+  const saveProfile = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("customer_companies").update({
+      company_name: form.company_name,
+      org_number: form.org_number || null,
+      industry: form.industry || null,
+      contact_phone: form.contact_phone || null,
+      address: form.address || null,
+      postal_code: form.postal_code || null,
+      city: form.city || null,
+      country: form.country || null,
+      website: form.website || null,
+      company_type: form.company_type || null,
+      share_capital: form.share_capital ? Number(form.share_capital) : null,
+      founding_date: form.founding_date || null,
+      fiscal_year_end: form.fiscal_year_end || null,
+      auditor: form.auditor || null,
+      description: form.description || null,
+      accounting_system: form.accounting_system || null,
+      bank: form.bank || null,
+      insurance_company: form.insurance_company || null,
+      num_employees: form.num_employees ? Number(form.num_employees) : null,
+      annual_revenue: form.annual_revenue || null,
+      vat_registered: form.vat_registered ?? false,
+      employer_registered: form.employer_registered ?? false,
+      internal_notes: form.internal_notes || null,
+    }).eq("id", companyId);
+    if (error) toast.error("Kunne ikke lagre"); else toast.success("Kundeprofil lagret");
+    setSaving(false);
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error("Kun bilder tillatt"); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Maks 2MB"); return; }
+    const path = `logos/${companyId}/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("archive-files").upload(path, file);
+    if (error) { toast.error("Opplasting feilet"); return; }
+    const { data: url } = supabase.storage.from("archive-files").getPublicUrl(path);
+    await supabase.from("customer_companies").update({ logo_url: url.publicUrl }).eq("id", companyId);
+    setForm((f: any) => ({ ...f, logo_url: url.publicUrl }));
+    toast.success("Logo oppdatert");
+  };
+
+  const addOwner = async () => {
+    if (!ownerForm.name.trim()) return;
+    await supabase.from("company_owners").insert({ company_id: companyId, name: ownerForm.name.trim(), email: ownerForm.email || null, phone: ownerForm.phone || null, ownership_percent: Number(ownerForm.ownership_percent) || 0, role: ownerForm.role || "Eier" });
+    setOwnerForm({ name: "", email: "", phone: "", ownership_percent: "", role: "Eier" }); setShowOwnerForm(false); load(); toast.success("Eier lagt til");
+  };
+  const deleteOwner = async (id: string) => { if (!confirm("Fjerne denne eieren?")) return; await supabase.from("company_owners").delete().eq("id", id); load(); };
+
+  const addBoard = async () => {
+    if (!boardForm.name.trim()) return;
+    await supabase.from("company_board_members").insert({ company_id: companyId, name: boardForm.name.trim(), email: boardForm.email || null, phone: boardForm.phone || null, position: boardForm.position || "Styremedlem" });
+    setBoardForm({ name: "", email: "", phone: "", position: "Styremedlem" }); setShowBoardForm(false); load(); toast.success("Styremedlem lagt til");
+  };
+  const deleteBoard = async (id: string) => { if (!confirm("Fjerne dette styremedlemmet?")) return; await supabase.from("company_board_members").delete().eq("id", id); load(); };
+
+  const addContact = async () => {
+    if (!contactForm.name.trim()) return;
+    await supabase.from("company_contacts").insert({ company_id: companyId, name: contactForm.name.trim(), email: contactForm.email || null, phone: contactForm.phone || null, role: contactForm.role || "Kontaktperson", is_primary: contactForm.is_primary });
+    setContactForm({ name: "", email: "", phone: "", role: "Kontaktperson", is_primary: false }); setShowContactForm(false); load(); toast.success("Kontaktperson lagt til");
+  };
+  const deleteContact = async (id: string) => { if (!confirm("Fjerne denne kontaktpersonen?")) return; await supabase.from("company_contacts").delete().eq("id", id); load(); };
+
+  if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
+
+  return (
+    <div className="space-y-6">
+      {/* Logo & header */}
+      <div className="glass rounded-2xl p-5 border border-border/20">
+        <div className="flex items-center gap-3">
+          {form.logo_url ? (
+            <img src={form.logo_url} alt="Logo" className="w-14 h-14 rounded-xl object-contain border border-border/20" />
+          ) : (
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
+              {form.company_name?.charAt(0)?.toUpperCase() || "?"}
+            </div>
+          )}
+          <div className="flex-1">
+            <p className="font-heading text-lg">{form.company_name}</p>
+            {form.org_number && <p className="text-xs text-muted-foreground">Org.nr: {form.org_number}</p>}
+          </div>
+          <div>
+            <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+            <button onClick={() => logoRef.current?.click()} className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border/30 rounded-xl hover:bg-muted/50">
+              <Upload size={13} /> Logo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bedriftsinformasjon */}
+      <div className="glass rounded-2xl p-5 border border-border/20 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Building2 size={16} className="text-primary" strokeWidth={1.5} />
+            <h3 className="font-medium text-sm">Bedriftsinformasjon</h3>
+          </div>
+          <button onClick={saveProfile} disabled={saving}
+            className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
+            <Save size={13} /> {saving ? "Lagrer…" : "Lagre"}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div><label className={labelCls}>Bedriftsnavn</label><input value={form.company_name || ""} onChange={e => setForm((f: any) => ({ ...f, company_name: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Org.nr</label><input value={form.org_number || ""} onChange={e => setForm((f: any) => ({ ...f, org_number: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Selskapsform</label>
+            <select value={form.company_type || "AS"} onChange={e => setForm((f: any) => ({ ...f, company_type: e.target.value }))} className={inputCls}>
+              <option value="AS">AS</option><option value="ENK">ENK</option><option value="ANS">ANS</option><option value="DA">DA</option><option value="NUF">NUF</option><option value="Annet">Annet</option>
+            </select>
+          </div>
+          <div><label className={labelCls}>Bransje</label><input value={form.industry || ""} onChange={e => setForm((f: any) => ({ ...f, industry: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Adresse</label><input value={form.address || ""} onChange={e => setForm((f: any) => ({ ...f, address: e.target.value }))} className={inputCls} /></div>
+          <div className="grid grid-cols-2 gap-2">
+            <div><label className={labelCls}>Postnr.</label><input value={form.postal_code || ""} onChange={e => setForm((f: any) => ({ ...f, postal_code: e.target.value }))} className={inputCls} /></div>
+            <div><label className={labelCls}>Sted</label><input value={form.city || ""} onChange={e => setForm((f: any) => ({ ...f, city: e.target.value }))} className={inputCls} /></div>
+          </div>
+          <div><label className={labelCls}>Land</label><input value={form.country || ""} onChange={e => setForm((f: any) => ({ ...f, country: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Nettside</label><input value={form.website || ""} onChange={e => setForm((f: any) => ({ ...f, website: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Telefon</label><input value={form.contact_phone || ""} onChange={e => setForm((f: any) => ({ ...f, contact_phone: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Aksjekapital</label><input value={form.share_capital || ""} onChange={e => setForm((f: any) => ({ ...f, share_capital: e.target.value }))} type="number" className={inputCls} /></div>
+          <div><label className={labelCls}>Stiftelsesdato</label><input value={form.founding_date || ""} onChange={e => setForm((f: any) => ({ ...f, founding_date: e.target.value }))} type="date" className={inputCls} /></div>
+          <div><label className={labelCls}>Regnskapsavslutning</label><input value={form.fiscal_year_end || ""} onChange={e => setForm((f: any) => ({ ...f, fiscal_year_end: e.target.value }))} className={inputCls} /></div>
+          <div><label className={labelCls}>Revisor</label><input value={form.auditor || ""} onChange={e => setForm((f: any) => ({ ...f, auditor: e.target.value }))} className={inputCls} /></div>
+        </div>
+
+        {/* Spesialfelt */}
+        <div className="border-t border-border/10 pt-4 mt-2">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 mb-3">Tilleggsinformasjon</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div><label className={labelCls}>Regnskapssystem</label>
+              <select value={form.accounting_system || ""} onChange={e => setForm((f: any) => ({ ...f, accounting_system: e.target.value }))} className={inputCls}>
+                <option value="">— Velg —</option>
+                <option value="Tripletex">Tripletex</option><option value="Fiken">Fiken</option><option value="Visma eAccounting">Visma eAccounting</option>
+                <option value="24SevenOffice">24SevenOffice</option><option value="Xledger">Xledger</option><option value="PowerOffice Go">PowerOffice Go</option>
+                <option value="Uniconta">Uniconta</option><option value="Annet">Annet</option>
+              </select>
+            </div>
+            <div><label className={labelCls}>Bankforbindelse</label><input value={form.bank || ""} onChange={e => setForm((f: any) => ({ ...f, bank: e.target.value }))} className={inputCls} /></div>
+            <div><label className={labelCls}>Forsikringsselskap</label><input value={form.insurance_company || ""} onChange={e => setForm((f: any) => ({ ...f, insurance_company: e.target.value }))} className={inputCls} /></div>
+            <div><label className={labelCls}>Antall ansatte</label><input value={form.num_employees || ""} onChange={e => setForm((f: any) => ({ ...f, num_employees: e.target.value }))} type="number" className={inputCls} /></div>
+            <div><label className={labelCls}>Årlig omsetning</label>
+              <select value={form.annual_revenue || ""} onChange={e => setForm((f: any) => ({ ...f, annual_revenue: e.target.value }))} className={inputCls}>
+                <option value="">— Velg —</option>
+                <option value="Under 1M">Under 1M</option><option value="1-5M">1–5M</option><option value="5-10M">5–10M</option>
+                <option value="10-50M">10–50M</option><option value="50-100M">50–100M</option><option value="Over 100M">Over 100M</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-6 mt-3">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={form.vat_registered || false} onChange={e => setForm((f: any) => ({ ...f, vat_registered: e.target.checked }))} className="rounded" />
+              MVA-registrert
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={form.employer_registered || false} onChange={e => setForm((f: any) => ({ ...f, employer_registered: e.target.checked }))} className="rounded" />
+              Registrert arbeidsgiver
+            </label>
+          </div>
+        </div>
+
+        <div><label className={labelCls}>Beskrivelse</label><textarea value={form.description || ""} onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))} className={`${inputCls} h-20 resize-none`} /></div>
+        <div><label className={labelCls}>Interne notater (kun synlig for admin)</label><textarea value={form.internal_notes || ""} onChange={e => setForm((f: any) => ({ ...f, internal_notes: e.target.value }))} className={`${inputCls} h-20 resize-none`} placeholder="Notater, observasjoner, oppfølgingspunkter…" /></div>
+      </div>
+
+      {/* Eiere */}
+      <div className="glass rounded-2xl p-5 border border-border/20 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-sm flex items-center gap-2"><User size={14} className="text-primary" /> Eiere</h3>
+          <button onClick={() => setShowOwnerForm(true)} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Legg til</button>
+        </div>
+        {showOwnerForm && (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-2 items-end">
+            <input value={ownerForm.name} onChange={e => setOwnerForm({ ...ownerForm, name: e.target.value })} placeholder="Navn *" className={inputCls} />
+            <input value={ownerForm.email} onChange={e => setOwnerForm({ ...ownerForm, email: e.target.value })} placeholder="E-post" className={inputCls} />
+            <input value={ownerForm.phone} onChange={e => setOwnerForm({ ...ownerForm, phone: e.target.value })} placeholder="Telefon" className={inputCls} />
+            <input value={ownerForm.ownership_percent} onChange={e => setOwnerForm({ ...ownerForm, ownership_percent: e.target.value })} placeholder="Eierandel %" type="number" className={inputCls} />
+            <div className="flex gap-1">
+              <button onClick={addOwner} className="px-3 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90">Lagre</button>
+              <button onClick={() => setShowOwnerForm(false)} className="px-3 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
+            </div>
+          </div>
+        )}
+        {owners.map(o => (
+          <div key={o.id} className="flex items-center justify-between py-2 border-b border-border/5 last:border-0">
+            <div>
+              <p className="text-sm">{o.name} <span className="text-muted-foreground text-xs">({o.ownership_percent}%)</span></p>
+              <p className="text-xs text-muted-foreground">{[o.email, o.phone].filter(Boolean).join(" · ")}</p>
+            </div>
+            <button onClick={() => deleteOwner(o.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>
+          </div>
+        ))}
+        {owners.length === 0 && !showOwnerForm && <p className="text-xs text-muted-foreground">Ingen eiere registrert</p>}
+      </div>
+
+      {/* Styre */}
+      <div className="glass rounded-2xl p-5 border border-border/20 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-sm flex items-center gap-2"><Shield size={14} className="text-primary" /> Styret</h3>
+          <button onClick={() => setShowBoardForm(true)} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Legg til</button>
+        </div>
+        {showBoardForm && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+            <input value={boardForm.name} onChange={e => setBoardForm({ ...boardForm, name: e.target.value })} placeholder="Navn *" className={inputCls} />
+            <input value={boardForm.email} onChange={e => setBoardForm({ ...boardForm, email: e.target.value })} placeholder="E-post" className={inputCls} />
+            <select value={boardForm.position} onChange={e => setBoardForm({ ...boardForm, position: e.target.value })} className={inputCls}>
+              <option value="Styreleder">Styreleder</option><option value="Nestleder">Nestleder</option><option value="Styremedlem">Styremedlem</option><option value="Varamedlem">Varamedlem</option>
+            </select>
+            <div className="flex gap-1">
+              <button onClick={addBoard} className="px-3 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90">Lagre</button>
+              <button onClick={() => setShowBoardForm(false)} className="px-3 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
+            </div>
+          </div>
+        )}
+        {board.map(b => (
+          <div key={b.id} className="flex items-center justify-between py-2 border-b border-border/5 last:border-0">
+            <div>
+              <p className="text-sm">{b.name} <span className="text-muted-foreground text-xs">({b.position})</span></p>
+              <p className="text-xs text-muted-foreground">{[b.email, b.phone].filter(Boolean).join(" · ")}</p>
+            </div>
+            <button onClick={() => deleteBoard(b.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>
+          </div>
+        ))}
+        {board.length === 0 && !showBoardForm && <p className="text-xs text-muted-foreground">Ingen styremedlemmer registrert</p>}
+      </div>
+
+      {/* Kontaktpersoner */}
+      <div className="glass rounded-2xl p-5 border border-border/20 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-sm flex items-center gap-2"><Phone size={14} className="text-primary" /> Kontaktpersoner</h3>
+          <button onClick={() => setShowContactForm(true)} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Legg til</button>
+        </div>
+        {showContactForm && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+            <input value={contactForm.name} onChange={e => setContactForm({ ...contactForm, name: e.target.value })} placeholder="Navn *" className={inputCls} />
+            <input value={contactForm.email} onChange={e => setContactForm({ ...contactForm, email: e.target.value })} placeholder="E-post" className={inputCls} />
+            <input value={contactForm.phone} onChange={e => setContactForm({ ...contactForm, phone: e.target.value })} placeholder="Telefon" className={inputCls} />
+            <div className="flex gap-1">
+              <button onClick={addContact} className="px-3 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90">Lagre</button>
+              <button onClick={() => setShowContactForm(false)} className="px-3 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
+            </div>
+          </div>
+        )}
+        {contacts.map(ct => (
+          <div key={ct.id} className="flex items-center justify-between py-2 border-b border-border/5 last:border-0">
+            <div>
+              <p className="text-sm">{ct.name} <span className="text-muted-foreground text-xs">({ct.role})</span></p>
+              <p className="text-xs text-muted-foreground">{[ct.email, ct.phone].filter(Boolean).join(" · ")}</p>
+            </div>
+            <button onClick={() => deleteContact(ct.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>
+          </div>
+        ))}
+        {contacts.length === 0 && !showContactForm && <p className="text-xs text-muted-foreground">Ingen kontaktpersoner registrert</p>}
       </div>
     </div>
   );
@@ -185,7 +535,7 @@ const CustomersPanel = () => {
 // ========== CUSTOMER DETAIL ==========
 const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack: () => void }) => {
   const { session } = useAuth();
-  const [tab, setTab] = useState<"financials" | "documents" | "handbook">("financials");
+  const [tab, setTab] = useState<"profile" | "financials" | "documents" | "handbook">("profile");
   const [financials, setFinancials] = useState<Financial[]>([]);
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -351,7 +701,11 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
+        <button onClick={() => setTab("profile")}
+          className={`px-4 py-2 rounded-xl text-sm transition-colors ${tab === "profile" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50"}`}>
+          <Building2 size={14} className="inline mr-1" /> Profil
+        </button>
         <button onClick={() => setTab("financials")}
           className={`px-4 py-2 rounded-xl text-sm transition-colors ${tab === "financials" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50"}`}>
           <DollarSign size={14} className="inline mr-1" /> Økonomi
@@ -365,6 +719,8 @@ const CustomerDetail = ({ company, onBack }: { company: CustomerCompany; onBack:
           <BookOpen size={14} className="inline mr-1" /> Personalhåndbok
         </button>
       </div>
+
+      {tab === "profile" && <CustomerProfileTab companyId={company.id} />}
 
       {tab === "financials" && (
         <div className="space-y-4">
@@ -564,7 +920,6 @@ const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit, onNotify 
   return (
     <div className="space-y-4">
       <div className="flex gap-6">
-        {/* Chapter sidebar */}
         <div className="w-52 shrink-0 hidden md:block space-y-0.5">
           <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 mb-3 px-2">Kapitler</p>
           {chapters.map((ch, i) => (
@@ -584,7 +939,6 @@ const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit, onNotify 
           ))}
         </div>
 
-        {/* Editor */}
         <div className="flex-1 min-w-0 space-y-4">
           <select
             className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm"
@@ -637,7 +991,6 @@ const AdminHandbookEditor = ({ companyId, handbookInitialized, onInit, onNotify 
             )}
           </div>
 
-          {/* Prev/Next */}
           <div className="flex justify-between">
             <button onClick={() => { setActiveIdx(Math.max(0, activeIdx - 1)); setEditing(false); }} disabled={activeIdx === 0}
               className="px-3 py-1.5 text-xs rounded-lg border border-border/30 hover:bg-muted/50 disabled:opacity-30">← Forrige</button>
@@ -720,10 +1073,9 @@ const FinancialUploadForm = ({ companyId, onComplete, onCancel, onNotify }: { co
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Fil *</label>
           <div onClick={() => uploadRef.current?.click()}
-            className="h-10 border border-dashed border-border/30 rounded-xl px-3 flex items-center cursor-pointer hover:border-primary/40 transition-colors">
-            <p className="text-sm text-muted-foreground truncate">{file ? file.name : "Velg PDF, Excel eller CSV…"}</p>
-            <input ref={uploadRef} type="file" accept=".pdf,.xlsx,.xls,.csv,.txt" className="hidden"
-              onChange={e => { setFile(e.target.files?.[0] || null); setParsed(null); }} />
+            className="border-2 border-dashed border-border/30 rounded-xl h-10 flex items-center px-3 cursor-pointer hover:border-primary/40 transition-colors">
+            <p className="text-xs text-muted-foreground truncate">{file ? file.name : "Klikk for å velge fil"}</p>
+            <input ref={uploadRef} type="file" accept=".pdf,.xlsx,.xls,.csv" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
           </div>
         </div>
       </div>
@@ -732,7 +1084,7 @@ const FinancialUploadForm = ({ companyId, onComplete, onCancel, onNotify }: { co
         <div className="flex gap-2">
           <button onClick={parseFile} disabled={parsing || !file || !period}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
-            {parsing ? "Analyserer fil…" : "Analyser fil med AI"}
+            {parsing ? "Analyserer…" : "Analyser fil"}
           </button>
           <button onClick={onCancel} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
         </div>
@@ -740,32 +1092,28 @@ const FinancialUploadForm = ({ companyId, onComplete, onCancel, onNotify }: { co
 
       {parsed && (
         <div className="space-y-3">
-          <p className="text-xs text-emerald-500 font-medium">✓ Tall hentet fra {parsed.file_name}</p>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { label: "Inntekter", key: "revenue" },
-              { label: "Kostnader", key: "costs" },
-              { label: "Resultat", key: "result" },
-              { label: "Egenkapital", key: "equity" },
-              { label: "Eiendeler", key: "assets" },
-              { label: "Gjeld", key: "liabilities" },
-            ].map(f => (
-              <div key={f.key} className="glass rounded-xl p-3 border border-border/10">
-                <p className="text-[10px] text-muted-foreground">{f.label}</p>
-                <p className="text-sm font-heading">{Number(parsed.data[f.key]).toLocaleString("no-NO")} kr</p>
-              </div>
-            ))}
+          <p className="text-xs text-emerald-500 font-medium">✓ Tall hentet fra filen — se gjennom og lagre</p>
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div className="glass rounded-xl p-3 border border-border/10">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Inntekter</p>
+              <p className="font-medium">{Number(parsed.data.revenue).toLocaleString("no-NO")} kr</p>
+            </div>
+            <div className="glass rounded-xl p-3 border border-border/10">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Kostnader</p>
+              <p className="font-medium">{Number(parsed.data.costs).toLocaleString("no-NO")} kr</p>
+            </div>
+            <div className="glass rounded-xl p-3 border border-border/10">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Resultat</p>
+              <p className={`font-medium ${Number(parsed.data.result) >= 0 ? "text-emerald-500" : "text-destructive"}`}>{Number(parsed.data.result).toLocaleString("no-NO")} kr</p>
+            </div>
           </div>
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notat (valgfritt)" rows={2}
-            className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
-          <textarea value={actionPlan} onChange={e => setActionPlan(e.target.value)} placeholder="Tiltaksplan (synlig for kunden)" rows={3}
-            className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+          <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notater (valgfritt)" className={`${inputCls} h-16 resize-none`} />
+          <textarea value={actionPlan} onChange={e => setActionPlan(e.target.value)} placeholder="Tiltaksplan (synlig for kunden, valgfritt)" className={`${inputCls} h-16 resize-none`} />
           <div className="flex gap-2">
             <button onClick={saveToDb} disabled={saving}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
-              {saving ? "Lagrer…" : "Lagre til kundens økonomi"}
+              {saving ? "Lagrer…" : "Lagre til kundeportal"}
             </button>
-            <button onClick={() => setParsed(null)} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Analyser på nytt</button>
             <button onClick={onCancel} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
           </div>
         </div>
