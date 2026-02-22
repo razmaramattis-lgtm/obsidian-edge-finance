@@ -100,7 +100,7 @@ const TaxDeadlineWidget = ({
         <div className="flex items-center gap-2 text-muted-foreground">
           <AlertTriangle size={14} />
           <span className="text-xs">{error}</span>
-          <button onClick={fetchDeadlines} className="ml-auto text-primary hover:text-primary/80">
+          <button onClick={fetchDeadlines} className="ml-auto text-primary hover:text-primary/80" aria-label="Last inn på nytt">
             <RefreshCw size={13} />
           </button>
         </div>
@@ -114,9 +114,9 @@ const TaxDeadlineWidget = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <CalendarClock size={15} className="text-primary" strokeWidth={1.5} />
-            <h3 className={compact ? "font-medium text-xs" : "font-medium text-sm"}>
+            <p className={compact ? "font-medium text-xs" : "font-medium text-sm"}>
               Skattefrister
-            </h3>
+            </p>
           </div>
           <a
             href="https://www.skatteetaten.no/bedrift-og-organisasjon/starte-og-drive/frister-gebyrer-og-tilleggsskatt/frister-og-oppgaver/"
