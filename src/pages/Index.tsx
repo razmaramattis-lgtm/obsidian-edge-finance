@@ -43,7 +43,7 @@ const RotatingHook = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setHookIndex((prev) => (prev + 1) % hookSlides.length);
-    }, 8000);
+    }, 12000);
     return () => clearInterval(timer);
   }, []);
 
