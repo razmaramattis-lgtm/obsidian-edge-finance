@@ -6,30 +6,29 @@ const Landbruk = () => (
     icon={Tractor}
     name="Landbruk"
     tagline="Vi kjenner gårdens rytme"
-    intro="Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder for bønder og sørger for at du aldri går glipp av det du har krav på."
-    body="Landbruksøkonomi er unikt komplekst: jordbruksfradrag, produksjonstilskudd, skogbruksbeskatning, driftsplan og tilskuddsordninger fra Landbruksdirektoratet. I tillegg er sesongbasert kontantstrøm en utfordring som krever presis planlegging gjennom hele året. Vår regnskapsfører kjenner disse reglene — du slipper å lære dem selv."
+    intro="Landbruk er en bransje med sin helt egen hverdag — sesongsvingninger, dyr, maskiner og støtteordninger. Vi kjenner til hva som gjelder og sørger for at du aldri går glipp av det du har krav på."
+    body="Økonomi i landbruket er sammensatt: det finnes egne fradrag, en rekke tilskuddsordninger og spesielle skatteregler for skogbruk. I tillegg gjør sesongene at pengene kommer ujevnt gjennom året. Vi holder styr på alt dette — slik at du kan bruke tiden din på gården."
     deliverables={[
-      "Jordbruksfradrag og næringsinntekt",
-      "Produksjonstilskudd og RMP-tilskudd",
-      "Skogbruksregnskap og tilvekstberegning",
-      "MVA i landbruk (særregler)",
-      "Maskin- og driftskapital",
-      "Budsjettering for sesongbasert kontantstrøm",
-      "Generasjonsskifte og overdragelse",
-      "SAK-oppgaver og ligningsdokumenter",
+      "Fradrag som gjelder spesifikt for landbruk",
+      "Søknad om produksjonstilskudd og andre støtteordninger",
+      "Regnskap for skogbruk",
+      "Avgiftsregler som gjelder for bønder",
+      "Maskiner og utstyr i regnskapet",
+      "Planlegging av pengestrøm gjennom sesongen",
+      "Generasjonsskifte og overdragelse av gård",
+      "Skattemelding og årsregnskap",
     ]}
     challenges={[
-      { title: "Jordbruksfradraget utnyttes sjelden fullt ut.", desc: "Maksimalt jordbruksfradrag er 190 400 kr — men mange bønder benytter ikke hele beløpet fordi regnskapet ikke er satt opp riktig. Vi sørger for at du tar ut det du har krav på." },
-      { title: "Sesongbasert kontantstrøm krever presis planlegging.", desc: "Store inntekter på høst og store utgifter på vår. Uten god budsjettering kan likviditeten bli presset akkurat når det er minst rom for det." },
-      { title: "Generasjonsskifte i landbruk er komplekst.", desc: "Overdragelse av gårdsbruk har egne skatteregler for arv, gavesalg og odelsrett. Vi planlegger generasjonsskiftet slik at skattebelastningen minimeres for alle parter." },
-      { title: "Tilskuddsordninger er mange og krevende.", desc: "Produksjonstilskudd, regionalt miljøprogram (RMP), velferdsordninger og investeringstilskudd — vi holder oversikt over søknadsfrister og dokumentasjonskrav." },
+      { title: "Mange bønder utnytter ikke fradragene sine fullt ut.", desc: "Det finnes fradrag som er laget spesielt for landbruk, men som mange ikke benytter fordi regnskapet ikke er satt opp for det. Vi sørger for at du tar ut alt du har krav på." },
+      { title: "Pengene kommer ujevnt gjennom året.", desc: "Store inntekter på høsten og store utgifter om våren. Uten god planlegging kan det bli trangt akkurat når du trenger det minst." },
+      { title: "Å overføre gården til neste generasjon er komplekst.", desc: "Det finnes egne regler for overdragelse av gårdsbruk. Vi planlegger slik at skattebelastningen blir minst mulig for alle parter." },
+      { title: "Det er mange støtteordninger — og mange søknadsfrister.", desc: "Produksjonstilskudd, miljøstøtte og investeringstilskudd — vi holder oversikt over frister og dokumentasjonskrav for deg." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Regnskapsfører med landbruksbakgrunn.", desc: "Vi kjenner terminologien, regelverket og hverdagen på gården. Du slipper å bruke møtetid på å forklare hva en kvote eller et SAK-krav er." },
-      { num: "02", title: "Maksimale fradrag — alltid.", desc: "Jordbruksfradrag, maskinutgifter, driftsutgifter og investeringsavskrivninger optimaliseres løpende gjennom året — ikke bare ved årsoppgjøret." },
-      { num: "03", title: "Planlegging over generasjoner.", desc: "Vi tenker langsiktig. Generasjonsskifte, strukturvalg og skatteoptimalisering planlegges i god tid — ikke i siste liten." },
+      { num: "01", title: "Vi kjenner hverdagen din.", desc: "Vi forstår hvordan et gårdsbruk fungerer økonomisk — du trenger ikke bruke tid på å forklare." },
+      { num: "02", title: "Maksimale fradrag — alltid.", desc: "Fradrag, avskrivninger og tilskudd følges opp løpende gjennom hele året — ikke bare ved årsoppgjøret." },
+      { num: "03", title: "Vi tenker langsiktig.", desc: "Generasjonsskifte, strukturvalg og skatteoptimalisering planlegges i god tid — ikke i siste liten." },
     ]}
-    quote={{ text: "Regnskapsføreren vår hos Avargo forstår landbruk. Han vet hva en kvote er, hva et jordbruksfradrag er, og hva sesongvariasjon gjør med likviditeten. Det er unikt.", author: "Eier, Gårdsbruk i Trøndelag" }}
     relatedSlugs={[
       { label: "Varehandel", href: "/bransjer/varehandel" },
       { label: "Eiendom & Utvikling", href: "/bransjer/eiendom" },

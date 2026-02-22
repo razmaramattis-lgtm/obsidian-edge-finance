@@ -7,27 +7,27 @@ const ByggAnlegg = () => (
     name="Bygg & Anlegg"
     tagline="Vi holder orden mens du bygger"
     intro="Bygg- og anleggsbransjen er avhengig av at prosjekter går i pluss og at alt er på stell. Vi hjelper deg å ha god oversikt over hvert enkelt prosjekt, slik at du alltid vet om du tjener penger eller ikke."
-    body="Prosjektregnskap, fakturering etter fremdrift og krav til dokumentasjon gjør bygg til en av de mer komplekse bransjene regnskapsmessig. I tillegg er seriøsitetskravene i bransjen skjerpet kraftig — med krav til HMS-kort, registeroppføring og dokumentasjon av underleverandørers lønn og skatt."
+    body="I byggebransjen skal regnskapet følge hvert prosjekt, fakturering skjer etter fremdrift, og det stilles stadig strengere krav til dokumentasjon. Vi holder orden på alt det administrative — slik at du kan konsentrere deg om det som skjer på byggeplassen."
     deliverables={[
-      "Prosjektregnskap og fremdriftsfakturering",
-      "Anbudskalkylering og prosjektbudsjettering",
-      "Bilagskontroll og underleverandørdokumentasjon",
-      "MVA i byggebransjen (særregler for omvendt avgiftsplikt)",
-      "HMS-dokumentasjon og seriøsitetskrav",
-      "Maskinavskrivninger og leasing",
-      "Garantier og retensjoner",
+      "Regnskap per prosjekt med løpende oppfølging",
+      "Fakturering basert på fremdrift",
+      "Kontroll på kostnader og underleverandører",
+      "Riktig håndtering av avgifter mellom entreprenører",
+      "Dokumentasjon og sikkerhetskrav",
+      "Avskrivning av maskiner og kjøretøy",
+      "Håndtering av garantier og tilbakeholdte beløp",
       "Årsregnskap og skattemelding",
     ]}
     challenges={[
-      { title: "Prosjektet ser lønnsomt ut — til det plutselig ikke gjør det.", desc: "Uten løpende prosjektregnskap oppdager du kostnadsoverskridelser for sent. Vi setter opp systemer som gir deg varsling i sanntid, ikke i etterkant." },
-      { title: "Omvendt avgiftsplikt mellom MVA-pliktige er en vanlig feil.", desc: "Feil håndtering av omvendt avgiftsplikt mellom entreprenør og underentreprenør er en av de hyppigst korrigerte feilene i bransjen. Vi gjør det riktig." },
-      { title: "Seriøsitetskrav og dokumentasjonskrav er blitt strengere.", desc: "Krav til HMS-kort, Skatteetatens transportregister, lønns- og arbeidsvilkår hos underleverandører — vi holder oversikt over hva som kreves og sikrer compliance." },
-      { title: "Likviditet er kritisk i anleggsfasen.", desc: "Byggeprosjekter binder opp kapital lenge. Vi budsjetteterer kontantstrøm per prosjekt slik at du aldri havner i likviditetsklemme midt i et oppdrag." },
+      { title: "Prosjektet ser lønnsomt ut — til det plutselig ikke gjør det.", desc: "Uten løpende oversikt over kostnadene oppdager du overskridelser for sent. Vi gir deg varsling underveis, ikke i etterkant." },
+      { title: "Avgifter mellom byggeaktører er en vanlig feilkilde.", desc: "Reglene for hvordan avgifter skal håndteres mellom entreprenører og underentreprenører er strenge. Vi gjør det riktig fra starten." },
+      { title: "Dokumentasjonskravene i bransjen har blitt strengere.", desc: "Sikkerhetskort, registreringer og dokumentasjon av underleverandører — vi holder oversikt over hva som kreves og sørger for at alt er i orden." },
+      { title: "Byggeprosjekter binder opp penger lenge.", desc: "Vi planlegger pengestrømmen per prosjekt slik at du ikke havner i klemme midt i et oppdrag." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Prosjektregnskap som faktisk gir innsikt.", desc: "Ikke bare kostnader — men margin, fremdrift og prognosert sluttresultat per prosjekt. Du vet alltid om du tjener penger." },
-      { num: "02", title: "Compliance i en strengere bransje.", desc: "Vi holder deg oppdatert på seriøsitetskrav, underleverandøroppfølging og dokumentasjonskrav som er unike for bygg og anlegg." },
-      { num: "03", title: "Erfaring med alle selskapsformer i bransjen.", desc: "Enkeltpersonforetak, AS, ANS og konsortier — vi kjenner regnskapsmodellene for alle vanlige konstruksjoner i bransjen." },
+      { num: "01", title: "Prosjektregnskap som gir ekte innsikt.", desc: "Ikke bare kostnader — men fortjeneste, fremdrift og forventet sluttresultat per prosjekt. Du vet alltid hvor du står." },
+      { num: "02", title: "Alt på stell i en strengere bransje.", desc: "Vi holder deg oppdatert på alle krav til dokumentasjon og oppfølging som gjelder spesifikt for bygg og anlegg." },
+      { num: "03", title: "Erfaring med alle typer selskaper i bransjen.", desc: "Enkeltpersonforetak, aksjeselskap og samarbeidsformer — vi kjenner regnskapsmodellene for alle vanlige måter å organisere seg på." },
     ]}
     relatedSlugs={[
       { label: "Eiendom & Utvikling", href: "/bransjer/eiendom" },

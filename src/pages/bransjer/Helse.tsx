@@ -7,27 +7,26 @@ const Helse = () => (
     name="Helse & Velvære"
     tagline="Fokuser på menneskene du hjelper"
     intro="Klinikker, treningssentre og helseforetak har nok å tenke på med kunder og pasienter. Vi ordner det økonomiske i bakgrunnen, slik at du kan gi full oppmerksomhet til dem du er der for."
-    body="Helsesektoren kjennetegnes av et unikt MVA-regime der mange helsetjenester er fritatt, kombinert med strenge krav til pasientjournaler, personvern og GDPR. I tillegg er driftsmodellene varierte — fra soloterapeuter til større klinikker med ansatte og leiekontrakter."
+    body="Helsebransjen har egne regler for hva som er avgiftsfritt og ikke, strenge krav til personvern, og driftsmodeller som varierer enormt — fra en som jobber alene til større klinikker med mange ansatte og leiekontrakter. Vi tar oss av alt det økonomiske, slik at du slipper å bruke tid på det."
     deliverables={[
-      "MVA-fritak for helsetjenester (mva-loven § 3-2)",
-      "Lønnskjøring for helsepersonell",
-      "Fakturering mot HELFO og private betalere",
-      "Arbeidsgiverperiode ved sykefravær",
-      
-      "Leiekontrakter og lokalkostnader",
+      "Riktig håndtering av avgiftsfritak for helsetjenester",
+      "Lønnskjøring for alle typer ansatte",
+      "Fakturering mot det offentlige og private betalere",
+      "Håndtering av sykefravær og arbeidsgiverperiode",
+      "Oversikt over leiekontrakter og lokalkostnader",
       "Pensjon og forsikringer for ansatte",
       "Skattemelding og årsregnskap",
     ]}
     challenges={[
-      { title: "MVA-fritak for helsetjenester er ikke selvforklarende.", desc: "Ikke alle tjenester som utføres av helsepersonell er MVA-fritatt. Grensedragningen er kompleks, og feil kan utløse etterberegning. Vi kjenner regelverket." },
-      { title: "HELFO-refusjon krever riktig koding og dokumentasjon.", desc: "Feil takst, feil diagnose eller manglende dokumentasjon fører til avvist krav. Vi hjelper deg å sette opp systemer som sikrer korrekt og fullstendig fakturering." },
-      { title: "Ansatte helsepersonell har særskilte arbeidsvilkår.", desc: "Vaktordninger, overtid, tillegg for ubekvem arbeidstid og kompetansekrav gjør lønnskjøring i helsesektoren mer kompleks enn i de fleste andre bransjer." },
-      { title: "Investeringer i medisinsk utstyr avskrives annerledes.", desc: "Kostbart medisinsk utstyr har egne avskrivningsregler og finansieringsalternativer. Vi hjelper deg å velge riktig avskrivningsplan og finansieringsmodell." },
+      { title: "Ikke alle helsetjenester er avgiftsfrie.", desc: "Det er ikke alltid opplagt hva som er fritatt for avgift og hva som ikke er det. Feil her kan koste deg dyrt i etterkant. Vi kjenner reglene og sørger for at alt er riktig." },
+      { title: "Refusjoner fra det offentlige krever nøyaktighet.", desc: "Feil i dokumentasjonen kan føre til at du ikke får pengene du har krav på. Vi hjelper deg å sette opp gode rutiner for dette." },
+      { title: "Lønn i helsebransjen har mange tillegg.", desc: "Vaktordninger, kvelds- og helgetillegg og kompetansekrav gjør at lønnskjøring krever mer enn vanlig. Vi håndterer det for deg." },
+      { title: "Utstyr og inventar skal behandles riktig i regnskapet.", desc: "Stort utstyr har egne regler for hvordan det føres i regnskapet. Vi hjelper deg å velge riktig fremgangsmåte." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Vi kjenner helsesektorens særregler.", desc: "MVA-fritak, HELFO-fakturering og bransjens lønnsstrukturer er ikke ukjent for oss. Du trenger ikke forklare bransjen." },
-      { num: "02", title: "Fokus på drift — ikke administrasjon.", desc: "Vi automatiserer og forenkler slik at du bruker minst mulig tid på økonomi og mest mulig tid på pasientene dine." },
-      { num: "03", title: "Skreddersydd for alle størrelser.", desc: "Fra soloterapeutens enkle regnskap til en flerlege-klinikk med ansatte og leiekontrakter — vi tilpasser leveransen til din virkelighet." },
+      { num: "01", title: "Vi kjenner reglene som gjelder for deg.", desc: "Avgiftsfritak, offentlige refusjoner og lønnsstrukturene i helsebransjen er noe vi har jobbet med mange ganger. Du slipper å forklare." },
+      { num: "02", title: "Minst mulig tid på administrasjon.", desc: "Vi setter opp alt slik at du bruker så lite tid som mulig på økonomi — og mest mulig tid på dem du er der for." },
+      { num: "03", title: "Tilpasset din størrelse.", desc: "Enten du jobber alene eller driver en klinikk med mange ansatte — vi tilpasser det vi leverer til din hverdag." },
     ]}
     relatedSlugs={[
       { label: "Frisør & Skjønnhet", href: "/bransjer/frisor" },
