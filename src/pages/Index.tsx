@@ -23,17 +23,17 @@ const hookSlides = [
   {
     heading: <>Store selskaper har hele avdelinger.{" "}<span className="italic text-gradient-teal">Nå har du det også.</span></>,
     body: "Regnskapsfører, HR-rådgiver, skatteekspert, markedsfører og utvikler — det er teamet som store selskaper bygger internt for millioner i året. Hos Avargo får du det samme teamet, dedikert til ditt selskap, til en brøkdel av prisen.",
-    tagline: "Du trenger ikke bli stor for å ha ressursene til det.",
+    tagline: "Bygget for små og mellomstore bedrifter som fortjener mer.",
   },
   {
     heading: <>Du startet bedriften for å bygge noe.{" "}<span className="italic text-gradient-teal">Ikke for å sitte med bilag.</span></>,
     body: "De fleste bedriftseiere bruker timer hver uke på fakturering, rapporter og frister — tid som burde gått til kunder, ansatte og vekst. Med Avargo overlater du alt det til noen som faktisk brenner for det.",
-    tagline: "Vi tar ansvaret. Du tar beslutningene.",
+    tagline: "Vi finnes for at du skal slippe å gjøre alt selv.",
   },
   {
     heading: <>Samme trygghet som de store.{" "}<span className="italic text-gradient-teal">Uten byråkratiet.</span></>,
     body: "Storkonsern har egne økonomiavdelinger, HR-team og rådgivere. Du har Avargo. Samme kompetanse, samme tilgjengelighet — men uten faste ansatte, kontorlokaler og millionbudsjetter.",
-    tagline: "Alt du trenger. Ingenting du ikke trenger.",
+    tagline: "Laget for bedrifter som tenker stort — uansett størrelse.",
   },
 ];
 
