@@ -42,6 +42,7 @@ const BenefitApplicationPanel = () => {
       offering: form.offering || null,
       price: form.price || null,
       website: form.website || null,
+      logo_url: company.logo_url || null,
       contact_name: form.contact_name || profile?.name || null,
       contact_email: form.contact_email || profile?.email || null,
       contact_phone: form.contact_phone || null,
