@@ -56,7 +56,7 @@ interface NavItem {
 const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Hoved
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
-  { id: "datacenter", label: "Datasenter", icon: Building2, adminOnly: true, group: "Hoved" },
+  { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
 
   // Kunder
   { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
@@ -72,19 +72,19 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Innhold (nettside)
   { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Innhold" },
   { id: "page_changes", label: "Sideendringer", icon: Briefcase, adminOnly: true, group: "Innhold" },
-  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Innhold" },
-  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Innhold" },
-  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Innhold" },
-  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Innhold" },
 
-  // Ressurser
-  { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Ressurser" },
-  { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
-  { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
-  { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
+  // Organisasjonsressurser
+  { id: "datacenter", label: "Datasenter", icon: Building2, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Organisasjonsressurser" },
+  { id: "hms", label: "HMS-bok", icon: Shield, group: "Organisasjonsressurser" },
 
   // Internt
-  { id: "hms", label: "HMS-bok", icon: Shield, group: "Internt" },
+  { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
   { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
