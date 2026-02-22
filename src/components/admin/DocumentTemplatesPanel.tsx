@@ -56,6 +56,7 @@ const DocumentTemplatesPanel = () => {
   };
 
   const startEdit = (tpl: any) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditId(tpl.id);
     setForm({
       title: tpl.title,

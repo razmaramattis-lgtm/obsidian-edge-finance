@@ -78,7 +78,7 @@ const IndustriesPanel = () => {
               {item.href && <p className="text-xs text-muted-foreground">{item.href}</p>}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => { setEditing(item); setForm({ title: item.title, description: item.description || "", href: item.href || "", active: item.active }); setShowForm(true); }}
+              <button onClick={() => { document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' }); setEditing(item); setForm({ title: item.title, description: item.description || "", href: item.href || "", active: item.active }); setShowForm(true); }}
                 className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
               <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
             </div>

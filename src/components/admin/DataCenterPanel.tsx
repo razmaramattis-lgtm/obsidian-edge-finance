@@ -91,6 +91,7 @@ const DataCenterPanel = () => {
   };
 
   const startEdit = (item: Material) => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(item);
     setForm({ title: item.title, content: item.content || "", category: item.category || "Generelt" });
     setShowForm(true);
