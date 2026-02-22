@@ -208,8 +208,7 @@ const Contact = () => {
             </div>
             <div className="space-y-3 text-sm text-foreground/60 font-light">
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Oslo, Norge</span></div>
-              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>post@avargo.no</span></div>
-              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>+47 22 00 00 00</span></div>
+              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>kontakt@avargo.no</span></div>
             </div>
           </AnimatedSection>
 
