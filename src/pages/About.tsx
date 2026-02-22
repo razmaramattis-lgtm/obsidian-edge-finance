@@ -1,38 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Users, Bot, Shield, TrendingUp, Rocket, CheckCircle2, Handshake, Sparkles, Crown, Gem } from "lucide-react";
+import { ArrowRight, Handshake, Sparkles, Crown, Gem } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
-const starterPakker = [
-  {
-    name: "Oppstart",
-    price: "1 499",
-    desc: "For nyoppstartede selskaper som trenger orden fra dag én.",
-    features: ["Bokføring", "MVA-rapportering", "Årsregnskap", "Skattemelding", "Kvartalsvis rådgivning"],
-    highlighted: false,
-  },
-  {
-    name: "Vekst",
-    price: "3 499",
-    desc: "For selskaper i vekst som trenger mer oppfølging og innsikt.",
-    features: ["Alt i Oppstart", "Dedikert regnskapsfører", "Lønnskjøring", "Månedlig resultatrapport", "Skatteoptimalisering"],
-    highlighted: true,
-  },
-  {
-    name: "Kun rådgivning",
-    price: "999",
-    desc: "For deg som har regnskap, men trenger noen å sparre med.",
-    features: ["Månedlig rådgivningstime", "Skattegjennomgang", "Selskapsstruktur-rådgivning", "Tilgang til Avargo-nettverk"],
-    highlighted: false,
-  },
-];
-
 const About = () => {
-  const navigate = useNavigate();
-
-  const handlePackageClick = (packageName: string) => {
-    navigate(`/kontakt?pakke=${encodeURIComponent(packageName)}`);
-  };
 
   return (
     <>
@@ -62,72 +33,6 @@ const About = () => {
               </p>
             </div>
           </AnimatedSection>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
-
-      {/* Nystartet firma — pakker */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-30" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-14 md:mb-20">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                <Rocket size={14} className="text-primary" />
-                <span className="text-xs text-primary tracking-wide font-medium">Nystartet selskap?</span>
-              </div>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-                Kom i gang fra{" "}
-                <span className="italic text-gradient-rose">1 499 kr/mnd</span>
-              </h2>
-              <p className="text-foreground/70 font-light leading-relaxed text-sm md:text-base">
-                Du trenger ikke et stort byrå for å komme i gang. Velg pakken som passer deg — og bytt opp etterhvert som selskapet vokser. Alle priser er faste og uten skjulte kostnader.
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-            {starterPakker.map((pkg, i) => (
-              <AnimatedSection key={pkg.name} delay={i * 0.12}>
-                <div
-                  onClick={() => handlePackageClick(pkg.name)}
-                  className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift cursor-pointer ${
-                    pkg.highlighted ? "glass glow-rose border-primary/25" : "glass"
-                  }`}
-                >
-                  {pkg.highlighted && (
-                    <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
-                      Mest valgt
-                    </div>
-                  )}
-                  <h3 className="font-heading text-2xl md:text-3xl mb-2">{pkg.name}</h3>
-                  <p className="text-sm text-foreground/60 font-light mb-6">{pkg.desc}</p>
-                  <div className="mb-6">
-                    <span className="text-sm text-foreground/50 font-light mr-1">Fra</span>
-                    <span className="font-heading text-4xl md:text-5xl">{pkg.price}</span>
-                    <span className="text-foreground/50 text-sm"> kr/mnd</span>
-                  </div>
-                  <ul className="flex flex-col gap-3 mb-8 flex-1">
-                    {pkg.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3 text-sm text-foreground/70 font-light">
-                        <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${
-                    pkg.highlighted
-                      ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose"
-                      : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"
-                  }`}>
-                    Velg {pkg.name}
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
         </div>
       </section>
 
