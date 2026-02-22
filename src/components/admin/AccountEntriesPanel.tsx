@@ -20,10 +20,14 @@ interface AccountEntry {
 const slugify = (text: string) =>
   text.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-const AccountEntriesPanel = () => {
+interface AccountEntriesPanelProps {
+  initialSearch?: string;
+}
+
+const AccountEntriesPanel = ({ initialSearch }: AccountEntriesPanelProps = {}) => {
   const [items, setItems] = useState<AccountEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch || "");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<AccountEntry | null>(null);
   const [form, setForm] = useState({
@@ -44,6 +48,7 @@ const AccountEntriesPanel = () => {
   };
 
   useEffect(() => { fetchData(); }, []);
+  useEffect(() => { if (initialSearch) setSearch(initialSearch); }, [initialSearch]);
 
   const addTag = () => {
     const tag = tagInput.trim().toLowerCase();
