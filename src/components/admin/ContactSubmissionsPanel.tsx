@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon } from "lucide-react";
+import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { nb } from "date-fns/locale";
 
 interface Submission {
@@ -34,6 +35,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "new" | "contacted" | "archived">("all");
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const load = async () => {
     const { data } = await supabase
@@ -49,6 +51,15 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("contact_submissions").update({ status }).eq("id", id);
     toast.success(status === "contacted" ? "Markert som kontaktet" : "Arkivert");
+    await load();
+    onStatusChange?.();
+  };
+
+  const deleteSubmission = async (id: string) => {
+    await supabase.from("contact_submissions").delete().eq("id", id);
+    toast.success("Henvendelsen er slettet permanent");
+    setDeleteTarget(null);
+    setExpandedId(null);
     await load();
     onStatusChange?.();
   };
@@ -258,6 +269,13 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                         Gjenåpne
                       </button>
                     )}
+                    <button
+                      onClick={() => setDeleteTarget(s.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors ml-auto"
+                    >
+                      <Trash2 size={11} />
+                      Slett
+                    </button>
                   </div>
                 </div>
               )}
@@ -265,6 +283,27 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
           );
         })}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Denne handlingen kan ikke angres. Henvendelsen vil bli permanent slettet fra systemet.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTarget && deleteSubmission(deleteTarget)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Slett permanent
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
