@@ -41,7 +41,7 @@ const DocumentGenerator = ({ config }: Props) => {
     const loadCompany = async () => {
       const { data } = await supabase
         .from("customer_companies")
-        .select("id, company_name, org_number, industry")
+        .select("id, company_name, org_number, industry, logo_url")
         .limit(1)
         .maybeSingle();
       if (data) {
@@ -52,6 +52,10 @@ const DocumentGenerator = ({ config }: Props) => {
           orgNumber: prev.orgNumber || data.org_number || "",
           industry: prev.industry || data.industry || "",
         }));
+        // Auto-load company logo from settings
+        if (data.logo_url && !logoDataUrl) {
+          setLogoDataUrl(data.logo_url);
+        }
       }
     };
     loadCompany();
@@ -88,8 +92,11 @@ const DocumentGenerator = ({ config }: Props) => {
 
   const buildFullHtml = useCallback(() => {
     const date = new Date().toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" });
-    let html = `<div style="text-align:center;margin-bottom:2.5em;padding-bottom:1.5em;border-bottom:2px solid #333;">
-      <h1 style="font-size:24px;font-weight:bold;color:#000;margin-bottom:8px;font-family:'Georgia',serif;">${config.title}</h1>
+    let html = `<div style="text-align:center;margin-bottom:2.5em;padding-bottom:1.5em;border-bottom:2px solid #333;">`;
+    if (logoDataUrl) {
+      html += `<div style="margin-bottom:16px;"><img src="${logoDataUrl}" alt="Logo" style="max-height:80px;max-width:200px;margin:0 auto;display:block;object-fit:contain;" /></div>`;
+    }
+    html += `<h1 style="font-size:24px;font-weight:bold;color:#000;margin-bottom:8px;font-family:'Georgia',serif;">${config.title}</h1>
       <p style="font-size:13px;color:#555;margin:4px 0;">${form.companyName || "[Bedriftsnavn]"}</p>
       ${form.orgNumber ? `<p style="font-size:11px;color:#888;">Org.nr. ${form.orgNumber}</p>` : ""}
       <p style="font-size:11px;color:#888;margin-top:8px;">${date}</p>
