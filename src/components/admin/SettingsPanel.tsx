@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
+import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Link2, Download, Copy } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmployeesPanel from "@/components/admin/EmployeesPanel";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, isSameDay, isSameMonth, addYears, subYears } from "date-fns";
+import { nb } from "date-fns/locale";
 
-/* ─────────── Availability sub-panel (moved from MyBookingSettingsPanel) ─────────── */
+/* ─────────── Availability sub-panel ─────────── */
 
 const DAYS = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"];
 
 interface Availability {
   id?: string;
@@ -25,16 +28,30 @@ interface BlockedDate {
   reason: string | null;
 }
 
+interface Booking {
+  id: string;
+  booking_date: string;
+  booking_time: string;
+  customer_name: string;
+  company_name: string;
+  status: string;
+}
+
 const AvailabilityTab = () => {
   const { profile } = useAuth();
   const [bookingActive, setBookingActive] = useState(false);
   const [teamsLink, setTeamsLink] = useState("");
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
-  const [newBlockDate, setNewBlockDate] = useState("");
-  const [newBlockReason, setNewBlockReason] = useState("");
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [viewMode, setViewMode] = useState<"week" | "month" | "year">("week");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentYear, setCurrentYear] = useState(new Date());
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [newBlockReason, setNewBlockReason] = useState("");
+  const [showReasonFor, setShowReasonFor] = useState<string | null>(null);
 
   useEffect(() => { if (profile) loadData(); }, [profile]);
 
@@ -47,11 +64,14 @@ const AvailabilityTab = () => {
     if (avail && avail.length > 0) {
       setAvailability(avail.map(a => ({ id: a.id, day_of_week: a.day_of_week, start_time: a.start_time, end_time: a.end_time, active: a.active })));
     } else {
-      setAvailability([1, 2, 3, 4, 5].map(d => ({ day_of_week: d, start_time: "09:00", end_time: "17:00", active: true })));
+      setAvailability([1, 2, 3, 4, 5, 6, 7].map(d => ({ day_of_week: d, start_time: "09:00", end_time: "17:00", active: d <= 5 })));
     }
 
     const { data: blocked } = await supabase.from("advisor_blocked_dates").select("*").eq("profile_id", profile.id).order("blocked_date");
     setBlockedDates((blocked as BlockedDate[]) || []);
+
+    const { data: bk } = await supabase.from("bookings").select("id, booking_date, booking_time, customer_name, company_name, status").eq("advisor_id", profile.id).order("booking_date");
+    setBookings((bk as Booking[]) || []);
   };
 
   const saveAll = async () => {
@@ -69,10 +89,22 @@ const AvailabilityTab = () => {
     setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000);
   };
 
-  const addBlockedDate = async () => {
-    if (!profile || !newBlockDate) return;
-    await supabase.from("advisor_blocked_dates").insert({ profile_id: profile.id, blocked_date: newBlockDate, reason: newBlockReason || null });
-    setNewBlockDate(""); setNewBlockReason(""); loadData();
+  const toggleBlockDate = async (dateStr: string) => {
+    const existing = blockedDates.find(bd => bd.blocked_date === dateStr);
+    if (existing) {
+      await supabase.from("advisor_blocked_dates").delete().eq("id", existing.id);
+      setBlockedDates(prev => prev.filter(d => d.id !== existing.id));
+    } else {
+      setShowReasonFor(dateStr);
+    }
+  };
+
+  const confirmBlock = async () => {
+    if (!profile || !showReasonFor) return;
+    await supabase.from("advisor_blocked_dates").insert({ profile_id: profile.id, blocked_date: showReasonFor, reason: newBlockReason || null });
+    setShowReasonFor(null);
+    setNewBlockReason("");
+    loadData();
   };
 
   const removeBlockedDate = async (id: string) => {
@@ -82,21 +114,55 @@ const AvailabilityTab = () => {
 
   const toggleDay = (dayIndex: number) => setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, active: !a.active } : a));
   const updateTime = (dayIndex: number, field: "start_time" | "end_time", value: string) => setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, [field]: value } : a));
-  const addDay = (dayIndex: number) => {
-    if (availability.some(a => a.day_of_week === dayIndex)) return;
-    setAvailability(prev => [...prev, { day_of_week: dayIndex, start_time: "09:00", end_time: "17:00", active: true }].sort((a, b) => a.day_of_week - b.day_of_week));
+
+  const calendarFeedUrl = profile ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=feed&profile_id=${profile.id}` : "";
+  const outlookSubscribeUrl = profile ? `webcal://${calendarFeedUrl.replace(/^https?:\/\//, "")}` : "";
+
+  const copyFeedLink = () => {
+    navigator.clipboard.writeText(calendarFeedUrl);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
-  const missingDays = [1, 2, 3, 4, 5, 6, 7].filter(d => !availability.some(a => a.day_of_week === d));
+
+  const downloadBookingIcs = (bookingId: string) => {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=download_booking&booking_id=${bookingId}`;
+    window.open(url, "_blank");
+  };
+
+  const monthDays = useMemo(() => {
+    const start = startOfMonth(currentMonth);
+    const end = endOfMonth(currentMonth);
+    const days = eachDayOfInterval({ start, end });
+    const firstDayOfWeek = (getDay(start) + 6) % 7;
+    return { days, offset: firstDayOfWeek };
+  }, [currentMonth]);
+
+  const isDateBlocked = (date: Date) => blockedDates.some(bd => bd.blocked_date === format(date, "yyyy-MM-dd"));
+  const getBookingsForDate = (date: Date) => bookings.filter(b => b.booking_date === format(date, "yyyy-MM-dd"));
+  const isDayAvailable = (date: Date) => {
+    const dow = getDay(date) === 0 ? 7 : getDay(date);
+    return availability.find(a => a.day_of_week === dow)?.active ?? false;
+  };
+
+  const yearMonths = useMemo(() => {
+    const y = currentYear.getFullYear();
+    return Array.from({ length: 12 }, (_, i) => new Date(y, i, 1));
+  }, [currentYear]);
+
+  const getMonthBlockedCount = (m: Date) => blockedDates.filter(bd => bd.blocked_date.startsWith(format(m, "yyyy-MM"))).length;
+  const getMonthBookingCount = (m: Date) => bookings.filter(b => b.booking_date.startsWith(format(m, "yyyy-MM"))).length;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <p className="text-xs text-muted-foreground">Styr når kunder kan booke deg for 1-1 møter</p>
         <button onClick={saveAll} disabled={saving} className="h-9 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all">
           <Save size={13} /> {saving ? "Lagrer…" : saved ? "Lagret ✓" : "Lagre alt"}
         </button>
       </div>
 
+      {/* Toggle & Teams */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="glass rounded-2xl border border-border/20 p-5">
           <div className="flex items-center justify-between mb-3">
@@ -110,48 +176,130 @@ const AvailabilityTab = () => {
         <div className="glass rounded-2xl border border-border/20 p-5">
           <div className="flex items-center gap-2 mb-3"><Video size={14} className="text-primary" /><span className="text-sm font-medium">Microsoft Teams-lenke</span></div>
           <input value={teamsLink} onChange={e => setTeamsLink(e.target.value)} placeholder="https://teams.microsoft.com/l/meetup-join/…" className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          <p className="text-[10px] text-muted-foreground mt-2">Sendes automatisk til kunder ved bekreftet booking.</p>
         </div>
       </div>
 
-      <div className="glass rounded-2xl border border-border/20 p-5">
-        <div className="flex items-center gap-2 mb-4"><Clock size={14} className="text-primary" /><span className="text-sm font-medium">Ukeplan</span></div>
-        <div className="space-y-2">
-          {availability.map(slot => (
-            <div key={slot.day_of_week} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${slot.active ? "border-primary/20 bg-primary/5" : "border-border/10 bg-muted/20 opacity-60"}`}>
-              <button onClick={() => toggleDay(slot.day_of_week)} className={`w-8 h-8 rounded-lg text-xs font-medium flex items-center justify-center transition-all ${slot.active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                {DAYS[slot.day_of_week - 1]?.slice(0, 2)}
-              </button>
-              <span className="text-xs w-16 shrink-0">{DAYS[slot.day_of_week - 1]}</span>
-              {slot.active ? (
-                <div className="flex items-center gap-2 flex-1">
-                  <input type="time" value={slot.start_time} onChange={e => updateTime(slot.day_of_week, "start_time", e.target.value)} className="h-8 rounded-lg border border-border/30 bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
-                  <span className="text-xs text-muted-foreground">—</span>
-                  <input type="time" value={slot.end_time} onChange={e => updateTime(slot.day_of_week, "end_time", e.target.value)} className="h-8 rounded-lg border border-border/30 bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
-                </div>
-              ) : <span className="text-xs text-muted-foreground italic flex-1">Ikke tilgjengelig</span>}
-            </div>
-          ))}
-        </div>
-        {missingDays.length > 0 && (
-          <div className="mt-3 flex gap-2 flex-wrap">
-            {missingDays.map(d => (
-              <button key={d} onClick={() => addDay(d)} className="h-7 px-3 rounded-lg border border-dashed border-border/30 text-[11px] text-muted-foreground hover:text-foreground hover:border-primary/30 flex items-center gap-1 transition-all">
-                <Plus size={10} /> {DAYS[d - 1]}
-              </button>
+      {/* View mode tabs */}
+      <div className="flex items-center gap-1 bg-muted/30 border border-border/20 rounded-xl p-1 w-fit">
+        {(["week", "month", "year"] as const).map(mode => (
+          <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === mode ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            {mode === "week" ? "Ukeplan" : mode === "month" ? "Måned" : "Årsplan"}
+          </button>
+        ))}
+      </div>
+
+      {/* WEEK VIEW */}
+      {viewMode === "week" && (
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <div className="flex items-center gap-2 mb-4"><Clock size={14} className="text-primary" /><span className="text-sm font-medium">Ukeplan — faste tider</span></div>
+          <div className="space-y-2">
+            {availability.map(slot => (
+              <div key={slot.day_of_week} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${slot.active ? "border-primary/20 bg-primary/5" : "border-border/10 bg-muted/20 opacity-60"}`}>
+                <button onClick={() => toggleDay(slot.day_of_week)} className={`w-10 h-10 rounded-xl text-xs font-medium flex items-center justify-center transition-all ${slot.active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                  {DAYS[slot.day_of_week - 1]?.slice(0, 2)}
+                </button>
+                <span className="text-xs w-20 shrink-0 font-medium">{DAYS[slot.day_of_week - 1]}</span>
+                {slot.active ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input type="time" value={slot.start_time} onChange={e => updateTime(slot.day_of_week, "start_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
+                    <span className="text-xs text-muted-foreground">til</span>
+                    <input type="time" value={slot.end_time} onChange={e => updateTime(slot.day_of_week, "end_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
+                  </div>
+                ) : <span className="text-xs text-muted-foreground italic flex-1">Ikke tilgjengelig</span>}
+              </div>
             ))}
           </div>
-        )}
-      </div>
-
-      <div className="glass rounded-2xl border border-border/20 p-5">
-        <div className="flex items-center gap-2 mb-4"><CalendarDays size={14} className="text-destructive" /><span className="text-sm font-medium">Blokkerte datoer</span></div>
-        <div className="flex gap-2 mb-4">
-          <input type="date" value={newBlockDate} onChange={e => setNewBlockDate(e.target.value)} className="h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
-          <input value={newBlockReason} onChange={e => setNewBlockReason(e.target.value)} placeholder="Grunn (valgfritt)" className="flex-1 h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
-          <button onClick={addBlockedDate} disabled={!newBlockDate} className="h-9 px-4 rounded-xl bg-destructive/10 text-destructive text-xs font-medium hover:bg-destructive/20 disabled:opacity-50 flex items-center gap-1.5 transition-all"><Plus size={12} /> Blokker</button>
         </div>
-        {blockedDates.length === 0 ? <p className="text-xs text-muted-foreground text-center py-4">Ingen blokkerte datoer</p> : (
-          <div className="space-y-1.5">
+      )}
+
+      {/* MONTH VIEW */}
+      {viewMode === "month" && (
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="w-8 h-8 rounded-lg border border-border/20 flex items-center justify-center hover:bg-muted/50 transition-colors"><ChevronLeft size={14} /></button>
+            <span className="text-sm font-medium capitalize">{format(currentMonth, "MMMM yyyy", { locale: nb })}</span>
+            <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="w-8 h-8 rounded-lg border border-border/20 flex items-center justify-center hover:bg-muted/50 transition-colors"><ChevronRight size={14} /></button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {DAYS.map(d => <div key={d} className="text-center text-[10px] text-muted-foreground font-medium py-1">{d.slice(0, 2)}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: monthDays.offset }).map((_, i) => <div key={`empty-${i}`} />)}
+            {monthDays.days.map(day => {
+              const ds = format(day, "yyyy-MM-dd");
+              const blocked = isDateBlocked(day);
+              const dayBookings = getBookingsForDate(day);
+              const available = isDayAvailable(day);
+              const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+              const isToday = isSameDay(day, new Date());
+
+              return (
+                <button
+                  key={ds}
+                  onClick={() => !isPast && toggleBlockDate(ds)}
+                  disabled={isPast}
+                  className={`relative aspect-square rounded-xl text-xs font-medium flex flex-col items-center justify-center transition-all border ${
+                    blocked ? "bg-destructive/10 border-destructive/30 text-destructive" :
+                    isToday ? "border-primary/40 bg-primary/10 text-primary" :
+                    !available ? "bg-muted/30 border-border/10 text-muted-foreground" :
+                    "border-border/10 hover:border-primary/20 hover:bg-primary/5 text-foreground"
+                  } ${isPast ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                >
+                  <span>{day.getDate()}</span>
+                  {dayBookings.length > 0 && (
+                    <div className="flex gap-0.5 mt-0.5">
+                      {dayBookings.slice(0, 3).map((_, i) => <div key={i} className="w-1 h-1 rounded-full bg-primary" />)}
+                    </div>
+                  )}
+                  {blocked && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive" />}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-4 mt-4 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-primary" /> Booking</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-destructive" /> Blokkert</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded bg-muted/50 border border-border/20" /> Ikke tilgj.</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">Klikk på en dato for å blokkere/fjerne blokkering.</p>
+        </div>
+      )}
+
+      {/* YEAR VIEW */}
+      {viewMode === "year" && (
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => setCurrentYear(subYears(currentYear, 1))} className="w-8 h-8 rounded-lg border border-border/20 flex items-center justify-center hover:bg-muted/50 transition-colors"><ChevronLeft size={14} /></button>
+            <span className="text-sm font-medium">{currentYear.getFullYear()}</span>
+            <button onClick={() => setCurrentYear(addYears(currentYear, 1))} className="w-8 h-8 rounded-lg border border-border/20 flex items-center justify-center hover:bg-muted/50 transition-colors"><ChevronRight size={14} /></button>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            {yearMonths.map((m, i) => {
+              const blockedCount = getMonthBlockedCount(m);
+              const bookingCount = getMonthBookingCount(m);
+              const isCurrent = isSameMonth(m, new Date());
+              return (
+                <button key={i} onClick={() => { setCurrentMonth(m); setViewMode("month"); }}
+                  className={`rounded-xl border p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5 ${isCurrent ? "border-primary/30 bg-primary/5" : "border-border/20"}`}>
+                  <p className="text-sm font-medium">{MONTHS_SHORT[i]}</p>
+                  <div className="mt-2 space-y-1">
+                    {bookingCount > 0 && <p className="text-[10px] text-primary">{bookingCount} booking{bookingCount > 1 ? "er" : ""}</p>}
+                    {blockedCount > 0 && <p className="text-[10px] text-destructive">{blockedCount} blokkert</p>}
+                    {bookingCount === 0 && blockedCount === 0 && <p className="text-[10px] text-muted-foreground">Ingen hendelser</p>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Blocked dates list */}
+      {blockedDates.length > 0 && (
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <div className="flex items-center gap-2 mb-3"><CalendarDays size={14} className="text-destructive" /><span className="text-sm font-medium">Blokkerte datoer ({blockedDates.length})</span></div>
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
             {blockedDates.map(bd => (
               <div key={bd.id} className="flex items-center justify-between py-2 px-3 rounded-xl bg-destructive/5 border border-destructive/10">
                 <div>
@@ -162,7 +310,75 @@ const AvailabilityTab = () => {
               </div>
             ))}
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Block date reason modal */}
+      {showReasonFor && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowReasonFor(null)}>
+          <div className="bg-background rounded-2xl border border-border/20 p-6 w-full max-w-sm space-y-4 shadow-xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-medium">Blokker {new Date(showReasonFor).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}</h3>
+            <input value={newBlockReason} onChange={e => setNewBlockReason(e.target.value)} placeholder="Grunn (valgfritt)" className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" autoFocus />
+            <div className="flex gap-2">
+              <button onClick={confirmBlock} className="flex-1 h-10 rounded-xl bg-destructive text-destructive-foreground text-sm font-medium hover:opacity-90 transition-all">Blokker dato</button>
+              <button onClick={() => setShowReasonFor(null)} className="h-10 px-4 rounded-xl border border-border/30 text-sm hover:bg-muted/50 transition-all">Avbryt</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming bookings */}
+      {bookings.filter(b => b.booking_date >= format(new Date(), "yyyy-MM-dd")).length > 0 && (
+        <div className="glass rounded-2xl border border-border/20 p-5">
+          <div className="flex items-center gap-2 mb-3"><CalendarIcon size={14} className="text-primary" /><span className="text-sm font-medium">Kommende bookinger</span></div>
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {bookings.filter(b => b.booking_date >= format(new Date(), "yyyy-MM-dd")).slice(0, 10).map(b => (
+              <div key={b.id} className="flex items-center justify-between py-2 px-3 rounded-xl bg-primary/5 border border-primary/10">
+                <div>
+                  <span className="text-xs font-medium">{new Date(b.booking_date).toLocaleDateString("nb-NO", { weekday: "short", day: "numeric", month: "short" })} kl. {b.booking_time.slice(0, 5)}</span>
+                  <span className="text-[11px] text-muted-foreground ml-2">— {b.customer_name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full ${b.status === "confirmed" ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-muted text-muted-foreground border border-border/20"}`}>{b.status === "confirmed" ? "Bekreftet" : b.status === "pending" ? "Venter" : b.status}</span>
+                  <button onClick={() => downloadBookingIcs(b.id)} title="Last ned .ics" className="text-muted-foreground hover:text-primary transition-colors"><Download size={12} /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Calendar integration */}
+      <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
+        <div className="flex items-center gap-2"><Link2 size={14} className="text-primary" /><span className="text-sm font-medium">Kalenderintegrasjon</span></div>
+        <p className="text-xs text-muted-foreground">Koble dine bookinger og blokkerte datoer til Outlook, Google Calendar eller Apple Calendar — uten API-oppsett.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <button onClick={() => window.open(outlookSubscribeUrl)} className="flex items-center gap-3 p-4 rounded-xl border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all text-left">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><CalendarIcon size={18} className="text-primary" /></div>
+            <div>
+              <p className="text-xs font-medium">Abonner i Outlook / Apple Calendar</p>
+              <p className="text-[10px] text-muted-foreground">Åpner automatisk i din kalenderapp.</p>
+            </div>
+          </button>
+          <button onClick={copyFeedLink} className="flex items-center gap-3 p-4 rounded-xl border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all text-left">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">{copiedLink ? <Check size={18} className="text-primary" /> : <Copy size={18} className="text-primary" />}</div>
+            <div>
+              <p className="text-xs font-medium">{copiedLink ? "Kopiert!" : "Kopier kalender-URL"}</p>
+              <p className="text-[10px] text-muted-foreground">For Google Calendar: «Legg til URL».</p>
+            </div>
+          </button>
+        </div>
+
+        <div className="rounded-xl bg-muted/20 border border-border/10 p-4 space-y-2">
+          <p className="text-xs font-medium">Slik kobler du til Outlook:</p>
+          <ol className="text-[11px] text-muted-foreground space-y-1 list-decimal list-inside">
+            <li>Klikk «Abonner i Outlook» over, eller kopier URL-en.</li>
+            <li>I Outlook: Fil → Kontoinnstillinger → Internett-kalendere → Ny.</li>
+            <li>Lim inn URL-en og gi kalenderen et navn.</li>
+            <li>Alle bookinger og blokkerte datoer synkroniseres automatisk.</li>
+          </ol>
+        </div>
       </div>
     </div>
   );
