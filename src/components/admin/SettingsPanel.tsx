@@ -14,7 +14,7 @@ import { nb } from "date-fns/locale";
 const DAYS = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"];
 
-interface Availability {
+interface AvailabilitySlot {
   id?: string;
   day_of_week: number;
   start_time: string;
@@ -41,7 +41,7 @@ const AvailabilityTab = () => {
   const { profile } = useAuth();
   const [bookingActive, setBookingActive] = useState(false);
   const [teamsLink, setTeamsLink] = useState("");
-  const [availability, setAvailability] = useState<Availability[]>([]);
+  const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [saving, setSaving] = useState(false);
@@ -70,6 +70,7 @@ const AvailabilityTab = () => {
     if (avail && avail.length > 0) {
       setAvailability(avail.map(a => ({ id: a.id, day_of_week: a.day_of_week, start_time: a.start_time, end_time: a.end_time, active: a.active })));
     } else {
+      // Default: Mon-Fri 09-17, one slot per day
       setAvailability([1, 2, 3, 4, 5, 6, 7].map(d => ({ day_of_week: d, start_time: "09:00", end_time: "17:00", active: d <= 5 })));
     }
 
@@ -84,14 +85,23 @@ const AvailabilityTab = () => {
     if (!profile) return;
     setSaving(true);
     await supabase.from("profiles").update({ booking_active: bookingActive, teams_link: teamsLink || null } as any).eq("id", profile.id);
-    for (const slot of availability) {
-      if (slot.id) {
-        await supabase.from("advisor_availability").update({ start_time: slot.start_time, end_time: slot.end_time, active: slot.active }).eq("id", slot.id);
-      } else {
-        const { data } = await supabase.from("advisor_availability").insert({ profile_id: profile.id, day_of_week: slot.day_of_week, start_time: slot.start_time, end_time: slot.end_time, active: slot.active }).select().single();
-        if (data) slot.id = data.id;
+    
+    // Delete old availability and re-insert all
+    await supabase.from("advisor_availability").delete().eq("profile_id", profile.id);
+    const rows = availability.map(slot => ({
+      profile_id: profile.id,
+      day_of_week: slot.day_of_week,
+      start_time: slot.start_time,
+      end_time: slot.end_time,
+      active: slot.active,
+    }));
+    if (rows.length > 0) {
+      const { data } = await supabase.from("advisor_availability").insert(rows).select();
+      if (data) {
+        setAvailability(data.map(a => ({ id: a.id, day_of_week: a.day_of_week, start_time: a.start_time, end_time: a.end_time, active: a.active })));
       }
     }
+    
     setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000);
   };
 
@@ -118,8 +128,60 @@ const AvailabilityTab = () => {
     setBlockedDates(prev => prev.filter(d => d.id !== id));
   };
 
-  const toggleDay = (dayIndex: number) => setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, active: !a.active } : a));
-  const updateTime = (dayIndex: number, field: "start_time" | "end_time", value: string) => setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, [field]: value } : a));
+  // Group slots by day
+  const slotsByDay = useMemo(() => {
+    const grouped: Record<number, AvailabilitySlot[]> = {};
+    for (let d = 1; d <= 7; d++) grouped[d] = [];
+    availability.forEach(s => {
+      if (!grouped[s.day_of_week]) grouped[s.day_of_week] = [];
+      grouped[s.day_of_week].push(s);
+    });
+    return grouped;
+  }, [availability]);
+
+  const toggleDay = (dayIndex: number) => {
+    const daySlots = slotsByDay[dayIndex];
+    if (daySlots.length === 0) {
+      // Add default slot
+      setAvailability(prev => [...prev, { day_of_week: dayIndex, start_time: "09:00", end_time: "17:00", active: true }]);
+    } else {
+      const allActive = daySlots.every(s => s.active);
+      setAvailability(prev => prev.map(a => a.day_of_week === dayIndex ? { ...a, active: !allActive } : a));
+    }
+  };
+
+  const updateSlotTime = (dayIndex: number, slotIndex: number, field: "start_time" | "end_time", value: string) => {
+    let count = 0;
+    setAvailability(prev => prev.map(a => {
+      if (a.day_of_week === dayIndex) {
+        if (count === slotIndex) { count++; return { ...a, [field]: value }; }
+        count++;
+      }
+      return a;
+    }));
+  };
+
+  const addSlotToDay = (dayIndex: number) => {
+    const daySlots = slotsByDay[dayIndex];
+    const lastEnd = daySlots.length > 0 ? daySlots[daySlots.length - 1].end_time : "09:00";
+    // Calculate a reasonable start time (1h after last end)
+    const h = parseInt(lastEnd.slice(0, 2));
+    const m = lastEnd.slice(3, 5);
+    const newStart = `${String(Math.min(h + 1, 23)).padStart(2, "0")}:${m}`;
+    const newEnd = `${String(Math.min(h + 2, 23)).padStart(2, "0")}:${m}`;
+    setAvailability(prev => [...prev, { day_of_week: dayIndex, start_time: newStart, end_time: newEnd, active: true }]);
+  };
+
+  const removeSlotFromDay = (dayIndex: number, slotIndex: number) => {
+    let count = 0;
+    setAvailability(prev => prev.filter(a => {
+      if (a.day_of_week === dayIndex) {
+        if (count === slotIndex) { count++; return false; }
+        count++;
+      }
+      return true;
+    }));
+  };
 
   const calendarFeedUrl = profile ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=feed&profile_id=${profile.id}` : "";
   const outlookSubscribeUrl = profile ? `webcal://${calendarFeedUrl.replace(/^https?:\/\//, "")}` : "";
@@ -178,7 +240,7 @@ const AvailabilityTab = () => {
   const getBookingsForDate = (date: Date) => bookings.filter(b => b.booking_date === format(date, "yyyy-MM-dd"));
   const isDayAvailable = (date: Date) => {
     const dow = getDay(date) === 0 ? 7 : getDay(date);
-    return availability.find(a => a.day_of_week === dow)?.active ?? false;
+    return availability.some(a => a.day_of_week === dow && a.active);
   };
 
   const yearMonths = useMemo(() => {
@@ -230,22 +292,43 @@ const AvailabilityTab = () => {
       {viewMode === "week" && (
         <div className="glass rounded-2xl border border-border/20 p-5">
           <div className="flex items-center gap-2 mb-4"><Clock size={14} className="text-primary" /><span className="text-sm font-medium">Ukeplan — faste tider</span></div>
-          <div className="space-y-2">
-            {availability.map(slot => (
-              <div key={slot.day_of_week} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${slot.active ? "border-primary/20 bg-primary/5" : "border-border/10 bg-muted/20 opacity-60"}`}>
-                <button onClick={() => toggleDay(slot.day_of_week)} className={`w-10 h-10 rounded-xl text-xs font-medium flex items-center justify-center transition-all ${slot.active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                  {DAYS[slot.day_of_week - 1]?.slice(0, 2)}
-                </button>
-                <span className="text-xs w-20 shrink-0 font-medium">{DAYS[slot.day_of_week - 1]}</span>
-                {slot.active ? (
-                  <div className="flex items-center gap-2 flex-1">
-                    <input type="time" value={slot.start_time} onChange={e => updateTime(slot.day_of_week, "start_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
-                    <span className="text-xs text-muted-foreground">til</span>
-                    <input type="time" value={slot.end_time} onChange={e => updateTime(slot.day_of_week, "end_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
+          <p className="text-[11px] text-muted-foreground mb-4">Du kan legge til flere tidsrom per dag, f.eks. 08:00–10:00 og 11:00–12:00.</p>
+          <div className="space-y-3">
+            {DAYS.map((dayName, i) => {
+              const dayIndex = i + 1;
+              const daySlots = slotsByDay[dayIndex] || [];
+              const isActive = daySlots.some(s => s.active);
+              return (
+                <div key={dayIndex} className={`rounded-xl border transition-all ${isActive ? "border-primary/20 bg-primary/5" : "border-border/10 bg-muted/20 opacity-60"}`}>
+                  <div className="flex items-center gap-3 p-3">
+                    <button onClick={() => toggleDay(dayIndex)} className={`w-10 h-10 rounded-xl text-xs font-medium flex items-center justify-center transition-all shrink-0 ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                      {dayName.slice(0, 2)}
+                    </button>
+                    <span className="text-xs w-20 shrink-0 font-medium">{dayName}</span>
+                    <div className="flex-1 space-y-2">
+                      {!isActive && <span className="text-xs text-muted-foreground italic">Ikke tilgjengelig</span>}
+                      {daySlots.map((slot, si) => slot.active && (
+                        <div key={si} className="flex items-center gap-2">
+                          <input type="time" value={slot.start_time} onChange={e => updateSlotTime(dayIndex, si, "start_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
+                          <span className="text-xs text-muted-foreground">til</span>
+                          <input type="time" value={slot.end_time} onChange={e => updateSlotTime(dayIndex, si, "end_time", e.target.value)} className="h-9 rounded-xl border border-border/30 bg-background px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40" />
+                          {daySlots.filter(s => s.active).length > 1 && (
+                            <button onClick={() => removeSlotFromDay(dayIndex, si)} className="text-muted-foreground hover:text-destructive transition-colors shrink-0" title="Fjern tidsrom">
+                              <Trash2 size={12} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {isActive && (
+                      <button onClick={() => addSlotToDay(dayIndex)} className="shrink-0 w-8 h-8 rounded-lg border border-dashed border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all" title="Legg til tidsrom">
+                        <Plus size={12} />
+                      </button>
+                    )}
                   </div>
-                ) : <span className="text-xs text-muted-foreground italic flex-1">Ikke tilgjengelig</span>}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -311,23 +394,49 @@ const AvailabilityTab = () => {
             <span className="text-sm font-medium">{currentYear.getFullYear()}</span>
             <button onClick={() => setCurrentYear(addYears(currentYear, 1))} className="w-8 h-8 rounded-lg border border-border/20 flex items-center justify-center hover:bg-muted/50 transition-colors"><ChevronRight size={14} /></button>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-            {yearMonths.map((m, i) => {
-              const blockedCount = getMonthBlockedCount(m);
-              const bookingCount = getMonthBookingCount(m);
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {yearMonths.map((m, mi) => {
+              const mStart = startOfMonth(m);
+              const mEnd = endOfMonth(m);
+              const mDays = eachDayOfInterval({ start: mStart, end: mEnd });
+              const mOffset = (getDay(mStart) + 6) % 7;
               const isCurrent = isSameMonth(m, new Date());
               return (
-                <button key={i} onClick={() => { setCurrentMonth(m); setViewMode("month"); }}
-                  className={`rounded-xl border p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5 ${isCurrent ? "border-primary/30 bg-primary/5" : "border-border/20"}`}>
-                  <p className="text-sm font-medium">{MONTHS_SHORT[i]}</p>
-                  <div className="mt-2 space-y-1">
-                    {bookingCount > 0 && <p className="text-[10px] text-primary">{bookingCount} booking{bookingCount > 1 ? "er" : ""}</p>}
-                    {blockedCount > 0 && <p className="text-[10px] text-destructive">{blockedCount} blokkert</p>}
-                    {bookingCount === 0 && blockedCount === 0 && <p className="text-[10px] text-muted-foreground">Ingen hendelser</p>}
+                <div key={mi} className={`rounded-xl border p-3 transition-all ${isCurrent ? "border-primary/30 bg-primary/5" : "border-border/20"}`}>
+                  <p className="text-xs font-semibold mb-2 text-center">{MONTHS_SHORT[mi]}</p>
+                  <div className="grid grid-cols-7 gap-px">
+                    {["M","T","O","T","F","L","S"].map((d, di) => <div key={di} className="text-center text-[8px] text-muted-foreground py-0.5">{d}</div>)}
+                    {Array.from({ length: mOffset }).map((_, i) => <div key={`e-${i}`} />)}
+                    {mDays.map(day => {
+                      const ds = format(day, "yyyy-MM-dd");
+                      const blocked = isDateBlocked(day);
+                      const hasBooking = getBookingsForDate(day).length > 0;
+                      const available = isDayAvailable(day);
+                      const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+                      const isToday = isSameDay(day, new Date());
+                      return (
+                        <button key={ds} onClick={() => !isPast && toggleBlockDate(ds)} disabled={isPast}
+                          className={`aspect-square rounded text-[9px] flex items-center justify-center transition-all ${
+                            blocked ? "bg-destructive/20 text-destructive font-bold" :
+                            isToday ? "bg-primary/20 text-primary font-bold" :
+                            hasBooking ? "bg-primary/10 text-primary" :
+                            !available ? "text-muted-foreground/40" :
+                            "text-foreground hover:bg-primary/10"
+                          } ${isPast ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+                        >
+                          {day.getDate()}
+                        </button>
+                      );
+                    })}
                   </div>
-                </button>
+                </div>
               );
             })}
+          </div>
+          <div className="flex items-center gap-4 mt-4 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-primary" /> Booking</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-destructive" /> Blokkert</span>
+            <span>Klikk på en dag for å blokkere/fjerne.</span>
           </div>
         </div>
       )}
