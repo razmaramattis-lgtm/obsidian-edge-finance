@@ -16,7 +16,7 @@ interface Booking {
   created_at: string;
 }
 
-const BookingsPanel = () => {
+const BookingsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [tab, setTab] = useState<"bookings" | "availability" | "blocked">("bookings");
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
   const [availability, setAvailability] = useState<Availability[]>([]);
@@ -80,6 +80,7 @@ const BookingsPanel = () => {
   const updateBookingStatus = async (id: string, status: string) => {
     await supabase.from("bookings").update({ status }).eq("id", id);
     fetchAll();
+    onStatusChange?.();
   };
 
   const saveTeamsLink = async (bookingId: string) => {

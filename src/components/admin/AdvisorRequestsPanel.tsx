@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Check, X, Clock, Building2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
-const AdvisorRequestsPanel = () => {
+const AdvisorRequestsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [advisors, setAdvisors] = useState<any[]>([]);
@@ -35,12 +35,14 @@ const AdvisorRequestsPanel = () => {
     await supabase.from("advisor_requests").update({ status: "approved" }).eq("id", req.id);
     toast.success("Godkjent og rådgiver tildelt");
     load();
+    onStatusChange?.();
   };
 
   const handleReject = async (id: string) => {
     await supabase.from("advisor_requests").update({ status: "rejected" }).eq("id", id);
     toast.success("Avslått");
     load();
+    onStatusChange?.();
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;

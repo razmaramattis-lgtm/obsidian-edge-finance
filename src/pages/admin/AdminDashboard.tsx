@@ -91,6 +91,8 @@ const AdminDashboard = () => {
   const visibleItems = navItems.filter(item => !item.adminOnly || isAdmin);
   const groups = [...new Set(visibleItems.map(i => i.group))];
 
+  const refreshNotifications = notifications.refresh;
+
   const renderPanel = () => {
     switch (activePanel) {
       case "employees": return <EmployeesPanel />;
@@ -108,14 +110,14 @@ const AdminDashboard = () => {
       case "knowledge": return <KnowledgeBasePanel />;
       case "datacenter": return <DataCenterPanel />;
       case "courses": return <CoursesPanel />;
-      case "bookings": return <BookingsPanel />;
+      case "bookings": return <BookingsPanel onStatusChange={refreshNotifications} />;
       case "mybooking": return <MyBookingSettingsPanel />;
       case "customers": return <CustomersPanel />;
-      case "partner_requests": return <PartnerRequestsPanel />;
-      case "advisor_requests": return <AdvisorRequestsPanel />;
-      case "employee_invitations": return <EmployeeInvitationsPanel />;
+      case "partner_requests": return <PartnerRequestsPanel onStatusChange={refreshNotifications} />;
+      case "advisor_requests": return <AdvisorRequestsPanel onStatusChange={refreshNotifications} />;
+      case "employee_invitations": return <EmployeeInvitationsPanel onStatusChange={refreshNotifications} />;
       case "doc_templates": return <DocumentTemplatesPanel />;
-      case "benefit_applications": return <BenefitApplicationsPanel />;
+      case "benefit_applications": return <BenefitApplicationsPanel onStatusChange={refreshNotifications} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
