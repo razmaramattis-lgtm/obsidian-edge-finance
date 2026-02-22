@@ -385,6 +385,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/ressurser?tab=blogg" className="text-foreground/70 hover:text-foreground transition-colors">Blogg</Link>
                 <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground transition-colors">Guider</Link>
                 <Link to="/ressurser?tab=arkiv" className="text-foreground/70 hover:text-foreground transition-colors">Arkiv & maler</Link>
+                <Link to="/kontohjelp" className="text-foreground/70 hover:text-foreground transition-colors">Kontohjelp</Link>
                 <Link to="/ressurser/skattekalender" className="text-foreground/70 hover:text-foreground transition-colors">Skattekalender</Link>
                 <Link to="/priser" className="text-foreground/70 hover:text-foreground transition-colors">Priser</Link>
                 <Link to="/metoden" className="text-foreground/70 hover:text-foreground transition-colors">Vår metode</Link>
@@ -398,8 +399,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/kontakt" className="text-foreground/70 hover:text-foreground transition-colors">Kontakt oss</Link>
                 <Link to="/kunde/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors">Kundeportal</Link>
                 <Link to="/faq" className="text-foreground/70 hover:text-foreground transition-colors">Vanlige spørsmål</Link>
-                <a href="mailto:firmapost@avargo.no" className="text-foreground/70 hover:text-foreground transition-colors">firmapost@avargo.no</a>
-                <a href="tel:+4722000000" className="text-foreground/70 hover:text-foreground transition-colors">+47 22 00 00 00</a>
+                <a href="mailto:kontakt@avargo.no" className="text-foreground/70 hover:text-foreground transition-colors">kontakt@avargo.no</a>
               </div>
             </div>
           </div>
