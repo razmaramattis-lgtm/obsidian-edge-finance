@@ -82,7 +82,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 ];
 
 const NAV_ORDER_KEY = "admin-sidebar-order";
-const DISMISSED_KEY = "admin-dismissed-notifications";
+
 
 function loadNavOrder(): Panel[] | null {
   try {
@@ -96,17 +96,6 @@ function saveNavOrder(order: Panel[]) {
   localStorage.setItem(NAV_ORDER_KEY, JSON.stringify(order));
 }
 
-function loadDismissed(): string[] {
-  try {
-    const raw = localStorage.getItem(DISMISSED_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return [];
-}
-
-function saveDismissed(ids: string[]) {
-  localStorage.setItem(DISMISSED_KEY, JSON.stringify(ids));
-}
 
 const AdminDashboard = () => {
   const { profile, signOut, isAdmin } = useAuth();
@@ -116,7 +105,6 @@ const AdminDashboard = () => {
   const [editingSidebar, setEditingSidebar] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [bellOpen, setBellOpen] = useState(false);
-  const [dismissedNotifications, setDismissedNotifications] = useState<string[]>(loadDismissed);
   const bellRef = useRef<HTMLDivElement>(null);
   const notifications = useAdminNotifications();
 
@@ -158,29 +146,8 @@ const AdminDashboard = () => {
     navigate("/");
   };
 
-  // Notification items
-  const notificationItems = [
-    { key: "partner_requests", count: notifications.partnerRequests, label: "Avtaleforespørsler", icon: Inbox, panel: "partner_requests" as Panel },
-    { key: "advisor_requests", count: notifications.advisorRequests, label: "Rådgiverforespørsler", icon: Users, panel: "advisor_requests" as Panel },
-    { key: "employee_invitations", count: notifications.employeeInvitations, label: "Ansattinvitasjoner", icon: UserPlus, panel: "employee_invitations" as Panel },
-    { key: "benefit_applications", count: notifications.benefitApplications, label: "Fordelsavtale-søknader", icon: Handshake, panel: "benefit_applications" as Panel },
-    { key: "bookings", count: notifications.pendingBookings, label: "Ventende bookinger", icon: CalendarDays, panel: "bookings" as Panel },
-    { key: "contact_submissions", count: notifications.contactSubmissions, label: "Nye henvendelser", icon: FileText, panel: "overview" as Panel },
-  ];
-
-  const activeNotifications = notificationItems.filter(n => n.count > 0 && !dismissedNotifications.includes(n.key));
-  const activeTotal = activeNotifications.reduce((sum, n) => sum + n.count, 0);
-
-  const dismissNotification = (key: string) => {
-    const next = [...dismissedNotifications, key];
-    setDismissedNotifications(next);
-    saveDismissed(next);
-  };
-
-  const clearAllDismissed = () => {
-    setDismissedNotifications([]);
-    saveDismissed([]);
-  };
+  // Active total from hook
+  const activeTotal = notifications.total;
 
   // Map panel IDs to notification counts
   const badgeMap: Partial<Record<Panel, number>> = {
@@ -442,48 +409,46 @@ const AdminDashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: -8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-border/20 bg-background shadow-2xl z-50 overflow-hidden"
+                className="absolute right-0 top-full mt-2 w-96 rounded-2xl border border-border/20 bg-background shadow-2xl z-50 overflow-hidden"
               >
-                <div className="px-4 py-3 border-b border-border/10 flex items-center justify-between">
-                  <h3 className="text-sm font-medium">Varsler</h3>
-                  {dismissedNotifications.length > 0 && (
-                    <button onClick={clearAllDismissed} className="text-[10px] text-primary hover:underline">
-                      Vis alle igjen
-                    </button>
-                  )}
+                <div className="px-4 py-3 border-b border-border/10">
+                  <h3 className="text-sm font-medium">Varsler ({activeTotal})</h3>
                 </div>
-                <div className="max-h-80 overflow-y-auto">
-                  {activeNotifications.length === 0 ? (
+                <div className="max-h-96 overflow-y-auto divide-y divide-border/5">
+                  {notifications.items.length === 0 ? (
                     <div className="px-4 py-8 text-center">
                       <Bell size={20} className="mx-auto text-muted-foreground/30 mb-2" />
-                      <p className="text-xs text-muted-foreground">Ingen aktive varsler</p>
+                      <p className="text-xs text-muted-foreground">Ingen ventende oppgaver</p>
                     </div>
                   ) : (
-                    activeNotifications.map(item => (
+                    notifications.items.map(item => (
                       <div
-                        key={item.key}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors group border-b border-border/5 last:border-0"
+                        key={item.id}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors group"
                       >
                         <button
-                          onClick={() => { setActivePanel(item.panel); setBellOpen(false); }}
-                          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                          onClick={() => { setActivePanel(item.category as Panel); setBellOpen(false); }}
+                          className="flex-1 min-w-0 text-left"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
-                            <item.icon size={14} className="text-destructive" strokeWidth={1.5} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">{item.label}</p>
-                            <p className="text-[10px] text-muted-foreground">{item.count} venter</p>
-                          </div>
-                          <ArrowRight size={11} className="text-muted-foreground/30 group-hover:text-primary shrink-0" />
+                          <p className="text-xs font-medium truncate">{item.label}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{item.sublabel}</p>
                         </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); dismissNotification(item.key); }}
-                          className="shrink-0 p-1.5 rounded-lg text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100"
-                          title="Fjern varsel"
-                        >
-                          <X size={12} />
-                        </button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={async (e) => { e.stopPropagation(); await notifications.approve(item); }}
+                            className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-green-600 hover:bg-green-500/10 transition-colors"
+                            title="Godkjenn"
+                          >
+                            <Check size={13} />
+                          </button>
+                          <button
+                            onClick={async (e) => { e.stopPropagation(); await notifications.reject(item); }}
+                            className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            title="Avslå"
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
                       </div>
                     ))
                   )}
