@@ -313,7 +313,16 @@ const AdminDashboard = () => {
           return (
             <div key={group}>
               <button
-                onClick={() => setCollapsedGroups(prev => ({ ...prev, [group]: !prev[group] }))}
+                onClick={() => setCollapsedGroups(prev => {
+                  const isCurrentlyCollapsed = prev[group] ?? false;
+                  // Collapse all groups, then toggle the clicked one
+                  const allCollapsed: Record<string, boolean> = {};
+                  groups.forEach(g => { allCollapsed[g] = true; });
+                  if (isCurrentlyCollapsed) {
+                    allCollapsed[group] = false; // open this one
+                  }
+                  return allCollapsed;
+                })}
                 className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-muted-foreground transition-colors"
               >
                 <ChevronDown
