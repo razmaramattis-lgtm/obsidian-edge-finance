@@ -38,4 +38,3 @@ Disallow: /admin/
 Disallow: /kunde/
 
 Sitemap: https://avargo.no/sitemap.xml
-Sitemap: https://zgujpuxizstchqgdzwng.supabase.co/functions/v1/sitemap
