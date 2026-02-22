@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, ChevronRight, Phone, CheckCircle2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
-import type { LucideIcon } from "lucide-react";
+
 
 export interface ServicePageProps {
   meta: {
@@ -43,11 +42,8 @@ const ServicePageTemplate = ({
     <section className="py-28 md:py-44 relative overflow-hidden">
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-4xl"
+        <div
+          className="max-w-4xl animate-fade-up"
         >
           <Link
             to="/tjenester"
@@ -79,7 +75,7 @@ const ServicePageTemplate = ({
               Se priser
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
 

@@ -1,6 +1,4 @@
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -9,19 +7,39 @@ interface AnimatedSectionProps {
 }
 
 const AnimatedSection = ({ children, className = "", delay = 0 }: AnimatedSectionProps) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-60px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: "easeOut" }}
       className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.5s ease-out ${delay}s, transform 0.5s ease-out ${delay}s`,
+        willChange: visible ? "auto" : "opacity, transform",
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
