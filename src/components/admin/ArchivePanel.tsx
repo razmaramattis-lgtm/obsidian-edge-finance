@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical, Globe, Lock, CheckSquare, Square } from "lucide-react";
+import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical, Globe, Lock, CheckSquare, Square, Users } from "lucide-react";
 import { toast } from "sonner";
 
 interface ArchiveFile {
@@ -12,6 +12,7 @@ interface ArchiveFile {
   file_name: string;
   file_size: string;
   active: boolean;
+  visibility: string;
 }
 
 interface ArchiveCategory {
@@ -29,7 +30,7 @@ const ArchivePanel = () => {
   const [editingCat, setEditingCat] = useState<ArchiveCategory | null>(null);
   const [catName, setCatName] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "", category: "", active: true });
+  const [form, setForm] = useState({ name: "", description: "", category: "", active: true, visibility: "public" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
@@ -59,11 +60,14 @@ const ArchivePanel = () => {
     if (!error && uploadData) {
       const { data: { publicUrl } } = supabase.storage.from("archive-files").getPublicUrl(path);
       await supabase.from("archive_files").insert([{
-        ...form, file_url: publicUrl, file_name: selectedFile.name,
+        name: form.name, description: form.description, category: form.category,
+        active: form.visibility === "public",
+        visibility: form.visibility,
+        file_url: publicUrl, file_name: selectedFile.name,
         file_size: `${(selectedFile.size / 1024).toFixed(0)} KB`,
-      }]);
+      } as any]);
       setShowForm(false); setSelectedFile(null);
-      setForm({ name: "", description: "", category: categories[0]?.name || "", active: true });
+      setForm({ name: "", description: "", category: categories[0]?.name || "", active: true, visibility: "public" });
       fetchAll();
     }
     setUploading(false);
@@ -114,9 +118,21 @@ const ArchivePanel = () => {
     }
   };
 
-  const toggleVisibility = async (file: ArchiveFile) => {
-    await supabase.from("archive_files").update({ active: !file.active }).eq("id", file.id);
+  const cycleVisibility = async (file: ArchiveFile) => {
+    const order = ["public", "customer", "internal"];
+    const current = file.visibility || (file.active ? "public" : "internal");
+    const next = order[(order.indexOf(current) + 1) % order.length];
+    await supabase.from("archive_files").update({
+      visibility: next,
+      active: next === "public",
+    } as any).eq("id", file.id);
     fetchAll();
+  };
+
+  const visLabel = (v: string) => {
+    if (v === "public") return { text: "Offentlig", icon: Globe, cls: "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20" };
+    if (v === "customer") return { text: "Kundeportal", icon: Users, cls: "bg-primary/10 text-primary hover:bg-primary/20" };
+    return { text: "Kun intern", icon: Lock, cls: "bg-muted/50 text-muted-foreground hover:bg-muted" };
   };
 
   const saveCat = async () => {
@@ -214,6 +230,12 @@ const ArchivePanel = () => {
           </select>
           <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Kort beskrivelse"
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          <select value={form.visibility} onChange={e => setForm({ ...form, visibility: e.target.value })}
+            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+            <option value="public">🌐 Offentlig (alle kan se)</option>
+            <option value="customer">👥 Kundeportal (kun innloggede kunder)</option>
+            <option value="internal">🔒 Kun intern (ansatte)</option>
+          </select>
           <div className="flex gap-2">
             <button type="submit" disabled={uploading || !selectedFile} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
               {uploading ? "Laster opp…" : "Last opp"}
@@ -243,13 +265,16 @@ const ArchivePanel = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => toggleVisibility(file)}
-                      className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${
-                        file.active ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                      }`}>
-                      {file.active ? <Globe size={11} /> : <Lock size={11} />}
-                      {file.active ? "Offentlig" : "Kun intern"}
-                    </button>
+                    {(() => {
+                      const v = visLabel(file.visibility || (file.active ? "public" : "internal"));
+                      return (
+                        <button onClick={() => cycleVisibility(file)}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${v.cls}`}>
+                          <v.icon size={11} />
+                          {v.text}
+                        </button>
+                      );
+                    })()}
                     {file.file_url && (
                       <a href={file.file_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                         <Download size={14} />
