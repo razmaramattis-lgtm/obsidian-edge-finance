@@ -25,10 +25,11 @@ type TabId = (typeof TABS)[number]["id"];
 interface OrgResourcesPanelProps {
   onStatusChange?: () => void;
   initialSearch?: string;
+  initialTab?: string;
 }
 
-const OrgResourcesPanel = ({ onStatusChange, initialSearch }: OrgResourcesPanelProps) => {
-  const [tab, setTab] = useState<TabId>("datacenter");
+const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab }: OrgResourcesPanelProps) => {
+  const [tab, setTab] = useState<TabId>((initialTab as TabId) || "datacenter");
 
   return (
     <div className="space-y-6">
