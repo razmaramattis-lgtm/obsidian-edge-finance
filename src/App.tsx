@@ -126,7 +126,7 @@ const App = () => (
                 {/* Admin routes (no Layout wrapper) */}
                 <Route path="/admin/logg-inn" element={<AdminLogin />} />
                 <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-                <Route path="/admin" element={<Navigate to="/admin/logg-inn" replace />} />
+                <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
 
                 {/* Customer routes */}
                 <Route path="/kunde/logg-inn" element={<KundeLogin />} />
