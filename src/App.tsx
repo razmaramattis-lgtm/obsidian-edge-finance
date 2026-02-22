@@ -92,10 +92,9 @@ const EnergiMiljo = lazy(() => import("./pages/bransjer/EnergiMiljo"));
 
 const queryClient = new QueryClient();
 
-// Prefetch critical routes after initial load for instant navigation
+// Prefetch critical routes immediately after initial load
 const prefetchRoutes = () => {
   const prefetch = (fn: () => Promise<unknown>) => fn().catch(() => {});
-  // Priority 1: Most visited pages from nav
   prefetch(() => import("./pages/Pricing"));
   prefetch(() => import("./pages/Contact"));
   prefetch(() => import("./pages/Metoden"));
@@ -106,8 +105,9 @@ const prefetchRoutes = () => {
   prefetch(() => import("./pages/FAQ"));
   prefetch(() => import("./pages/admin/AdminLogin"));
   prefetch(() => import("./pages/kunde/KundeLogin"));
+  prefetch(() => import("./pages/Personvern"));
+  prefetch(() => import("./pages/Vilkar"));
 
-  // Priority 2: Popular sub-pages (delayed)
   setTimeout(() => {
     prefetch(() => import("./pages/tjenester/Regnskapsforer"));
     prefetch(() => import("./pages/tjenester/CFO"));
@@ -124,13 +124,11 @@ const prefetchRoutes = () => {
     prefetch(() => import("./pages/Skattekalender"));
     prefetch(() => import("./pages/Kontohjelp"));
     prefetch(() => import("./pages/BlogListing"));
-  }, 1500);
+  }, 500);
 };
 
 const PageFallback = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-  </div>
+  <div className="min-h-screen bg-background" />
 );
 
 // Protected route for admin dashboard
@@ -151,11 +149,10 @@ const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
 
 const PrefetchTrigger = () => {
   useEffect(() => {
-    // Prefetch after initial paint + idle time
     if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(prefetchRoutes, { timeout: 3000 });
+      (window as any).requestIdleCallback(prefetchRoutes, { timeout: 1000 });
     } else {
-      setTimeout(prefetchRoutes, 2000);
+      setTimeout(prefetchRoutes, 500);
     }
   }, []);
   return null;
