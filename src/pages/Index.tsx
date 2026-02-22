@@ -124,11 +124,25 @@ const Index = () => {
           "description": "AI-drevet regnskapsbyrå med dedikerte regnskapsførere, skatteoptimalisering og rådgivning for ambisiøse selskaper i Norge.",
           "url": "https://avargo.no",
           "logo": "https://avargo.no/favicon.ico",
+          "image": "https://avargo.no/favicon.ico",
           "email": "firmapost@avargo.no",
+          "telephone": "+4735000000",
           "address": {
             "@type": "PostalAddress",
+            "streetAddress": "Oscars gate 2B",
+            "addressLocality": "Skien",
+            "postalCode": "3714",
+            "addressRegion": "Vestfold og Telemark",
             "addressCountry": "NO"
           },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 59.2084,
+            "longitude": 9.6069
+          },
+          "openingHoursSpecification": [
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "16:00" }
+          ],
           "areaServed": {
             "@type": "Country",
             "name": "Norway"
