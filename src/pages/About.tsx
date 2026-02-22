@@ -58,7 +58,7 @@ const About = () => {
                 Derfor startet vi Avargo. Et regnskapsbyrå bygget rundt mennesker, ikke systemer. Der du får én fast regnskapsfører som faktisk kjenner selskapet ditt, forsterket av AI-verktøy som gjør at vi oppdager ting andre overser.
               </p>
               <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-light italic">
-                Vi startet Avargo fordi vi selv var kunder som fortjente bedre. Nå bygger vi det for deg.
+                Vi startet Avargo fordi vi som autoriserte regnskapsførere så hva markedet manglet — og bygde det selv.
               </p>
             </div>
           </AnimatedSection>
