@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { CalendarDays, Clock, Save, Trash2, Plus, Video, Power } from "lucide-react";
+import { CalendarDays, Clock, Save, Trash2, Plus, Video, Power, HelpCircle, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const DAYS = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
@@ -30,6 +30,7 @@ const MyBookingSettingsPanel = () => {
   const [newBlockReason, setNewBlockReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showTeamsGuide, setShowTeamsGuide] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -191,8 +192,58 @@ const MyBookingSettingsPanel = () => {
           <input value={teamsLink} onChange={e => setTeamsLink(e.target.value)} placeholder="https://teams.microsoft.com/l/meetup-join/…"
             className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30" />
           <p className="text-[10px] text-muted-foreground mt-2">Din faste Teams-møtelenke som sendes til kunder ved bekreftet booking.</p>
+          <button onClick={() => setShowTeamsGuide(prev => !prev)} className="mt-3 text-[11px] text-primary hover:underline flex items-center gap-1">
+            <HelpCircle size={12} /> {showTeamsGuide ? "Skjul brukermanual" : "Hvordan koble opp Teams?"}
+          </button>
         </div>
       </div>
+
+      {/* Teams setup guide */}
+      {showTeamsGuide && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+          className="glass rounded-2xl border border-primary/20 p-5 bg-primary/5">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2"><Video size={14} className="text-primary" /> Brukermanual: Koble opp Microsoft Teams</h3>
+          <div className="space-y-4 text-xs text-muted-foreground">
+            <div>
+              <p className="font-medium text-foreground mb-1 flex items-center gap-1"><ChevronRight size={12} className="text-primary" /> Steg 1 — Opprett et fast møterom i Teams</p>
+              <ol className="list-decimal list-inside space-y-1 ml-4">
+                <li>Åpne <strong>Microsoft Teams</strong> (desktop eller web).</li>
+                <li>Gå til <strong>Kalender</strong> i venstremenyen.</li>
+                <li>Klikk <strong>«Nytt møte»</strong> øverst til høyre.</li>
+                <li>Fyll inn tittel, f.eks. <em>«1-1 Regnskap – [Ditt navn]»</em>.</li>
+                <li>Du trenger <strong>ikke</strong> legge til deltakere eller velge tidspunkt — dette er en gjenbrukbar lenke.</li>
+                <li>Klikk <strong>«Lagre»</strong> for å opprette møtet.</li>
+              </ol>
+            </div>
+            <div>
+              <p className="font-medium text-foreground mb-1 flex items-center gap-1"><ChevronRight size={12} className="text-primary" /> Steg 2 — Kopier møtelenken</p>
+              <ol className="list-decimal list-inside space-y-1 ml-4">
+                <li>Åpne møtet du nettopp opprettet fra kalenderen.</li>
+                <li>Finn feltet <strong>«Microsoft Teams-møte»</strong> eller <strong>«Bli med i Teams-møte»</strong>.</li>
+                <li>Høyreklikk på lenken og velg <strong>«Kopier lenkeadresse»</strong>.</li>
+                <li>Lenken ser typisk slik ut: <code className="bg-muted px-1.5 py-0.5 rounded text-[10px] break-all">https://teams.microsoft.com/l/meetup-join/...</code></li>
+              </ol>
+            </div>
+            <div>
+              <p className="font-medium text-foreground mb-1 flex items-center gap-1"><ChevronRight size={12} className="text-primary" /> Steg 3 — Lim inn lenken her</p>
+              <ol className="list-decimal list-inside space-y-1 ml-4">
+                <li>Lim inn den kopierte lenken i feltet <strong>«Microsoft Teams-lenke»</strong> over.</li>
+                <li>Klikk <strong>«Lagre alt»</strong> øverst til høyre.</li>
+                <li>Lenken blir nå automatisk sendt til kunder når en booking bekreftes.</li>
+              </ol>
+            </div>
+            <div className="rounded-xl bg-primary/10 border border-primary/20 p-3 mt-2">
+              <p className="font-medium text-foreground mb-1">💡 Tips</p>
+              <ul className="list-disc list-inside space-y-1 ml-1">
+                <li>Bruk én fast møtelenke — du trenger ikke opprette nytt møte for hver booking.</li>
+                <li>Kunder mottar lenken automatisk i sin bekreftelses-e-post med ICS-kalenderfil.</li>
+                <li>Du kan endre lenken når som helst ved å oppdatere feltet og lagre på nytt.</li>
+                <li>Sørg for at «Tilgjengelig for booking» er slått <strong>på</strong> for å være synlig i bookingkalenderen.</li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Weekly schedule with multiple slots */}
       <div className="glass rounded-2xl border border-border/20 p-5">
