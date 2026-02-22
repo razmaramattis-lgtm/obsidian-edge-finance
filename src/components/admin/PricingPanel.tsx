@@ -11,6 +11,7 @@ interface Plan {
   features: string[];
   highlighted: boolean;
   active: boolean;
+  sort_order: number;
 }
 
 const PricingPanel = () => {
@@ -18,7 +19,7 @@ const PricingPanel = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Plan | null>(null);
-  const [form, setForm] = useState({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true });
+  const [form, setForm] = useState({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0 });
 
   const fetch = async () => {
     const { data } = await supabase.from("pricing_plans").select("*").order("sort_order");
@@ -29,14 +30,14 @@ const PricingPanel = () => {
   useEffect(() => { fetch(); }, []);
 
   const save = async () => {
-    const payload = { ...form, price: Number(form.price), features: form.features.split("\n").filter(Boolean) };
+    const payload = { ...form, price: Number(form.price), sort_order: Number(form.sort_order), features: form.features.split("\n").filter(Boolean) };
     if (editing) {
       await supabase.from("pricing_plans").update(payload).eq("id", editing.id);
     } else {
       await supabase.from("pricing_plans").insert([payload]);
     }
     setShowForm(false); setEditing(null);
-    setForm({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true });
+    setForm({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0 });
     fetch();
   };
 
@@ -49,7 +50,7 @@ const PricingPanel = () => {
   const startEdit = (plan: Plan) => {
     document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(plan);
-    setForm({ name: plan.name, price: plan.price, price_suffix: plan.price_suffix, description: plan.description || "", features: (plan.features || []).join("\n"), highlighted: plan.highlighted, active: plan.active });
+    setForm({ name: plan.name, price: plan.price, price_suffix: plan.price_suffix, description: plan.description || "", features: (plan.features || []).join("\n"), highlighted: plan.highlighted, active: plan.active, sort_order: plan.sort_order || 0 });
     setShowForm(true);
   };
 
@@ -86,6 +87,12 @@ const PricingPanel = () => {
             <input type="checkbox" checked={form.highlighted} onChange={e => setForm({ ...form, highlighted: e.target.checked })} />
             Fremhevet (anbefalt)
           </label>
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-muted-foreground">Sortering</label>
+            <input value={form.sort_order} onChange={e => setForm({ ...form, sort_order: Number(e.target.value) })} type="number"
+              className="h-10 w-20 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            <span className="text-xs text-muted-foreground/60">Lavere = vises først</span>
+          </div>
           <div className="flex gap-2">
             <button onClick={save} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">Lagre</button>
             <button onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>

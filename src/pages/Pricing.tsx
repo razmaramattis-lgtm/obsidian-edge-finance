@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, MessageCircle, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
@@ -109,6 +110,47 @@ const Pricing = () => {
               ))}
             </div>
           )}
+
+          {/* Custom pricing CTA */}
+          <AnimatedSection delay={0.5}>
+            <div className="max-w-6xl mx-auto mt-16 md:mt-20">
+              <motion.div
+                className="relative overflow-hidden rounded-3xl glass border border-border/20"
+                whileHover={{ scale: 1.005 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 p-8 md:p-12">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/15 border border-primary/20 flex items-center justify-center">
+                      <Sparkles size={24} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="font-heading text-2xl md:text-3xl mb-2">
+                      Trenger du noe{" "}
+                      <span className="italic text-gradient-rose">skreddersydd</span>?
+                    </h3>
+                    <p className="text-sm md:text-base text-foreground/60 font-light leading-relaxed max-w-lg">
+                      Ikke alle selskaper passer inn i en ferdig pakke. Fortell oss om ditt behov, 
+                      så setter vi sammen en løsning som passer deg — uten binding og med full transparens.
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Link
+                      to="/kontakt?pakke=Skreddersydd"
+                      className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500"
+                    >
+                      <MessageCircle size={15} className="text-primary" />
+                      Ta kontakt
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
