@@ -188,6 +188,68 @@ export type Database = {
         }
         Relationships: []
       }
+      benefit_agreement_applications: {
+        Row: {
+          admin_note: string | null
+          company_id: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          offering: string | null
+          price: string | null
+          status: string
+          title: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          company_id: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          offering?: string | null
+          price?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          company_id?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          offering?: string | null
+          price?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_agreement_applications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           category: string | null
@@ -421,6 +483,135 @@ export type Database = {
         }
         Relationships: []
       }
+      company_board_members: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_board_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_contacts: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string | null
+          id: string
+          is_primary: boolean | null
+          name: string
+          phone: string | null
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          name: string
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          name?: string
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_owners: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          ownership_percent: number
+          phone: string | null
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          ownership_percent?: number
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          ownership_percent?: number
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_owners_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
           company_name: string | null
@@ -528,40 +719,76 @@ export type Database = {
       }
       customer_companies: {
         Row: {
+          address: string | null
+          auditor: string | null
           backup_advisor_id: string | null
+          city: string | null
           company_name: string
+          company_type: string | null
           contact_phone: string | null
+          country: string | null
           created_at: string
+          description: string | null
+          fiscal_year_end: string | null
+          founding_date: string | null
           id: string
           industry: string | null
+          logo_url: string | null
           org_number: string | null
+          postal_code: string | null
           primary_advisor_id: string | null
           profile_id: string
+          share_capital: number | null
           updated_at: string
+          website: string | null
         }
         Insert: {
+          address?: string | null
+          auditor?: string | null
           backup_advisor_id?: string | null
+          city?: string | null
           company_name: string
+          company_type?: string | null
           contact_phone?: string | null
+          country?: string | null
           created_at?: string
+          description?: string | null
+          fiscal_year_end?: string | null
+          founding_date?: string | null
           id?: string
           industry?: string | null
+          logo_url?: string | null
           org_number?: string | null
+          postal_code?: string | null
           primary_advisor_id?: string | null
           profile_id: string
+          share_capital?: number | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          address?: string | null
+          auditor?: string | null
           backup_advisor_id?: string | null
+          city?: string | null
           company_name?: string
+          company_type?: string | null
           contact_phone?: string | null
+          country?: string | null
           created_at?: string
+          description?: string | null
+          fiscal_year_end?: string | null
+          founding_date?: string | null
           id?: string
           industry?: string | null
+          logo_url?: string | null
           org_number?: string | null
+          postal_code?: string | null
           primary_advisor_id?: string | null
           profile_id?: string
+          share_capital?: number | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
@@ -807,6 +1034,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_templates: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          content: string
+          created_at: string
+          description: string | null
+          id: string
+          merge_fields: Json | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          content: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          merge_fields?: Json | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          content?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          merge_fields?: Json | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       hms_documents: {
         Row: {
@@ -1106,6 +1372,7 @@ export type Database = {
           file_url: string | null
           id: string
           name: string
+          type: string | null
           updated_at: string
         }
         Insert: {
@@ -1117,6 +1384,7 @@ export type Database = {
           file_url?: string | null
           id?: string
           name: string
+          type?: string | null
           updated_at?: string
         }
         Update: {
@@ -1128,6 +1396,7 @@ export type Database = {
           file_url?: string | null
           id?: string
           name?: string
+          type?: string | null
           updated_at?: string
         }
         Relationships: []

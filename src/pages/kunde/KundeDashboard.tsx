@@ -12,10 +12,15 @@ import {
   TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
   Download, Building2, Calculator, Trash2, Eye, MoreVertical,
   Scale, AlertTriangle, ShieldCheck, Lock, Heart,
-  CheckSquare, Square, Key, Check, Settings, Mail, UserPlus, Users
+  CheckSquare, Square, Key, Check, Settings, Mail, UserPlus, Users,
+  FolderOpen, Sparkles, Send
 } from "lucide-react";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
+import CustomerSettingsPanel from "@/components/kunde/CustomerSettingsPanel";
+import BenefitApplicationPanel from "@/components/kunde/BenefitApplicationPanel";
+import CustomerDocGeneratorPanel from "@/components/kunde/CustomerDocGeneratorPanel";
+import MalerPanel from "@/components/kunde/MalerPanel";
 import { personalhandbokConfig } from "@/components/kunde/generators/personalhandbok";
 import { arbeidsreglementConfig } from "@/components/kunde/generators/arbeidsreglement";
 import { varslingsrutinerConfig } from "@/components/kunde/generators/varslingsrutiner";
@@ -27,7 +32,9 @@ import {
   CartesianGrid, Tooltip, BarChart, Bar
 } from "recharts";
 
-type Panel = "overview" | "documents" | "booking" | "partners" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator" | "settings" | "employees";
+type Panel = "overview" | "documents" | "booking" | "partners" | "benefit_apply"
+  | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt"
+  | "calculator" | "doc_generator" | "maler" | "settings" | "employees";
 
 interface NavItem {
   id: Panel;
@@ -41,6 +48,9 @@ const navItems: NavItem[] = [
   { id: "documents", label: "Dokumenter", icon: FileText },
   { id: "booking", label: "Book rådgiver", icon: CalendarDays },
   { id: "partners", label: "Fordelsavtaler", icon: Handshake },
+  { id: "benefit_apply", label: "Søk om fordelsavtale", icon: Send },
+  { id: "doc_generator", label: "Dokumentgenerator", icon: Sparkles, group: "Dokumenter" },
+  { id: "maler", label: "Maler og avstemminger", icon: FolderOpen, group: "Dokumenter" },
   { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "HR og personal" },
   { id: "arbeidsreglement", label: "Arbeidsreglement", icon: Scale, group: "HR og personal" },
   { id: "varslingsrutiner", label: "Varslingsrutiner", icon: AlertTriangle, group: "HR og personal" },
@@ -129,6 +139,9 @@ const KundeDashboard = () => {
       case "employees": return <EmployeesPanel />;
       case "booking": return <BookingPanel />;
       case "partners": return <PartnersPanel />;
+      case "benefit_apply": return <BenefitApplicationPanel />;
+      case "doc_generator": return <CustomerDocGeneratorPanel />;
+      case "maler": return <MalerPanel />;
       default: return <OverviewPanel />;
     }
   };
@@ -314,61 +327,6 @@ const OverviewPanel = () => {
   );
 };
 
-// ========== CUSTOMER SETTINGS PANEL ==========
-const CustomerSettingsPanel = () => {
-  const { profile } = useAuth();
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  const changePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) { setError("Passordene stemmer ikke overens."); return; }
-    if (newPassword.length < 6) { setError("Passord må være minst 6 tegn."); return; }
-    setLoading(true); setError(""); setSuccess("");
-    const { error: err } = await supabase.auth.updateUser({ password: newPassword });
-    if (err) { setError("Kunne ikke oppdatere passordet."); }
-    else { setSuccess("Passordet er oppdatert!"); setNewPassword(""); setConfirmPassword(""); }
-    setLoading(false);
-  };
-
-  return (
-    <div className="space-y-6 max-w-md">
-      <div className="glass rounded-2xl p-5 border border-border/20">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
-            {profile?.name?.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="font-medium">{profile?.name}</p>
-            <p className="text-xs text-muted-foreground">{profile?.email}</p>
-          </div>
-        </div>
-      </div>
-      <div className="glass rounded-2xl p-5 border border-border/20">
-        <div className="flex items-center gap-2 mb-5">
-          <Key size={16} className="text-primary" strokeWidth={1.5} />
-          <h3 className="font-medium">Endre passord</h3>
-        </div>
-        <form onSubmit={changePassword} className="space-y-3">
-          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nytt passord" required
-            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Bekreft nytt passord" required
-            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-          {error && <p className="text-destructive text-xs">{error}</p>}
-          {success && <div className="flex items-center gap-2 text-xs text-primary"><Check size={13} /> {success}</div>}
-          <button type="submit" disabled={loading}
-            className="w-full h-10 rounded-xl bg-primary text-primary-foreground text-sm hover:opacity-90 disabled:opacity-50 transition-all">
-            {loading ? "Oppdaterer…" : "Oppdater passord"}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
 // ========== DOCUMENT VIEWER ==========
 const DocumentViewer = ({ doc, onClose }: { doc: any; onClose: () => void }) => {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
@@ -481,26 +439,26 @@ const DocumentsPanel = () => {
         docHtml = `<p>${doc.description || doc.title}</p><p>Kategori: ${doc.category || "Generelt"}</p>`;
       }
 
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("email, name")
         .limit(1)
         .maybeSingle();
 
-      if (!profile?.email) { toast.error("Ingen e-post funnet"); setSendingEmail(null); return; }
+      if (!profileData?.email) { toast.error("Ingen e-post funnet"); setSendingEmail(null); return; }
 
       await supabase.functions.invoke("notify", {
         body: {
           type: "send_document",
           data: {
-            recipient_email: profile.email,
-            recipient_name: profile.name,
+            recipient_email: profileData.email,
+            recipient_name: profileData.name,
             document_title: doc.title,
             document_html: docHtml,
           },
         },
       });
-      toast.success(`Dokument sendt til ${profile.email}`);
+      toast.success(`Dokument sendt til ${profileData.email}`);
     } catch {
       toast.error("Kunne ikke sende dokument");
     }
@@ -580,7 +538,6 @@ const DocumentsPanel = () => {
 
   return (
     <div className="space-y-4">
-      {/* View document modal */}
       {openDoc && <DocumentViewer doc={openDoc} onClose={() => setOpenDoc(null)} />}
 
       <div className="flex items-center gap-2 flex-wrap">
@@ -747,10 +704,8 @@ const HandbookPanel = () => {
     toast.success("Kapittel lagret");
   };
 
-  // Strip HTML for plain-text search
   const stripHtml = (html: string) => (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 
-  // Find chapters matching search
   const matchingIndices = search.trim()
     ? chapters
         .map((ch, i) => {
@@ -762,7 +717,6 @@ const HandbookPanel = () => {
         .filter(i => i >= 0)
     : [];
 
-  // Highlight editable placeholders like [Bedriftsnavn], [Daglig leder] etc.
   const renderContentWithEditableFields = (html: string) => {
     if (!html) return "<p class='text-muted-foreground italic'>Ingen innhold ennå.</p>";
     return html.replace(
@@ -771,7 +725,6 @@ const HandbookPanel = () => {
     );
   };
 
-  // Handle inline field click — replace [placeholder] with user value directly in content
   const handleFieldClick = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (!target.classList.contains("editable-field")) return;
@@ -852,7 +805,6 @@ const HandbookPanel = () => {
     input.select();
   }, [isTemplate, activeIdx, chapters]);
 
-  // Highlight search matches in rendered content
   const highlightSearch = (html: string) => {
     if (!search.trim()) return html;
     const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -878,7 +830,6 @@ const HandbookPanel = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="font-heading text-2xl md:text-3xl">Personalhåndbok</h2>
@@ -900,7 +851,6 @@ const HandbookPanel = () => {
         </div>
       </div>
 
-      {/* Search results */}
       {search.trim() && (
         <div className="glass rounded-2xl p-4 border border-border/20 space-y-2">
           <p className="text-xs text-muted-foreground">{matchingIndices.length} treff for «{search}»</p>
@@ -927,7 +877,6 @@ const HandbookPanel = () => {
       )}
 
       <div className="flex gap-8">
-        {/* Table of contents sidebar */}
         <div className="w-56 shrink-0 hidden md:block">
           <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 mb-3 px-3">Innhold</p>
           <nav className="space-y-0.5">
@@ -951,9 +900,7 @@ const HandbookPanel = () => {
           </nav>
         </div>
 
-        {/* Article content area — blog-style */}
         <div className="flex-1 min-w-0">
-          {/* Mobile chapter selector */}
           <select
             className="md:hidden w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm mb-4"
             value={activeIdx}
@@ -970,7 +917,6 @@ const HandbookPanel = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {/* Chapter header — newspaper/blog style */}
             <div className="mb-8 pb-6 border-b border-border/20">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-[11px] tracking-[0.3em] uppercase font-semibold text-primary">
@@ -1017,7 +963,6 @@ const HandbookPanel = () => {
               </div>
             </div>
 
-            {/* Chapter body */}
             {editing ? (
               <textarea
                 value={editContent}
@@ -1036,7 +981,6 @@ const HandbookPanel = () => {
               />
             )}
 
-            {/* Prev / Next navigation — blog style */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-border/20">
               {activeIdx > 0 ? (
                 <button
@@ -1090,48 +1034,27 @@ const BookingPanel = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data: comp } = await supabase
-        .from("customer_companies")
-        .select("*")
-        .limit(1)
-        .maybeSingle();
+      const { data: comp } = await supabase.from("customer_companies").select("*").limit(1).maybeSingle();
       setCompany(comp);
-
-      // Check for existing advisor request
       if (comp) {
-        const { data: reqData } = await supabase
-          .from("advisor_requests")
-          .select("*")
-          .eq("company_id", comp.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        const { data: reqData } = await supabase.from("advisor_requests").select("*").eq("company_id", comp.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
         setAdvisorRequest(reqData);
       }
-
       if (comp?.primary_advisor_id || comp?.backup_advisor_id) {
         const advisorIds = [comp.primary_advisor_id, comp.backup_advisor_id].filter(Boolean);
-
         const [advRes, availRes, blockedRes, bookRes] = await Promise.all([
           supabase.from("profiles").select("id, name, teams_link").in("id", advisorIds),
           supabase.from("advisor_availability").select("*").in("profile_id", advisorIds).eq("active", true),
           supabase.from("advisor_blocked_dates").select("*").in("profile_id", advisorIds),
           supabase.from("bookings").select("*").in("advisor_id", advisorIds).neq("status", "cancelled"),
         ]);
-
         setAdvisors(advRes.data || []);
         setAvailability(availRes.data || []);
         setBlockedDates(blockedRes.data || []);
         setExistingBookings(bookRes.data || []);
       }
-
-      if (profile) {
-        setForm(f => ({ ...f, name: profile.name || "", email: profile.email || "" }));
-      }
-      if (comp) {
-        setForm(f => ({ ...f, company_name: comp.company_name || "" }));
-      }
-
+      if (profile) setForm(f => ({ ...f, name: profile.name || "", email: profile.email || "" }));
+      if (comp) setForm(f => ({ ...f, company_name: comp.company_name || "" }));
       setLoading(false);
     };
     load();
@@ -1140,16 +1063,9 @@ const BookingPanel = () => {
   const sendAdvisorRequest = async () => {
     if (!company) return;
     setSendingRequest(true);
-    const { error } = await supabase.from("advisor_requests").insert({
-      company_id: company.id,
-      message: requestMessage || null,
-    });
-    if (error) {
-      toast.error("Kunne ikke sende forespørsel");
-    } else {
-      setAdvisorRequest({ status: "pending", message: requestMessage });
-      toast.success("Forespørsel sendt til Avargo!");
-    }
+    const { error } = await supabase.from("advisor_requests").insert({ company_id: company.id, message: requestMessage || null });
+    if (error) toast.error("Kunne ikke sende forespørsel");
+    else { setAdvisorRequest({ status: "pending", message: requestMessage }); toast.success("Forespørsel sendt til Avargo!"); }
     setSendingRequest(false);
   };
 
@@ -1170,7 +1086,6 @@ const BookingPanel = () => {
     const dayOfWeek = date.getDay();
     const dateStr = date.toISOString().split("T")[0];
     const slots: { time: string; advisorId: string; advisorName: string }[] = [];
-
     for (const adv of advisors) {
       if (blockedDates.some(b => b.profile_id === adv.id && b.blocked_date === dateStr)) continue;
       const dayAvail = availability.filter(a => a.profile_id === adv.id && a.day_of_week === dayOfWeek);
@@ -1196,42 +1111,22 @@ const BookingPanel = () => {
     setSubmitting(true);
     const dateStr = selectedDate.toISOString().split("T")[0];
     const advisor = advisors.find(a => a.id === selectedSlot.advisorId);
-
     const { error } = await supabase.from("bookings").insert({
-      advisor_id: selectedSlot.advisorId,
-      booking_date: dateStr,
-      booking_time: selectedSlot.time + ":00",
-      customer_name: form.name,
-      customer_email: form.email,
-      customer_phone: form.phone,
-      company_name: form.company_name,
-      message: form.message || null,
-      teams_link: advisor?.teams_link || null,
+      advisor_id: selectedSlot.advisorId, booking_date: dateStr, booking_time: selectedSlot.time + ":00",
+      customer_name: form.name, customer_email: form.email, customer_phone: form.phone,
+      company_name: form.company_name, message: form.message || null, teams_link: advisor?.teams_link || null,
     });
-
     if (!error) {
-      // Send email notification to advisor
       try {
         await supabase.functions.invoke("notify", {
-          body: {
-            type: "booking_notification",
-            data: {
-              advisor_id: selectedSlot.advisorId,
-              customer_name: form.name,
-              customer_email: form.email,
-              customer_phone: form.phone,
-              company_name: form.company_name,
-              booking_date: dateStr,
-              booking_time: selectedSlot.time,
-              message: form.message || null,
-            },
-          },
+          body: { type: "booking_notification", data: {
+            advisor_id: selectedSlot.advisorId, customer_name: form.name, customer_email: form.email,
+            customer_phone: form.phone, company_name: form.company_name, booking_date: dateStr,
+            booking_time: selectedSlot.time, message: form.message || null,
+          }},
         });
-      } catch (e) {
-        console.error("Notification error:", e);
-      }
+      } catch (e) { console.error("Notification error:", e); }
     }
-
     setSuccess(true);
     setSubmitting(false);
   };
@@ -1253,21 +1148,16 @@ const BookingPanel = () => {
 
   return (
     <div className="space-y-6">
-      {/* Advisor info / request section */}
       {hasAdvisors ? (
         <div className="glass rounded-2xl p-5 border border-border/20">
           <p className="text-sm text-muted-foreground mb-1">Dine rådgivere</p>
           <div className="flex gap-3">
             {advisors.map(a => (
               <div key={a.id} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
-                  {a.name?.charAt(0)}
-                </div>
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">{a.name?.charAt(0)}</div>
                 <div>
                   <p className="text-sm font-medium">{a.name}</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {company.primary_advisor_id === a.id ? "Oppdragsansvarlig" : "Reserve"}
-                  </p>
+                  <p className="text-[10px] text-muted-foreground">{company.primary_advisor_id === a.id ? "Oppdragsansvarlig" : "Reserve"}</p>
                 </div>
               </div>
             ))}
@@ -1282,25 +1172,15 @@ const BookingPanel = () => {
               <p className="text-sm text-muted-foreground">Du har ikke fått tildelt en rådgiver ennå. Send en forespørsel til Avargo, så tildeler vi deg en rådgiver.</p>
             </div>
           </div>
-
           {advisorRequest?.status === "pending" ? (
-            <div className="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 text-xs">
-              ⏳ Forespørsel sendt – venter på svar fra Avargo
-            </div>
+            <div className="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 text-xs">⏳ Forespørsel sendt – venter på svar fra Avargo</div>
           ) : advisorRequest?.status === "approved" ? (
-            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs">
-              ✓ Forespørsel godkjent – rådgiver blir tildelt
-            </div>
+            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs">✓ Forespørsel godkjent – rådgiver blir tildelt</div>
           ) : (
             <div className="space-y-2">
-              <input
-                value={requestMessage}
-                onChange={e => setRequestMessage(e.target.value)}
-                placeholder="Melding til Avargo (valgfritt)"
-                className="w-full h-9 rounded-xl border border-border/30 bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-              <button onClick={sendAdvisorRequest} disabled={sendingRequest}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
+              <input value={requestMessage} onChange={e => setRequestMessage(e.target.value)} placeholder="Melding til Avargo (valgfritt)"
+                className="w-full h-9 rounded-xl border border-border/30 bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+              <button onClick={sendAdvisorRequest} disabled={sendingRequest} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50">
                 {sendingRequest ? "Sender…" : "Be om rådgiver"}
               </button>
             </div>
@@ -1308,18 +1188,11 @@ const BookingPanel = () => {
         </div>
       )}
 
-      {/* Calendar & booking - always shown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass rounded-2xl p-5 border border-border/20">
           <h3 className="font-heading text-base mb-3">Velg dato</h3>
           {hasAdvisors ? (
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={d => { setSelectedDate(d); setSelectedSlot(null); }}
-              disabled={isDayDisabled}
-              className="p-3 pointer-events-auto"
-            />
+            <Calendar mode="single" selected={selectedDate} onSelect={d => { setSelectedDate(d); setSelectedSlot(null); }} disabled={isDayDisabled} className="p-3 pointer-events-auto" />
           ) : (
             <div className="text-center py-8">
               <CalendarDays size={28} className="text-muted-foreground/20 mx-auto mb-2" />
@@ -1339,15 +1212,12 @@ const BookingPanel = () => {
               ) : (
                 <div className="grid grid-cols-3 gap-2">
                   {slotsForDate.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedSlot({ time: s.time, advisorId: s.advisorId })}
+                    <button key={i} onClick={() => setSelectedSlot({ time: s.time, advisorId: s.advisorId })}
                       className={`px-3 py-2 rounded-xl text-sm border transition-colors ${
                         selectedSlot?.time === s.time && selectedSlot?.advisorId === s.advisorId
                           ? "bg-primary text-primary-foreground border-primary"
                           : "border-border/30 hover:border-primary/40"
-                      }`}
-                    >
+                      }`}>
                       <span className="font-medium">{s.time}</span>
                       <span className="block text-[10px] opacity-70">{s.advisorName}</span>
                     </button>
@@ -1361,28 +1231,17 @@ const BookingPanel = () => {
             <form onSubmit={handleSubmit} className="glass rounded-2xl p-5 border border-border/20 space-y-3">
               <h3 className="font-heading text-base">Bekreft booking</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Navn *" required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-                <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="E-post *" type="email" required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-                <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Telefon *" required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-                <input value={form.company_name} onChange={e => setForm({ ...form, company_name: e.target.value })} placeholder="Bedrift *" required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Navn *" required className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="E-post *" type="email" required className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Telefon *" required className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                <input value={form.company_name} onChange={e => setForm({ ...form, company_name: e.target.value })} placeholder="Bedrift *" required className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
               </div>
               <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="Beskjed (valgfritt)" rows={2}
                 className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
-              <button type="submit" disabled={submitting}
-                className="w-full py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50">
+              <button type="submit" disabled={submitting} className="w-full h-10 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50 transition-all">
                 {submitting ? "Sender…" : "Bekreft booking"}
               </button>
             </form>
-          )}
-
-          {!hasAdvisors && !selectedDate && (
-            <div className="glass rounded-2xl p-5 border border-border/20 text-center">
-              <p className="text-sm text-muted-foreground">Booking av tid krever at du har en tildelt rådgiver. Send en forespørsel ovenfor.</p>
-            </div>
           )}
         </div>
       </div>
@@ -1393,8 +1252,8 @@ const BookingPanel = () => {
 // ========== PARTNERS PANEL ==========
 const PartnersPanel = () => {
   const [partners, setPartners] = useState<any[]>([]);
-  const [requests, setRequests] = useState<any[]>([]);
   const [company, setCompany] = useState<any>(null);
+  const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [requestingId, setRequestingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -1407,12 +1266,8 @@ const PartnersPanel = () => {
       ]);
       setPartners(partRes.data || []);
       setCompany(compRes.data);
-
       if (compRes.data) {
-        const { data: reqs } = await supabase
-          .from("partnership_requests")
-          .select("*")
-          .eq("company_id", compRes.data.id);
+        const { data: reqs } = await supabase.from("partnership_requests").select("*").eq("company_id", compRes.data.id);
         setRequests(reqs || []);
       }
       setLoading(false);
@@ -1422,17 +1277,10 @@ const PartnersPanel = () => {
 
   const sendRequest = async (agreementId: string) => {
     if (!company) return;
-    const { error } = await supabase.from("partnership_requests").insert({
-      agreement_id: agreementId,
-      company_id: company.id,
-      message: message || null,
-    });
+    const { error } = await supabase.from("partnership_requests").insert({ agreement_id: agreementId, company_id: company.id, message: message || null });
     if (error) {
-      if (error.code === "23505") {
-        toast.info("Du har allerede sendt en forespørsel for denne avtalen");
-      } else {
-        toast.error("Kunne ikke sende forespørsel");
-      }
+      if (error.code === "23505") toast.info("Du har allerede sendt en forespørsel for denne avtalen");
+      else toast.error("Kunne ikke sende forespørsel");
       setRequestingId(null);
       return;
     }
@@ -1442,9 +1290,7 @@ const PartnersPanel = () => {
     toast.success("Forespørsel sendt til Avargo!");
   };
 
-  const getRequestStatus = (agreementId: string) => {
-    return requests.find(r => r.agreement_id === agreementId);
-  };
+  const getRequestStatus = (agreementId: string) => requests.find(r => r.agreement_id === agreementId);
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
@@ -1465,12 +1311,7 @@ const PartnersPanel = () => {
                 {p.description && <p className="text-xs mt-1 text-foreground/80">{p.description}</p>}
                 {p.offering && <p className="text-xs mt-1">{p.offering}</p>}
                 {p.price && <p className="text-xs text-primary font-medium mt-1">{p.price}</p>}
-                {p.website && (
-                  <a href={p.website} target="_blank" rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline mt-1 inline-block">Besøk nettside →</a>
-                )}
-
-                {/* Request status / button */}
+                {p.website && <a href={p.website} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline mt-1 inline-block">Besøk nettside →</a>}
                 <div className="mt-3">
                   {req ? (
                     <span className={`text-xs px-3 py-1 rounded-full ${
@@ -1478,31 +1319,19 @@ const PartnersPanel = () => {
                       req.status === "approved" ? "bg-emerald-500/10 text-emerald-600" :
                       "bg-destructive/10 text-destructive"
                     }`}>
-                      {req.status === "pending" ? "⏳ Forespørsel sendt" :
-                       req.status === "approved" ? "✓ Godkjent" : "✕ Avslått"}
+                      {req.status === "pending" ? "⏳ Forespørsel sendt" : req.status === "approved" ? "✓ Godkjent" : "✕ Avslått"}
                     </span>
                   ) : requestingId === p.id ? (
                     <div className="space-y-2">
-                      <input
-                        value={message}
-                        onChange={e => setMessage(e.target.value)}
-                        placeholder="Melding til Avargo (valgfritt)"
-                        className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                      />
+                      <input value={message} onChange={e => setMessage(e.target.value)} placeholder="Melding til Avargo (valgfritt)"
+                        className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
                       <div className="flex gap-2">
-                        <button onClick={() => sendRequest(p.id)}
-                          className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs hover:opacity-90">
-                          Send forespørsel
-                        </button>
-                        <button onClick={() => { setRequestingId(null); setMessage(""); }}
-                          className="px-3 py-1.5 rounded-lg text-xs border border-border/30 hover:bg-muted/50">
-                          Avbryt
-                        </button>
+                        <button onClick={() => sendRequest(p.id)} className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs hover:opacity-90">Send forespørsel</button>
+                        <button onClick={() => { setRequestingId(null); setMessage(""); }} className="px-3 py-1.5 rounded-lg text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
                       </div>
                     </div>
                   ) : (
-                    <button onClick={() => setRequestingId(p.id)}
-                      className="px-3 py-1.5 border border-primary/30 text-primary rounded-lg text-xs hover:bg-primary/5 transition-colors">
+                    <button onClick={() => setRequestingId(p.id)} className="px-3 py-1.5 border border-primary/30 text-primary rounded-lg text-xs hover:bg-primary/5 transition-colors">
                       Jeg ønsker denne avtalen
                     </button>
                   )}
@@ -1526,10 +1355,7 @@ const EmployeesPanel = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
-    const { data } = await supabase
-      .from("customer_employee_invitations")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data } = await supabase.from("customer_employee_invitations").select("*").order("created_at", { ascending: false });
     setInvitations(data || []);
     setLoading(false);
   }, []);
@@ -1540,37 +1366,22 @@ const EmployeesPanel = () => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim()) return;
     setSubmitting(true);
-
     const { data: company } = await supabase.from("customer_companies").select("id, company_name").limit(1).maybeSingle();
     if (!company) { toast.error("Ingen bedrift funnet"); setSubmitting(false); return; }
-
     const { error } = await supabase.from("customer_employee_invitations").insert({
-      company_id: company.id,
-      invited_by: profile!.id,
-      employee_name: formData.name.trim(),
-      employee_email: formData.email.trim(),
-      role: formData.role,
+      company_id: company.id, invited_by: profile!.id,
+      employee_name: formData.name.trim(), employee_email: formData.email.trim(), role: formData.role,
     });
-
-    if (error) {
-      toast.error("Kunne ikke sende invitasjon");
-    } else {
-      // Send notification to admin
+    if (error) { toast.error("Kunne ikke sende invitasjon"); }
+    else {
       try {
         await supabase.functions.invoke("notify", {
-          body: {
-            type: "employee_invitation",
-            data: {
-              company_name: company.company_name,
-              employee_name: formData.name.trim(),
-              employee_email: formData.email.trim(),
-              invited_by_name: profile?.name || "Ukjent",
-            },
-          },
+          body: { type: "employee_invitation", data: {
+            company_name: company.company_name, employee_name: formData.name.trim(),
+            employee_email: formData.email.trim(), invited_by_name: profile?.name || "Ukjent",
+          }},
         });
-      } catch (e) {
-        console.error("Notification error:", e);
-      }
+      } catch (e) { console.error("Notification error:", e); }
       toast.success("Invitasjon sendt — venter på godkjenning fra admin");
       setFormData({ name: "", email: "", role: "ansatt" });
       setShowForm(false);
@@ -1595,50 +1406,31 @@ const EmployeesPanel = () => {
           <h2 className="font-heading text-xl">Ansatte</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Legg til ansatte i portalen. Alle invitasjoner må godkjennes av admin.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-        >
+        <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-1.5 px-4 py-2 text-xs rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
           <UserPlus size={14} /> Legg til ansatt
         </button>
       </div>
 
       {showForm && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl p-5 border border-border/20">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-2xl p-5 border border-border/20">
           <form onSubmit={handleInvite} className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Navn</label>
-                <input
-                  value={formData.name}
-                  onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
-                  placeholder="Fullt navn"
-                  required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
+                <input value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} placeholder="Fullt navn" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
               </div>
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">E-post</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
-                  placeholder="ansatt@bedrift.no"
-                  required
-                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
+                <input type="email" value={formData.email} onChange={e => setFormData(f => ({ ...f, email: e.target.value }))} placeholder="ansatt@bedrift.no" required
+                  className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button type="submit" disabled={submitting}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50 transition-all">
+              <button type="submit" disabled={submitting} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90 disabled:opacity-50 transition-all">
                 {submitting ? "Sender…" : "Send invitasjon"}
               </button>
-              <button type="button" onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-border/30 rounded-xl text-sm hover:bg-muted/50 transition-colors">
-                Avbryt
-              </button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-border/30 rounded-xl text-sm hover:bg-muted/50 transition-colors">Avbryt</button>
             </div>
             <p className="text-[10px] text-muted-foreground">Invitasjonen sendes til admin for godkjenning. Den ansatte får tilgang først etter at admin har godkjent.</p>
           </form>
@@ -1666,12 +1458,8 @@ const EmployeesPanel = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${status.color}`}>
-                    {status.text}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">
-                    {new Date(inv.created_at).toLocaleDateString("no-NO")}
-                  </span>
+                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${status.color}`}>{status.text}</span>
+                  <span className="text-[10px] text-muted-foreground">{new Date(inv.created_at).toLocaleDateString("no-NO")}</span>
                 </div>
               </div>
             );

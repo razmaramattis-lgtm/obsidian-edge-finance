@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck
 } from "lucide-react";
 
 // Sub-panels
@@ -32,9 +32,11 @@ import CustomersPanel from "@/components/admin/CustomersPanel";
 import PartnerRequestsPanel from "@/components/admin/PartnerRequestsPanel";
 import AdvisorRequestsPanel from "@/components/admin/AdvisorRequestsPanel";
 import EmployeeInvitationsPanel from "@/components/admin/EmployeeInvitationsPanel";
+import DocumentTemplatesPanel from "@/components/admin/DocumentTemplatesPanel";
+import BenefitApplicationsPanel from "@/components/admin/BenefitApplicationsPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications";
 
 const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?: boolean; group?: string }[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
@@ -50,6 +52,8 @@ const navItems: { id: Panel; label: string; icon: React.ElementType; adminOnly?:
   { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Kunder" },
   { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
+  { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Kunder" },
+  { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -99,6 +103,8 @@ const AdminDashboard = () => {
       case "partner_requests": return <PartnerRequestsPanel />;
       case "advisor_requests": return <AdvisorRequestsPanel />;
       case "employee_invitations": return <EmployeeInvitationsPanel />;
+      case "doc_templates": return <DocumentTemplatesPanel />;
+      case "benefit_applications": return <BenefitApplicationsPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
     }
