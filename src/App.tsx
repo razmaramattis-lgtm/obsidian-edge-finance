@@ -29,6 +29,8 @@ const BlogListing = lazy(() => import("./pages/BlogListing"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Personvern = lazy(() => import("./pages/Personvern"));
+const Vilkar = lazy(() => import("./pages/Vilkar"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeLogin = lazy(() => import("./pages/kunde/KundeLogin"));
@@ -251,6 +253,8 @@ const App = () => (
                         <Route path="/nyhet/:slug" element={<BlogPost />} />
                         <Route path="/om-oss" element={<About />} />
                         <Route path="/kontakt" element={<Contact />} />
+                        <Route path="/personvern" element={<Personvern />} />
+                        <Route path="/vilkar" element={<Vilkar />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>

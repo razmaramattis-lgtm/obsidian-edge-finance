@@ -186,7 +186,6 @@ const Index = () => {
           "logo": "https://avargo.no/favicon.ico",
           "image": "https://avargo.no/favicon.ico",
           "email": "firmapost@avargo.no",
-          "telephone": "+4798642391",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Oscars gate 2B",
