@@ -102,6 +102,7 @@ const AdminDashboard = () => {
   const { profile, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [activePanel, setActivePanel] = useState<Panel>("overview");
+  const [panelContext, setPanelContext] = useState<Record<string, string> | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingSidebar, setEditingSidebar] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -216,10 +217,10 @@ const AdminDashboard = () => {
       case "employee_invitations": return <EmployeeInvitationsPanel onStatusChange={refreshNotifications} />;
       case "doc_templates": return <DocumentTemplatesPanel />;
       case "benefit_applications": return <BenefitApplicationsPanel onStatusChange={refreshNotifications} />;
-      case "account_entries": return <AccountEntriesPanel />;
+      case "account_entries": return <AccountEntriesPanel initialSearch={panelContext?.search} />;
       case "glossary": return <GlossaryPanel />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
-      case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p) => setActivePanel(p as Panel)} />;
+      case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }

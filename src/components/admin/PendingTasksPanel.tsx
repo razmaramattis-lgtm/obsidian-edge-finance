@@ -19,7 +19,7 @@ const categoryConfig: Record<string, { label: string; icon: React.ElementType }>
 
 interface Props {
   onStatusChange?: () => void;
-  onNavigate?: (panel: string) => void;
+  onNavigate?: (panel: string, context?: Record<string, string>) => void;
 }
 
 const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
@@ -130,11 +130,11 @@ const PendingTasksPanel = ({ onStatusChange, onNavigate }: Props) => {
         </div>
         {item.table === "account_feedback" && d.top_result_account && onNavigate && (
           <button
-            onClick={() => onNavigate("account_entries")}
+            onClick={() => onNavigate("account_entries", { search: d.top_result_account })}
             className="flex items-center gap-1.5 text-[11px] text-primary hover:underline"
           >
             <ExternalLink size={11} />
-            Åpne konto {d.top_result_account} i Kontohjelp
+            Rediger konto {d.top_result_account} – {d.top_result_name || ""} i Kontohjelp
           </button>
         )}
       </div>
