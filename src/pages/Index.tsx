@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users,
-  Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target
+  Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target,
+  ChevronDown, Award, Clock, CheckCircle2
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
@@ -82,6 +83,15 @@ const RotatingHook = () => {
     </section>
   );
 };
+
+const faqItems = [
+  { q: "Hva koster en regnskapsfører hos Avargo?", a: "Vi opererer med faste månedspriser uten skjulte kostnader. Alt fra bokføring, MVA, lønn, årsregnskap og skattemelding er inkludert. Prisen avhenger av selskapets størrelse og kompleksitet." },
+  { q: "Er regnskapsførerne deres statsautoriserte?", a: "Ja, alle våre regnskapsførere er statsautoriserte og godkjent av Finanstilsynet. Vi er også et godkjent regnskapsførerselskap." },
+  { q: "Kan jeg bytte regnskapsfører midt i året?", a: "Absolutt. Vi håndterer hele overgangen for deg — inkludert kontakt med din nåværende regnskapsfører, overføring av regnskapsmateriale og oppsett i våre systemer." },
+  { q: "Hvor lang er bindingstiden?", a: "Vi har ingen bindingstid. Du kan si opp når som helst med én måneds varsel. Vi tror på å beholde kunder gjennom kvalitet, ikke kontrakter." },
+  { q: "Dekker dere min bransje?", a: "Vi dekker over 25 bransjer — fra tech og SaaS til bygg, restaurant, eiendom og landbruk. Hver kunde får en regnskapsfører som forstår bransjen din." },
+  { q: "Hva skiller Avargo fra andre regnskapsbyråer?", a: "Du får én dedikert regnskapsfører som kjenner selskapet ditt, støttet av et helt team innen HR, skatteplanlegging og digital markedsføring. Alt inkludert i fastprisen — ingen tillegg for rådgivning." },
+];
 
 const Index = () => {
   const [lowestPrice, setLowestPrice] = useState<string | null>(null);
@@ -219,6 +229,13 @@ const Index = () => {
           "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".hero-description", ".hero-tagline"] },
           "url": "https://avargo.no"
         })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org", "@type": "FAQPage",
+          "mainEntity": faqItems.map(faq => ({
+            "@type": "Question", "name": faq.q,
+            "acceptedAnswer": { "@type": "Answer", "text": faq.a }
+          }))
+        })}</script>
       </Helmet>
 
       {/* HERO — Pure CSS animations */}
@@ -287,6 +304,30 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* SOCIAL PROOF BAR */}
+      <section className="py-12 md:py-16 border-b border-border/15 relative">
+        <div className="absolute inset-0 ambient-glow opacity-20" />
+        <div className="container mx-auto px-4 md:px-6 relative">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {[
+              { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
+              { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
+              { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+              { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div className="inline-flex p-2.5 bg-primary/10 rounded-xl mb-3">
+                  <item.icon size={18} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <p className="font-heading text-2xl md:text-3xl text-gradient-rose">{item.value}</p>
+                <p className="text-xs text-foreground/70 font-light mt-1">{item.label}</p>
+                <p className="text-[10px] text-foreground/40 font-light">{item.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* THE HOOK — rotating */}
       <RotatingHook />
