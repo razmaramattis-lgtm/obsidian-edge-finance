@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { motion, Reorder } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   FileText, Briefcase, DollarSign, Archive, Shield,
   FolderOpen, Handshake, MessageSquare, Eye, EyeOff,
   Clock, TrendingUp, PenLine, ArrowRight, Building2,
-  Inbox, Users, UserPlus, CalendarDays, Mail, AlertCircle
+  Inbox, Users, UserPlus, CalendarDays, Mail, AlertCircle,
+  Settings2, GripVertical, EyeIcon, EyeOffIcon, RotateCcw
 } from "lucide-react";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import type { AdminNotifications } from "@/hooks/useAdminNotifications";
@@ -24,12 +25,58 @@ interface Stats {
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
   | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications";
 
+type WidgetId = "notifications" | "stats" | "quickdraft" | "recentposts" | "taxdeadlines" | "quicknav";
+
+interface WidgetConfig {
+  id: WidgetId;
+  label: string;
+  visible: boolean;
+  adminOnly?: boolean;
+}
+
+const DEFAULT_WIDGETS: WidgetConfig[] = [
+  { id: "notifications", label: "Ventende oppgaver", visible: true, adminOnly: true },
+  { id: "stats", label: "Statistikk", visible: true, adminOnly: true },
+  { id: "quickdraft", label: "Hurtiginnlegg", visible: true, adminOnly: true },
+  { id: "recentposts", label: "Siste innlegg", visible: true },
+  { id: "taxdeadlines", label: "Skattefrister", visible: true },
+  { id: "quicknav", label: "Hurtignavigasjon", visible: true },
+];
+
+const STORAGE_KEY = "admin-dashboard-widgets";
+
+function loadWidgets(): WidgetConfig[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved: WidgetConfig[] = JSON.parse(raw);
+      // merge with defaults in case new widgets added
+      const ids = new Set(saved.map(w => w.id));
+      const merged = [...saved];
+      for (const d of DEFAULT_WIDGETS) {
+        if (!ids.has(d.id)) merged.push(d);
+      }
+      return merged.map(w => ({ ...w, label: DEFAULT_WIDGETS.find(d => d.id === w.id)?.label ?? w.label, adminOnly: DEFAULT_WIDGETS.find(d => d.id === w.id)?.adminOnly }));
+    }
+  } catch { /* ignore */ }
+  return DEFAULT_WIDGETS;
+}
+
+function saveWidgets(widgets: WidgetConfig[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(widgets));
+}
+
 const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolean; onNavigate: (p: Panel) => void; notifications: AdminNotifications }) => {
   const { profile } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [quickTitle, setQuickTitle] = useState("");
   const [quickExcerpt, setQuickExcerpt] = useState("");
   const [saving, setSaving] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [widgets, setWidgets] = useState<WidgetConfig[]>(loadWidgets);
+
+  const visibleWidgets = widgets.filter(w => w.visible && (!w.adminOnly || isAdmin));
+  const allWidgets = widgets.filter(w => !w.adminOnly || isAdmin);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -53,6 +100,19 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
     fetchStats();
   }, []);
 
+  const updateWidgets = useCallback((next: WidgetConfig[]) => {
+    setWidgets(next);
+    saveWidgets(next);
+  }, []);
+
+  const toggleWidget = (id: WidgetId) => {
+    updateWidgets(widgets.map(w => w.id === id ? { ...w, visible: !w.visible } : w));
+  };
+
+  const resetWidgets = () => {
+    updateWidgets(DEFAULT_WIDGETS);
+  };
+
   const saveQuickDraft = async () => {
     if (!quickTitle.trim()) return;
     setSaving(true);
@@ -63,7 +123,6 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
     setQuickTitle("");
     setQuickExcerpt("");
     setSaving(false);
-    // Refresh stats
     const { data } = await supabase.from("blog_posts").select("id,title,published,created_at").order("created_at", { ascending: false }).limit(5);
     if (data && stats) {
       setStats({ ...stats, recentPosts: data as any, totalPosts: stats.totalPosts + 1, draftPosts: stats.draftPosts + 1 });
@@ -98,91 +157,85 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
     { id: "chat" as Panel, icon: MessageSquare, label: "Chat", desc: "Intern kommunikasjon", admin: false },
   ].filter(c => !c.admin || isAdmin);
 
-  return (
-    <div className="space-y-6">
-      {/* Greeting */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h2 className="font-heading text-2xl md:text-3xl mb-1">
-          {getGreeting()}, <span className="text-primary">{profile?.name}</span> 👋
-        </h2>
-        <p className="text-sm text-muted-foreground font-light">
-          Her er en oversikt over hva som skjer.
-        </p>
-      </motion.div>
-
-      {/* Notification Queue */}
-      {isAdmin && notifications.total > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="glass rounded-2xl p-5 border border-destructive/20 bg-destructive/[0.03]"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <AlertCircle size={15} className="text-destructive" strokeWidth={1.5} />
-            <h3 className="font-medium text-sm">Venter på behandling</h3>
-            <span className="ml-auto min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5">
-              {notifications.total}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {[
-              { count: notifications.partnerRequests, label: "Avtaleforespørsler", icon: Inbox, panel: "partner_requests" as Panel },
-              { count: notifications.advisorRequests, label: "Rådgiverforespørsler", icon: Users, panel: "advisor_requests" as Panel },
-              { count: notifications.employeeInvitations, label: "Ansattinvitasjoner", icon: UserPlus, panel: "employee_invitations" as Panel },
-              { count: notifications.benefitApplications, label: "Fordelsavtale-søknader", icon: Handshake, panel: "benefit_applications" as Panel },
-              { count: notifications.pendingBookings, label: "Ventende bookinger", icon: CalendarDays, panel: "bookings" as Panel },
-              { count: notifications.contactSubmissions, label: "Nye henvendelser", icon: Mail, panel: "overview" as Panel },
-            ]
-              .filter(item => item.count > 0)
-              .map(item => (
-                <button
-                  key={item.label}
-                  onClick={() => onNavigate(item.panel)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/60 border border-border/20 hover:border-primary/30 transition-all text-left group"
-                >
-                  <item.icon size={14} className="text-muted-foreground group-hover:text-primary shrink-0" strokeWidth={1.5} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{item.label}</p>
-                  </div>
-                  <span className="min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-destructive/10 text-destructive text-[10px] font-bold px-1">
-                    {item.count}
-                  </span>
-                  <ArrowRight size={11} className="text-muted-foreground/40 group-hover:text-primary shrink-0" />
-                </button>
-              ))}
-          </div>
-        </motion.div>
-      )}
-      {/* Stats Cards */}
-      {statCards.length > 0 && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {statCards.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="glass rounded-2xl p-4 border border-border/20"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <stat.icon size={16} className={stat.color} strokeWidth={1.5} />
-                <TrendingUp size={12} className="text-muted-foreground/40" />
-              </div>
-              <p className="font-heading text-2xl mb-0.5">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground font-light">{stat.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Draft */}
-        {isAdmin && (
+  // Render individual widgets
+  const renderWidget = (id: WidgetId) => {
+    switch (id) {
+      case "notifications":
+        if (!isAdmin || notifications.total === 0) return null;
+        return (
           <motion.div
+            key={id}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            className="glass rounded-2xl p-5 border border-destructive/20 bg-destructive/[0.03]"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <AlertCircle size={15} className="text-destructive" strokeWidth={1.5} />
+              <h3 className="font-medium text-sm">Venter på behandling</h3>
+              <span className="ml-auto min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5">
+                {notifications.total}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {[
+                { count: notifications.partnerRequests, label: "Avtaleforespørsler", icon: Inbox, panel: "partner_requests" as Panel },
+                { count: notifications.advisorRequests, label: "Rådgiverforespørsler", icon: Users, panel: "advisor_requests" as Panel },
+                { count: notifications.employeeInvitations, label: "Ansattinvitasjoner", icon: UserPlus, panel: "employee_invitations" as Panel },
+                { count: notifications.benefitApplications, label: "Fordelsavtale-søknader", icon: Handshake, panel: "benefit_applications" as Panel },
+                { count: notifications.pendingBookings, label: "Ventende bookinger", icon: CalendarDays, panel: "bookings" as Panel },
+                { count: notifications.contactSubmissions, label: "Nye henvendelser", icon: Mail, panel: "overview" as Panel },
+              ]
+                .filter(item => item.count > 0)
+                .map(item => (
+                  <button
+                    key={item.label}
+                    onClick={() => onNavigate(item.panel)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/60 border border-border/20 hover:border-primary/30 transition-all text-left group"
+                  >
+                    <item.icon size={14} className="text-muted-foreground group-hover:text-primary shrink-0" strokeWidth={1.5} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">{item.label}</p>
+                    </div>
+                    <span className="min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-destructive/10 text-destructive text-[10px] font-bold px-1">
+                      {item.count}
+                    </span>
+                    <ArrowRight size={11} className="text-muted-foreground/40 group-hover:text-primary shrink-0" />
+                  </button>
+                ))}
+            </div>
+          </motion.div>
+        );
+
+      case "stats":
+        if (statCards.length === 0) return null;
+        return (
+          <div key={id} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {statCards.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                className="glass rounded-2xl p-4 border border-border/20"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <stat.icon size={16} className={stat.color} strokeWidth={1.5} />
+                  <TrendingUp size={12} className="text-muted-foreground/40" />
+                </div>
+                <p className="font-heading text-2xl mb-0.5">{stat.value}</p>
+                <p className="text-[10px] text-muted-foreground font-light">{stat.sub}</p>
+              </motion.div>
+            ))}
+          </div>
+        );
+
+      case "quickdraft":
+        if (!isAdmin) return null;
+        return (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
             className="glass rounded-2xl p-5 border border-border/20"
           >
             <div className="flex items-center gap-2 mb-4">
@@ -212,72 +265,191 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
               </button>
             </div>
           </motion.div>
-        )}
+        );
 
-        {/* Recent Activity */}
+      case "recentposts":
+        return (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass rounded-2xl p-5 border border-border/20"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Clock size={15} className="text-primary" strokeWidth={1.5} />
+                <h3 className="font-medium text-sm">Siste innlegg</h3>
+              </div>
+              {isAdmin && (
+                <button onClick={() => onNavigate("blog")} className="text-xs text-primary hover:underline flex items-center gap-1">
+                  Se alle <ArrowRight size={11} />
+                </button>
+              )}
+            </div>
+            <div className="space-y-2">
+              {stats?.recentPosts.map(post => (
+                <div key={post.id} className="flex items-center justify-between py-2 border-b border-border/10 last:border-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {post.published ? <Eye size={12} className="text-primary shrink-0" /> : <EyeOff size={12} className="text-muted-foreground shrink-0" />}
+                    <p className="text-sm truncate">{post.title}</p>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground shrink-0 ml-3">{formatDate(post.created_at)}</span>
+                </div>
+              ))}
+              {(!stats || stats.recentPosts.length === 0) && (
+                <p className="text-xs text-muted-foreground text-center py-4">Ingen innlegg ennå</p>
+              )}
+            </div>
+          </motion.div>
+        );
+
+      case "taxdeadlines":
+        return (
+          <motion.div key={id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            <TaxDeadlineWidget limit={5} compact />
+          </motion.div>
+        );
+
+      case "quicknav":
+        return (
+          <div key={id}>
+            <p className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground/40 mb-3">Hurtignavigasjon</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {quickLinks.map((card, i) => (
+                <motion.button
+                  key={card.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  onClick={() => onNavigate(card.id)}
+                  className="glass rounded-2xl p-4 text-left card-lift group border border-border/20 hover:border-primary/30 transition-all"
+                >
+                  <card.icon size={16} className="text-primary mb-2" strokeWidth={1.5} />
+                  <p className="font-medium text-xs mb-0.5">{card.label}</p>
+                  <p className="text-[10px] text-muted-foreground font-light">{card.desc}</p>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  // Determine layout: quickdraft + recentposts side by side if both visible
+  const bothDraftAndRecent = visibleWidgets.some(w => w.id === "quickdraft") && visibleWidgets.some(w => w.id === "recentposts");
+
+  return (
+    <div className="space-y-6">
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-4">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <h2 className="font-heading text-2xl md:text-3xl mb-1">
+            {getGreeting()}, <span className="text-primary">{profile?.name}</span> 👋
+          </h2>
+          <p className="text-sm text-muted-foreground font-light">
+            Her er en oversikt over hva som skjer.
+          </p>
+        </motion.div>
+
+        <button
+          onClick={() => setEditMode(!editMode)}
+          className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs transition-all border ${
+            editMode
+              ? "bg-primary text-primary-foreground border-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50 border-border/20"
+          }`}
+        >
+          <Settings2 size={13} strokeWidth={1.5} />
+          {editMode ? "Ferdig" : "Tilpass"}
+        </button>
+      </div>
+
+      {/* Edit mode panel */}
+      {editMode && (
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className={`glass rounded-2xl p-5 border border-border/20 ${isAdmin ? "lg:col-span-2" : "lg:col-span-3"}`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="glass rounded-2xl p-5 border border-primary/20 bg-primary/[0.02]"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Clock size={15} className="text-primary" strokeWidth={1.5} />
-              <h3 className="font-medium text-sm">Siste innlegg</h3>
-            </div>
-            {isAdmin && (
-              <button onClick={() => onNavigate("blog")} className="text-xs text-primary hover:underline flex items-center gap-1">
-                Se alle <ArrowRight size={11} />
-              </button>
-            )}
-          </div>
-          <div className="space-y-2">
-            {stats?.recentPosts.map(post => (
-              <div key={post.id} className="flex items-center justify-between py-2 border-b border-border/10 last:border-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  {post.published ? <Eye size={12} className="text-primary shrink-0" /> : <EyeOff size={12} className="text-muted-foreground shrink-0" />}
-                  <p className="text-sm truncate">{post.title}</p>
-                </div>
-                <span className="text-[10px] text-muted-foreground shrink-0 ml-3">{formatDate(post.created_at)}</span>
-              </div>
-            ))}
-            {(!stats || stats.recentPosts.length === 0) && (
-              <p className="text-xs text-muted-foreground text-center py-4">Ingen innlegg ennå</p>
-            )}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Tax Deadlines */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <TaxDeadlineWidget limit={5} compact />
-      </motion.div>
-
-      {/* Quick Navigation */}
-      <div>
-        <p className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground/40 mb-3">Hurtignavigasjon</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {quickLinks.map((card, i) => (
-            <motion.button
-              key={card.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + i * 0.04 }}
-              onClick={() => onNavigate(card.id)}
-              className="glass rounded-2xl p-4 text-left card-lift group border border-border/20 hover:border-primary/30 transition-all"
+            <h3 className="font-medium text-sm">Tilpass dashbordet</h3>
+            <button
+              onClick={resetWidgets}
+              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
             >
-              <card.icon size={16} className="text-primary mb-2" strokeWidth={1.5} />
-              <p className="font-medium text-xs mb-0.5">{card.label}</p>
-              <p className="text-[10px] text-muted-foreground font-light">{card.desc}</p>
-            </motion.button>
-          ))}
-        </div>
-      </div>
+              <RotateCcw size={11} />
+              Tilbakestill
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">Velg hvilke moduler som skal vises. Dra for å endre rekkefølge.</p>
+
+          <Reorder.Group
+            axis="y"
+            values={allWidgets}
+            onReorder={(newOrder) => {
+              // rebuild full list preserving items not in allWidgets (adminOnly hidden for non-admin)
+              const hiddenIds = widgets.filter(w => w.adminOnly && !isAdmin).map(w => w.id);
+              const hidden = widgets.filter(w => hiddenIds.includes(w.id));
+              updateWidgets([...newOrder, ...hidden]);
+            }}
+            className="space-y-1.5"
+          >
+            {allWidgets.map(w => (
+              <Reorder.Item key={w.id} value={w} className="cursor-grab active:cursor-grabbing">
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-background/60 border border-border/20 hover:border-primary/20 transition-all">
+                  <GripVertical size={13} className="text-muted-foreground/40 shrink-0" />
+                  <span className="text-sm flex-1">{w.label}</span>
+                  <button
+                    onClick={() => toggleWidget(w.id)}
+                    className={`shrink-0 p-1 rounded-lg transition-colors ${w.visible ? "text-primary" : "text-muted-foreground/40"}`}
+                  >
+                    {w.visible ? <EyeIcon size={14} /> : <EyeOffIcon size={14} />}
+                  </button>
+                </div>
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
+        </motion.div>
+      )}
+
+      {/* Render visible widgets in order */}
+      {visibleWidgets.map(w => {
+        // Handle the combined quickdraft + recentposts layout
+        if (w.id === "quickdraft" && bothDraftAndRecent) {
+          // Find if recentposts comes after quickdraft or before
+          const qIdx = visibleWidgets.findIndex(v => v.id === "quickdraft");
+          const rIdx = visibleWidgets.findIndex(v => v.id === "recentposts");
+          if (qIdx < rIdx) {
+            return (
+              <div key="draft-recent-combo" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div>{renderWidget("quickdraft")}</div>
+                <div className="lg:col-span-2">{renderWidget("recentposts")}</div>
+              </div>
+            );
+          }
+          return renderWidget(w.id);
+        }
+        if (w.id === "recentposts" && bothDraftAndRecent) {
+          const qIdx = visibleWidgets.findIndex(v => v.id === "quickdraft");
+          const rIdx = visibleWidgets.findIndex(v => v.id === "recentposts");
+          if (rIdx < qIdx) {
+            return (
+              <div key="recent-draft-combo" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">{renderWidget("recentposts")}</div>
+                <div>{renderWidget("quickdraft")}</div>
+              </div>
+            );
+          }
+          // Already rendered in combo above
+          return null;
+        }
+
+        return renderWidget(w.id);
+      })}
     </div>
   );
 };
