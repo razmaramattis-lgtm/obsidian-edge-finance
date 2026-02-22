@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_entries: {
+        Row: {
+          account_number: string
+          active: boolean
+          business_types: string[]
+          category_group: string | null
+          created_at: string
+          description: string | null
+          examples: string | null
+          id: string
+          mva_status: string
+          name: string
+          slug: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          account_number: string
+          active?: boolean
+          business_types?: string[]
+          category_group?: string | null
+          created_at?: string
+          description?: string | null
+          examples?: string | null
+          id?: string
+          mva_status?: string
+          name: string
+          slug: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string
+          active?: boolean
+          business_types?: string[]
+          category_group?: string | null
+          created_at?: string
+          description?: string | null
+          examples?: string | null
+          id?: string
+          mva_status?: string
+          name?: string
+          slug?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       advisor_availability: {
         Row: {
           active: boolean
@@ -1073,6 +1121,39 @@ export type Database = {
           merge_fields?: Json | null
           sort_order?: number | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      glossary_terms: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          sort_order: number | null
+          term: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          sort_order?: number | null
+          term: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number | null
+          term?: string
           updated_at?: string
         }
         Relationships: []

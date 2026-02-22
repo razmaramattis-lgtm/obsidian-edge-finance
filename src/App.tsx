@@ -21,6 +21,10 @@ const Tjenester = lazy(() => import("./pages/Tjenester"));
 const Bransjer = lazy(() => import("./pages/Bransjer"));
 const Ressurser = lazy(() => import("./pages/Ressurser"));
 const Skattekalender = lazy(() => import("./pages/Skattekalender"));
+const Kontohjelp = lazy(() => import("./pages/Kontohjelp"));
+const KontohjelpDetalj = lazy(() => import("./pages/KontohjelpDetalj"));
+const Regnskapsord = lazy(() => import("./pages/Regnskapsord"));
+const RegnskapsordDetalj = lazy(() => import("./pages/RegnskapsordDetalj"));
 const BlogListing = lazy(() => import("./pages/BlogListing"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -167,6 +171,10 @@ const App = () => (
                         <Route path="/priser" element={<Pricing />} />
                         <Route path="/ressurser" element={<Ressurser />} />
                         <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
+                        <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
+                        <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
+                        <Route path="/ressurser/regnskapsord" element={<Regnskapsord />} />
+                        <Route path="/ressurser/regnskapsord/:slug" element={<RegnskapsordDetalj />} />
                         <Route path="/nyheter" element={<BlogListing />} />
                         <Route path="/faq" element={<FAQ />} />
                         <Route path="/nyhet/:slug" element={<BlogPost />} />

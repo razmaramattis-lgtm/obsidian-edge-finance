@@ -54,6 +54,8 @@ const selskapetLinks = [
 ];
 
 const ressurserLinks = [
+  { icon: BookOpen, title: "Kontohjelp", desc: "Finn riktig konto for regnskapet", href: "/ressurser/kontohjelp" },
+  { icon: BookMarked, title: "Regnskapsordbok", desc: "Forstå regnskapsbegreper fra A til Å", href: "/ressurser/regnskapsord" },
   { icon: Newspaper, title: "Nyheter", desc: "Siste nytt fra Avargo", href: "/ressurser?tab=nyheter" },
   { icon: FileText, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
   { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser?tab=guider" },

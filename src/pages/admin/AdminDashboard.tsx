@@ -35,9 +35,11 @@ import AdvisorRequestsPanel from "@/components/admin/AdvisorRequestsPanel";
 import EmployeeInvitationsPanel from "@/components/admin/EmployeeInvitationsPanel";
 import DocumentTemplatesPanel from "@/components/admin/DocumentTemplatesPanel";
 import BenefitApplicationsPanel from "@/components/admin/BenefitApplicationsPanel";
+import AccountEntriesPanel from "@/components/admin/AccountEntriesPanel";
+import GlossaryPanel from "@/components/admin/GlossaryPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary";
 
 interface NavItem {
   id: Panel;
@@ -63,6 +65,8 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
   { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Kunder" },
   { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Nettside" },
+  { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Nettside" },
+  { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -239,6 +243,8 @@ const AdminDashboard = () => {
       case "employee_invitations": return <EmployeeInvitationsPanel onStatusChange={refreshNotifications} />;
       case "doc_templates": return <DocumentTemplatesPanel />;
       case "benefit_applications": return <BenefitApplicationsPanel onStatusChange={refreshNotifications} />;
+      case "account_entries": return <AccountEntriesPanel />;
+      case "glossary": return <GlossaryPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
