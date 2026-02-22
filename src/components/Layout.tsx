@@ -380,7 +380,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Regnskapsbyrået for små og mellomstore bedrifter.<br />Trygghet. Oversikt. Vekst.
               </p>
               <p className="mt-2 text-xs text-foreground/40 font-light leading-relaxed">
-                Oscars gate 2B, 3714 Skien<br />+47 986 42 391<br />firmapost@avargo.no
+                Oscars gate 2B, 3714 Skien<br />firmapost@avargo.no
               </p>
               <Link to="/kontakt" className="inline-block mt-4 px-5 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 tracking-wide">
                 Få tilbud
@@ -442,8 +442,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-foreground/40">
             <span>© 2026 Avargo. Alle rettigheter reservert.</span>
             <div className="flex gap-8">
-              <Link to="/om-oss" className="hover:text-foreground transition-colors">Personvern</Link>
-              <Link to="/om-oss" className="hover:text-foreground transition-colors">Vilkår</Link>
+              <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
+              <Link to="/vilkar" className="hover:text-foreground transition-colors">Vilkår</Link>
             </div>
           </div>
         </div>
