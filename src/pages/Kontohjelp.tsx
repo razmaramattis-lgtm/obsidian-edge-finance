@@ -56,6 +56,11 @@ const Kontohjelp = () => {
 
   const [showAll, setShowAll] = useState(false);
 
+  const isResultAccount = (num: string) => {
+    const n = parseInt(num, 10);
+    return n >= 3000 && n <= 8999;
+  };
+
   const filtered = useMemo(() => {
     let result = entries;
     if (activeClass) {
@@ -68,21 +73,18 @@ const Kontohjelp = () => {
           let score = 0;
           const nameL = e.name.toLowerCase();
           const numL = e.account_number;
-          // Exact account number match
           if (numL === q) score += 100;
           else if (numL.startsWith(q)) score += 60;
           else if (numL.includes(q)) score += 30;
-          // Name match
           if (nameL === q) score += 90;
           else if (nameL.startsWith(q)) score += 50;
           else if (nameL.includes(q)) score += 25;
-          // Tag exact match
           if (e.tags?.some(t => t.toLowerCase() === q)) score += 40;
           else if (e.tags?.some(t => t.toLowerCase().includes(q))) score += 15;
-          // Examples match
           if (e.examples?.some(ex => ex.toLowerCase().includes(q))) score += 10;
-          // Description match
           if (e.description?.toLowerCase().includes(q)) score += 5;
+          // Boost result accounts (3000-8999) over balance accounts
+          if (score > 0 && isResultAccount(e.account_number)) score += 20;
           return { entry: e, score };
         })
         .filter(s => s.score > 0)
@@ -91,6 +93,12 @@ const Kontohjelp = () => {
       if (activeClass) {
         result = result.filter(e => e.account_number.startsWith(activeClass));
       }
+    } else if (!activeClass) {
+      // Default view: show result accounts (3-8) before balance accounts (1-2)
+      result = [
+        ...result.filter(e => isResultAccount(e.account_number)),
+        ...result.filter(e => !isResultAccount(e.account_number)),
+      ];
     }
     return result;
   }, [entries, search, activeClass]);
