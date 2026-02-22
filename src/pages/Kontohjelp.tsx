@@ -308,14 +308,60 @@ const Kontohjelp = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 space-y-3"
+            className="text-center py-16 space-y-4"
           >
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto">
               <Search size={24} className="text-muted-foreground/40" />
             </div>
             <p className="text-muted-foreground text-sm">Ingen treff. Prøv et annet søkeord eller velg en kontoklasse.</p>
             {search && (
-              <button onClick={() => setSearch("")} className="text-primary text-sm hover:underline">Nullstill søk</button>
+              <>
+                <button onClick={() => setSearch("")} className="text-primary text-sm hover:underline">Nullstill søk</button>
+                <div className="pt-4">
+                  {feedbackSent ? (
+                    <div className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-sm border border-emerald-500/20">
+                      <CheckCircle size={16} />
+                      Takk for tilbakemeldingen! Vi ser på det.
+                    </div>
+                  ) : !showFeedback ? (
+                    <button
+                      onClick={() => setShowFeedback(true)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border/20 hover:border-primary/20 transition-all duration-200"
+                    >
+                      <AlertTriangle size={13} />
+                      Meld fra slik at vi kan legge til kontoen
+                    </button>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="max-w-lg mx-auto glass rounded-2xl p-5 border border-primary/20 space-y-3 text-left"
+                    >
+                      <div className="flex items-center gap-2 text-sm font-medium">
+                        <AlertTriangle size={14} className="text-primary" />
+                        Meld manglende konto
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        <p><span className="font-medium text-foreground/80">Søkeord:</span> {search}</p>
+                      </div>
+                      <textarea
+                        value={feedbackMessage}
+                        onChange={e => setFeedbackMessage(e.target.value)}
+                        placeholder="Beskriv hva du lette etter (valgfritt)…"
+                        rows={2}
+                        className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => setShowFeedback(false)} className="px-4 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50 transition-colors">Avbryt</button>
+                        <button onClick={submitFeedback} disabled={feedbackSending} className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90 disabled:opacity-50 transition-all">
+                          <Send size={12} />
+                          {feedbackSending ? "Sender…" : "Send tilbakemelding"}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              </>
             )}
           </motion.div>
         ) : (
