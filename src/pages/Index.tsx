@@ -93,6 +93,21 @@ const faqItems = [
   { q: "Hva skiller Avargo fra andre regnskapsbyråer?", a: "Du får én dedikert regnskapsfører som kjenner selskapet ditt, støttet av et helt team innen HR, skatteplanlegging og digital markedsføring. Alt inkludert i fastprisen — ingen tillegg for rådgivning." },
 ];
 
+const FaqAccordion = ({ question, answer }: { question: string; answer: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="glass rounded-2xl overflow-hidden">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-6 py-5 text-left">
+        <span className="text-sm md:text-base text-foreground/90 font-light pr-4">{question}</span>
+        <ChevronDown size={16} className={`text-primary shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${open ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
+        <p className="px-6 pb-5 text-sm text-foreground/60 font-light leading-relaxed">{answer}</p>
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   const [lowestPrice, setLowestPrice] = useState<string | null>(null);
 
@@ -548,6 +563,41 @@ const Index = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* FAQ */}
+      <section className="py-24 md:py-40 relative">
+        <div className="absolute inset-0 ambient-glow opacity-30" />
+        <div className="container mx-auto px-4 md:px-6 relative">
+          <AnimatedSection>
+            <div className="text-center mb-14 md:mb-20">
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Vanlige spørsmål</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl max-w-3xl mx-auto leading-snug">
+                Alt du lurer på.{" "}<span className="italic text-gradient-rose">Rett fra oss.</span>
+              </h2>
+            </div>
+          </AnimatedSection>
+          <div className="max-w-2xl mx-auto space-y-3">
+            {faqItems.map((faq, i) => (
+              <FaqAccordion key={i} question={faq.q} answer={faq.a} />
+            ))}
+          </div>
+          <AnimatedSection delay={0.2}>
+            <div className="text-center mt-10">
+              <Link to="/faq" className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
+                Se alle vanlige spørsmål →
+              </Link>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Sticky mobile CTA */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/20 p-3 safe-area-bottom">
+        <Link to="/kontakt" className="flex items-center justify-center gap-2 w-full py-3.5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose">
+          Få et uforpliktende tilbud
+          <ArrowRight size={14} />
+        </Link>
+      </div>
     </>
   );
 };
