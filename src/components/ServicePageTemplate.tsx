@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, ArrowLeft, ChevronRight, Phone, CheckCircle2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 
 export interface ServicePageProps {
@@ -36,7 +37,26 @@ const ServicePageTemplate = ({
       <title>{meta.title}</title>
       <meta name="description" content={meta.description} />
       <link rel="canonical" href={meta.canonical} />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": typeof meta.title === "string" ? meta.title.split("|")[0].trim() : "",
+        "description": meta.description,
+        "url": meta.canonical,
+        "provider": {
+          "@type": "AccountingService",
+          "name": "Avargo",
+          "url": "https://avargo.no"
+        },
+        "areaServed": { "@type": "Country", "name": "Norway" },
+        "serviceType": category
+      })}</script>
     </Helmet>
+    <BreadcrumbJsonLd items={[
+      { name: "Hjem", href: "/" },
+      { name: "Tjenester", href: "/tjenester" },
+      { name: typeof meta.title === "string" ? meta.title.split("|")[0].trim() : "Tjeneste", href: meta.canonical.replace("https://avargo.no", "") },
+    ]} />
 
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">

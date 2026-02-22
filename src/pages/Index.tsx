@@ -179,13 +179,15 @@ const Index = () => {
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "AccountingService",
+          "@type": ["AccountingService", "LocalBusiness"],
           "name": "Avargo",
-          "description": "AI-drevet regnskapsbyrå med dedikerte regnskapsførere, skatteoptimalisering og rådgivning for ambisiøse selskaper i Norge.",
+          "alternateName": "Avargo Regnskap",
+          "description": "Regnskapsbyrå for små og mellomstore bedrifter i Norge. Dedikert statsautorisert regnskapsfører, skatteoptimalisering, lønn, HR og rådgivning — alt inkludert i fast pris.",
           "url": "https://avargo.no",
-          "logo": "https://avargo.no/favicon.ico",
-          "image": "https://avargo.no/favicon.ico",
+          "logo": "https://avargo.no/logo.png",
+          "image": "https://avargo.no/og-image.jpg",
           "email": "firmapost@avargo.no",
+          "telephone": "+4798642391",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Oscars gate 2B",
@@ -202,20 +204,32 @@ const Index = () => {
           "openingHoursSpecification": [
             { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "16:00" }
           ],
-          "areaServed": {
-            "@type": "Country",
-            "name": "Norway"
-          },
+          "areaServed": [
+            { "@type": "Country", "name": "Norway" },
+            { "@type": "City", "name": "Skien" },
+            { "@type": "City", "name": "Oslo" },
+            { "@type": "City", "name": "Bergen" },
+            { "@type": "City", "name": "Trondheim" }
+          ],
           "priceRange": lowestPrice ? `Fra ${lowestPrice} kr/mnd` : "Fra 1 499 kr/mnd",
-          "serviceType": ["Regnskap", "Skatteoptimalisering", "CFO-rådgivning", "Lønnskjøring", "HR", "Digital markedsføring"],
+          "currenciesAccepted": "NOK",
+          "paymentAccepted": "Faktura",
+          "serviceType": ["Regnskap", "Regnskapsfører", "Skatteoptimalisering", "CFO-rådgivning", "Lønnskjøring", "HR", "Årsregnskap", "Skattemelding", "MVA-rapportering", "Bokføring"],
+          "knowsAbout": ["Regnskap", "Skatteplanlegging", "Aksjeselskap", "Enkeltpersonforetak", "MVA", "Lønn", "HR", "Årsoppgjør"],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Regnskapstjenester",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oppstart", "description": "For nyoppstartede selskaper", "url": "https://avargo.no/priser" }},
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Vekst", "description": "For selskaper i vekst", "url": "https://avargo.no/priser" }},
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rådgivning", "description": "Kun rådgivning og sparring", "url": "https://avargo.no/priser" }}
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Oppstart", "description": "Regnskapsfører for nyoppstartede selskaper", "url": "https://avargo.no/priser" }},
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Vekst", "description": "Regnskapsfører for selskaper i vekst", "url": "https://avargo.no/priser" }},
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rådgivning", "description": "CFO-rådgivning og skatteplanlegging", "url": "https://avargo.no/priser" }}
             ]
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "bestRating": "5",
+            "ratingCount": "12"
           },
           "sameAs": []
         })}</script>

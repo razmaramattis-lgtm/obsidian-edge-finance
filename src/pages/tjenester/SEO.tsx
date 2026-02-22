@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, ChevronRight, ArrowLeft, CheckCircle2, TrendingUp } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
 
 const deliverables = [
@@ -35,7 +36,22 @@ const SEO = () => (
       <title>Bli funnet på Google | SEO for bedrifter | Avargo</title>
       <meta name="description" content="Vi hjelper bedriften din å dukke opp på Google når kundene søker etter det du tilbyr. Enkel og effektiv synlighet — uten at du betaler for hvert klikk." />
       <link rel="canonical" href="https://avargo.no/tjenester/seo" />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "SEO & søkbarhet for bedrifter",
+        "description": "Vi hjelper bedriften din å dukke opp på Google når kundene søker etter det du tilbyr.",
+        "url": "https://avargo.no/tjenester/seo",
+        "provider": { "@type": "AccountingService", "name": "Avargo", "url": "https://avargo.no" },
+        "areaServed": { "@type": "Country", "name": "Norway" },
+        "serviceType": "Markedsføring & Vekst"
+      })}</script>
     </Helmet>
+    <BreadcrumbJsonLd items={[
+      { name: "Hjem", href: "/" },
+      { name: "Tjenester", href: "/tjenester" },
+      { name: "SEO & søkbarhet", href: "/tjenester/seo" },
+    ]} />
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture2} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
       <div className="absolute inset-0 ambient-glow opacity-30" />
