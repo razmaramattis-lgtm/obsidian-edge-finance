@@ -478,3 +478,32 @@ html {
 .animate-bounce-slow {
   animation: bounceSlow 3s ease-in-out infinite;
 }
+
+/* CSS-only fade/slide animations replacing framer-motion */
+@keyframes cssFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.css-fade-in {
+  animation: cssFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes cssSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.css-slide-in {
+  animation: cssSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes progressBar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
