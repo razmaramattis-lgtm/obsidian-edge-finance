@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
+import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/assets/hero-bg.jpg";
 import serviceBg1 from "@/assets/service-bg-1.jpg";
 import serviceBg2 from "@/assets/service-bg-2.jpg";
@@ -19,6 +20,22 @@ import serviceBg4 from "@/assets/service-bg-4.jpg";
 import serviceBg5 from "@/assets/service-bg-5.jpg";
 
 const Index = () => {
+  const [lowestPrice, setLowestPrice] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLowest = async () => {
+      const { data } = await supabase
+        .from("pricing_plans")
+        .select("price")
+        .eq("active", true)
+        .order("price", { ascending: true })
+        .limit(1);
+      if (data && data.length > 0) {
+        setLowestPrice(data[0].price.toLocaleString("nb-NO"));
+      }
+    };
+    fetchLowest();
+  }, []);
   const industries = [
     { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", desc: "Startups og tech-selskaper trenger en regnskapsfører som forstår vekst, investorer og SaaS-modeller. Det gjør vi." },
     { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", desc: "Full kontroll over eiendomsporteføljen din — hva du tjener, hva det koster og hvordan du kan gjøre det smartere." },
@@ -116,7 +133,7 @@ const Index = () => {
             "@type": "Country",
             "name": "Norway"
           },
-          "priceRange": "Fra 1 499 kr/mnd",
+          "priceRange": lowestPrice ? `Fra ${lowestPrice} kr/mnd` : "Fra 1 499 kr/mnd",
           "serviceType": ["Regnskap", "Skatteoptimalisering", "CFO-rådgivning", "Lønnskjøring", "HR", "Digital markedsføring"],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
@@ -190,7 +207,7 @@ const Index = () => {
               transition={{ delay: 1.1, duration: 0.8 }}
               className="text-sm text-primary italic mb-10 md:mb-14 font-light"
             >
-              Fra 1 499 kr/mnd for nyoppstartede selskaper.
+              {lowestPrice ? `Fra ${lowestPrice} kr/mnd for nyoppstartede selskaper.` : "Fast pris for nyoppstartede selskaper."}
             </motion.p>
 
             <motion.div
