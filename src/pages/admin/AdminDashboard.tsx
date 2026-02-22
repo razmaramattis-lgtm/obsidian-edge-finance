@@ -2,10 +2,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck
+  Users, MessageSquare, Settings, LogOut, ChevronRight, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell
 } from "lucide-react";
 
 // Sub-panels
@@ -71,10 +72,20 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activePanel, setActivePanel] = useState<Panel>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const notifications = useAdminNotifications();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  // Map panel IDs to notification counts
+  const badgeMap: Partial<Record<Panel, number>> = {
+    partner_requests: notifications.partnerRequests,
+    advisor_requests: notifications.advisorRequests,
+    employee_invitations: notifications.employeeInvitations,
+    benefit_applications: notifications.benefitApplications,
+    bookings: notifications.pendingBookings,
   };
 
   const visibleItems = navItems.filter(item => !item.adminOnly || isAdmin);
@@ -106,7 +117,7 @@ const AdminDashboard = () => {
       case "doc_templates": return <DocumentTemplatesPanel />;
       case "benefit_applications": return <BenefitApplicationsPanel />;
       case "settings": return <SettingsPanel />;
-      default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} />;
+      default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
   };
 
@@ -132,7 +143,12 @@ const AdminDashboard = () => {
                 }`}
               >
                 <item.icon size={15} strokeWidth={1.5} className="shrink-0" />
-                <span className="font-light">{item.label}</span>
+                <span className="font-light flex-1">{item.label}</span>
+                {(badgeMap[item.id] || 0) > 0 && (
+                  <span className="ml-auto mr-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
+                    {badgeMap[item.id]}
+                  </span>
+                )}
                 {activePanel === item.id && <ChevronRight size={12} className="ml-auto" />}
               </button>
             ))}
@@ -184,9 +200,20 @@ const AdminDashboard = () => {
           >
             <Menu size={20} />
           </button>
-          <h1 className="font-heading text-lg">
+          <h1 className="font-heading text-lg flex-1">
             {visibleItems.find(i => i.id === activePanel)?.label ?? "Oversikt"}
           </h1>
+          {notifications.total > 0 && (
+            <button
+              onClick={() => setActivePanel("overview")}
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+            >
+              <Bell size={15} strokeWidth={1.5} />
+              <span className="min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
+                {notifications.total}
+              </span>
+            </button>
+          )}
         </div>
 
         <div className="p-4 md:p-6 lg:p-8">
