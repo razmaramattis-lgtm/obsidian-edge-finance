@@ -399,6 +399,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/kontakt" className="text-foreground/70 hover:text-foreground transition-colors">Kontakt oss</Link>
                 <Link to="/kunde/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors">Kundeportal</Link>
                 <Link to="/faq" className="text-foreground/70 hover:text-foreground transition-colors">Vanlige spørsmål</Link>
+                <Link to="/admin/login" className="text-foreground/70 hover:text-foreground transition-colors">Ansatt-innlogging</Link>
                 <a href="mailto:kontakt@avargo.no" className="text-foreground/70 hover:text-foreground transition-colors">kontakt@avargo.no</a>
               </div>
             </div>
