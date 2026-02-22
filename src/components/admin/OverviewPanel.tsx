@@ -140,10 +140,10 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
   };
 
   const statCards = isAdmin ? [
-    { icon: FileText, label: "Innlegg", value: stats?.totalPosts ?? "–", sub: `${stats?.publishedPosts ?? 0} publisert · ${stats?.draftPosts ?? 0} utkast`, color: "text-primary" },
-    { icon: Briefcase, label: "Tjenester", value: stats?.totalServices ?? "–", sub: "aktive tjenester", color: "text-secondary" },
-    { icon: Building2, label: "Bransjer", value: stats?.totalIndustries ?? "–", sub: "bransjekategorier", color: "text-accent" },
-    { icon: Archive, label: "Arkivfiler", value: stats?.totalArchiveFiles ?? "–", sub: "nedlastbare filer", color: "text-primary" },
+    { icon: FileText, label: "Innlegg", value: stats?.totalPosts ?? "–", sub: `${stats?.publishedPosts ?? 0} publisert · ${stats?.draftPosts ?? 0} utkast`, color: "text-primary", panel: "blog" as Panel },
+    { icon: Briefcase, label: "Tjenester", value: stats?.totalServices ?? "–", sub: "aktive tjenester", color: "text-secondary", panel: "services" as Panel },
+    { icon: Building2, label: "Bransjer", value: stats?.totalIndustries ?? "–", sub: "bransjekategorier", color: "text-accent", panel: "industries" as Panel },
+    { icon: Archive, label: "Arkivfiler", value: stats?.totalArchiveFiles ?? "–", sub: "nedlastbare filer", color: "text-primary", panel: "archive" as Panel },
   ] : [];
 
   const quickLinks = [
@@ -211,20 +211,21 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
         return (
           <div key={id} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {statCards.map((stat, i) => (
-              <motion.div
+              <motion.button
                 key={stat.label}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="glass rounded-2xl p-4 border border-border/20"
+                onClick={() => onNavigate(stat.panel)}
+                className="glass rounded-2xl p-4 border border-border/20 hover:border-primary/30 transition-all text-left group cursor-pointer"
               >
                 <div className="flex items-center justify-between mb-3">
                   <stat.icon size={16} className={stat.color} strokeWidth={1.5} />
-                  <TrendingUp size={12} className="text-muted-foreground/40" />
+                  <ArrowRight size={12} className="text-muted-foreground/20 group-hover:text-primary transition-colors" />
                 </div>
                 <p className="font-heading text-2xl mb-0.5">{stat.value}</p>
                 <p className="text-[10px] text-muted-foreground font-light">{stat.sub}</p>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         );
@@ -288,13 +289,20 @@ const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolea
             </div>
             <div className="space-y-2">
               {stats?.recentPosts.map(post => (
-                <div key={post.id} className="flex items-center justify-between py-2 border-b border-border/10 last:border-0">
+                <button
+                  key={post.id}
+                  onClick={() => onNavigate("blog")}
+                  className="w-full flex items-center justify-between py-2 border-b border-border/10 last:border-0 hover:bg-muted/20 rounded-lg px-2 -mx-2 transition-colors text-left group"
+                >
                   <div className="flex items-center gap-2 min-w-0">
                     {post.published ? <Eye size={12} className="text-primary shrink-0" /> : <EyeOff size={12} className="text-muted-foreground shrink-0" />}
-                    <p className="text-sm truncate">{post.title}</p>
+                    <p className="text-sm truncate group-hover:text-primary transition-colors">{post.title}</p>
                   </div>
-                  <span className="text-[10px] text-muted-foreground shrink-0 ml-3">{formatDate(post.created_at)}</span>
-                </div>
+                  <div className="flex items-center gap-2 shrink-0 ml-3">
+                    <span className="text-[10px] text-muted-foreground">{formatDate(post.created_at)}</span>
+                    <ArrowRight size={10} className="text-muted-foreground/20 group-hover:text-primary transition-colors" />
+                  </div>
+                </button>
               ))}
               {(!stats || stats.recentPosts.length === 0) && (
                 <p className="text-xs text-muted-foreground text-center py-4">Ingen innlegg ennå</p>
