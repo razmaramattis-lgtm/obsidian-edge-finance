@@ -14,6 +14,7 @@ interface AccountEntry {
   tags: string[];
   mva_status: string;
   active: boolean;
+  related_accounts: string[];
 }
 
 const slugify = (text: string) =>
@@ -28,10 +29,11 @@ const AccountEntriesPanel = () => {
   const [form, setForm] = useState({
     account_number: "", name: "", slug: "", description: "",
     examples: [] as string[], category_group: "", tags: [] as string[],
-    mva_status: "med_mva", active: true,
+    mva_status: "med_mva", active: true, related_accounts: [] as string[],
   });
   const [tagInput, setTagInput] = useState("");
   const [exampleInput, setExampleInput] = useState("");
+  const [relatedSearch, setRelatedSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
 
@@ -58,8 +60,8 @@ const AccountEntriesPanel = () => {
   const removeExample = (ex: string) => setForm(prev => ({ ...prev, examples: prev.examples.filter(e => e !== ex) }));
 
   const resetForm = () => {
-    setForm({ account_number: "", name: "", slug: "", description: "", examples: [], category_group: "", tags: [], mva_status: "med_mva", active: true });
-    setTagInput(""); setExampleInput("");
+    setForm({ account_number: "", name: "", slug: "", description: "", examples: [], category_group: "", tags: [], mva_status: "med_mva", active: true, related_accounts: [] });
+    setTagInput(""); setExampleInput(""); setRelatedSearch("");
   };
 
   const save = async (e: React.FormEvent) => {
@@ -205,6 +207,49 @@ const AccountEntriesPanel = () => {
             )}
           </div>
 
+          {/* Related accounts */}
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground">Relaterte kontoer</label>
+            <div className="relative">
+              <input value={relatedSearch} onChange={e => setRelatedSearch(e.target.value)}
+                placeholder="Søk kontonr. eller navn for å legge til…"
+                className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+              {relatedSearch.trim() && (
+                <div className="absolute left-0 right-0 top-full mt-1 z-20 glass rounded-xl border border-border/20 shadow-lg max-h-48 overflow-y-auto">
+                  {items
+                    .filter(i => {
+                      if (form.related_accounts.includes(i.account_number)) return false;
+                      if (editing && i.id === editing.id) return false;
+                      const q = relatedSearch.toLowerCase();
+                      return i.account_number.includes(q) || i.name.toLowerCase().includes(q);
+                    })
+                    .slice(0, 8)
+                    .map(i => (
+                      <button key={i.id} type="button"
+                        onClick={() => { setForm(prev => ({ ...prev, related_accounts: [...prev.related_accounts, i.account_number] })); setRelatedSearch(""); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-primary/5 transition-colors text-sm border-b border-border/10 last:border-0">
+                        <span className="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded">{i.account_number}</span>
+                        <span className="truncate">{i.name}</span>
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+            {form.related_accounts.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {form.related_accounts.map(acc => {
+                  const match = items.find(i => i.account_number === acc);
+                  return (
+                    <span key={acc} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-xs">
+                      {acc}{match ? ` – ${match.name}` : ""}
+                      <button type="button" onClick={() => setForm(prev => ({ ...prev, related_accounts: prev.related_accounts.filter(a => a !== acc) }))} className="hover:text-destructive"><X size={11} /></button>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm hover:opacity-90">Lagre</button>
             <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 rounded-xl text-sm border border-border/30 hover:bg-muted/50">Avbryt</button>
@@ -243,8 +288,9 @@ const AccountEntriesPanel = () => {
                   description: item.description || "", examples: item.examples || [],
                   category_group: item.category_group || "", tags: item.tags || [],
                   mva_status: item.mva_status, active: item.active,
+                  related_accounts: item.related_accounts || [],
                 });
-                setTagInput(""); setExampleInput("");
+                setTagInput(""); setExampleInput(""); setRelatedSearch("");
                 setShowForm(true);
               }} className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
               <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
