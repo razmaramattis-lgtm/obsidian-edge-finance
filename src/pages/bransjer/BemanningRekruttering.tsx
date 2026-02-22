@@ -6,28 +6,28 @@ const BemanningRekruttering = () => (
     icon={UserPlus}
     name="Bemanning & Rekruttering"
     tagline="Du finner folkene — vi ordner tallene"
-    intro="Bemanningsbyråer og rekrutteringsselskaper håndterer mange ansatte, mange kunder og stramme marginer. Vi gir deg økonomisk kontroll per oppdrag og per utleid ressurs."
-    body="Bemanningsbransjen er unik fordi dine ansatte jobber hos andre. Det betyr kompleks lønnskjøring med ulike satser per oppdrag, fakturering basert på timer, og marginer som varierer fra kontrakt til kontrakt. Vi hjelper deg med å holde oversikt over faktisk lønnsomhet per utleid person og per kunde — og med å sikre at lønnskjøringen alltid er korrekt."
+    intro="Bemanningsbyråer og rekrutteringsselskaper håndterer mange ansatte, mange kunder og stramme marginer. Vi gir deg kontroll over hva du faktisk tjener per person og per oppdrag."
+    body="I bemanningsbransjen jobber de ansatte dine hos andre. Det betyr mange ulike lønnssatser, fakturering basert på timer og marginer som varierer fra kontrakt til kontrakt. Vi hjelper deg å holde oversikt over hva du faktisk sitter igjen med per person og per kunde."
     deliverables={[
-      "Lønnskjøring for innleide med ulike satser",
-      "Lønnsomhetsanalyse per kontrakt og kunde",
+      "Lønnskjøring med ulike satser per oppdrag",
+      "Oversikt over lønnsomhet per kontrakt og kunde",
       "Fakturering basert på timeregistrering",
-      "A-melding og innberetning",
-      "Arbeidsgiveravgift og sosiale kostnader",
-      "Kontraktsoppfølging og marginstyring",
+      "Innrapportering til myndighetene",
+      "Beregning av alle arbeidsgiverkostnader",
+      "Oppfølging av kontrakter og marginer",
       "Årsregnskap og skattemelding",
-      "Likviditetsplanlegging ved vekst",
+      "Planlegging av pengestrøm ved vekst",
     ]}
     challenges={[
-      { title: "Mange ansatte med ulike lønnsvilkår.", desc: "Ulike satser per oppdrag, overtid, tillegg og bonus gjør lønnskjøringen svært kompleks. Vi håndterer det med presisjon." },
-      { title: "Marginen per person er nøkkeltallet.", desc: "Vi gir deg rapportering som viser faktisk margin per utleid ressurs — inkludert alle sosiale kostnader." },
-      { title: "Likviditeten presses ved vekst.", desc: "Du betaler lønn før du mottar betaling fra kunden. Vi hjelper med likviditetsprognose og finansieringsløsninger." },
-      { title: "Regelverket for utleie er strengt.", desc: "Likebehandlingsregler, innleieregler og dokumentasjonskrav — vi hjelper deg å holde deg innenfor lovverket." },
+      { title: "Mange ansatte med ulike avtaler.", desc: "Ulike satser, tillegg og bonus gjør at lønnskjøringen krever presisjon. Vi tar oss av det." },
+      { title: "Hva du faktisk tjener per person er nøkkeltallet.", desc: "Vi gir deg oversikt over hva du sitter igjen med per utleid person — etter alle kostnader." },
+      { title: "Du betaler lønn før du mottar betaling.", desc: "Vi hjelper deg med å planlegge pengeflyten og finne gode løsninger for finansiering." },
+      { title: "Reglene for utleie av arbeidskraft er strenge.", desc: "Likebehandlingsregler og dokumentasjonskrav — vi hjelper deg å holde deg innenfor lovverket." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Margin per hode.", desc: "Vi rapporterer på faktisk lønnsomhet per utleid person — slik at du kan optimalisere kundeporteføljen og satsene dine." },
-      { num: "02", title: "Effektiv lønnskjøring i volum.", desc: "Enten du har 20 eller 200 utleide, kjører vi lønn korrekt og effektivt med alle tillegg og innberetninger." },
-      { num: "03", title: "Vekststøtte.", desc: "Vi hjelper deg med likviditetsplanlegging, factoring-vurderinger og finansiering — slik at vekst ikke knekker kontantstrømmen." },
+      { num: "01", title: "Margin per person.", desc: "Vi viser deg hva du faktisk tjener per utleid person — slik at du kan optimalisere satsene og porteføljen." },
+      { num: "02", title: "Effektiv lønnskjøring i stort volum.", desc: "Enten du har 20 eller 200 utleide, kjører vi lønn korrekt og effektivt." },
+      { num: "03", title: "Støtte i vekstfasen.", desc: "Vi hjelper deg med pengestrøm og finansiering — slik at vekst ikke knekker kontantstrømmen." },
     ]}
     relatedSlugs={[
       { label: "Renhold & Facility", href: "/bransjer/renhold" },

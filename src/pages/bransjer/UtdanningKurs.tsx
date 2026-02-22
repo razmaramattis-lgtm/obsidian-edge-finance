@@ -6,28 +6,28 @@ const UtdanningKurs = () => (
     icon={GraduationCap}
     name="Utdanning & Kurs"
     tagline="Du lærer bort — vi holder orden"
-    intro="Kursarrangører, private skoler, e-læringsplattformer og undervisningsbyråer. Du deler kunnskap — vi sørger for at økonomien din er like solid som fagkunnskapen din."
-    body="Utdanningsbransjen omfatter alt fra fysiske kurs og seminarer til digitale plattformer og coaching. Inntektene kan komme fra kursdeltakere, bedriftsavtaler, offentlige tilskudd eller abonnementer. MVA-reglene er spesielt relevante — undervisning kan være fritatt eller avgiftspliktig avhengig av type. Vi hjelper deg å navigere dette og maksimere lønnsomheten."
+    intro="Kursarrangører, private skoler, nettbaserte plattformer og coaching. Du deler kunnskap — vi sørger for at økonomien din er like solid som det du kan."
+    body="Utdanningsbransjen spenner fra fysiske kurs og seminarer til digitale plattformer og en-til-en-veiledning. Inntektene kan komme fra deltakere, bedriftsavtaler, offentlig støtte eller abonnementer. Det som gjør det ekstra viktig å ha oversikt er at noe undervisning har andre avgiftsregler enn vanlig tjenesteyting."
     deliverables={[
-      "Kursregnskap per arrangement eller program",
-      "MVA-vurdering (fritatt vs. avgiftspliktig undervisning)",
+      "Regnskap per kurs, arrangement eller program",
+      "Vurdering av avgiftsregler for undervisning",
       "Honorar og fakturering til foredragsholdere",
-      "Tilskudd og offentlig støtte",
-      "Abonnementsinntekter og e-læring",
+      "Offentlige tilskudd og støtte",
+      "Abonnementsinntekter og nettbasert læring",
       "Lønnskjøring for deltids- og frilansundervisere",
       "Årsregnskap og skattemelding",
-      "Rapportering per kursområde",
+      "Rapportering per fagområde",
     ]}
     challenges={[
-      { title: "MVA-fritaket for undervisning er komplekst.", desc: "Noe undervisning er MVA-fritatt, annet ikke. Vi vurderer din virksomhet og sikrer korrekt MVA-behandling." },
-      { title: "Inntektene svinger med kurskalenderen.", desc: "Vi hjelper deg med likviditetsplanlegging som tar høyde for at inntektene kommer i puljer — ikke jevnt." },
-      { title: "Mange underleverandører og foredragsholdere.", desc: "Honorarer, reisekostnader og fakturering til eksterne krever god oversikt. Vi holder orden." },
-      { title: "Digital versus fysisk levering.", desc: "E-læring og fysiske kurs har ulike kostnadsstrukturer. Vi gir deg innsikt i lønnsomheten per kanal." },
+      { title: "Avgiftsreglene for undervisning er ikke rett frem.", desc: "Noen typer undervisning er fritatt for avgift, andre ikke. Vi vurderer hva som gjelder for deg og sørger for at det gjøres riktig." },
+      { title: "Inntektene svinger med kurskalenderen.", desc: "Vi hjelper deg med planlegging som tar høyde for at pengene kommer i puljer — ikke jevnt gjennom året." },
+      { title: "Mange eksterne foredragsholdere og underleverandører.", desc: "Honorarer, reisekostnader og fakturering til andre krever god oversikt. Vi holder orden." },
+      { title: "Digital og fysisk levering har ulike kostnader.", desc: "Vi gir deg innsikt i hva som lønner seg best — nettbasert eller i klasserommet." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Lønnsomhet per kurs.", desc: "Vi setter opp rapportering som viser deg faktisk resultat per kurs, program eller arrangement." },
-      { num: "02", title: "MVA-ekspertise.", desc: "Vi kjenner reglene for MVA-fritak i undervisning og sikrer at du verken betaler for mye eller for lite." },
-      { num: "03", title: "Skalerbar økonomi.", desc: "Enten du holder 5 eller 500 kurs i året, tilpasser vi regnskapet til volumet ditt." },
+      { num: "01", title: "Lønnsomhet per kurs.", desc: "Vi viser deg hva du faktisk sitter igjen med per kurs, program eller arrangement." },
+      { num: "02", title: "Vi kjenner avgiftsreglene.", desc: "Vi vet hva som gjelder for undervisning og sørger for at du verken betaler for mye eller for lite." },
+      { num: "03", title: "Tilpasset ditt volum.", desc: "Enten du holder 5 eller 500 kurs i året, tilpasser vi oss." },
     ]}
     relatedSlugs={[
       { label: "Consulting & Rådgivning", href: "/bransjer/consulting" },

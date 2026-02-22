@@ -6,28 +6,28 @@ const TransportLogistikk = () => (
     icon={Truck}
     name="Transport & Logistikk"
     tagline="Vi holder oversikt mens du holder hjulene i gang"
-    intro="Transport- og logistikkbransjen har komplekse kostnadsstrukturer med drivstoff, bompenger, vedlikehold og sjåførlønninger. Vi gir deg den økonomiske oversikten som trengs for å drive lønnsomt — mil etter mil."
-    body="Enten du kjører tungtransport, budbil eller driver lagerlogistikk, krever bransjen din presis kostnadskontroll per tur, per bil og per sjåfør. Drivstoffkostnader svinger, forsikringspremier er høye, og regelverket rundt kjøre- og hviletid påvirker lønnskostnadene direkte. Vi hjelper deg å forstå den reelle lønnsomheten i driften — ikke bare omsetningen."
+    intro="Transport og logistikk har mange kostnader som skal følges opp — drivstoff, bompenger, vedlikehold og lønn. Vi gir deg den oversikten som trengs for å drive lønnsomt, tur etter tur."
+    body="Enten du kjører tungtransport, budbil eller driver lager, krever bransjen din at du vet hva det koster per tur, per bil og per sjåfør. Drivstoffprisene svinger, forsikringene er dyre, og reglene for kjøretid påvirker lønnskostnadene direkte. Vi hjelper deg å forstå hva du faktisk tjener — ikke bare hva du omsetter for."
     deliverables={[
-      "Kostnadskontroll per kjøretøy og rute",
-      "Drivstoffregnskap og avgiftsoptimalisering",
-      "Lønnskjøring med diett, overtid og utetillegg",
-      "Bompenger og utenlandskjøring (MVA-refusjon)",
+      "Kostnadsoversikt per bil og rute",
+      "Drivstoffkostnader og avgiftsoptimalisering",
+      "Lønnskjøring med tillegg for diett, overtid og utetid",
+      "Bompenger og avgiftsrefusjon ved kjøring i utlandet",
       "Avskrivning og leasing av kjøretøy",
-      "Likviditetsplanlegging ved store investeringer",
+      "Planlegging av pengestrøm ved store investeringer",
       "Skattemelding og årsregnskap",
-      "Rapportering til Statens vegvesen og løyvekrav",
+      "Rapportering og løyvekrav",
     ]}
     challenges={[
-      { title: "Drivstoff er den mest volatile kostnaden.", desc: "Vi setter opp rapportering som viser deg faktisk drivstoffkostnad per kilometer og per oppdrag — slik at du kan prise riktig og reagere tidlig." },
-      { title: "Lønnskjøring er kompleks med skift og tillegg.", desc: "Diettgodtgjørelse, nattillegg, overtid og utetillegg krever korrekt beregning. Vi håndterer dette korrekt og effektivt." },
-      { title: "Store investeringer krever god likviditetsplanlegging.", desc: "Nye kjøretøy og utstyr er kapitalkrevende. Vi hjelper deg med finansieringsvalg, avskrivninger og likviditetsprognoser." },
-      { title: "MVA på tvers av landegrenser er krevende.", desc: "Grensekryssende transport har egne MVA-regler. Vi sikrer korrekt behandling og hjelper deg med refusjonskrav i utlandet." },
+      { title: "Drivstoff er den mest uforutsigbare kostnaden.", desc: "Vi gir deg oversikt over faktisk drivstoffkostnad per kilometer og per oppdrag — slik at du kan prise riktig og reagere tidlig." },
+      { title: "Lønn med mange tillegg er krevende.", desc: "Diett, nattillegg, overtid og utetillegg skal beregnes riktig. Vi tar oss av det, raskt og korrekt." },
+      { title: "Nye biler og utstyr binder opp mye penger.", desc: "Vi hjelper deg med å velge riktig finansiering og behandler det riktig i regnskapet." },
+      { title: "Kjøring i utlandet har egne avgiftsregler.", desc: "Vi sørger for at alt behandles riktig og hjelper deg med å få tilbake avgifter du har krav på." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Kostnad per kilometer — ikke bare totaltall.", desc: "Vi bryter ned økonomien din per kjøretøy, per rute og per sjåfør. Det gir deg beslutningsgrunnlag som faktisk betyr noe." },
-      { num: "02", title: "Automatisert integrasjon med flåtesystemer.", desc: "Data fra bompengeselskaper, drivstoffkort og flåtestyring hentes inn automatisk. Du slipper manuell registrering." },
-      { num: "03", title: "Vi forstår sesongsvingningene.", desc: "Transport er sesongavhengig. Vi hjelper deg med kontantstrømstyring og budsjettering som tar høyde for variasjonene." },
+      { num: "01", title: "Kostnad per kilometer — ikke bare totaltall.", desc: "Vi bryter ned økonomien per bil, per rute og per sjåfør. Det gir deg et beslutningsgrunnlag som faktisk betyr noe." },
+      { num: "02", title: "Data hentes inn automatisk.", desc: "Bompenger, drivstoffkort og andre systemer kobles rett inn. Du slipper å registrere noe manuelt." },
+      { num: "03", title: "Vi forstår sesongene.", desc: "Transport varierer med årstidene. Vi hjelper med budsjett og pengestrøm som tar høyde for det." },
     ]}
     relatedSlugs={[
       { label: "Bygg & Anlegg", href: "/bransjer/bygg-anlegg" },

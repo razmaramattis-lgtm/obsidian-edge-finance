@@ -7,33 +7,33 @@ const Varehandel = () => (
     name="Varehandel"
     tagline="Alltid kontroll på varene og pengene"
     intro="Butikk er mer enn salg — det handler om innkjøp, lager, svinn og marginer. Vi hjelper deg å forstå hva som faktisk lønner seg å selge, og gir deg et klart bilde av hvordan bedriften din går."
-    body="Varehandel stiller særskilte krav til lagerregnskap, bruttomarginoppfølging og likviditetsstyring i forbindelse med innkjøpssykluser. Vi hjelper butikker og kjeder med å sette opp regnskapssystemer som faktisk gir innsikt — ikke bare tall du ikke forstår hva du skal gjøre med."
+    body="I varehandel er det avgjørende å vite hva varene faktisk koster deg, holde styr på lageret og ha kontroll på pengeflyten — spesielt rundt innkjøp og sesonger. Vi hjelper deg med regnskap som gir deg innsikt du faktisk kan bruke, ikke bare tall som samler støv."
     deliverables={[
-      "Lagerregnskap og varekostnad (COGS)",
-      "Bruttomarginanalyse per kategori",
-      "Kassedifferanser og internkontroll",
+      "Oversikt over lagerverdier og varekostnad",
+      "Analyse av marginer per produktkategori",
+      "Kontroll på kassedifferanser",
       "MVA-rapportering og årsoppgjør",
-      "Innkjøpsbudsjettering og sesongplanlegging",
-      "Svinnregistrering og avviksanalyse",
-      "Bankintegrasjon og automatisert bilagsflyt",
-      "Skattemelding og personallønnskjøring",
+      "Budsjettering for innkjøp og sesonger",
+      "Registrering av svinn og avvik",
+      "Automatisk henting av data fra bank",
+      "Skattemelding og lønnskjøring",
     ]}
     challenges={[
-      { title: "Varekostnad og bruttomargin er nøkkelen.", desc: "Vet du hvilke produktkategorier som faktisk tjener penger, og hvilke som spiser marginen din? Vi setter opp rapportering som svarer på dette spørsmålet." },
-      { title: "Lager- og kontantstrøm kolliderer.", desc: "Innkjøp skjer nå, betaling kommer senere. Uten god likviditetsstyring kan en sterk sesong paradoksalt nok skape likviditetskrise. Vi planlegger med deg." },
-      { title: "Kasseavvik er et tegn på noe større.", desc: "Regelmessige kassedifferanser er sjelden tilfeldige. Vi hjelper deg å identifisere mønstre og sette opp rutiner som reduserer avvik og intern svinn." },
-      { title: "Sesongvariasjon krever forutsigbar økonomi.", desc: "Julehandel, sommerens lavtrafikk og salgskampanjer skaper variabel kontantstrøm. Vi budsjetteterer sesongtilpasset slik at du aldri blir tatt på senga." },
+      { title: "Vet du hvilke produkter som faktisk tjener penger?", desc: "Vi setter opp rapportering som viser deg hva som gir god margin og hva som spiser opp fortjenesten din." },
+      { title: "Innkjøp og innbetaling kommer sjelden samtidig.", desc: "Du betaler for varene nå, men pengene fra kundene kommer senere. Uten god planlegging kan en god sesong paradoksalt nok skape problemer." },
+      { title: "Kasseavvik er sjelden tilfeldige.", desc: "Regelmessige forskjeller i kassa tyder på noe. Vi hjelper deg å finne mønsteret og lage bedre rutiner." },
+      { title: "Sesongene styrer alt.", desc: "Julehandel, sommerens lavtrafikk og kampanjer skaper svingninger i pengeflyten. Vi budsjetterer slik at du er forberedt." },
     ]}
     whyAvargo={[
-      { num: "01", title: "Vi forstår handelens logikk.", desc: "Innkjøp, lagerstyring, margin og svinn — vi kjenner bransjen og rapporterer på de målene som faktisk betyr noe for en varehandler." },
-      { num: "02", title: "Integrasjon mot kassasystem og nettbutikk.", desc: "Salgsdata fra kassen og nettbutikken hentes automatisk inn i regnskapet. Ingen manuell overføring, ingen forsinkelse." },
-      { num: "03", title: "Proaktiv rådgivning på vekst og marginoptimalisering.", desc: "Vi hjelper deg ikke bare med å bokføre — vi hjelper deg å forstå hvilke produkter og kanaler som vokser lønnsomheten din." },
+      { num: "01", title: "Vi forstår butikkdrift.", desc: "Innkjøp, lager, marginer og svinn — vi rapporterer på det som faktisk betyr noe for deg som driver butikk." },
+      { num: "02", title: "Kassesystem og nettbutikk kobles rett inn.", desc: "Salgsdata hentes automatisk inn i regnskapet. Ingen manuell overføring, ingen forsinkelse." },
+      { num: "03", title: "Vi hjelper deg å vokse lønnsomst mulig.", desc: "Vi bokfører ikke bare — vi hjelper deg å forstå hvilke produkter og kanaler som gir best avkastning." },
     ]}
     relatedSlugs={[
       { label: "Nettbutikk & E-commerce", href: "/bransjer/nettbutikk" },
       { label: "Restaurant & Uteliv", href: "/bransjer/restaurant" },
     ]}
-    ctaHeadline="Oversikt over hvert krone inn og ut av butikken."
+    ctaHeadline="Oversikt over hver krone inn og ut av butikken."
   />
 );
 
