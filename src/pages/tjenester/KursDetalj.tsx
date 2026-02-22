@@ -22,6 +22,8 @@ interface CourseDetail {
   duration: string | null;
   meta_title: string | null;
   meta_description: string | null;
+  coming_soon: boolean;
+  has_certificate: boolean;
 }
 
 const KursDetalj = () => {
@@ -29,15 +31,19 @@ const KursDetalj = () => {
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showBooking, setShowBooking] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", email: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactSending, setContactSending] = useState(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
       const { data } = await supabase
         .from("courses")
-        .select("id, name, description, long_description, category, slug, highlights, target_audience, duration, meta_title, meta_description")
+        .select("id, name, description, long_description, category, slug, highlights, target_audience, duration, meta_title, meta_description, coming_soon, has_certificate")
         .eq("slug", slug)
         .eq("active", true)
         .single();
@@ -113,23 +119,48 @@ const KursDetalj = () => {
                 {course.description}
               </p>
             )}
-            <div className="flex flex-wrap gap-4 items-center mb-10">
+            <div className="flex flex-wrap gap-3 items-center mb-10">
+              {course.coming_soon && (
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">
+                  Kommer snart
+                </span>
+              )}
+              {course.has_certificate && (
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-medium">
+                  <Award size={12} /> Kursbevis inkludert
+                </span>
+              )}
               {course.duration && (
                 <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock size={14} className="text-primary" /> {course.duration}
                 </span>
               )}
-              <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <Award size={14} className="text-primary" /> Kursbevis inkludert
-              </span>
             </div>
-            <button
-              onClick={() => setShowBooking(true)}
-              className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-            >
-              Bestill kurs
-              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              {!course.coming_soon ? (
+                <button
+                  onClick={() => setShowBooking(true)}
+                  className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                >
+                  Bestill kurs
+                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowContact(true)}
+                  className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                >
+                  Få beskjed når kurset er klart
+                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </button>
+              )}
+              <button
+                onClick={() => setShowContact(true)}
+                className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all"
+              >
+                <Phone size={14} /> Book rådgivningstime
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -241,6 +272,102 @@ const KursDetalj = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* Contact / Advisory Modal */}
+      {showContact && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowContact(false)}
+        >
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-lg glass rounded-3xl border border-border/20 p-8 md:p-10"
+            onClick={e => e.stopPropagation()}
+          >
+            <button onClick={() => setShowContact(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
+              <X size={18} />
+            </button>
+            {contactSubmitted ? (
+              <div className="text-center py-6">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle2 size={24} className="text-primary" />
+                </div>
+                <h3 className="font-heading text-2xl mb-2">Vi har mottatt forespørselen!</h3>
+                <p className="text-sm text-muted-foreground font-light mb-2">Vi kontakter deg innen 24 timer.</p>
+                <p className="text-xs text-muted-foreground">Kurs: <span className="text-foreground">{course.name}</span></p>
+                <button onClick={() => setShowContact(false)} className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm hover:opacity-90">Lukk</button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <p className="text-[9px] tracking-[0.4em] uppercase text-primary mb-2">Book rådgivningstime</p>
+                  <h3 className="font-heading text-xl md:text-2xl mb-1">Interessert i dette kurset?</h3>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Kurset du ser på: <span className="text-foreground font-medium">{course.name}</span> ({course.category})
+                  </p>
+                </div>
+                <div className="line-accent mb-6" />
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setContactSending(true);
+                  try {
+                    await supabase.functions.invoke("contact-submit", {
+                      body: {
+                        company_name: `Rådgivning kurs: ${course.name}`,
+                        contact_person: contactForm.name,
+                        email: contactForm.email,
+                        phone: contactForm.phone,
+                        message: `Interessert i kurs: ${course.name} (${course.category})${course.coming_soon ? " — Ønsker beskjed når klart" : ""}. Melding: ${contactForm.message}`,
+                        package: "Kursrådgivning",
+                      },
+                    });
+                  } catch (err) {
+                    console.error("Submit error:", err);
+                  }
+                  setContactSending(false);
+                  setContactSubmitted(true);
+                }} className="space-y-4">
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1.5 block">Fullt navn *</label>
+                    <input value={contactForm.name} onChange={e => setContactForm({ ...contactForm, name: e.target.value })} required placeholder="Ola Nordmann"
+                      className="w-full h-11 rounded-xl border border-border/30 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1.5 block">E-post *</label>
+                    <input value={contactForm.email} onChange={e => setContactForm({ ...contactForm, email: e.target.value })} required type="email" placeholder="ola@firma.no"
+                      className="w-full h-11 rounded-xl border border-border/30 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1.5 block">Telefon</label>
+                    <input value={contactForm.phone} onChange={e => setContactForm({ ...contactForm, phone: e.target.value })} type="tel" placeholder="+47 XXX XX XXX"
+                      className="w-full h-11 rounded-xl border border-border/30 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1.5 block">Melding</label>
+                    <textarea value={contactForm.message} onChange={e => setContactForm({ ...contactForm, message: e.target.value })} rows={3} placeholder="Fortell oss hva du trenger hjelp med…"
+                      className="w-full rounded-xl border border-border/30 bg-muted/20 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" />
+                  </div>
+                  <div className="glass rounded-xl p-3 border border-border/10">
+                    <p className="text-xs text-muted-foreground font-light">
+                      <span className="text-foreground font-medium">Kurs:</span> {course.name}
+                      {course.coming_soon && <span className="ml-2 text-amber-400">(Kommer snart)</span>}
+                    </p>
+                  </div>
+                  <button type="submit" disabled={contactSending}
+                    className="w-full py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-medium tracking-wider glow-rose hover:scale-[1.01] transition-all disabled:opacity-50">
+                    {contactSending ? "Sender…" : "Send forespørsel"}
+                  </button>
+                </form>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Booking Modal */}
       {showBooking && (

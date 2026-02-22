@@ -760,9 +760,11 @@ export type Database = {
         Row: {
           active: boolean | null
           category: string
+          coming_soon: boolean
           created_at: string
           description: string | null
           duration: string | null
+          has_certificate: boolean
           highlights: Json | null
           id: string
           long_description: string | null
@@ -777,9 +779,11 @@ export type Database = {
         Insert: {
           active?: boolean | null
           category?: string
+          coming_soon?: boolean
           created_at?: string
           description?: string | null
           duration?: string | null
+          has_certificate?: boolean
           highlights?: Json | null
           id?: string
           long_description?: string | null
@@ -794,9 +798,11 @@ export type Database = {
         Update: {
           active?: boolean | null
           category?: string
+          coming_soon?: boolean
           created_at?: string
           description?: string | null
           duration?: string | null
+          has_certificate?: boolean
           highlights?: Json | null
           id?: string
           long_description?: string | null
