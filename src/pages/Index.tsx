@@ -73,15 +73,6 @@ const RotatingHook = () => {
               </p>
             </motion.div>
           </AnimatePresence>
-          <div className="flex items-center justify-center gap-2 mt-8">
-            {hookSlides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setHookIndex(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === hookIndex ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </section>
