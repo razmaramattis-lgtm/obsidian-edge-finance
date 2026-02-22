@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical, Globe, Lock, CheckSquare, Square, Users } from "lucide-react";
+import { Plus, Trash2, Download, Upload, FileSpreadsheet, Edit2, X, GripVertical, Globe, Lock, CheckSquare, Square, Users, Save, Check } from "lucide-react";
 import { toast } from "sonner";
 
 interface ArchiveFile {
@@ -34,6 +34,8 @@ const ArchivePanel = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  const [editingFile, setEditingFile] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", description: "", category: "" });
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchAll = async () => {
@@ -133,6 +135,23 @@ const ArchivePanel = () => {
     if (v === "public") return { text: "Offentlig", icon: Globe, cls: "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20" };
     if (v === "customer") return { text: "Kundeportal", icon: Users, cls: "bg-primary/10 text-primary hover:bg-primary/20" };
     return { text: "Kun intern", icon: Lock, cls: "bg-muted/50 text-muted-foreground hover:bg-muted" };
+  };
+
+  const startEdit = (file: ArchiveFile) => {
+    setEditingFile(file.id);
+    setEditForm({ name: file.name, description: file.description || "", category: file.category || "" });
+  };
+
+  const saveEdit = async () => {
+    if (!editingFile) return;
+    await supabase.from("archive_files").update({
+      name: editForm.name,
+      description: editForm.description || null,
+      category: editForm.category,
+    } as any).eq("id", editingFile);
+    setEditingFile(null);
+    toast.success("Fil oppdatert");
+    fetchAll();
   };
 
   const saveCat = async () => {
@@ -251,37 +270,64 @@ const ArchivePanel = () => {
             <h3 className="text-xs tracking-widest uppercase text-muted-foreground mb-2">{cat.name}</h3>
             <div className="space-y-2">
               {grouped[cat.name].map(file => (
-                <div key={file.id} className={`glass rounded-2xl px-5 py-4 border flex items-center justify-between gap-4 transition-colors ${
+                <div key={file.id} className={`glass rounded-2xl px-5 py-4 border transition-colors ${
                   selected.has(file.id) ? "border-primary/40 bg-primary/5" : "border-border/20"
                 }`}>
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => toggleSelect(file.id)} className="text-muted-foreground hover:text-primary transition-colors shrink-0">
-                      {selected.has(file.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
-                    </button>
-                    <FileSpreadsheet size={18} className="text-primary shrink-0" strokeWidth={1.5} />
-                    <div>
-                      <p className="text-sm font-medium">{file.name}</p>
-                      <p className="text-xs text-muted-foreground">{file.file_name} {file.file_size && `· ${file.file_size}`}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {(() => {
-                      const v = visLabel(file.visibility || (file.active ? "public" : "internal"));
-                      return (
-                        <button onClick={() => cycleVisibility(file)}
-                          className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${v.cls}`}>
-                          <v.icon size={11} />
-                          {v.text}
+                  {editingFile === file.id ? (
+                    <div className="space-y-2">
+                      <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                        placeholder="Navn" className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                      <input value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                        placeholder="Beskrivelse" className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                      <select value={editForm.category} onChange={e => setEditForm(f => ({ ...f, category: e.target.value }))}
+                        className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+                        {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                      </select>
+                      <div className="flex gap-2">
+                        <button onClick={saveEdit} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs bg-primary text-primary-foreground hover:opacity-90">
+                          <Check size={12} /> Lagre
                         </button>
-                      );
-                    })()}
-                    {file.file_url && (
-                      <a href={file.file_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                        <Download size={14} />
-                      </a>
-                    )}
-                    <button onClick={() => del(file)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
-                  </div>
+                        <button onClick={() => setEditingFile(null)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border border-border/30 hover:bg-muted/50">
+                          <X size={12} /> Avbryt
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => toggleSelect(file.id)} className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                          {selected.has(file.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
+                        </button>
+                        <FileSpreadsheet size={18} className="text-primary shrink-0" strokeWidth={1.5} />
+                        <div>
+                          <p className="text-sm font-medium">{file.name}</p>
+                          {file.description && <p className="text-[11px] text-muted-foreground">{file.description}</p>}
+                          <p className="text-xs text-muted-foreground">{file.file_name} {file.file_size && `· ${file.file_size}`}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const v = visLabel(file.visibility || (file.active ? "public" : "internal"));
+                          return (
+                            <button onClick={() => cycleVisibility(file)}
+                              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${v.cls}`}>
+                              <v.icon size={11} />
+                              {v.text}
+                            </button>
+                          );
+                        })()}
+                        <button onClick={() => startEdit(file)} className="text-muted-foreground hover:text-primary transition-colors">
+                          <Edit2 size={14} />
+                        </button>
+                        {file.file_url && (
+                          <a href={file.file_url} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Download size={14} />
+                          </a>
+                        )}
+                        <button onClick={() => del(file)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
