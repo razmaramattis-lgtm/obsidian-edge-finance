@@ -720,13 +720,14 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { type } = await req.json().catch(() => ({ type: "all" }));
+    const { type, batch } = await req.json().catch(() => ({ type: "all", batch: undefined }));
+    const batchSize = 50;
 
     let accountsInserted = 0;
     let glossaryInserted = 0;
 
     if (type === "all" || type === "accounts") {
-      const rows = ACCOUNTS.map(a => ({
+      const allRows = ACCOUNTS.map(a => ({
         account_number: a.n,
         name: a.name,
         slug: slugify(`${a.n}-${a.name}`),
@@ -739,11 +740,24 @@ Deno.serve(async (req) => {
         active: true,
       }));
 
+      // If batch is specified, only process that slice
+      const start = batch !== undefined ? batch * batchSize : 0;
+      const end = batch !== undefined ? start + batchSize : allRows.length;
+      const rows = allRows.slice(start, end);
+      const totalBatches = Math.ceil(allRows.length / batchSize);
+
       for (const row of rows) {
         const { error } = await supabase
           .from("account_entries")
           .upsert(row, { onConflict: "slug" });
         if (!error) accountsInserted++;
+      }
+
+      if (batch !== undefined) {
+        return new Response(
+          JSON.stringify({ success: true, accountsInserted, batch, totalBatches, batchRange: `${start}-${end}` }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
     }
 
