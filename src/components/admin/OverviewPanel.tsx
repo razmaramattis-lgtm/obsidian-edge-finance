@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   FileText, Briefcase, DollarSign, Archive, Shield,
   FolderOpen, Handshake, MessageSquare, Eye, EyeOff,
-  Clock, TrendingUp, PenLine, ArrowRight, Building2
+  Clock, TrendingUp, PenLine, ArrowRight, Building2,
+  Inbox, Users, UserPlus, CalendarDays, Mail, AlertCircle
 } from "lucide-react";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
+import type { AdminNotifications } from "@/hooks/useAdminNotifications";
 
 interface Stats {
   totalPosts: number;
@@ -20,9 +22,9 @@ interface Stats {
 }
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications";
 
-const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: (p: Panel) => void }) => {
+const OverviewPanel = ({ isAdmin, onNavigate, notifications }: { isAdmin: boolean; onNavigate: (p: Panel) => void; notifications: AdminNotifications }) => {
   const { profile } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [quickTitle, setQuickTitle] = useState("");
@@ -108,6 +110,50 @@ const OverviewPanel = ({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate: 
         </p>
       </motion.div>
 
+      {/* Notification Queue */}
+      {isAdmin && notifications.total > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="glass rounded-2xl p-5 border border-destructive/20 bg-destructive/[0.03]"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <AlertCircle size={15} className="text-destructive" strokeWidth={1.5} />
+            <h3 className="font-medium text-sm">Venter på behandling</h3>
+            <span className="ml-auto min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5">
+              {notifications.total}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {[
+              { count: notifications.partnerRequests, label: "Avtaleforespørsler", icon: Inbox, panel: "partner_requests" as Panel },
+              { count: notifications.advisorRequests, label: "Rådgiverforespørsler", icon: Users, panel: "advisor_requests" as Panel },
+              { count: notifications.employeeInvitations, label: "Ansattinvitasjoner", icon: UserPlus, panel: "employee_invitations" as Panel },
+              { count: notifications.benefitApplications, label: "Fordelsavtale-søknader", icon: Handshake, panel: "benefit_applications" as Panel },
+              { count: notifications.pendingBookings, label: "Ventende bookinger", icon: CalendarDays, panel: "bookings" as Panel },
+              { count: notifications.contactSubmissions, label: "Nye henvendelser", icon: Mail, panel: "overview" as Panel },
+            ]
+              .filter(item => item.count > 0)
+              .map(item => (
+                <button
+                  key={item.label}
+                  onClick={() => onNavigate(item.panel)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-background/60 border border-border/20 hover:border-primary/30 transition-all text-left group"
+                >
+                  <item.icon size={14} className="text-muted-foreground group-hover:text-primary shrink-0" strokeWidth={1.5} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{item.label}</p>
+                  </div>
+                  <span className="min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-destructive/10 text-destructive text-[10px] font-bold px-1">
+                    {item.count}
+                  </span>
+                  <ArrowRight size={11} className="text-muted-foreground/40 group-hover:text-primary shrink-0" />
+                </button>
+              ))}
+          </div>
+        </motion.div>
+      )}
       {/* Stats Cards */}
       {statCards.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
