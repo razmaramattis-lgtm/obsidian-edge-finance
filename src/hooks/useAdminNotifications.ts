@@ -17,6 +17,7 @@ export interface AdminNotifications {
   benefitApplications: number;
   contactSubmissions: number;
   pendingBookings: number;
+  accountFeedback: number;
   total: number;
   loading: boolean;
   items: PendingItem[];
@@ -33,18 +34,20 @@ export const useAdminNotifications = (): AdminNotifications => {
     benefitApplications: 0,
     contactSubmissions: 0,
     pendingBookings: 0,
+    accountFeedback: 0,
   });
   const [items, setItems] = useState<PendingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = useCallback(async () => {
-    const [pr, ar, ei, ba, cs, bk] = await Promise.all([
+    const [pr, ar, ei, ba, cs, bk, af] = await Promise.all([
       supabase.from("partnership_requests").select("id, status, company_id, message", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("advisor_requests").select("id, status, company_id, message", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("customer_employee_invitations").select("id, status, employee_name, employee_email, company_id", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("benefit_agreement_applications").select("id, status, title, company_id", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("contact_submissions").select("id, status, company_name, contact_person, email", { count: "exact" }).eq("status", "new").limit(10),
       supabase.from("bookings").select("id, status, customer_name, company_name, booking_date, booking_time", { count: "exact" }).eq("status", "pending").limit(10),
+      supabase.from("account_feedback").select("id, status, search_term, top_result_account, top_result_name, message", { count: "exact" }).eq("status", "new").limit(10),
     ]);
 
     setCounts({
@@ -54,6 +57,7 @@ export const useAdminNotifications = (): AdminNotifications => {
       benefitApplications: ba.count || 0,
       contactSubmissions: cs.count || 0,
       pendingBookings: bk.count || 0,
+      accountFeedback: af.count || 0,
     });
 
     const pendingItems: PendingItem[] = [];
@@ -82,6 +86,10 @@ export const useAdminNotifications = (): AdminNotifications => {
       id: r.id, label: "Booking", sublabel: `${r.customer_name} – ${r.booking_date}`,
       table: "bookings", statusField: "status", category: "bookings",
     }));
+    ((af.data as any[]) || []).forEach(r => pendingItems.push({
+      id: r.id, label: "Kontohjelp-melding", sublabel: `«${r.search_term}»${r.top_result_account ? ` → ${r.top_result_account} ${r.top_result_name}` : ""}`,
+      table: "account_feedback", statusField: "status", category: "account_feedback",
+    }));
 
     setItems(pendingItems);
     setLoading(false);
@@ -94,13 +102,17 @@ export const useAdminNotifications = (): AdminNotifications => {
   }, [fetchAll]);
 
   const approve = useCallback(async (item: PendingItem) => {
-    const newStatus = item.table === "contact_submissions" ? "contacted" : "approved";
+    const newStatus = item.table === "contact_submissions" ? "contacted"
+      : item.table === "account_feedback" ? "handled"
+      : "approved";
     await supabase.from(item.table as any).update({ [item.statusField]: newStatus } as any).eq("id", item.id);
     await fetchAll();
   }, [fetchAll]);
 
   const reject = useCallback(async (item: PendingItem) => {
-    const newStatus = item.table === "contact_submissions" ? "archived" : "rejected";
+    const newStatus = item.table === "contact_submissions" ? "archived"
+      : item.table === "account_feedback" ? "handled"
+      : "rejected";
     await supabase.from(item.table as any).update({ [item.statusField]: newStatus } as any).eq("id", item.id);
     await fetchAll();
   }, [fetchAll]);
@@ -111,7 +123,8 @@ export const useAdminNotifications = (): AdminNotifications => {
     counts.employeeInvitations +
     counts.benefitApplications +
     counts.contactSubmissions +
-    counts.pendingBookings;
+    counts.pendingBookings +
+    counts.accountFeedback;
 
   return { ...counts, total, loading, items, refresh: fetchAll, approve, reject };
 };

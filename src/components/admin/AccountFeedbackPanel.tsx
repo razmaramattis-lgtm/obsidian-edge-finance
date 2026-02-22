@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Search, Trash2, Check, AlertTriangle, ExternalLink } from "lucide-react";
 
-const AccountFeedbackPanel = () => {
+const AccountFeedbackPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,12 +22,14 @@ const AccountFeedbackPanel = () => {
     await supabase.from("account_feedback" as any).update({ status: "handled" }).eq("id", id);
     toast.success("Markert som behandlet");
     load();
+    onStatusChange?.();
   };
 
   const del = async (id: string) => {
     await supabase.from("account_feedback" as any).delete().eq("id", id);
     toast.success("Slettet");
     load();
+    onStatusChange?.();
   };
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
