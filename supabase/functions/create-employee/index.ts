@@ -68,7 +68,12 @@ async function sendEmail(opts: {
 }
 
 function buildWelcomeEmail(name: string, email: string, password: string, role: string) {
-  const roleLabel = role === "admin" ? "administrator" : "medarbeider";
+  const isCustomer = role === "customer";
+  const roleLabel = isCustomer ? "kunde" : role === "admin" ? "administrator" : "medarbeider";
+  const loginUrl = isCustomer
+    ? "https://obsidian-edge-finance.lovable.app/kunde/logg-inn"
+    : "https://obsidian-edge-finance.lovable.app/admin/logg-inn";
+  const portalName = isCustomer ? "kundeportalen" : "admin-portalen";
   const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" });
 
   return `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#fff;">
@@ -81,7 +86,10 @@ function buildWelcomeEmail(name: string, email: string, password: string, role: 
         Hei <strong>${name}</strong> 👋
       </p>
       <p style="font-size:14px;color:#475569;line-height:1.7;margin:0 0 20px;">
-        Vi ønsker deg hjertelig velkommen som ${roleLabel} i Avargo-teamet! Vi gleder oss virkelig til å få deg med på laget, og ser frem til alt vi skal utrette sammen. 🚀
+        ${isCustomer
+          ? `Vi ønsker deg velkommen som kunde hos Avargo! Du har nå tilgang til kundeportalen der du kan følge økonomien din, laste ned dokumenter og kommunisere med din rådgiver. 📊`
+          : `Vi ønsker deg hjertelig velkommen som ${roleLabel} i Avargo-teamet! Vi gleder oss virkelig til å få deg med på laget, og ser frem til alt vi skal utrette sammen. 🚀`
+        }
       </p>
 
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:24px;margin-bottom:24px;">
@@ -105,9 +113,9 @@ function buildWelcomeEmail(name: string, email: string, password: string, role: 
       </div>
 
       <div style="text-align:center;margin-bottom:24px;">
-        <a href="https://obsidian-edge-finance.lovable.app/admin/logg-inn" 
+        <a href="${loginUrl}" 
            style="display:inline-block;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
-          Logg inn nå →
+          Logg inn på ${portalName} →
         </a>
       </div>
 

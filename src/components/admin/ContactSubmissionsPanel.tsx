@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2 } from "lucide-react";
+import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2, UserPlus, Eye, EyeOff, Shuffle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { nb } from "date-fns/locale";
 
 interface Submission {
@@ -23,11 +24,30 @@ interface Submission {
   updated_at: string;
 }
 
+interface CreateCustomerForm {
+  name: string;
+  email: string;
+  password: string;
+  company_name: string;
+  org_number: string;
+  industry: string;
+  contact_phone: string;
+}
+
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   new: { label: "Ny", color: "bg-destructive/10 text-destructive", icon: Clock },
   contacted: { label: "Kontaktet", color: "bg-primary/10 text-primary", icon: CheckCircle },
   archived: { label: "Arkivert", color: "bg-muted text-muted-foreground", icon: ArchiveIcon },
 };
+
+const inputCls = "w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
+
+function generatePassword(length = 12): string {
+  const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#";
+  let pw = "";
+  for (let i = 0; i < length; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  return pw;
+}
 
 const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   const [items, setItems] = useState<Submission[]>([]);
@@ -36,6 +56,13 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "new" | "contacted" | "archived">("all");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  // Create customer state
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createSource, setCreateSource] = useState<Submission | null>(null);
+  const [createForm, setCreateForm] = useState<CreateCustomerForm>({ name: "", email: "", password: "", company_name: "", org_number: "", industry: "", contact_phone: "" });
+  const [creating, setCreating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const load = async () => {
     const { data } = await supabase
@@ -50,7 +77,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
 
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("contact_submissions").update({ status }).eq("id", id);
-    toast.success(status === "contacted" ? "Markert som kontaktet" : "Arkivert");
+    toast.success(status === "contacted" ? "Markert som kontaktet" : status === "archived" ? "Arkivert" : "Status oppdatert");
     await load();
     onStatusChange?.();
   };
@@ -62,6 +89,66 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
     setExpandedId(null);
     await load();
     onStatusChange?.();
+  };
+
+  const openCreateDialog = (s: Submission) => {
+    setCreateSource(s);
+    setCreateForm({
+      name: s.contact_person || "",
+      email: s.email || "",
+      password: generatePassword(),
+      company_name: s.company_name || "",
+      org_number: s.org_number || "",
+      industry: s.industry || "",
+      contact_phone: s.phone || "",
+    });
+    setShowPassword(false);
+    setCreateDialogOpen(true);
+  };
+
+  const createCustomer = async () => {
+    if (!createForm.email || !createForm.name || !createForm.company_name || !createForm.password) {
+      toast.error("Fyll ut alle påkrevde felt");
+      return;
+    }
+    setCreating(true);
+    try {
+      const res = await supabase.functions.invoke("create-employee", {
+        body: { email: createForm.email, password: createForm.password, name: createForm.name, role: "customer" },
+      });
+      if (res.error || res.data?.error) throw new Error(res.data?.error || "Feil ved opprettelse");
+
+      // Get profile to link company
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", res.data.userId)
+        .single();
+
+      if (profileData) {
+        await supabase.from("customer_companies").insert({
+          profile_id: profileData.id,
+          company_name: createForm.company_name,
+          org_number: createForm.org_number || null,
+          industry: createForm.industry || null,
+          contact_phone: createForm.contact_phone || null,
+        });
+      }
+
+      // Mark submission as archived after customer creation
+      if (createSource) {
+        await supabase.from("contact_submissions").update({ status: "archived" }).eq("id", createSource.id);
+      }
+
+      toast.success(`Kunde opprettet! Velkomst-e-post sendt til ${createForm.email}`);
+      setCreateDialogOpen(false);
+      setCreateSource(null);
+      await load();
+      onStatusChange?.();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+    setCreating(false);
   };
 
   const filtered = items.filter(s => {
@@ -232,7 +319,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                   )}
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 pt-3 border-t border-border/10">
+                  <div className="flex items-center gap-2 pt-3 border-t border-border/10 flex-wrap">
                     {s.status === "new" && (
                       <>
                         <button
@@ -269,6 +356,18 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
                         Gjenåpne
                       </button>
                     )}
+
+                    {/* Create customer button - available for contacted and new */}
+                    {(s.status === "new" || s.status === "contacted") && (
+                      <button
+                        onClick={() => openCreateDialog(s)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors"
+                      >
+                        <UserPlus size={11} />
+                        Opprett som kunde
+                      </button>
+                    )}
+
                     <button
                       onClick={() => setDeleteTarget(s.id)}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors ml-auto"
@@ -304,6 +403,150 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Create customer dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus size={18} />
+              Opprett ny kunde
+            </DialogTitle>
+            <DialogDescription>
+              Opprett kundekonto basert på henvendelsen. Kunden vil motta en velkomst-e-post med innloggingsinformasjon.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-2">
+            {/* Source info */}
+            {createSource?.package && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-accent/10 border border-accent/20">
+                <Package size={14} className="text-accent-foreground shrink-0" />
+                <span className="text-xs font-medium text-accent-foreground">Henvendelse om: {createSource.package}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Kontaktperson *</label>
+                <input
+                  value={createForm.name}
+                  onChange={e => setCreateForm({ ...createForm, name: e.target.value })}
+                  placeholder="Navn"
+                  required
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">E-post *</label>
+                <input
+                  value={createForm.email}
+                  onChange={e => setCreateForm({ ...createForm, email: e.target.value })}
+                  placeholder="E-post"
+                  type="email"
+                  required
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Firmanavn *</label>
+                <input
+                  value={createForm.company_name}
+                  onChange={e => setCreateForm({ ...createForm, company_name: e.target.value })}
+                  placeholder="Firmanavn"
+                  required
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Org.nr</label>
+                <input
+                  value={createForm.org_number}
+                  onChange={e => setCreateForm({ ...createForm, org_number: e.target.value })}
+                  placeholder="123456789"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Bransje</label>
+                <input
+                  value={createForm.industry}
+                  onChange={e => setCreateForm({ ...createForm, industry: e.target.value })}
+                  placeholder="Bransje"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Telefon</label>
+                <input
+                  value={createForm.contact_phone}
+                  onChange={e => setCreateForm({ ...createForm, contact_phone: e.target.value })}
+                  placeholder="Telefon"
+                  className={inputCls}
+                />
+              </div>
+            </div>
+
+            {/* Password field */}
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Midlertidig passord *</label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    value={createForm.password}
+                    onChange={e => setCreateForm({ ...createForm, password: e.target.value })}
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    className={inputCls}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCreateForm({ ...createForm, password: generatePassword() })}
+                  className="flex items-center gap-1.5 px-3 rounded-xl border border-border/30 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  title="Generer nytt passord"
+                >
+                  <Shuffle size={12} />
+                  Generer
+                </button>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">Kunden vil motta dette passordet på e-post og bes om å endre det etter innlogging.</p>
+            </div>
+
+            {createSource?.message && (
+              <div className="p-3 rounded-xl bg-muted/30 border border-border/10">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Melding fra henvendelsen</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{createSource.message}</p>
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={createCustomer}
+                disabled={creating}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+              >
+                {creating ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
+                {creating ? "Oppretter…" : "Opprett kunde og send velkomst-e-post"}
+              </button>
+              <button
+                onClick={() => setCreateDialogOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border/30 hover:bg-muted/50 transition-colors"
+              >
+                Avbryt
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
