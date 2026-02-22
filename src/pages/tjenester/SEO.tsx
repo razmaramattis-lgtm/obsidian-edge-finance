@@ -6,34 +6,34 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
 
 const deliverables = [
-  "Teknisk SEO-analyse og utbedring",
-  "Søkeordstrategi og konkurrentanalyse",
-  "On-page optimalisering",
-  "Google Min Bedrift-optimalisering",
-  "Lokal SEO for geografiske markeder",
-  "AI-assistert innholdsproduksjon",
-  "Lenkestrategi og autoritetbygging",
-  "Månedlig rangerings- og trafikrapport",
+  "Gjøre nettsiden din søkevennlig",
+  "Finne ut hva folk søker etter i din bransje",
+  "Skrive og forbedre innhold på nettsiden",
+  "Bli synlig lokalt på Google",
+  "Komme høyere opp i søkeresultatene",
+  "Lage innhold som trekker besøkende",
+  "Bygge troverdighet hos Google",
+  "Månedlig rapport med resultater",
 ];
 
 const pillars = [
-  { num: "01", title: "Teknisk fundament først.", desc: "Crawlabilitet, sidestruktur, Core Web Vitals og indeksering. Uten et solid teknisk fundament hjelper ikke innhold. Vi starter alltid her." },
-  { num: "02", title: "Innhold Google belønner.", desc: "Søkeordrettet innhold som svarer på det brukerne faktisk søker etter — og som plasserer selskapet ditt som autoriteten i din bransje." },
-  { num: "03", title: "Lokal synlighet.", desc: "Google Min Bedrift, lokale søkefraser og geografisk målrettet innhold gjør at du dominerer i ditt marked — ikke bare nasjonalt." },
-  { num: "04", title: "Langsiktig investering.", desc: "SEO er ikke en kampanje. Det er en investering som vokser over tid. Vi bygger organisk trafikk som ikke forsvinner når du slutter å betale for klikk." },
+  { num: "01", title: "Det tekniske må være på plass.", desc: "Nettsiden din må fungere skikkelig for at Google skal like den. Vi sjekker at alt lastes raskt, at sidene er riktig bygget opp, og at Google finner alt innholdet." },
+  { num: "02", title: "Innhold folk faktisk søker etter.", desc: "Vi finner ut hva kundene dine googler, og sørger for at nettsiden din svarer på akkurat de spørsmålene. Da dukker du opp — helt gratis." },
+  { num: "03", title: "Bli synlig der du er.", desc: "Hvis du driver lokalt, sørger vi for at du dukker opp på Google Maps og i lokale søk. Slik at folk i nærheten finner deg først." },
+  { num: "04", title: "Resultater som varer.", desc: "I motsetning til annonser forsvinner ikke denne trafikken når du slutter å betale. Vi bygger synlighet som vokser over tid." },
 ];
 
 const RelatedServices = [
-  { label: "Nettsider & digitale flater", href: "/tjenester/nettsider" },
-  { label: "Google Ads", href: "/tjenester/google-ads" },
-  { label: "AI & automatisering", href: "/tjenester/ai-automatisering" },
+  { label: "Nettsider", href: "/tjenester/nettsider" },
+  { label: "Annonser på Google", href: "/tjenester/google-ads" },
+  { label: "Automatisering og AI", href: "/tjenester/ai-automatisering" },
 ];
 
 const SEO = () => (
   <>
     <Helmet>
-      <title>SEO-tjenester — Bli synlig på Google | Avargo</title>
-      <meta name="description" content="Strategisk søkemotoroptimalisering (SEO) som bygger varig synlighet. Teknisk SEO, innholdsstrategi og lokal SEO for norske bedrifter." />
+      <title>Bli funnet på Google | SEO for bedrifter | Avargo</title>
+      <meta name="description" content="Vi hjelper bedriften din å dukke opp på Google når kundene søker etter det du tilbyr. Enkel og effektiv synlighet — uten at du betaler for hvert klikk." />
       <link rel="canonical" href="https://avargo.no/tjenester/seo" />
     </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -44,13 +44,13 @@ const SEO = () => (
           <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Avargo · Tjenester</p>
+          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Markedsføring & Vekst</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            Synlig på Google.{" "}
-            <span className="italic text-gradient-teal">Organisk og varig.</span>
+            Bli funnet på Google.{" "}
+            <span className="italic text-gradient-teal">Uten å betale for hvert klikk.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Strategisk søkemotoroptimalisering som bygger langsiktig synlighet — slik at kundene finner deg i det øyeblikket behovet oppstår, uten at du betaler for hvert klikk.
+            Vi sørger for at bedriften din dukker opp når folk søker etter det du tilbyr. Slik at kundene finner deg — helt naturlig, uten at du betaler for hvert eneste besøk.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -67,13 +67,13 @@ const SEO = () => (
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva er inkludert</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Komplett SEO —{" "}
-              <span className="italic text-gradient-teal">teknisk og innholdsmessig.</span>
+              Alt som trengs for å bli{" "}
+              <span className="italic text-gradient-teal">synlig på nett.</span>
             </h2>
             <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Vi kombinerer teknisk SEO, innholdsstrategi og lokal tilstedeværelse i en koordinert leveranse som gir resultater som varer.
+              Vi gjør nettsiden din søkevennlig, skriver innhold som treffer, og sørger for at du dukker opp i søkeresultatene — måned for måned.
             </p>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
@@ -94,8 +94,8 @@ const SEO = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Metodikk</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Fire pilarer for varig synlighet.</h2>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Slik jobber vi</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Fire ting som gjør at du blir funnet.</h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {pillars.map((p, i) => (
@@ -134,10 +134,10 @@ const SEO = () => (
             <TrendingUp size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            La kundene finne deg — uten å betale for hvert klikk.
+            La kundene finne deg — helt gratis.
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            Book en SEO-gjennomgang og få konkret innsikt i hva som kreves for å klatre på Google i din bransje.
+            Vi ser på nettsiden din og forteller deg hva som skal til for å komme høyere opp på Google.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
             Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

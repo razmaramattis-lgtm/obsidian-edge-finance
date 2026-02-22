@@ -6,53 +6,53 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
 
 const deliverables = [
-  "Kapitalstruktur- og finansieringsstrategi",
-  "Investor- og styrekommunikasjon",
-  "Exit- og fusjonsplanlegging (M&A)",
-  "Budsjettering og scenarioanalyse",
-  "Finansiell modellering og prognoser",
-  "Rapportering til styre og investorer",
-  "Risikovurdering og internkontroll",
-  "Strategiske veivalg og beslutningsstøtte",
+  "Hjelp med budsjett og langsiktige planer",
+  "Kommunikasjon med investorer og styret",
+  "Planlegging ved salg eller sammenslåing",
+  "Finne ut hva som lønner seg — og hva som ikke gjør det",
+  "Lage økonomiske modeller og prognoser",
+  "Rapporter til styret og eiere",
+  "Vurdere risiko og sikre god kontroll",
+  "Støtte når du skal ta store beslutninger",
 ];
 
 const useCases = [
   {
-    title: "Vekstselskaper uten intern CFO",
-    desc: "Du trenger strategisk finansiell ledelse, men ikke nødvendigvis en CFO på heltid. Vi stiller med seniorkompetanse akkurat når det trengs — uten overhead.",
+    title: "Bedrifter som vokser raskt",
+    desc: "Du trenger noen med tung økonomiforståelse, men har ikke behov for en heltidsansatt. Vi stiller opp med erfaring og kompetanse akkurat når du trenger det.",
   },
   {
-    title: "Investeringsrunder og kapitalanskaffelse",
-    desc: "Strukturering av finansieringsrunder, investor-narrativ, due diligence-forberedelse og term sheet-gjennomgang. Vi hjelper deg å stå sterkt ved bordet.",
+    title: "Hente inn penger eller investorer",
+    desc: "Vi hjelper deg med å forberede alt investorer trenger å se — tall, planer og dokumentasjon. Slik at du står sterkt når du møter dem.",
   },
   {
-    title: "Exit og fusjoner",
-    desc: "Planlegging av virksomhetsoverdragelse, verdsettelse, selskapsstrukturering og forhandlingsstøtte. Komplekse prosesser gjort kontrollerbare.",
+    title: "Selge eller slå sammen bedriften",
+    desc: "Vi hjelper deg med å planlegge og gjennomføre prosessen — fra å finne ut hva bedriften er verdt til å forhandle avtalen.",
   },
   {
-    title: "Strategiske veivalg og vekstplan",
-    desc: "Scenarioanalyser, lønnsomhetsmodeller og kapitalallokering som gir styret og ledelsen grunnlaget for informerte beslutninger — ikke bare magefølelse.",
+    title: "Store veivalg og vekstplaner",
+    desc: "Hva bør vi satse på? Hva lønner seg? Vi gir deg et solid grunnlag for å ta de riktige beslutningene — basert på fakta, ikke magefølelse.",
   },
 ];
 
 const RelatedServices = [
-  { label: "AI-drevet finansiell innsikt", href: "/tjenester/ai-innsikt" },
-  { label: "Dedikert regnskapsfører", href: "/tjenester/regnskapsforer" },
+  { label: "Din egen regnskapsfører", href: "/tjenester/regnskapsforer" },
+  { label: "Skatterådgivning", href: "/tjenester/skatteplanlegging" },
 ];
 
 const CFO = () => (
   <>
     <Helmet>
-      <title>CFO-as-a-Service — Strategisk finansiell ledelse | Avargo</title>
-      <meta name="description" content="Seniorkompetanse uten heltidsansettelsen. CFO-tjeneste for vekstselskaper, investeringsrunder, exit og strategiske veivalg." />
+      <title>Økonomisk rådgiver for bedrifter | Avargo</title>
+      <meta name="description" content="Få tilgang til erfarne økonomiske rådgivere uten å ansette noen på heltid. Vi hjelper med budsjett, vekstplaner, investorer og store beslutninger." />
       <link rel="canonical" href="https://avargo.no/tjenester/cfo" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "Hva er CFO-as-a-Service?", "acceptedAnswer": { "@type": "Answer", "text": "CFO-as-a-Service gir deg tilgang til strategisk finansiell ledelse fra senioreksperter — uten å ansette en CFO på heltid. Du får kapitalstrukturstrategi, investor-kommunikasjon, budsjettering, scenarioanalyse og beslutningsstøtte tilpasset din fase og ditt behov." }},
-          { "@type": "Question", "name": "Når trenger man en CFO?", "acceptedAnswer": { "@type": "Answer", "text": "Du trenger en CFO når selskapet står overfor strategiske veivalg: investeringsrunder, exit/fusjon, kraftig vekst eller behov for styrerettet rapportering. Med CFO-as-a-Service fra Avargo får du seniorkompetanse akkurat når det trengs — uten fast ansettelse." }},
-          { "@type": "Question", "name": "Hva koster CFO-as-a-Service?", "acceptedAnswer": { "@type": "Answer", "text": "Prisen avhenger av omfanget — fra kvartalsvise strategiøkter til løpende engasjement. Kontakt oss for et skreddersydd tilbud basert på selskapets fase og behov." }}
+          { "@type": "Question", "name": "Hva er en økonomisk rådgiver?", "acceptedAnswer": { "@type": "Answer", "text": "En økonomisk rådgiver hjelper deg med de store økonomiske spørsmålene i bedriften — budsjett, vekstplaner, investorer og viktige beslutninger. Hos Avargo får du tilgang til erfarne rådgivere uten å ansette noen på heltid." }},
+          { "@type": "Question", "name": "Når trenger bedriften min en økonomisk rådgiver?", "acceptedAnswer": { "@type": "Answer", "text": "Du trenger det når bedriften skal ta store steg — hente inn penger, vokse raskt, selge virksomheten eller rett og slett ta viktige valg om fremtiden. Vi hjelper deg å se klart og ta gode beslutninger." }},
+          { "@type": "Question", "name": "Hva koster det?", "acceptedAnswer": { "@type": "Answer", "text": "Prisen avhenger av hvor mye hjelp du trenger — fra noen møter i kvartalet til tett oppfølging over tid. Ta kontakt, så finner vi ut hva som passer for deg." }}
         ]
       })}</script>
     </Helmet>
@@ -69,13 +69,13 @@ const CFO = () => (
           <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">Strategisk lag</p>
+          <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">Regnskap & Økonomi</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            CFO-as-a-Service.{" "}
+            En rådgiver i ryggen.{" "}
             <span className="italic text-gradient-rose">Uten heltidsansettelsen.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Strategisk finansiell lederskap fra senioreksperter — tilgjengelig for selskaper som trenger tung rådgivning uten å ansette en CFO i fast stilling.
+            Du får tilgang til en erfaren økonomisk rådgiver som hjelper deg med de store spørsmålene — budsjett, vekst, investorer og viktige veivalg. Uten at du trenger å ansette noen fast.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -95,13 +95,13 @@ const CFO = () => (
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva er inkludert</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Seniorkompetanse.{" "}
-              <span className="italic text-gradient-rose">Uten overhead.</span>
+              Tung kompetanse.{" "}
+              <span className="italic text-gradient-rose">Uten de store kostnadene.</span>
             </h2>
             <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Vår CFO-tjeneste er skalerbar og tilpasset behovet ditt — fra kvartalsvise strategiøkter til full løpende engasjement under en kritisk vekstfase eller transaksjon.
+              Vi tilpasser oss behovet ditt — fra noen strategiske møter i kvartalet til tett oppfølging i en vekstfase. Du bestemmer omfanget.
             </p>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
@@ -122,9 +122,9 @@ const CFO = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bruksområder</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Når passer det?</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
-            Når trenger du egentlig en CFO?
+            Når trenger du egentlig en rådgiver?
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
@@ -163,13 +163,13 @@ const CFO = () => (
             <TrendingUp size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            Strategien på plass. Veksten klar.
+            Klar for å ta neste steg?
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            Ta en uforpliktende samtale om hva CFO-støtte kan bety for selskapet ditt i neste fase.
+            Ta en uforpliktende prat om hva en rådgiver kan bety for bedriften din.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-            Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>
       </div>

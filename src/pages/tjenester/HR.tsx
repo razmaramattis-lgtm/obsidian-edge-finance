@@ -6,49 +6,49 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 
 const deliverables = [
-  "Lønnskjøring og A-melding",
-  "Feriepengeavregning og skattetrekk",
-  "Arbeidskontrakter og personalreglement",
-  "HMS-dokumentasjon og internkontroll",
-  "Onboarding- og offboardingsprosesser",
-  "Sykefraværsoppfølging",
-  "Ansattehåndbok og retningslinjer",
-  "Arbeidsrettslig rådgivning",
+  "Lønnskjøring og innrapportering",
+  "Feriepenger og skattetrekk",
+  "Arbeidskontrakter og personalregler",
+  "Arbeidsmiljø og sikkerhetsdokumentasjon",
+  "God oppstart og avslutning for ansatte",
+  "Oppfølging av sykefravær",
+  "Personalhåndbok og retningslinjer",
+  "Rådgivning i personalsaker",
 ];
 
 const pillars = [
   {
     num: "01",
-    title: "Compliant fra dag én.",
-    desc: "Arbeidsrett, skattelovgivning og HMS-krav endrer seg. Vi holder oss oppdatert — slik at du slipper å bekymre deg for om selskapet ditt er på rett side av regelverket.",
+    title: "Alt på riktig side av loven.",
+    desc: "Regler for arbeidsgivere endrer seg ofte. Vi holder oss oppdatert — slik at du slipper å bekymre deg for om bedriften din gjør alt riktig.",
   },
   {
     num: "02",
-    title: "Profesjonell arbeidsgiver.",
-    desc: "Strukturerte onboarding-prosesser, klare arbeidskontrakter og et velfungerende personalreglement sender et tydelig signal: dette er et selskap folk ønsker å jobbe for.",
+    title: "En arbeidsplass folk vil jobbe i.",
+    desc: "Gode rutiner, klare kontrakter og en ordentlig oppstart for nye ansatte sender et tydelig signal: dette er et bra sted å jobbe.",
   },
   {
     num: "03",
-    title: "HR uten det administrative kaoset.",
-    desc: "Lønnskjøring, A-meldinger og feriepengeavregning — alt håndtert nøyaktig og til fristen. Du slipper å ha hodet i regneark mens du prøver å drive selskapet.",
+    title: "Lønn uten hodepine.",
+    desc: "Lønnskjøring, feriepenger og innrapportering — alt håndtert nøyaktig og til rett tid. Du slipper å ha hodet i regneark mens du prøver å drive bedriften.",
   },
   {
     num: "04",
-    title: "Rådgivning inkludert.",
-    desc: "Spørsmål om oppsigelse, permittering, arbeidskonflikt eller ansettelsesvilkår? Ring oss. Det er det vi er her for — og det koster ingenting ekstra.",
+    title: "Rådgivning er inkludert.",
+    desc: "Lurer du på noe om oppsigelse, ansettelse, sykefravær eller noe annet? Ring oss. Det er det vi er her for — og det koster ingenting ekstra.",
   },
 ];
 
 const RelatedServices = [
-  { label: "Dedikert regnskapsfører", href: "/tjenester/regnskapsforer" },
-  { label: "CFO-as-a-Service", href: "/tjenester/cfo" },
+  { label: "Din egen regnskapsfører", href: "/tjenester/regnskapsforer" },
+  { label: "Økonomisk rådgiver", href: "/tjenester/cfo" },
 ];
 
 const HR = () => (
   <>
     <Helmet>
-      <title>HR & Lønn — Personaladministrasjon for bedrifter | Avargo</title>
-      <meta name="description" content="Komplett HR- og lønnstjeneste. Ansettelseskontrakter, lønnskjøring, personalforsikringer og rådgivning for norske arbeidsgivere." />
+      <title>Lønn og personalarbeid for bedrifter | Avargo</title>
+      <meta name="description" content="Vi tar oss av lønn, kontrakter, arbeidsmiljø og rådgivning — slik at du kan fokusere på menneskene i bedriften din." />
       <link rel="canonical" href="https://avargo.no/tjenester/hr-og-lonn" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
@@ -76,11 +76,11 @@ const HR = () => (
           </Link>
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">HR & Personal</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            HR uten friksjon.{" "}
-            <span className="italic text-gradient-teal">Menneskene i sentrum.</span>
+            Vi tar oss av personalarbeidet.{" "}
+            <span className="italic text-gradient-teal">Du tar deg av folka.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Lønnskjøring, arbeidsrett, HMS og personaladministrasjon — vi tar hele HR-byrden slik at du kan fokusere på kulturen, menneskene og veksten.
+            Lønn, kontrakter, arbeidsmiljø og rådgivning — vi tar hele HR-jobben slik at du kan fokusere på menneskene og bedriften din.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -100,13 +100,13 @@ const HR = () => (
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva er inkludert</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Komplett HR-leveranse.{" "}
-              <span className="italic text-gradient-teal">Alt inkludert.</span>
+              Alt du trenger som arbeidsgiver.{" "}
+              <span className="italic text-gradient-teal">På ett sted.</span>
             </h2>
             <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Fra lønnskjøring til arbeidsrettslig rådgivning — vi håndterer hele personaladministrasjonen slik at du alltid er compliant og dine ansatte opplever en profesjonell arbeidsgiver.
+              Fra lønnskjøring til rådgivning i vanskelige saker — vi tar oss av hele personaladministrasjonen slik at du alltid følger reglene og de ansatte har det bra.
             </p>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
@@ -127,9 +127,9 @@ const HR = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Verdien</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor det betyr noe</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
-            Hvorfor dette er viktigere enn de fleste tror.
+            Viktigere enn de fleste tror.
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
@@ -169,13 +169,13 @@ const HR = () => (
             <Shield size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            La menneskene trives. Vi tar resten.
+            La de ansatte trives. Vi tar resten.
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            En samtale er nok til å finne ut hva vi kan avlaste deg for — og hva det vil bety i praksis.
+            En samtale er nok til å finne ut hva vi kan hjelpe deg med.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-            Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>
       </div>

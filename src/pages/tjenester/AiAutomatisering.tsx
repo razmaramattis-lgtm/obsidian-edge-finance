@@ -6,34 +6,34 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 
 const deliverables = [
-  "Prosessautomatisering og arbeidsflyt-design",
-  "Systemintegrasjoner (CRM, ERP, regnskapssystem)",
-  "AI-chatbot og kundeserviceautomatisering",
-  "Automatisk leadoppfølging og e-postflyt",
-  "Datadrevne beslutningssystemer",
-  "Rapportautomatisering og dashbord",
-  "Dokumenthåndtering og godkjenningsflyt",
-  "Skreddersydde AI-løsninger etter behov",
+  "Sette opp arbeidsflyter som kjører av seg selv",
+  "Koble sammen systemene dine (regnskap, nettbutikk, e-post)",
+  "Chatbot som svarer kundene dine hele døgnet",
+  "Automatisk oppfølging av interesserte kunder",
+  "Smarte systemer som hjelper med beslutninger",
+  "Rapporter som lages automatisk",
+  "Dokumenter som sorteres og godkjennes av seg selv",
+  "Egne AI-løsninger tilpasset din bedrift",
 ];
 
 const useCases = [
-  { num: "01", title: "Gjør bort med manuell rapportering.", desc: "Automatisk datainnhenting, behandling og presentasjon — slik at ledelsesrapporter genereres uten at noen trenger å sette seg ned med Excel fredag ettermiddag." },
-  { num: "02", title: "Kundeservice som aldri sover.", desc: "AI-chatbots som svarer på vanlige spørsmål, håndterer bookinger og eskalerer komplekse saker til riktig person — 24 timer i døgnet, uten lønnskostnad." },
-  { num: "03", title: "Leads fulgt opp før konkurrenten rekker det.", desc: "Automatiske e-postsekvenser, SMS-varsler og CRM-oppdateringer som sørger for at ingen lead faller gjennom sprekkene — og at oppfølgingen skjer umiddelbart." },
-  { num: "04", title: "Systemer som snakker med hverandre.", desc: "Nettbutikk, regnskapssystem, CRM og lagerstyring integrert slik at data flyter automatisk — uten manuell overføring, feil eller forsinkelser." },
+  { num: "01", title: "Slutt på manuell rapportering.", desc: "Istedenfor at noen sitter med Excel fredag ettermiddag, henter systemet tallene og lager rapporten automatisk. Klar til mandag morgen." },
+  { num: "02", title: "Kundene får svar hele døgnet.", desc: "En chatbot som svarer på de vanlige spørsmålene, tar imot bestillinger og sender videre det som trenger menneskelig hjelp. Uten at du trenger å betale nattevakter." },
+  { num: "03", title: "Ingen kunder glipper.", desc: "Når noen viser interesse, følger systemet opp automatisk med e-post eller melding. Raskere enn konkurrenten rekker å svare." },
+  { num: "04", title: "Systemene snakker med hverandre.", desc: "Nettbutikk, regnskap, kundesystem og lager kobles sammen. Data flyter automatisk — ingen manuell overføring, ingen feil." },
 ];
 
 const RelatedServices = [
-  { label: "AI-drevet finansiell innsikt", href: "/tjenester/ai-innsikt" },
-  { label: "Nettbutikk & e-handel", href: "/tjenester/nettbutikk" },
-  { label: "Nettsider & digitale flater", href: "/tjenester/nettsider" },
+  { label: "Nettbutikk", href: "/tjenester/nettbutikk" },
+  { label: "Nettsider", href: "/tjenester/nettsider" },
+  { label: "Chatbot for kundeservice", href: "/tjenester/chatbot" },
 ];
 
 const AiAutomatisering = () => (
   <>
     <Helmet>
-      <title>AI & Automatisering for bedrifter | Avargo</title>
-      <meta name="description" content="Intelligente arbeidsflyter og AI-løsninger som eliminerer repetitive oppgaver. Prosessautomatisering, chatbots og systemintegrasjoner for norske bedrifter." />
+      <title>Automatisering og AI for bedrifter | Avargo</title>
+      <meta name="description" content="Vi setter opp smarte løsninger som gjør de kjedelige oppgavene for deg — automatisk. Spar tid, unngå feil og fokuser på det som betyr noe." />
       <link rel="canonical" href="https://avargo.no/tjenester/ai-automatisering" />
     </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -44,13 +44,13 @@ const AiAutomatisering = () => (
           <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Avargo · Tjenester</p>
+          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">IT & Utvikling</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            AI & automatisering.{" "}
-            <span className="italic text-gradient-teal">Teknologi som jobber mens du sover.</span>
+            Teknologi som{" "}
+            <span className="italic text-gradient-teal">jobber mens du sover.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Intelligente arbeidsflyter og AI-drevne løsninger som eliminerer repetitive oppgaver, kobler systemene dine og skalerer kapasiteten uten proporsjonalt mer ressurser.
+            Vi setter opp smarte løsninger som tar seg av de kjedelige, tidkrevende oppgavene — automatisk. Slik at du kan bruke tiden din på det som virkelig betyr noe.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -67,13 +67,13 @@ const AiAutomatisering = () => (
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva er inkludert</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Skreddersydde{" "}
-              <span className="italic text-gradient-teal">automatiseringsløsninger.</span>
+              Løsninger som{" "}
+              <span className="italic text-gradient-teal">sparer deg for tid.</span>
             </h2>
             <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Vi kartlegger, designer og implementerer automatiseringsløsninger tilpasset selskapet ditt — fra enkle systemintegrasjoner til komplekse AI-drevne arbeidsflyter.
+              Vi finner ut hvilke oppgaver som kan gjøres automatisk i din bedrift, og setter det opp for deg — enkelt forklart, uten teknisk sjargong.
             </p>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
@@ -94,8 +94,8 @@ const AiAutomatisering = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bruksområder</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Hva vi automatiserer — og hvorfor det lønner seg.</h2>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Eksempler</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Hva vi kan gjøre for deg.</h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {useCases.map((u, i) => (
@@ -134,13 +134,13 @@ const AiAutomatisering = () => (
             <Cpu size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            Automatiser det som stjeler tiden din.
+            Hvilke oppgaver stjeler tiden din?
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            Book en gjennomgang. Vi kartlegger hvilke prosesser som kan automatiseres — og hva det betyr i faktisk timesparing og kostnadskutt.
+            Vi finner ut hva som kan automatiseres — og forteller deg hva det betyr i spart tid og penger.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-            Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>
       </div>
