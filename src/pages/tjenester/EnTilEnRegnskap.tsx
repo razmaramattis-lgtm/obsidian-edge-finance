@@ -68,7 +68,7 @@ const EnTilEnRegnskap = () => {
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
   const getAvailableSlots = (date: Date) => {
-    const dow = (date.getDay() + 6) % 7; // Convert to 0=Mon
+    const dow = ((date.getDay() + 6) % 7) + 1; // Convert to 1=Mon matching DB
     const dateStr = format(date, "yyyy-MM-dd");
     const today = startOfDay(new Date());
 
@@ -117,17 +117,22 @@ const EnTilEnRegnskap = () => {
       booking_time: selectedTime,
     });
 
-    // Also send email notification
+    // Send booking notification email to advisor
     if (!error) {
       try {
-        await supabase.functions.invoke("contact-submit", {
+        await supabase.functions.invoke("notify", {
           body: {
-            company_name: form.firma,
-            contact_person: form.navn,
-            email: form.epost,
-            phone: form.telefon,
-            message: `1-1 Regnskap booking: ${bookingDate} kl. ${selectedTime}${form.melding ? `\n\nMelding: ${form.melding}` : ""}`,
-            package: "1-1 Regnskap – Booking",
+            type: "booking_notification",
+            data: {
+              advisor_id: selectedAdvisor,
+              customer_name: form.navn,
+              customer_email: form.epost,
+              customer_phone: form.telefon,
+              company_name: form.firma,
+              booking_date: bookingDate,
+              booking_time: selectedTime,
+              message: form.melding || null,
+            },
           },
         });
       } catch (emailErr) {
