@@ -6,7 +6,7 @@ import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle
 } from "lucide-react";
 
 // Sub-panels
@@ -37,9 +37,10 @@ import DocumentTemplatesPanel from "@/components/admin/DocumentTemplatesPanel";
 import BenefitApplicationsPanel from "@/components/admin/BenefitApplicationsPanel";
 import AccountEntriesPanel from "@/components/admin/AccountEntriesPanel";
 import GlossaryPanel from "@/components/admin/GlossaryPanel";
+import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback";
 
 interface NavItem {
   id: Panel;
@@ -67,6 +68,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck, adminOnly: true, group: "Nettside" },
   { id: "account_entries", label: "Kontohjelp", icon: BookOpen, adminOnly: true, group: "Nettside" },
   { id: "glossary", label: "Regnskapsord", icon: FileText, adminOnly: true, group: "Nettside" },
+  { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle, adminOnly: true, group: "Nettside" },
   { id: "archive", label: "Arkiv & Skjemaer", icon: Archive, adminOnly: true, group: "Ressurser" },
   { id: "resources", label: "Maler", icon: BookOpen, adminOnly: true, group: "Ressurser" },
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Ressurser" },
@@ -246,6 +248,7 @@ const AdminDashboard = () => {
       case "benefit_applications": return <BenefitApplicationsPanel onStatusChange={refreshNotifications} />;
       case "account_entries": return <AccountEntriesPanel />;
       case "glossary": return <GlossaryPanel />;
+      case "account_feedback": return <AccountFeedbackPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
