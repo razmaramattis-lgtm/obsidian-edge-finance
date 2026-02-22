@@ -6,34 +6,34 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 
 const deliverables = [
-  "Kampanjestrategi og målgruppeanalyse",
-  "Annonseproduksjon (bilde, video, karusell)",
-  "A/B-testing av kreativt innhold",
-  "Retargeting og lookalike-målgrupper",
-  "Meta Pixel og konverteringssporing",
-  "Budsjettallokering og budstyring",
-  "ROAS-optimalisering og skalering",
-  "Månedlig kampanjerapport og innsikt",
+  "Finne ut hvem annonsene skal vises til",
+  "Lage annonser med bilder, video eller karuseller",
+  "Teste ulike annonser for å finne den beste",
+  "Vise annonser til folk som allerede har vist interesse",
+  "Sette opp måling av resultater",
+  "Styre budsjettet slik at pengene brukes smart",
+  "Forbedre annonsene løpende",
+  "Månedlig rapport med hva som fungerer",
 ];
 
 const approach = [
-  { num: "01", title: "Målgrupper som faktisk konverterer.", desc: "Vi bruker datadrevet målgruppebygging — interesser, atferd, lookalike-segmenter og egne kundelister — for å nå de som er mest sannsynlig å kjøpe." },
-  { num: "02", title: "Kreativt innhold som stopper scrollet.", desc: "Effektive Meta-annonser handler om det første sekundet. Vi produserer annonsemateriell som fanger oppmerksomhet, kommuniserer verdi og driver til handling." },
-  { num: "03", title: "Kontinuerlig testing og optimalisering.", desc: "Vi tester systematisk — kreativt, tekst, målgrupper og plasseringer — og skalerer det som fungerer. Budsjettet ditt brukes der det gir mest igjen." },
-  { num: "04", title: "ROAS forankret i realiteten.", desc: "Som en del av Avargo vet vi hva bunnlinjen ser ut. Vi optimaliserer ikke bare for clicks og impressions — men for avkastning som faktisk syns i regnskapet." },
+  { num: "01", title: "Vi finner de riktige menneskene.", desc: "Vi bruker data til å finne folk som faktisk er interessert i det du tilbyr — basert på hva de liker, hva de gjør på nett og hvem som ligner på dine beste kunder." },
+  { num: "02", title: "Annonser som fanger oppmerksomhet.", desc: "Folk scroller fort. Annonsene må stoppe dem. Vi lager innhold som fanger blikket, forteller hva du tilbyr og får folk til å ta kontakt." },
+  { num: "03", title: "Vi tester og forbedrer hele tiden.", desc: "Vi prøver ulike versjoner av annonsene og bruker mer penger på det som fungerer best. Slik får du mest mulig igjen for budsjettet." },
+  { num: "04", title: "Vi ser på hva som faktisk gir penger inn.", desc: "Det handler ikke om likes og visninger — det handler om at annonsene gir deg flere kunder og mer salg. Det er det vi måler." },
 ];
 
 const RelatedServices = [
-  { label: "Google Ads", href: "/tjenester/google-ads" },
-  { label: "Nettsider & digitale flater", href: "/tjenester/nettsider" },
-  { label: "SEO & søkbarhet", href: "/tjenester/seo" },
+  { label: "Annonser på Google", href: "/tjenester/google-ads" },
+  { label: "Nettsider", href: "/tjenester/nettsider" },
+  { label: "Bli funnet på Google", href: "/tjenester/seo" },
 ];
 
 const MetaAnnonser = () => (
   <>
     <Helmet>
-      <title>Meta-annonser (Facebook & Instagram Ads) | Avargo</title>
-      <meta name="description" content="Målrettet annonsering på Facebook og Instagram. Kampanjestrategi, innholdsproduksjon og konverteringsoptimalisering for norske bedrifter." />
+      <title>Annonser på Facebook og Instagram | Avargo</title>
+      <meta name="description" content="Vi lager og styrer annonser på Facebook og Instagram som gir deg flere kunder. Du bestemmer budsjettet — vi sørger for at pengene brukes smart." />
       <link rel="canonical" href="https://avargo.no/tjenester/meta-annonser" />
     </Helmet>
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -44,13 +44,13 @@ const MetaAnnonser = () => (
           <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Avargo · Tjenester</p>
+          <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Markedsføring & Vekst</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            Meta-annonser.{" "}
-            <span className="italic text-gradient-rose">Avkastning, ikke bare rekkevidde.</span>
+            Annonser på Facebook og Instagram.{" "}
+            <span className="italic text-gradient-rose">Som faktisk gir resultater.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Målrettede kampanjer på Facebook og Instagram som genererer kvalifiserte leads og salg — med budsjett styrt av data og optimalisert kontinuerlig for maksimal ROAS.
+            Vi lager annonser som treffer de riktige menneskene — de som faktisk er interessert i det du selger. Du får flere henvendelser, flere kunder og mer salg.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -67,13 +67,13 @@ const MetaAnnonser = () => (
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva er inkludert</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Komplett kampanjeledelse —{" "}
-              <span className="italic text-gradient-rose">fra strategi til optimalisering.</span>
+              Vi tar oss av alt —{" "}
+              <span className="italic text-gradient-rose">du godkjenner.</span>
             </h2>
             <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Vi tar ansvar for hele Meta-kampanjestrukturen — strategi, kreativt, targeting og budsjettstyring. Du godkjenner. Vi leverer.
+              Vi finner ut hvem annonsene skal vises til, lager innholdet, styrer budsjettet og forbedrer resultatene. Du trenger bare å si ja.
             </p>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
@@ -94,8 +94,8 @@ const MetaAnnonser = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Slik tenker vi</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Annonser som jobber hardere enn snittet.</h2>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Slik jobber vi</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">Annonser som gir mer igjen enn de koster.</h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {approach.map((a, i) => (
@@ -134,13 +134,13 @@ const MetaAnnonser = () => (
             <Target size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            Klar for kampanjer som faktisk leverer?
+            Klar for annonser som faktisk gir kunder?
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            Book en gjennomgang og se hva vi kan oppnå med budsjettet ditt på Meta-plattformene.
+            Ta en prat med oss — vi viser deg hva vi kan gjøre med budsjettet ditt.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-            Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>
       </div>
