@@ -56,6 +56,11 @@ const Kontohjelp = () => {
 
   const [showAll, setShowAll] = useState(false);
 
+  // Reset showAll whenever search changes
+  useEffect(() => {
+    setShowAll(false);
+  }, [search]);
+
   const isResultAccount = (num: string) => {
     const n = parseInt(num, 10);
     return n >= 3000 && n <= 8999;
