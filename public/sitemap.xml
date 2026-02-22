@@ -70,191 +70,203 @@
   <url><loc>https://avargo.no/bransjer/bil</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/energi</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
-  <!-- Blogginnlegg -->
-  <url><loc>https://avargo.no/nyhet/bokforing-nettbutikk-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/sjekkliste-godkjent-bilag</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/skattefri-omdanning-enk-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/lonn-eller-utbytte</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/sjekkliste-arsoppgjoret</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/formuesskatt-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/gode-rutiner-regnskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/avstemming-balansen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <!-- Blogginnlegg (32 stk) -->
   <url><loc>https://avargo.no/nyhet/10-tips-samarbeid-regnskapsforer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/11-ting-mva-registrering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/statsautorisert-regnskapsforer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/viktige-regnskapsfrister</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/a-meldingen-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/ai-i-regnskapet-automatisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/aksjonaeravtale-innhold-og-fallgruver</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/avstemming-balansen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/bokforing-nettbutikk-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/bokforingsloven-alt-du-trenger-a-vite</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/chatgpt-for-naeringslivet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/endringsledelse-for-ledere</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/feriepenger-beregning-og-utbetaling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/formuesskatt-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/gode-rutiner-regnskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/hms-internkontroll-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/hva-koster-en-regnskapsforer-2026</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/innholdsmarkedsforing-og-storytelling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/kontoplan-ns-4102-oppbygging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/likviditetsbudsjettering-kontroll</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/lonn-eller-utbytte</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/mva-registrering-nar-og-hvordan</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/nettbutikk-optimalisering-ok-salget</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/okr-og-malstyring-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/hms-internkontroll-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/aksjonaeravtale-innhold-og-fallgruver</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/chatgpt-for-naeringslivet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/resultatregnskap-forstaa-det</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/endringsledelse-for-ledere</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/a-meldingen-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/innholdsmarkedsforing-og-storytelling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/regnskapsforer-vs-gjor-det-selv</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/bokforingsloven-alt-du-trenger-a-vite</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/kontoplan-ns-4102-oppbygging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/onboarding-av-ansatte-beste-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/likviditetsbudsjettering-kontroll</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/ai-i-regnskapet-automatisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/regnskapsforer-vs-gjor-det-selv</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/resultatregnskap-forstaa-det</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/sjekkliste-arsoppgjoret</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/sjekkliste-godkjent-bilag</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/skattefri-omdanning-enk-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/skatteoptimalisering-for-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/feriepenger-beregning-og-utbetaling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/nyhet/slik-stifter-du-aksjeselskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/hva-koster-en-regnskapsforer-2026</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/nyhet/mva-registrering-nar-og-hvordan</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/statsautorisert-regnskapsforer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/nyhet/viktige-regnskapsfrister</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <!-- Kurs -->
-  <url><loc>https://avargo.no/tjenester/kurs/markedsstrategi-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/wordpress-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/shopify-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/rekruttering-og-ansettelsesprosess</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/stiftelse-av-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-registrering-og-grenser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/nokkeltallsanalyse-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <!-- Kurs (139 stk) -->
   <url><loc>https://avargo.no/tjenester/kurs/a-meldingen-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/regnskapslovens-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skatteplikt-for-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/ai-drevet-regnskapsforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/hms-internkontroll-for-ledere</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/strategisk-planlegging-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/tripletex-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/innforing-i-bokforingsloven</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/onboarding-av-nye-ansatte</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/feriepengeavsetning-og--utbetaling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kontoplan-ns-4102-oppbygging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/okr-og-malstyring</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/likviditetsbudsjettering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/aksjonaeravtale-innhold-og-fallgruver</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/nettbutikk-optimalisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/utgaende-vs-inngaende-mva</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/chatgpt-for-naeringslivet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/landingssider-som-konverterer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/tripletex-avansert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skatteplikt-for-enk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/innholdsmarkedsforing-og-storytelling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/resultatregnskap-oppstilling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/risikovurdering-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/google-analytics-4</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/resultatbudsjettering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fiken-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/endringsledelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/arbeidsgiveravgift-diff-satser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/alminnelig-inntekt-vs-personinntekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/bilagshandtering-og-dokumentasjonskrav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/automatisering-med-make/zapier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/sosiale-medier-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fraktlosninger-og-logistikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/verneombud-rolle-og-ansvar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/medarbeidersamtalen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fradragsrett-og-begrensninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/balanse-eiendeler-gjeld-og-ek</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/styrets-plikter-og-ansvar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/ux-design-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/notekrav-for-sma-foretak</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fusjon-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/google-ads-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/visma-eaccounting-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/betalingslosninger-klarna-vipps-stripe</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/naturalytelser-og-fordelsbeskatning</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/break-even-analyse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/arbeidsmiljolovens-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kassasystem-og-kontantsalg</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/baerekraft-og-esg-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/brannsikkerhet-og-beredskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/foretaksmodellen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-import</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/ai-assistert-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/bankintegrasjon-og-autobank</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/oppbevaringsplikten-5-ar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-eksport</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/aksjonaermodellen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kontantstromoppstilling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/sykepenger-og-refusjonsordninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/konflikthandtering-pa-arbeidsplassen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/ergonomi-og-kontorarbeidsplass</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/meta-annonser-facebook/instagram</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/maskinlaering-for-beslutningstaking</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/tilgjengelighet-wcag</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/markedsforing-for-nettbutikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fisjon-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kpi-er-for-okonomi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/lederutvikling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/utbytte-og-utbytteskatt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/forhandlingsteknikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/seo-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/otp-obligatorisk-tjenestepensjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/gdpr-for-hr-avdelingen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/revisjon-vs-fravalg-av-revisjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/holdingselskap-struktur-og-fordeler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/prompt-engineering-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/manedsrapportering-til-styre</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/psykososialt-arbeidsmiljo</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/spesifikasjoner-og-pliktig-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/omvendt-avgiftsplikt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/ehf-faktura-og-peppol</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/firmabil-beregning-og-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/sykefravaersoppfolging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/dashboard-og-visualisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/e-postmarkedsforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fradragsberettigede-kostnader</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/ai-og-personvern-gdpr</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/integrasjon-med-nettbutikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-meldingen-termin-og-innlevering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/apnings--og-avslutningsbalanse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/avvikling-og-sletting-av-selskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/innsending-til-regnskapsregisteret</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/api-integrasjoner-for-regnskapsbyra</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/konverteringsoptimalisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kompetanseutvikling-og-kursplanlegging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/nedskrivning-av-eiendeler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/reiseregning-og-diett</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/justeringsregler-for-kapitalvarer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kontoavstemminger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/automatisert-kundeservice</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/verdsettelse-av-virksomhet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skattemessige-avskrivninger-saldogrupper</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/prosjektregnskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/ai-drevet-regnskapsforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/ai-for-salg-og-markedsforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skattemelding-for-selskap-rf-1028</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/organisasjonskultur-og-verdier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skybasert-dokumenthandtering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/unntatte-omsetninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/utsatt-skatt-skattefordel</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/merkevarebygging-og-posisjonering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/overtid-og-tillegg</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skatteplanlegging-for-eier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/it-sikkerhet-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/valutabokforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mangfold-og-inkludering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/ai-og-personvern-gdpr</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/aksjonaeravtale-innhold-og-fallgruver</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/aksjonaermodellen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/alminnelig-inntekt-vs-personinntekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/anleggsmiddelregister</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/api-integrasjoner-for-regnskapsbyra</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/apnings--og-avslutningsbalanse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/arbeidsgiveravgift-diff-satser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/arbeidsmiljolovens-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/automatisering-med-make/zapier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/automatisert-kundeservice</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/avvikling-og-sletting-av-selskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/baerekraft-og-esg-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/balanse-eiendeler-gjeld-og-ek</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/bankavstemminger-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/bankintegrasjon-og-autobank</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/betalingslosninger-klarna-vipps-stripe</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/bilagshandtering-og-dokumentasjonskrav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/brannsikkerhet-og-beredskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/break-even-analyse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/chatgpt-for-naeringslivet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/dashboard-og-visualisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/digitale-arbeidsprosesser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kundelojalitet-og-crm</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/sluttvederlag-og-oppsigelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/e-postmarkedsforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/ehf-faktura-og-peppol</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/endringsledelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/ergonomi-og-kontorarbeidsplass</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fellesregistrering-mva</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/feriepengeavsetning-og--utbetaling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fiken-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/firmabil-beregning-og-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fisjon-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/foretaksmodellen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/forhandlingsteknikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/formuesskatt-og-verdsettelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fradragsberettigede-kostnader</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fradragsrett-og-begrensninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fraktlosninger-og-logistikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/fritatte-omsetninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-pa-fast-eiendom</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/fusjon-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/gdpr-for-hr-avdelingen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/google-ads-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/google-analytics-4</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/hms-internkontroll-for-ledere</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/holdingselskap-struktur-og-fordeler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/innforing-i-bokforingsloven</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/innholdsmarkedsforing-og-storytelling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/innsending-til-regnskapsregisteret</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/integrasjon-med-nettbutikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/it-sikkerhet-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/justeringsregler-for-kapitalvarer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kassasystem-og-kontantsalg</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kompetanseutvikling-og-kursplanlegging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/konflikthandtering-pa-arbeidsplassen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/konsernbokforing-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kontantstromoppstilling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kontoavstemminger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kontoplan-ns-4102-oppbygging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/konverteringsoptimalisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/korrigering-av-mva-feil</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kpi-er-for-okonomi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kundefordringer-og-aldersfordeling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/kundelojalitet-og-crm</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/landingssider-som-konverterer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/lederutvikling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/leverandorgjeld-og-betalingsrutiner</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/likviditetsbudsjettering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/manedsrapportering-til-styre</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mangfold-og-inkludering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/markedsforing-for-nettbutikk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/markedsstrategi-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/maskinlaering-for-beslutningstaking</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/medarbeidersamtalen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/merkevarebygging-og-posisjonering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/meta-annonser-facebook/instagram</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-meldingen-termin-og-innlevering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-pa-fast-eiendom</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-registrering-og-grenser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-eksport</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-import</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-kjop-av-tjenester-fra-utlandet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-utleie-av-naeringslokaler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/naturalytelser-og-fordelsbeskatning</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/nedskrivning-av-eiendeler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/nettbutikk-optimalisering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/nokkeltallsanalyse-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/notekrav-for-sma-foretak</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/okr-og-malstyring</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/omvendt-avgiftsplikt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/onboarding-av-nye-ansatte</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/oppbevaringsplikten-5-ar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/organisasjonskultur-og-verdier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/otp-obligatorisk-tjenestepensjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/overtid-og-tillegg</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/periodisering-av-inntekter-og-kostnader</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/prompt-engineering-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/prosjektregnskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/psykososialt-arbeidsmiljo</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/regnskapslovens-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/reiseregning-og-diett</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/rekruttering-og-ansettelsesprosess</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/resultatbudsjettering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/resultatregnskap-oppstilling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/revisjon-vs-fravalg-av-revisjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/risikovurdering-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/seo-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/shopify-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skatt-ved-salg-av-aksjer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skattefri-omorganisering-fisjon/fusjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-utleie-av-naeringslokaler</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/anleggsmiddelregister</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skattemelding-for-selskap-rf-1028</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skattemessige-avskrivninger-saldogrupper</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skatteplanlegging-for-eier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skatteplikt-for-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skatteplikt-for-enk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/skybasert-dokumenthandtering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/sluttvederlag-og-oppsigelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/sosiale-medier-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/spesifikasjoner-og-pliktig-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/stiftelse-av-as</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/strategisk-planlegging-for-smb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/styrets-plikter-og-ansvar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/sykefravaersoppfolging</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/sykepenger-og-refusjonsordninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/tilgjengelighet-wcag</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/tripletex-avansert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/tripletex-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/unntatte-omsetninger</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/utbytte-og-utbytteskatt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/utgaende-vs-inngaende-mva</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/utsatt-skatt-skattefordel</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/ux-design-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/valutabokforing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/varelager-og-varetelling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/fellesregistrering-mva</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/formuesskatt-og-verdsettelse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/mva-ved-kjop-av-tjenester-fra-utlandet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/kundefordringer-og-aldersfordeling</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/leverandorgjeld-og-betalingsrutiner</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/korrigering-av-mva-feil</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/bankavstemminger-i-praksis</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/periodisering-av-inntekter-og-kostnader</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/verdsettelse-av-virksomhet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/verneombud-rolle-og-ansvar</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/visma-eaccounting-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://avargo.no/tjenester/kurs/wordpress-for-bedrifter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <!-- Regnskapsord (ordbok) -->
+  <!-- Regnskapsord (112 stk) -->
+  <url><loc>https://avargo.no/ressurser/regnskapsord/a-melding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/aksjekapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/aksjeselskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/aksjeselskap-as</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/aktiva</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/aktivering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/aktiveringsgrense</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/altinn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/anleggsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/arbeidsgiveravgift-aga</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/arsberetning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/arsoppgjor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/arsregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/avanse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/avskrivning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/avstemming</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/balanse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/balanseforing</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/bankavstemming</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/bilag</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/bokforing</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
@@ -262,168 +274,518 @@
   <url><loc>https://avargo.no/ressurser/regnskapsord/brutto</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/budsjett</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/cash-flow</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/dagbok</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/debet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/debitor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/dekningsbidrag</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/delingsmodellen</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/depositum</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/driftsinntekter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/driftskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/driftsresultat</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/egenkapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/emisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/enkeltpersonforetak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/enkeltpersonforetak-enk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/faktura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/finansregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/fordring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/foretaksregisteret</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/forskuddsskatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/fradrag</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/aksjekapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/god-regnskapsskikk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/grunnbelop</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/fritaksmetoden</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/generalforsamling</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/gjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/god-regnskapsskikk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/god-regnskapsskikk-grs</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/goodwill</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/grunnbelop</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/grunnbelopet-g</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/handleplikt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/holdingselskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/hovedbok</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/inngaende-faktura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/ifrs</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/inkasso</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/inngaende-faktura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/internregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kassekreditt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/kontantprinsippet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/kontantstrom</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kontering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/kontoplan</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kredit</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kreditnota</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kreditor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/kundefordring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/leverandorgjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/likviditet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-merverdiavgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-melding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/netto</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/noter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/omlopsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/periodisering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/resultatregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/revisor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/saldoavskrivning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/skattepliktig-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/utgaende-faktura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/utbytte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/generalforsamling</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/goodwill</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/enkeltpersonforetak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/kontantstrom</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/fritaksmetoden</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/god-regnskapsskikk-grs</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/regnskapsar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/varekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/arsoppgjor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/arsregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/a-melding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/aksjeselskap-as</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/aktivering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/aktiveringsgrense</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/altinn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/arbeidsgiveravgift-aga</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/avanse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/balanseforing</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/dagbok</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/delingsmodellen</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/emisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/enkeltpersonforetak-enk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/foretaksregisteret</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/grunnbelopet-g</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/handleplikt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/ifrs</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/internregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/kontoplan</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/kontantprinsippet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/likviditetsbudsjett</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/lineaer-avskrivning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/regnskapsloven</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-registrering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/morarente</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-melding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-merverdiavgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/mva-registrering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/nedskrivning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/netto</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/norsk-standard-kontoplan-ns-4102</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/noter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/obligatorisk-tjenestepensjon-otp</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/omlopsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/opptjeningsprinsippet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/overkursfond</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/passiva</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/periodisering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/privatuttak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/prokura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/purring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/regnskapsar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/regnskapsloven</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/regnskapspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/resultatregnskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/revisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/revisor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/saldoavskrivning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/saldogrupper</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/sammenstillingsprinsippet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/skattemelding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/skattepliktig-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/soliditet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/styre</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/tilskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/trekkpliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/trinnskatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/utbytte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/utgaende-faktura</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/utsatt-skatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/regnskapsord/varekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/varelager</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/regnskapsord/vareopptelling</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/arsberetning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/regnskapsord/sammenstillingsprinsippet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
-  <!-- Kontohjelp (kontoer) — et utvalg av de mest brukte er inkludert, resten har egne detaljsider -->
-  <url><loc>https://avargo.no/ressurser/kontohjelp/1920-bankinnskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/1500-kundefordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2400-leverandorgjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2600-forskuddstrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2700-utgaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2701-utgaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2710-inngaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2770-skyldig-arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/2941-feriepengeavsetning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/3000-salgsinntekt-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/3010-salgsinntekt-varer-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/3020-salgsinntekt-tjenester-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/3100-salgsinntekt-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/4000-innkjop-av-ravarer-og-halvfabrikater</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5000-lonn-til-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5020-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5060-feriepengekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5300-pensjonskostnad-otp</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5400-arbeidsgiveravgift-av-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/5800-refusjon-av-sykepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6000-avskrivninger-bygninger-og-fast-eiendom</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6300-husleie-og-lokalkostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6340-strom-og-oppvarming</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6700-regnskaps-og-revisjonskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6800-kontorrekvisita</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6810-it-utstyr-og-datakostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/6900-telefoni-og-internett</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7000-drivstoff-til-firmakjoretoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7100-kilometergodtgjorelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7140-reiseutgifter-i-tjeneste</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7300-salgskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7320-reklamekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7500-forsikringspremier</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7750-bankgebyrer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/7830-konstaterte-tap-pa-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/8050-annen-renteinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/8100-rentekostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/8300-betalbar-skatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://avargo.no/ressurser/kontohjelp/8800-arsresultat</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <!-- Kontohjelp - ALLE kontoer (300+ stk) -->
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1000-utvikling-ervervet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1005-utvikling-egenutviklet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1020-konsesjoner-og-rettigheter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1030-patenter-og-lisensrettigheter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1070-utsatt-skattefordel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1080-goodwill</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1100-forretningsbygg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1120-bygningsmessige-anlegg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1130-anlegg-under-utforelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1190-andre-anleggsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/1200-maskiner-og-anlegg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1210-maskiner-og-anlegg-under-utforelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1230-personbiler-og-stasjonsvogner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1235-varebiler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/1240-personbiler-og-kjoretoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1249-andre-transportmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1270-verktoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1280-kontormaskiner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1290-andre-driftsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1320-lan-til-selskap-i-samme-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1370-fordringer-pa-personlige-eiere</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1380-fordringer-pa-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1384-fordringer-pa-daglig-leder</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1395-depositum-og-leietakerinnskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1399-andre-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1400-ravarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1420-datautstyr-og-servere</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1460-innkjopte-varer-for-videresalg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1480-forskuddsbetaling-til-leverandorer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1500-kundefordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1509-ikke-reskontroforte-kundefordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1530-opptjent-ikke-fakturert-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1550-kundefordringer-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1560-andre-fordringer-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1570-andre-kortsiktige-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1571-lonnsforskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1572-andre-kortsiktige-lan-til-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1574-kortsiktig-lan-aksjonaer-deltaker</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1576-kortsiktige-fordringer-eiere-styremedlemmer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1579-andre-kortsiktige-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1580-avsetning-for-tap-pa-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1585-avsetning-tap-pa-andre-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1670-krav-pa-offentlige-tilskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1700-forskuddsbetalt-leiekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1710-forskuddsbetalt-rentekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1740-forskuddsbetalt-ikke-palopt-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1749-andre-forskuddsbetalte-kostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1750-palopt-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1760-palopt-ikke-forfalt-renteinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1770-andre-periodiseringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1800-aksjer-i-konsernselskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1810-borsnoterte-aksjer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1820-andre-aksjer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1830-markedsbaserte-obligasjoner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1840-andre-obligasjoner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1850-markedsbaserte-sertifikater</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1870-markedsbaserte-opsjoner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1900-kontanter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1905-kontanter-euro</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1908-kontanter-annen-valuta</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1920-bankinnskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1921-bankinnskudd-2</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/1940-bankinnskudd-utland</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/1950-bankinnskudd-for-skattetrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/2000-egenkapital-bundet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2010-egne-aksjer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2020-overkurs</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2030-annen-innskutt-egenkapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/2050-annen-egenkapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2052-ikke-fradragsberettigede-kontingenter-gaver</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2060-privatuttak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2064-uttak-varer-og-tjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2068-private-kostnader-elektronisk-kommunikasjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2072-skatter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2075-privat-bruk-av-naeringsbil</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2077-premie-egen-syke-og-ulykkesforsikring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2078-premie-tilleggstrygd-sykepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2080-udekket-tap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2100-pensjonsforpliktelser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2120-utsatt-skatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2160-uopptjent-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2180-andre-avsetninger-for-forpliktelser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2200-pantelan-og-langsiktige-lan</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2220-gjeld-til-kredittinstitusjoner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2240-pantelan</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2250-lan-fra-aksjonaerer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2255-gjeld-til-eiere</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2260-gjeld-til-selskap-i-samme-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2290-annen-langsiktig-gjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2300-konvertible-lan-kortsiktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2320-obligasjonslan-kortsiktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2360-byggelan</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/2380-kassekreditt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2390-annen-gjeld-til-kredittinstitusjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2400-leverandorgjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2460-leverandorgjeld-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2500-betalbar-skatt-ikke-utlignet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2510-betalbar-skatt-utlignet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2540-forhandsskatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2600-forskuddstrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2610-paleggstrekk-og-utleggstrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2620-bidragstrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2630-trygdetrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2640-forsikringstrekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2650-trukket-fagforeningskontingent</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2690-andre-trekk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2700-utgaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2701-utgaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2702-utgaende-mva-lav-sats-12</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2703-utgaende-mva-kjop-tjenester-utland-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2704-utgaende-mva-kjop-tjenester-utland-lav-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2705-utgaende-mva-innforsel-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2706-utgaende-mva-innforsel-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2707-utgaende-mva-klimakvoter-og-gull</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2710-inngaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2711-inngaende-mva-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2712-inngaende-mva-lav-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2713-inngaende-mva-innforsel-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2714-inngaende-mva-innforsel-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2740-oppgjorskonto-merverdiavgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2741-inngaende-mva-kjop-varer-utland-1</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2742-inngaende-mva-kjop-varer-utland-2</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2745-grunnlag-utgaende-mva-kjop-tjenester-utland</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2746-motkonto-grunnlag-kjop-tjenester-utland</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2761-grunnlag-innforsel-varer-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2762-motkonto-innforsel-varer-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2763-grunnlag-innforsel-varer-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2764-motkonto-innforsel-varer-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2765-grunnlag-innforsel-varer-ingen-mva</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2766-motkonto-innforsel-varer-ingen-mva</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2770-skyldig-arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2780-skyldig-mva-ved-terminoppgjor</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2785-palopt-arbeidsgiveravgift-ferielonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2790-andre-offentlige-avgifter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2800-avsatt-ordinaert-utbytte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/2900-forskudd-fra-kunder</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2903-forskudd-kunder-tilgodelapp</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2910-gjeld-til-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2920-skyldig-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2930-skyldig-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2940-skyldige-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2941-feriepengeavsetning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/2960-palopte-kostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2965-forskuddsbetalt-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2970-uopptjent-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2980-avsetning-styrehonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2982-avsetning-revisjonshonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2983-avsetning-regnskapshonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2989-avsetning-andre-forpliktelser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/2990-annen-kortsiktig-gjeld</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3000-salgsinntekt-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3001-salgsinntekt-avgiftspliktig-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3002-salgsinntekt-avgiftspliktig-lav-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3010-salgsinntekt-varer-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3011-salgsinntekt-avgiftspliktig-rafisk</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3020-salgsinntekt-tjenester-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3030-salgsinntekt-handelsvarer-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3035-salgsinntekt-handelsvarer-avgiftspliktig-2</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3040-salgsinntekt-varer-avgiftspliktig-2</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3050-salgsinntekt-tjenester-avgiftspliktig-2</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3059-opptjent-ikke-fakturert-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3060-uttak-av-varer-tjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3061-uttak-av-varer-tjenester-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3062-uttak-av-varer-tjenester-lav-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3063-motkonto-uttak-av-varer-tjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3070-uttak-av-tjenester-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3071-uttak-av-tjenester-avgiftspliktig-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3074-uttak-av-tjenester-avgiftspliktig-lav-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3080-rabatter-og-returvarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3090-opptjent-ikke-fakturert-inntekt-alt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3092-motkonto-salgsinntekt-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3094-motkonto-salgsinntekt-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3095-motkonto-salgsinntekt-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3100-salgsinntekt-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3107-salgsinntekt-utforsel-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3108-salgsinntekt-gull-og-klimakvoter-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3110-salgsinntekt-varer-innenlands</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3120-salgsinntekt-tjenester-innenlands</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3125-salgsinntekt-tjenester-utforsel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3160-uttak-av-varer-tjenester-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3170-uttak-av-tjenester-avgiftsfritt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3180-rabatt-og-salgsinntektsreduksjon-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3190-opptjent-ikke-fakturert-inntekt-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3195-motkonto-salgsinntekt-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3197-motkonto-salgsinntekt-utforsel-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3198-motkonto-salgsinntekt-gull-klimakvoter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3200-salgsinntekt-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3210-salgsinntekt-egentilvirkede-varer-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3220-salgsinntekt-tjenester-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3250-eksportsalg-av-tjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3260-uttak-av-varer-tjenester-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3280-rabatter-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3290-opptjent-ikke-fakturert-inntekt-utenfor-mva</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3295-motkonto-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3300-spesiell-offentlig-avgift-for-tilvirkede-solgte-varer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3400-spesielt-offentlig-tilskudd-for-varer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3440-spesielt-offentlig-tilskudd-for-tjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3600-leieinntekt-fast-eiendom-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3605-leieinntekt-fast-eiendom-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3610-leieinntekt-driftsmidler-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3615-leieinntekt-driftsmidler-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3620-annen-leieinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3690-opptjent-ikke-fakturert-leieinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3700-provisjonsinntekt-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3701-provisjonsinntekt-avgiftspliktig-hoy-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3705-provisjonsinntekt-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3710-provisjonsinntekt-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3790-opptjent-ikke-fakturert-provisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3800-salgssum-anleggsmidler-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3805-salgssum-anleggsmidler-avgiftsfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3807-salgssum-anleggsmidler-utenfor-avgiftsomradet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3809-motkonto-balanseverdi-solgte-anleggsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3850-verdiendringer-investeringseiendommer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3900-annen-driftsrelatert-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3910-porto-pliktig-ved-salg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3950-ekspedisjonsgebyr-fritt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3960-porto-fritt-ved-salg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/3990-annen-driftsrelatert-inntekt-skattefri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4000-innkjop-av-ravarer-og-halvfabrikater</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4060-frakt-toll-og-spedisjon-ravarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4070-innkjopsprisreduksjon-ravarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4090-beholdningsendring-ravarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4100-innkjop-av-varer-under-tilvirkning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4160-frakt-toll-og-spedisjon-tilvirkning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4170-innkjopsprisreduksjon-tilvirkning</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4190-beholdningsendring-under-arbeid</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4200-innkjop-ferdig-egentilvirkede-varer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4260-frakt-toll-og-spedisjon-ferdigvarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4270-innkjopsprisreduksjon-avgiftspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4290-beholdningsendring-ferdigvarer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/4300-innleid-arbeidskraft</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4301-innkjop-varer-for-videresalg-middels-sats</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4360-frakt-toll-og-spedisjon-videresalg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4370-innkjopsprisreduksjon-videresalg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4380-grunnlag-merverdiavgift-ved-innforsel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4390-beholdningsendring-videresalg</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4400-innkjop-av-varer-for-videresalg-utland</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4500-fremmedytelser-og-underentrepriser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4520-underentreprenorer-opplysningspliktige</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4590-beholdningsendring-fremmedytelser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4598-motkonto-interne-avvik</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4599-annen-konto-for-avvik-avrunding</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/4900-endring-i-varelager</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5000-lonn-til-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5010-timelonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5020-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5030-bonus-og-provisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5060-feriepengekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5080-styrehonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5090-palopt-ikke-utbetalt-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5095-periodisering-av-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5096-periodisering-av-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5099-andre-lonnsperiodiseringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/5200-fri-bil</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5210-fri-telefon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5220-fri-avis</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5230-fri-kost-losji-og-bolig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5240-rentefordel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5251-gruppelivsforsikring-opplysningspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5252-ulykkesforsikring-opplysningspliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5280-annen-fordel-i-arbeidsforhold</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5281-annen-fordel-opplysningspliktig-ikke-aga</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5290-motkonto-for-gruppe-52</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5300-pensjonskostnad-otp</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5320-pensjonskostnad-utover-otp</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5330-godtgjorelse-til-styre-og-bedriftsforsamling</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5390-annen-oppgavepliktig-godtgjorelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5395-annen-oppgavepliktig-godtgjorelse-trekkfri</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5400-arbeidsgiveravgift-av-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5401-arbeidsgiveravgift-av-opptjente-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5405-arbeidsgiveravgift-av-andre-palopte-lonnskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5420-innberetningspliktig-pensjonskostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5430-finansskatt-av-lonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5431-finansskatt-av-palopt-ferielonn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5495-periodisering-av-arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5496-periodisering-av-aga-opptjente-feriepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/5500-annen-kostnadsgodtgjorelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5510-trekkpliktig-del-reise</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5600-arbeidsgodtgjorelse-til-eiere-i-ans-o-l</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5700-laerlingtilskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5720-annet-lonnstilskudd</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5800-refusjon-av-sykepenger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5820-refusjon-av-arbeidsgiveravgift</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/5900-gaver-til-ansatte-fradragsberettigede</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5905-gaver-til-ansatte-ikke-fradragsberettigede</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/5910-firmafest-og-sosiale-tiltak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5912-middag-ved-overtid</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5920-annen-personalkostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5930-andre-forsikringer-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5945-pensjonsforsikring-for-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/5990-annen-personalkostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6000-avskrivninger-bygninger-og-fast-eiendom</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6010-avskrivninger-pa-transportmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6015-avskrivning-pa-maskiner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6017-avskrivning-pa-inventar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6020-avskrivninger-immaterielle-eiendeler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6050-nedskrivning-av-anleggsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/6100-frakt-transport-og-forsikring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6110-toll-og-spedisjonskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/6200-elektrisitet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6210-fyringsolje-og-gass</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6220-fyringsolje</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6230-kull-og-koks</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6250-bensin-og-dieselolje</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6260-vann</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6290-annen-brensel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6300-husleie-og-lokalkostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6320-kommunale-avgifter-og-renovasjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6340-strom-og-oppvarming</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6360-rengjoring-og-renhold</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6390-ovrige-lokalkostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6400-leie-maskiner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6410-leie-inventar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6420-leie-datasystemer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6430-leie-andre-kontormaskiner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6440-leie-transportmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6490-annen-leiekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6500-elektrisk-og-motordrevet-verktoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6510-manuelt-handverktoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6520-hjelpeverktoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6530-spesialverktoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6540-arbeidstoy-og-verneutstyr</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6550-driftsmaterialer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6551-driftsmateriale</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6552-programvare-anskaffelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6560-rekvisita-og-smaanskaffelser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6570-arbeidsklaer-og-verneutstyr</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6590-annet-driftsmateriell</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6600-reparasjon-og-vedlikehold-bygninger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6620-vedlikehold-av-maskiner-og-utstyr</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6640-vedlikehold-av-kontormaskiner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6690-reparasjon-og-vedlikehold-annet</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6700-regnskaps-og-revisjonskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6701-revisjonshonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6702-honorar-radgivning-revisjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6705-regnskapshonorar</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6720-juridisk-bistand</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6725-honorar-juridisk-bistand-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6726-honorar-juridisk-bistand-ikke-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6790-andre-konsulenttjenester</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6800-kontorrekvisita</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6810-it-utstyr-og-datakostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6820-trykksaker-og-kopieringskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6840-aviser-tidsskrifter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/6860-kurs-og-seminarutgifter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6890-annen-kontorkostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6900-telefoni-og-internett</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6910-internett-og-bredband</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/6940-frankering-og-forsendelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7000-drivstoff-til-firmakjoretoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7020-service-og-vedlikehold-av-kjoretoy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7040-forsikring-og-avgifter-transportmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7080-bilkostnader-bruk-av-privat-bil-i-naering</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7090-annen-kostnad-transportmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7098-privat-bruk-av-elektronisk-kommunikasjon</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7099-privat-bruk-av-naeringsbil</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7100-kilometergodtgjorelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7130-reisekostnader-oppgavepliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7140-reiseutgifter-i-tjeneste</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7150-diettkostnader-oppgavepliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7160-mat-og-drikke-pa-tjenestereise</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7170-hotellovernatting</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7190-annen-kostnadsgodtgjorelse</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7200-provisjonskostnader-oppgavepliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7210-provisjonskostnader-ikke-oppgavepliktig</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7300-salgskostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7320-reklamekostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7330-nettside-og-digitale-kanaler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/7350-representasjon-og-kundepleie</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7360-representasjon-ikke-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7390-annen-salgskostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7400-kontingenter-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7410-kontingenter-ikke-fradrag</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7420-firmarelaterte-gaver</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7430-gaver-til-ansatte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7500-forsikringspremier</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7510-garantiforsikring-og-kausjonsforsikring</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7550-garantikostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7560-servicekostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7600-lisensavgifter-og-royalties</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7610-patentkostnader-ved-egne-patenter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7620-kostnader-ved-varemerker-etc</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7630-kontroll-prove-og-stempelavgifter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7700-styre-og-bedriftsforsamlinger</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7710-generalforsamling</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7730-kostnader-ved-egne-aksjer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7740-oredifferanser</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7750-bankgebyrer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/7770-bank-og-kortgebyrer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7790-annen-kostnad-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7791-annen-kostnad-ikke-fradragsberettiget</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7800-tap-ved-salg-av-anleggsmidler</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7820-innkommet-tidligere-nedskrevne-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7830-konstaterte-tap-pa-fordringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7860-tap-pa-kontrakter</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/7900-beholdningsendringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8000-inntekt-pa-investering-i-datterselskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8010-inntekt-pa-investering-i-konsernselskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8020-inntekt-pa-investering-i-tilknyttet-selskap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8030-renteinntekter-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8040-renteinntekt-tilbakebetalt-skatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8050-annen-renteinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/8060-valutagevinst-agio</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8070-annen-finansinntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8071-aksjeutbytte-fra-norske-foretak</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8100-rentekostnader</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8130-rentekostnader-konsern</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8140-rentekostnad-fastsatt-skatt-ikke-fradrag</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8150-rentekostnader-kredittinstitusjoner</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/8160-valutatap-disagio</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8170-annen-finanskostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8300-betalbar-skatt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8320-endring-utsatt-skatt-skattefordel</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8490-ekstraordinaer-inntekt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8590-annen-ekstraordinaer-kostnad</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8600-betalbar-skatt-ekstraordinaert</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8620-endring-utsatt-skatt-ekstraordinaert</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8800-arsresultat</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/8900-overforinger-og-disponeringer</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8910-overforinger-felleseid-andelskapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://avargo.no/ressurser/kontohjelp/8920-avsatt-ordinaert-utbytte</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8960-overforinger-annen-egenkapital</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://avargo.no/ressurser/kontohjelp/8990-udekket-tap</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>
