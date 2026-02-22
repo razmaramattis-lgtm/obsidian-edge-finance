@@ -6,7 +6,7 @@ import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail
 } from "lucide-react";
 
 // Sub-panels
@@ -39,9 +39,10 @@ import AccountEntriesPanel from "@/components/admin/AccountEntriesPanel";
 import GlossaryPanel from "@/components/admin/GlossaryPanel";
 import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
 import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
+import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 
 type Panel = "overview" | "employees" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "mybooking" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions";
 
 interface NavItem {
   id: Panel;
@@ -62,6 +63,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "courses", label: "Kurs", icon: GraduationCap, adminOnly: true, group: "Nettside" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Nettside" },
   { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
+  { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, group: "Kunder" },
   { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Kunder" },
   { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
@@ -158,6 +160,7 @@ const AdminDashboard = () => {
     employee_invitations: notifications.employeeInvitations,
     benefit_applications: notifications.benefitApplications,
     bookings: notifications.pendingBookings,
+    contact_submissions: notifications.contactSubmissions,
     overview: notifications.contactSubmissions,
     account_feedback: notifications.accountFeedback,
   };
@@ -219,6 +222,7 @@ const AdminDashboard = () => {
       case "benefit_applications": return <BenefitApplicationsPanel onStatusChange={refreshNotifications} />;
       case "account_entries": return <AccountEntriesPanel initialSearch={panelContext?.search} />;
       case "glossary": return <GlossaryPanel />;
+      case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
       case "settings": return <SettingsPanel />;
