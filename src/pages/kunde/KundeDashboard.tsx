@@ -67,6 +67,15 @@ const KundeDashboard = () => {
   const navigate = useNavigate();
   const [activePanel, setActivePanel] = useState<Panel>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      const { data } = await supabase.from("customer_companies").select("logo_url").limit(1).maybeSingle();
+      if (data?.logo_url) setCompanyLogo(data.logo_url);
+    };
+    fetchLogo();
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -109,9 +118,13 @@ const KundeDashboard = () => {
       </nav>
       <div className="p-4 border-t border-border/10">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-medium">
-            {profile?.name?.charAt(0).toUpperCase()}
-          </div>
+          {companyLogo ? (
+            <img src={companyLogo} alt="Logo" className="w-8 h-8 rounded-full object-contain border border-border/20" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-medium">
+              {profile?.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium truncate">{profile?.name}</p>
             <p className="text-[10px] text-muted-foreground">Kunde</p>
@@ -164,6 +177,7 @@ const KundeDashboard = () => {
           <button onClick={() => setSidebarOpen(true)} className="md:hidden text-muted-foreground hover:text-foreground">
             <Menu size={20} />
           </button>
+          {companyLogo && <img src={companyLogo} alt="Logo" className="w-6 h-6 rounded-lg object-contain border border-border/20" />}
           <h1 className="font-heading text-lg">{navItems.find(i => i.id === activePanel)?.label ?? "Oversikt"}</h1>
         </div>
         <div className="p-4 md:p-6 lg:p-8">{renderPanel()}</div>
