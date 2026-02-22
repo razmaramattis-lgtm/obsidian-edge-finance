@@ -378,7 +378,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <div>
-              <h4 className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Tjenester</h4>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Tjenester</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
                 <Link to="/tjenester/regnskapsforer" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Dedikert regnskapsfører</Link>
                 <Link to="/tjenester/cfo" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">CFO-as-a-Service</Link>
@@ -391,7 +391,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <div>
-              <h4 className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Bransjer</h4>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Bransjer</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
                 <Link to="/bransjer/tech-saas" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Tech & SaaS</Link>
                 <Link to="/bransjer/eiendom" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Eiendom</Link>
@@ -403,7 +403,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <div>
-              <h4 className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Ressurser</h4>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Ressurser</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
                 <Link to="/ressurser?tab=blogg" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Blogg</Link>
                 <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Guider</Link>
@@ -416,7 +416,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <div>
-              <h4 className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Selskapet</h4>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Selskapet</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
                 <Link to="/om-oss" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Om Avargo</Link>
                 <Link to="/kontakt" className="text-foreground/70 hover:text-foreground active:text-foreground transition-colors py-0.5">Kontakt oss</Link>

@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
-  Tractor, ShoppingCart, HardHat, Heart, Store, Users, Bot,
-  FileCheck, Calculator, Clock, Headphones,
-  LayoutTemplate, Search, ChevronLeft, ChevronRight,
+  Tractor, ShoppingCart, HardHat, Heart, Store, Users,
   Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -367,12 +365,14 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
 
         {/* Click zones — left half prev, right half next (invisible) */}
-        <div
-          className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize"
+        <button
+          aria-label="Forrige tjeneste"
+          className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize bg-transparent border-0"
           onClick={prevService}
         />
-        <div
-          className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize"
+        <button
+          aria-label="Neste tjeneste"
+          className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize bg-transparent border-0"
           onClick={nextService}
         />
 
@@ -505,6 +505,7 @@ const Index = () => {
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
+                aria-label={`Bransje-side ${i + 1}`}
                 onClick={() => setIndustryPage(i)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`}
               />
