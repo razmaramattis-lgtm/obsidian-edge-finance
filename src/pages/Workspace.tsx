@@ -53,7 +53,7 @@ const Workspace = () => {
     if (!searchQuery.trim()) { setSearchResults([]); setShowSearchResults(false); return; }
     setShowSearchResults(true);
     const timer = setTimeout(async () => {
-      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email").ilike("name", `%${searchQuery}%`).limit(10);
+      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems").ilike("name", `%${searchQuery}%`).limit(10);
       setSearchResults((data as Profile[]) || []);
     }, 300);
     return () => clearTimeout(timer);
@@ -401,7 +401,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
   const bgRef = useRef<HTMLInputElement>(null);
 
   const refetchProfile = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email").eq("id", profile.id).single();
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems").eq("id", profile.id).single();
     if (data) setProfile(data as Profile);
   };
 
@@ -471,7 +471,11 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
           {/* Avatar - clickable to change */}
           <div className="absolute -top-16">
             <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card relative group cursor-pointer" onClick={() => avatarRef.current?.click()}>
-              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="lg" />
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt={profile.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-4xl font-semibold">{profile.name.charAt(0).toUpperCase()}</div>
+              )}
               <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
                 <span className="opacity-0 group-hover:opacity-100 transition-all text-white">
                   {uploadingAvatar ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Camera size={22} />}

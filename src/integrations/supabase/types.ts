@@ -1742,6 +1742,7 @@ export type Database = {
           name: string
           outlook_calendar_url: string | null
           phone: string | null
+          preferred_accounting_systems: string[] | null
           role: Database["public"]["Enums"]["app_role"]
           specialty: string | null
           teams_link: string | null
@@ -1763,6 +1764,7 @@ export type Database = {
           name: string
           outlook_calendar_url?: string | null
           phone?: string | null
+          preferred_accounting_systems?: string[] | null
           role?: Database["public"]["Enums"]["app_role"]
           specialty?: string | null
           teams_link?: string | null
@@ -1784,6 +1786,7 @@ export type Database = {
           name?: string
           outlook_calendar_url?: string | null
           phone?: string | null
+          preferred_accounting_systems?: string[] | null
           role?: Database["public"]["Enums"]["app_role"]
           specialty?: string | null
           teams_link?: string | null
