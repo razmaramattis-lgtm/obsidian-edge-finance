@@ -67,6 +67,7 @@ const Ansettelse = lazy(() => import("./pages/tjenester/Ansettelse"));
 const Personalhandbok = lazy(() => import("./pages/tjenester/Personalhandbok"));
 const Arbeidsrett = lazy(() => import("./pages/tjenester/Arbeidsrett"));
 const Chatbot = lazy(() => import("./pages/tjenester/Chatbot"));
+const WorkspacePage = lazy(() => import("./pages/Workspace"));
 const Internsystemer = lazy(() => import("./pages/tjenester/Internsystemer"));
 const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
 const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
@@ -186,6 +187,9 @@ const App = () => (
                   <Route path="/admin/logg-inn" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
+
+                  {/* Workspace route (authenticated, no Layout) */}
+                  <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />
 
                   {/* Customer routes */}
                   <Route path="/kunde/logg-inn" element={<KundeLogin />} />

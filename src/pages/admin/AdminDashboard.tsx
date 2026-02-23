@@ -78,7 +78,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Internt
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
-  { id: "chat", label: "Chat", icon: MessageSquare, group: "Internt" },
+  { id: "chat", label: "Workspace", icon: MessageSquare, group: "Internt" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
 
   // Admin
@@ -199,7 +199,7 @@ const AdminDashboard = () => {
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "chat": return <ChatPanel />;
+      case "chat": navigate("/workspace"); return null;
       case "blog": return <BlogPanel />;
       case "services": return <ServicesPanel />;
       case "industries": return <IndustriesPanel />;
