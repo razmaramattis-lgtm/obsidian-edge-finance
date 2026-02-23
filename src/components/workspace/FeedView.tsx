@@ -198,6 +198,17 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
 
   const submitGif = async (url: string) => {
     await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: `![gif](${url})` }]);
+    const { data: post } = await supabase.from("workspace_posts").select("author_id").eq("id", postId).single();
+    if (post && post.author_id !== profileId) {
+      createNotification({
+        recipientId: post.author_id,
+        actorId: profileId,
+        type: "feed_comment",
+        referenceId: postId,
+        referenceType: "post",
+        body: "Reagerte med en GIF på innlegget ditt",
+      });
+    }
     fetchComments();
   };
 
