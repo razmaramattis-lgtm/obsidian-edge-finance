@@ -100,7 +100,7 @@ const Workspace = () => {
       {/* Header with search */}
       {!headerHidden && (
         <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={18} /></button>
+          <button onClick={() => navigate("/admin")} className="text-muted-foreground hover:text-foreground transition-colors" title="Tilbake til admin"><ArrowLeft size={18} /></button>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Sparkles size={16} className="text-white" /></div>
             <div>
