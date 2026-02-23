@@ -771,26 +771,44 @@ const SectionHome = () => {
         </div>
       </section>
 
-      {/* OTHER SECTIONS */}
-      <section className="py-20 md:py-28 border-t border-border/10">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* CROSS-SELL TRIGGER POINTS */}
+      <section className="py-24 md:py-36 border-t border-border/10 relative">
+        <div className="absolute inset-0 ambient-glow opacity-15" />
+        <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/50 mb-8">Utforsk også</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {otherSections.map((s) => (
-                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 px-6 py-5 glass rounded-2xl card-lift group">
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center border transition-colors duration-300"
-                    style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)`, borderColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)` }}>
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)` }} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{s.shortName}</p>
-                    <p className="text-xs text-muted-foreground">{s.tagline}</p>
-                  </div>
-                </Link>
-              ))}
+            <div className="text-center mb-14 md:mb-20">
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5">Trenger du mer?</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl max-w-2xl mx-auto leading-snug">
+                Vi dekker hele{" "}<span className="italic text-gradient-rose">bedriftens behov.</span>
+              </h2>
+              <p className="text-foreground/60 text-base font-light mt-5 max-w-lg mx-auto">
+                Avargo er mer enn {sectionId === "regnskap" ? "regnskap" : sectionId === "hr" ? "HR" : sectionId === "markedsforing" ? "markedsføring" : "IT"}. Kombiner tjenestene og få én partner for alt.
+              </p>
             </div>
           </AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
+            {otherSections.map((s) => (
+              <AnimatedSection key={s.id} delay={0.1}>
+                <Link to={s.basePath} className="group block glass rounded-2xl p-6 md:p-8 card-lift border border-border/10 hover:border-border/25 transition-all duration-500">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center border transition-colors duration-300"
+                      style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)`, borderColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)` }}>
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)` }} />
+                    </div>
+                    <div>
+                      <p className="text-base font-medium">{s.name}</p>
+                      <p className="text-xs text-muted-foreground italic">{s.tagline}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-foreground/60 font-light leading-relaxed mb-5">{s.description}</p>
+                  <span className="inline-flex items-center gap-2 text-xs font-medium tracking-wider group-hover:gap-3 transition-all duration-300"
+                    style={{ color: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)` }}>
+                    Utforsk {s.shortName} <ArrowRight size={13} />
+                  </span>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
         </div>
       </section>
 
