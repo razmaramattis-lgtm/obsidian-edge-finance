@@ -166,6 +166,7 @@ const Contact = () => {
           revenue_target: omsetning,
           message: frustrasjon,
           package: valgtPakke,
+          section: isInSection && section ? section.id : null,
         },
       });
       if (error) throw error;

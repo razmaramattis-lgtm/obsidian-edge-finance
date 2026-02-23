@@ -7,6 +7,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const SECTION_LABELS: Record<string, string> = {
+  regnskap: "Regnskap",
+  hr: "Personal (HR)",
+  markedsforing: "Markedsføring",
+  it: "IT & Utvikling",
+};
+
 // Minimal SMTP client using Deno TLS
 async function sendEmail(opts: {
   hostname: string;
@@ -25,14 +32,12 @@ async function sendEmail(opts: {
   async function readResponse(): Promise<string> {
     let result = "";
     const buf = new Uint8Array(4096);
-    // Read until we get a complete response (line starting with "NNN " not "NNN-")
     while (true) {
       const n = await conn.read(buf);
       if (!n) break;
       result += decoder.decode(buf.subarray(0, n));
       const lines = result.trim().split("\r\n");
       const lastLine = lines[lines.length - 1];
-      // SMTP multi-line responses use "NNN-" continuation, final line uses "NNN "
       if (/^\d{3} /.test(lastLine) || !/^\d{3}/.test(lastLine)) break;
     }
     return result;
@@ -47,7 +52,6 @@ async function sendEmail(opts: {
   }
 
   try {
-    // Read server greeting
     const greeting = await readResponse();
     console.log("SMTP greeting:", greeting.trim());
 
@@ -95,7 +99,10 @@ serve(async (req) => {
     const {
       company_name, org_number, contact_person, email, phone,
       industry, industry_code, revenue_target, message, package: pkg,
+      section,
     } = body;
+
+    const sectionLabel = section ? SECTION_LABELS[section] || section : null;
 
     // Save to database
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -107,6 +114,7 @@ serve(async (req) => {
       .insert({
         company_name, org_number, contact_person, email, phone,
         industry, industry_code, revenue_target, message, package: pkg,
+        section: section || null,
       });
 
     if (dbError) console.error("DB error:", dbError);
@@ -121,16 +129,21 @@ serve(async (req) => {
       try {
         const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
         
+        const sectionBadge = sectionLabel
+          ? `<div style="display:inline-block;background:#f0fdf4;color:#166534;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:12px;margin-right:8px;">📍 ${sectionLabel}</div>`
+          : "";
+
         const htmlBody = `
           <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;">
             <!-- Header -->
             <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
               <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:-0.3px;">📬 Ny henvendelse</h1>
-              <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}</p>
+              <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p>
             </div>
 
             <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
-              <!-- Pakke-badge -->
+              <!-- Section + Pakke badges -->
+              ${sectionBadge}
               ${pkg ? `<div style="display:inline-block;background:#eef2ff;color:#4338ca;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px;">🏷️ ${pkg}</div>` : ""}
 
               <!-- Selskapsinfo -->
@@ -168,7 +181,7 @@ serve(async (req) => {
 
               <!-- Footer -->
               <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-                <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra kontaktskjemaet på <strong>avargo.no</strong></p>
+                <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra kontaktskjemaet på <strong>avargo.no</strong>${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p>
               </div>
             </div>
           </div>`;
@@ -180,7 +193,7 @@ serve(async (req) => {
           password: smtpPass,
           from: "kontakt@avargo.no",
           to: "kontakt@avargo.no",
-          subject: `Ny henvendelse: ${company_name || contact_person || "Ukjent"}`,
+          subject: `${sectionLabel ? `[${sectionLabel}] ` : ""}Ny henvendelse: ${company_name || contact_person || "Ukjent"}`,
           html: htmlBody,
         });
         emailSent = true;

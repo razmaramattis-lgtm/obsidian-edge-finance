@@ -406,6 +406,7 @@ export type Database = {
           customer_phone: string
           id: string
           message: string | null
+          section: string | null
           status: string
           teams_link: string | null
           updated_at: string
@@ -421,6 +422,7 @@ export type Database = {
           customer_phone: string
           id?: string
           message?: string | null
+          section?: string | null
           status?: string
           teams_link?: string | null
           updated_at?: string
@@ -436,6 +438,7 @@ export type Database = {
           customer_phone?: string
           id?: string
           message?: string | null
+          section?: string | null
           status?: string
           teams_link?: string | null
           updated_at?: string
@@ -719,6 +722,7 @@ export type Database = {
           package: string | null
           phone: string | null
           revenue_target: string | null
+          section: string | null
           status: string
           updated_at: string
         }
@@ -735,6 +739,7 @@ export type Database = {
           package?: string | null
           phone?: string | null
           revenue_target?: string | null
+          section?: string | null
           status?: string
           updated_at?: string
         }
@@ -751,6 +756,7 @@ export type Database = {
           package?: string | null
           phone?: string | null
           revenue_target?: string | null
+          section?: string | null
           status?: string
           updated_at?: string
         }
@@ -1466,6 +1472,7 @@ export type Database = {
           name: string
           price: number
           price_suffix: string | null
+          section: string | null
           sort_order: number | null
           updated_at: string
         }
@@ -1479,6 +1486,7 @@ export type Database = {
           name: string
           price?: number
           price_suffix?: string | null
+          section?: string | null
           sort_order?: number | null
           updated_at?: string
         }
@@ -1492,6 +1500,7 @@ export type Database = {
           name?: string
           price?: number
           price_suffix?: string | null
+          section?: string | null
           sort_order?: number | null
           updated_at?: string
         }
