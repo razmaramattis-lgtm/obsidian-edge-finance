@@ -41,7 +41,7 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-3 border-t border-border/15 bg-card/30">
+    <form onSubmit={handleSubmit} className="p-3 border-t border-border/15 bg-card/30 sticky bottom-0 z-20">
       <div className="flex items-center gap-1.5 bg-muted/30 rounded-2xl border border-border/20 focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
         <input
           value={text}
@@ -51,9 +51,9 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
           className="flex-1 min-w-0 h-12 sm:h-11 bg-transparent pl-3 pr-1 text-sm focus:outline-none placeholder:text-muted-foreground/40"
         />
         <div className="flex items-center shrink-0 pr-1.5">
-          <div className="hidden md:block"><GifPicker onSelect={handleGif} /></div>
+          <GifPicker onSelect={handleGif} />
           {onSendFile && (
-            <div className="hidden md:flex items-center">
+            <div className="flex items-center">
               <button type="button" onClick={() => fileRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg">
                 <Paperclip size={16} />
               </button>
@@ -61,7 +61,7 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
                 <Image size={16} />
               </button>
               <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
-              <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+              <input ref={imageRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFile} />
             </div>
           )}
           <button
