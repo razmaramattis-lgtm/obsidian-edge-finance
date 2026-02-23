@@ -28,12 +28,15 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled, onCom
     if (!input) return;
     const onFocus = () => onComposingChange?.(true);
     const onBlur = () => {
-      // Delay to allow button clicks to register
+      // Delay to allow button clicks (send, attach) to register
       setTimeout(() => {
-        if (!document.activeElement || document.activeElement === document.body) {
+        // If focus moved to another input inside this form, stay composing
+        const active = document.activeElement;
+        const isStillInForm = input.closest("form")?.contains(active);
+        if (!isStillInForm) {
           onComposingChange?.(false);
         }
-      }, 150);
+      }, 200);
     };
     input.addEventListener("focus", onFocus);
     input.addEventListener("blur", onBlur);
