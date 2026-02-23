@@ -19,6 +19,7 @@ import ProfileEditView from "@/components/workspace/ProfileEditView";
 import NotificationBell from "@/components/workspace/NotificationBell";
 import { useWorkspaceNotifications } from "@/hooks/useWorkspaceNotifications";
 import { useBrowserNotifications } from "@/hooks/useBrowserNotifications";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
 import { usePresence } from "@/hooks/usePresence";
 import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
@@ -44,6 +45,7 @@ const Workspace = () => {
   const [viewingProfile, setViewingProfile] = useState<Profile | null>(null);
   const wsNotifs = useWorkspaceNotifications(profile?.id);
   useBrowserNotifications(profile?.id);
+  usePushSubscription(profile?.id);
   const presence = usePresence(profile?.id);
 
   useEffect(() => {
