@@ -1203,6 +1203,45 @@ export type Database = {
           },
         ]
       }
+      dm_message_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          message_id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          message_id: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          message_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "dm_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dm_message_reactions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dm_messages: {
         Row: {
           content: string
@@ -1319,6 +1358,45 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      group_message_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          message_id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          message_id: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          message_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_group_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_message_reactions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hms_documents: {
         Row: {
@@ -1656,8 +1734,10 @@ export type Database = {
           bio: string | null
           booking_active: boolean
           created_at: string
+          department: string | null
           email: string
           id: string
+          interests: string[] | null
           name: string
           outlook_calendar_url: string | null
           phone: string | null
@@ -1674,8 +1754,10 @@ export type Database = {
           bio?: string | null
           booking_active?: boolean
           created_at?: string
+          department?: string | null
           email: string
           id?: string
+          interests?: string[] | null
           name: string
           outlook_calendar_url?: string | null
           phone?: string | null
@@ -1692,8 +1774,10 @@ export type Database = {
           bio?: string | null
           booking_active?: boolean
           created_at?: string
+          department?: string | null
           email?: string
           id?: string
+          interests?: string[] | null
           name?: string
           outlook_calendar_url?: string | null
           phone?: string | null

@@ -4,6 +4,10 @@ export interface Profile {
   role: string;
   avatar_url?: string | null;
   email?: string;
+  title?: string | null;
+  department?: string | null;
+  specialty?: string | null;
+  interests?: string[];
 }
 
 export interface Post {

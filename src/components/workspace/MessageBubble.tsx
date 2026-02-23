@@ -1,4 +1,6 @@
 import UserAvatar from "./UserAvatar";
+import MessageReactions from "./MessageReactions";
+import { Paperclip } from "lucide-react";
 
 interface MessageBubbleProps {
   content: string;
@@ -7,11 +9,17 @@ interface MessageBubbleProps {
   time: string;
   isOwn: boolean;
   showAvatar?: boolean;
+  messageId?: string;
+  profileId?: string;
+  reactionTable?: "dm_message_reactions" | "group_message_reactions";
+  fileUrl?: string | null;
+  fileName?: string | null;
 }
 
 const isGif = (content: string) => /^https?:\/\/.*\.(gif|giphy)/i.test(content);
+const isImage = (url: string) => /\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
 
-const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAvatar = true }: MessageBubbleProps) => {
+const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAvatar = true, messageId, profileId, reactionTable, fileUrl, fileName }: MessageBubbleProps) => {
   const gif = isGif(content);
 
   return (
@@ -39,6 +47,25 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
               : "bg-muted/50 text-foreground rounded-bl-md"
           }`}>
             {content}
+          </div>
+        )}
+        {fileUrl && (
+          <div className="mt-1">
+            {isImage(fileUrl) ? (
+              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="block max-w-[240px] rounded-xl overflow-hidden border border-border/20 hover:border-primary/30 transition-all">
+                <img src={fileUrl} alt={fileName || "Bilde"} className="w-full rounded-xl" loading="lazy" />
+              </a>
+            ) : (
+              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">
+                <Paperclip size={10} /> {fileName || "Vedlegg"}
+              </a>
+            )}
+          </div>
+        )}
+        {/* Reactions */}
+        {messageId && profileId && reactionTable && (
+          <div className="mt-1">
+            <MessageReactions messageId={messageId} profileId={profileId} table={reactionTable} />
           </div>
         )}
         {!showAvatar && (

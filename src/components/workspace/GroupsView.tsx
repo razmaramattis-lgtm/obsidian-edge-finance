@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Users, Plus, Lock, Globe, ArrowLeft, Video, Trash2,
-  Search, Sparkles, Image, Paperclip, X, MoreHorizontal,
+  Search, Paperclip,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import ChatInput from "./ChatInput";
@@ -23,9 +23,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   const [groupMembers, setGroupMembers] = useState<Array<{ id: string; name: string; avatar_url?: string | null }>>([]);
   const [memberCount, setMemberCount] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchGroups = async () => {
     const { data } = await supabase.from("workspace_groups").select("*").order("created_at");
@@ -82,14 +80,13 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   };
 
   const joinGroup = async (groupId: string) => {
-    try { await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]); } catch {}
+    try { await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]); } catch { }
   };
 
   const deleteGroup = async (id: string) => {
     if (!confirm("Slett denne gruppen og alle meldinger?")) return;
     await supabase.from("workspace_groups").delete().eq("id", id);
     setActive(null);
-    setMenuOpen(null);
     fetchGroups();
   };
 
@@ -103,7 +100,6 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
     (g.description || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Customer can only see public groups
   const isCustomer = profile.role === "customer";
   const visibleGroups = isCustomer ? filteredGroups.filter(g => !g.is_private) : filteredGroups;
 
@@ -124,7 +120,6 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-            {/* Search */}
             <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 border border-border/15 mb-6 max-w-md">
               <Search size={14} className="text-muted-foreground" />
               <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk etter grupper…" className="h-11 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40" />
@@ -149,7 +144,6 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
                 const canDelete = g.created_by === profile.id || isAdmin;
                 return (
                   <div key={g.id} className="group/card rounded-2xl border border-border/15 bg-card/50 overflow-hidden hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 relative">
-                    {/* Cover */}
                     <div className={`h-28 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                       <div className="absolute bottom-3 left-4 flex items-center gap-1.5">
@@ -168,7 +162,6 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
                         </button>
                       )}
                     </div>
-                    {/* Content */}
                     <button onClick={() => { setActive(g); joinGroup(g.id); }} className="w-full text-left p-4">
                       <div className="flex items-start gap-3">
                         <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-sm shadow-lg -mt-8 border-2 border-background relative z-10`}>
@@ -194,7 +187,6 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
           </div>
         </>
       ) : (
-        /* Group chat */
         <div className="flex-1 flex flex-col min-w-0">
           <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
             <button onClick={() => setActive(null)} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={16} /></button>
@@ -221,14 +213,19 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
               const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
               return (
                 <div key={msg.id} className="group/msg relative">
-                  <MessageBubble content={msg.content} senderName={mp?.name} senderAvatar={mp?.avatar_url} time={formatTime(msg.created_at)} isOwn={isOwn} showAvatar={showAv} />
-                  {msg.file_url && (
-                    <div className={`ml-10 mt-1 ${isOwn ? "text-right mr-10" : ""}`}>
-                      <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">
-                        <Paperclip size={10} /> {msg.file_name || "Vedlegg"}
-                      </a>
-                    </div>
-                  )}
+                  <MessageBubble
+                    content={msg.content}
+                    senderName={mp?.name}
+                    senderAvatar={mp?.avatar_url}
+                    time={formatTime(msg.created_at)}
+                    isOwn={isOwn}
+                    showAvatar={showAv}
+                    messageId={msg.id}
+                    profileId={profile.id}
+                    reactionTable="group_message_reactions"
+                    fileUrl={msg.file_url}
+                    fileName={msg.file_name}
+                  />
                   {(isOwn || isAdmin) && (
                     <button onClick={() => deleteMsg(msg.id)} className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"><Trash2 size={12} /></button>
                   )}
@@ -237,13 +234,11 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
             })}
             <div ref={endRef} />
           </div>
-          <div className="border-t border-border/10">
-            <input ref={fileRef} type="file" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) sendFile(f); }} />
-            <div className="flex items-center gap-1 px-3 pt-2">
-              <button onClick={() => fileRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg"><Paperclip size={16} /></button>
-            </div>
-            <ChatInput placeholder={`Skriv i ${active.name}…`} onSend={send} />
-          </div>
+          <ChatInput
+            placeholder={`Skriv i ${active.name}…`}
+            onSend={send}
+            onSendFile={sendFile}
+          />
         </div>
       )}
 
