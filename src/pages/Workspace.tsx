@@ -57,9 +57,11 @@ const Workspace = () => {
     setShowSearchResults(true);
     const timer = setTimeout(async () => {
       const q = searchQuery.trim();
+      const qLower = q.toLowerCase();
+      const qUpper = q.charAt(0).toUpperCase() + q.slice(1).toLowerCase();
       const { data } = await supabase.from("profiles")
         .select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems")
-        .or(`name.ilike.%${q}%,title.ilike.%${q}%,specialty.ilike.%${q}%,department.ilike.%${q}%,bio.ilike.%${q}%,interests.cs.{"${q}"},preferred_accounting_systems.cs.{"${q}"}`)
+        .or(`name.ilike.%${q}%,title.ilike.%${q}%,specialty.ilike.%${q}%,department.ilike.%${q}%,bio.ilike.%${q}%,interests.cs.{"${q}"},interests.cs.{"${qLower}"},interests.cs.{"${qUpper}"},preferred_accounting_systems.cs.{"${q}"},preferred_accounting_systems.cs.{"${qLower}"},preferred_accounting_systems.cs.{"${qUpper}"}`)
         .limit(10);
       setSearchResults((data as Profile[]) || []);
     }, 300);
