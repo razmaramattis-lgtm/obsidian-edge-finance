@@ -1,19 +1,24 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Hash, Send, Plus, Trash2, Users, MessageSquare, Newspaper,
-  ChevronDown, PanelLeftClose, PanelLeft, ThumbsUp, Heart,
-  MessageCircle, Pin, UserPlus, LogOut, ArrowLeft, Eye, EyeOff,
+  PanelLeftClose, PanelLeft, MessageCircle, Pin, Eye, EyeOff,
+  ArrowLeft, Image, Lock, Globe, Search, Bell, Settings, Sparkles,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import UserAvatar from "@/components/workspace/UserAvatar";
+import ChatInput from "@/components/workspace/ChatInput";
+import MessageBubble from "@/components/workspace/MessageBubble";
+import PostReactions from "@/components/workspace/PostReactions";
+import EmojiPicker from "@/components/workspace/EmojiPicker";
 
 // ─── Types ───
-interface Profile { id: string; name: string; role: string; avatar_url?: string | null }
+interface Profile { id: string; name: string; role: string; avatar_url?: string | null; email?: string }
 interface Channel { id: string; name: string; description: string; color: string }
 interface ChatMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
-interface Post { id: string; title?: string; content: string; pinned: boolean; created_at: string; author_id: string; profiles?: Profile; reaction_count?: number; comment_count?: number }
+interface Post { id: string; title?: string; content: string; pinned: boolean; created_at: string; author_id: string; profiles?: Profile }
 interface PostComment { id: string; content: string; created_at: string; author_id: string; profiles?: Profile }
 interface Group { id: string; name: string; description?: string; color: string; is_private: boolean; created_by: string }
 interface GroupMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
@@ -29,12 +34,29 @@ const timeAgo = (ts: string) => {
   const diff = Date.now() - new Date(ts).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "nå";
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return `${mins} min`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}t`;
-  return `${Math.floor(hrs / 24)}d`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d`;
+  return formatDate(ts);
 };
-const avatar = (name?: string) => (name || "?").charAt(0).toUpperCase();
+
+const groupColors = [
+  "from-violet-600 to-purple-500",
+  "from-blue-600 to-cyan-500",
+  "from-emerald-600 to-teal-500",
+  "from-rose-600 to-pink-500",
+  "from-amber-600 to-orange-500",
+  "from-indigo-600 to-blue-500",
+  "from-fuchsia-600 to-pink-500",
+];
+
+const getGroupGradient = (color: string, name: string) => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return groupColors[Math.abs(hash) % groupColors.length];
+};
 
 // ─── Main ───
 const Workspace = () => {
@@ -44,89 +66,101 @@ const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!user) navigate("/admin/logg-inn");
   }, [user]);
 
-  if (!user || !profile) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Laster…</div>;
+  if (!user || !profile) return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-primary/20 animate-pulse" />
+        <span className="text-muted-foreground text-sm">Laster workspace…</span>
+      </div>
+    </div>
+  );
+
+  const navItems = [
+    { id: "feed" as View, icon: Newspaper, label: "Feed", badge: null },
+    { id: "channels" as View, icon: Hash, label: "Kanaler", badge: null },
+    { id: "groups" as View, icon: Users, label: "Grupper", badge: null },
+    { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: null },
+  ];
 
   return (
     <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
-      {/* Mini header */}
+      {/* Header */}
       {!headerHidden && (
-        <header className="h-12 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-4 gap-3 shrink-0 z-30">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={16} /></button>
-          <span className="font-heading text-lg text-primary">Avargo</span>
-          <span className="text-xs text-muted-foreground">Workspace</span>
-          <div className="flex-1" />
-          <button onClick={() => setHeaderHidden(true)} title="Skjul header" className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-lg hover:bg-muted/50">
-            <EyeOff size={14} />
+        <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30">
+          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft size={18} />
           </button>
-          <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-medium">
-            {avatar(profile.name)}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <Sparkles size={16} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Avargo Workspace</h1>
+              <p className="text-[10px] text-muted-foreground leading-tight">Samhandling & kommunikasjon</p>
+            </div>
           </div>
+          <div className="flex-1" />
+          <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40">
+            <EyeOff size={15} />
+          </button>
+          <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
         </header>
       )}
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className={`${sidebarOpen ? "w-56" : "w-12"} shrink-0 border-r border-border/10 bg-card/50 flex flex-col transition-all duration-200`}>
-          {/* Toggle */}
-          <div className="h-11 flex items-center justify-between px-2 border-b border-border/10">
-            {sidebarOpen && <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60 pl-1">Workspace</span>}
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg">
-              {sidebarOpen ? <PanelLeftClose size={14} /> : <PanelLeft size={14} />}
+        <aside className={`${sidebarOpen ? "w-60" : "w-14"} shrink-0 border-r border-border/10 bg-card/40 flex flex-col transition-all duration-300`}>
+          <div className="h-12 flex items-center justify-between px-3 border-b border-border/10">
+            {sidebarOpen && <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground/50 font-medium">Meny</span>}
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-lg hover:bg-muted/40">
+              {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeft size={15} />}
             </button>
           </div>
 
-          {/* Show header button when hidden */}
           {headerHidden && (
-            <button onClick={() => setHeaderHidden(false)} className="mx-2 mt-2 mb-1 flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
-              <Eye size={12} />
+            <button onClick={() => setHeaderHidden(false)} className="mx-2 mt-2 flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
+              <Eye size={13} />
               {sidebarOpen && <span>Vis header</span>}
             </button>
           )}
 
-          {/* Nav items */}
-          <nav className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
-            {([
-              { id: "feed" as View, icon: Newspaper, label: "Feed" },
-              { id: "channels" as View, icon: Hash, label: "Kanaler" },
-              { id: "groups" as View, icon: Users, label: "Grupper" },
-              { id: "dms" as View, icon: MessageSquare, label: "Meldinger" },
-            ]).map(item => (
+          <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+            {navItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => setView(item.id)}
-                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm transition-all ${
-                  view === item.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                  view === item.id
+                    ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 }`}
               >
-                <item.icon size={15} strokeWidth={1.5} />
-                {sidebarOpen && <span className="font-light">{item.label}</span>}
+                <item.icon size={17} strokeWidth={view === item.id ? 2 : 1.5} />
+                {sidebarOpen && <span className={view === item.id ? "font-medium" : "font-light"}>{item.label}</span>}
               </button>
             ))}
           </nav>
 
-          {/* User */}
-          <div className="p-2 border-t border-border/10">
-            {sidebarOpen ? (
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-medium">{avatar(profile.name)}</div>
+          {/* Profile card */}
+          <div className="p-3 border-t border-border/10">
+            <div className={`flex items-center gap-2.5 ${sidebarOpen ? "" : "justify-center"}`}>
+              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
+              {sidebarOpen && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] truncate">{profile.name}</p>
-                  <p className="text-[9px] text-muted-foreground capitalize">{profile.role}</p>
+                  <p className="text-xs font-medium truncate">{profile.name}</p>
+                  <p className="text-[10px] text-muted-foreground capitalize">{profile.role === "admin" ? "Administrator" : profile.role === "employee" ? "Ansatt" : "Kunde"}</p>
                 </div>
-              </div>
-            ) : (
-              <div className="w-7 h-7 mx-auto rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-medium">{avatar(profile.name)}</div>
-            )}
+              )}
+            </div>
           </div>
         </aside>
 
         {/* Content */}
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden bg-background">
           {view === "feed" && <FeedView profile={profile} />}
           {view === "channels" && <ChannelsView profile={profile} />}
           {view === "groups" && <GroupsView profile={profile} />}
@@ -180,157 +214,194 @@ const FeedView = ({ profile }: { profile: Profile }) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="px-6 py-4 border-b border-border/10">
-        <h2 className="text-lg font-medium">Feed</h2>
-        <p className="text-xs text-muted-foreground">Kunngjøringer og oppdateringer</p>
+      <div className="px-6 py-5 border-b border-border/10 bg-card/20">
+        <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Feed</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">Kunngjøringer, oppdateringer og alt som skjer</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {/* New post form */}
-        <form onSubmit={submitPost} className="rounded-2xl border border-border/20 bg-card/50 p-4">
-          <textarea
-            value={newPost}
-            onChange={e => setNewPost(e.target.value)}
-            placeholder="Del noe med teamet…"
-            rows={3}
-            className="w-full resize-none bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/50"
-          />
-          <div className="flex justify-end mt-2">
-            <button type="submit" disabled={!newPost.trim() || sending} className="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium disabled:opacity-50 hover:opacity-90 transition-all">
-              Publiser
-            </button>
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-2xl mx-auto p-6 space-y-5">
+          {/* Composer */}
+          <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
+            <div className="flex items-start gap-3 p-4">
+              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
+              <form onSubmit={submitPost} className="flex-1">
+                <textarea
+                  value={newPost}
+                  onChange={e => setNewPost(e.target.value)}
+                  placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
+                  rows={3}
+                  className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40"
+                />
+                <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2">
+                  <div className="flex gap-1">
+                    <EmojiPicker onSelect={(e) => setNewPost(prev => prev + e)} />
+                    <button type="button" className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
+                      <Image size={18} />
+                    </button>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!newPost.trim() || sending}
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+                  >
+                    Publiser
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </form>
 
-        {/* Posts */}
-        {posts.map(post => (
-          <article key={post.id} className={`rounded-2xl border ${post.pinned ? "border-primary/30 bg-primary/5" : "border-border/15 bg-card/30"} p-5`}>
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-medium shrink-0">
-                {avatar((post.profiles as any)?.name)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-medium">{(post.profiles as any)?.name || "Ukjent"}</span>
-                  <span className="text-[10px] text-muted-foreground">{timeAgo(post.created_at)}</span>
-                  {post.pinned && <Pin size={10} className="text-primary" />}
+          {/* Posts */}
+          {posts.map(post => {
+            const authorProfile = post.profiles as any;
+            return (
+              <article
+                key={post.id}
+                className={`rounded-2xl border overflow-hidden transition-all hover:shadow-md ${
+                  post.pinned
+                    ? "border-primary/25 bg-gradient-to-br from-primary/5 to-transparent shadow-sm"
+                    : "border-border/15 bg-card/50 hover:border-border/25"
+                }`}
+              >
+                {/* Author header */}
+                <div className="flex items-start gap-3 p-5 pb-0">
+                  <UserAvatar name={authorProfile?.name} avatarUrl={authorProfile?.avatar_url} size="md" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold">{authorProfile?.name || "Ukjent"}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground capitalize">
+                        {authorProfile?.role === "admin" ? "Admin" : authorProfile?.role === "employee" ? "Ansatt" : "Kunde"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)}</span>
+                      {post.pinned && (
+                        <span className="flex items-center gap-1 text-[10px] text-primary">
+                          <Pin size={9} /> Festet
+                        </span>
+                      )}
+                      <span className="text-[11px] text-muted-foreground">· <Globe size={9} className="inline" /> Alle</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-2 text-sm text-foreground/80 prose prose-sm max-w-none">
-                  <ReactMarkdown>{post.content}</ReactMarkdown>
+
+                {/* Content */}
+                <div className="px-5 pt-3 pb-4">
+                  <div className="text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
+                    <ReactMarkdown>{post.content}</ReactMarkdown>
+                  </div>
                 </div>
-                <div className="mt-3 flex items-center gap-3">
+
+                {/* Reactions */}
+                <div className="px-5 pb-3">
                   <PostReactions postId={post.id} profileId={profile.id} />
-                  <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <MessageCircle size={12} /> Kommentarer
+                </div>
+
+                {/* Action bar */}
+                <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
+                  <button
+                    onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+                  >
+                    <MessageCircle size={15} /> Kommenter
                   </button>
                   {(post.author_id === profile.id || profile.role === "admin") && (
                     <>
-                      <button onClick={() => togglePin(post)} className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                        {post.pinned ? "Løsne" : "Fest"}
+                      <button onClick={() => togglePin(post)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                        <Pin size={15} /> {post.pinned ? "Løsne" : "Fest"}
                       </button>
-                      <button onClick={() => deletePost(post.id)} className="text-xs text-muted-foreground hover:text-destructive transition-colors">
-                        Slett
+                      <button onClick={() => deletePost(post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
+                        <Trash2 size={15} /> Slett
                       </button>
                     </>
                   )}
                 </div>
-                {expandedPost === post.id && <PostComments postId={post.id} profileId={profile.id} />}
+
+                {/* Comments */}
+                {expandedPost === post.id && (
+                  <PostComments postId={post.id} profileId={profile.id} profileData={profile} />
+                )}
+              </article>
+            );
+          })}
+          {posts.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
+                <Newspaper size={28} className="text-muted-foreground/40" />
               </div>
+              <p className="text-muted-foreground text-sm">Ingen innlegg ennå</p>
+              <p className="text-muted-foreground/60 text-xs mt-1">Vær den første til å dele noe!</p>
             </div>
-          </article>
-        ))}
-        {posts.length === 0 && <p className="text-center text-muted-foreground text-sm py-8">Ingen innlegg ennå. Vær den første!</p>}
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
-
-// ─── Post Reactions ───
-const PostReactions = ({ postId, profileId }: { postId: string; profileId: string }) => {
-  const [reactions, setReactions] = useState<{ emoji: string; count: number; mine: boolean }[]>([]);
-  const emojis = ["👍", "❤️", "🎉", "🔥"];
-
-  const fetch = async () => {
-    const { data } = await supabase.from("workspace_post_reactions").select("emoji, profile_id").eq("post_id", postId);
-    const map: Record<string, { count: number; mine: boolean }> = {};
-    (data || []).forEach((r: any) => {
-      if (!map[r.emoji]) map[r.emoji] = { count: 0, mine: false };
-      map[r.emoji].count++;
-      if (r.profile_id === profileId) map[r.emoji].mine = true;
-    });
-    setReactions(emojis.map(e => ({ emoji: e, count: map[e]?.count || 0, mine: map[e]?.mine || false })));
-  };
-
-  useEffect(() => { fetch(); }, [postId]);
-
-  const toggle = async (emoji: string, mine: boolean) => {
-    if (mine) {
-      await supabase.from("workspace_post_reactions").delete().match({ post_id: postId, profile_id: profileId, emoji });
-    } else {
-      await supabase.from("workspace_post_reactions").insert([{ post_id: postId, profile_id: profileId, emoji }]);
-    }
-    fetch();
-  };
-
-  return (
-    <div className="flex items-center gap-1">
-      {reactions.map(r => (
-        <button key={r.emoji} onClick={() => toggle(r.emoji, r.mine)}
-          className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs transition-all ${r.mine ? "bg-primary/15 text-primary" : "hover:bg-muted/50 text-muted-foreground"}`}>
-          {r.emoji}{r.count > 0 && <span className="text-[10px]">{r.count}</span>}
-        </button>
-      ))}
     </div>
   );
 };
 
 // ─── Post Comments ───
-const PostComments = ({ postId, profileId }: { postId: string; profileId: string }) => {
+const PostComments = ({ postId, profileId, profileData }: { postId: string; profileId: string; profileData: Profile }) => {
   const [comments, setComments] = useState<PostComment[]>([]);
   const [text, setText] = useState("");
 
-  const fetch = async () => {
-    const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role)").eq("post_id", postId).order("created_at");
+  const fetchComments = async () => {
+    const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role, avatar_url)").eq("post_id", postId).order("created_at");
     setComments((data as any[]) || []);
   };
 
-  useEffect(() => { fetch(); }, [postId]);
+  useEffect(() => { fetchComments(); }, [postId]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: text.trim() }]);
     setText("");
-    fetch();
+    fetchComments();
   };
 
   return (
-    <div className="mt-3 pt-3 border-t border-border/10 space-y-2">
-      {comments.map(c => (
-        <div key={c.id} className="flex gap-2">
-          <div className="w-6 h-6 rounded-full bg-muted/50 flex items-center justify-center text-[9px] font-medium shrink-0">{avatar((c.profiles as any)?.name)}</div>
-          <div>
-            <span className="text-[11px] font-medium">{(c.profiles as any)?.name}</span>
-            <span className="text-[10px] text-muted-foreground ml-1.5">{timeAgo(c.created_at)}</span>
-            <p className="text-xs text-foreground/80">{c.content}</p>
-          </div>
+    <div className="border-t border-border/10 bg-muted/10">
+      <div className="px-5 py-3 space-y-3 max-h-64 overflow-y-auto">
+        {comments.map(c => {
+          const cp = c.profiles as any;
+          return (
+            <div key={c.id} className="flex gap-2.5">
+              <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
+              <div className="flex-1">
+                <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2">
+                  <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
+                  <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
+                </div>
+                <span className="text-[10px] text-muted-foreground ml-2">{timeAgo(c.created_at)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <form onSubmit={submit} className="flex items-center gap-2.5 px-5 py-3 border-t border-border/10">
+        <UserAvatar name={profileData.name} avatarUrl={profileData.avatar_url} size="xs" />
+        <div className="flex-1 flex items-center bg-muted/30 rounded-2xl border border-border/15 pr-1">
+          <input
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder="Skriv en kommentar…"
+            className="flex-1 h-9 bg-transparent px-3 text-xs focus:outline-none placeholder:text-muted-foreground/40"
+          />
+          <button type="submit" disabled={!text.trim()} className="h-7 px-3 rounded-xl bg-primary/10 text-primary text-[10px] font-semibold disabled:opacity-30 transition-all">
+            Send
+          </button>
         </div>
-      ))}
-      <form onSubmit={submit} className="flex gap-2">
-        <input value={text} onChange={e => setText(e.target.value)} placeholder="Skriv en kommentar…" className="flex-1 h-8 rounded-lg border border-border/20 bg-muted/20 px-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary/30" />
-        <button type="submit" disabled={!text.trim()} className="h-8 px-3 rounded-lg bg-primary/10 text-primary text-xs font-medium disabled:opacity-50">Send</button>
       </form>
     </div>
   );
 };
 
-// ─── Channels View (existing chat) ───
+// ─── Channels View ───
 const ChannelsView = ({ profile }: { profile: Profile }) => {
   const [categories, setCategories] = useState<Channel[]>([]);
   const [active, setActive] = useState<Channel | null>(null);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const [newMsg, setNewMsg] = useState("");
-  const [sending, setSending] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [catForm, setCatForm] = useState({ name: "", description: "", color: "#6366f1" });
   const endRef = useRef<HTMLDivElement>(null);
@@ -344,7 +415,7 @@ const ChannelsView = ({ profile }: { profile: Profile }) => {
   };
 
   const fetchMsgs = async (id: string) => {
-    const { data } = await supabase.from("chat_messages").select("*, profiles(id, name, role)").eq("category_id", id).order("created_at");
+    const { data } = await supabase.from("chat_messages").select("*, profiles(id, name, role, avatar_url)").eq("category_id", id).order("created_at");
     setMessages((data as ChatMsg[]) || []);
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   };
@@ -357,13 +428,9 @@ const ChannelsView = ({ profile }: { profile: Profile }) => {
     return () => { supabase.removeChannel(ch); };
   }, [active?.id]);
 
-  const send = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMsg.trim() || !active) return;
-    setSending(true);
-    await supabase.from("chat_messages").insert([{ category_id: active.id, sender_id: profile.id, content: newMsg.trim() }]);
-    setNewMsg("");
-    setSending(false);
+  const send = async (content: string) => {
+    if (!active) return;
+    await supabase.from("chat_messages").insert([{ category_id: active.id, sender_id: profile.id, content }]);
   };
 
   const addCat = async (e: React.FormEvent) => {
@@ -384,74 +451,84 @@ const ChannelsView = ({ profile }: { profile: Profile }) => {
   return (
     <div className="h-full flex">
       {/* Channel list */}
-      <div className="w-48 shrink-0 border-r border-border/10 flex flex-col">
+      <div className="w-52 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
         <div className="p-3 border-b border-border/10 flex items-center justify-between">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Kanaler</span>
-          {isAdmin && <button onClick={() => setShowNew(!showNew)} className="text-muted-foreground hover:text-primary"><Plus size={13} /></button>}
+          <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 font-medium">Kanaler</span>
+          {isAdmin && <button onClick={() => setShowNew(!showNew)} className="text-muted-foreground hover:text-primary transition-colors"><Plus size={14} /></button>}
         </div>
         {showNew && isAdmin && (
-          <form onSubmit={addCat} className="p-2 border-b border-border/10 space-y-1.5">
-            <input value={catForm.name} onChange={e => setCatForm({ ...catForm, name: e.target.value })} placeholder="Kanalnavn" required className="w-full h-7 rounded-lg border border-border/20 bg-muted/20 px-2 text-xs focus:outline-none" />
-            <div className="flex gap-1.5">
-              <input type="color" value={catForm.color} onChange={e => setCatForm({ ...catForm, color: e.target.value })} className="h-7 w-7 rounded border-0 bg-transparent cursor-pointer" />
-              <button type="submit" className="flex-1 h-7 bg-primary text-primary-foreground rounded-lg text-xs">Opprett</button>
+          <form onSubmit={addCat} className="p-3 border-b border-border/10 space-y-2">
+            <input value={catForm.name} onChange={e => setCatForm({ ...catForm, name: e.target.value })} placeholder="Kanalnavn" required className="w-full h-8 rounded-xl border border-border/20 bg-muted/20 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20" />
+            <div className="flex gap-2">
+              <input type="color" value={catForm.color} onChange={e => setCatForm({ ...catForm, color: e.target.value })} className="h-8 w-8 rounded-lg border-0 bg-transparent cursor-pointer" />
+              <button type="submit" className="flex-1 h-8 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl text-xs font-medium">Opprett</button>
             </div>
           </form>
         )}
-        <div className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
+        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
           {categories.map(cat => (
             <div key={cat.id} className="group flex items-center">
-              <button onClick={() => setActive(cat)} className={`flex-1 flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-all ${active?.id === cat.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
-                <Hash size={11} style={{ color: cat.color }} /><span className="truncate">{cat.name}</span>
+              <button onClick={() => setActive(cat)} className={`flex-1 flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all ${active?.id === cat.id ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
+                <div className="w-5 h-5 rounded-lg flex items-center justify-center" style={{ backgroundColor: cat.color + "20" }}>
+                  <Hash size={11} style={{ color: cat.color }} />
+                </div>
+                <span className="truncate">{cat.name}</span>
               </button>
-              {isAdmin && <button onClick={() => delCat(cat.id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive p-1"><Trash2 size={10} /></button>}
+              {isAdmin && <button onClick={() => delCat(cat.id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive p-1 transition-all"><Trash2 size={11} /></button>}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Chat area */}
       {active ? (
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-4 py-3 border-b border-border/10 flex items-center gap-2">
-            <Hash size={14} style={{ color: active.color }} />
-            <span className="font-medium text-sm">{active.name}</span>
+          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: active.color + "20" }}>
+              <Hash size={15} style={{ color: active.color }} />
+            </div>
+            <div>
+              <span className="font-semibold text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
+              {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
+          <div className="flex-1 overflow-y-auto p-5 space-y-1">
             {messages.map((msg, i) => {
               const isOwn = msg.sender_id === profile.id;
+              const mp = msg.profiles as any;
               const showDateSep = i === 0 || formatDate(msg.created_at) !== formatDate(messages[i - 1].created_at);
+              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
               return (
                 <div key={msg.id}>
                   {showDateSep && (
-                    <div className="flex items-center gap-2 my-3">
+                    <div className="flex items-center gap-3 my-5">
                       <div className="flex-1 h-px bg-border/15" />
-                      <span className="text-[9px] text-muted-foreground">{formatDate(msg.created_at)}</span>
+                      <span className="text-[10px] text-muted-foreground bg-background px-3 py-1 rounded-full border border-border/15">{formatDate(msg.created_at)}</span>
                       <div className="flex-1 h-px bg-border/15" />
                     </div>
                   )}
-                  <div className={`flex gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
-                    <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-medium shrink-0">{avatar((msg.profiles as any)?.name)}</div>
-                    <div className={`max-w-[70%] flex flex-col ${isOwn ? "items-end" : ""}`}>
-                      <div className="flex items-baseline gap-1.5 mb-0.5">
-                        <span className="text-[10px] font-medium">{(msg.profiles as any)?.name || "Ukjent"}</span>
-                        <span className="text-[9px] text-muted-foreground">{formatTime(msg.created_at)}</span>
-                      </div>
-                      <div className={`px-3 py-1.5 rounded-2xl text-sm ${isOwn ? "bg-primary text-primary-foreground" : "bg-muted/40"}`}>{msg.content}</div>
-                    </div>
-                  </div>
+                  <MessageBubble
+                    content={msg.content}
+                    senderName={mp?.name}
+                    senderAvatar={mp?.avatar_url}
+                    time={formatTime(msg.created_at)}
+                    isOwn={isOwn}
+                    showAvatar={showAv}
+                  />
                 </div>
               );
             })}
             <div ref={endRef} />
           </div>
-          <form onSubmit={send} className="p-3 border-t border-border/10 flex gap-2">
-            <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder={`Melding i #${active.name}…`} className="flex-1 h-9 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30" />
-            <button type="submit" disabled={!newMsg.trim() || sending} className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50"><Send size={13} /></button>
-          </form>
+          <ChatInput placeholder={`Skriv i #${active.name}…`} onSend={send} />
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Velg en kanal</div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <Hash size={32} className="text-muted-foreground/20 mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">Velg en kanal for å starte</p>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -462,18 +539,26 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
   const [messages, setMessages] = useState<GroupMsg[]>([]);
-  const [newMsg, setNewMsg] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", color: "#6366f1", is_private: false });
+  const [memberCount, setMemberCount] = useState<Record<string, number>>({});
   const endRef = useRef<HTMLDivElement>(null);
 
   const fetchGroups = async () => {
     const { data } = await supabase.from("workspace_groups").select("*").order("created_at");
-    setGroups((data as Group[]) || []);
+    const gs = (data as Group[]) || [];
+    setGroups(gs);
+    // Fetch member counts
+    const counts: Record<string, number> = {};
+    for (const g of gs) {
+      const { count } = await supabase.from("workspace_group_members").select("*", { count: "exact", head: true }).eq("group_id", g.id);
+      counts[g.id] = count || 0;
+    }
+    setMemberCount(counts);
   };
 
   const fetchMsgs = async (id: string) => {
-    const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role)").eq("group_id", id).order("created_at");
+    const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role, avatar_url)").eq("group_id", id).order("created_at");
     setMessages((data as GroupMsg[]) || []);
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   };
@@ -488,86 +573,134 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
 
   const createGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    await supabase.from("workspace_groups").insert([{ ...form, created_by: profile.id }]);
+    const { data } = await supabase.from("workspace_groups").insert([{ ...form, created_by: profile.id }]).select().single();
+    if (data) {
+      await supabase.from("workspace_group_members").insert([{ group_id: data.id, profile_id: profile.id }]);
+    }
     setForm({ name: "", description: "", color: "#6366f1", is_private: false });
     setShowNew(false);
     fetchGroups();
   };
 
-  const send = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMsg.trim() || !active) return;
-    await supabase.from("workspace_group_messages").insert([{ group_id: active.id, sender_id: profile.id, content: newMsg.trim() }]);
-    setNewMsg("");
+  const send = async (content: string) => {
+    if (!active) return;
+    await supabase.from("workspace_group_messages").insert([{ group_id: active.id, sender_id: profile.id, content }]);
   };
 
   const joinGroup = async (groupId: string) => {
-    await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]);
+    try { await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]); } catch {}
   };
 
   return (
-    <div className="h-full flex">
-      <div className="w-52 shrink-0 border-r border-border/10 flex flex-col">
-        <div className="p-3 border-b border-border/10 flex items-center justify-between">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Grupper</span>
-          <button onClick={() => setShowNew(!showNew)} className="text-muted-foreground hover:text-primary"><Plus size={13} /></button>
-        </div>
-        {showNew && (
-          <form onSubmit={createGroup} className="p-2 border-b border-border/10 space-y-1.5">
-            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Gruppenavn" required className="w-full h-7 rounded-lg border border-border/20 bg-muted/20 px-2 text-xs focus:outline-none" />
-            <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse" className="w-full h-7 rounded-lg border border-border/20 bg-muted/20 px-2 text-xs focus:outline-none" />
-            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <input type="checkbox" checked={form.is_private} onChange={e => setForm({ ...form, is_private: e.target.checked })} className="rounded" />
-              Privat
-            </label>
-            <button type="submit" className="w-full h-7 bg-primary text-primary-foreground rounded-lg text-xs">Opprett</button>
-          </form>
-        )}
-        <div className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
-          {groups.map(g => (
-            <button key={g.id} onClick={() => { setActive(g); joinGroup(g.id); }}
-              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-all ${active?.id === g.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
-              <Users size={11} style={{ color: g.color }} />
-              <span className="truncate">{g.name}</span>
-              {g.is_private && <span className="text-[8px] text-muted-foreground/50 ml-auto">🔒</span>}
-            </button>
-          ))}
-          {groups.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Ingen grupper</p>}
-        </div>
-      </div>
-
-      {active ? (
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-4 py-3 border-b border-border/10">
-            <div className="flex items-center gap-2">
-              <Users size={14} style={{ color: active.color }} />
-              <span className="font-medium text-sm">{active.name}</span>
-              {active.is_private && <span className="text-[9px] text-muted-foreground">Privat</span>}
+    <div className="h-full flex flex-col">
+      {!active ? (
+        /* Groups grid */
+        <>
+          <div className="px-6 py-5 border-b border-border/10 bg-card/20 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Grupper</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Teams og spesialiserte grupper</p>
             </div>
-            {active.description && <p className="text-xs text-muted-foreground mt-0.5">{active.description}</p>}
+            <button onClick={() => setShowNew(!showNew)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+              <Plus size={14} /> Ny gruppe
+            </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-            {messages.map(msg => (
-              <div key={msg.id} className={`flex gap-2 ${msg.sender_id === profile.id ? "flex-row-reverse" : ""}`}>
-                <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-medium shrink-0">{avatar((msg.profiles as any)?.name)}</div>
-                <div className={`max-w-[70%] flex flex-col ${msg.sender_id === profile.id ? "items-end" : ""}`}>
-                  <div className="flex items-baseline gap-1.5 mb-0.5">
-                    <span className="text-[10px] font-medium">{(msg.profiles as any)?.name || "Ukjent"}</span>
-                    <span className="text-[9px] text-muted-foreground">{formatTime(msg.created_at)}</span>
-                  </div>
-                  <div className={`px-3 py-1.5 rounded-2xl text-sm ${msg.sender_id === profile.id ? "bg-primary text-primary-foreground" : "bg-muted/40"}`}>{msg.content}</div>
+
+          <div className="flex-1 overflow-y-auto p-6">
+            {showNew && (
+              <form onSubmit={createGroup} className="max-w-md mx-auto mb-8 rounded-2xl border border-border/20 bg-card/60 p-5 space-y-3">
+                <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Opprett ny gruppe</h3>
+                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Gruppenavn" required className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
+                <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse (valgfritt)" className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
+                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+                  <input type="checkbox" checked={form.is_private} onChange={e => setForm({ ...form, is_private: e.target.checked })} className="rounded" />
+                  <Lock size={13} /> Privat gruppe
+                </label>
+                <button type="submit" className="w-full h-10 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl text-sm font-semibold">Opprett</button>
+              </form>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {groups.map(g => {
+                const gradient = getGroupGradient(g.color, g.name);
+                return (
+                  <button
+                    key={g.id}
+                    onClick={() => { setActive(g); joinGroup(g.id); }}
+                    className="group text-left rounded-2xl border border-border/15 bg-card/50 overflow-hidden hover:border-border/30 hover:shadow-lg transition-all"
+                  >
+                    {/* Cover */}
+                    <div className={`h-20 bg-gradient-to-br ${gradient} relative`}>
+                      <div className="absolute inset-0 bg-black/10" />
+                      <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-[10px]">
+                        <Users size={10} /> {memberCount[g.id] || 0}
+                      </div>
+                      {g.is_private && (
+                        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-[10px] flex items-center gap-1">
+                          <Lock size={9} /> Privat
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">{g.name}</h3>
+                      {g.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{g.description}</p>}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            {groups.length === 0 && (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
+                  <Users size={28} className="text-muted-foreground/40" />
                 </div>
+                <p className="text-muted-foreground text-sm">Ingen grupper ennå</p>
+                <p className="text-muted-foreground/60 text-xs mt-1">Opprett den første gruppen!</p>
               </div>
-            ))}
+            )}
+          </div>
+        </>
+      ) : (
+        /* Group chat */
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
+            <button onClick={() => setActive(null)} className="text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft size={16} />
+            </button>
+            <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getGroupGradient(active.color, active.name)} flex items-center justify-center`}>
+              <Users size={14} className="text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
+                {active.is_private && <Lock size={11} className="text-muted-foreground" />}
+              </div>
+              {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
+            </div>
+            <div className="flex-1" />
+            <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Users size={10} /> {memberCount[active.id] || 0} medlemmer</span>
+          </div>
+          <div className="flex-1 overflow-y-auto p-5 space-y-1">
+            {messages.map((msg, i) => {
+              const isOwn = msg.sender_id === profile.id;
+              const mp = msg.profiles as any;
+              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  content={msg.content}
+                  senderName={mp?.name}
+                  senderAvatar={mp?.avatar_url}
+                  time={formatTime(msg.created_at)}
+                  isOwn={isOwn}
+                  showAvatar={showAv}
+                />
+              );
+            })}
             <div ref={endRef} />
           </div>
-          <form onSubmit={send} className="p-3 border-t border-border/10 flex gap-2">
-            <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder={`Melding i ${active.name}…`} className="flex-1 h-9 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30" />
-            <button type="submit" disabled={!newMsg.trim()} className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50"><Send size={13} /></button>
-          </form>
+          <ChatInput placeholder={`Skriv i ${active.name}…`} onSend={send} />
         </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Velg eller opprett en gruppe</div>
       )}
     </div>
   );
@@ -578,24 +711,22 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const [conversations, setConversations] = useState<DmConv[]>([]);
   const [active, setActive] = useState<DmConv | null>(null);
   const [messages, setMessages] = useState<DmMsg[]>([]);
-  const [newMsg, setNewMsg] = useState("");
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [showNew, setShowNew] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   const fetchConvs = async () => {
     const { data } = await supabase.from("dm_conversations").select("*").order("updated_at", { ascending: false });
     if (!data) return;
-    // Fetch profile names for participants
     const profileIds = new Set<string>();
     data.forEach((c: any) => { profileIds.add(c.participant_1); profileIds.add(c.participant_2); });
     const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url").in("id", [...profileIds]);
     const pMap = new Map((profiles || []).map((p: any) => [p.id, p]));
-    const convs = data.map((c: any) => ({
+    setConversations(data.map((c: any) => ({
       ...c,
       other: pMap.get(c.participant_1 === profile.id ? c.participant_2 : c.participant_1),
-    }));
-    setConversations(convs);
+    })));
   };
 
   const fetchMsgs = async (id: string) => {
@@ -618,7 +749,6 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   }, [active?.id]);
 
   const startDm = async (otherId: string) => {
-    // Check if conversation exists
     const { data: existing } = await supabase.from("dm_conversations").select("*")
       .or(`and(participant_1.eq.${profile.id},participant_2.eq.${otherId}),and(participant_1.eq.${otherId},participant_2.eq.${profile.id})`);
     if (existing && existing.length > 0) {
@@ -635,70 +765,115 @@ const DmsView = ({ profile }: { profile: Profile }) => {
     setShowNew(false);
   };
 
-  const send = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMsg.trim() || !active) return;
-    await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content: newMsg.trim() }]);
-    setNewMsg("");
+  const send = async (content: string) => {
+    if (!active) return;
+    await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content }]);
   };
+
+  const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="h-full flex">
-      <div className="w-52 shrink-0 border-r border-border/10 flex flex-col">
+      {/* Conversations list */}
+      <div className="w-64 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
         <div className="p-3 border-b border-border/10 flex items-center justify-between">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Meldinger</span>
-          <button onClick={() => setShowNew(!showNew)} className="text-muted-foreground hover:text-primary"><Plus size={13} /></button>
+          <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Meldinger</span>
+          <button onClick={() => setShowNew(!showNew)} className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-all">
+            <Plus size={14} />
+          </button>
         </div>
+
         {showNew && (
-          <div className="p-2 border-b border-border/10 max-h-48 overflow-y-auto space-y-0.5">
-            <p className="text-[9px] text-muted-foreground mb-1">Ny samtale</p>
-            {allProfiles.map(p => (
-              <button key={p.id} onClick={() => startDm(p.id)} className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
-                <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[9px] font-medium">{avatar(p.name)}</div>
-                <span className="truncate">{p.name}</span>
-              </button>
-            ))}
+          <div className="border-b border-border/10">
+            <div className="p-2">
+              <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
+                <Search size={13} className="text-muted-foreground" />
+                <input
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Søk etter personer…"
+                  className="h-9 flex-1 bg-transparent text-xs focus:outline-none placeholder:text-muted-foreground/40"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="max-h-48 overflow-y-auto p-2 space-y-0.5">
+              {filteredProfiles.map(p => (
+                <button key={p.id} onClick={() => startDm(p.id)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
+                  <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" />
+                  <div className="text-left">
+                    <p className="font-medium">{p.name}</p>
+                    <p className="text-[10px] text-muted-foreground capitalize">{p.role}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         )}
-        <div className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
+
+        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
           {conversations.map(conv => (
-            <button key={conv.id} onClick={() => setActive(conv)}
-              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-xs transition-all ${active?.id === conv.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
-              <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-medium shrink-0">{avatar(conv.other?.name)}</div>
-              <span className="truncate">{conv.other?.name || "Ukjent"}</span>
+            <button
+              key={conv.id}
+              onClick={() => setActive(conv)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                active?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/40"
+              }`}
+            >
+              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
+              <div className="text-left flex-1 min-w-0">
+                <p className={`text-sm truncate ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
+                <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
+              </div>
             </button>
           ))}
-          {conversations.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Ingen samtaler</p>}
+          {conversations.length === 0 && !showNew && (
+            <div className="text-center py-8">
+              <p className="text-xs text-muted-foreground">Ingen samtaler</p>
+              <button onClick={() => setShowNew(true)} className="text-xs text-primary hover:underline mt-1">Start en ny</button>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Chat */}
       {active ? (
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-4 py-3 border-b border-border/10 flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-medium">{avatar(active.other?.name)}</div>
-            <span className="font-medium text-sm">{active.other?.name || "Ukjent"}</span>
+          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
+            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" online />
+            <div>
+              <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
+              <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-            {messages.map(msg => {
+          <div className="flex-1 overflow-y-auto p-5 space-y-1">
+            {messages.map((msg, i) => {
               const isOwn = msg.sender_id === profile.id;
+              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
               return (
-                <div key={msg.id} className={`flex gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
-                  <div className={`max-w-[70%] flex flex-col ${isOwn ? "items-end" : ""}`}>
-                    <span className="text-[9px] text-muted-foreground mb-0.5">{formatTime(msg.created_at)}</span>
-                    <div className={`px-3 py-1.5 rounded-2xl text-sm ${isOwn ? "bg-primary text-primary-foreground" : "bg-muted/40"}`}>{msg.content}</div>
-                  </div>
-                </div>
+                <MessageBubble
+                  key={msg.id}
+                  content={msg.content}
+                  senderName={isOwn ? profile.name : active.other?.name}
+                  senderAvatar={isOwn ? profile.avatar_url : active.other?.avatar_url}
+                  time={formatTime(msg.created_at)}
+                  isOwn={isOwn}
+                  showAvatar={showAv}
+                />
               );
             })}
             <div ref={endRef} />
           </div>
-          <form onSubmit={send} className="p-3 border-t border-border/10 flex gap-2">
-            <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Skriv en melding…" className="flex-1 h-9 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30" />
-            <button type="submit" disabled={!newMsg.trim()} className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50"><Send size={13} /></button>
-          </form>
+          <ChatInput placeholder={`Skriv til ${active.other?.name}…`} onSend={send} />
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Velg en samtale eller start en ny</div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <MessageSquare size={32} className="text-muted-foreground/20 mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">Velg en samtale</p>
+            <p className="text-muted-foreground/60 text-xs mt-1">eller start en ny</p>
+          </div>
+        </div>
       )}
     </div>
   );

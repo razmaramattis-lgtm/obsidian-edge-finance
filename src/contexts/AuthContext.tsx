@@ -8,6 +8,7 @@ interface Profile {
   role: "admin" | "employee" | "customer";
   name: string;
   email: string;
+  avatar_url?: string | null;
 }
 
 interface AuthContextType {
