@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import { useBrowserNotifications } from "@/hooks/useBrowserNotifications";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
@@ -128,6 +129,7 @@ const AdminDashboard = () => {
 
   // Enable native browser/phone push notifications
   useBrowserNotifications(profile?.id);
+  usePushSubscription(profile?.id);
 
   // Sync URL params when panel changes
   useEffect(() => {
