@@ -1731,6 +1731,7 @@ export type Database = {
         Row: {
           active: boolean
           avatar_url: string | null
+          background_url: string | null
           bio: string | null
           booking_active: boolean
           created_at: string
@@ -1751,6 +1752,7 @@ export type Database = {
         Insert: {
           active?: boolean
           avatar_url?: string | null
+          background_url?: string | null
           bio?: string | null
           booking_active?: boolean
           created_at?: string
@@ -1771,6 +1773,7 @@ export type Database = {
         Update: {
           active?: boolean
           avatar_url?: string | null
+          background_url?: string | null
           bio?: string | null
           booking_active?: boolean
           created_at?: string
