@@ -250,7 +250,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(20);
+      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url, active)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(20);
       const ps = (data as any[]) || [];
       setPosts(ps);
       const counts: Record<string, number> = {};
@@ -477,7 +477,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
   const bgRef = useRef<HTMLInputElement>(null);
 
   const refetchProfile = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, phone, preferred_accounting_systems").eq("id", profile.id).single();
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, active, title, department, specialty, interests, bio, background_url, email, phone, preferred_accounting_systems").eq("id", profile.id).single();
     if (data) setProfile(data as Profile);
   };
 
@@ -511,7 +511,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
+      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url, active)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
       const ps = (data as any[]) || [];
       setMyPosts(ps);
       const counts: Record<string, number> = {};
@@ -677,7 +677,7 @@ const ConferenceView = ({ profile }: { profile: Profile }) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name");
+      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, active").neq("id", profile.id).order("name");
       setAllProfiles((data as Profile[]) || []);
     })();
   }, []);

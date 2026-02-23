@@ -2,6 +2,7 @@ export interface Profile {
   id: string;
   name: string;
   role: string;
+  active?: boolean;
   avatar_url?: string | null;
   email?: string;
   phone?: string | null;

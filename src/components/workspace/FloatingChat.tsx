@@ -36,13 +36,13 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
     if (!data) return;
     const profileIds = new Set<string>();
     data.forEach((c: any) => { profileIds.add(c.participant_1); profileIds.add(c.participant_2); });
-    const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url").in("id", [...profileIds]);
+    const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url, active").in("id", [...profileIds]);
     const pMap = new Map((profiles || []).map((p: any) => [p.id, p]));
     setConversations(data.map((c: any) => ({ ...c, other: pMap.get(c.participant_1 === profile.id ? c.participant_2 : c.participant_1) })));
   };
 
   const fetchProfiles = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name").limit(50);
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, active").neq("id", profile.id).order("name").limit(50);
     setAllProfiles((data as Profile[]) || []);
   };
 
@@ -118,7 +118,7 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
         {conversations.filter(conv => !openChats.some(c => c.conv.id === conv.id) && (unread[conv.id] || 0) > 0).slice(0, 4).map(conv => (
           <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
             <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} />
+              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} isActive={conv.other?.active !== false} />
             </div>
             <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{unread[conv.id]}</span>
           </button>
@@ -151,14 +151,14 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
           <div className="max-h-72 overflow-y-auto p-2 space-y-0.5">
             {!searchQuery && conversations.slice(0, 5).map(conv => (
               <button key={conv.id} onClick={() => openChat(conv)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="sm" profileId={conv.other?.id} />
+                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="sm" profileId={conv.other?.id} isActive={conv.other?.active !== false} />
                 <span className="font-medium flex-1 text-left truncate">{conv.other?.name}</span>
                 {unread[conv.id] > 0 && <span className="w-4 h-4 rounded-full bg-destructive text-white text-[9px] flex items-center justify-center">{unread[conv.id]}</span>}
               </button>
             ))}
             {searchQuery && filteredProfiles.map(p => (
               <button key={p.id} onClick={() => startNewChat(p.id)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
-                <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" />
+                <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" isActive={p.active !== false} />
                 <div className="text-left flex-1 min-w-0"><p className="font-medium truncate">{p.name}</p><p className="text-[10px] text-muted-foreground capitalize">{p.role}</p></div>
               </button>
             ))}
@@ -263,7 +263,7 @@ const MiniChatWindow = ({
   if (chat.minimized) {
     return (
       <button onClick={onMinimize} className="w-12 h-12 rounded-full shadow-lg ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-        <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="md" profileId={chat.conv.other?.id} />
+        <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="md" profileId={chat.conv.other?.id} isActive={chat.conv.other?.active !== false} />
       </button>
     );
   }
@@ -273,7 +273,7 @@ const MiniChatWindow = ({
       <div className="w-80 h-[420px] bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
         {/* Header */}
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/10 bg-card/80 shrink-0">
-          <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" online />
+          <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" online isActive={chat.conv.other?.active !== false} />
           <span className="text-xs font-semibold flex-1 truncate">{chat.conv.other?.name}</span>
           <button onClick={() => { setCallWithVideo(false); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-green-500 hover:bg-green-500/10 transition-all" title="Ring"><Phone size={13} /></button>
           <button onClick={() => { setCallWithVideo(true); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Videosamtale"><Video size={13} /></button>
