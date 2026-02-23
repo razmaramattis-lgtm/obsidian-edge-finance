@@ -42,6 +42,7 @@ const KundeDashboard = lazy(() => import("./pages/kunde/KundeDashboard"));
 // Section pages
 const SectionHome = lazy(() => import("./pages/sections/SectionHome"));
 const SectionTjenester = lazy(() => import("./pages/sections/SectionTjenester"));
+const SectionBransjerGenerell = lazy(() => import("./pages/sections/SectionBransjerGenerell"));
 
 // Tjeneste-undersider
 const Regnskapsforer = lazy(() => import("./pages/tjenester/Regnskapsforer"));
@@ -195,6 +196,7 @@ const App = () => (
                             <Route path="/:sectionId" element={<SectionHome />} />
                             <Route path="/:sectionId/tjenester" element={<SectionTjenester />} />
                             <Route path="/:sectionId/bransjer" element={<Bransjer />} />
+                            <Route path="/:sectionId/bransjer/alle" element={<SectionBransjerGenerell />} />
                             <Route path="/:sectionId/priser" element={<Pricing />} />
                             <Route path="/:sectionId/kontakt" element={<Contact />} />
                             <Route path="/:sectionId/om-oss" element={<About />} />
