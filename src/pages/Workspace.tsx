@@ -877,18 +877,44 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
     fetchComments();
   };
 
+  const submitGif = async (url: string) => {
+    await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: `![gif](${url})` }]);
+    fetchComments();
+  };
+
+  const deleteComment = async (id: string) => {
+    await supabase.from("workspace_post_comments").delete().eq("id", id);
+    fetchComments();
+  };
+
+  const isGif = (content: string) => /^!\[gif\]\((.+)\)$/.test(content);
+  const gifUrl = (content: string) => content.match(/^!\[gif\]\((.+)\)$/)?.[1] || "";
+
   return (
     <div className="border-t border-border/10 bg-muted/10">
       <div className="px-5 py-3 space-y-3 max-h-64 overflow-y-auto">
         {comments.map(c => {
           const cp = c.profiles as any;
+          const isOwn = c.author_id === profileId;
           return (
-            <div key={c.id} className="flex gap-2.5">
+            <div key={c.id} className="flex gap-2.5 group/comment">
               <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
               <div className="flex-1">
-                <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2">
+                <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2 relative">
                   <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
-                  <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
+                  {isGif(c.content) ? (
+                    <img src={gifUrl(c.content)} alt="GIF" className="mt-1 max-h-40 rounded-lg" loading="lazy" />
+                  ) : (
+                    <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
+                  )}
+                  {isOwn && (
+                    <button
+                      onClick={() => deleteComment(c.id)}
+                      className="absolute top-1 right-1 opacity-0 group-hover/comment:opacity-100 p-1 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
+                    >
+                      <Trash2 size={10} />
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 ml-2 mt-0.5">
                   <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
@@ -901,13 +927,15 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
       </div>
       <form onSubmit={submit} className="flex items-center gap-2.5 px-5 py-3 border-t border-border/10">
         <UserAvatar name={profileData.name} avatarUrl={profileData.avatar_url} size="xs" />
-        <div className="flex-1 flex items-center bg-muted/30 rounded-2xl border border-border/15 pr-1">
+        <div className="flex-1 flex items-center bg-muted/30 rounded-2xl border border-border/15 pr-1 gap-0.5">
           <input
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder="Skriv en kommentar…"
             className="flex-1 h-9 bg-transparent px-3 text-xs focus:outline-none placeholder:text-muted-foreground/40"
           />
+          <EmojiPicker onSelect={e => setText(prev => prev + e)} />
+          <GifPicker onSelect={submitGif} />
           <button type="submit" disabled={!text.trim()} className="h-7 px-3 rounded-xl bg-primary/10 text-primary text-[10px] font-semibold disabled:opacity-30 transition-all">
             Send
           </button>
@@ -1018,8 +1046,13 @@ const ChannelsView = ({ profile }: { profile: Profile }) => {
               const mp = msg.profiles as any;
               const showDateSep = i === 0 || formatDate(msg.created_at) !== formatDate(messages[i - 1].created_at);
               const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
+              const deleteMsg = async () => {
+                if (!confirm("Slett denne meldingen?")) return;
+                await supabase.from("chat_messages").delete().eq("id", msg.id);
+                if (active) fetchMsgs(active.id);
+              };
               return (
-                <div key={msg.id}>
+                <div key={msg.id} className="group/msg relative">
                   {showDateSep && (
                     <div className="flex items-center gap-3 my-5">
                       <div className="flex-1 h-px bg-border/15" />
@@ -1027,14 +1060,25 @@ const ChannelsView = ({ profile }: { profile: Profile }) => {
                       <div className="flex-1 h-px bg-border/15" />
                     </div>
                   )}
-                  <MessageBubble
-                    content={msg.content}
-                    senderName={mp?.name}
-                    senderAvatar={mp?.avatar_url}
-                    time={formatTime(msg.created_at)}
-                    isOwn={isOwn}
-                    showAvatar={showAv}
-                  />
+                  <div className="relative">
+                    <MessageBubble
+                      content={msg.content}
+                      senderName={mp?.name}
+                      senderAvatar={mp?.avatar_url}
+                      time={formatTime(msg.created_at)}
+                      isOwn={isOwn}
+                      showAvatar={showAv}
+                    />
+                    {(isOwn || isAdmin) && (
+                      <button
+                        onClick={deleteMsg}
+                        className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
+                        title="Slett melding"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}
