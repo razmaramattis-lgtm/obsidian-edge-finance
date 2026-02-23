@@ -11,6 +11,7 @@ import MessageBubble from "./MessageBubble";
 import VideoCall from "./VideoCall";
 import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 const GroupsView = ({ profile }: { profile: Profile }) => {
   const { isAdmin } = useAuth();
@@ -69,6 +70,20 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   const send = async (content: string) => {
     if (!active) return;
     await supabase.from("workspace_group_messages").insert([{ group_id: active.id, sender_id: profile.id, content }]);
+    // Notify group members
+    const { data: members } = await supabase.from("workspace_group_members").select("profile_id").eq("group_id", active.id).neq("profile_id", profile.id);
+    (members || []).forEach((m: any) => {
+      createNotification({
+        recipientId: m.profile_id,
+        actorId: profile.id,
+        type: "group_message",
+        referenceId: active.id,
+        referenceType: "group",
+        title: active.name,
+        body: profile.name + ": " + content.slice(0, 60),
+        imageUrl: profile.avatar_url || undefined,
+      });
+    });
   };
 
   const sendFile = async (file: File) => {

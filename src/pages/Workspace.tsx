@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Users, MessageSquare, Video, User, UserPlus, Search, X,
-  PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
+  PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles, Bell,
   Globe, Lock, MapPin, Briefcase, Building2, Star, Heart, Camera, MessageCircle, Pin,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
@@ -16,6 +16,8 @@ import FloatingChat from "@/components/workspace/FloatingChat";
 import VideoCall from "@/components/workspace/VideoCall";
 import PostReactions from "@/components/workspace/PostReactions";
 import ProfileEditView from "@/components/workspace/ProfileEditView";
+import NotificationBell from "@/components/workspace/NotificationBell";
+import { useWorkspaceNotifications } from "@/hooks/useWorkspaceNotifications";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
@@ -32,6 +34,7 @@ const Workspace = () => {
   const [searchResults, setSearchResults] = useState<Profile[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<Profile | null>(null);
+  const wsNotifs = useWorkspaceNotifications(profile?.id);
 
   useEffect(() => {
     if (!user) navigate("/admin/logg-inn");
@@ -70,6 +73,13 @@ const Workspace = () => {
     setShowSearchResults(false);
   };
 
+  // Mark feed notifications read when opening feed
+  useEffect(() => {
+    if (!profile) return;
+    if (view === "feed") wsNotifs.markTypeRead(["feed_post", "feed_comment", "feed_reaction"]);
+    if (view === "groups") wsNotifs.markTypeRead(["group_message"]);
+  }, [view, profile?.id]);
+
   if (!user || !profile) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
@@ -82,18 +92,23 @@ const Workspace = () => {
   const navItems = isCustomer
     ? [
         { id: "profile" as View, icon: User, label: "Profil", badge: 0 },
-        { id: "groups" as View, icon: Users, label: "Grupper", badge: 0 },
-        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: 0 },
+        { id: "groups" as View, icon: Users, label: "Grupper", badge: wsNotifs.unreadGroupCount },
+        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: wsNotifs.unreadDmCount },
         { id: "friends" as View, icon: UserPlus, label: "Venner", badge: pendingFriendCount },
       ]
     : [
         { id: "profile" as View, icon: User, label: "Profil", badge: 0 },
-        { id: "feed" as View, icon: Newspaper, label: "Feed", badge: 0 },
-        { id: "groups" as View, icon: Users, label: "Grupper", badge: 0 },
-        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: 0 },
+        { id: "feed" as View, icon: Newspaper, label: "Feed", badge: wsNotifs.unreadFeedCount },
+        { id: "groups" as View, icon: Users, label: "Grupper", badge: wsNotifs.unreadGroupCount },
+        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: wsNotifs.unreadDmCount },
         { id: "friends" as View, icon: UserPlus, label: "Venner", badge: pendingFriendCount },
         { id: "conference" as View, icon: Video, label: "Konferanse", badge: 0 },
       ];
+
+  const handleNotifNavigate = (targetView: View, refId?: string) => {
+    setView(targetView);
+    setViewingProfile(null);
+  };
 
   return (
     <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
@@ -135,6 +150,13 @@ const Workspace = () => {
               </div>
             )}
           </div>
+          <NotificationBell
+            notifications={wsNotifs.notifications}
+            unreadCount={wsNotifs.unreadCount}
+            onMarkRead={wsNotifs.markRead}
+            onMarkAllRead={wsNotifs.markAllRead}
+            onNavigate={handleNotifNavigate}
+          />
           <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
           <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
         </header>

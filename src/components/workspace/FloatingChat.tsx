@@ -11,6 +11,7 @@ import MessageReactions from "./MessageReactions";
 import VideoCall from "./VideoCall";
 import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, uploadFile, isGifUrl } from "./helpers";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 interface FloatingChatProps {
   profile: Profile;
@@ -207,6 +208,17 @@ const MiniChatWindow = ({
   const send = async (content: string) => {
     if (!content.trim()) return;
     await supabase.from("dm_messages").insert([{ conversation_id: chat.conv.id, sender_id: profile.id, content: content.trim() }]);
+    const recipientId = chat.conv.participant_1 === profile.id ? chat.conv.participant_2 : chat.conv.participant_1;
+    createNotification({
+      recipientId,
+      actorId: profile.id,
+      type: "dm_message",
+      referenceId: chat.conv.id,
+      referenceType: "dm_conversation",
+      title: content.trim().slice(0, 80),
+      body: profile.name + " sendte deg en melding",
+      imageUrl: profile.avatar_url || undefined,
+    });
   };
 
   const sendFile = async (file: File) => {

@@ -3,6 +3,7 @@ import { motion, Reorder } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
+import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
@@ -112,6 +113,19 @@ const AdminDashboard = () => {
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const notifications = useAdminNotifications();
+  const [wsUnread, setWsUnread] = useState(0);
+
+  // Fetch workspace notification count
+  useEffect(() => {
+    if (!profile?.id) return;
+    const fetchWsCount = async () => {
+      const { count } = await supabase.from("workspace_notifications").select("*", { count: "exact", head: true }).eq("recipient_id", profile.id).eq("read", false);
+      setWsUnread(count || 0);
+    };
+    fetchWsCount();
+    const ch = supabase.channel("admin-ws-badge").on("postgres_changes", { event: "*", schema: "public", table: "workspace_notifications" }, () => fetchWsCount()).subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [profile?.id]);
 
   // Build ordered nav items
   const [navOrder, setNavOrder] = useState<Panel[]>(() => {
@@ -165,6 +179,7 @@ const AdminDashboard = () => {
     overview: notifications.contactSubmissions,
     account_feedback: notifications.accountFeedback,
     org_resources: notifications.accountFeedback,
+    chat: wsUnread,
   };
 
   const visibleItems = orderedNavItems.filter(item => !item.adminOnly || isAdmin);

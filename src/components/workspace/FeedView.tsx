@@ -12,6 +12,7 @@ import GifPicker from "./GifPicker";
 import PostReactions from "./PostReactions";
 import type { Profile, Post, PostComment } from "./types";
 import { timeAgo, isGifContent, extractGifUrl } from "./helpers";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 // ─── Comment Reactions ───
 const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];
@@ -177,6 +178,20 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
     e.preventDefault();
     if (!text.trim()) return;
     await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: text.trim() }]);
+    // Notify the post author about the comment
+    const { data: post } = await supabase.from("workspace_posts").select("author_id").eq("id", postId).single();
+    if (post && post.author_id !== profileId) {
+      createNotification({
+        recipientId: post.author_id,
+        actorId: profileId,
+        type: "feed_comment",
+        referenceId: postId,
+        referenceType: "post",
+        title: text.trim().slice(0, 80),
+        body: profileData.name + " kommenterte innlegget ditt",
+        imageUrl: profileData.avatar_url || undefined,
+      });
+    }
     setText("");
     fetchComments();
   };
@@ -319,7 +334,23 @@ const FeedView = ({ profile }: { profile: Profile }) => {
     setSending(true);
     let image_url: string | null = null;
     if (imageFile) image_url = await uploadImage(imageFile);
-    await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: newPost.trim(), ...(image_url ? { image_url } : {}) }]);
+    const { data: inserted } = await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: newPost.trim(), ...(image_url ? { image_url } : {}) }]).select("id").single();
+    // Notify all other profiles about new feed post
+    if (inserted) {
+      const { data: allProfiles } = await supabase.from("profiles").select("id").neq("id", profile.id);
+      (allProfiles || []).forEach(p => {
+        createNotification({
+          recipientId: p.id,
+          actorId: profile.id,
+          type: "feed_post",
+          referenceId: inserted.id,
+          referenceType: "post",
+          title: newPost.trim().slice(0, 80) || "Nytt innlegg",
+          body: profile.name + " publiserte et innlegg",
+          imageUrl: image_url || profile.avatar_url || undefined,
+        });
+      });
+    }
     setNewPost(""); setImageFile(null); setImagePreview(null); setSending(false);
   };
 
