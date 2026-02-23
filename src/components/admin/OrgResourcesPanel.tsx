@@ -26,9 +26,10 @@ interface OrgResourcesPanelProps {
   onStatusChange?: () => void;
   initialSearch?: string;
   initialTab?: string;
+  badgeCounts?: Partial<Record<TabId, number>>;
 }
 
-const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab }: OrgResourcesPanelProps) => {
+const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab, badgeCounts }: OrgResourcesPanelProps) => {
   const [tab, setTab] = useState<TabId>((initialTab as TabId) || "datacenter");
 
   return (
@@ -47,11 +48,17 @@ const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab }: OrgRes
         {TABS.map(t => {
           const Icon = t.icon;
           const active = tab === t.id;
+          const badge = badgeCounts?.[t.id] || 0;
           return (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium transition-all ${active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`relative flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium transition-all ${active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
               <Icon size={13} />
               {t.label}
+              {badge > 0 && (
+                <span className="min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[8px] font-bold px-1 ml-1">
+                  {badge}
+                </span>
+              )}
             </button>
           );
         })}

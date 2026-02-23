@@ -226,7 +226,7 @@ const AdminDashboard = () => {
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
-      case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} />;
+      case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
