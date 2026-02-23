@@ -7,6 +7,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const SECTION_LABELS: Record<string, string> = {
+  regnskap: "Regnskap",
+  hr: "Personal (HR)",
+  markedsforing: "Markedsføring",
+  it: "IT & Utvikling",
+};
+
 async function sendEmail(opts: {
   hostname: string;
   port: number;
@@ -115,7 +122,6 @@ function generateICS(opts: {
   teamsLink?: string;
   uid: string;
 }): string {
-  // Parse date "2026-03-15" and time "09:00"
   const d = opts.date.replace(/-/g, "");
   const t = (opts.time.slice(0, 5)).replace(":", "") + "00";
   const startHour = parseInt(opts.time.slice(0, 2));
@@ -153,17 +159,31 @@ function generateICS(opts: {
   return lines.join("\r\n");
 }
 
-function wrapHtml(title: string, body: string) {
+function sectionBadgeHtml(section?: string): string {
+  if (!section) return "";
+  const label = SECTION_LABELS[section] || section;
+  return `<div style="display:inline-block;background:#f0fdf4;color:#166534;padding:4px 12px;border-radius:16px;font-size:12px;font-weight:600;margin-bottom:12px;">📍 ${label}</div>`;
+}
+
+function sectionSubject(section?: string, prefix?: string): string {
+  if (!section) return prefix || "";
+  const label = SECTION_LABELS[section] || section;
+  return `[${label}] ${prefix || ""}`;
+}
+
+function wrapHtml(title: string, body: string, section?: string) {
   const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const sectionLabel = section ? SECTION_LABELS[section] || section : null;
   return `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#fff;">
     <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
       <h1 style="color:#fff;margin:0;font-size:20px;font-weight:600;">${title}</h1>
-      <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}</p>
+      <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}${sectionLabel ? ` · ${sectionLabel}` : ""}</p>
     </div>
     <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+      ${sectionBadgeHtml(section)}
       ${body}
       <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-        <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong></p>
+        <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong>${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p>
       </div>
     </div>
   </div>`;
@@ -193,11 +213,12 @@ serve(async (req) => {
       from: "kontakt@avargo.no",
     };
 
+    // Extract section from data if present
+    const section = data?.section || null;
+
     if (type === "booking_notification") {
-      // Send email to the advisor about the booking
       const { advisor_id, customer_name, customer_email, customer_phone, company_name, booking_date, booking_time, message } = data;
 
-      // Get advisor email
       const { data: advisor } = await supabase
         .from("profiles")
         .select("email, name")
@@ -221,27 +242,24 @@ serve(async (req) => {
         ${message ? `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Melding:</strong><br/>${message}</div>` : ""}
       `;
 
-      // Send to advisor
       await sendEmail({
         ...smtpOpts,
         to: advisor.email,
-        subject: `Ny booking: ${customer_name} — ${booking_date} kl. ${booking_time}`,
-        html: wrapHtml("📅 Ny booking mottatt", body),
+        subject: sectionSubject(section, `Ny booking: ${customer_name} — ${booking_date} kl. ${booking_time}`),
+        html: wrapHtml("📅 Ny booking mottatt", body, section),
       });
 
-      // Also send to kontakt@avargo.no
       await sendEmail({
         ...smtpOpts,
         to: "kontakt@avargo.no",
-        subject: `Ny booking: ${customer_name} → ${advisor.name} — ${booking_date}`,
-        html: wrapHtml("📅 Ny booking mottatt", body),
+        subject: sectionSubject(section, `Ny booking: ${customer_name} → ${advisor.name} — ${booking_date}`),
+        html: wrapHtml("📅 Ny booking mottatt", body, section),
       });
     }
 
     if (type === "booking_confirmed") {
       const { advisor_id, advisor_name, customer_name, customer_email, customer_phone, company_name, booking_date, booking_time, message, teams_link } = data;
 
-      // Get advisor email
       const { data: advisor } = await supabase
         .from("profiles")
         .select("email, name")
@@ -251,7 +269,6 @@ serve(async (req) => {
       const formattedDate = new Date(booking_date).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
       const formattedTime = booking_time?.slice(0, 5) || booking_time;
 
-      // ── Email to CUSTOMER ──
       const customerBody = `
         <div style="margin-bottom:20px;">
           <p style="font-size:14px;color:#0f172a;">Hei ${customer_name} 👋</p>
@@ -278,7 +295,6 @@ serve(async (req) => {
         <p style="font-size:13px;color:#94a3b8;line-height:1.6;">Vi gleder oss til møtet! Ta gjerne kontakt på <a href="mailto:firmapost@avargo.no" style="color:#2563eb;">firmapost@avargo.no</a> hvis du har spørsmål.</p>
       `;
 
-      // Generate ICS calendar event
       const meetingUid = `booking-${Date.now()}@avargo.no`;
       const icsForCustomer = generateICS({
         date: booking_date,
@@ -312,11 +328,10 @@ serve(async (req) => {
         ...smtpOpts,
         to: customer_email,
         subject: `✅ Booking bekreftet: ${formattedDate} kl. ${formattedTime} — Avargo`,
-        html: wrapHtml("✅ Din booking er bekreftet!", customerBody),
+        html: wrapHtml("✅ Din booking er bekreftet!", customerBody, section),
         icsAttachment: icsForCustomer,
       });
 
-      // ── Email to ADVISOR ──
       if (advisor?.email) {
         const advisorBody = `
           <div style="margin-bottom:20px;">
@@ -341,8 +356,8 @@ serve(async (req) => {
         await sendEmail({
           ...smtpOpts,
           to: advisor.email,
-          subject: `✅ Booking bekreftet: ${customer_name} — ${formattedDate} kl. ${formattedTime}`,
-          html: wrapHtml("✅ Booking bekreftet", advisorBody),
+          subject: sectionSubject(section, `Booking bekreftet: ${customer_name} — ${formattedDate} kl. ${formattedTime}`),
+          html: wrapHtml("✅ Booking bekreftet", advisorBody, section),
           icsAttachment: icsForAdvisor,
         });
       }
@@ -365,7 +380,7 @@ serve(async (req) => {
         ...smtpOpts,
         to: recipient_email,
         subject: `Dokument: ${document_title} — Avargo`,
-        html: wrapHtml(`📄 ${document_title}`, body),
+        html: wrapHtml(`📄 ${document_title}`, body, section),
       });
     }
 
@@ -388,8 +403,8 @@ serve(async (req) => {
       await sendEmail({
         ...smtpOpts,
         to: "kontakt@avargo.no",
-        subject: `Ny ansattinvitasjon: ${employee_name} — ${company_name}`,
-        html: wrapHtml("👤 Godkjenning påkrevd: Ny ansatt", body),
+        subject: sectionSubject(section, `Ny ansattinvitasjon: ${employee_name} — ${company_name}`),
+        html: wrapHtml("👤 Godkjenning påkrevd: Ny ansatt", body, section),
       });
     }
 
@@ -419,7 +434,7 @@ serve(async (req) => {
           <p style="font-size:14px;color:#475569;line-height:1.7;">
             Logg inn på kundeportalen for å se oppdateringen:
           </p>
-          <a href="https://obsidian-edge-finance.lovable.app/kunde/logg-inn" 
+          <a href="https://avargo.no/kunde/logg-inn" 
              style="display:inline-block;margin-top:10px;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
             Gå til kundeportalen →
           </a>
@@ -431,7 +446,7 @@ serve(async (req) => {
         ...smtpOpts,
         to: customer_email,
         subject: `${label}: Ny oppdatering fra ${admin_name} — ${company_name}`,
-        html: wrapHtml(`${label} — Oppdatering fra din regnskapsfører`, body),
+        html: wrapHtml(`${label} — Oppdatering fra din regnskapsfører`, body, section),
       });
     }
 
@@ -453,8 +468,8 @@ serve(async (req) => {
       await sendEmail({
         ...smtpOpts,
         to: "kontakt@avargo.no",
-        subject: `Kontohjelp: Manglende treff for «${search_term}»`,
-        html: wrapHtml("🔍 Kontohjelp-tilbakemelding", body),
+        subject: sectionSubject(section, `Kontohjelp: Manglende treff for «${search_term}»`),
+        html: wrapHtml("🔍 Kontohjelp-tilbakemelding", body, section),
       });
     }
     return new Response(

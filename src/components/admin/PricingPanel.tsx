@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Trash2, Edit2 } from "lucide-react";
 
+const SECTION_OPTIONS = [
+  { value: "", label: "Alle / Hub (ingen seksjon)" },
+  { value: "regnskap", label: "Regnskap" },
+  { value: "hr", label: "Personal (HR)" },
+  { value: "markedsforing", label: "Markedsføring" },
+  { value: "it", label: "IT & Utvikling" },
+];
+
 interface Plan {
   id: string;
   name: string;
@@ -12,6 +20,7 @@ interface Plan {
   highlighted: boolean;
   active: boolean;
   sort_order: number;
+  section: string | null;
 }
 
 const PricingPanel = () => {
@@ -19,51 +28,67 @@ const PricingPanel = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Plan | null>(null);
-  const [form, setForm] = useState({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0 });
+  const [form, setForm] = useState({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0, section: "" });
+  const [filterSection, setFilterSection] = useState<string>("all");
 
-  const fetch = async () => {
+  const fetch_ = async () => {
     const { data } = await supabase.from("pricing_plans").select("*").order("sort_order");
     setPlans((data as Plan[]) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetch_(); }, []);
 
   const save = async () => {
-    const payload = { ...form, price: Number(form.price), sort_order: Number(form.sort_order), features: form.features.split("\n").filter(Boolean) };
+    const payload = { ...form, price: Number(form.price), sort_order: Number(form.sort_order), features: form.features.split("\n").filter(Boolean), section: form.section || null };
     if (editing) {
-      await supabase.from("pricing_plans").update(payload).eq("id", editing.id);
+      await supabase.from("pricing_plans").update(payload as any).eq("id", editing.id);
     } else {
-      await supabase.from("pricing_plans").insert([payload]);
+      await supabase.from("pricing_plans").insert([payload] as any);
     }
     setShowForm(false); setEditing(null);
-    setForm({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0 });
-    fetch();
+    setForm({ name: "", price: 0, price_suffix: "/mnd", description: "", features: "", highlighted: false, active: true, sort_order: 0, section: "" });
+    fetch_();
   };
 
   const del = async (id: string) => {
     if (!confirm("Slett prisplan?")) return;
     await supabase.from("pricing_plans").delete().eq("id", id);
-    fetch();
+    fetch_();
   };
 
   const startEdit = (plan: Plan) => {
     document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
     setEditing(plan);
-    setForm({ name: plan.name, price: plan.price, price_suffix: plan.price_suffix, description: plan.description || "", features: (plan.features || []).join("\n"), highlighted: plan.highlighted, active: plan.active, sort_order: plan.sort_order || 0 });
+    setForm({ name: plan.name, price: plan.price, price_suffix: plan.price_suffix, description: plan.description || "", features: (plan.features || []).join("\n"), highlighted: plan.highlighted, active: plan.active, sort_order: plan.sort_order || 0, section: plan.section || "" });
     setShowForm(true);
   };
+
+  const filteredPlans = filterSection === "all"
+    ? plans
+    : filterSection === "hub"
+      ? plans.filter(p => !p.section)
+      : plans.filter(p => p.section === filterSection);
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <p className="text-muted-foreground text-sm">{plans.length} prisplaner</p>
         <button onClick={() => { setShowForm(true); setEditing(null); }}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90">
           <Plus size={14} /> Ny prisplan
         </button>
+      </div>
+
+      {/* Section filter */}
+      <div className="flex gap-1.5 flex-wrap">
+        <button onClick={() => setFilterSection("all")} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterSection === "all" ? "bg-primary text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}>Alle</button>
+        <button onClick={() => setFilterSection("hub")} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterSection === "hub" ? "bg-primary text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}>Hub</button>
+        {SECTION_OPTIONS.filter(s => s.value).map(s => (
+          <button key={s.value} onClick={() => setFilterSection(s.value)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterSection === s.value ? "bg-primary text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}>{s.label}</button>
+        ))}
       </div>
 
       {showForm && (
@@ -76,9 +101,13 @@ const PricingPanel = () => {
               <input value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} placeholder="Pris" type="number"
                 className="h-10 flex-1 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
               <input value={form.price_suffix} onChange={e => setForm({ ...form, price_suffix: e.target.value })} placeholder="/mnd"
-                className="h-10 w-16 rounded-xl border border-border/30 bg-muted/30 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                className="h-10 w-20 rounded-xl border border-border/30 bg-muted/30 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
             </div>
           </div>
+          <select value={form.section} onChange={e => setForm({ ...form, section: e.target.value })}
+            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+            {SECTION_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
           <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse"
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
           <textarea value={form.features} onChange={e => setForm({ ...form, features: e.target.value })} placeholder="Funksjoner (én per linje)" rows={4}
@@ -101,7 +130,7 @@ const PricingPanel = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plans.map(plan => (
+        {filteredPlans.map(plan => (
           <div key={plan.id} className={`glass rounded-2xl p-5 border ${plan.highlighted ? "border-primary/40" : "border-border/20"}`}>
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -113,7 +142,17 @@ const PricingPanel = () => {
                 <button onClick={() => del(plan.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>
               </div>
             </div>
-            {plan.highlighted && <span className="text-[9px] tracking-widest uppercase text-primary border border-primary/30 px-2 py-0.5 rounded-full">Anbefalt</span>}
+            <div className="flex gap-1.5 flex-wrap mb-2">
+              {plan.highlighted && <span className="text-[9px] tracking-widest uppercase text-primary border border-primary/30 px-2 py-0.5 rounded-full">Anbefalt</span>}
+              {plan.section && <span className="text-[9px] tracking-widest uppercase text-muted-foreground border border-border/30 px-2 py-0.5 rounded-full">{SECTION_OPTIONS.find(s => s.value === plan.section)?.label || plan.section}</span>}
+              {!plan.section && <span className="text-[9px] tracking-widest uppercase text-muted-foreground/50 border border-border/20 px-2 py-0.5 rounded-full">Hub</span>}
+            </div>
+            {plan.features && plan.features.length > 0 && (
+              <ul className="text-xs text-muted-foreground space-y-1 mt-2">
+                {(plan.features as string[]).slice(0, 4).map((f, i) => <li key={i}>• {f}</li>)}
+                {(plan.features as string[]).length > 4 && <li className="text-muted-foreground/50">+{(plan.features as string[]).length - 4} til</li>}
+              </ul>
+            )}
           </div>
         ))}
       </div>

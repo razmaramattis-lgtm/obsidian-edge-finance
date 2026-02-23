@@ -6,7 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
-import { sectionPricingPlans, sectionPricingCopy } from "@/config/sectionPricing";
+import { sectionPricingCopy } from "@/config/sectionPricing";
 
 interface PricingPlan {
   id: string;
@@ -18,46 +18,52 @@ interface PricingPlan {
   highlighted: boolean;
   active: boolean;
   sort_order: number;
+  section: string | null;
 }
 
 const Pricing = () => {
-  const [dbPlans, setDbPlans] = useState<PricingPlan[]>([]);
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const { section, isInSection } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
-  // Section-specific data
-  const sectionPlans = isInSection && section ? sectionPricingPlans[section.id] : null;
   const copy = isInSection && section ? sectionPricingCopy[section.id] : null;
 
   useEffect(() => {
-    if (sectionPlans) {
-      setLoading(false);
-      return;
-    }
     const fetchPlans = async () => {
-      const { data } = await supabase
+      let query = supabase
         .from("pricing_plans")
         .select("*")
         .eq("active", true)
         .order("sort_order");
-      setDbPlans((data as PricingPlan[]) || []);
+
+      // Filter by section
+      if (isInSection && section) {
+        query = query.eq("section", section.id);
+      } else {
+        query = query.is("section", null);
+      }
+
+      const { data } = await query;
+      setPlans((data as PricingPlan[]) || []);
       setLoading(false);
     };
     fetchPlans();
-  }, [sectionPlans]);
+  }, [isInSection, section]);
 
-  const plans = sectionPlans || dbPlans;
   const comparisons = copy?.comparisons || [
     { name: "Billigalternativene", body: "Lav inngangsbillett og enkel løsning. Men når selskapet vokser, kommer spørsmålene — hvem følger opp?", us: "Hos Avargo er rådgivning og oppfølging inkludert — uansett pakke.", tag: "Helhet fra dag én." },
     { name: "De store byråene", body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster.", us: "Hos oss betaler du fast pris og kan ta kontakt uten å tenke på timebudsjettet.", tag: "Relasjon foran ressursnummer." },
     { name: "Gjør-det-selv-systemer", body: "Gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.", us: "Med Avargo får du systemet, eksperten og strukturen — satt opp riktig.", tag: "Teknologi med eierskap." },
   ];
 
+  const lowestPrice = plans.length > 0 ? Math.min(...plans.map(p => p.price)) : null;
+  const lowestPriceFormatted = lowestPrice ? lowestPrice.toLocaleString("nb-NO") : null;
+
   return (
     <>
       <Helmet>
-        <title>{copy ? `Priser — ${section!.name} | Avargo` : "Priser | Regnskap fra 1 499 kr/mnd — Avargo"}</title>
+        <title>{copy ? `Priser — ${section!.name} | Avargo` : `Priser | ${lowestPriceFormatted ? `Regnskap fra ${lowestPriceFormatted} kr/mnd` : "Regnskap"} — Avargo`}</title>
         <meta name="description" content={copy?.sub || "Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert."} />
         <link rel="canonical" href={`https://avargo.no${sectionPath}/priser`} />
       </Helmet>
@@ -85,8 +91,10 @@ const Pricing = () => {
 
           {loading ? (
             <div className="text-center text-foreground/50 text-sm py-12">Laster prisplaner…</div>
+          ) : plans.length === 0 ? (
+            <div className="text-center text-foreground/50 text-sm py-12">Ingen prisplaner tilgjengelig for denne avdelingen ennå.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 max-w-6xl mx-auto">
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${plans.length >= 4 ? "lg:grid-cols-4" : plans.length === 3 ? "lg:grid-cols-3" : ""} gap-5 md:gap-6 max-w-6xl mx-auto`}>
               {plans.map((plan, i) => (
                 <AnimatedSection key={plan.id} delay={i * 0.15}>
                   <div className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${plan.highlighted ? "glass glow-rose border-primary/25" : "glass"}`}>

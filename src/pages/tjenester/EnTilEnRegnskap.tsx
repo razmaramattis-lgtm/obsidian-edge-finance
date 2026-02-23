@@ -6,6 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Link } from "react-router-dom";
 import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { useSection } from "@/contexts/SectionContext";
 import { format, addDays, startOfWeek, isBefore, isToday, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
 
@@ -115,7 +116,8 @@ const EnTilEnRegnskap = () => {
       message: form.melding || null,
       booking_date: bookingDate,
       booking_time: selectedTime,
-    });
+      section: section?.id || null,
+    } as any);
 
     // Send booking notification email to advisor
     if (!error) {
