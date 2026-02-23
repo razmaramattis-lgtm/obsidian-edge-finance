@@ -26,6 +26,8 @@ import {
   PieChart,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionCategoryIds, sectionKursHrefs, sectionPageCopy } from "@/config/sectionContent";
 
 const categories = [
   {
@@ -245,13 +247,40 @@ const categories = [
     ],
   },
 ];
+
 const Tjenester = () => {
+  const { section, isInSection } = useSection();
+
+  // Filter categories based on active section
+  const visibleCategories = (() => {
+    if (!isInSection || !section) return categories;
+
+    const allowedIds = sectionCategoryIds[section.id];
+    const kursHrefs = sectionKursHrefs[section.id];
+
+    return categories
+      .filter((cat) => allowedIds.includes(cat.id) || cat.id === "kurs")
+      .map((cat) => {
+        if (cat.id === "kurs") {
+          return {
+            ...cat,
+            services: cat.services.filter((s) => kursHrefs.includes(s.href)),
+          };
+        }
+        return cat;
+      })
+      .filter((cat) => cat.services.length > 0);
+  })();
+
+  const copy = isInSection && section ? sectionPageCopy[section.id].tjenester : null;
+  const sectionPath = isInSection && section ? section.basePath : "";
+
   return (
     <>
       <Helmet>
-        <title>Tjenester | Regnskap, rådgivning og digital markedsføring — Avargo</title>
-        <meta name="description" content="Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning, HR, SEO, Google Ads, nettsider og AI-automatisering for norske bedrifter." />
-        <link rel="canonical" href="https://avargo.no/tjenester" />
+        <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, rådgivning og digital markedsføring — Avargo"}</title>
+        <meta name="description" content={copy?.sub || "Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning, HR, SEO, Google Ads, nettsider og AI-automatisering for norske bedrifter."} />
+        <link rel="canonical" href={`https://avargo.no${sectionPath}/tjenester`} />
       </Helmet>
       {/* HERO */}
       <section className="py-28 md:py-44 relative overflow-hidden">
@@ -264,28 +293,27 @@ const Tjenester = () => {
             className="max-w-4xl"
           >
             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-6 md:mb-8">
-              Avargo · Tjenester
+              {copy?.tag || "Avargo · Tjenester"}
             </p>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-              Alt du trenger.{" "}
-              <span className="italic text-gradient-rose">Samlet på ett sted.</span>
+              {copy?.headline || <>Alt du trenger.{" "}<span className="italic text-gradient-rose">Samlet på ett sted.</span></>}
             </h1>
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-5 md:mb-6">
-              Regnskap, CFO-rådgivning, HR og fullskala digital markedsføring — koordinert av ett team, levert under ett tak. Du fokuserer på å bygge. Vi tar resten.
+              {copy?.sub || "Regnskap, CFO-rådgivning, HR og fullskala digital markedsføring — koordinert av ett team, levert under ett tak. Du fokuserer på å bygge. Vi tar resten."}
             </p>
             <p className="text-sm text-primary/60 italic font-light mb-10 md:mb-14">
-              Strukturen som gjør vekst mulig.
+              {copy?.cta || "Strukturen som gjør vekst mulig."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                to="/kontakt"
+                to={`${sectionPath}/kontakt`}
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link
-                to="/priser"
+                to={`${sectionPath}/priser`}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se priser
@@ -299,7 +327,7 @@ const Tjenester = () => {
       <div className="sticky top-[64px] md:top-[72px] z-40 bg-background/80 backdrop-blur-xl border-b border-border/10">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex gap-1 overflow-x-auto py-3 scrollbar-hide">
-            {categories.map((cat) => (
+            {visibleCategories.map((cat) => (
               <a
                 key={cat.id}
                 href={`#${cat.id}`}
@@ -313,7 +341,7 @@ const Tjenester = () => {
       </div>
 
       {/* Service categories */}
-      {categories.map((cat, catIdx) => (
+      {visibleCategories.map((cat, catIdx) => (
         <section
           key={cat.id}
           id={cat.id}
@@ -348,16 +376,16 @@ const Tjenester = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8 flex-1">
                       {service.desc}
                     </p>
-                    <ul className="flex flex-col gap-2 mb-6">
-                      {service.sub.map((item) => (
-                        <li key={item} className="flex items-center gap-2.5 text-xs text-muted-foreground/80 font-light">
-                          <ChevronRight size={11} className="text-primary/40 shrink-0" />
-                          {item}
+                    <ul className="space-y-2 mb-6 md:mb-8">
+                      {service.sub.map((s) => (
+                        <li key={s} className="flex items-center gap-2.5 text-[13px] text-foreground/55 font-light">
+                          <div className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
+                          {s}
                         </li>
                       ))}
                     </ul>
-                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-auto">
-                      Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    <div className="mt-auto flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/60 group-hover:text-primary transition-colors duration-300">
+                      Les mer <ChevronRight size={11} className="group-hover:translate-x-0.5 transition-transform duration-300" />
                     </div>
                   </Link>
                 </AnimatedSection>
@@ -367,65 +395,24 @@ const Tjenester = () => {
         </section>
       ))}
 
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
-
-      {/* Marketing callout */}
-      <AnimatedSection>
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="glass rounded-3xl p-8 md:p-14 flex flex-col md:flex-row gap-8 md:gap-14 items-start md:items-center">
-              <div className="flex-1">
-                <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4 md:mb-5">Avargo · Helhetlig</p>
-                <h3 className="font-heading text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-5 leading-snug">
-                  Markedsføring og regnskap —{" "}
-                  <span className="italic text-gradient-rose">endelig i samme samtale.</span>
-                </h3>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-xl">
-                  Markedsføring er en integrert del av Avargo. Det betyr at markedsbudsjett, ROAS-kalkuleringer og vekststrategi alltid vurderes i lys av de faktiske tallene — ikke i isolasjon. En helhetlig tilnærming som gjør at pengene jobber smartere.
-                </p>
-              </div>
-              <div className="shrink-0">
-                <Link
-                  to="/kontakt"
-                  className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500 whitespace-nowrap"
-                >
-                  Få et uforpliktende tilbud
-                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      </AnimatedSection>
-
       {/* CTA */}
-      <section className="py-24 md:py-40 border-t border-border/10 text-center relative">
-        <div className="absolute inset-0 ambient-glow opacity-30" />
+      <section className="py-24 md:py-40 text-center relative">
+        <div className="absolute inset-0 ambient-glow opacity-25" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-6 md:mb-8">Uforpliktende samtale</p>
-             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug max-w-3xl mx-auto">
-               Ikke alle tjenestene passer alle.{" "}
-               <span className="italic text-gradient-rose">La oss finne din kombinasjon.</span>
-             </h2>
-             <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">
-               Vi setter opp det du trenger — og ingenting mer. En av våre statsautoriserte regnskapsførere kontakter deg innen 24 timer.
-             </p>
-             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <Link
-                 to="/kontakt"
-                 className="group inline-flex items-center justify-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-               >
-                 Få et uforpliktende tilbud
-                <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-              </Link>
-              <Link
-                to="/priser"
-                className="inline-flex items-center justify-center gap-2 px-10 md:px-12 py-4 md:py-5 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
-              >
-                Se prisene
-              </Link>
-            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug max-w-3xl mx-auto">
+              Klar for å komme i gang?
+            </h2>
+            <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">
+              Én samtale er nok. Vi forteller deg hva som passer for din bedrift — helt uforpliktende.
+            </p>
+            <Link
+              to={`${sectionPath}/kontakt`}
+              className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+            >
+              Book en samtale
+              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            </Link>
           </AnimatedSection>
         </div>
       </section>

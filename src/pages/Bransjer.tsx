@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionPageCopy } from "@/config/sectionContent";
 
 const industries = [
   { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", short: "Fra pre-revenue til scale-up. Vi forstår investorrunder, MRR-rapportering og alt mellom." },
@@ -41,6 +43,9 @@ const industries = [
 
 const Bransjer = () => {
   const [search, setSearch] = useState("");
+  const { section, isInSection } = useSection();
+  const copy = isInSection && section ? sectionPageCopy[section.id].bransjer : null;
+  const sectionPath = isInSection && section ? section.basePath : "";
 
   const filtered = useMemo(() => {
     if (!search.trim()) return industries;
@@ -56,9 +61,9 @@ const Bransjer = () => {
   return (
   <>
     <Helmet>
-      <title>Bransjer vi betjener | Regnskapsfører for din bransje — Avargo</title>
-      <meta name="description" content="Avargo tilbyr bransjespesialiserte regnskapstjenester for tech, eiendom, bygg, restaurant, helse, landbruk og 20+ andre bransjer i Norge." />
-      <link rel="canonical" href="https://avargo.no/bransjer" />
+      <title>{copy ? `Bransjer — ${section!.name} | Avargo` : "Bransjer vi betjener | Regnskapsfører for din bransje — Avargo"}</title>
+      <meta name="description" content={copy?.sub || "Avargo tilbyr bransjespesialiserte regnskapstjenester for tech, eiendom, bygg, restaurant, helse, landbruk og 20+ andre bransjer i Norge."} />
+      <link rel="canonical" href={`https://avargo.no${sectionPath}/bransjer`} />
     </Helmet>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -72,28 +77,27 @@ const Bransjer = () => {
           className="max-w-4xl"
         >
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">
-            Avargo · Bransjer
+            {copy?.tag || "Avargo · Bransjer"}
           </p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            Vi kjenner bransjen din.{" "}
-            <span className="italic text-gradient-rose">Ikke bare tallene.</span>
+            {copy?.headline || <>Vi kjenner bransjen din.{" "}<span className="italic text-gradient-rose">Ikke bare tallene.</span></>}
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-5 md:mb-6">
-            Uansett hvilken bransje du er i, møter du noen hos oss som forstår hverdagen din — sesongsvingninger, bransjespesifikke skatteregler, og utfordringene du faktisk møter i driften.
+            {copy?.sub || "Uansett hvilken bransje du er i, møter du noen hos oss som forstår hverdagen din — sesongsvingninger, bransjespesifikke skatteregler, og utfordringene du faktisk møter i driften."}
           </p>
           <p className="text-sm text-primary/60 italic font-light mb-10 md:mb-14">
-            {industries.length} spesialiserte bransjeområder. Én dedikert regnskapsfører som kjenner din.
+            {industries.length} spesialiserte bransjeområder.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              to="/kontakt"
+              to={`${sectionPath}/kontakt`}
               className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
-              Finn din bransjeekspert
+              {copy?.ctaButton || "Finn din bransjeekspert"}
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
-              to="/tjenester"
+              to={`${sectionPath}/tjenester`}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se alle tjenester
@@ -115,7 +119,7 @@ const Bransjer = () => {
             <span className="italic text-gradient-teal">hva vi kan gjøre for deg.</span>
           </h2>
           <p className="text-muted-foreground font-light text-sm md:text-base mb-8 md:mb-10 max-w-xl">
-            Klikk på bransjen din for å se spesifikk informasjon om hva vi leverer, hvilke regler som gjelder, og hva kundene i din bransje vanligvis oppdager hos oss.
+            Klikk på bransjen din for å se spesifikk informasjon om hva vi leverer.
           </p>
 
           {/* SEARCH */}
@@ -169,7 +173,7 @@ const Bransjer = () => {
             <p className="text-muted-foreground font-light text-sm md:text-base">
               Er bransjen din ikke på listen?{" "}
               <span className="text-foreground">Vi tar på oss alle typer bedrifter.</span>{" "}
-              <Link to="/kontakt" className="text-primary hover:underline underline-offset-4 transition-all">
+              <Link to={`${sectionPath}/kontakt`} className="text-primary hover:underline underline-offset-4 transition-all">
                 Ta kontakt
               </Link>{" "}
               — vi setter oss raskt inn i din hverdag.
@@ -179,22 +183,22 @@ const Bransjer = () => {
       </div>
     </section>
 
-    {/* WHY SPECIALIZATION MATTERS */}
+    {/* WHY SPECIALIZATION */}
     <section className="py-24 md:py-40 border-y border-border/10 relative">
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
           <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor det betyr noe</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
-            En regnskapsfører som kjenner bransjen gjør en{" "}
+            En ekspert som kjenner bransjen gjør en{" "}
             <span className="italic text-gradient-rose">grunnleggende forskjell.</span>
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
           {[
-            { num: "01", title: "Bransjespesifikke fradrag.", desc: "Hver bransje har egne skattefordeler, tilskudd og fradragsmuligheter. En regnskapsfører som ikke kjenner din bransje vil overse disse. Vi gjør ikke det." },
-            { num: "02", title: "Regler du ikke kan gjette deg til.", desc: "Landbruksstøtte, MVA-unntak for helsetjenester, prosjektregnskap i bygg — dette er komplekst. Vi kjenner regelverket for din bransje og sikrer at du alltid er compliant." },
-            { num: "03", title: "Innsikt som faktisk er relevant.", desc: "En generalist gir deg generelle råd. Vi gir deg innsikt basert på hva som faktisk gjelder for din bransje — og sammenlignet med andre i din bransje." },
+            { num: "01", title: "Bransjespesifikk kompetanse.", desc: "Hver bransje har egne regler, fradrag og utfordringer. Vi kjenner dem — og bruker den kunnskapen for deg." },
+            { num: "02", title: "Regler du ikke kan gjette deg til.", desc: "Komplekse regelverk krever spesialkompetanse. Vi sørger for at du alltid er compliant." },
+            { num: "03", title: "Innsikt som faktisk er relevant.", desc: "Ikke generelle råd, men spesifikk innsikt basert på hva som gjelder for din bransje." },
           ].map((p, i) => (
             <AnimatedSection key={p.num} delay={i * 0.12}>
               <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
@@ -215,14 +219,13 @@ const Bransjer = () => {
         <AnimatedSection>
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-6 md:mb-8">Kom i gang</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug max-w-3xl mx-auto">
-            Finn en regnskapsfører som{" "}
-            <span className="italic text-gradient-rose">kjenner din verden.</span>
+            {copy?.ctaHeadline || <>Finn en ekspert som{" "}<span className="italic text-gradient-rose">kjenner din verden.</span></>}
           </h2>
           <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">
             Én samtale er nok til å matche deg med riktig person. Gratis, uforpliktende og raskt.
           </p>
           <Link
-            to="/kontakt"
+            to={`${sectionPath}/kontakt`}
             className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
           >
             Book en gjennomgang

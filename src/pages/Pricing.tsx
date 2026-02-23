@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionPageCopy } from "@/config/sectionContent";
 
 interface PricingPlan {
   id: string;
@@ -21,6 +23,9 @@ interface PricingPlan {
 const Pricing = () => {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const { section, isInSection } = useSection();
+  const copy = isInSection && section ? sectionPageCopy[section.id].priser : null;
+  const sectionPath = isInSection && section ? section.basePath : "";
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -38,9 +43,9 @@ const Pricing = () => {
   return (
     <>
       <Helmet>
-        <title>Priser | Regnskap fra 1 499 kr/mnd — Avargo</title>
-        <meta name="description" content="Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert. Se våre pakker og kom i gang i dag." />
-        <link rel="canonical" href="https://avargo.no/priser" />
+        <title>{copy ? `Priser — ${section!.name} | Avargo` : "Priser | Regnskap fra 1 499 kr/mnd — Avargo"}</title>
+        <meta name="description" content={copy?.sub || "Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert."} />
+        <link rel="canonical" href={`https://avargo.no${sectionPath}/priser`} />
       </Helmet>
 
       <section className="py-24 md:py-40 relative">
@@ -49,14 +54,13 @@ const Pricing = () => {
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
               <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-10 leading-snug">
-                Enkel pris.{" "}
-                <span className="italic text-gradient-rose">Full kontroll.</span>
+                {copy?.headline || <>Enkel pris.{" "}<span className="italic text-gradient-rose">Full kontroll.</span></>}
               </h1>
               <p className="text-foreground/70 font-light leading-relaxed max-w-lg mx-auto mb-5 md:mb-6 text-base md:text-lg">
-                Hos Avargo betaler du én fast månedspris. Ingen tillegg for MVA-rapportering, lønnskjøring eller rådgivning. Alt er inkludert fra dag én.
+                {copy?.sub || "Hos Avargo betaler du én fast månedspris. Ingen tillegg for MVA-rapportering, lønnskjøring eller rådgivning. Alt er inkludert fra dag én."}
               </p>
               <p className="text-sm text-primary italic font-light">
-                Vi tror på forutsigbarhet — for deg og for oss.
+                {copy?.italic || "Vi tror på forutsigbarhet — for deg og for oss."}
               </p>
             </div>
           </AnimatedSection>
@@ -67,17 +71,9 @@ const Pricing = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 max-w-6xl mx-auto">
               {plans.map((plan, i) => (
                 <AnimatedSection key={plan.id} delay={i * 0.15}>
-                  <div
-                    className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${
-                      plan.highlighted
-                        ? "glass glow-rose border-primary/25"
-                        : "glass"
-                    }`}
-                  >
+                  <div className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${plan.highlighted ? "glass glow-rose border-primary/25" : "glass"}`}>
                     {plan.highlighted && (
-                      <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
-                        Anbefalt
-                      </div>
+                      <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">Anbefalt</div>
                     )}
                     <h3 className="font-heading text-2xl md:text-3xl mb-2">{plan.name}</h3>
                     <p className="text-sm text-foreground/60 font-light mb-6 md:mb-8">{plan.description}</p>
@@ -95,12 +91,8 @@ const Pricing = () => {
                       ))}
                     </ul>
                     <Link
-                      to={`/kontakt?pakke=${encodeURIComponent(plan.name)}`}
-                      className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${
-                        plan.highlighted
-                          ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose"
-                          : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"
-                      }`}
+                      to={`${sectionPath}/kontakt?pakke=${encodeURIComponent(plan.name)}`}
+                      className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${plan.highlighted ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose" : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"}`}
                     >
                       Få tilbud på {plan.name}
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -114,11 +106,7 @@ const Pricing = () => {
           {/* Custom pricing CTA */}
           <AnimatedSection delay={0.5}>
             <div className="max-w-6xl mx-auto mt-16 md:mt-20">
-              <motion.div
-                className="relative overflow-hidden rounded-3xl glass border border-border/20"
-                whileHover={{ scale: 1.005 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div className="relative overflow-hidden rounded-3xl glass border border-border/20" whileHover={{ scale: 1.005 }} transition={{ duration: 0.4 }}>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                 <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 p-8 md:p-12">
@@ -129,19 +117,14 @@ const Pricing = () => {
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="font-heading text-2xl md:text-3xl mb-2">
-                      Trenger du noe{" "}
-                      <span className="italic text-gradient-rose">skreddersydd</span>?
+                      Trenger du noe{" "}<span className="italic text-gradient-rose">skreddersydd</span>?
                     </h3>
                     <p className="text-sm md:text-base text-foreground/60 font-light leading-relaxed max-w-lg">
-                      Ikke alle selskaper passer inn i en ferdig pakke. Fortell oss om ditt behov, 
-                      så setter vi sammen en løsning som passer deg — uten binding og med full transparens.
+                      Ikke alle selskaper passer inn i en ferdig pakke. Fortell oss om ditt behov, så setter vi sammen en løsning som passer deg.
                     </p>
                   </div>
                   <div className="flex-shrink-0">
-                    <Link
-                      to="/kontakt?pakke=Skreddersydd"
-                      className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500"
-                    >
+                    <Link to={`${sectionPath}/kontakt?pakke=Skreddersydd`} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
                       <MessageCircle size={15} className="text-primary" />
                       Ta kontakt
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -159,35 +142,19 @@ const Pricing = () => {
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-6">
               <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6">
-                Hva skiller Avargo{" "}
-                <span className="italic text-gradient-rose">fra resten</span>?
+                Hva skiller Avargo{" "}<span className="italic text-gradient-rose">fra resten</span>?
               </h2>
               <p className="text-foreground/60 font-light leading-relaxed max-w-lg mx-auto text-sm md:text-base">
-                De fleste regnskapstilbydere gir deg enten en billig minimumsløsning eller en dyr helhetspakke. Vi gir deg alt du trenger — til en pris som gir mening.
+                {copy?.comparison || "De fleste regnskapstilbydere gir deg enten en billig minimumsløsning eller en dyr helhetspakke. Vi gir deg alt du trenger — til en pris som gir mening."}
               </p>
             </div>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mt-12 md:mt-16">
             {[
-              {
-                name: "Billigalternativene",
-                body: "Lav inngangsbillett og enkel bokføring. Men når selskapet vokser, kommer spørsmålene: Hvem følger opp? Hvem gir deg råd? Hvem tenker fremover?",
-                us: "Hos Avargo er rådgivning, lønnskjøring og oppfølging inkludert — uansett pakke.",
-                tag: "Helhet fra dag én.",
-              },
-              {
-                name: "De store byråene",
-                body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster deg timepris.",
-                us: "Hos oss betaler du fast pris og kan ringe regnskapsføreren din uten å tenke på timebudsjettet.",
-                tag: "Relasjon foran ressursnummer.",
-              },
-              {
-                name: "Gjør-det-selv-systemer",
-                body: "Regnskapssystemer er gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.",
-                us: "Med Avargo får du systemet, regnskapsføreren og strukturen — satt opp riktig og brukt riktig.",
-                tag: "Teknologi med eierskap.",
-              },
+              { name: "Billigalternativene", body: "Lav inngangsbillett og enkel løsning. Men når selskapet vokser, kommer spørsmålene — hvem følger opp?", us: "Hos Avargo er rådgivning og oppfølging inkludert — uansett pakke.", tag: "Helhet fra dag én." },
+              { name: "De store byråene", body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster.", us: "Hos oss betaler du fast pris og kan ta kontakt uten å tenke på timebudsjettet.", tag: "Relasjon foran ressursnummer." },
+              { name: "Gjør-det-selv-systemer", body: "Gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.", us: "Med Avargo får du systemet, eksperten og strukturen — satt opp riktig.", tag: "Teknologi med eierskap." },
             ].map((comp, i) => (
               <AnimatedSection key={comp.name} delay={i * 0.1}>
                 <div className="p-7 md:p-8 glass rounded-3xl card-lift text-left h-full flex flex-col">
@@ -204,14 +171,11 @@ const Pricing = () => {
           <AnimatedSection delay={0.4}>
             <div className="max-w-xl mx-auto text-center mt-16 md:mt-20">
               <p className="text-foreground/60 font-light leading-relaxed mb-2 text-sm md:text-base">
-                Å bytte regnskapsfører handler sjelden om pris.
-                <br />Det handler om kontroll, tilgjengelighet og tillit.
+                Å bytte leverandør handler sjelden om pris.<br />Det handler om kontroll, tilgjengelighet og tillit.
               </p>
-              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">
-                Når det først fungerer, blir du.
-              </p>
+              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">Når det først fungerer, blir du.</p>
               <Link
-                to="/kontakt"
+                to={`${sectionPath}/kontakt`}
                 className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Få et uforpliktende tilbud
