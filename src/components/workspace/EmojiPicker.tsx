@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { Smile, Search, X } from "lucide-react";
 
 const EMOJI_CATEGORIES = [
@@ -71,8 +72,8 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
         <Smile size={18} />
       </button>
 
-      {open && (
-        <div className="fixed inset-x-0 bottom-0 z-50 sm:fixed sm:inset-0 sm:flex sm:items-center sm:justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+      {open && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
         <div className="w-full sm:w-80 bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
           {/* Drag handle on mobile */}
           <div className="sm:hidden flex justify-center pt-2 pb-1">
@@ -140,7 +141,7 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
           </div>
         </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 };
