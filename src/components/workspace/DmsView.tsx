@@ -13,7 +13,7 @@ import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, formatDate, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const DmsView = ({ profile }: { profile: Profile }) => {
+const DmsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
   const { isAdmin } = useAuth();
   const [conversations, setConversations] = useState<DmConv[]>([]);
   const [active, setActive] = useState<DmConv | null>(null);
@@ -261,7 +261,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
           <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 shrink-0 flex items-center gap-3">
             <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} isActive={active.other?.active !== false} />
             <div className="flex-1">
-              <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
+              <span className={`font-semibold text-sm ${onViewProfile && active.other ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && active.other && onViewProfile(active.other as Profile)}>{active.other?.name || "Ukjent"}</span>
               <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
             </div>
             <button onClick={() => setCallActive(true)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-green-500/15 text-muted-foreground hover:text-green-500 flex items-center justify-center transition-all"><Phone size={16} /></button>
@@ -295,6 +295,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
                     fileUrl={msg.file_url}
                     fileName={msg.file_name}
                     readAt={msg.read_at}
+                    onNameClick={onViewProfile ? () => onViewProfile(isOwn ? profile : active.other as Profile) : undefined}
                   />
                   {(isOwn || isAdmin) && (
                     <button onClick={() => deleteMsg(msg.id)} className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"><Trash2 size={12} /></button>

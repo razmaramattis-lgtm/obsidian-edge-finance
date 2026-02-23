@@ -16,7 +16,7 @@ import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const GroupsView = ({ profile }: { profile: Profile }) => {
+const GroupsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
   const { isAdmin } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
@@ -487,6 +487,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
                         fileUrl={msg.file_url}
                         fileName={msg.file_name}
                         readAt={isOwn && readStatus[msg.id] ? "read" : null}
+                        onNameClick={onViewProfile && mp ? () => onViewProfile(mp as Profile) : undefined}
                       />
                       {(isOwn || (isAdmin && !isOwn)) && (
                         <div className={`flex ${isOwn ? "justify-end" : "justify-start"} mt-0.5 mb-1`}>
