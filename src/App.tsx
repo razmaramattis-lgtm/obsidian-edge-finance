@@ -237,32 +237,32 @@ const App = () => (
                             <Route path="/:sectionId/tjenester/hr-kurs" element={<HrKurs />} />
                             <Route path="/:sectionId/tjenester/bedriftskurs" element={<Bedriftskurs />} />
 
-                            {/* Section bransje sub-pages */}
-                            <Route path="/:sectionId/bransjer/tech-saas" element={<TechSaas />} />
-                            <Route path="/:sectionId/bransjer/eiendom" element={<Eiendom />} />
-                            <Route path="/:sectionId/bransjer/holding" element={<Holding />} />
-                            <Route path="/:sectionId/bransjer/consulting" element={<Consulting />} />
-                            <Route path="/:sectionId/bransjer/landbruk" element={<Landbruk />} />
-                            <Route path="/:sectionId/bransjer/varehandel" element={<Varehandel />} />
-                            <Route path="/:sectionId/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
-                            <Route path="/:sectionId/bransjer/nettbutikk" element={<NettbutikkBransje />} />
-                            <Route path="/:sectionId/bransjer/helse" element={<Helse />} />
-                            <Route path="/:sectionId/bransjer/restaurant" element={<Restaurant />} />
-                            <Route path="/:sectionId/bransjer/frisor" element={<Frisor />} />
-                            <Route path="/:sectionId/bransjer/handverkere" element={<Handverkere />} />
-                            <Route path="/:sectionId/bransjer/transport" element={<TransportLogistikk />} />
-                            <Route path="/:sectionId/bransjer/industri" element={<IndustriProduksjon />} />
-                            <Route path="/:sectionId/bransjer/renhold" element={<RenholdFacility />} />
-                            <Route path="/:sectionId/bransjer/kultur" element={<KulturMedia />} />
-                            <Route path="/:sectionId/bransjer/sport" element={<SportFritid />} />
-                            <Route path="/:sectionId/bransjer/utdanning" element={<UtdanningKurs />} />
-                            <Route path="/:sectionId/bransjer/juridisk" element={<JuridiskAdvokat />} />
-                            <Route path="/:sectionId/bransjer/arkitektur" element={<ArkitekturDesign />} />
-                            <Route path="/:sectionId/bransjer/markedsforing" element={<MarkedsforingReklame />} />
-                            <Route path="/:sectionId/bransjer/bemanning" element={<BemanningRekruttering />} />
-                            <Route path="/:sectionId/bransjer/reiseliv" element={<ReiselivTurisme />} />
-                            <Route path="/:sectionId/bransjer/bil" element={<BilVerksted />} />
-                            <Route path="/:sectionId/bransjer/energi" element={<EnergiMiljo />} />
+                            {/* Section bransje sub-pages (only regnskap) */}
+                            <Route path="/regnskap/bransjer/tech-saas" element={<TechSaas />} />
+                            <Route path="/regnskap/bransjer/eiendom" element={<Eiendom />} />
+                            <Route path="/regnskap/bransjer/holding" element={<Holding />} />
+                            <Route path="/regnskap/bransjer/consulting" element={<Consulting />} />
+                            <Route path="/regnskap/bransjer/landbruk" element={<Landbruk />} />
+                            <Route path="/regnskap/bransjer/varehandel" element={<Varehandel />} />
+                            <Route path="/regnskap/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
+                            <Route path="/regnskap/bransjer/nettbutikk" element={<NettbutikkBransje />} />
+                            <Route path="/regnskap/bransjer/helse" element={<Helse />} />
+                            <Route path="/regnskap/bransjer/restaurant" element={<Restaurant />} />
+                            <Route path="/regnskap/bransjer/frisor" element={<Frisor />} />
+                            <Route path="/regnskap/bransjer/handverkere" element={<Handverkere />} />
+                            <Route path="/regnskap/bransjer/transport" element={<TransportLogistikk />} />
+                            <Route path="/regnskap/bransjer/industri" element={<IndustriProduksjon />} />
+                            <Route path="/regnskap/bransjer/renhold" element={<RenholdFacility />} />
+                            <Route path="/regnskap/bransjer/kultur" element={<KulturMedia />} />
+                            <Route path="/regnskap/bransjer/sport" element={<SportFritid />} />
+                            <Route path="/regnskap/bransjer/utdanning" element={<UtdanningKurs />} />
+                            <Route path="/regnskap/bransjer/juridisk" element={<JuridiskAdvokat />} />
+                            <Route path="/regnskap/bransjer/arkitektur" element={<ArkitekturDesign />} />
+                            <Route path="/regnskap/bransjer/markedsforing" element={<MarkedsforingReklame />} />
+                            <Route path="/regnskap/bransjer/bemanning" element={<BemanningRekruttering />} />
+                            <Route path="/regnskap/bransjer/reiseliv" element={<ReiselivTurisme />} />
+                            <Route path="/regnskap/bransjer/bil" element={<BilVerksted />} />
+                            <Route path="/regnskap/bransjer/energi" element={<EnergiMiljo />} />
 
                             {/* Section ressurser sub-pages */}
                             <Route path="/:sectionId/ressurser" element={<Ressurser />} />
