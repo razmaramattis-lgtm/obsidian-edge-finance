@@ -1401,6 +1401,57 @@ export type Database = {
         }
         Relationships: []
       }
+      group_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: string | null
+          file_type: string
+          file_url: string
+          folder: string
+          group_id: string
+          id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: string | null
+          file_type?: string
+          file_url: string
+          folder?: string
+          group_id: string
+          id?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: string | null
+          file_type?: string
+          file_url?: string
+          folder?: string
+          group_id?: string
+          id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_files_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_files_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_message_reactions: {
         Row: {
           created_at: string
@@ -2209,8 +2260,10 @@ export type Database = {
       }
       workspace_groups: {
         Row: {
+          avatar_url: string | null
           color: string | null
           cover_image_url: string | null
+          cover_url: string | null
           created_at: string
           created_by: string
           description: string | null
@@ -2220,8 +2273,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           color?: string | null
           cover_image_url?: string | null
+          cover_url?: string | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -2231,8 +2286,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           color?: string | null
           cover_image_url?: string | null
+          cover_url?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
