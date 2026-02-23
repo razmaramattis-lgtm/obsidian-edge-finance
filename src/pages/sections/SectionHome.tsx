@@ -73,7 +73,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     ],
     services: [
       { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert.", href: "/regnskap/tjenester/regnskapsforer" },
-      { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Ingenting er «ekstra».", href: "/regnskap/tjenester/en-til-en-regnskap" },
+      { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Ingenting er «ekstra».", href: "/regnskap/tjenester/1-1-regnskap" },
       { icon: Users, title: "Lønn & Personal", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift — inkludert i fastprisen.", href: "/regnskap/tjenester/lonn" },
       { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om.", href: "/regnskap/tjenester/cfo" },
       { icon: Sparkles, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv.", href: "/regnskap/tjenester/ai-innsikt" },
@@ -148,10 +148,10 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: BookOpen, title: "Personalhåndbok", desc: "Komplett håndbok tilpasset din bedrift, klar til bruk fra dag én.", href: "/hr/tjenester/personalhandbok" },
       { icon: Scale, title: "Arbeidsrett & HMS", desc: "Vi hjelper deg med reglene, dokumentasjonen og de vanskelige sakene.", href: "/hr/tjenester/arbeidsrett" },
       { icon: UserCheck, title: "Rekruttering", desc: "Fra stillingsannonse til signert kontrakt — vi tar hele prosessen.", href: "/hr/tjenester/ansettelse" },
-      { icon: HeartHandshake, title: "Sykefraværsoppfølging", desc: "Strukturert oppfølging av sykmeldte med dokumentasjon og tilrettelegging.", href: "/hr/tjenester/hr" },
+      { icon: HeartHandshake, title: "Sykefraværsoppfølging", desc: "Strukturert oppfølging av sykmeldte med dokumentasjon og tilrettelegging.", href: "/hr/tjenester/hr-og-lonn" },
       { icon: GraduationCap, title: "HR-kurs", desc: "Opplæring for ledere i arbeidsrett, vanskelige samtaler og personalledelse.", href: "/hr/tjenester/hr-kurs" },
       { icon: Shield, title: "Varslingsrutiner", desc: "Lovpålagte varslingskanaler og rutiner — satt opp riktig og dokumentert.", href: "/hr/tjenester/arbeidsrett" },
-      { icon: Users, title: "Medarbeidersamtaler", desc: "Maler, prosesser og oppfølging for effektive og dokumenterte samtaler.", href: "/hr/tjenester/hr" },
+      { icon: Users, title: "Medarbeidersamtaler", desc: "Maler, prosesser og oppfølging for effektive og dokumenterte samtaler.", href: "/hr/tjenester/hr-og-lonn" },
     ],
     industries: [
       { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Trygg arbeidsgiver på byggeplassen", desc: "Skiftarbeid, HMS-krav og innleie — vi sørger for at alt er i henhold til loven." },
@@ -763,7 +763,7 @@ const SectionHome = () => {
           </div>
           <AnimatedSection delay={0.2}>
             <div className="text-center mt-10">
-              <Link to="/faq" className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
+              <Link to={sp("/faq")} className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
                 Se alle vanlige spørsmål →
               </Link>
             </div>

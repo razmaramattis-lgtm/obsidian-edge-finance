@@ -94,10 +94,10 @@ const bransjerItems = [
 ];
 
 const selskapetLinks = [
-  { icon: Users, title: "Kundeportal", desc: "Logg inn som kunde", href: "/kunde/logg-inn" },
-  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-ansatte", href: "/admin/logg-inn" },
-  { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt" },
-  { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss" },
+  { icon: Users, title: "Kundeportal", desc: "Logg inn som kunde", href: "/kunde/logg-inn", absolute: true },
+  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-ansatte", href: "/admin/logg-inn", absolute: true },
+  { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt", absolute: false },
+  { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss", absolute: false },
 ];
 
 const ressurserLinks = [
@@ -257,7 +257,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </button>
               <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-3 w-60 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
                 {selskapetLinks.map((item) => (
-                  <Link key={item.href} to={sp(item.href)} onClick={() => setSelskapetOpen(false)}
+                  <Link key={item.href} to={item.absolute ? item.href : sp(item.href)} onClick={() => setSelskapetOpen(false)}
                     className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                   >
                     <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200 mt-0.5">
