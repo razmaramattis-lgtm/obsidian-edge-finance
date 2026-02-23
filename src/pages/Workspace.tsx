@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Newspaper, Users, MessageSquare, Video, User, UserPlus, Search,
+  Newspaper, Users, MessageSquare, Video, User, UserPlus, Search, X,
   PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
   Globe, Lock, MapPin, Briefcase, Building2, Star, Heart,
 } from "lucide-react";
@@ -197,6 +197,21 @@ const Workspace = () => {
 const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: Profile; myProfile: Profile; onBack: () => void; onNavigate: (v: View) => void }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [friendCount, setFriendCount] = useState(0);
+  const [allGroups, setAllGroups] = useState<Group[]>([]);
+  const [memberGroupIds, setMemberGroupIds] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<"feed" | "groups" | "about">("feed");
+  const [friendStatus, setFriendStatus] = useState<"none" | "pending_sent" | "pending_received" | "accepted">("none");
+  const [friendRowId, setFriendRowId] = useState<string | null>(null);
+
+  const fetchFriendStatus = async () => {
+    const { data } = await supabase.from("workspace_friends").select("*").or(`and(requester_id.eq.${myProfile.id},receiver_id.eq.${profile.id}),and(requester_id.eq.${profile.id},receiver_id.eq.${myProfile.id})`);
+    const row = data?.[0];
+    if (!row) { setFriendStatus("none"); setFriendRowId(null); return; }
+    setFriendRowId(row.id);
+    if (row.status === "accepted") setFriendStatus("accepted");
+    else if (row.requester_id === myProfile.id) setFriendStatus("pending_sent");
+    else setFriendStatus("pending_received");
+  };
 
   useEffect(() => {
     (async () => {
@@ -207,7 +222,31 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
       const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("status", "accepted").or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
       setFriendCount(count || 0);
     })();
+    (async () => {
+      const { data: gs } = await supabase.from("workspace_groups").select("*").order("created_at");
+      setAllGroups((gs as Group[]) || []);
+      const { data: memberships } = await supabase.from("workspace_group_members").select("group_id").eq("profile_id", profile.id);
+      setMemberGroupIds((memberships || []).map((m: any) => m.group_id));
+    })();
+    fetchFriendStatus();
   }, [profile.id]);
+
+  const sendFriendRequest = async () => {
+    await supabase.from("workspace_friends").insert([{ requester_id: myProfile.id, receiver_id: profile.id }]);
+    fetchFriendStatus();
+  };
+
+  const acceptFriend = async () => {
+    if (!friendRowId) return;
+    await supabase.from("workspace_friends").update({ status: "accepted" }).eq("id", friendRowId);
+    fetchFriendStatus();
+  };
+
+  const removeFriend = async () => {
+    if (!friendRowId) return;
+    await supabase.from("workspace_friends").delete().eq("id", friendRowId);
+    fetchFriendStatus();
+  };
 
   return (
     <div className="h-full overflow-y-auto">
@@ -229,50 +268,120 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                 {profile.specialty && <span className="flex items-center gap-1 text-xs"><Star size={11} /> {profile.specialty}</span>}
               </div>
             </div>
-            <button onClick={() => onNavigate("dms")} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
-              <MessageSquare size={16} /> Melding
-            </button>
+            <div className="flex items-center gap-2">
+              {friendStatus === "none" && (
+                <button onClick={sendFriendRequest} className="px-4 py-2.5 rounded-xl bg-accent/10 text-accent text-sm font-semibold hover:bg-accent/20 transition-all active:scale-95 flex items-center gap-2">
+                  <UserPlus size={16} /> Legg til venn
+                </button>
+              )}
+              {friendStatus === "pending_sent" && (
+                <button onClick={removeFriend} className="px-4 py-2.5 rounded-xl bg-muted/50 text-muted-foreground text-sm font-medium hover:bg-destructive/10 hover:text-destructive transition-all flex items-center gap-2">
+                  <X size={16} /> Forespørsel sendt
+                </button>
+              )}
+              {friendStatus === "pending_received" && (
+                <button onClick={acceptFriend} className="px-4 py-2.5 rounded-xl bg-green-500/10 text-green-600 text-sm font-semibold hover:bg-green-500/20 transition-all flex items-center gap-2">
+                  <UserPlus size={16} /> Godta forespørsel
+                </button>
+              )}
+              {friendStatus === "accepted" && (
+                <button onClick={removeFriend} className="px-4 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-destructive/10 hover:text-destructive transition-all flex items-center gap-2">
+                  <Users size={16} /> Venner ✓
+                </button>
+              )}
+              <button onClick={() => onNavigate("dms")} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
+                <MessageSquare size={16} /> Melding
+              </button>
+            </div>
           </div>
           <div className="flex items-center gap-8 pb-4 border-b border-border/15">
-            <div className="text-center"><p className="text-lg font-bold">{posts.length}</p><p className="text-xs text-muted-foreground">Innlegg</p></div>
+            <button className="text-center group" onClick={() => setActiveTab("feed")}><p className="text-lg font-bold">{posts.length}</p><p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Innlegg</p></button>
+            <button className="text-center group" onClick={() => setActiveTab("groups")}><p className="text-lg font-bold">{memberGroupIds.length}</p><p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Grupper</p></button>
             <div className="text-center"><p className="text-lg font-bold">{friendCount}</p><p className="text-xs text-muted-foreground">Venner</p></div>
+          </div>
+          <div className="flex gap-1 mt-2">
+            {(["feed", "groups", "about"] as const).map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === tab ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"}`}>
+                {tab === "feed" ? "Innlegg" : tab === "groups" ? "Grupper" : "Om"}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
-        {/* Bio & interests */}
-        {(profile.bio || (profile.interests && profile.interests.length > 0)) && (
-          <div className="rounded-2xl border border-border/15 bg-card/60 p-5 space-y-3">
-            {profile.bio && <p className="text-sm text-foreground/80">{profile.bio}</p>}
-            {profile.interests && profile.interests.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {profile.interests.map((i, idx) => (
-                  <span key={idx} className="px-2.5 py-1 rounded-full bg-accent/10 text-accent text-xs">{i}</span>
-                ))}
-              </div>
-            )}
+      <div className="max-w-3xl mx-auto px-6 py-6">
+        {activeTab === "feed" && (
+          <div className="space-y-5">
+            {posts.map(post => {
+              const ap = post.profiles as any;
+              return (
+                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
+                  <div className="flex items-start gap-3 p-5 pb-0">
+                    <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
+                    <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
+                  </div>
+                  {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
+                  {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
+                  <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
+                </article>
+              );
+            })}
+            {posts.length === 0 && <div className="text-center py-12"><p className="text-muted-foreground text-sm">Ingen innlegg ennå</p></div>}
           </div>
         )}
 
-        {/* Posts */}
-        <div className="space-y-5">
-          {posts.map(post => {
-            const ap = post.profiles as any;
-            return (
-              <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
-                <div className="flex items-start gap-3 p-5 pb-0">
-                  <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
-                  <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
+        {activeTab === "groups" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {allGroups.filter(g => memberGroupIds.includes(g.id)).map(g => {
+              const grad = getGroupGradient(g.color, g.name);
+              return (
+                <div key={g.id} className="text-left rounded-2xl border border-border/15 bg-card/60 overflow-hidden">
+                  <div className={`h-20 bg-gradient-to-br ${grad} relative`}><div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" /></div>
+                  <div className="p-4 -mt-5 relative">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-background`}>{g.name.charAt(0)}</div>
+                    <h4 className="text-sm font-semibold mt-2">{g.name}</h4>
+                    {g.description && <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{g.description}</p>}
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">{g.is_private ? <Lock size={9} /> : <Globe size={9} />} {g.is_private ? "Privat" : "Offentlig"}</span>
+                  </div>
                 </div>
-                {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
-                {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
-                <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
-              </article>
-            );
-          })}
-          {posts.length === 0 && <div className="text-center py-12"><p className="text-muted-foreground text-sm">Ingen innlegg ennå</p></div>}
-        </div>
+              );
+            })}
+            {memberGroupIds.length === 0 && <div className="sm:col-span-2 text-center py-12"><p className="text-muted-foreground text-sm">Ikke medlem av noen grupper</p></div>}
+          </div>
+        )}
+
+        {activeTab === "about" && (
+          <div className="rounded-2xl border border-border/15 bg-card/60 p-6 space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Briefcase size={9} /> Rolle / Tittel</p>
+                <p className="text-sm font-medium mt-0.5">{profile.title || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Building2 size={9} /> Avdeling</p>
+                <p className="text-sm font-medium mt-0.5">{profile.department || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Star size={9} /> Spesialisering</p>
+                <p className="text-sm font-medium mt-0.5">{profile.specialty || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
+              </div>
+              {profile.bio && (
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Bio</p>
+                  <p className="text-sm mt-0.5 text-foreground/80">{profile.bio}</p>
+                </div>
+              )}
+              <div className="sm:col-span-2">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Heart size={9} /> Interesser</p>
+                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  {(profile.interests && profile.interests.length > 0) ? profile.interests.map((interest, i) => (
+                    <span key={i} className="px-2.5 py-1 rounded-full bg-accent/10 text-accent text-xs">{interest}</span>
+                  )) : <span className="text-sm text-muted-foreground/50 italic">Ingen interesser lagt til</span>}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
