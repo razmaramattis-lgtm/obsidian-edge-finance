@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
-import { useSection, SECTION_LIST } from "@/contexts/SectionContext";
+import { useSection, SECTION_LIST, SECTIONS } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
@@ -17,6 +17,15 @@ const groupSectionMap: Record<string, string> = {
   "Markedsføring & Vekst": "/markedsforing",
   "IT & Utvikling": "/it",
   "Kurs & Opplæring": "/regnskap",
+};
+
+/** Maps tjenester group label → SectionId for accent colors */
+const groupSectionIdMap: Record<string, string> = {
+  "Regnskap & Økonomi": "regnskap",
+  "HR & Personal": "hr",
+  "Markedsføring & Vekst": "markedsforing",
+  "IT & Utvikling": "it",
+  "Kurs & Opplæring": "regnskap",
 };
 
 const tjenesterGroups = [
@@ -172,25 +181,38 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </button>
               <DropdownPanel open={tjenesterOpen} className="fixed top-[72px] left-0 right-0 bg-card/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl p-6">
                 <div className="container mx-auto">
-                  <div className={`grid gap-6`} style={{ gridTemplateColumns: `repeat(${Math.min(visibleTjenesterGroups.length, 5)}, 1fr)` }}>
-                    {visibleTjenesterGroups.map((group) => (
-                      <div key={group.label}>
-                        <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>
-                        <div className="flex flex-col gap-0.5">
-                          {group.items.map((item) => (
-                            <Link key={item.href} to={tjenesterPath(item.href, group.label)} onClick={() => setTjenesterOpen(false)}
-                              className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
-                            >
-                              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
-                                <item.icon size={13} className="text-primary" strokeWidth={1.5} />
-                              </div>
-                              <span className="text-[12.5px] text-foreground/80 group-hover:text-foreground transition-colors duration-200 leading-tight">{item.title}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                   <div className={`grid gap-6`} style={{ gridTemplateColumns: `repeat(${Math.min(visibleTjenesterGroups.length, 5)}, 1fr)` }}>
+                     {visibleTjenesterGroups.map((group) => {
+                       const sId = groupSectionIdMap[group.label];
+                       const accent = sId && !isInSection ? SECTIONS[sId as keyof typeof SECTIONS]?.accent : null;
+                       const accentColor = accent ? `hsl(${accent.h} ${accent.s}% ${accent.l}%)` : undefined;
+                       return (
+                         <div key={group.label}>
+                           <p
+                             className={`text-[10px] tracking-[0.35em] uppercase px-2.5 mb-2 font-medium ${accent ? "" : "text-foreground/50"}`}
+                             style={accent ? { color: accentColor } : undefined}
+                           >
+                             {group.label}
+                           </p>
+                           <div className="flex flex-col gap-0.5">
+                             {group.items.map((item) => (
+                               <Link key={item.href} to={tjenesterPath(item.href, group.label)} onClick={() => setTjenesterOpen(false)}
+                                 className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
+                               >
+                                 <div
+                                   className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 group-hover:brightness-125 transition-all duration-200"
+                                   style={{ backgroundColor: accent ? `hsl(${accent.h} ${accent.s}% ${accent.l}% / 0.12)` : undefined }}
+                                 >
+                                   <item.icon size={13} className={accent ? "" : "text-primary"} style={accent ? { color: accentColor } : undefined} strokeWidth={1.5} />
+                                 </div>
+                                 <span className="text-[12.5px] text-foreground/80 group-hover:text-foreground transition-colors duration-200 leading-tight">{item.title}</span>
+                               </Link>
+                             ))}
+                           </div>
+                         </div>
+                       );
+                     })}
+                   </div>
                   <div className="mt-3 pt-3 border-t border-border/15">
                     <Link to={sp("/tjenester")} onClick={() => setTjenesterOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle tjenester →</Link>
                   </div>
