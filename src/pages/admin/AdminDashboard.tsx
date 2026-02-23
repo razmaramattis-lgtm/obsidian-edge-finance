@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, Reorder } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
+import { useBrowserNotifications } from "@/hooks/useBrowserNotifications";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
@@ -107,8 +108,15 @@ function saveNavOrder(order: Panel[]) {
 const AdminDashboard = () => {
   const { profile, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [activePanel, setActivePanel] = useState<Panel>("overview");
-  const [panelContext, setPanelContext] = useState<Record<string, string> | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activePanel, setActivePanel] = useState<Panel>(() => {
+    const p = searchParams.get("panel");
+    return (p && DEFAULT_NAV_ITEMS.some(i => i.id === p)) ? p as Panel : "overview";
+  });
+  const [panelContext, setPanelContext] = useState<Record<string, string> | null>(() => {
+    const tab = searchParams.get("tab");
+    return tab ? { tab } : null;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingSidebar, setEditingSidebar] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -117,6 +125,17 @@ const AdminDashboard = () => {
   const notifications = useAdminNotifications();
   const [wsUnread, setWsUnread] = useState(0);
   const [grantedPanels, setGrantedPanels] = useState<Set<string>>(new Set());
+
+  // Enable native browser/phone push notifications
+  useBrowserNotifications(profile?.id);
+
+  // Sync URL params when panel changes
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (activePanel !== "overview") params.panel = activePanel;
+    if (panelContext?.tab) params.tab = panelContext.tab;
+    setSearchParams(params, { replace: true });
+  }, [activePanel, panelContext, setSearchParams]);
 
   // Fetch workspace notification count
   useEffect(() => {

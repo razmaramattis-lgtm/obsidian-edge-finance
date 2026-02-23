@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -18,6 +18,7 @@ import PostReactions from "@/components/workspace/PostReactions";
 import ProfileEditView from "@/components/workspace/ProfileEditView";
 import NotificationBell from "@/components/workspace/NotificationBell";
 import { useWorkspaceNotifications } from "@/hooks/useWorkspaceNotifications";
+import { useBrowserNotifications } from "@/hooks/useBrowserNotifications";
 import { usePresence } from "@/hooks/usePresence";
 import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
@@ -28,7 +29,9 @@ import ReactMarkdown from "react-markdown";
 const Workspace = () => {
   const { user, profile, isAdmin, isCustomer } = useAuth();
   const navigate = useNavigate();
-  const [view, setView] = useState<View>("feed");
+  const [searchParams] = useSearchParams();
+  const initialView = searchParams.get("view") as View | null;
+  const [view, setView] = useState<View>(initialView && ["feed", "groups", "dms", "friends", "profile", "conference"].includes(initialView) ? initialView : "feed");
   const [composing, setComposing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
@@ -40,6 +43,7 @@ const Workspace = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<Profile | null>(null);
   const wsNotifs = useWorkspaceNotifications(profile?.id);
+  useBrowserNotifications(profile?.id);
   const presence = usePresence(profile?.id);
 
   useEffect(() => {

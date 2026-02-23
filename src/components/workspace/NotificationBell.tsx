@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Bell, Check, MessageCircle, Newspaper, Users, Heart, UserPlus, X } from "lucide-react";
+import { Bell, Check, MessageCircle, Newspaper, Users, Heart, UserPlus, X, Mail, CalendarDays, Inbox, Handshake, HelpCircle } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import type { WsNotification } from "@/hooks/useWorkspaceNotifications";
 import { timeAgo } from "./helpers";
@@ -23,6 +23,13 @@ const typeIcon = (type: string) => {
     case "dm_message": return <MessageCircle size={12} className="text-primary" />;
     case "chat_message": return <MessageCircle size={12} className="text-secondary" />;
     case "friend_request": return <UserPlus size={12} className="text-accent" />;
+    case "admin_contact": return <Mail size={12} className="text-primary" />;
+    case "admin_booking": return <CalendarDays size={12} className="text-accent" />;
+    case "admin_advisor": return <Users size={12} className="text-primary" />;
+    case "admin_partner": return <Inbox size={12} className="text-accent" />;
+    case "admin_invitation": return <UserPlus size={12} className="text-primary" />;
+    case "admin_benefit": return <Handshake size={12} className="text-accent" />;
+    case "admin_feedback": return <HelpCircle size={12} className="text-primary" />;
     default: return <Bell size={12} className="text-muted-foreground" />;
   }
 };
@@ -36,6 +43,13 @@ const typeLabel = (type: string) => {
     case "dm_message": return "Direktemelding";
     case "chat_message": return "Chatmelding";
     case "friend_request": return "Venneforespørsel";
+    case "admin_contact": return "Henvendelse";
+    case "admin_booking": return "Booking";
+    case "admin_advisor": return "Rådgiver";
+    case "admin_partner": return "Avtale";
+    case "admin_invitation": return "Invitasjon";
+    case "admin_benefit": return "Fordelsavtale";
+    case "admin_feedback": return "Kontohjelp";
     default: return "Varsling";
   }
 };
@@ -53,21 +67,34 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
   }, []);
 
   const handleClick = (n: WsNotification) => {
-    // For DMs, don't mark read here - only when chat is opened
-    if (n.type !== "dm_message") {
-      onMarkRead(n.id);
+    onMarkRead(n.id);
+
+    // Admin notifications → navigate to admin dashboard
+    if (n.type.startsWith("admin_")) {
+      const panelMap: Record<string, string> = {
+        admin_contact: "contact_submissions",
+        admin_booking: "bookings",
+        admin_advisor: "advisor_requests",
+        admin_partner: "partner_requests",
+        admin_invitation: "employee_invitations",
+        admin_benefit: "benefit_applications",
+        admin_feedback: "org_resources",
+      };
+      const panel = panelMap[n.type] || "overview";
+      const params = n.type === "admin_feedback" ? `?panel=${panel}&tab=account_feedback` : `?panel=${panel}`;
+      window.location.href = `/admin/dashboard${params}`;
+      setOpen(false);
+      return;
     }
 
-    // Navigate to the right place
+    // Workspace notifications
     if (n.type === "feed_post" || n.type === "feed_comment" || n.type === "feed_reaction") {
       onNavigate("feed", n.reference_id || undefined);
     } else if (n.type === "group_message") {
       onNavigate("groups", n.reference_id || undefined);
     } else if (n.type === "dm_message") {
-      onMarkRead(n.id);
       onNavigate("dms", n.reference_id || undefined);
     } else if (n.type === "friend_request") {
-      onMarkRead(n.id);
       onNavigate("friends");
     }
     setOpen(false);
