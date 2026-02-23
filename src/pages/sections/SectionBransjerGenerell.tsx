@@ -195,7 +195,7 @@ const SectionBransjerGenerell = () => {
       <Helmet>
         <title>{c.metaTitle}</title>
         <meta name="description" content={c.metaDesc} />
-        <link rel="canonical" href={`https://avargo.no${sp("/bransjer/alle")}`} />
+        <link rel="canonical" href={`https://avargo.no${sp("/bransjer")}`} />
       </Helmet>
 
       {/* HERO */}
@@ -215,8 +215,8 @@ const SectionBransjerGenerell = () => {
                 {c.ctaButton}
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link to={sp("/bransjer")} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
-                Se bransjeoversikt
+              <Link to={sp("/tjenester")} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
+                Se alle tjenester
               </Link>
             </div>
           </motion.div>
