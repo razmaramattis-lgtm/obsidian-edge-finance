@@ -20,6 +20,7 @@ const typeIcon = (type: string) => {
     case "feed_reaction": return <Heart size={12} className="text-destructive" />;
     case "group_message": return <Users size={12} className="text-secondary" />;
     case "dm_message": return <MessageCircle size={12} className="text-primary" />;
+    case "chat_message": return <MessageCircle size={12} className="text-secondary" />;
     case "friend_request": return <UserPlus size={12} className="text-accent" />;
     default: return <Bell size={12} className="text-muted-foreground" />;
   }
@@ -32,6 +33,7 @@ const typeLabel = (type: string) => {
     case "feed_reaction": return "Reagerte";
     case "group_message": return "Gruppemelding";
     case "dm_message": return "Direktemelding";
+    case "chat_message": return "Chatmelding";
     case "friend_request": return "Venneforespørsel";
     default: return "Varsling";
   }

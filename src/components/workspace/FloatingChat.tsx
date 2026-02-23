@@ -279,7 +279,9 @@ const MiniChatWindow = ({
     // Send email if recipient is offline
     supabase.functions.invoke("notify-dm-email", {
       body: { recipientId, senderName: profile.name, messagePreview: content.trim().slice(0, 100) },
-    }).catch(() => {});
+    }).then(res => {
+      if (res.error) console.warn("notify-dm-email error:", res.error);
+    }).catch(err => console.warn("notify-dm-email failed:", err));
   };
 
   const sendFile = async (file: File) => {
