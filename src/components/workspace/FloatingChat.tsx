@@ -106,7 +106,7 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
   const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="fixed bottom-0 right-0 z-50 flex flex-col items-end pr-4 pb-4 gap-3 max-h-screen">
+    <div className="fixed bottom-0 right-0 z-50 flex flex-col items-end pr-4 pb-24 gap-3 max-h-screen">
       {/* Open mini chats - vertical stack */}
       <div className="flex flex-col items-end gap-2 overflow-y-auto max-h-[calc(100vh-120px)]" style={{ scrollbarWidth: "none" }}>
         {openChats.map(chat => (
