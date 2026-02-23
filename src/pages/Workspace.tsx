@@ -293,7 +293,11 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
           <button onClick={onBack} className="absolute top-4 left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
           <div className="absolute -top-16">
             <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
-              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="lg" />
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt={profile.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-4xl font-semibold">{profile.name.charAt(0).toUpperCase()}</div>
+              )}
             </div>
           </div>
           <div className="pt-20 pb-5 flex items-end gap-4">
