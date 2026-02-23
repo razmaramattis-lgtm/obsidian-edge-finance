@@ -113,21 +113,15 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
 
       {/* Bottom bar: bubbles + main button */}
       <div className="flex items-end gap-2">
-        {/* Conversation bubbles */}
-        {conversations.slice(0, 4).map(conv => {
-          if (openChats.some(c => c.conv.id === conv.id)) return null;
-          const count = unread[conv.id] || 0;
-          return (
-            <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
-              <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
-              </div>
-              {count > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{count}</span>
-              )}
-            </button>
-          );
-        })}
+        {/* Conversation bubbles - only show if unread */}
+        {conversations.filter(conv => !openChats.some(c => c.conv.id === conv.id) && (unread[conv.id] || 0) > 0).slice(0, 4).map(conv => (
+          <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
+            <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
+              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
+            </div>
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{unread[conv.id]}</span>
+          </button>
+        ))}
 
         {/* Close all button */}
         {openChats.length > 0 && (
