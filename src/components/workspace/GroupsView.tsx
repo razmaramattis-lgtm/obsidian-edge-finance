@@ -97,7 +97,11 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
     fetchMsgs(active.id);
     fetchMembers(active.id);
     const ch = supabase.channel(`ws-grp-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "workspace_group_messages", filter: `group_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const chReads = supabase.channel(`ws-grp-reads-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "group_message_reads" }, () => {
+      // Re-fetch read status when someone reads a message
+      fetchMsgs(active.id);
+    }).subscribe();
+    return () => { supabase.removeChannel(ch); supabase.removeChannel(chReads); };
   }, [active?.id]);
 
   const createGroup = async (e: React.FormEvent) => {
