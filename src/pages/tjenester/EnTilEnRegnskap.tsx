@@ -29,6 +29,7 @@ function generateSlots(startTime: string, endTime: string): string[] {
 }
 
 const EnTilEnRegnskap = () => {
+  const { section } = useSection();
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
