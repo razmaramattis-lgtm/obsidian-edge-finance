@@ -117,15 +117,15 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 px-6 pt-4">
+      <div className="flex gap-1 px-3 sm:px-6 pt-4">
         {([
           { id: "friends" as const, label: "Venner", icon: Users, count: friends.length },
           { id: "requests" as const, label: "Forespørsler", icon: Bell, count: pendingReceived.length },
-          { id: "find" as const, label: "Finn personer", icon: Search, count: 0 },
+          { id: "find" as const, label: "Finn", icon: Search, count: 0 },
         ]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${tab === t.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/40"}`}>
-            <t.icon size={14} /> {t.label}
-            {t.count > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold min-w-[18px] text-center">{t.count}</span>}
+          <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${tab === t.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/40"}`}>
+            <t.icon size={13} className="shrink-0" /> <span className="truncate">{t.label}</span>
+            {t.count > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold min-w-[18px] text-center shrink-0">{t.count}</span>}
           </button>
         ))}
       </div>
