@@ -47,10 +47,29 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
     setMyMembership(memberMap);
   };
 
+  const [readStatus, setReadStatus] = useState<Record<string, boolean>>({});
+
   const fetchMsgs = async (id: string) => {
     const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role, avatar_url)").eq("group_id", id).order("created_at");
-    setMessages((data as GroupMsg[]) || []);
+    const msgs = (data as GroupMsg[]) || [];
+    setMessages(msgs);
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+
+    // Mark unread messages as read
+    const otherMsgs = msgs.filter(m => m.sender_id !== profile.id);
+    if (otherMsgs.length > 0) {
+      const inserts = otherMsgs.map(m => ({ message_id: m.id, profile_id: profile.id }));
+      await supabase.from("group_message_reads" as any).upsert(inserts, { onConflict: "message_id,profile_id" });
+    }
+
+    // Fetch read status for own messages
+    const ownMsgIds = msgs.filter(m => m.sender_id === profile.id).map(m => m.id);
+    if (ownMsgIds.length > 0) {
+      const { data: reads } = await supabase.from("group_message_reads" as any).select("message_id").in("message_id", ownMsgIds).neq("profile_id", profile.id);
+      const readMap: Record<string, boolean> = {};
+      (reads || []).forEach((r: any) => { readMap[r.message_id] = true; });
+      setReadStatus(readMap);
+    }
   };
 
   const fetchMembers = async (id: string) => {
@@ -389,7 +408,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
               const mp = msg.profiles as any;
               const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
               return (
-                <div key={msg.id} className="group/msg relative">
+                <div key={msg.id} className="group/msg">
                   <MessageBubble
                     content={msg.content}
                     senderName={mp?.name}
@@ -402,9 +421,12 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
                     reactionTable="group_message_reactions"
                     fileUrl={msg.file_url}
                     fileName={msg.file_name}
+                    readAt={isOwn && readStatus[msg.id] ? "read" : null}
                   />
                   {(isOwn || isAdmin) && (
-                    <button onClick={() => deleteMsg(msg.id)} className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"><Trash2 size={12} /></button>
+                    <div className={`flex ${isOwn ? "justify-end" : "justify-start"} mt-0.5 mb-1`}>
+                      <button onClick={() => deleteMsg(msg.id)} className="opacity-0 group-hover/msg:opacity-100 px-2 py-0.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-[10px] flex items-center gap-1"><Trash2 size={10} /> Slett</button>
+                    </div>
                   )}
                 </div>
               );

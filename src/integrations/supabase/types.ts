@@ -1440,6 +1440,42 @@ export type Database = {
           },
         ]
       }
+      group_message_reads: {
+        Row: {
+          id: string
+          message_id: string
+          profile_id: string
+          read_at: string
+        }
+        Insert: {
+          id?: string
+          message_id: string
+          profile_id: string
+          read_at?: string
+        }
+        Update: {
+          id?: string
+          message_id?: string
+          profile_id?: string
+          read_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_message_reads_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_group_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_message_reads_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hms_documents: {
         Row: {
           content: string | null
