@@ -240,11 +240,79 @@ const DocumentsTab = ({ isAdmin }: { isAdmin: boolean }) => {
                     </div>
                   </div>
                   <div className="flex gap-2 shrink-0">
-                    {item.file_url && (
+                    {item.file_url ? (
                       <button onClick={async () => {
                         const { data } = await supabase.storage.from("internal-docs").createSignedUrl(item.file_url, 3600);
                         if (data?.signedUrl) window.open(data.signedUrl, "_blank");
-                      }} className="text-muted-foreground hover:text-primary transition-colors">
+                      }} className="text-muted-foreground hover:text-primary transition-colors" title="Last ned fil">
+                        <Download size={13} />
+                      </button>
+                    ) : (
+                      <button onClick={async () => {
+                        // Generate PDF from HMS chapters for this generator
+                        try {
+                          const prefix = `${item.title}:`;
+                          const { data: chapters } = await supabase
+                            .from("hms_documents")
+                            .select("title, content")
+                            .like("title", `${prefix}%`)
+                            .order("sort_order");
+                          
+                          if (!chapters || chapters.length === 0) {
+                            const { toast } = await import("sonner");
+                            toast.error("Ingen kapitler funnet for dette dokumentet");
+                            return;
+                          }
+
+                          const html2pdf = (await import("html2pdf.js")).default;
+                          const container = document.createElement("div");
+                          container.style.cssText = "font-family:'Georgia',serif;font-size:13px;line-height:1.8;color:#1a1a1a;";
+                          
+                          // Title page
+                          container.innerHTML = `
+                            <div style="text-align:center;margin-bottom:2.5em;padding-bottom:1.5em;border-bottom:2px solid #333;">
+                              <h1 style="font-size:24px;font-weight:bold;color:#000;margin-bottom:8px;">${item.title}</h1>
+                              <p style="font-size:11px;color:#888;margin-top:8px;">${new Date().toLocaleDateString("nb-NO", { year: "numeric", month: "long", day: "numeric" })}</p>
+                            </div>
+                            <div style="margin-bottom:2em;padding-bottom:1.5em;border-bottom:1px solid #ddd;">
+                              <h2 style="font-size:16px;font-weight:bold;color:#000;margin-bottom:12px;">Innholdsfortegnelse</h2>
+                              <ol style="padding-left:1.5em;color:#333;font-size:12px;line-height:2.2;">
+                                ${chapters.map(c => `<li>${c.title.replace(`${prefix} `, "")}</li>`).join("")}
+                              </ol>
+                            </div>
+                          `;
+                          
+                          chapters.forEach((ch, i) => {
+                            const chTitle = ch.title.replace(`${prefix} `, "");
+                            container.innerHTML += `
+                              <div style="${i > 0 ? 'page-break-before:always;' : ''}">
+                                <h2 style="font-size:18px;font-weight:bold;color:#000;margin-bottom:12px;">${chTitle}</h2>
+                                ${ch.content || ""}
+                              </div>
+                              ${i < chapters.length - 1 ? '<hr style="margin:2em 0;border:none;border-top:1px solid #ddd;" />' : ""}
+                            `;
+                          });
+
+                          container.innerHTML += `<div style="margin-top:3em;padding-top:1em;border-top:2px solid #333;text-align:center;font-size:10px;color:#888;"><p>${item.title} — Konfidensielt</p></div>`;
+
+                          container.style.cssText += "position:absolute;left:-9999px;top:0;width:794px;background:#fff;z-index:-1;padding:20px;";
+                          document.body.appendChild(container);
+                          
+                          await html2pdf().set({
+                            margin: [15, 18, 15, 18],
+                            filename: `${item.title}.pdf`,
+                            image: { type: "jpeg", quality: 0.98 },
+                            html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, windowWidth: 794 },
+                            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+                            pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+                          }).from(container).save();
+                          
+                          document.body.removeChild(container);
+                        } catch {
+                          const { toast } = await import("sonner");
+                          toast.error("Kunne ikke generere PDF");
+                        }
+                      }} className="text-muted-foreground hover:text-primary transition-colors" title="Last ned PDF">
                         <Download size={13} />
                       </button>
                     )}
