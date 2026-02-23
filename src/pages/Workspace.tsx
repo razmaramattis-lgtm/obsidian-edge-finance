@@ -119,7 +119,7 @@ const Workspace = () => {
 
   return (
     <PresenceContext.Provider value={presence}>
-    <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Header with search */}
       {!headerHidden && (
         <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30 sticky top-0">
@@ -211,7 +211,7 @@ const Workspace = () => {
         </aside>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main className="flex-1 overflow-hidden bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
           {view === "view-profile" && viewingProfile && <ViewProfilePage profile={viewingProfile} myProfile={profile} onBack={() => setView("feed")} onNavigate={setView} />}
           {view === "feed" && <FeedView profile={profile} />}
