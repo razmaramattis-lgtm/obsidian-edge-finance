@@ -3,10 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Download, Upload, FileText, Edit2, Search, ChevronLeft, ChevronRight,
-  BookOpen, Save, X, Eye, Check, GripVertical, Shield
+  BookOpen, Save, X, Eye, Check, GripVertical, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator
 } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 import HmsPanel from "./HmsPanel";
+import DocumentGenerator from "@/components/kunde/DocumentGenerator";
+import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
+import { personalhandbokConfig } from "@/components/kunde/generators/personalhandbok";
+import { arbeidsreglementConfig } from "@/components/kunde/generators/arbeidsreglement";
+import { varslingsrutinerConfig } from "@/components/kunde/generators/varslingsrutiner";
+import { gdprConfig } from "@/components/kunde/generators/gdpr";
+import { digitalSikkerhetConfig } from "@/components/kunde/generators/digital-sikkerhet";
+import { psykososialtConfig } from "@/components/kunde/generators/psykososialt";
 import DOMPurify from "dompurify";
 
 // ── Types ──
@@ -29,17 +37,42 @@ interface HandbookChapter {
 // ── Constants ──
 const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "Annet"];
 
-type Tab = "handbook" | "documents" | "hms";
+type Tab = "handbook" | "hms" | "documents" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
+
+const HR_TABS: { id: Tab; label: string; icon: React.ElementType; group: string }[] = [
+  { id: "handbook", label: "Avargo Håndbok", icon: BookOpen, group: "Håndbøker" },
+  { id: "hms", label: "HMS-håndbok", icon: Shield, group: "Håndbøker" },
+  { id: "documents", label: "HR-dokumenter", icon: FileText, group: "Håndbøker" },
+  { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "Generatorer" },
+  { id: "arbeidsreglement", label: "Arbeidsreglement", icon: Scale, group: "Generatorer" },
+  { id: "varslingsrutiner", label: "Varslingsrutiner", icon: AlertTriangle, group: "Generatorer" },
+  { id: "gdpr", label: "GDPR & Personvern", icon: ShieldCheck, group: "Generatorer" },
+  { id: "digital-sikkerhet", label: "Digital Sikkerhet", icon: Lock, group: "Generatorer" },
+  { id: "psykososialt", label: "Psykososialt Arbeidsmiljø", icon: Heart, group: "Generatorer" },
+  { id: "calculator", label: "Ansettelseskalkulator", icon: Calculator, group: "Verktøy" },
+];
 
 const HrPanel = () => {
   const { isAdmin } = useAuth();
   const [tab, setTab] = useState<Tab>("handbook");
 
-  const tabs: { id: Tab; label: string; icon: typeof BookOpen }[] = [
-    { id: "handbook", label: "Personalhåndbok", icon: BookOpen },
-    { id: "hms", label: "HMS-håndbok", icon: Shield },
-    { id: "documents", label: "HR-dokumenter", icon: FileText },
-  ];
+  const groups = [...new Set(HR_TABS.map(t => t.group))];
+
+  const renderTab = () => {
+    switch (tab) {
+      case "handbook": return <HandbookTab isAdmin={isAdmin} />;
+      case "hms": return <HmsPanel />;
+      case "documents": return <DocumentsTab isAdmin={isAdmin} />;
+      case "personalhandbok": return <DocumentGenerator config={personalhandbokConfig} />;
+      case "arbeidsreglement": return <DocumentGenerator config={arbeidsreglementConfig} />;
+      case "varslingsrutiner": return <DocumentGenerator config={varslingsrutinerConfig} />;
+      case "gdpr": return <DocumentGenerator config={gdprConfig} />;
+      case "digital-sikkerhet": return <DocumentGenerator config={digitalSikkerhetConfig} />;
+      case "psykososialt": return <DocumentGenerator config={psykososialtConfig} />;
+      case "calculator": return <AnsettelsesKalkulator />;
+      default: return null;
+    }
+  };
 
   return (
     <div className="space-y-5">
@@ -50,29 +83,36 @@ const HrPanel = () => {
         </div>
         <div>
           <p className="text-sm font-medium">HR & Personal</p>
-          <p className="text-[10px] text-muted-foreground">Personalhåndbok, HMS og HR-dokumenter</p>
+          <p className="text-[10px] text-muted-foreground">Håndbøker, dokumentgeneratorer og verktøy</p>
         </div>
       </div>
 
-      {/* Tab bar */}
-      <div className="flex gap-1 p-1 rounded-xl bg-muted/30 border border-border/10 w-fit">
-        {tabs.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-              tab === t.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <t.icon size={13} />
-            {t.label}
-          </button>
+      {/* Tab bar with groups */}
+      <div className="flex flex-wrap gap-x-4 gap-y-2 p-2 rounded-xl bg-muted/30 border border-border/10">
+        {groups.map(group => (
+          <div key={group} className="flex items-center gap-1">
+            <span className="text-[9px] tracking-widest uppercase text-muted-foreground/40 mr-1 hidden sm:inline">{group}</span>
+            {HR_TABS.filter(t => t.group === group).map(t => {
+              const Icon = t.icon;
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap ${
+                    active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  <Icon size={12} />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         ))}
       </div>
 
-      {tab === "handbook" && <HandbookTab isAdmin={isAdmin} />}
-      {tab === "hms" && <HmsPanel />}
-      {tab === "documents" && <DocumentsTab isAdmin={isAdmin} />}
+      {renderTab()}
     </div>
   );
 };
