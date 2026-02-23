@@ -434,9 +434,9 @@ const AdminDashboard = () => {
           >
             <Menu size={20} />
           </button>
-          <h1 className="font-heading text-lg flex-1">
+          <Link to="/" className="font-heading text-lg flex-1 hover:text-primary transition-colors">
             {visibleItems.find(i => i.id === activePanel)?.label ?? "Oversikt"}
-          </h1>
+          </Link>
 
           <Link
             to="/"
