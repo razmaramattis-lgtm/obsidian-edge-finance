@@ -8,7 +8,11 @@ export interface Profile {
   department?: string | null;
   specialty?: string | null;
   interests?: string[];
+  background_url?: string | null;
+  bio?: string | null;
 }
+
+export type View = "feed" | "groups" | "dms" | "conference" | "profile" | "friends" | "view-profile";
 
 export interface Post {
   id: string;
@@ -78,4 +82,4 @@ export interface Friend {
   receiver?: Profile;
 }
 
-export type View = "feed" | "groups" | "dms" | "conference" | "profile" | "friends";
+// View type moved to Profile section above

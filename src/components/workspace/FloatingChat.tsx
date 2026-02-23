@@ -1,9 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, X, Minus, Send, Paperclip } from "lucide-react";
+import {
+  MessageCircle, X, Minus, Send, Trash2, Pencil, Phone, Video,
+  Paperclip, Image, XCircle,
+} from "lucide-react";
 import UserAvatar from "./UserAvatar";
+import EmojiPicker from "./EmojiPicker";
+import GifPicker from "./GifPicker";
+import MessageReactions from "./MessageReactions";
+import VideoCall from "./VideoCall";
 import type { Profile, DmConv, DmMsg } from "./types";
-import { formatTime, uploadFile } from "./helpers";
+import { formatTime, uploadFile, isGifUrl } from "./helpers";
 
 interface FloatingChatProps {
   profile: Profile;
@@ -22,7 +29,6 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
   const [unread, setUnread] = useState<Record<string, number>>({});
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const endRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const fetchConvs = async () => {
     const { data } = await supabase.from("dm_conversations").select("*").order("updated_at", { ascending: false });
@@ -41,17 +47,14 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
 
   useEffect(() => { fetchConvs(); fetchProfiles(); }, []);
 
-  // Listen for new DMs for unread counts
   useEffect(() => {
     const ch = supabase.channel("floating-dm-notif").on("postgres_changes", { event: "INSERT", schema: "public", table: "dm_messages" }, (payload: any) => {
       const msg = payload.new;
       if (msg.sender_id !== profile.id) {
-        // Check if chat is open
         const isOpen = openChats.some(c => c.conv.id === msg.conversation_id && !c.minimized);
         if (!isOpen) {
           setUnread(prev => ({ ...prev, [msg.conversation_id]: (prev[msg.conversation_id] || 0) + 1 }));
         }
-        // Update open chat messages
         setOpenChats(prev => prev.map(c => c.conv.id === msg.conversation_id ? { ...c, messages: [...c.messages, msg] } : c));
       }
     }).subscribe();
@@ -88,55 +91,59 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
     setOpenChats(prev => prev.filter(c => c.conv.id !== convId));
   };
 
-  const sendMsg = async (convId: string, content: string) => {
-    if (!content.trim()) return;
-    const msg = { conversation_id: convId, sender_id: profile.id, content: content.trim() };
-    await supabase.from("dm_messages").insert([msg]);
-    // Optimistic update
-    setOpenChats(prev => prev.map(c => c.conv.id === convId ? { ...c, messages: [...c.messages, { ...msg, id: crypto.randomUUID(), created_at: new Date().toISOString() } as DmMsg] } : c));
-  };
+  const closeAll = () => setOpenChats([]);
 
   const totalUnread = Object.values(unread).reduce((a, b) => a + b, 0);
   const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="fixed bottom-0 right-0 z-50 flex items-end gap-3 pr-4 pb-4">
-      {/* Open mini chats */}
-      {openChats.map(chat => (
-        <MiniChatWindow
-          key={chat.conv.id}
-          chat={chat}
-          profile={profile}
-          onClose={() => closeChat(chat.conv.id)}
-          onMinimize={() => setOpenChats(prev => prev.map(c => c.conv.id === chat.conv.id ? { ...c, minimized: !c.minimized } : c))}
-          onSend={(content) => sendMsg(chat.conv.id, content)}
-          endRefs={endRefs}
-        />
-      ))}
+    <div className="fixed bottom-0 right-0 z-50 flex flex-col items-end pr-4 pb-4 gap-3 max-h-screen">
+      {/* Open mini chats - vertical stack */}
+      <div className="flex flex-col items-end gap-2 overflow-y-auto max-h-[calc(100vh-120px)]" style={{ scrollbarWidth: "none" }}>
+        {openChats.map(chat => (
+          <MiniChatWindow
+            key={chat.conv.id}
+            chat={chat}
+            profile={profile}
+            onClose={() => closeChat(chat.conv.id)}
+            onMinimize={() => setOpenChats(prev => prev.map(c => c.conv.id === chat.conv.id ? { ...c, minimized: !c.minimized } : c))}
+          />
+        ))}
+      </div>
 
-      {/* Active conversation bubbles */}
-      {conversations.slice(0, 4).map(conv => {
-        if (openChats.some(c => c.conv.id === conv.id)) return null;
-        const count = unread[conv.id] || 0;
-        return (
-          <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
-            <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
-            </div>
-            {count > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{count}</span>
-            )}
+      {/* Bottom bar: bubbles + main button */}
+      <div className="flex items-end gap-2">
+        {/* Conversation bubbles */}
+        {conversations.slice(0, 4).map(conv => {
+          if (openChats.some(c => c.conv.id === conv.id)) return null;
+          const count = unread[conv.id] || 0;
+          return (
+            <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
+              <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
+                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
+              </div>
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{count}</span>
+              )}
+            </button>
+          );
+        })}
+
+        {/* Close all button */}
+        {openChats.length > 0 && (
+          <button onClick={closeAll} className="w-10 h-10 rounded-full bg-muted/80 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition-all shadow-lg" title="Lukk alle">
+            <XCircle size={18} />
           </button>
-        );
-      })}
-
-      {/* Main chat button */}
-      <button onClick={() => setShowPicker(!showPicker)} className="relative w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all active:scale-95 flex items-center justify-center">
-        <MessageCircle size={22} />
-        {totalUnread > 0 && (
-          <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-white text-[11px] font-bold flex items-center justify-center">{totalUnread}</span>
         )}
-      </button>
+
+        {/* Main chat button */}
+        <button onClick={() => setShowPicker(!showPicker)} className="relative w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all active:scale-95 flex items-center justify-center">
+          <MessageCircle size={22} />
+          {totalUnread > 0 && (
+            <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-white text-[11px] font-bold flex items-center justify-center">{totalUnread}</span>
+          )}
+        </button>
+      </div>
 
       {/* Contact picker */}
       {showPicker && (
@@ -147,7 +154,6 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
             </div>
           </div>
           <div className="max-h-72 overflow-y-auto p-2 space-y-0.5">
-            {/* Recent conversations */}
             {!searchQuery && conversations.slice(0, 5).map(conv => (
               <button key={conv.id} onClick={() => openChat(conv)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
                 <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="sm" online />
@@ -170,30 +176,83 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
 
 // ─── Mini Chat Window ───
 const MiniChatWindow = ({
-  chat, profile, onClose, onMinimize, onSend, endRefs,
+  chat, profile, onClose, onMinimize,
 }: {
   chat: MiniChat;
   profile: Profile;
   onClose: () => void;
   onMinimize: () => void;
-  onSend: (content: string) => void;
-  endRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
 }) => {
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const [messages, setMessages] = useState<DmMsg[]>(chat.messages);
+  const [callActive, setCallActive] = useState(false);
+  const [callWithVideo, setCallWithVideo] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setMessages(chat.messages); }, [chat.messages]);
 
   useEffect(() => {
     if (!chat.minimized) {
       setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     }
-  }, [chat.messages.length, chat.minimized]);
+  }, [messages.length, chat.minimized]);
+
+  // Realtime
+  useEffect(() => {
+    const ch = supabase.channel(`mini-chat-${chat.conv.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${chat.conv.id}` }, async () => {
+      const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", chat.conv.id).order("created_at").limit(50);
+      setMessages((data as DmMsg[]) || []);
+    }).subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [chat.conv.id]);
+
+  const send = async (content: string) => {
+    if (!content.trim()) return;
+    await supabase.from("dm_messages").insert([{ conversation_id: chat.conv.id, sender_id: profile.id, content: content.trim() }]);
+  };
+
+  const sendFile = async (file: File) => {
+    const result = await uploadFile(supabase, "workspace-uploads", "dms", file);
+    if (result) {
+      await supabase.from("dm_messages").insert([{ conversation_id: chat.conv.id, sender_id: profile.id, content: `📎 ${result.name}`, file_url: result.url, file_name: result.name }]);
+    }
+  };
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) sendFile(f);
+    e.target.value = "";
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    onSend(text.trim());
+    send(text.trim());
     setText("");
   };
+
+  const deleteMsg = async (id: string) => {
+    await supabase.from("dm_messages").delete().eq("id", id);
+  };
+
+  const startEdit = (msg: DmMsg) => {
+    setEditingId(msg.id);
+    setEditText(msg.content);
+  };
+
+  const saveEdit = async () => {
+    if (!editingId || !editText.trim()) return;
+    // DM messages don't have an update policy by default, so we delete and re-insert
+    // Actually let's just show edit UI but note dm_messages can't be updated per RLS
+    // We'll skip edit for DMs that lack UPDATE policy - just allow delete
+    setEditingId(null);
+  };
+
+  const isImage = (url: string) => /\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
 
   if (chat.minimized) {
     return (
@@ -204,36 +263,88 @@ const MiniChatWindow = ({
   }
 
   return (
-    <div className="w-80 h-96 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
-      {/* Header */}
-      <div className="flex items-center gap-2.5 px-3 py-2.5 border-b border-border/10 bg-card/80">
-        <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" online />
-        <span className="text-xs font-semibold flex-1 truncate">{chat.conv.other?.name}</span>
-        <button onClick={onMinimize} className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><Minus size={14} /></button>
-        <button onClick={onClose} className="p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><X size={14} /></button>
-      </div>
+    <>
+      <div className="w-80 h-[420px] bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
+        {/* Header */}
+        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/10 bg-card/80 shrink-0">
+          <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" online />
+          <span className="text-xs font-semibold flex-1 truncate">{chat.conv.other?.name}</span>
+          <button onClick={() => { setCallWithVideo(false); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-green-500 hover:bg-green-500/10 transition-all" title="Ring"><Phone size={13} /></button>
+          <button onClick={() => { setCallWithVideo(true); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Videosamtale"><Video size={13} /></button>
+          <button onClick={onMinimize} className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><Minus size={14} /></button>
+          <button onClick={onClose} className="p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><X size={14} /></button>
+        </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {chat.messages.map(msg => {
-          const isOwn = msg.sender_id === profile.id;
-          return (
-            <div key={msg.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-xs ${isOwn ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md" : "bg-muted/50 text-foreground rounded-bl-md"}`}>
-                {msg.content}
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+          {messages.map(msg => {
+            const isOwn = msg.sender_id === profile.id;
+            const gif = isGifUrl(msg.content);
+            return (
+              <div key={msg.id} className={`flex ${isOwn ? "justify-end" : "justify-start"} group/msg relative`}>
+                <div className="max-w-[80%]">
+                  {gif ? (
+                    <img src={msg.content} alt="GIF" className="max-h-32 rounded-xl" loading="lazy" />
+                  ) : (
+                    <div className={`px-3 py-2 rounded-2xl text-xs ${isOwn ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md" : "bg-muted/50 text-foreground rounded-bl-md"}`}>
+                      {msg.content}
+                    </div>
+                  )}
+                  {msg.file_url && (
+                    <div className="mt-1">
+                      {isImage(msg.file_url) ? (
+                        <a href={msg.file_url} target="_blank" rel="noopener noreferrer"><img src={msg.file_url} alt="" className="max-h-32 rounded-xl" loading="lazy" /></a>
+                      ) : (
+                        <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-[9px]">📎 {msg.file_name || "Fil"}</a>
+                      )}
+                    </div>
+                  )}
+                  {/* Reactions */}
+                  <div className="mt-0.5">
+                    <MessageReactions messageId={msg.id} profileId={profile.id} table="dm_message_reactions" size="sm" />
+                  </div>
+                  {/* Actions */}
+                  {isOwn && (
+                    <div className="absolute top-0 right-0 opacity-0 group-hover/msg:opacity-100 flex gap-0.5 transition-all">
+                      <button onClick={() => deleteMsg(msg.id)} className="p-0.5 rounded text-destructive/60 hover:text-destructive"><Trash2 size={10} /></button>
+                    </div>
+                  )}
+                </div>
               </div>
+            );
+          })}
+          <div ref={endRef} />
+        </div>
+
+        {/* Input */}
+        <form onSubmit={handleSubmit} className="p-2 border-t border-border/10 shrink-0">
+          <div className="flex items-center gap-0.5 bg-muted/30 rounded-2xl border border-border/15 pr-1">
+            <div className="flex items-center pl-0.5">
+              <EmojiPicker onSelect={e => setText(prev => prev + e)} />
+              <GifPicker onSelect={url => send(url)} />
+              <button type="button" onClick={() => fileRef.current?.click()} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Paperclip size={13} /></button>
+              <button type="button" onClick={() => imageRef.current?.click()} className="p-1.5 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={13} /></button>
+              <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
+              <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
             </div>
-          );
-        })}
-        <div ref={endRef} />
+            <input value={text} onChange={e => setText(e.target.value)} placeholder="Skriv melding…" className="flex-1 h-9 bg-transparent px-1.5 text-xs focus:outline-none placeholder:text-muted-foreground/40" />
+            <button type="submit" disabled={!text.trim()} className="h-7 w-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-30 transition-all"><Send size={11} /></button>
+          </div>
+        </form>
       </div>
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="p-2 border-t border-border/10 flex gap-1.5">
-        <input value={text} onChange={e => setText(e.target.value)} placeholder="Skriv melding…" className="flex-1 h-8 bg-muted/30 rounded-xl px-3 text-xs focus:outline-none border border-border/15 focus:ring-1 focus:ring-primary/20" />
-        <button type="submit" disabled={!text.trim()} className="h-8 w-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-30 transition-all"><Send size={12} /></button>
-      </form>
-    </div>
+      {callActive && (
+        <VideoCall
+          conversationId={chat.conv.id}
+          profileId={profile.id}
+          profileName={profile.name}
+          profileAvatar={profile.avatar_url}
+          otherName={chat.conv.other?.name}
+          otherAvatar={chat.conv.other?.avatar_url}
+          onClose={() => setCallActive(false)}
+        />
+      )}
+    </>
   );
 };
 

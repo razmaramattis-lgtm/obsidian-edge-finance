@@ -194,17 +194,27 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPosts = async () => {
     const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(50);
-    setPosts((data as any[]) || []);
+    const ps = (data as any[]) || [];
+    setPosts(ps);
+    // Fetch comment counts
+    const counts: Record<string, number> = {};
+    for (const p of ps) {
+      const { count } = await supabase.from("workspace_post_comments").select("*", { count: "exact", head: true }).eq("post_id", p.id);
+      counts[p.id] = count || 0;
+    }
+    setCommentCounts(counts);
   };
 
   useEffect(() => {
     fetchPosts();
     const ch = supabase.channel("ws-posts").on("postgres_changes", { event: "*", schema: "public", table: "workspace_posts" }, () => fetchPosts()).subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const ch2 = supabase.channel("ws-comments-count").on("postgres_changes", { event: "*", schema: "public", table: "workspace_post_comments" }, () => fetchPosts()).subscribe();
+    return () => { supabase.removeChannel(ch); supabase.removeChannel(ch2); };
   }, []);
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -344,7 +354,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                 </div>
                 <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
                   <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
-                    <MessageCircle size={15} /> Kommenter
+                    <MessageCircle size={15} /> Kommenter {commentCounts[post.id] > 0 && <span className="px-1.5 py-0.5 rounded-full bg-muted/50 text-[10px] font-medium">{commentCounts[post.id]}</span>}
                   </button>
                 </div>
                 {expandedPost === post.id && <PostComments postId={post.id} profileId={profile.id} profileData={profile} />}

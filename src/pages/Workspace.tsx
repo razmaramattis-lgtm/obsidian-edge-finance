@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Users, MessageSquare, Video, User, UserPlus, Search,
   PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
-  Globe, Lock, MapPin, Bell, Briefcase, Building2, Star, Heart,
+  Globe, Lock, MapPin, Briefcase, Building2, Star, Heart,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
 import FeedView from "@/components/workspace/FeedView";
@@ -19,6 +19,7 @@ import ProfileEditView from "@/components/workspace/ProfileEditView";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
+
 // ─── Main ───
 const Workspace = () => {
   const { user, profile, isAdmin, isCustomer } = useAuth();
@@ -27,12 +28,15 @@ const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Profile[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [viewingProfile, setViewingProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     if (!user) navigate("/admin/logg-inn");
   }, [user]);
 
-  // Fetch pending friend requests count
   useEffect(() => {
     if (!profile) return;
     const fetchPending = async () => {
@@ -44,6 +48,24 @@ const Workspace = () => {
     return () => { supabase.removeChannel(ch); };
   }, [profile?.id]);
 
+  // Global profile search
+  useEffect(() => {
+    if (!searchQuery.trim()) { setSearchResults([]); setShowSearchResults(false); return; }
+    setShowSearchResults(true);
+    const timer = setTimeout(async () => {
+      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email").ilike("name", `%${searchQuery}%`).limit(10);
+      setSearchResults((data as Profile[]) || []);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const openProfile = (p: Profile) => {
+    setViewingProfile(p);
+    setView("view-profile");
+    setSearchQuery("");
+    setShowSearchResults(false);
+  };
+
   if (!user || !profile) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
@@ -53,7 +75,6 @@ const Workspace = () => {
     </div>
   );
 
-  // Customer can only see: profile, feed (public groups), messages, friends
   const navItems = isCustomer
     ? [
         { id: "profile" as View, icon: User, label: "Profil", badge: 0 },
@@ -72,7 +93,7 @@ const Workspace = () => {
 
   return (
     <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
-      {/* Header */}
+      {/* Header with search */}
       {!headerHidden && (
         <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30">
           <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={18} /></button>
@@ -83,7 +104,33 @@ const Workspace = () => {
               <p className="text-[10px] text-muted-foreground leading-tight">Samhandling & kommunikasjon</p>
             </div>
           </div>
-          <div className="flex-1" />
+          {/* Search */}
+          <div className="flex-1 max-w-md mx-4 relative">
+            <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
+              <Search size={14} className="text-muted-foreground shrink-0" />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
+                onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
+                placeholder="Søk etter personer…"
+                className="h-9 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40"
+              />
+            </div>
+            {showSearchResults && searchResults.length > 0 && (
+              <div className="absolute top-11 left-0 right-0 bg-card border border-border/30 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+                {searchResults.map(p => (
+                  <button key={p.id} onMouseDown={() => openProfile(p)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-all text-left">
+                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{p.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{p.title || roleLabel(p.role)} {p.department ? `· ${p.department}` : ""}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
           <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
         </header>
@@ -105,7 +152,7 @@ const Workspace = () => {
           )}
           <nav className="flex-1 overflow-y-auto p-2 space-y-1">
             {navItems.map(item => (
-              <button key={item.id} onClick={() => setView(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${view === item.id ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
+              <button key={item.id} onClick={() => { setView(item.id); setViewingProfile(null); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${view === item.id ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
                 <item.icon size={17} strokeWidth={view === item.id ? 2 : 1.5} />
                 {sidebarOpen && (
                   <span className={`flex-1 text-left ${view === item.id ? "font-medium" : "font-light"}`}>{item.label}</span>
@@ -132,6 +179,7 @@ const Workspace = () => {
         {/* Content */}
         <main className="flex-1 overflow-hidden bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
+          {view === "view-profile" && viewingProfile && <ViewProfilePage profile={viewingProfile} myProfile={profile} onBack={() => setView("feed")} onNavigate={setView} />}
           {view === "feed" && <FeedView profile={profile} />}
           {view === "groups" && <GroupsView profile={profile} />}
           {view === "dms" && <DmsView profile={profile} />}
@@ -140,8 +188,92 @@ const Workspace = () => {
         </main>
       </div>
 
-      {/* Floating chat widget */}
       <FloatingChat profile={profile} />
+    </div>
+  );
+};
+
+// ─── View Other Profile Page ───
+const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: Profile; myProfile: Profile; onBack: () => void; onNavigate: (v: View) => void }) => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [friendCount, setFriendCount] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(20);
+      setPosts((data as any[]) || []);
+    })();
+    (async () => {
+      const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("status", "accepted").or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
+      setFriendCount(count || 0);
+    })();
+  }, [profile.id]);
+
+  return (
+    <div className="h-full overflow-y-auto">
+      <div className="relative">
+        <div className="h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
+        <div className="max-w-3xl mx-auto px-6 relative">
+          <button onClick={onBack} className="absolute top-4 left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
+          <div className="absolute -top-16">
+            <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
+              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="lg" />
+            </div>
+          </div>
+          <div className="pt-20 pb-5 flex items-end gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
+              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{profile.title || roleLabel(profile.role)}</span>
+                {profile.department && <span className="flex items-center gap-1 text-xs"><Building2 size={11} /> {profile.department}</span>}
+                {profile.specialty && <span className="flex items-center gap-1 text-xs"><Star size={11} /> {profile.specialty}</span>}
+              </div>
+            </div>
+            <button onClick={() => onNavigate("dms")} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
+              <MessageSquare size={16} /> Melding
+            </button>
+          </div>
+          <div className="flex items-center gap-8 pb-4 border-b border-border/15">
+            <div className="text-center"><p className="text-lg font-bold">{posts.length}</p><p className="text-xs text-muted-foreground">Innlegg</p></div>
+            <div className="text-center"><p className="text-lg font-bold">{friendCount}</p><p className="text-xs text-muted-foreground">Venner</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
+        {/* Bio & interests */}
+        {(profile.bio || (profile.interests && profile.interests.length > 0)) && (
+          <div className="rounded-2xl border border-border/15 bg-card/60 p-5 space-y-3">
+            {profile.bio && <p className="text-sm text-foreground/80">{profile.bio}</p>}
+            {profile.interests && profile.interests.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {profile.interests.map((i, idx) => (
+                  <span key={idx} className="px-2.5 py-1 rounded-full bg-accent/10 text-accent text-xs">{i}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Posts */}
+        <div className="space-y-5">
+          {posts.map(post => {
+            const ap = post.profiles as any;
+            return (
+              <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
+                <div className="flex items-start gap-3 p-5 pb-0">
+                  <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
+                  <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
+                </div>
+                {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
+                {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
+                <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
+              </article>
+            );
+          })}
+          {posts.length === 0 && <div className="text-center py-12"><p className="text-muted-foreground text-sm">Ingen innlegg ennå</p></div>}
+        </div>
+      </div>
     </div>
   );
 };
@@ -152,7 +284,6 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [myGroupIds, setMyGroupIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"feed" | "groups" | "about">("feed");
-  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [friendCount, setFriendCount] = useState(0);
 
   useEffect(() => {
@@ -167,10 +298,6 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
       setMyGroupIds((memberships || []).map((m: any) => m.group_id));
     })();
     (async () => {
-      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name").limit(20);
-      setAllProfiles((data as Profile[]) || []);
-    })();
-    (async () => {
       const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("status", "accepted").or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
       setFriendCount(count || 0);
     })();
@@ -179,7 +306,7 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
   return (
     <div className="h-full overflow-y-auto">
       <div className="relative">
-        <div className="h-48 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/10" />
+        <div className="h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
         <div className="max-w-3xl mx-auto px-6 relative">
           <div className="absolute -top-16">
             <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
@@ -189,9 +316,10 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
           <div className="pt-20 pb-5 flex items-end gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
-              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{roleLabel(profile.role)}</span>
-                {profile.email && <span className="flex items-center gap-1"><MapPin size={12} /> {profile.email}</span>}
+              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{profile.title || roleLabel(profile.role)}</span>
+                {profile.department && <span className="flex items-center gap-1 text-xs"><Building2 size={11} /> {profile.department}</span>}
+                {profile.specialty && <span className="flex items-center gap-1 text-xs"><Star size={11} /> {profile.specialty}</span>}
               </div>
             </div>
             <button onClick={() => onNavigate("dms")} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
