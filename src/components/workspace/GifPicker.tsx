@@ -74,7 +74,8 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
       </button>
 
       {open && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-80 sm:w-96 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+        <div className="w-80 sm:w-96 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
           <div className="p-2.5 border-b border-border/20">
             <input
               value={query}
@@ -114,6 +115,7 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
           <div className="px-3 py-1.5 border-t border-border/10 flex justify-end">
             <span className="text-[9px] text-muted-foreground/40">Powered by GIPHY</span>
           </div>
+        </div>
         </div>
       )}
     </div>

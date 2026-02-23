@@ -38,7 +38,8 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
       </button>
 
       {open && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-80 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+        <div className="w-80 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
           {/* Category tabs */}
           <div className="flex gap-1 p-2 border-b border-border/20 overflow-x-auto">
             {EMOJI_CATEGORIES.map((cat, i) => (
@@ -73,6 +74,7 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
               ))}
             </div>
           </div>
+        </div>
         </div>
       )}
     </div>

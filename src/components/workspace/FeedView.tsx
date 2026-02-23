@@ -400,7 +400,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="px-6 py-5 border-b border-border/10 bg-card/20">
+      <div className="px-6 py-5 border-b border-border/10 bg-card/20 sticky top-0 z-20 backdrop-blur-xl">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Feed</h2>
