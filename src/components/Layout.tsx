@@ -166,7 +166,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground relative">
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
         <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
-          <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-xl md:text-2xl text-primary tracking-wide">
+          <Link to="/" className="font-heading text-xl md:text-2xl text-primary tracking-wide">
             Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
           </Link>
 
@@ -393,7 +393,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-6">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
-              <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-2xl text-primary">
+              <Link to="/" className="font-heading text-2xl text-primary">
                 Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
               </Link>
               <p className="mt-3 text-sm text-foreground/60 leading-relaxed font-light">
