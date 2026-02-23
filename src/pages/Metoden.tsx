@@ -7,6 +7,8 @@ import {
   Headphones, Code2, Megaphone, Shield, Phone
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionPageCopy, sectionMetodenTeam } from "@/config/sectionContent";
 import metodenHero from "@/assets/metoden-hero.jpg";
 import metodenTeam from "@/assets/metoden-team.jpg";
 import metodenClosing from "@/assets/metoden-closing.jpg";
@@ -137,12 +139,18 @@ const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | 
 );
 
 const Metoden = () => {
+  const { section, isInSection } = useSection();
+  const copy = isInSection && section ? sectionPageCopy[section.id].metoden : null;
+  const highlightedRoles = isInSection && section ? sectionMetodenTeam[section.id] : null;
+  const sectionPath = isInSection && section ? section.basePath : "";
+  const visibleTeam = highlightedRoles ? team.filter(m => highlightedRoles.includes(m.role)) : team;
+
   return (
     <>
       <Helmet>
-        <title>Metoden vår | Slik jobber Avargo med regnskap og rådgivning</title>
-        <meta name="description" content="Les om Avargos unike metode: et tverrfaglig team av regnskapsførere, HR-spesialister, markedsførere og utviklere som jobber sammen for din vekst." />
-        <link rel="canonical" href="https://avargo.no/metoden" />
+        <title>{copy ? `Metoden — ${section!.name} | Avargo` : "Metoden vår | Slik jobber Avargo med regnskap og rådgivning"}</title>
+        <meta name="description" content={copy?.heroSub || "Les om Avargos unike metode: et tverrfaglig team av regnskapsførere, HR-spesialister, markedsførere og utviklere som jobber sammen for din vekst."} />
+        <link rel="canonical" href={`https://avargo.no${sectionPath}/metoden`} />
       </Helmet>
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -190,7 +198,7 @@ const Metoden = () => {
               transition={{ delay: 1.2, duration: 1 }}
               className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto mb-5 md:mb-6"
             >
-              Hos Avargo får du ikke bare en regnskapsfører — du får et helt team med statsautoriserte regnskapsførere, HR-spesialister og rådgivere som jobber sammen for at du skal sove godt om natten. Vi tar oss av alt det du ikke har tid til.
+              {copy?.heroSub || "Hos Avargo får du ikke bare en regnskapsfører — du får et helt team med statsautoriserte regnskapsførere, HR-spesialister og rådgivere som jobber sammen for at du skal sove godt om natten. Vi tar oss av alt det du ikke har tid til."}
             </motion.p>
 
             <motion.p
@@ -199,7 +207,7 @@ const Metoden = () => {
               transition={{ delay: 1.5, duration: 1 }}
               className="text-sm text-primary/70 italic font-light mb-12 md:mb-16"
             >
-              Bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall.
+              {copy?.heroItalic || "Bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall."}
             </motion.p>
 
             <motion.div
@@ -209,7 +217,7 @@ const Metoden = () => {
               className="flex flex-col sm:flex-row gap-4 md:gap-5 justify-center"
             >
               <Link
-                to="/kontakt"
+                to={`${sectionPath}/kontakt`}
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Få et uforpliktende tilbud
@@ -264,7 +272,7 @@ const Metoden = () => {
                 </p>
 
                 <div className="flex flex-col gap-3 md:gap-4">
-                  {team.map((member, i) => (
+                  {visibleTeam.map((member, i) => (
                     <AnimatedSection key={member.role} delay={i * 0.07}>
                       <div className="flex items-start gap-3 md:gap-4 group">
                         <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors duration-500">
@@ -368,10 +376,10 @@ const Metoden = () => {
               </p>
 
               <Link
-                to="/kontakt"
+                to={`${sectionPath}/kontakt`}
                 className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
-                Snakk med en regnskapsfører
+                {isInSection && section ? `Snakk med en ${section.shortName.toLowerCase()}-ekspert` : "Snakk med en regnskapsfører"}
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
 
