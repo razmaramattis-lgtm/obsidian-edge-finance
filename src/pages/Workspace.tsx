@@ -256,7 +256,7 @@ const Workspace = () => {
           {view === "feed" && <FeedView profile={profile} onViewProfile={openProfile} />}
           {view === "groups" && <GroupsView profile={profile} onViewProfile={openProfile} />}
           {view === "dms" && <DmsView profile={profile} onViewProfile={openProfile} />}
-          {view === "friends" && <FriendsView profile={profile} />}
+          {view === "friends" && <FriendsView profile={profile} onViewProfile={openProfile} />}
           {view === "conference" && <ConferenceView profile={profile} />}
         </main>
       </div>

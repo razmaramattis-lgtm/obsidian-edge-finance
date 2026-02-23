@@ -7,7 +7,7 @@ import UserAvatar from "./UserAvatar";
 import type { Profile, Friend } from "./types";
 import { roleLabel } from "./helpers";
 
-const FriendsView = ({ profile }: { profile: Profile }) => {
+const FriendsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pendingReceived, setPendingReceived] = useState<Friend[]>([]);
   const [pendingSent, setPendingSent] = useState<Friend[]>([]);
@@ -144,11 +144,13 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
               const fp = getFriendProfile(f);
               return (
                 <div key={f.id} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/30 transition-all group">
-                  <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" profileId={fp?.id} isActive={fp?.active !== false} />
-                  <div className="flex-1 min-w-0">
+                  <button onClick={() => fp && onViewProfile?.(fp)} className="shrink-0">
+                    <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" profileId={fp?.id} isActive={fp?.active !== false} />
+                  </button>
+                  <button onClick={() => fp && onViewProfile?.(fp)} className="flex-1 min-w-0 text-left">
                     <p className="text-sm font-medium truncate">{fp?.name || "Ukjent"}</p>
                     <p className="text-[10px] text-muted-foreground">{roleLabel(fp?.role || "")}</p>
-                  </div>
+                  </button>
                   <button onClick={() => removeFriend(f.id)} className="opacity-0 group-hover:opacity-100 p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all" title="Fjern venn"><UserMinus size={14} /></button>
                 </div>
               );
@@ -268,20 +270,22 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                 const intTags = p.interests || [];
                 return (
                   <div key={p.id} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/30 transition-all">
-                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" isActive={p.active !== false} />
-                    <div className="flex-1 min-w-0">
+                    <button onClick={() => onViewProfile?.(p)} className="shrink-0">
+                      <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" isActive={p.active !== false} />
+                    </button>
+                    <div onClick={() => onViewProfile?.(p)} className="flex-1 min-w-0 text-left cursor-pointer">
                       <p className="text-sm font-medium">{p.name}</p>
                       <p className="text-[10px] text-muted-foreground">{p.title ? `${p.title} · ` : ""}{roleLabel(p.role)}</p>
                       {(specTags.length > 0 || sysTags.length > 0 || intTags.length > 0) && (
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {specTags.map(t => (
-                            <button key={`s-${t}`} onClick={() => setActiveTag(t)} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">{t}</button>
+                            <span key={`s-${t}`} onClick={e => { e.stopPropagation(); setActiveTag(t); }} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all cursor-pointer">{t}</span>
                           ))}
                           {sysTags.map(t => (
-                            <button key={`sys-${t}`} onClick={() => setActiveTag(t)} className="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-[10px] font-medium hover:bg-secondary/25 transition-all">{t}</button>
+                            <span key={`sys-${t}`} onClick={e => { e.stopPropagation(); setActiveTag(t); }} className="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-[10px] font-medium hover:bg-secondary/25 transition-all cursor-pointer">{t}</span>
                           ))}
                           {intTags.slice(0, 3).map(t => (
-                            <button key={`i-${t}`} onClick={() => setActiveTag(t)} className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-medium hover:bg-accent/20 transition-all">{t}</button>
+                            <span key={`i-${t}`} onClick={e => { e.stopPropagation(); setActiveTag(t); }} className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-medium hover:bg-accent/20 transition-all cursor-pointer">{t}</span>
                           ))}
                         </div>
                       )}
