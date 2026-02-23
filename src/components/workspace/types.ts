@@ -4,6 +4,7 @@ export interface Profile {
   role: string;
   avatar_url?: string | null;
   email?: string;
+  phone?: string | null;
   title?: string | null;
   department?: string | null;
   specialty?: string | null;
