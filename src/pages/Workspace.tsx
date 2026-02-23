@@ -6,7 +6,7 @@ import {
   Hash, Send, Plus, Trash2, Users, MessageSquare, Newspaper,
   PanelLeftClose, PanelLeft, MessageCircle, Pin, Eye, EyeOff,
   ArrowLeft, Image, Lock, Globe, Search, Bell, Settings, Sparkles,
-  Phone, Video, User, Heart, UserPlus, MapPin, Calendar, ThumbsUp, X,
+  Phone, Video, User, Heart, UserPlus, MapPin, Calendar, ThumbsUp, X, SmilePlus,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/components/workspace/UserAvatar";
@@ -825,35 +825,84 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   );
 };
 
-// ─── Comment Like Button ───
-const CommentLikeButton = ({ commentId, profileId }: { commentId: string; profileId: string }) => {
-  const [count, setCount] = useState(0);
-  const [liked, setLiked] = useState(false);
+// ─── Comment Reactions (emoji-based like PostReactions) ───
+const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];
 
-  const fetch = async () => {
-    const { data } = await supabase.from("workspace_comment_likes").select("profile_id").eq("comment_id", commentId);
-    const likes = data || [];
-    setCount(likes.length);
-    setLiked(likes.some((l: any) => l.profile_id === profileId));
+const CommentReactions = ({ commentId, profileId }: { commentId: string; profileId: string }) => {
+  const [reactions, setReactions] = useState<{ emoji: string; count: number; mine: boolean }[]>([]);
+  const [showPicker, setShowPicker] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setShowPicker(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const fetchReactions = async () => {
+    const { data } = await supabase.from("workspace_comment_likes").select("emoji, profile_id").eq("comment_id", commentId);
+    const map: Record<string, { count: number; mine: boolean }> = {};
+    (data || []).forEach((r: any) => {
+      if (!map[r.emoji]) map[r.emoji] = { count: 0, mine: false };
+      map[r.emoji].count++;
+      if (r.profile_id === profileId) map[r.emoji].mine = true;
+    });
+    setReactions(Object.entries(map).map(([emoji, d]) => ({ emoji, ...d })).sort((a, b) => b.count - a.count));
   };
 
-  useEffect(() => { fetch(); }, [commentId]);
+  useEffect(() => { fetchReactions(); }, [commentId]);
 
-  const toggle = async () => {
-    if (liked) {
-      await supabase.from("workspace_comment_likes").delete().match({ comment_id: commentId, profile_id: profileId });
+  const toggle = async (emoji: string) => {
+    const existing = reactions.find(r => r.emoji === emoji);
+    if (existing?.mine) {
+      await supabase.from("workspace_comment_likes").delete().match({ comment_id: commentId, profile_id: profileId, emoji });
     } else {
-      await supabase.from("workspace_comment_likes").insert([{ comment_id: commentId, profile_id: profileId }]);
+      await supabase.from("workspace_comment_likes").insert([{ comment_id: commentId, profile_id: profileId, emoji }]);
     }
-    fetch();
+    fetchReactions();
+    setShowPicker(false);
   };
 
   return (
-    <button onClick={toggle} className={`flex items-center gap-1 text-[10px] font-medium transition-all hover:scale-105 active:scale-95 ${liked ? "text-primary" : "text-muted-foreground hover:text-primary/70"}`}>
-      <ThumbsUp size={11} className={liked ? "fill-primary" : ""} />
-      {count > 0 && <span>{count}</span>}
-      <span>Liker</span>
-    </button>
+    <div ref={ref} className="flex items-center gap-1 flex-wrap">
+      {reactions.map(r => (
+        <button
+          key={r.emoji}
+          onClick={() => toggle(r.emoji)}
+          className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-all hover:scale-105 active:scale-95 ${
+            r.mine ? "bg-primary/15 text-primary ring-1 ring-primary/30" : "bg-muted/40 text-foreground hover:bg-muted/60"
+          }`}
+        >
+          <span className="text-xs">{r.emoji}</span>
+          <span>{r.count}</span>
+        </button>
+      ))}
+      <div className="relative">
+        <button
+          onClick={() => setShowPicker(!showPicker)}
+          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+        >
+          <SmilePlus size={12} />
+        </button>
+        {showPicker && (
+          <div className="absolute bottom-7 left-0 bg-card border border-border/30 rounded-xl shadow-2xl shadow-black/40 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex gap-0.5">
+              {COMMENT_EMOJIS.map(emoji => (
+                <button
+                  key={emoji}
+                  onClick={() => toggle(emoji)}
+                  className="w-7 h-7 flex items-center justify-center text-sm rounded-lg hover:bg-muted/60 hover:scale-125 transition-all"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -918,7 +967,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
                 </div>
                 <div className="flex items-center gap-3 ml-2 mt-0.5">
                   <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
-                  <CommentLikeButton commentId={c.id} profileId={profileId} />
+                  <CommentReactions commentId={c.id} profileId={profileId} />
                 </div>
               </div>
             </div>
