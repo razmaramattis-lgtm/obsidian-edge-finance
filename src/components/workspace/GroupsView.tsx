@@ -423,7 +423,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
                     fileName={msg.file_name}
                     readAt={isOwn && readStatus[msg.id] ? "read" : null}
                   />
-                  {(isOwn || isAdmin) && (
+                  {(isOwn || (isAdmin && !isOwn)) && (
                     <div className={`flex ${isOwn ? "justify-end" : "justify-start"} mt-0.5 mb-1`}>
                       <button onClick={() => deleteMsg(msg.id)} className="opacity-0 group-hover/msg:opacity-100 px-2 py-0.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-[10px] flex items-center gap-1"><Trash2 size={10} /> Slett</button>
                     </div>

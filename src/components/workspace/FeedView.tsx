@@ -465,7 +465,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                         <div className="absolute right-0 top-9 bg-card border border-border/30 rounded-xl shadow-2xl z-50 min-w-[140px] py-1 animate-in fade-in zoom-in-95 duration-100">
                           {isOwn && <button onClick={() => startEditPost(post)} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-muted/40 transition-all"><Pencil size={12} /> Rediger</button>}
                           {isAdmin && <button onClick={() => { togglePin(post); setMenuOpen(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-muted/40 transition-all"><Pin size={12} /> {post.pinned ? "Løsne" : "Fest"}</button>}
-                          <button onClick={() => { deletePost(post.id); setMenuOpen(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={12} /> Slett</button>
+                          {(isOwn || isAdmin) && <button onClick={() => { deletePost(post.id); setMenuOpen(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={12} /> Slett</button>}
                         </div>
                       )}
                     </div>
