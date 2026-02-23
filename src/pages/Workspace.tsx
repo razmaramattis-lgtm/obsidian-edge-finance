@@ -60,7 +60,7 @@ const Workspace = () => {
       const qLower = q.toLowerCase();
       const qUpper = q.charAt(0).toUpperCase() + q.slice(1).toLowerCase();
       const { data } = await supabase.from("profiles")
-        .select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems")
+        .select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, phone, preferred_accounting_systems")
         .or(`name.ilike.%${q}%,title.ilike.%${q}%,specialty.ilike.%${q}%,department.ilike.%${q}%,bio.ilike.%${q}%,interests.cs.{"${q}"},interests.cs.{"${qLower}"},interests.cs.{"${qUpper}"},preferred_accounting_systems.cs.{"${q}"},preferred_accounting_systems.cs.{"${qLower}"},preferred_accounting_systems.cs.{"${qUpper}"}`)
         .limit(10);
       setSearchResults((data as Profile[]) || []);
@@ -408,6 +408,18 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Star size={9} /> Spesialisering</p>
                 <p className="text-sm font-medium mt-0.5">{profile.specialty || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
               </div>
+              {profile.email && (
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><MessageCircle size={9} /> E-post</p>
+                  <p className="text-sm font-medium mt-0.5">{profile.email}</p>
+                </div>
+              )}
+              {profile.phone && (
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><User size={9} /> Telefon</p>
+                  <p className="text-sm font-medium mt-0.5">{profile.phone}</p>
+                </div>
+              )}
               {profile.bio && (
                 <div className="sm:col-span-2">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Bio</p>
@@ -422,6 +434,16 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                   )) : <span className="text-sm text-muted-foreground/50 italic">Ingen interesser lagt til</span>}
                 </div>
               </div>
+              {profile.preferred_accounting_systems && profile.preferred_accounting_systems.length > 0 && (
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Sparkles size={9} /> Foretrukne regnskapssystemer</p>
+                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    {profile.preferred_accounting_systems.map((sys, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs">{sys}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -446,7 +468,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
   const bgRef = useRef<HTMLInputElement>(null);
 
   const refetchProfile = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems").eq("id", profile.id).single();
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, phone, preferred_accounting_systems").eq("id", profile.id).single();
     if (data) setProfile(data as Profile);
   };
 
