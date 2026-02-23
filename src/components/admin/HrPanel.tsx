@@ -76,29 +76,31 @@ const HrPanel = () => {
         </div>
       </div>
 
-      {/* Tab bar with groups */}
-      <div className="flex flex-wrap gap-x-4 gap-y-2 p-2 rounded-xl bg-muted/30 border border-border/10">
-        {groups.map(group => (
-          <div key={group} className="flex items-center gap-1">
-            <span className="text-[9px] tracking-widest uppercase text-muted-foreground/40 mr-1 hidden sm:inline">{group}</span>
-            {HR_TABS.filter(t => t.group === group).map(t => {
-              const Icon = t.icon;
-              const active = tab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap ${
-                    active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  }`}
-                >
-                  <Icon size={12} />
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
-        ))}
+      {/* Tab bar with groups – horizontally scrollable */}
+      <div className="overflow-x-auto -mx-1 px-1 pb-1">
+        <div className="flex gap-x-4 gap-y-2 p-2 rounded-xl bg-muted/30 border border-border/10 min-w-max">
+          {groups.map(group => (
+            <div key={group} className="flex items-center gap-1">
+              <span className="text-[9px] tracking-widest uppercase text-muted-foreground/40 mr-1 hidden sm:inline">{group}</span>
+              {HR_TABS.filter(t => t.group === group).map(t => {
+                const Icon = t.icon;
+                const active = tab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap ${
+                      active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Icon size={12} />
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
 
       {renderTab()}
