@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
+import SectionSwitcher from "@/components/SectionSwitcher";
+import { useSection } from "@/contexts/SectionContext";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
@@ -101,6 +103,7 @@ const DropdownPanel = ({ open, children, className = "" }: { open: boolean; chil
 );
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { section, isInSection } = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
@@ -117,6 +120,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setSelskapetOpen(false); setRessurserOpen(false); };
 
+  // Section-aware path helper
+  const sp = (path: string) => isInSection && section ? `${section.basePath}${path}` : path;
+
   const makeHandlers = (
     setter: (v: boolean) => void,
     timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
@@ -129,13 +135,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground relative">
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
         <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
-          <Link to="/" className="font-heading text-xl md:text-2xl text-primary tracking-wide">
-            Avargo
+          <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-xl md:text-2xl text-primary tracking-wide">
+            Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
           </Link>
 
           <div className="hidden md:flex items-center gap-5 lg:gap-7">
-            <Link to="/" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Hjem</Link>
-            <Link to="/metoden" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Metoden</Link>
+            <Link to={isInSection && section ? section.basePath : "/"} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Hjem</Link>
+            <Link to={sp("/metoden")} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Metoden</Link>
 
             {/* Tjenester */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
@@ -194,7 +200,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownPanel>
             </div>
 
-            <Link to="/priser" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Priser</Link>
+            <Link to={sp("/priser")} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Priser</Link>
 
             {/* Selskapet */}
             <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
@@ -325,7 +331,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </nav>
 
-      <main className="pt-16 md:pt-[72px]">{children}</main>
+      {/* Section switcher bar */}
+      {isInSection && (
+        <div className="fixed top-16 md:top-[72px] left-0 right-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/10">
+          <div className="container mx-auto px-4 md:px-6 py-2">
+            <SectionSwitcher />
+          </div>
+        </div>
+      )}
+
+      <main className={isInSection ? "pt-[104px] md:pt-[116px]" : "pt-16 md:pt-[72px]"}>{children}</main>
 
       <footer className="border-t border-border/15 py-12 md:py-24 relative">
         <div className="absolute inset-0 ambient-glow opacity-20" />

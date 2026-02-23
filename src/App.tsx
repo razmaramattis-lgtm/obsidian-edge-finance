@@ -6,11 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { SectionProvider } from "@/contexts/SectionContext";
 import Layout from "./components/Layout";
+import SectionTheme from "./components/SectionTheme";
 import ScrollToTop from "./components/ScrollToTop";
 
-// Eagerly load Index (landing page) for fastest FCP/LCP
-import Index from "./pages/Index";
+// Eagerly load Hub (new landing page)
+import Hub from "./pages/Hub";
 
 // Lazy-load everything else
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -35,6 +37,10 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeLogin = lazy(() => import("./pages/kunde/KundeLogin"));
 const KundeDashboard = lazy(() => import("./pages/kunde/KundeDashboard"));
+
+// Section pages
+const SectionHome = lazy(() => import("./pages/sections/SectionHome"));
+const SectionTjenester = lazy(() => import("./pages/sections/SectionTjenester"));
 
 // Tjeneste-undersider
 const Regnskapsforer = lazy(() => import("./pages/tjenester/Regnskapsforer"));
@@ -92,7 +98,6 @@ const EnergiMiljo = lazy(() => import("./pages/bransjer/EnergiMiljo"));
 
 const queryClient = new QueryClient();
 
-// Prefetch critical routes immediately after initial load
 const prefetchRoutes = () => {
   const prefetch = (fn: () => Promise<unknown>) => fn().catch(() => {});
   prefetch(() => import("./pages/Pricing"));
@@ -101,29 +106,20 @@ const prefetchRoutes = () => {
   prefetch(() => import("./pages/Tjenester"));
   prefetch(() => import("./pages/About"));
   prefetch(() => import("./pages/Bransjer"));
-  prefetch(() => import("./pages/Ressurser"));
-  prefetch(() => import("./pages/FAQ"));
-  prefetch(() => import("./pages/admin/AdminLogin"));
-  prefetch(() => import("./pages/kunde/KundeLogin"));
-  prefetch(() => import("./pages/Personvern"));
-  prefetch(() => import("./pages/Vilkar"));
+  prefetch(() => import("./pages/sections/SectionHome"));
+  prefetch(() => import("./pages/sections/SectionTjenester"));
 
   setTimeout(() => {
     prefetch(() => import("./pages/tjenester/Regnskapsforer"));
     prefetch(() => import("./pages/tjenester/CFO"));
     prefetch(() => import("./pages/tjenester/Lonn"));
-    prefetch(() => import("./pages/tjenester/Arsregnskap"));
     prefetch(() => import("./pages/tjenester/Nettsider"));
     prefetch(() => import("./pages/tjenester/SEO"));
-    prefetch(() => import("./pages/tjenester/AiAutomatisering"));
     prefetch(() => import("./pages/tjenester/HR"));
-    prefetch(() => import("./pages/bransjer/TechSaas"));
-    prefetch(() => import("./pages/bransjer/Eiendom"));
-    prefetch(() => import("./pages/bransjer/ByggAnlegg"));
-    prefetch(() => import("./pages/bransjer/Consulting"));
-    prefetch(() => import("./pages/Skattekalender"));
-    prefetch(() => import("./pages/Kontohjelp"));
-    prefetch(() => import("./pages/BlogListing"));
+    prefetch(() => import("./pages/Ressurser"));
+    prefetch(() => import("./pages/FAQ"));
+    prefetch(() => import("./pages/admin/AdminLogin"));
+    prefetch(() => import("./pages/kunde/KundeLogin"));
   }, 500);
 };
 
@@ -131,7 +127,6 @@ const PageFallback = () => (
   <div className="min-h-screen bg-background" />
 );
 
-// Protected route for admin dashboard
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) return <PageFallback />;
@@ -139,7 +134,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Protected route for customer dashboard
 const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) return <PageFallback />;
@@ -166,99 +160,114 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <ScrollToTop />
-            <PrefetchTrigger />
-            <Suspense fallback={<PageFallback />}>
-              <Routes>
-                {/* Admin routes (no Layout wrapper) */}
-                <Route path="/admin/logg-inn" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
+            <SectionProvider>
+              <ScrollToTop />
+              <PrefetchTrigger />
+              <Suspense fallback={<PageFallback />}>
+                <Routes>
+                  {/* Admin routes (no Layout wrapper) */}
+                  <Route path="/admin/logg-inn" element={<AdminLogin />} />
+                  <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
 
-                {/* Customer routes */}
-                <Route path="/kunde/logg-inn" element={<KundeLogin />} />
-                <Route path="/kunde/dashboard" element={<CustomerRoute><KundeDashboard /></CustomerRoute>} />
-                <Route path="/kunde" element={<Navigate to="/kunde/logg-inn" replace />} />
+                  {/* Customer routes */}
+                  <Route path="/kunde/logg-inn" element={<KundeLogin />} />
+                  <Route path="/kunde/dashboard" element={<CustomerRoute><KundeDashboard /></CustomerRoute>} />
+                  <Route path="/kunde" element={<Navigate to="/kunde/logg-inn" replace />} />
 
-                {/* Public routes */}
-                <Route path="/*" element={
-                  <Layout>
-                    <Suspense fallback={<PageFallback />}>
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/tjenester" element={<Tjenester />} />
-                        <Route path="/tjenester/regnskapsforer" element={<Regnskapsforer />} />
-                        <Route path="/tjenester/ai-innsikt" element={<AiInnsikt />} />
-                        <Route path="/tjenester/cfo" element={<CFO />} />
-                        <Route path="/tjenester/hr-og-lonn" element={<HR />} />
-                        <Route path="/tjenester/nettsider" element={<Nettsider />} />
-                        <Route path="/tjenester/seo" element={<SEO />} />
-                        <Route path="/tjenester/meta-annonser" element={<MetaAnnonser />} />
-                        <Route path="/tjenester/google-ads" element={<GoogleAds />} />
-                        <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
-                        <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
-                        <Route path="/tjenester/kurs" element={<Kurs />} />
-                        <Route path="/tjenester/kurs/:slug" element={<KursDetalj />} />
-                        <Route path="/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
-                        <Route path="/tjenester/lonn" element={<Lonn />} />
-                        <Route path="/tjenester/arsregnskap" element={<Arsregnskap />} />
-                        <Route path="/tjenester/fakturering" element={<Fakturering />} />
-                        <Route path="/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
-                        <Route path="/tjenester/dashboard" element={<DashboardPage />} />
-                        <Route path="/tjenester/ansettelse" element={<Ansettelse />} />
-                        <Route path="/tjenester/personalhandbok" element={<Personalhandbok />} />
-                        <Route path="/tjenester/arbeidsrett" element={<Arbeidsrett />} />
-                        <Route path="/tjenester/chatbot" element={<Chatbot />} />
-                        <Route path="/tjenester/internsystemer" element={<Internsystemer />} />
-                        <Route path="/tjenester/hr-kurs" element={<HrKurs />} />
-                        <Route path="/tjenester/bedriftskurs" element={<Bedriftskurs />} />
-                        <Route path="/bransjer" element={<Bransjer />} />
-                        <Route path="/bransjer/tech-saas" element={<TechSaas />} />
-                        <Route path="/bransjer/eiendom" element={<Eiendom />} />
-                        <Route path="/bransjer/holding" element={<Holding />} />
-                        <Route path="/bransjer/consulting" element={<Consulting />} />
-                        <Route path="/bransjer/landbruk" element={<Landbruk />} />
-                        <Route path="/bransjer/varehandel" element={<Varehandel />} />
-                        <Route path="/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
-                        <Route path="/bransjer/nettbutikk" element={<NettbutikkBransje />} />
-                        <Route path="/bransjer/helse" element={<Helse />} />
-                        <Route path="/bransjer/restaurant" element={<Restaurant />} />
-                        <Route path="/bransjer/frisor" element={<Frisor />} />
-                        <Route path="/bransjer/handverkere" element={<Handverkere />} />
-                        <Route path="/bransjer/transport" element={<TransportLogistikk />} />
-                        <Route path="/bransjer/industri" element={<IndustriProduksjon />} />
-                        <Route path="/bransjer/renhold" element={<RenholdFacility />} />
-                        <Route path="/bransjer/kultur" element={<KulturMedia />} />
-                        <Route path="/bransjer/sport" element={<SportFritid />} />
-                        <Route path="/bransjer/utdanning" element={<UtdanningKurs />} />
-                        <Route path="/bransjer/juridisk" element={<JuridiskAdvokat />} />
-                        <Route path="/bransjer/arkitektur" element={<ArkitekturDesign />} />
-                        <Route path="/bransjer/markedsforing" element={<MarkedsforingReklame />} />
-                        <Route path="/bransjer/bemanning" element={<BemanningRekruttering />} />
-                        <Route path="/bransjer/reiseliv" element={<ReiselivTurisme />} />
-                        <Route path="/bransjer/bil" element={<BilVerksted />} />
-                        <Route path="/bransjer/energi" element={<EnergiMiljo />} />
-                        <Route path="/metoden" element={<Metoden />} />
-                        <Route path="/priser" element={<Pricing />} />
-                        <Route path="/ressurser" element={<Ressurser />} />
-                        <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
-                        <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
-                        <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
-                        {/* Regnskapsord moved to customer portal */}
-                        <Route path="/nyheter" element={<BlogListing />} />
-                        <Route path="/faq" element={<FAQ />} />
-                        <Route path="/nyhet/:slug" element={<BlogPost />} />
-                        <Route path="/om-oss" element={<About />} />
-                        <Route path="/kontakt" element={<Contact />} />
-                        <Route path="/personvern" element={<Personvern />} />
-                        <Route path="/vilkar" element={<Vilkar />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                  </Layout>
-                } />
-              </Routes>
-            </Suspense>
+                  {/* Public routes */}
+                  <Route path="/*" element={
+                    <SectionTheme>
+                      <Layout>
+                        <Suspense fallback={<PageFallback />}>
+                          <Routes>
+                            {/* Hub / landing */}
+                            <Route path="/" element={<Hub />} />
+
+                            {/* Section routes */}
+                            <Route path="/:sectionId" element={<SectionHome />} />
+                            <Route path="/:sectionId/tjenester" element={<SectionTjenester />} />
+                            <Route path="/:sectionId/bransjer" element={<Bransjer />} />
+                            <Route path="/:sectionId/priser" element={<Pricing />} />
+                            <Route path="/:sectionId/kontakt" element={<Contact />} />
+                            <Route path="/:sectionId/om-oss" element={<About />} />
+                            <Route path="/:sectionId/metoden" element={<Metoden />} />
+
+                            {/* Legacy / shared routes */}
+                            <Route path="/tjenester" element={<Tjenester />} />
+                            <Route path="/tjenester/regnskapsforer" element={<Regnskapsforer />} />
+                            <Route path="/tjenester/ai-innsikt" element={<AiInnsikt />} />
+                            <Route path="/tjenester/cfo" element={<CFO />} />
+                            <Route path="/tjenester/hr-og-lonn" element={<HR />} />
+                            <Route path="/tjenester/nettsider" element={<Nettsider />} />
+                            <Route path="/tjenester/seo" element={<SEO />} />
+                            <Route path="/tjenester/meta-annonser" element={<MetaAnnonser />} />
+                            <Route path="/tjenester/google-ads" element={<GoogleAds />} />
+                            <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
+                            <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
+                            <Route path="/tjenester/kurs" element={<Kurs />} />
+                            <Route path="/tjenester/kurs/:slug" element={<KursDetalj />} />
+                            <Route path="/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
+                            <Route path="/tjenester/lonn" element={<Lonn />} />
+                            <Route path="/tjenester/arsregnskap" element={<Arsregnskap />} />
+                            <Route path="/tjenester/fakturering" element={<Fakturering />} />
+                            <Route path="/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
+                            <Route path="/tjenester/dashboard" element={<DashboardPage />} />
+                            <Route path="/tjenester/ansettelse" element={<Ansettelse />} />
+                            <Route path="/tjenester/personalhandbok" element={<Personalhandbok />} />
+                            <Route path="/tjenester/arbeidsrett" element={<Arbeidsrett />} />
+                            <Route path="/tjenester/chatbot" element={<Chatbot />} />
+                            <Route path="/tjenester/internsystemer" element={<Internsystemer />} />
+                            <Route path="/tjenester/hr-kurs" element={<HrKurs />} />
+                            <Route path="/tjenester/bedriftskurs" element={<Bedriftskurs />} />
+                            <Route path="/bransjer" element={<Bransjer />} />
+                            <Route path="/bransjer/tech-saas" element={<TechSaas />} />
+                            <Route path="/bransjer/eiendom" element={<Eiendom />} />
+                            <Route path="/bransjer/holding" element={<Holding />} />
+                            <Route path="/bransjer/consulting" element={<Consulting />} />
+                            <Route path="/bransjer/landbruk" element={<Landbruk />} />
+                            <Route path="/bransjer/varehandel" element={<Varehandel />} />
+                            <Route path="/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
+                            <Route path="/bransjer/nettbutikk" element={<NettbutikkBransje />} />
+                            <Route path="/bransjer/helse" element={<Helse />} />
+                            <Route path="/bransjer/restaurant" element={<Restaurant />} />
+                            <Route path="/bransjer/frisor" element={<Frisor />} />
+                            <Route path="/bransjer/handverkere" element={<Handverkere />} />
+                            <Route path="/bransjer/transport" element={<TransportLogistikk />} />
+                            <Route path="/bransjer/industri" element={<IndustriProduksjon />} />
+                            <Route path="/bransjer/renhold" element={<RenholdFacility />} />
+                            <Route path="/bransjer/kultur" element={<KulturMedia />} />
+                            <Route path="/bransjer/sport" element={<SportFritid />} />
+                            <Route path="/bransjer/utdanning" element={<UtdanningKurs />} />
+                            <Route path="/bransjer/juridisk" element={<JuridiskAdvokat />} />
+                            <Route path="/bransjer/arkitektur" element={<ArkitekturDesign />} />
+                            <Route path="/bransjer/markedsforing" element={<MarkedsforingReklame />} />
+                            <Route path="/bransjer/bemanning" element={<BemanningRekruttering />} />
+                            <Route path="/bransjer/reiseliv" element={<ReiselivTurisme />} />
+                            <Route path="/bransjer/bil" element={<BilVerksted />} />
+                            <Route path="/bransjer/energi" element={<EnergiMiljo />} />
+                            <Route path="/metoden" element={<Metoden />} />
+                            <Route path="/priser" element={<Pricing />} />
+                            <Route path="/ressurser" element={<Ressurser />} />
+                            <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
+                            <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
+                            <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
+                            <Route path="/nyheter" element={<BlogListing />} />
+                            <Route path="/faq" element={<FAQ />} />
+                            <Route path="/nyhet/:slug" element={<BlogPost />} />
+                            <Route path="/om-oss" element={<About />} />
+                            <Route path="/kontakt" element={<Contact />} />
+                            <Route path="/personvern" element={<Personvern />} />
+                            <Route path="/vilkar" element={<Vilkar />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Suspense>
+                      </Layout>
+                    </SectionTheme>
+                  } />
+                </Routes>
+              </Suspense>
+            </SectionProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
