@@ -72,8 +72,8 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
-        <div className="w-full sm:w-80 max-h-[75vh] sm:max-h-none bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-x-0 bottom-0 z-50 sm:fixed sm:inset-0 sm:flex sm:items-center sm:justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+        <div className="w-full sm:w-80 bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
           {/* Drag handle on mobile */}
           <div className="sm:hidden flex justify-center pt-2 pb-1">
             <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
@@ -116,13 +116,13 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
           )}
 
           {/* Emoji grid */}
-          <div className="p-3 sm:p-2 h-64 sm:h-52 overflow-y-auto">
+          <div className="p-2 h-40 sm:h-52 overflow-y-auto">
             {displayEmojis.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
                 Ingen emojis funnet
               </div>
             ) : (
-              <div className="grid grid-cols-8 gap-1 sm:gap-0.5">
+              <div className="grid grid-cols-8 gap-0.5">
                 {displayEmojis.map((emoji) => (
                   <button
                     key={emoji}
@@ -130,7 +130,7 @@ const EmojiPicker = ({ onSelect }: EmojiPickerProps) => {
                       onSelect(emoji);
                       setOpen(false);
                     }}
-                    className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center text-xl sm:text-lg rounded-lg hover:bg-muted/60 active:scale-90 hover:scale-110 transition-all"
+                    className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center text-lg rounded-lg hover:bg-muted/60 active:scale-90 hover:scale-110 transition-all"
                   >
                     {emoji}
                   </button>

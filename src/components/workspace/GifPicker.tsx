@@ -74,8 +74,8 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
-        <div className="w-full sm:w-96 max-h-[75vh] sm:max-h-none bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-x-0 bottom-0 z-50 sm:fixed sm:inset-0 sm:flex sm:items-center sm:justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+        <div className="w-full sm:w-96 bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
           {/* Drag handle on mobile */}
           <div className="sm:hidden flex justify-center pt-2 pb-1">
             <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
@@ -89,7 +89,7 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
               className="w-full h-10 sm:h-8 rounded-xl border border-border/20 bg-muted/30 px-3 text-sm sm:text-xs focus:outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-muted-foreground/40"
             />
           </div>
-          <div className="p-2 h-80 sm:h-72 overflow-y-auto">
+          <div className="p-2 h-48 sm:h-72 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
