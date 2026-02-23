@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  UserPlus, UserMinus, UserCheck, Users, Search, Bell, X, Check, Tag, Calculator, Star, Heart,
+  UserPlus, UserMinus, UserCheck, Users, Search, Bell, X, Check, Tag, Calculator, Star, Heart, Building, Shield,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import type { Profile, Friend } from "./types";
@@ -25,7 +25,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
   };
 
   const fetchProfiles = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, specialty, interests, preferred_accounting_systems, title, department").neq("id", profile.id).order("name");
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, specialty, interests, preferred_accounting_systems, title, department, bio").neq("id", profile.id).order("name");
     setAllProfiles((data as Profile[]) || []);
   };
 
@@ -69,11 +69,13 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
 
   // Collect all unique tags across profiles for quick-filter
   const allTags = (() => {
-    const tags = new Map<string, { label: string; type: "specialty" | "interest" | "system" }>();
+    const tags = new Map<string, { label: string; type: "specialty" | "interest" | "system" | "department" | "role" }>();
     allProfiles.forEach(p => {
       if (p.specialty) p.specialty.split(",").map(s => s.trim()).filter(Boolean).forEach(t => tags.set(t.toLowerCase(), { label: t, type: "specialty" }));
       (p.interests || []).forEach(t => tags.set(t.toLowerCase(), { label: t, type: "interest" }));
       (p.preferred_accounting_systems || []).forEach(t => tags.set(t.toLowerCase(), { label: t, type: "system" }));
+      if (p.department) tags.set(p.department.toLowerCase(), { label: p.department, type: "department" });
+      if (p.role) tags.set(p.role.toLowerCase(), { label: roleLabel(p.role), type: "role" });
     });
     return Array.from(tags.values());
   })();
@@ -83,6 +85,8 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
     if (p.specialty && p.specialty.toLowerCase().includes(t)) return true;
     if ((p.interests || []).some(i => i.toLowerCase() === t)) return true;
     if ((p.preferred_accounting_systems || []).some(s => s.toLowerCase() === t)) return true;
+    if (p.department && p.department.toLowerCase() === t) return true;
+    if (p.role && roleLabel(p.role).toLowerCase() === t) return true;
     return false;
   };
 
@@ -93,7 +97,10 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
       || (p.title || "").toLowerCase().includes(q)
       || (p.specialty || "").toLowerCase().includes(q)
       || (p.interests || []).some(i => i.toLowerCase().includes(q))
-      || (p.preferred_accounting_systems || []).some(s => s.toLowerCase().includes(q));
+      || (p.preferred_accounting_systems || []).some(s => s.toLowerCase().includes(q))
+      || (p.department || "").toLowerCase().includes(q)
+      || roleLabel(p.role).toLowerCase().includes(q)
+      || (p.bio || "").toLowerCase().includes(q);
     const tagMatch = !activeTag || profileMatchesTag(p, activeTag);
     return nameMatch && tagMatch;
   });
@@ -218,7 +225,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                 <div className="flex flex-wrap gap-1.5">
                   {allTags.slice(0, 30).map(t => {
                     const isActive = activeTag?.toLowerCase() === t.label.toLowerCase();
-                    const colorMap = { specialty: "primary", interest: "accent", system: "secondary" } as const;
+                    const colorMap = { specialty: "primary", interest: "accent", system: "secondary", department: "primary", role: "secondary" } as const;
                     const c = colorMap[t.type];
                     return (
                       <button
@@ -233,6 +240,8 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                         {t.type === "system" && <Calculator size={9} className="inline mr-1" />}
                         {t.type === "specialty" && <Star size={9} className="inline mr-1" />}
                         {t.type === "interest" && <Heart size={9} className="inline mr-1" />}
+                        {t.type === "department" && <Building size={9} className="inline mr-1" />}
+                        {t.type === "role" && <Shield size={9} className="inline mr-1" />}
                         {t.label}
                       </button>
                     );
