@@ -87,53 +87,108 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 w-[calc(100vw-2rem)] max-w-[380px] bg-card border border-border/30 rounded-2xl shadow-2xl z-50 max-h-[70vh] md:max-h-[500px] flex flex-col animate-in fade-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
-            <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
-            {unreadCount > 0 && (
-              <button onClick={onMarkAllRead} className="text-[10px] text-primary hover:underline flex items-center gap-1">
-                <Check size={10} /> Merk alle som lest
-              </button>
-            )}
+        <>
+          {/* Mobile: full-screen overlay */}
+          <div className="sm:hidden fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in slide-in-from-top-3 duration-150">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/15 bg-card/80 backdrop-blur-xl">
+              <h3 className="text-base font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button onClick={onMarkAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
+                    <Check size={12} /> Merk alle lest
+                  </button>
+                )}
+                <button onClick={() => setOpen(false)} className="p-2 -mr-2 rounded-xl text-muted-foreground hover:text-foreground transition-all">
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <div className="text-center py-20">
+                  <Bell size={32} className="text-muted-foreground/20 mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">Ingen varsler</p>
+                </div>
+              ) : (
+                notifications.slice(0, 50).map(n => (
+                  <button
+                    key={n.id}
+                    onClick={() => handleClick(n)}
+                    className={`w-full flex items-start gap-3 px-4 py-3.5 text-left transition-all active:bg-muted/40 ${!n.read ? "bg-primary/5" : ""}`}
+                  >
+                    <div className="relative shrink-0 mt-0.5">
+                      <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="md" />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
+                        {typeIcon(n.type)}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
+                        <span className="text-[11px] text-muted-foreground">{typeLabel(n.type)}</span>
+                      </div>
+                      {n.title && <p className="text-xs font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
+                      {n.body && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
+                      <p className="text-[10px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
+                    </div>
+                    {n.image_url && (
+                      <img src={n.image_url} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
+                    )}
+                    {!n.read && <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0 mt-2" />}
+                  </button>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <div className="text-center py-12">
-                <Bell size={28} className="text-muted-foreground/20 mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground">Ingen varsler</p>
-              </div>
-            ) : (
-              notifications.slice(0, 30).map(n => (
-                <button
-                  key={n.id}
-                  onClick={() => handleClick(n)}
-                  className={`w-full flex items-start gap-3 px-5 py-3 text-left transition-all hover:bg-muted/30 ${!n.read ? "bg-primary/5" : ""}`}
-                >
-                  <div className="relative shrink-0 mt-0.5">
-                    <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="sm" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
-                      {typeIcon(n.type)}
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
-                      <span className="text-[10px] text-muted-foreground">{typeLabel(n.type)}</span>
-                    </div>
-                    {n.title && <p className="text-[11px] font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
-                    {n.body && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
-                    <p className="text-[9px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
-                  </div>
-                  {n.image_url && (
-                    <img src={n.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                  )}
-                  {!n.read && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+          {/* Desktop: dropdown popover */}
+          <div className="hidden sm:flex absolute right-0 top-11 w-[380px] bg-card border border-border/30 rounded-2xl shadow-2xl z-50 max-h-[500px] flex-col animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
+              <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
+              {unreadCount > 0 && (
+                <button onClick={onMarkAllRead} className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                  <Check size={10} /> Merk alle som lest
                 </button>
-              ))
-            )}
+              )}
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <div className="text-center py-12">
+                  <Bell size={28} className="text-muted-foreground/20 mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">Ingen varsler</p>
+                </div>
+              ) : (
+                notifications.slice(0, 30).map(n => (
+                  <button
+                    key={n.id}
+                    onClick={() => handleClick(n)}
+                    className={`w-full flex items-start gap-3 px-5 py-3 text-left transition-all hover:bg-muted/30 ${!n.read ? "bg-primary/5" : ""}`}
+                  >
+                    <div className="relative shrink-0 mt-0.5">
+                      <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="sm" />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
+                        {typeIcon(n.type)}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
+                        <span className="text-[10px] text-muted-foreground">{typeLabel(n.type)}</span>
+                      </div>
+                      {n.title && <p className="text-[11px] font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
+                      {n.body && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
+                      <p className="text-[9px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
+                    </div>
+                    {n.image_url && (
+                      <img src={n.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    )}
+                    {!n.read && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+                  </button>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
