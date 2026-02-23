@@ -174,8 +174,41 @@ const DocumentGenerator = ({ config }: Props) => {
         });
       }
 
+      // Auto-publish to HMS-håndbok (hms_documents) for HMS-assistant search
+      const hmsTitle = `${config.title}`;
+      // Strip HTML to get plain text for HMS assistant context
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = fullHtml;
+      const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+      const { data: existingHms } = await supabase
+        .from("hms_documents")
+        .select("id")
+        .eq("title", hmsTitle)
+        .maybeSingle();
+
+      if (existingHms) {
+        await supabase.from("hms_documents")
+          .update({ content: plainText, updated_at: new Date().toISOString() })
+          .eq("id", existingHms.id);
+      } else {
+        // Get max sort_order
+        const { data: maxDoc } = await supabase
+          .from("hms_documents")
+          .select("sort_order")
+          .order("sort_order", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        const nextOrder = (maxDoc?.sort_order || 0) + 1;
+        await supabase.from("hms_documents").insert({
+          title: hmsTitle,
+          content: plainText,
+          sort_order: nextOrder,
+        });
+      }
+
       setSaved(true);
-      toast.success(`${config.title} lagret`);
+      toast.success(`${config.title} lagret og publisert til HMS-håndbok`);
     } catch (e) {
       toast.error("Kunne ikke lagre");
     }
@@ -293,7 +326,7 @@ const DocumentGenerator = ({ config }: Props) => {
             ) : (
               <Save size={14} />
             )}
-            {saving ? "Lagrer…" : saved ? "Lagret" : "Lagre alle"}
+            {saving ? "Lagrer…" : saved ? "Lagret & publisert" : "Lagre & publiser"}
           </button>
         </div>
       </div>
