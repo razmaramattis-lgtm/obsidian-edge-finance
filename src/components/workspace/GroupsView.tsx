@@ -58,7 +58,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
     const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role, avatar_url)").eq("group_id", id).order("created_at");
     const msgs = (data as GroupMsg[]) || [];
     setMessages(msgs);
-    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "instant" }), 50);
 
     // Mark unread messages as read
     const otherMsgs = msgs.filter(m => m.sender_id !== profile.id);

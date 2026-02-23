@@ -53,7 +53,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const fetchMsgs = async (id: string) => {
     const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", id).order("created_at");
     setMessages((data as DmMsg[]) || []);
-    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "instant" }), 50);
     // Mark unread messages as read
     if (data && data.length > 0) {
       const unreadIds = data.filter((m: any) => m.sender_id !== profile.id && !m.read_at).map((m: any) => m.id);
