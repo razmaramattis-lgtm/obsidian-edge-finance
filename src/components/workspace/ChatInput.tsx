@@ -21,26 +21,43 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled, onCom
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
-  // Notify parent when composing on mobile
+  // Notify parent when composing on mobile — react instantly to keyboard dismiss
   useEffect(() => {
     if (!isMobile) return;
     const input = inputRef.current;
     if (!input) return;
     const onFocus = () => onComposingChange?.(true);
     const onBlur = () => {
-      // Delay to allow button clicks (send, attach) to register
+      // Very short delay — just enough for button taps to register
       setTimeout(() => {
-        // If focus moved to another input inside this form, stay composing
         const active = document.activeElement;
         const isStillInForm = input.closest("form")?.contains(active);
         if (!isStillInForm) {
           onComposingChange?.(false);
         }
-      }, 200);
+      }, 80);
     };
     input.addEventListener("focus", onFocus);
     input.addEventListener("blur", onBlur);
-    return () => { input.removeEventListener("focus", onFocus); input.removeEventListener("blur", onBlur); };
+
+    // Also listen to viewport resize (keyboard dismiss) for instant response
+    const vv = window.visualViewport;
+    let lastHeight = vv?.height ?? window.innerHeight;
+    const onResize = () => {
+      const h = vv?.height ?? window.innerHeight;
+      // Keyboard dismissed — viewport grew
+      if (h > lastHeight + 50 && document.activeElement !== input) {
+        onComposingChange?.(false);
+      }
+      lastHeight = h;
+    };
+    vv?.addEventListener("resize", onResize);
+
+    return () => {
+      input.removeEventListener("focus", onFocus);
+      input.removeEventListener("blur", onBlur);
+      vv?.removeEventListener("resize", onResize);
+    };
   }, [isMobile, onComposingChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
