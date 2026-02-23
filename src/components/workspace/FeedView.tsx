@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "./UserAvatar";
-import EmojiPicker from "./EmojiPicker";
 import GifPicker from "./GifPicker";
 import PostReactions from "./PostReactions";
 import type { Profile, Post, PostComment } from "./types";
@@ -300,7 +299,6 @@ const PostComments = ({ postId, profileId, profileData, onViewProfile }: { postI
         <UserAvatar name={profileData.name} avatarUrl={profileData.avatar_url} size="xs" />
         <div className="flex-1 flex items-center bg-muted/30 rounded-2xl border border-border/15 pr-1 gap-0.5">
           <input value={text} onChange={e => setText(e.target.value)} placeholder="Skriv en kommentar…" className="flex-1 h-9 bg-transparent px-3 text-xs focus:outline-none placeholder:text-muted-foreground/40" />
-          <EmojiPicker onSelect={e => setText(prev => prev + e)} />
           <GifPicker onSelect={submitGif} />
           <button type="submit" disabled={!text.trim()} className="h-7 px-3 rounded-xl bg-primary/10 text-primary text-[10px] font-semibold disabled:opacity-30 transition-all">Send</button>
         </div>
@@ -443,7 +441,6 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
                 )}
                 <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2 gap-2">
                   <div className="flex gap-0.5 shrink-0">
-                    <EmojiPicker onSelect={e => setNewPost(prev => prev + e)} />
                     <GifPicker onSelect={submitGif} />
                     <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
                     <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={18} /></button>
