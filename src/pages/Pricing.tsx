@@ -37,11 +37,11 @@ const Pricing = () => {
         .eq("active", true)
         .order("sort_order");
 
-      // Filter by section
+      // Filter by section — hub shows regnskap prices
       if (isInSection && section) {
         query = query.eq("section", section.id);
       } else {
-        query = query.is("section", null);
+        query = query.eq("section", "regnskap");
       }
 
       const { data } = await query;
