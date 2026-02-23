@@ -10,6 +10,7 @@ import MessageBubble from "./MessageBubble";
 import VideoCall from "./VideoCall";
 import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, formatDate, uploadFile } from "./helpers";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 const DmsView = ({ profile }: { profile: Profile }) => {
   const { isAdmin } = useAuth();
@@ -86,6 +87,17 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const send = async (content: string) => {
     if (!active) return;
     await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content }]);
+    const recipientId = active.participant_1 === profile.id ? active.participant_2 : active.participant_1;
+    createNotification({
+      recipientId,
+      actorId: profile.id,
+      type: "dm_message",
+      referenceId: active.id,
+      referenceType: "dm_conversation",
+      title: content.slice(0, 80),
+      body: profile.name + " sendte deg en melding",
+      imageUrl: profile.avatar_url || undefined,
+    });
   };
 
   const sendFile = async (file: File) => {

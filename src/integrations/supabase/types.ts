@@ -2167,6 +2167,63 @@ export type Database = {
           },
         ]
       }
+      workspace_notifications: {
+        Row: {
+          actor_id: string
+          body: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          read: boolean
+          recipient_id: string
+          reference_id: string | null
+          reference_type: string | null
+          title: string | null
+          type: string
+        }
+        Insert: {
+          actor_id: string
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          read?: boolean
+          recipient_id: string
+          reference_id?: string | null
+          reference_type?: string | null
+          title?: string | null
+          type: string
+        }
+        Update: {
+          actor_id?: string
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          read?: boolean
+          recipient_id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          title?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_post_comments: {
         Row: {
           author_id: string
