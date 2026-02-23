@@ -1,7 +1,7 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, BookOpen, Users, Megaphone, Code2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 
@@ -88,6 +88,7 @@ const SectionHome = () => {
 
   const content = sectionContent[section.id];
   const otherSections = SECTION_LIST.filter((s) => s.id !== section.id);
+  const sp = (path: string) => `${section.basePath}${path}`;
 
   return (
     <>
@@ -118,13 +119,13 @@ const SectionHome = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                to="/kontakt"
+                to={sp("/kontakt")}
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Snakk med oss <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <Link
-                to={`${section.basePath}/tjenester`}
+                to={sp("/tjenester")}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se tjenester
@@ -226,7 +227,7 @@ const SectionHome = () => {
               Ta en uforpliktende prat — vi hjelper deg videre.
             </p>
             <Link
-              to="/kontakt"
+              to={sp("/kontakt")}
               className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

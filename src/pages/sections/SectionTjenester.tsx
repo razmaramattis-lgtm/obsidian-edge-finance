@@ -67,6 +67,7 @@ const SectionTjenester = () => {
   if (!section) return <Navigate to="/" replace />;
 
   const content = sectionServices[section.id];
+  const sp = (path: string) => `${section.basePath}${path}`;
 
   return (
     <>
@@ -96,7 +97,7 @@ const SectionTjenester = () => {
               {content.intro}
             </p>
             <Link
-              to="/kontakt"
+              to={sp("/kontakt")}
               className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Få et uforpliktende tilbud
@@ -115,7 +116,7 @@ const SectionTjenester = () => {
             {content.services.map((service, i) => (
               <AnimatedSection key={service.title} delay={i * 0.08}>
                 <Link
-                  to={service.href}
+                  to={sp(service.href)}
                   className="block p-8 md:p-10 glass rounded-3xl card-lift h-full group"
                 >
                   <h3 className="font-heading text-xl md:text-2xl mb-3 group-hover:text-primary transition-colors duration-300">
@@ -146,7 +147,7 @@ const SectionTjenester = () => {
               Ta en uforpliktende prat — vi forteller deg hva som passer for din bedrift.
             </p>
             <Link
-              to="/kontakt"
+              to={sp("/kontakt")}
               className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

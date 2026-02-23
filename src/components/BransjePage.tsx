@@ -7,6 +7,7 @@ import { LucideIcon } from "lucide-react";
 import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
 import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 import { useIndustryContent } from "@/hooks/useIndustryContent";
+import { useSection } from "@/contexts/SectionContext";
 
 interface BransjePageProps {
   href: string;
@@ -23,6 +24,13 @@ interface BransjePageProps {
   ctaHeadline: string;
 }
 
+const sectionRoleLabel: Record<string, string> = {
+  regnskap: "Regnskapsfører",
+  hr: "HR-rådgiver",
+  markedsforing: "Markedsfører",
+  it: "IT-rådgiver",
+};
+
 const BransjePage = ({
   href,
   icon: Icon,
@@ -38,18 +46,29 @@ const BransjePage = ({
   ctaHeadline: defaultCtaHeadline,
 }: BransjePageProps) => {
   const dbContent = useIndustryContent(href);
+  const { section, isInSection } = useSection();
   const tagline = dbContent?.tagline || defaultTagline;
   const intro = dbContent?.intro || defaultIntro;
   const body = dbContent?.body || defaultBody;
   const deliverables = dbContent?.deliverables || defaultDeliverables;
   const ctaHeadline = dbContent?.cta_headline || defaultCtaHeadline;
 
+  const sp = (path: string) => (isInSection && section ? `${section.basePath}${path}` : path);
+  const roleLabel = section ? sectionRoleLabel[section.id] || "rådgiver" : "regnskapsfører";
+
+  const titlePrefix = section
+    ? section.id === "regnskap" ? "Regnskapsfører"
+    : section.id === "hr" ? "HR-rådgiver"
+    : section.id === "markedsforing" ? "Markedsfører"
+    : "IT-rådgiver"
+    : "Regnskapsfører";
+
   return (
   <>
     <Helmet>
-      <title>Regnskapsfører for {name} | Avargo</title>
+      <title>{titlePrefix} for {name} | Avargo</title>
       <meta name="description" content={intro.length > 160 ? intro.slice(0, 157) + "..." : intro} />
-      <link rel="canonical" href={`https://avargo.no/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`} />
+      <link rel="canonical" href={`https://avargo.no${isInSection && section ? section.basePath : ""}/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`} />
     </Helmet>
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
@@ -63,7 +82,7 @@ const BransjePage = ({
           className="max-w-4xl"
         >
           <Link
-            to="/bransjer"
+            to={sp("/bransjer")}
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/70 hover:text-foreground transition-colors mb-8 md:mb-12"
           >
             <ArrowLeft size={12} /> Alle bransjer
@@ -85,14 +104,14 @@ const BransjePage = ({
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              to="/kontakt"
+              to={sp("/kontakt")}
               className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Snakk med en {name}-ekspert
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
-              to="/priser"
+              to={sp("/priser")}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se priser
@@ -180,7 +199,6 @@ const BransjePage = ({
       </div>
     </section>
 
-
     {/* RELATED */}
     {relatedSlugs.length > 0 && (
       <section className="py-16 md:py-20 border-t border-border/10">
@@ -191,7 +209,7 @@ const BransjePage = ({
               {relatedSlugs.map((s) => (
                 <Link
                   key={s.href}
-                  to={s.href}
+                  to={sp(s.href)}
                   className="inline-flex items-center gap-2 px-5 py-2.5 text-[12px] tracking-wide text-muted-foreground border border-border/20 rounded-full hover:border-primary/30 hover:text-foreground transition-all duration-300"
                 >
                   {s.label} <ChevronRight size={11} className="text-primary/40" />
@@ -212,10 +230,10 @@ const BransjePage = ({
             {ctaHeadline}
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            En samtale er nok. Vi setter deg i kontakt med en regnskapsfører som kjenner din bransje — og kan starte umiddelbart.
+            En samtale er nok. Vi setter deg i kontakt med en {roleLabel} som kjenner din bransje — og kan starte umiddelbart.
           </p>
           <Link
-            to="/kontakt"
+            to={sp("/kontakt")}
             className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
           >
             Book en gjennomgang

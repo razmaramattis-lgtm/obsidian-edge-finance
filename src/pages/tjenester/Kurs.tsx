@@ -243,7 +243,7 @@ const Kurs = () => {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-4xl"
           >
-            <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
+            <Link to={isInSection && section ? `${section.basePath}/tjenester` : "/tjenester"} className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
               <ArrowLeft size={12} /> Alle tjenester
             </Link>
             <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Kompetanseheving · Kurs</p>
