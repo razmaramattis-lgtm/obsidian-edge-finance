@@ -87,6 +87,23 @@ export const useWorkspaceNotifications = (profileId: string | undefined) => {
     fetch();
   };
 
+  const deleteNotifications = async (ids: string[]) => {
+    if (!ids.length) return;
+    await supabase.from("workspace_notifications").delete().in("id", ids);
+    setNotifications(prev => prev.filter(n => !ids.includes(n.id)));
+    setUnreadCount(prev => Math.max(0, prev - notifications.filter(n => ids.includes(n.id) && !n.read).length));
+  };
+
+  const deleteAllNotifications = async () => {
+    if (!profileId) return;
+    await supabase.from("workspace_notifications").delete().eq("recipient_id", profileId);
+    setNotifications([]);
+    setUnreadCount(0);
+    setUnreadDmCount(0);
+    setUnreadFeedCount(0);
+    setUnreadGroupCount(0);
+  };
+
   const markDmConvRead = async (conversationId: string) => {
     const toMark = notifications.filter(n => !n.read && n.type === "dm_message" && n.reference_id === conversationId);
     if (toMark.length === 0) return;
@@ -104,6 +121,8 @@ export const useWorkspaceNotifications = (profileId: string | undefined) => {
     markTypeRead,
     markAllRead,
     markDmConvRead,
+    deleteNotifications,
+    deleteAllNotifications,
     refetch: fetch,
   };
 };

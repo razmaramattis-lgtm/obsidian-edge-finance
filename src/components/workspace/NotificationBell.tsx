@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Bell, Check, MessageCircle, Newspaper, Users, Heart, UserPlus, X, Mail, CalendarDays, Inbox, Handshake, HelpCircle } from "lucide-react";
+import { Bell, Check, MessageCircle, Newspaper, Users, Heart, UserPlus, X, Mail, CalendarDays, Inbox, Handshake, HelpCircle, Trash2, CheckSquare, Square } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import type { WsNotification } from "@/hooks/useWorkspaceNotifications";
 import { timeAgo } from "./helpers";
@@ -12,6 +12,8 @@ interface Props {
   onMarkRead: (id: string) => void;
   onMarkAllRead: () => void;
   onNavigate: (view: View, refId?: string) => void;
+  onDeleteSelected?: (ids: string[]) => void;
+  onDeleteAll?: () => void;
 }
 
 const typeIcon = (type: string) => {
@@ -54,8 +56,10 @@ const typeLabel = (type: string) => {
   }
 };
 
-const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRead, onNavigate }: Props) => {
+const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRead, onNavigate, onDeleteSelected, onDeleteAll }: Props) => {
   const [open, setOpen] = useState(false);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,10 +70,49 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleClick = (n: WsNotification) => {
-    onMarkRead(n.id);
+  // Reset selection when closing
+  useEffect(() => {
+    if (!open) {
+      setSelectMode(false);
+      setSelected(new Set());
+    }
+  }, [open]);
 
-    // Admin notifications → navigate to admin dashboard
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = (items: WsNotification[]) => {
+    if (selected.size === items.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(items.map(n => n.id)));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selected.size === 0) return;
+    onDeleteSelected?.(Array.from(selected));
+    setSelected(new Set());
+    setSelectMode(false);
+  };
+
+  const handleDeleteAll = () => {
+    onDeleteAll?.();
+    setSelectMode(false);
+    setSelected(new Set());
+  };
+
+  const handleClick = (n: WsNotification) => {
+    if (selectMode) {
+      toggleSelect(n.id);
+      return;
+    }
+    onMarkRead(n.id);
     if (n.type.startsWith("admin_")) {
       const panelMap: Record<string, string> = {
         admin_contact: "contact_submissions",
@@ -86,8 +129,6 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
       setOpen(false);
       return;
     }
-
-    // Workspace notifications
     if (n.type === "feed_post" || n.type === "feed_comment" || n.type === "feed_reaction") {
       onNavigate("feed", n.reference_id || undefined);
     } else if (n.type === "group_message") {
@@ -99,6 +140,96 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
     }
     setOpen(false);
   };
+
+  const renderToolbar = (items: WsNotification[], isMobile: boolean) => (
+    <div className={`flex items-center gap-2 ${isMobile ? 'flex-wrap' : ''}`}>
+      {selectMode ? (
+        <>
+          <button
+            onClick={() => toggleSelectAll(items)}
+            className="text-[11px] text-primary hover:underline flex items-center gap-1"
+          >
+            {selected.size === items.length ? <CheckSquare size={12} /> : <Square size={12} />}
+            {selected.size === items.length ? "Fjern alle" : "Merk alle"}
+          </button>
+          {selected.size > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              className="text-[11px] text-destructive hover:underline flex items-center gap-1"
+            >
+              <Trash2 size={12} /> Slett ({selected.size})
+            </button>
+          )}
+          <button
+            onClick={() => { setSelectMode(false); setSelected(new Set()); }}
+            className="text-[11px] text-muted-foreground hover:underline"
+          >
+            Avbryt
+          </button>
+        </>
+      ) : (
+        <>
+          {notifications.length > 0 && (
+            <button
+              onClick={() => setSelectMode(true)}
+              className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1"
+            >
+              <CheckSquare size={12} /> Velg
+            </button>
+          )}
+          {notifications.length > 0 && (
+            <button
+              onClick={handleDeleteAll}
+              className="text-[11px] text-destructive/70 hover:text-destructive flex items-center gap-1"
+            >
+              <Trash2 size={12} /> Slett alle
+            </button>
+          )}
+          {unreadCount > 0 && (
+            <button onClick={onMarkAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
+              <Check size={12} /> Merk lest
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  const renderNotifItem = (n: WsNotification) => (
+    <button
+      key={n.id}
+      onClick={() => handleClick(n)}
+      className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-all hover:bg-muted/30 active:bg-muted/40 ${!n.read ? "bg-primary/5" : ""} ${selected.has(n.id) ? "bg-primary/10 ring-1 ring-primary/20" : ""}`}
+    >
+      {selectMode && (
+        <div className="shrink-0 mt-1.5">
+          {selected.has(n.id)
+            ? <CheckSquare size={16} className="text-primary" />
+            : <Square size={16} className="text-muted-foreground" />
+          }
+        </div>
+      )}
+      <div className="relative shrink-0 mt-0.5">
+        <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="sm" />
+        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
+          {typeIcon(n.type)}
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
+          <span className="text-[10px] text-muted-foreground">{typeLabel(n.type)}</span>
+        </div>
+        {n.title && <p className="text-[11px] font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
+        {n.body && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
+        <p className="text-[9px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
+      </div>
+      {n.image_url && (
+        <img src={n.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+      )}
+      {!n.read && !selectMode && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+    </button>
+  );
 
   return (
     <div className="relative" ref={ref}>
@@ -122,11 +253,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
               <div className="flex items-center justify-between px-4 py-3 border-b border-border/15 bg-card/80 backdrop-blur-xl">
                 <h3 className="text-base font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
                 <div className="flex items-center gap-2">
-                  {unreadCount > 0 && (
-                    <button onClick={onMarkAllRead} className="text-[11px] text-primary hover:underline flex items-center gap-1">
-                      <Check size={12} /> Merk alle lest
-                    </button>
-                  )}
+                  {renderToolbar(notifications.slice(0, 50), true)}
                   <button onClick={() => setOpen(false)} className="p-2 -mr-2 rounded-xl text-muted-foreground hover:text-foreground transition-all">
                     <X size={20} />
                   </button>
@@ -139,33 +266,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
                     <p className="text-sm text-muted-foreground">Ingen varsler</p>
                   </div>
                 ) : (
-                  notifications.slice(0, 50).map(n => (
-                    <button
-                      key={n.id}
-                      onClick={() => handleClick(n)}
-                      className={`w-full flex items-start gap-3 px-4 py-3.5 text-left transition-all active:bg-muted/40 ${!n.read ? "bg-primary/5" : ""}`}
-                    >
-                      <div className="relative shrink-0 mt-0.5">
-                        <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="md" />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
-                          {typeIcon(n.type)}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
-                          <span className="text-[11px] text-muted-foreground">{typeLabel(n.type)}</span>
-                        </div>
-                        {n.title && <p className="text-xs font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
-                        {n.body && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
-                        <p className="text-[10px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
-                      </div>
-                      {n.image_url && (
-                        <img src={n.image_url} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
-                      )}
-                      {!n.read && <div className="w-2.5 h-2.5 rounded-full bg-primary shrink-0 mt-2" />}
-                    </button>
-                  ))
+                  notifications.slice(0, 50).map(renderNotifItem)
                 )}
               </div>
             </div>,
@@ -176,11 +277,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
           <div className="hidden sm:flex absolute right-0 top-11 w-[380px] bg-card border border-border/30 rounded-2xl shadow-2xl z-50 max-h-[500px] flex-col animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
               <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
-              {unreadCount > 0 && (
-                <button onClick={onMarkAllRead} className="text-[10px] text-primary hover:underline flex items-center gap-1">
-                  <Check size={10} /> Merk alle som lest
-                </button>
-              )}
+              {renderToolbar(notifications.slice(0, 30), false)}
             </div>
             <div className="flex-1 overflow-y-auto">
               {notifications.length === 0 ? (
@@ -189,33 +286,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
                   <p className="text-xs text-muted-foreground">Ingen varsler</p>
                 </div>
               ) : (
-                notifications.slice(0, 30).map(n => (
-                  <button
-                    key={n.id}
-                    onClick={() => handleClick(n)}
-                    className={`w-full flex items-start gap-3 px-5 py-3 text-left transition-all hover:bg-muted/30 ${!n.read ? "bg-primary/5" : ""}`}
-                  >
-                    <div className="relative shrink-0 mt-0.5">
-                      <UserAvatar name={n.actor?.name || "?"} avatarUrl={n.actor?.avatar_url} size="sm" />
-                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card flex items-center justify-center border border-border/20">
-                        {typeIcon(n.type)}
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold truncate">{n.actor?.name || "Ukjent"}</span>
-                        <span className="text-[10px] text-muted-foreground">{typeLabel(n.type)}</span>
-                      </div>
-                      {n.title && <p className="text-[11px] font-medium text-foreground/80 truncate mt-0.5">{n.title}</p>}
-                      {n.body && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
-                      <p className="text-[9px] text-muted-foreground/60 mt-1">{timeAgo(n.created_at)}</p>
-                    </div>
-                    {n.image_url && (
-                      <img src={n.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                    )}
-                    {!n.read && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
-                  </button>
-                ))
+                notifications.slice(0, 30).map(renderNotifItem)
               )}
             </div>
           </div>

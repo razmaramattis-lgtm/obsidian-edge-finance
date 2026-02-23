@@ -176,6 +176,8 @@ const Workspace = () => {
             onMarkRead={wsNotifs.markRead}
             onMarkAllRead={wsNotifs.markAllRead}
             onNavigate={handleNotifNavigate}
+            onDeleteSelected={wsNotifs.deleteNotifications}
+            onDeleteAll={wsNotifs.deleteAllNotifications}
           />
           <button onClick={() => setHeaderHidden(true)} className="hidden md:block text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
           <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
