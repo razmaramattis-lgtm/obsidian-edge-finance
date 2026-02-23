@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Globe, MessageCircle, Image, X, Pin, Trash2,
-  MoreHorizontal, Pencil, SmilePlus, Search,
+  MoreHorizontal, Pencil, SmilePlus, Search, Plus, Paperclip,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "./UserAvatar";
@@ -12,6 +12,7 @@ import PostReactions from "./PostReactions";
 import type { Profile, Post, PostComment } from "./types";
 import { timeAgo, isGifContent, extractGifUrl } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // ─── Comment Reactions ───
 const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];
@@ -308,7 +309,7 @@ const PostComments = ({ postId, profileId, profileData, onViewProfile }: { postI
 };
 
 // ─── Feed View ───
-const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
+const FeedView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
   const { isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
@@ -321,7 +322,10 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [feedSearch, setFeedSearch] = useState("");
+  const [mobileComposer, setMobileComposer] = useState(false);
+  const [mobileAttachOpen, setMobileAttachOpen] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
 
   const fetchPosts = async () => {
     const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url, active)").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(50);
@@ -376,6 +380,7 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
       });
     }
     setNewPost(""); setImageFile(null); setImagePreview(null); setSending(false);
+    if (isMobile) { setMobileComposer(false); onComposingChange?.(false); }
   };
 
   const submitGif = async (url: string) => {
@@ -410,8 +415,19 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
       )
     : posts;
 
+  const openMobileComposer = () => {
+    setMobileComposer(true);
+    onComposingChange?.(true);
+  };
+
+  const closeMobileComposer = () => {
+    setMobileComposer(false);
+    setMobileAttachOpen(false);
+    onComposingChange?.(false);
+  };
+
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden relative">
       <div className="px-6 py-5 border-b border-border/10 bg-card/20 shrink-0">
         <div className="flex items-center justify-between">
           <div>
@@ -427,29 +443,31 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto p-6 space-y-5">
-          {/* Composer */}
-          <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
-            <div className="flex items-start gap-3 p-4">
-              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
-              <form onSubmit={submitPost} className="flex-1 min-w-0">
-                <textarea value={newPost} onChange={e => setNewPost(e.target.value)} placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`} rows={3} className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40" />
-                {imagePreview && (
-                  <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-64">
-                    <img src={imagePreview} alt="preview" className="w-full max-h-64 object-cover" />
-                    <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"><X size={14} /></button>
+          {/* Desktop Composer */}
+          {!isMobile && (
+            <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
+              <div className="flex items-start gap-3 p-4">
+                <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
+                <form onSubmit={submitPost} className="flex-1 min-w-0">
+                  <textarea value={newPost} onChange={e => setNewPost(e.target.value)} placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`} rows={3} className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40" />
+                  {imagePreview && (
+                    <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-64">
+                      <img src={imagePreview} alt="preview" className="w-full max-h-64 object-cover" />
+                      <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"><X size={14} /></button>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2 gap-2">
+                    <div className="flex gap-0.5 shrink-0">
+                      <GifPicker onSelect={submitGif} />
+                      <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
+                      <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={18} /></button>
+                    </div>
+                    <button type="submit" disabled={(!newPost.trim() && !imageFile) || sending} className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0">Publiser</button>
                   </div>
-                )}
-                <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2 gap-2">
-                  <div className="flex gap-0.5 shrink-0">
-                    <GifPicker onSelect={submitGif} />
-                    <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
-                    <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={18} /></button>
-                  </div>
-                  <button type="submit" disabled={(!newPost.trim() && !imageFile) || sending} className="px-4 sm:px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0 whitespace-nowrap">Publiser</button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Posts */}
           {filteredPosts.map(post => {
@@ -526,6 +544,98 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
           )}
         </div>
       </div>
+
+      {/* Mobile: Floating "Legg ut ny" button */}
+      {isMobile && !mobileComposer && (
+        <button
+          onClick={openMobileComposer}
+          className="absolute bottom-6 right-4 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/25 flex items-center justify-center active:scale-90 transition-all z-20 hover:shadow-2xl hover:shadow-primary/30"
+        >
+          <Plus size={24} strokeWidth={2.5} />
+        </button>
+      )}
+
+      {/* Mobile: Full-screen composer overlay */}
+      {isMobile && mobileComposer && (
+        <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-250">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/15 bg-card/80 backdrop-blur-xl safe-area-top">
+            <button onClick={closeMobileComposer} className="p-2 -ml-2 rounded-xl text-muted-foreground hover:text-foreground transition-all">
+              <X size={20} />
+            </button>
+            <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Nytt innlegg</span>
+            <button
+              onClick={submitPost as any}
+              disabled={(!newPost.trim() && !imageFile) || sending}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 transition-all active:scale-95"
+            >
+              Publiser
+            </button>
+          </div>
+
+          {/* Composer body */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex gap-3">
+              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold mb-0.5">{profile.name}</p>
+                <p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-3"><Globe size={9} /> Alle</p>
+              </div>
+            </div>
+            <textarea
+              value={newPost}
+              onChange={e => setNewPost(e.target.value)}
+              placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
+              rows={6}
+              autoFocus
+              className="w-full resize-none bg-transparent text-base leading-relaxed focus:outline-none placeholder:text-muted-foreground/40"
+            />
+            {imagePreview && (
+              <div className="relative mt-3 rounded-2xl overflow-hidden border border-border/20 max-h-72">
+                <img src={imagePreview} alt="preview" className="w-full max-h-72 object-cover" />
+                <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 active:scale-90"><X size={16} /></button>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom toolbar */}
+          <div className="border-t border-border/15 bg-card/80 backdrop-blur-xl p-3 safe-area-bottom">
+            <div className="flex items-center gap-1">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setMobileAttachOpen(!mobileAttachOpen)}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                    mobileAttachOpen
+                      ? "bg-primary text-primary-foreground rotate-45"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  {mobileAttachOpen ? <X size={16} /> : <Plus size={20} />}
+                </button>
+                {mobileAttachOpen && (
+                  <div className="absolute bottom-12 left-0 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 p-2 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200 min-w-[180px]">
+                    <div className="space-y-0.5">
+                      <GifPicker onSelect={(url) => { submitGif(url); closeMobileComposer(); }} />
+                      <button
+                        type="button"
+                        onClick={() => { imageInputRef.current?.click(); setMobileAttachOpen(false); }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground hover:bg-muted/50 transition-all active:scale-[0.98]"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
+                          <Image size={16} />
+                        </div>
+                        <span className="text-xs font-medium">Bilde / Video</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
