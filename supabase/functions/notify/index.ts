@@ -67,10 +67,13 @@ async function sendEmail(opts: {
       const boundary = "----=_AvargoMail_" + Date.now();
       message = [
         `From: Avargo <${opts.from}>`,
+        `Reply-To: kontakt@avargo.no`,
         `To: ${opts.to}`,
         `Subject: ${opts.subject}`,
         `MIME-Version: 1.0`,
         `Content-Type: multipart/mixed; boundary="${boundary}"`,
+        `List-Unsubscribe: <mailto:kontakt@avargo.no?subject=Unsubscribe>`,
+        `List-Unsubscribe-Post: List-Unsubscribe=One-Click`,
         ``,
         `--${boundary}`,
         `Content-Type: text/html; charset=UTF-8`,
@@ -91,10 +94,13 @@ async function sendEmail(opts: {
     } else {
       message = [
         `From: Avargo <${opts.from}>`,
+        `Reply-To: kontakt@avargo.no`,
         `To: ${opts.to}`,
         `Subject: ${opts.subject}`,
         `MIME-Version: 1.0`,
         `Content-Type: text/html; charset=UTF-8`,
+        `List-Unsubscribe: <mailto:kontakt@avargo.no?subject=Unsubscribe>`,
+        `List-Unsubscribe-Post: List-Unsubscribe=One-Click`,
         ``,
         opts.html,
         `.`,
