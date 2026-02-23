@@ -57,6 +57,7 @@ interface NavItem {
 const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Hoved
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
+  { id: "chat", label: "Workspace", icon: MessageSquare, group: "Hoved" },
   { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
 
   // Kunder
@@ -78,7 +79,6 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Internt
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
-  { id: "chat", label: "Workspace", icon: MessageSquare, group: "Internt" },
   { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
 
   // Admin
