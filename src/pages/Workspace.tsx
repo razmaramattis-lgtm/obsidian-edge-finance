@@ -27,7 +27,7 @@ interface GroupMsg { id: string; content: string; created_at: string; sender_id:
 interface DmConv { id: string; participant_1: string; participant_2: string; other?: Profile }
 interface DmMsg { id: string; content: string; created_at: string; sender_id: string }
 
-type View = "feed" | "channels" | "groups" | "dms";
+type View = "feed" | "channels" | "groups" | "dms" | "conference";
 
 // ─── Helpers ───
 const formatTime = (ts: string) => new Date(ts).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
@@ -86,6 +86,7 @@ const Workspace = () => {
     { id: "channels" as View, icon: Hash, label: "Kanaler", badge: null },
     { id: "groups" as View, icon: Users, label: "Grupper", badge: null },
     { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: null },
+    { id: "conference" as View, icon: Video, label: "Konferanse", badge: null },
   ];
 
   return (
@@ -167,6 +168,7 @@ const Workspace = () => {
           {view === "channels" && <ChannelsView profile={profile} />}
           {view === "groups" && <GroupsView profile={profile} />}
           {view === "dms" && <DmsView profile={profile} />}
+          {view === "conference" && <ConferenceView profile={profile} />}
         </main>
       </div>
     </div>
@@ -543,6 +545,8 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   const [messages, setMessages] = useState<GroupMsg[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", color: "#6366f1", is_private: false });
+  const [conferenceActive, setConferenceActive] = useState(false);
+  const [groupMembers, setGroupMembers] = useState<Array<{ id: string; name: string; avatar_url?: string | null }>>([]);
   const [memberCount, setMemberCount] = useState<Record<string, number>>({});
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -569,6 +573,18 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   useEffect(() => {
     if (!active) return;
     fetchMsgs(active.id);
+    // Fetch group members for conference
+    (async () => {
+      const { data } = await supabase
+        .from("workspace_group_members")
+        .select("profile_id, profiles(id, name, avatar_url)")
+        .eq("group_id", active.id);
+      setGroupMembers((data || []).map((d: any) => ({
+        id: d.profiles?.id,
+        name: d.profiles?.name,
+        avatar_url: d.profiles?.avatar_url,
+      })).filter((m: any) => m.id));
+    })();
     const ch = supabase.channel(`ws-grp-${active.id}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "workspace_group_messages", filter: `group_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [active?.id]);
@@ -680,6 +696,13 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
               {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
             </div>
             <div className="flex-1" />
+            <button
+              onClick={() => setConferenceActive(true)}
+              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"
+              title="Videokonferanse"
+            >
+              <Video size={16} />
+            </button>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Users size={10} /> {memberCount[active.id] || 0} medlemmer</span>
           </div>
           <div className="flex-1 overflow-y-auto p-5 space-y-1">
@@ -703,6 +726,137 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
           </div>
           <ChatInput placeholder={`Skriv i ${active.name}…`} onSend={send} />
         </div>
+      )}
+
+      {/* Conference call overlay */}
+      {conferenceActive && active && (
+        <VideoCall
+          conversationId={active.id}
+          profileId={profile.id}
+          profileName={profile.name}
+          profileAvatar={profile.avatar_url}
+          isConference
+          conferenceId={active.id}
+          participants={groupMembers}
+          onClose={() => setConferenceActive(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+// ─── Conference View (standalone) ───
+const ConferenceView = ({ profile }: { profile: Profile }) => {
+  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [conferenceActive, setConferenceActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name");
+      setAllProfiles((data as Profile[]) || []);
+    })();
+  }, []);
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : prev.length < 3 ? [...prev, id] : prev);
+  };
+
+  const participants = [
+    { id: profile.id, name: profile.name, avatar_url: profile.avatar_url },
+    ...selected.map(id => allProfiles.find(p => p.id === id)).filter(Boolean) as Array<{ id: string; name: string; avatar_url?: string | null }>,
+  ];
+
+  const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const confId = `standalone-${[profile.id, ...selected.sort()].join("-")}`;
+
+  return (
+    <div className="h-full flex flex-col">
+      <div className="px-6 py-5 border-b border-border/10 bg-card/20">
+        <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Konferanse</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">Start en videokonferanse med opptil 4 deltakere</p>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Search */}
+          <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 border border-border/15">
+            <Search size={14} className="text-muted-foreground" />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Søk etter deltakere…"
+              className="h-11 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40"
+            />
+          </div>
+
+          {/* Selected */}
+          {selected.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground">Valgte ({selected.length}/3):</span>
+              {selected.map(id => {
+                const p = allProfiles.find(pp => pp.id === id);
+                return (
+                  <button
+                    key={id}
+                    onClick={() => toggleSelect(id)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-all"
+                  >
+                    <UserAvatar name={p?.name} avatarUrl={p?.avatar_url} size="xs" />
+                    {p?.name}
+                    <span className="ml-1 opacity-60">✕</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Profiles list */}
+          <div className="space-y-1 max-h-[400px] overflow-y-auto">
+            {filteredProfiles.map(p => (
+              <button
+                key={p.id}
+                onClick={() => toggleSelect(p.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  selected.includes(p.id) ? "bg-primary/10 border border-primary/20" : "hover:bg-muted/40"
+                }`}
+              >
+                <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" />
+                <div className="text-left flex-1">
+                  <p className="text-sm font-medium">{p.name}</p>
+                  <p className="text-[10px] text-muted-foreground capitalize">{p.role === "admin" ? "Administrator" : p.role === "employee" ? "Ansatt" : "Kunde"}</p>
+                </div>
+                {selected.includes(p.id) && (
+                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">✓</div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Start button */}
+          <button
+            onClick={() => setConferenceActive(true)}
+            disabled={selected.length === 0}
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-sm disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            <Video size={18} />
+            Start konferanse ({participants.length} deltakere)
+          </button>
+        </div>
+      </div>
+
+      {conferenceActive && (
+        <VideoCall
+          conversationId={confId}
+          profileId={profile.id}
+          profileName={profile.name}
+          profileAvatar={profile.avatar_url}
+          isConference
+          conferenceId={confId}
+          participants={participants}
+          onClose={() => setConferenceActive(false)}
+        />
       )}
     </div>
   );
