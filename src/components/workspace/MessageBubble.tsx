@@ -1,6 +1,6 @@
 import UserAvatar from "./UserAvatar";
 import MessageReactions from "./MessageReactions";
-import { Paperclip } from "lucide-react";
+import { Paperclip, Check, CheckCheck } from "lucide-react";
 
 interface MessageBubbleProps {
   content: string;
@@ -14,12 +14,13 @@ interface MessageBubbleProps {
   reactionTable?: "dm_message_reactions" | "group_message_reactions";
   fileUrl?: string | null;
   fileName?: string | null;
+  readAt?: string | null;
 }
 
 const isGif = (content: string) => /^https?:\/\/.*\.(gif|giphy)/i.test(content);
 const isImage = (url: string) => /\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
 
-const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAvatar = true, messageId, profileId, reactionTable, fileUrl, fileName }: MessageBubbleProps) => {
+const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAvatar = true, messageId, profileId, reactionTable, fileUrl, fileName, readAt }: MessageBubbleProps) => {
   const gif = isGif(content);
 
   return (
@@ -68,7 +69,17 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
             <MessageReactions messageId={messageId} profileId={profileId} table={reactionTable} />
           </div>
         )}
-        {!showAvatar && (
+        {isOwn && (
+          <div className="flex items-center gap-1 mt-0.5 justify-end">
+            {readAt ? (
+              <CheckCheck size={12} className="text-blue-400" />
+            ) : (
+              <Check size={12} className="text-muted-foreground/50" />
+            )}
+            <span className="text-[9px] text-muted-foreground/60">{readAt ? "Lest" : "Sendt"}</span>
+          </div>
+        )}
+        {!showAvatar && !isOwn && (
           <span className="text-[9px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-0.5">{time}</span>
         )}
       </div>
