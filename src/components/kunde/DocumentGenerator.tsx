@@ -174,37 +174,52 @@ const DocumentGenerator = ({ config }: Props) => {
         });
       }
 
-      // Auto-publish to HMS-håndbok (hms_documents) for HMS-assistant search
-      const hmsTitle = `${config.title}`;
-      // Strip HTML to get plain text for HMS assistant context
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = fullHtml;
-      const plainText = tempDiv.textContent || tempDiv.innerText || "";
-
-      const { data: existingHms } = await supabase
+      // Auto-publish each section as individual chapters to HMS-håndbok
+      const prefix = `${config.title}`;
+      
+      // Delete old HMS chapters for this generator
+      const { data: oldHmsDocs } = await supabase
+        .from("hms_documents")
+        .select("id, title")
+        .like("title", `${prefix}:%`);
+      
+      // Also delete legacy single-entry
+      const { data: legacyDoc } = await supabase
         .from("hms_documents")
         .select("id")
-        .eq("title", hmsTitle)
+        .eq("title", prefix)
         .maybeSingle();
+      
+      const idsToDelete = [
+        ...(oldHmsDocs?.map(d => d.id) || []),
+        ...(legacyDoc ? [legacyDoc.id] : []),
+      ];
+      if (idsToDelete.length > 0) {
+        await supabase.from("hms_documents").delete().in("id", idsToDelete);
+      }
 
-      if (existingHms) {
-        await supabase.from("hms_documents")
-          .update({ content: plainText, updated_at: new Date().toISOString() })
-          .eq("id", existingHms.id);
-      } else {
-        // Get max sort_order
-        const { data: maxDoc } = await supabase
-          .from("hms_documents")
-          .select("sort_order")
-          .order("sort_order", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        const nextOrder = (maxDoc?.sort_order || 0) + 1;
+      // Get current max sort_order
+      const { data: maxDoc } = await supabase
+        .from("hms_documents")
+        .select("sort_order")
+        .order("sort_order", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      let nextOrder = (maxDoc?.sort_order || 0) + 1;
+
+      // Insert each section as a separate HMS chapter
+      for (const section of config.sections) {
+        const sectionHtml = section.content(form);
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = sectionHtml;
+        const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
         await supabase.from("hms_documents").insert({
-          title: hmsTitle,
+          title: `${prefix}: ${section.title}`,
           content: plainText,
           sort_order: nextOrder,
         });
+        nextOrder++;
       }
 
       setSaved(true);
