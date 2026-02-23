@@ -2,34 +2,38 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Handshake, Sparkles, Crown, Gem } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionPageCopy } from "@/config/sectionContent";
 
 const About = () => {
+  const { section, isInSection } = useSection();
+  const copy = isInSection && section ? sectionPageCopy[section.id].omOss : null;
+  const sectionPath = isInSection && section ? section.basePath : "";
 
   return (
     <>
       <Helmet>
-        <title>Om Avargo | Regnskapsbyrå for små og mellomstore bedrifter</title>
-        <meta name="description" content="Møt Avargo — regnskapsbyrået med statsautoriserte regnskapsførere som gir små og mellomstore bedrifter trygghet, oversikt og rom til å vokse." />
-        <link rel="canonical" href="https://avargo.no/om-oss" />
+        <title>{copy ? `Om oss — ${section!.name} | Avargo` : "Om Avargo | Regnskapsbyrå for små og mellomstore bedrifter"}</title>
+        <meta name="description" content={copy?.intro1 || "Møt Avargo — regnskapsbyrået med statsautoriserte regnskapsførere som gir små og mellomstore bedrifter trygghet, oversikt og rom til å vokse."} />
+        <link rel="canonical" href={`https://avargo.no${sectionPath}/om-oss`} />
       </Helmet>
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
             <div className="max-w-3xl">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Om Avargo</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">{copy?.tag || "Om Avargo"}</p>
               <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-10 leading-snug">
-                Regnskapsførere som brant for å{" "}
-                <span className="italic text-gradient-rose">gjøre det bedre.</span>
+                {copy?.headline || <>Regnskapsførere som brant for å{" "}<span className="italic text-gradient-rose">gjøre det bedre.</span></>}
               </h1>
               <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-5 md:mb-6 font-light">
-                Vi er statsautoriserte regnskapsførere som ble lei av å se bedriftseiere slite med dårlig oppfølging, skjulte kostnader og regnskapsførere som aldri tok telefonen. Vi visste at det gikk an å gjøre det bedre — mer tilgjengelig, mer proaktivt og mer forståelig.
+                {copy?.intro1 || "Vi er statsautoriserte regnskapsførere som ble lei av å se bedriftseiere slite med dårlig oppfølging, skjulte kostnader og regnskapsførere som aldri tok telefonen. Vi visste at det gikk an å gjøre det bedre — mer tilgjengelig, mer proaktivt og mer forståelig."}
               </p>
               <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-5 md:mb-6 font-light">
-                Derfor startet vi Avargo. Et regnskapsbyrå bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall. Der du får én fast regnskapsfører som faktisk kjenner selskapet ditt, og et helt team som jobber for at du skal ha full kontroll.
+                {copy?.intro2 || "Derfor startet vi Avargo. Et regnskapsbyrå bygget for små og mellomstore bedrifter som ønsker trygghet — ikke bare tall. Der du får én fast regnskapsfører som faktisk kjenner selskapet ditt, og et helt team som jobber for at du skal ha full kontroll."}
               </p>
               <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-light italic">
-                Vi bygde Avargo fordi vi som statsautoriserte regnskapsførere så hva markedet manglet — og bestemte oss for å gjøre noe med det.
+                {copy?.italic || "Vi bygde Avargo fordi vi som statsautoriserte regnskapsførere så hva markedet manglet — og bestemte oss for å gjøre noe med det."}
               </p>
             </div>
           </AnimatedSection>
@@ -50,10 +54,10 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
-              { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt, statsautorisert regnskapsfører som lærer selskapet ditt å kjenne. Ingen callsenter, ingen chatbot — et menneske som jobber for deg som om det var sitt eget selskap." },
-              { icon: Sparkles, num: "02", title: "Teknologi som stille superkraft", desc: "Regnskapsføreren din bruker smarte verktøy som gjennomgår tusenvis av datapunkter. Du får fradrag du ikke visste om, risiko du ikke hadde sett, og muligheter du ikke hadde oppdaget." },
-              { icon: Gem, num: "03", title: "Alt inkludert — virkelig alt", desc: "Bokføring, MVA, lønn, årsregnskap, skattemelding, aksjonærregisteroppgave, revisjonstøtte og rådgivning. Andre tar ekstra for halvparten. Vi tar ingenting ekstra." },
-              { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Vi har erfaring med over 25 bransjer — fra tech og eiendom til bygg, restaurant og helse. Din regnskapsfører forstår hverdagen din, ikke bare tallene." },
+              { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt ekspert som lærer selskapet ditt å kjenne. Ingen callsenter — et menneske som jobber for deg." },
+              { icon: Sparkles, num: "02", title: "Teknologi som stille superkraft", desc: "Smarte verktøy som gjennomgår tusenvis av datapunkter. Du får innsikt du ikke visste om og muligheter du ikke hadde oppdaget." },
+              { icon: Gem, num: "03", title: "Alt inkludert — virkelig alt", desc: "Ingen tillegg, ingen overraskelser. Alt du trenger er inkludert fra dag én." },
+              { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Erfaring med over 25 bransjer. Din rådgiver forstår hverdagen din, ikke bare tallene." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.12}>
                 <div className="group p-8 md:p-10 glass rounded-3xl card-lift h-full relative overflow-hidden">
@@ -85,9 +89,9 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
-              { num: "01", title: "Ingen overraskelser", desc: "Fast pris. Ingen timefakturering. Ingen skjulte kostnader. Du vet alltid hva du betaler — og hva du får tilbake." },
-              { num: "02", title: "Vi ringer deg først", desc: "Vi venter ikke på at du skal oppdage problemet. Vi ringer deg med muligheter, advarsler og forslag — før du trenger å spørre." },
-              { num: "03", title: "Din vekst er målet vårt", desc: "Vi måles ikke på antall bilag. Vi måles på hvor mye verdi vi skaper for deg. Hvis du ikke vokser, har vi ikke gjort jobben vår." },
+              { num: "01", title: "Ingen overraskelser", desc: "Fast pris. Ingen timefakturering. Ingen skjulte kostnader." },
+              { num: "02", title: "Vi tar initiativ", desc: "Vi venter ikke på at du skal oppdage problemet. Vi kontakter deg med muligheter og forslag." },
+              { num: "03", title: "Din vekst er målet vårt", desc: "Vi måles ikke på volum. Vi måles på hvor mye verdi vi skaper for deg." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.15}>
                 <div className="p-8 md:p-10 glass rounded-3xl card-lift">
@@ -106,14 +110,14 @@ const About = () => {
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-               Klar for en regnskapsfører som{" "}
+               Klar for en partner som{" "}
                <span className="italic text-gradient-rose">faktisk bryr seg</span>?
              </h2>
              <p className="text-foreground/60 font-light mb-8 md:mb-10 max-w-lg mx-auto text-sm md:text-base">
-               Statsautorisert. Dedikert. Klar fra dag én. En av våre regnskapsførere kontakter deg innen 24 timer.
+               Dedikert. Klar fra dag én. Vi kontakter deg innen 24 timer.
              </p>
              <Link
-               to="/kontakt"
+               to={`${sectionPath}/kontakt`}
                className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
              >
                Få et uforpliktende tilbud

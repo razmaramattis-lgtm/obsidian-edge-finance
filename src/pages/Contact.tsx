@@ -5,6 +5,8 @@ import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-re
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionPageCopy } from "@/config/sectionContent";
 
 const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
 const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
@@ -26,6 +28,8 @@ type RolleGruppe = {
 
 const Contact = () => {
   const [searchParams] = useSearchParams();
+  const { section, isInSection } = useSection();
+  const contactCopy = isInSection && section ? sectionPageCopy[section.id].kontakt : null;
   const [submitted, setSubmitted] = useState(false);
   const [companySearch, setCompanySearch] = useState("");
   const [searchResults, setSearchResults] = useState<BrregEnhet[]>([]);
@@ -177,9 +181,9 @@ const Contact = () => {
   return (
     <>
     <Helmet>
-      <title>Kontakt Avargo | Få tilbud på regnskapstjenester</title>
-      <meta name="description" content="Ta kontakt med Avargo for et uforpliktende tilbud på regnskap, rådgivning og skatteoptimalisering. Vi svarer innen 24 timer." />
-      <link rel="canonical" href="https://avargo.no/kontakt" />
+      <title>{contactCopy ? `Kontakt — ${section!.name} | Avargo` : "Kontakt Avargo | Få tilbud på regnskapstjenester"}</title>
+      <meta name="description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud. Vi svarer innen 24 timer."} />
+      <link rel="canonical" href={`https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt`} />
     </Helmet>
     <section className="py-24 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />
@@ -187,19 +191,19 @@ const Contact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Uforpliktende henvendelse</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">{contactCopy?.tag || "Uforpliktende henvendelse"}</p>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl mb-6 md:mb-8 leading-snug">
-              Fortell oss om selskapet ditt.{" "}
+              {contactCopy?.headline || "Fortell oss om selskapet ditt."}{" "}
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
             <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
-              Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt innen 24 timer med et tilpasset forslag — helt uforpliktende.
+              {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt innen 24 timer med et tilpasset forslag — helt uforpliktende."}
             </p>
             <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
-              Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger.
+              {contactCopy?.italic || "Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger."}
             </p>
             <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
-              {["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Svar innen 24 timer — alltid"].map((item) => (
+              {(contactCopy?.bullets || ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Svar innen 24 timer — alltid"]).map((item) => (
                 <div key={item} className="flex items-center gap-3 text-sm text-foreground/70 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
                   {item}
