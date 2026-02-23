@@ -74,7 +74,7 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
       </button>
 
       {open && (
-        <div className="absolute bottom-12 right-0 w-80 sm:w-96 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-80 sm:w-96 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="p-2.5 border-b border-border/20">
             <input
               value={query}
