@@ -130,7 +130,23 @@ const DmsView = ({ profile }: { profile: Profile }) => {
 
   const send = async (content: string) => {
     if (!active) return;
-    await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content }]);
+    const { error } = await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content }]);
+    if (error) {
+      console.error("DM send error:", error);
+      // Conversation may have been deleted — re-verify
+      const { data: convCheck } = await supabase.from("dm_conversations").select("id").eq("id", active.id).single();
+      if (!convCheck) {
+        // Conversation no longer exists, recreate it
+        const otherId = active.participant_1 === profile.id ? active.participant_2 : active.participant_1;
+        const { data: newConv } = await supabase.from("dm_conversations").insert([{ participant_1: profile.id, participant_2: otherId }]).select().single();
+        if (newConv) {
+          setActive({ ...newConv, other: active.other } as DmConv);
+          await supabase.from("dm_messages").insert([{ conversation_id: newConv.id, sender_id: profile.id, content }]);
+          fetchConvs();
+        }
+      }
+      return;
+    }
     const recipientId = active.participant_1 === profile.id ? active.participant_2 : active.participant_1;
     createNotification({
       recipientId,
