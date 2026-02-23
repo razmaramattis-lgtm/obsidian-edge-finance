@@ -231,7 +231,11 @@ const MiniChatWindow = ({
 
   const send = async (content: string) => {
     if (!content.trim()) return;
-    await supabase.from("dm_messages").insert([{ conversation_id: chat.conv.id, sender_id: profile.id, content: content.trim() }]);
+    const { error } = await supabase.from("dm_messages").insert([{ conversation_id: chat.conv.id, sender_id: profile.id, content: content.trim() }]);
+    if (error) {
+      console.error("FloatingChat send error:", error);
+      return;
+    }
     const recipientId = chat.conv.participant_1 === profile.id ? chat.conv.participant_2 : chat.conv.participant_1;
     createNotification({
       recipientId,
