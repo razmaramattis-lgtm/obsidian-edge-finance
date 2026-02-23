@@ -38,6 +38,13 @@ const DmsView = ({ profile }: { profile: Profile }) => {
     const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", id).order("created_at");
     setMessages((data as DmMsg[]) || []);
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    // Mark unread messages as read
+    if (data && data.length > 0) {
+      const unreadIds = data.filter((m: any) => m.sender_id !== profile.id && !m.read_at).map((m: any) => m.id);
+      if (unreadIds.length > 0) {
+        await supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+      }
+    }
   };
 
   const fetchProfiles = async () => {
@@ -209,6 +216,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
                     reactionTable="dm_message_reactions"
                     fileUrl={msg.file_url}
                     fileName={msg.file_name}
+                    readAt={msg.read_at}
                   />
                   {(isOwn || isAdmin) && (
                     <button onClick={() => deleteMsg(msg.id)} className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"><Trash2 size={12} /></button>

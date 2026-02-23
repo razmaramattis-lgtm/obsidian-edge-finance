@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   MessageCircle, X, Minus, Send, Trash2, Pencil, Phone, Video,
-  Paperclip, Image, XCircle,
+  Paperclip, Image, XCircle, Check, CheckCheck,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import EmojiPicker from "./EmojiPicker";
@@ -68,6 +68,14 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
     } else {
       const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", conv.id).order("created_at").limit(50);
       setOpenChats(prev => [...prev.slice(-2), { conv, messages: (data as DmMsg[]) || [], minimized: false }]);
+      // Mark unread messages as read
+      if (data && data.length > 0) {
+        const myProfileId = profile.id;
+        const unreadIds = data.filter((m: any) => m.sender_id !== myProfileId && !m.read_at).map((m: any) => m.id);
+        if (unreadIds.length > 0) {
+          await supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+        }
+      }
     }
     setUnread(prev => ({ ...prev, [conv.id]: 0 }));
     setShowPicker(false);
@@ -201,9 +209,16 @@ const MiniChatWindow = ({
     const ch = supabase.channel(`mini-chat-${chat.conv.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${chat.conv.id}` }, async () => {
       const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", chat.conv.id).order("created_at").limit(50);
       setMessages((data as DmMsg[]) || []);
+      // Auto-mark as read if chat is open
+      if (!chat.minimized && data) {
+        const unreadIds = data.filter((m: any) => m.sender_id !== profile.id && !m.read_at).map((m: any) => m.id);
+        if (unreadIds.length > 0) {
+          await supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+        }
+      }
     }).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [chat.conv.id]);
+  }, [chat.conv.id, chat.minimized, profile.id]);
 
   const send = async (content: string) => {
     if (!content.trim()) return;
@@ -303,6 +318,12 @@ const MiniChatWindow = ({
                       ) : (
                         <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-[9px]">📎 {msg.file_name || "Fil"}</a>
                       )}
+                    </div>
+                  )}
+                  {/* Read receipt */}
+                  {isOwn && (
+                    <div className="flex items-center gap-0.5 mt-0.5 justify-end">
+                      {msg.read_at ? <CheckCheck size={10} className="text-blue-400" /> : <Check size={10} className="text-muted-foreground/50" />}
                     </div>
                   )}
                   {/* Reactions */}

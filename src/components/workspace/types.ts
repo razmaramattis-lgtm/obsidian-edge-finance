@@ -73,6 +73,7 @@ export interface DmMsg {
   sender_id: string;
   file_url?: string | null;
   file_name?: string | null;
+  read_at?: string | null;
 }
 
 export interface Friend {
