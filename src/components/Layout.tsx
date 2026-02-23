@@ -199,28 +199,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             {/* Bransjer */}
-            <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
-              <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
-                Bransjer <ChevronDown size={12} className={`transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
-              </button>
-              <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-72 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
-                <div className="flex flex-col gap-0.5">
-                  {bransjerItems.map((item) => (
-                    <Link key={item.href} to={sp(item.href)} onClick={() => setBransjerOpen(false)}
-                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
-                        <item.icon size={13} className="text-primary" strokeWidth={1.5} />
-                      </div>
-                      <span className="text-[12.5px] text-foreground/80 group-hover:text-foreground transition-colors duration-200">{item.title}</span>
-                    </Link>
-                  ))}
-                </div>
-                <div className="mt-2 pt-2 border-t border-border/15">
-                  <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle bransjer →</Link>
-                </div>
-              </DropdownPanel>
-            </div>
+            {isInSection && section && section.id !== "regnskap" ? (
+              <Link to={sp("/bransjer")} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Bransjer</Link>
+            ) : (
+              <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
+                <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
+                  Bransjer <ChevronDown size={12} className={`transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
+                </button>
+                <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-72 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
+                  <div className="flex flex-col gap-0.5">
+                    {bransjerItems.map((item) => (
+                      <Link key={item.href} to={sp(item.href)} onClick={() => setBransjerOpen(false)}
+                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
+                          <item.icon size={13} className="text-primary" strokeWidth={1.5} />
+                        </div>
+                        <span className="text-[12.5px] text-foreground/80 group-hover:text-foreground transition-colors duration-200">{item.title}</span>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-border/15">
+                    <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle bransjer →</Link>
+                  </div>
+                </DropdownPanel>
+              </div>
+            )}
 
             <Link to={sp("/priser")} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Priser</Link>
 
@@ -311,24 +315,30 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
 
-            <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
-              Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
-            </button>
-            <div className={`overflow-hidden transition-all duration-200 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
-              <div className="py-2 pl-2 flex flex-col gap-0.5">
-                {bransjerItems.slice(0, 5).map((item) => (
-                  <Link key={item.href} to={sp(item.href)} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
-                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
-                  >
-                    <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                  </Link>
-                ))}
-                <Link to={sp("/bransjer")} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
-                  className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
-                  Se alle bransjer →
-                </Link>
-              </div>
-            </div>
+            {isInSection && section && section.id !== "regnskap" ? (
+              <Link to={sp("/bransjer")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Bransjer</Link>
+            ) : (
+              <>
+                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
+                  Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-200 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
+                  <div className="py-2 pl-2 flex flex-col gap-0.5">
+                    {bransjerItems.slice(0, 5).map((item) => (
+                      <Link key={item.href} to={sp(item.href)} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
+                      >
+                        <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
+                      </Link>
+                    ))}
+                    <Link to={sp("/bransjer")} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                      className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
+                      Se alle bransjer →
+                    </Link>
+                  </div>
+                </div>
+              </>
+            )}
 
             <Link to={sp("/priser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
             <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
