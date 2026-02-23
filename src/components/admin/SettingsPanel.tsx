@@ -974,118 +974,8 @@ interface SettingsPanelProps {
   defaultTab?: string;
 }
 
-const GRANTABLE_PANELS = [
-  { key: "customers", label: "Kundearkiv", group: "Hoved" },
-  { key: "collab", label: "Samarbeidsavtaler", group: "Hoved" },
-  { key: "bookings", label: "1-1 Bookinger", group: "Hoved" },
-  { key: "contact_submissions", label: "Henvendelser", group: "Kunder" },
-  { key: "employee_invitations", label: "Ansattinvitasjoner", group: "Kunder" },
-  { key: "advisor_requests", label: "Rådgiverforespørsler", group: "Kunder" },
-  { key: "partner_requests", label: "Avtaleforespørsler", group: "Avtaler" },
-  { key: "benefit_applications", label: "Fordelsavtale-søknader", group: "Avtaler" },
-  { key: "blog", label: "Blogg & Nyheter", group: "Innhold" },
-  { key: "page_changes", label: "Sideendringer", group: "Innhold" },
-  { key: "org_resources", label: "Organisasjonsressurser", group: "Innhold" },
-  { key: "hr", label: "HR & Personal", group: "Internt" },
-  { key: "internal", label: "Interne ressurser", group: "Internt" },
-];
 
-interface EmployeeAccess {
-  profile_id: string;
-  name: string;
-  avatar_url: string | null;
-  role: string;
-  panels: string[];
-}
 
-const PanelAccessTab = () => {
-  const { profile } = useAuth();
-  const [employees, setEmployees] = useState<EmployeeAccess[]>([]);
-  const [saving, setSaving] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  const fetchEmployees = async () => {
-    const { data: profiles } = await supabase.from("profiles").select("id, name, avatar_url, role").eq("role", "employee").eq("active", true).order("name");
-    if (!profiles) return;
-    const { data: access } = await supabase.from("employee_panel_access").select("profile_id, panel_key");
-    const accessMap = new Map<string, string[]>();
-    (access || []).forEach((a: any) => {
-      if (!accessMap.has(a.profile_id)) accessMap.set(a.profile_id, []);
-      accessMap.get(a.profile_id)!.push(a.panel_key);
-    });
-    setEmployees(profiles.map((p: any) => ({ profile_id: p.id, name: p.name, avatar_url: p.avatar_url, role: p.role, panels: accessMap.get(p.id) || [] })));
-  };
-
-  const togglePanel = async (empId: string, panelKey: string) => {
-    setSaving(empId);
-    const emp = employees.find(e => e.profile_id === empId);
-    if (!emp) return;
-    const has = emp.panels.includes(panelKey);
-    if (has) {
-      await supabase.from("employee_panel_access").delete().eq("profile_id", empId).eq("panel_key", panelKey);
-    } else {
-      await supabase.from("employee_panel_access").insert({ profile_id: empId, panel_key: panelKey, granted_by: profile?.id });
-    }
-    setEmployees(prev => prev.map(e => e.profile_id === empId ? { ...e, panels: has ? e.panels.filter(p => p !== panelKey) : [...e.panels, panelKey] } : e));
-    setSaving(null);
-  };
-
-  const groups = [...new Set(GRANTABLE_PANELS.map(p => p.group))];
-
-  if (employees.length === 0) {
-    return <p className="text-sm text-muted-foreground py-8 text-center">Ingen ansatte funnet</p>;
-  }
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-heading mb-1">Paneltilganger</h3>
-        <p className="text-xs text-muted-foreground">Velg hvilke paneler hver ansatt skal ha tilgang til i admin-dashbordet.</p>
-      </div>
-      <div className="space-y-4">
-        {employees.map(emp => (
-          <div key={emp.profile_id} className="rounded-xl border border-border/20 bg-card/40 p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-semibold">
-                {emp.avatar_url ? <img src={emp.avatar_url} alt="" className="w-full h-full rounded-full object-cover" /> : emp.name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <p className="text-sm font-medium">{emp.name}</p>
-                <p className="text-[10px] text-muted-foreground">{emp.panels.length} tilganger</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              {groups.map(group => (
-                <div key={group}>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">{group}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {GRANTABLE_PANELS.filter(p => p.group === group).map(panel => {
-                      const active = emp.panels.includes(panel.key);
-                      return (
-                        <button
-                          key={panel.key}
-                          onClick={() => togglePanel(emp.profile_id, panel.key)}
-                          disabled={saving === emp.profile_id}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] border transition-all ${active ? "bg-primary/15 border-primary/30 text-primary" : "bg-muted/20 border-border/15 text-muted-foreground hover:border-primary/20 hover:text-foreground"}`}
-                        >
-                          {active && <Check size={10} className="inline mr-1" />}
-                          {panel.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const SettingsPanel = ({ defaultTab = "profile" }: SettingsPanelProps) => {
   const { isAdmin } = useAuth();
@@ -1104,17 +994,11 @@ const SettingsPanel = ({ defaultTab = "profile" }: SettingsPanelProps) => {
             <Users size={13} /> Ansatte
           </TabsTrigger>
         )}
-        {isAdmin && (
-          <TabsTrigger value="panel_access" className="rounded-lg text-xs gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            <Key size={13} /> Tilganger
-          </TabsTrigger>
-        )}
       </TabsList>
 
       <TabsContent value="profile"><ProfileTab /></TabsContent>
       <TabsContent value="availability"><AvailabilityTab /></TabsContent>
       {isAdmin && <TabsContent value="employees"><EmployeesPanel /></TabsContent>}
-      {isAdmin && <TabsContent value="panel_access"><PanelAccessTab /></TabsContent>}
     </Tabs>
   );
 };

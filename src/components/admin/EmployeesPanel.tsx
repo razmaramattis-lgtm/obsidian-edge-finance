@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, UserPlus, ChevronLeft, Shield, ShieldOff, User, Mail, Phone, Briefcase, Sparkles, X, UserX, UserCheck } from "lucide-react";
+import { Trash2, UserPlus, ChevronLeft, Shield, ShieldOff, User, Mail, Phone, Briefcase, Sparkles, X, UserX, UserCheck, Check, Key } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -31,6 +31,22 @@ interface Employee {
   active: boolean;
 }
 
+const GRANTABLE_PANELS = [
+  { key: "customers", label: "Kundearkiv", group: "Hoved" },
+  { key: "collab", label: "Samarbeidsavtaler", group: "Hoved" },
+  { key: "bookings", label: "1-1 Bookinger", group: "Hoved" },
+  { key: "contact_submissions", label: "Henvendelser", group: "Kunder" },
+  { key: "employee_invitations", label: "Ansattinvitasjoner", group: "Kunder" },
+  { key: "advisor_requests", label: "Rådgiverforespørsler", group: "Kunder" },
+  { key: "partner_requests", label: "Avtaleforespørsler", group: "Avtaler" },
+  { key: "benefit_applications", label: "Fordelsavtale-søknader", group: "Avtaler" },
+  { key: "blog", label: "Blogg & Nyheter", group: "Innhold" },
+  { key: "page_changes", label: "Sideendringer", group: "Innhold" },
+  { key: "org_resources", label: "Organisasjonsressurser", group: "Innhold" },
+  { key: "hr", label: "HR & Personal", group: "Internt" },
+  { key: "internal", label: "Interne ressurser", group: "Internt" },
+];
+
 const EmployeesPanel = () => {
   const { profile: currentProfile } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -38,6 +54,8 @@ const EmployeesPanel = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [empSpecialties, setEmpSpecialties] = useState<{id: string; name: string; description: string | null}[]>([]);
+  const [empPanels, setEmpPanels] = useState<string[]>([]);
+  const [savingPanel, setSavingPanel] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -117,9 +135,28 @@ const EmployeesPanel = () => {
     setEmpSpecialties((data || []) as any);
   };
 
+  const loadPanelAccess = async (profileId: string) => {
+    const { data } = await supabase.from("employee_panel_access").select("panel_key").eq("profile_id", profileId);
+    setEmpPanels((data || []).map((d: any) => d.panel_key));
+  };
+
+  const togglePanelAccess = async (empId: string, panelKey: string) => {
+    setSavingPanel(true);
+    const has = empPanels.includes(panelKey);
+    if (has) {
+      await supabase.from("employee_panel_access").delete().eq("profile_id", empId).eq("panel_key", panelKey);
+      setEmpPanels(prev => prev.filter(p => p !== panelKey));
+    } else {
+      await supabase.from("employee_panel_access").insert({ profile_id: empId, panel_key: panelKey, granted_by: currentProfile?.id });
+      setEmpPanels(prev => [...prev, panelKey]);
+    }
+    setSavingPanel(false);
+  };
+
   const selectEmployee = (emp: Employee) => {
     setSelectedEmployee(emp);
     loadSpecialties(emp.id);
+    loadPanelAccess(emp.id);
   };
 
   const filtered = employees.filter(e => {
@@ -251,6 +288,41 @@ const EmployeesPanel = () => {
           <div className="glass rounded-2xl border border-border/20 p-5">
             <h4 className="text-sm font-medium mb-2">Teams-lenke</h4>
             <a href={emp.teams_link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline break-all">{emp.teams_link}</a>
+          </div>
+        )}
+
+        {/* Panel Access - only for non-admin employees */}
+        {emp.role === "employee" && (
+          <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <Key size={14} className="text-primary" />
+              <h4 className="text-sm font-medium">Paneltilganger</h4>
+              <span className="text-[10px] text-muted-foreground ml-auto">{empPanels.length} tilganger</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Velg hvilke paneler denne ansatte skal ha tilgang til i admin-dashbordet.</p>
+            <div className="space-y-3">
+              {[...new Set(GRANTABLE_PANELS.map(p => p.group))].map(group => (
+                <div key={group}>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">{group}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {GRANTABLE_PANELS.filter(p => p.group === group).map(panel => {
+                      const active = empPanels.includes(panel.key);
+                      return (
+                        <button
+                          key={panel.key}
+                          onClick={() => togglePanelAccess(emp.id, panel.key)}
+                          disabled={savingPanel}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] border transition-all ${active ? "bg-primary/15 border-primary/30 text-primary" : "bg-muted/20 border-border/15 text-muted-foreground hover:border-primary/20 hover:text-foreground"}`}
+                        >
+                          {active && <Check size={10} className="inline mr-1" />}
+                          {panel.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
