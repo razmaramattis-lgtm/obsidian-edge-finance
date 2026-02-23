@@ -47,6 +47,11 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled, onCom
     await onSend(text.trim());
     setText("");
     setSending(false);
+    // Blur input so menu reappears on mobile
+    if (isMobile) {
+      inputRef.current?.blur();
+      onComposingChange?.(false);
+    }
   };
 
   const handleGif = async (url: string) => {
