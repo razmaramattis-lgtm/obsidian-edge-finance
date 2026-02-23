@@ -291,8 +291,8 @@ const EmployeesPanel = () => {
           </div>
         )}
 
-        {/* Panel Access - only for non-admin employees */}
-        {emp.role === "employee" && (
+        {/* Panel Access */}
+        {emp.id !== currentProfile?.id && (
           <div className="glass rounded-2xl border border-border/20 p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Key size={14} className="text-primary" />
