@@ -91,7 +91,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
   };
 
   const searchResults = allProfiles.filter(p => {
-    if (friendIds.has(p.id) || p.id === profile.id) return false;
+    if (p.id === profile.id) return false;
     const q = searchQuery.toLowerCase();
     const nameMatch = !q || p.name.toLowerCase().includes(q)
       || (p.title || "").toLowerCase().includes(q)
@@ -104,6 +104,10 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
     const tagMatch = !activeTag || profileMatchesTag(p, activeTag);
     return nameMatch && tagMatch;
   });
+
+  const isFriend = (id: string) => friends.some(f => (f.requester_id === id || f.receiver_id === id) && f.requester_id !== profile.id ? f.requester_id === id : f.receiver_id === id);
+  const isPendingSent = (id: string) => pendingSent.some(f => f.receiver_id === id);
+  const isPendingReceived = (id: string) => pendingReceived.some(f => f.requester_id === id);
 
   return (
     <div className="h-full flex flex-col">
@@ -282,9 +286,19 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                         </div>
                       )}
                     </div>
-                    <button onClick={() => sendRequest(p.id)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
-                      <UserPlus size={13} /> Legg til
-                    </button>
+                    {friendIds.has(p.id) ? (
+                      <span className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-muted/30 text-muted-foreground text-xs font-medium">
+                        <UserCheck size={13} /> Venn
+                      </span>
+                    ) : isPendingSent(p.id) ? (
+                      <span className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-muted/20 text-muted-foreground text-xs font-medium">
+                        Sendt
+                      </span>
+                    ) : (
+                      <button onClick={() => sendRequest(p.id)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+                        <UserPlus size={13} /> Legg til
+                      </button>
+                    )}
                   </div>
                 );
               })}
