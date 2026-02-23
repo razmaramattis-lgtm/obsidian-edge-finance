@@ -279,7 +279,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </button>
               <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-64 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
                 {ressurserLinks.map((item) => (
-                  <Link key={item.title} to={item.href} onClick={() => setRessurserOpen(false)}
+                  <Link key={item.title} to={sp(item.href)} onClick={() => setRessurserOpen(false)}
                     className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                   >
                     <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200 mt-0.5">
@@ -365,9 +365,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <Link to={sp("/priser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
             <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
             <Link to={sp("/om-oss")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
-            <Link to="/ressurser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
-            <Link to="/ressurser/kontohjelp" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
-            <Link to="/ressurser?tab=arkiv" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
+            <Link to={sp("/ressurser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
+            <Link to={sp("/ressurser/kontohjelp")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
+            <Link to={sp("/ressurser?tab=arkiv")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
 
             <div className="flex gap-3 mt-4">
               <Link to="/kunde/logg-inn" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-[13px] font-medium text-foreground/70 border border-border/20 rounded-xl text-center active:bg-muted/30 transition-colors">
@@ -479,10 +479,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Ressurser</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to="/ressurser?tab=arkiv" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Arkiv & maler</Link>
-                <Link to="/ressurser/kontohjelp" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kontohjelp</Link>
-                <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Guider</Link>
-                <Link to="/ressurser?tab=blogg" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Blogg</Link>
+                <Link to={sp("/ressurser?tab=arkiv")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Arkiv & maler</Link>
+                <Link to={sp("/ressurser/kontohjelp")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kontohjelp</Link>
+                <Link to={sp("/ressurser?tab=guider")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Guider</Link>
+                <Link to={sp("/ressurser?tab=blogg")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Blogg</Link>
               </div>
             </div>
 
