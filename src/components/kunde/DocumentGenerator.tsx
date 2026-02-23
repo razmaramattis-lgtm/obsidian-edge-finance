@@ -218,9 +218,50 @@ const DocumentGenerator = ({ config }: Props) => {
         nextOrder++;
       }
 
-      // Also save to HR-dokumenter (internal_resources) for the admin HR panel
+      // Generate a real PDF and upload to storage
       const hrDocTitle = config.title;
       const hrCategory = config.documentCategory || "Personalhåndbok";
+      let uploadedFileUrl = "";
+      try {
+        const html2pdf = (await import("html2pdf.js")).default;
+        const container = document.createElement("div");
+        container.style.cssText = "position:absolute;left:-9999px;top:0;width:794px;background:#fff;color:#000;z-index:-1;padding:20px;font-family:'Georgia',serif;font-size:13px;line-height:1.8;";
+        container.innerHTML = fullHtml;
+        container.querySelectorAll("*").forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          htmlEl.style.backgroundColor = "transparent";
+          htmlEl.style.color = htmlEl.style.color || "#1a1a1a";
+        });
+        container.style.backgroundColor = "#ffffff";
+        document.body.appendChild(container);
+
+        const pdfBlob: Blob = await html2pdf()
+          .set({
+            margin: [15, 18, 15, 18],
+            filename: `${hrDocTitle}.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, windowWidth: 794 },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+          })
+          .from(container)
+          .outputPdf("blob");
+
+        document.body.removeChild(container);
+
+        // Upload PDF to storage
+        const storagePath = `hr/${Date.now()}-${hrDocTitle.replace(/[^a-zA-ZæøåÆØÅ0-9]/g, "_")}.pdf`;
+        const { data: uploadData } = await supabase.storage
+          .from("internal-docs")
+          .upload(storagePath, pdfBlob, { contentType: "application/pdf", upsert: false });
+        if (uploadData) {
+          uploadedFileUrl = storagePath;
+        }
+      } catch (pdfErr) {
+        console.error("PDF upload error:", pdfErr);
+      }
+
+      // Save to HR-dokumenter (internal_resources) for the admin HR panel
       const { data: existingHrDoc } = await supabase
         .from("internal_resources")
         .select("id")
@@ -228,16 +269,23 @@ const DocumentGenerator = ({ config }: Props) => {
         .eq("category", hrCategory)
         .maybeSingle();
 
+      const hrPayload: Record<string, string> = {
+        description: `Generert ${new Date().toLocaleDateString("nb-NO")}`,
+        file_name: `${hrDocTitle}.pdf`,
+      };
+      if (uploadedFileUrl) {
+        hrPayload.file_url = uploadedFileUrl;
+      }
+
       if (existingHrDoc) {
         await supabase.from("internal_resources")
-          .update({ description: `Generert ${new Date().toLocaleDateString("nb-NO")}`, updated_at: new Date().toISOString() })
+          .update({ ...hrPayload, updated_at: new Date().toISOString() })
           .eq("id", existingHrDoc.id);
       } else {
         await supabase.from("internal_resources").insert({
           title: hrDocTitle,
-          description: `Generert ${new Date().toLocaleDateString("nb-NO")}`,
           category: hrCategory,
-          file_name: `${hrDocTitle}.pdf`,
+          ...hrPayload,
         });
       }
 
