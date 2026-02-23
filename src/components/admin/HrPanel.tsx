@@ -65,7 +65,7 @@ const HrPanel = () => {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
+      {/* Header – horizontal */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
           <Shield size={18} className="text-primary" strokeWidth={1.5} />
@@ -76,39 +76,35 @@ const HrPanel = () => {
         </div>
       </div>
 
-      <div className="flex gap-5">
-        {/* Vertical sidebar navigation */}
-        <div className="w-56 shrink-0 space-y-4">
-          {groups.map(group => (
-            <div key={group}>
-              <p className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/50 mb-1.5 px-2">{group}</p>
-              <div className="space-y-0.5">
-                {HR_TABS.filter(t => t.group === group).map(t => {
-                  const Icon = t.icon;
-                  const active = tab === t.id;
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => setTab(t.id)}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left ${
-                        active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                      }`}
-                    >
-                      <Icon size={13} />
-                      {t.label}
-                    </button>
-                  );
-                })}
-              </div>
+      {/* Categories listed vertically, items within each wrap horizontally */}
+      <div className="space-y-3">
+        {groups.map(group => (
+          <div key={group} className="glass rounded-xl border border-border/10 p-3">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/50 mb-2 px-1">{group}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {HR_TABS.filter(t => t.group === group).map(t => {
+                const Icon = t.icon;
+                const active = tab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap ${
+                      active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                    }`}
+                  >
+                    <Icon size={12} />
+                    {t.label}
+                  </button>
+                );
+              })}
             </div>
-          ))}
-        </div>
-
-        {/* Content area */}
-        <div className="flex-1 min-w-0">
-          {renderTab()}
-        </div>
+          </div>
+        ))}
       </div>
+
+      {/* Content */}
+      {renderTab()}
     </div>
   );
 };
