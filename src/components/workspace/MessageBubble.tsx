@@ -37,19 +37,27 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
             <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">{time}</span>
           </div>
         )}
-        {gif ? (
-          <div className="rounded-2xl overflow-hidden max-w-[240px]">
-            <img src={content} alt="GIF" className="w-full rounded-2xl" loading="lazy" />
-          </div>
-        ) : (
-          <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-            isOwn
-              ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md"
-              : "bg-muted/50 text-foreground rounded-bl-md"
-          }`}>
-            {content}
-          </div>
-        )}
+        <div className="relative">
+          {gif ? (
+            <div className="rounded-2xl overflow-hidden max-w-[240px]">
+              <img src={content} alt="GIF" className="w-full rounded-2xl" loading="lazy" />
+            </div>
+          ) : (
+            <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+              isOwn
+                ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md"
+                : "bg-muted/50 text-foreground rounded-bl-md"
+            }`}>
+              {content}
+            </div>
+          )}
+          {/* Reactions centered on bubble */}
+          {messageId && profileId && reactionTable && (
+            <div className={`absolute top-1/2 -translate-y-1/2 ${isOwn ? "-left-2 -translate-x-full" : "-right-2 translate-x-full"}`}>
+              <MessageReactions messageId={messageId} profileId={profileId} table={reactionTable} />
+            </div>
+          )}
+        </div>
         {fileUrl && (
           <div className="mt-1">
             {isImage(fileUrl) ? (
@@ -61,12 +69,6 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
                 <Paperclip size={10} /> {fileName || "Vedlegg"}
               </a>
             )}
-          </div>
-        )}
-        {/* Reactions */}
-        {messageId && profileId && reactionTable && (
-          <div className="mt-1">
-            <MessageReactions messageId={messageId} profileId={profileId} table={reactionTable} />
           </div>
         )}
         {isOwn && (
