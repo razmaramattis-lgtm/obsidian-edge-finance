@@ -144,7 +144,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
               const fp = getFriendProfile(f);
               return (
                 <div key={f.id} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/30 transition-all group">
-                  <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" online />
+                  <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" profileId={fp?.id} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{fp?.name || "Ukjent"}</p>
                     <p className="text-[10px] text-muted-foreground">{roleLabel(fp?.role || "")}</p>

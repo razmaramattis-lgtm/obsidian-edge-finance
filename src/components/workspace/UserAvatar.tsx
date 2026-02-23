@@ -1,8 +1,11 @@
+import { usePresenceContext } from "@/contexts/PresenceContext";
+
 interface UserAvatarProps {
   name?: string;
   avatarUrl?: string | null;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   online?: boolean;
+  profileId?: string;
   className?: string;
 }
 
@@ -39,7 +42,9 @@ const getColorFromName = (name: string) => {
   return colorPalette[Math.abs(hash) % colorPalette.length];
 };
 
-const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, className = "" }: UserAvatarProps) => {
+const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, className = "" }: UserAvatarProps) => {
+  const { isOnline } = usePresenceContext();
+  const resolved = online !== undefined ? online : profileId ? isOnline(profileId) : undefined;
   const initial = name.charAt(0).toUpperCase();
   const gradient = getColorFromName(name);
 
@@ -56,8 +61,8 @@ const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, className = ""
           {initial}
         </div>
       )}
-      {online && (
-        <div className={`absolute ${onlineDotMap[size]} rounded-full bg-emerald-400 ring-2 ring-background`} />
+      {resolved !== undefined && (
+        <div className={`absolute ${onlineDotMap[size]} rounded-full ring-2 ring-background ${resolved ? "bg-emerald-400" : "bg-red-400"}`} />
       )}
     </div>
   );

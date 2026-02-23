@@ -18,6 +18,8 @@ import PostReactions from "@/components/workspace/PostReactions";
 import ProfileEditView from "@/components/workspace/ProfileEditView";
 import NotificationBell from "@/components/workspace/NotificationBell";
 import { useWorkspaceNotifications } from "@/hooks/useWorkspaceNotifications";
+import { usePresence } from "@/hooks/usePresence";
+import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
@@ -35,6 +37,7 @@ const Workspace = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<Profile | null>(null);
   const wsNotifs = useWorkspaceNotifications(profile?.id);
+  const presence = usePresence(profile?.id);
 
   useEffect(() => {
     if (!user) navigate("/admin/logg-inn");
@@ -113,6 +116,7 @@ const Workspace = () => {
   };
 
   return (
+    <PresenceContext.Provider value={presence}>
     <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
       {/* Header with search */}
       {!headerHidden && (
@@ -142,7 +146,7 @@ const Workspace = () => {
               <div className="absolute top-11 left-0 right-0 bg-card border border-border/30 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
                 {searchResults.map(p => (
                   <button key={p.id} onMouseDown={() => openProfile(p)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-all text-left">
-                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" />
+                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" profileId={p.id} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{p.name}</p>
                       <p className="text-[10px] text-muted-foreground">{p.title || roleLabel(p.role)} {p.department ? `· ${p.department}` : ""}</p>
@@ -218,6 +222,7 @@ const Workspace = () => {
 
       <FloatingChat profile={profile} />
     </div>
+    </PresenceContext.Provider>
   );
 };
 

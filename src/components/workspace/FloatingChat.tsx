@@ -118,7 +118,7 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
         {conversations.filter(conv => !openChats.some(c => c.conv.id === conv.id) && (unread[conv.id] || 0) > 0).slice(0, 4).map(conv => (
           <button key={conv.id} onClick={() => openChat(conv)} className="relative group" title={conv.other?.name}>
             <div className="w-12 h-12 rounded-full shadow-lg shadow-black/20 ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
+              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} />
             </div>
             <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-bounce">{unread[conv.id]}</span>
           </button>
@@ -151,7 +151,7 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
           <div className="max-h-72 overflow-y-auto p-2 space-y-0.5">
             {!searchQuery && conversations.slice(0, 5).map(conv => (
               <button key={conv.id} onClick={() => openChat(conv)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="sm" online />
+                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="sm" profileId={conv.other?.id} />
                 <span className="font-medium flex-1 text-left truncate">{conv.other?.name}</span>
                 {unread[conv.id] > 0 && <span className="w-4 h-4 rounded-full bg-destructive text-white text-[9px] flex items-center justify-center">{unread[conv.id]}</span>}
               </button>
@@ -263,7 +263,7 @@ const MiniChatWindow = ({
   if (chat.minimized) {
     return (
       <button onClick={onMinimize} className="w-12 h-12 rounded-full shadow-lg ring-2 ring-background hover:ring-primary/30 transition-all hover:scale-110">
-        <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="md" online />
+        <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="md" profileId={chat.conv.other?.id} />
       </button>
     );
   }

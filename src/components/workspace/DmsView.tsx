@@ -153,7 +153,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
           {conversations.map(conv => (
             <div key={conv.id} className="group/conv flex items-center">
               <button onClick={() => setActive(conv)} className={`flex-1 flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${active?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/40"}`}>
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
+                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} />
                 <div className="text-left flex-1 min-w-0">
                   <p className={`text-sm truncate ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
                   <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
@@ -174,7 +174,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
       {active ? (
         <div className="flex-1 flex flex-col min-w-0">
           <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" online />
+            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} />
             <div className="flex-1">
               <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
               <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
