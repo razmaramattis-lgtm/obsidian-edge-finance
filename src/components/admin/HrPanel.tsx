@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Download, Upload, FileText, Edit2, Search, ChevronLeft, ChevronRight,
-  BookOpen, Save, X, Eye, Check, GripVertical
+  BookOpen, Save, X, Eye, Check, GripVertical, Shield
 } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
+import HmsPanel from "./HmsPanel";
 import DOMPurify from "dompurify";
 
 // ── Types ──
@@ -28,37 +29,50 @@ interface HandbookChapter {
 // ── Constants ──
 const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "Annet"];
 
-type Tab = "handbook" | "documents";
+type Tab = "handbook" | "documents" | "hms";
 
 const HrPanel = () => {
   const { isAdmin } = useAuth();
   const [tab, setTab] = useState<Tab>("handbook");
 
+  const tabs: { id: Tab; label: string; icon: typeof BookOpen }[] = [
+    { id: "handbook", label: "Personalhåndbok", icon: BookOpen },
+    { id: "hms", label: "HMS-håndbok", icon: Shield },
+    { id: "documents", label: "HR-dokumenter", icon: FileText },
+  ];
+
   return (
     <div className="space-y-5">
-      {/* Tab bar */}
-      <div className="flex gap-1 p-1 rounded-xl bg-muted/30 border border-border/10 w-fit">
-        <button
-          onClick={() => setTab("handbook")}
-          className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-            tab === "handbook" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <BookOpen size={13} className="inline mr-1.5" />
-          Avargo Personalhåndbok
-        </button>
-        <button
-          onClick={() => setTab("documents")}
-          className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-            tab === "documents" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <FileText size={13} className="inline mr-1.5" />
-          HR-dokumenter
-        </button>
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Shield size={18} className="text-primary" strokeWidth={1.5} />
+        </div>
+        <div>
+          <p className="text-sm font-medium">HR & Personal</p>
+          <p className="text-[10px] text-muted-foreground">Personalhåndbok, HMS og HR-dokumenter</p>
+        </div>
       </div>
 
-      {tab === "handbook" ? <HandbookTab isAdmin={isAdmin} /> : <DocumentsTab isAdmin={isAdmin} />}
+      {/* Tab bar */}
+      <div className="flex gap-1 p-1 rounded-xl bg-muted/30 border border-border/10 w-fit">
+        {tabs.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+              tab === t.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <t.icon size={13} />
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "handbook" && <HandbookTab isAdmin={isAdmin} />}
+      {tab === "hms" && <HmsPanel />}
+      {tab === "documents" && <DocumentsTab isAdmin={isAdmin} />}
     </div>
   );
 };

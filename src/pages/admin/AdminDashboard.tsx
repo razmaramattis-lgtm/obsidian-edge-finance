@@ -208,7 +208,7 @@ const AdminDashboard = () => {
       case "archive": return <ArchivePanel />;
       case "resources": return <ResourcesPanel />;
       case "hr": return <HrPanel />;
-      case "hms": return <HmsPanel />;
+      case "hms": return <HrPanel />;
       case "internal": return <InternalResourcesPanel />;
       case "collab": return <CollabPanel />;
       case "knowledge": return <KnowledgeBasePanel />;
