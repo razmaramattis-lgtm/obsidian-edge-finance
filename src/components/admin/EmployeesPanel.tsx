@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, UserPlus, ChevronLeft, Shield, ShieldOff, User, Mail, Phone, Briefcase, Sparkles, X } from "lucide-react";
+import { Trash2, UserPlus, ChevronLeft, Shield, ShieldOff, User, Mail, Phone, Briefcase, Sparkles, X, UserX, UserCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Employee {
   id: string;
@@ -18,6 +28,7 @@ interface Employee {
   booking_active: boolean;
   teams_link: string | null;
   created_at: string;
+  active: boolean;
 }
 
 const EmployeesPanel = () => {
@@ -34,7 +45,8 @@ const EmployeesPanel = () => {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-
+  const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fetchEmployees = async () => {
     const { data } = await supabase.from("profiles").select("*").order("created_at");
     setEmployees((data as Employee[]) || []);
@@ -66,11 +78,30 @@ const EmployeesPanel = () => {
     setAdding(false);
   };
 
-  const deleteEmployee = async (id: string) => {
-    if (!confirm("Er du sikker på at du vil slette denne ansatte?")) return;
-    await supabase.from("profiles").delete().eq("id", id);
-    if (selectedEmployee?.id === id) setSelectedEmployee(null);
-    fetchEmployees();
+  const deleteEmployee = async (emp: Employee) => {
+    setDeleting(true);
+    try {
+      const res = await supabase.functions.invoke("delete-user", {
+        body: { userId: emp.user_id },
+      });
+      if (res.error || res.data?.error) {
+        alert(res.data?.error || "Kunne ikke slette brukeren.");
+      } else {
+        if (selectedEmployee?.id === emp.id) setSelectedEmployee(null);
+        fetchEmployees();
+      }
+    } catch {
+      alert("Noe gikk galt ved sletting.");
+    }
+    setDeleting(false);
+    setDeleteTarget(null);
+  };
+
+  const toggleActive = async (emp: Employee) => {
+    const newActive = !emp.active;
+    await supabase.from("profiles").update({ active: newActive } as any).eq("id", emp.id);
+    setEmployees(prev => prev.map(e => e.id === emp.id ? { ...e, active: newActive } : e));
+    if (selectedEmployee?.id === emp.id) setSelectedEmployee(prev => prev ? { ...prev, active: newActive } : null);
   };
 
   const toggleRole = async (emp: Employee) => {
@@ -124,6 +155,11 @@ const EmployeesPanel = () => {
                 <span className={`text-[10px] tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${emp.role === "admin" ? "border-primary/30 text-primary bg-primary/10" : "border-border/30 text-muted-foreground"}`}>
                   {emp.role === "admin" ? "Administrator" : "Ansatt"}
                 </span>
+                {!emp.active && (
+                  <span className="text-[10px] tracking-widest uppercase px-2.5 py-0.5 rounded-full border border-destructive/30 text-destructive bg-destructive/10">
+                    Inaktiv
+                  </span>
+                )}
                 {emp.booking_active && (
                   <span className="text-[10px] tracking-widest uppercase px-2.5 py-0.5 rounded-full border border-green-500/30 text-green-600 bg-green-500/10">
                     Tilgjengelig for booking
@@ -133,18 +169,30 @@ const EmployeesPanel = () => {
             </div>
             <div className="flex items-center gap-2">
               {emp.id !== currentProfile?.id && (
-                <button
-                  onClick={() => toggleRole(emp)}
-                  className={`h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
-                    emp.role === "admin"
-                      ? "bg-muted text-muted-foreground hover:bg-muted/80 border border-border/30"
-                      : "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
-                  }`}
-                >
-                  {emp.role === "admin" ? <><ShieldOff size={13} /> Gjør til ansatt</> : <><Shield size={13} /> Gjør til admin</>}
-                </button>
+                <>
+                  <button
+                    onClick={() => toggleActive(emp)}
+                    className={`h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
+                      emp.active
+                        ? "bg-muted text-muted-foreground hover:bg-muted/80 border border-border/30"
+                        : "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
+                    }`}
+                  >
+                    {emp.active ? <><UserX size={13} /> Sett inaktiv</> : <><UserCheck size={13} /> Aktiver</>}
+                  </button>
+                  <button
+                    onClick={() => toggleRole(emp)}
+                    className={`h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
+                      emp.role === "admin"
+                        ? "bg-muted text-muted-foreground hover:bg-muted/80 border border-border/30"
+                        : "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
+                    }`}
+                  >
+                    {emp.role === "admin" ? <><ShieldOff size={13} /> Gjør til ansatt</> : <><Shield size={13} /> Gjør til admin</>}
+                  </button>
+                </>
               )}
-              <button onClick={() => deleteEmployee(emp.id)} className="h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 transition-all">
+              <button onClick={() => setDeleteTarget(emp)} className="h-9 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 transition-all">
                 <Trash2 size={13} /> Slett
               </button>
             </div>
@@ -286,11 +334,16 @@ const EmployeesPanel = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {!emp.active && (
+                <span className="text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full border border-destructive/30 text-destructive bg-destructive/10">
+                  Inaktiv
+                </span>
+              )}
               <span className={`text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full border ${emp.role === "admin" ? "border-primary/30 text-primary bg-primary/10" : "border-border/30 text-muted-foreground"}`}>
                 {emp.role === "admin" ? "Admin" : "Ansatt"}
               </span>
               <button
-                onClick={e => { e.stopPropagation(); deleteEmployee(emp.id); }}
+                onClick={e => { e.stopPropagation(); setDeleteTarget(emp); }}
                 className="text-muted-foreground hover:text-destructive transition-colors"
               >
                 <Trash2 size={14} />
@@ -300,6 +353,30 @@ const EmployeesPanel = () => {
         ))}
         {filtered.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Ingen ansatte funnet</p>}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Slett bruker permanent?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dette vil permanent slette <strong>{deleteTarget?.name}</strong> ({deleteTarget?.email}) fra systemet.
+              Brukeren mister all tilgang og e-postadressen kan brukes på nytt.
+              Denne handlingen kan ikke angres.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTarget && deleteEmployee(deleteTarget)}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Sletter…" : "Slett permanent"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

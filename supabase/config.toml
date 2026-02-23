@@ -3,6 +3,9 @@ project_id = "zgujpuxizstchqgdzwng"
 [functions.create-employee]
 verify_jwt = false
 
+[functions.delete-user]
+verify_jwt = false
+
 [functions.hms-chat]
 verify_jwt = false
 
