@@ -467,7 +467,7 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
           {/* Tab content */}
           {groupTab === "chat" ? (
             <>
-              <div className="flex-1 overflow-y-auto p-5 space-y-1">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 space-y-1">
                 {messages.map((msg, i) => {
                   const isOwn = msg.sender_id === profile.id;
                   const mp = msg.profiles as any;

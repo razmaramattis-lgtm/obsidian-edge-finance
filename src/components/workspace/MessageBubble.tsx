@@ -30,7 +30,7 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
       ) : (
         <div className="w-8 shrink-0" />
       )}
-      <div className={`max-w-[65%] flex flex-col ${isOwn ? "items-end" : ""}`}>
+      <div className={`max-w-[65%] min-w-0 flex flex-col ${isOwn ? "items-end" : ""}`}>
         {showAvatar && (
           <div className="flex items-baseline gap-2 mb-1">
             <span className="text-xs font-semibold">{senderName || "Ukjent"}</span>
@@ -43,7 +43,7 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
               <img src={content} alt="GIF" className="w-full rounded-2xl" loading="lazy" />
             </div>
           ) : (
-            <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+            <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words overflow-hidden ${
               isOwn
                 ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md"
                 : "bg-muted/50 text-foreground rounded-bl-md"
