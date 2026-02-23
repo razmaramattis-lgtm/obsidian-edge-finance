@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Send, Plus, Hash, Trash2 } from "lucide-react";
+import { Send, Plus, Hash, Trash2, ArrowLeft } from "lucide-react";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 interface Category {
@@ -120,9 +120,9 @@ const ChatPanel = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] rounded-2xl overflow-hidden border border-border/20 glass">
+    <div className="flex h-[calc(100vh-10rem)] rounded-2xl overflow-hidden border border-border/20 glass flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="w-56 shrink-0 border-r border-border/10 flex flex-col">
+      <div className={`${activeCategory ? "hidden md:flex" : "flex"} w-full md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-border/10 flex-col`}>
         <div className="p-3 border-b border-border/10 flex items-center justify-between">
           <span className="text-xs tracking-widest uppercase text-muted-foreground">Kanaler</span>
           {isAdmin && (
@@ -173,7 +173,8 @@ const ChatPanel = () => {
       {/* Chat area */}
       {activeCategory ? (
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-4 py-3 border-b border-border/10 flex items-center gap-2">
+          <div className="px-3 md:px-4 py-3 border-b border-border/10 flex items-center gap-2">
+            <button onClick={() => setActiveCategory(null)} className="md:hidden p-1 rounded-lg text-muted-foreground hover:text-foreground"><ArrowLeft size={14} /></button>
             <Hash size={14} style={{ color: activeCategory.color }} />
             <span className="font-medium text-sm">{activeCategory.name}</span>
             {activeCategory.description && <span className="text-xs text-muted-foreground">{activeCategory.description}</span>}

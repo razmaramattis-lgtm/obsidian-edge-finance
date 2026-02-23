@@ -190,7 +190,8 @@ const DmsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?:
 
   return (
     <div className="h-full flex overflow-hidden">
-      <div className="w-64 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
+      {/* Conversation list - full width on mobile when no active chat */}
+      <div className={`${active ? "hidden md:flex" : "flex"} w-full md:w-64 shrink-0 border-r border-border/10 bg-card/20 flex-col`}>
         <div className="p-3 border-b border-border/10 flex items-center justify-between shrink-0 bg-card/80">
           <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Meldinger</span>
           <button onClick={() => setShowNew(!showNew)} className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-all"><Plus size={14} /></button>
@@ -259,16 +260,17 @@ const DmsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?:
       </div>
 
       {active ? (
-        <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 shrink-0 flex items-center gap-3">
+        <div className={`${active ? "flex" : "hidden"} md:flex flex-1 flex-col min-w-0 min-h-0 overflow-hidden`}>
+          <div className="px-3 md:px-5 py-3 md:py-3.5 border-b border-border/10 bg-card/20 shrink-0 flex items-center gap-2 md:gap-3">
+            <button onClick={() => setActive(null)} className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><ArrowLeft size={16} /></button>
             <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} isActive={active.other?.active !== false} />
-            <div className="flex-1">
-              <span className={`font-semibold text-sm ${onViewProfile && active.other ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && active.other && onViewProfile(active.other as Profile)}>{active.other?.name || "Ukjent"}</span>
+            <div className="flex-1 min-w-0">
+              <span className={`font-semibold text-sm truncate block ${onViewProfile && active.other ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && active.other && onViewProfile(active.other as Profile)}>{active.other?.name || "Ukjent"}</span>
               <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
             </div>
-            <button onClick={() => setCallActive(true)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-green-500/15 text-muted-foreground hover:text-green-500 flex items-center justify-center transition-all"><Phone size={16} /></button>
-            <button onClick={() => setCallActive(true)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"><Video size={16} /></button>
-            <button onClick={() => deleteConversation(active.id)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-destructive/15 text-muted-foreground hover:text-destructive flex items-center justify-center transition-all"><Trash2 size={16} /></button>
+            <button onClick={() => setCallActive(true)} className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-muted/40 hover:bg-green-500/15 text-muted-foreground hover:text-green-500 flex items-center justify-center transition-all"><Phone size={15} /></button>
+            <button onClick={() => setCallActive(true)} className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"><Video size={15} /></button>
+            <button onClick={() => deleteConversation(active.id)} className="hidden md:flex w-9 h-9 rounded-xl bg-muted/40 hover:bg-destructive/15 text-muted-foreground hover:text-destructive items-center justify-center transition-all"><Trash2 size={16} /></button>
           </div>
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 pb-8 space-y-1">
             {messages.map((msg, i) => {

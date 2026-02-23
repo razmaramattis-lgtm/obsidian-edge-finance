@@ -31,6 +31,8 @@ const Workspace = () => {
   const [view, setView] = useState<View>("feed");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Profile[]>([]);
@@ -122,17 +124,17 @@ const Workspace = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header with search */}
       {!headerHidden && (
-        <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30 sticky top-0">
+        <header className="h-12 md:h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-3 md:px-5 gap-2 md:gap-4 shrink-0 z-30 sticky top-0">
           <button onClick={() => navigate("/admin")} className="text-muted-foreground hover:text-foreground transition-colors" title="Tilbake til admin"><ArrowLeft size={18} /></button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Sparkles size={16} className="text-white" /></div>
-            <div>
+            <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Sparkles size={14} className="text-white" /></div>
+            <div className="hidden sm:block">
               <h1 className="text-sm font-semibold leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Avargo Workspace</h1>
               <p className="text-[10px] text-muted-foreground leading-tight">Samhandling & kommunikasjon</p>
             </div>
           </div>
-          {/* Search */}
-          <div className="flex-1 max-w-md mx-4 relative">
+          {/* Search - desktop inline, mobile toggle */}
+          <div className="flex-1 hidden md:block max-w-md mx-4 relative">
             <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
               <Search size={14} className="text-muted-foreground shrink-0" />
               <input
@@ -158,6 +160,11 @@ const Workspace = () => {
               </div>
             )}
           </div>
+          {/* Mobile search button */}
+          <div className="flex-1 md:hidden" />
+          <button onClick={() => setMobileSearchOpen(!mobileSearchOpen)} className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
+            <Search size={16} />
+          </button>
           <NotificationBell
             notifications={wsNotifs.notifications}
             unreadCount={wsNotifs.unreadCount}
@@ -165,14 +172,46 @@ const Workspace = () => {
             onMarkAllRead={wsNotifs.markAllRead}
             onNavigate={handleNotifNavigate}
           />
-          <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
+          <button onClick={() => setHeaderHidden(true)} className="hidden md:block text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
           <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
         </header>
       )}
 
+      {/* Mobile search overlay */}
+      {mobileSearchOpen && (
+        <div className="md:hidden px-3 py-2 bg-card/90 backdrop-blur-xl border-b border-border/15 z-20">
+          <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
+            <Search size={14} className="text-muted-foreground shrink-0" />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
+              onBlur={() => setTimeout(() => { setShowSearchResults(false); setMobileSearchOpen(false); }, 200)}
+              placeholder="Søk etter personer…"
+              className="h-9 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40"
+              autoFocus
+            />
+            <button onClick={() => { setMobileSearchOpen(false); setSearchQuery(""); }} className="text-muted-foreground"><X size={14} /></button>
+          </div>
+          {showSearchResults && searchResults.length > 0 && (
+            <div className="mt-2 bg-card border border-border/30 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
+              {searchResults.map(p => (
+                <button key={p.id} onMouseDown={() => { openProfile(p); setMobileSearchOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-all text-left">
+                  <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" profileId={p.id} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{p.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{p.title || roleLabel(p.role)} {p.department ? `· ${p.department}` : ""}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className={`${sidebarOpen ? "w-60" : "w-14"} shrink-0 border-r border-border/10 bg-card/40 flex flex-col transition-all duration-300`}>
+        {/* Sidebar - hidden on mobile, replaced by bottom tab bar */}
+        <aside className={`hidden md:flex ${sidebarOpen ? "w-60" : "w-14"} shrink-0 border-r border-border/10 bg-card/40 flex-col transition-all duration-300`}>
           <div className="h-12 flex items-center justify-between px-3 border-b border-border/10">
             {sidebarOpen && <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground/50 font-medium">Meny</span>}
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-lg hover:bg-muted/40">
@@ -222,7 +261,27 @@ const Workspace = () => {
         </main>
       </div>
 
-      <FloatingChat profile={profile} onViewProfile={openProfile} />
+      {/* Mobile bottom tab bar */}
+      <nav className="md:hidden flex items-center border-t border-border/15 bg-card/90 backdrop-blur-xl shrink-0 z-30 safe-area-bottom">
+        {navItems.slice(0, 5).map(item => (
+          <button
+            key={item.id}
+            onClick={() => { setView(item.id); setViewingProfile(null); }}
+            className={`flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 transition-all relative ${view === item.id ? "text-primary" : "text-muted-foreground"}`}
+          >
+            <item.icon size={20} strokeWidth={view === item.id ? 2 : 1.5} />
+            <span className="text-[9px] font-medium">{item.label}</span>
+            {item.badge > 0 && (
+              <span className="absolute top-1 right-1/2 translate-x-3 px-1 py-0 rounded-full bg-destructive text-white text-[8px] font-bold min-w-[14px] text-center leading-[14px]">{item.badge > 99 ? "99+" : item.badge}</span>
+            )}
+          </button>
+        ))}
+      </nav>
+
+      {/* Hide floating chat on mobile */}
+      <div className="hidden md:block">
+        <FloatingChat profile={profile} onViewProfile={openProfile} />
+      </div>
     </div>
     </PresenceContext.Provider>
   );
@@ -295,11 +354,11 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
   return (
     <div className="h-full overflow-y-auto">
       <div className="relative">
-        <div className="h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
-        <div className="max-w-3xl mx-auto px-6 relative">
-          <button onClick={onBack} className="absolute top-4 left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
-          <div className="absolute -top-16">
-            <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
+        <div className="h-32 md:h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
+        <div className="max-w-3xl mx-auto px-4 md:px-6 relative">
+          <button onClick={onBack} className="absolute top-4 left-4 md:left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
+          <div className="absolute -top-12 md:-top-16">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={profile.name} className="w-full h-full object-cover" />
               ) : (
@@ -307,10 +366,10 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
               )}
             </div>
           </div>
-          <div className="pt-20 pb-5 flex items-end gap-4">
+          <div className="pt-14 md:pt-20 pb-5 flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
-              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+              <h1 className="text-xl md:text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
+              <div className="flex items-center gap-2 md:gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
                 <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{profile.title || roleLabel(profile.role)}</span>
                 {profile.department && <span className="flex items-center gap-1 text-xs"><Building2 size={11} /> {profile.department}</span>}
                 {profile.specialty && <span className="flex items-center gap-1 text-xs"><Star size={11} /> {profile.specialty}</span>}
@@ -540,7 +599,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
       <div className="relative">
         {/* Background - clickable to change */}
         <div
-          className="h-48 relative group cursor-pointer"
+          className="h-32 md:h-48 relative group cursor-pointer"
           style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
           onClick={() => bgRef.current?.click()}
         >
@@ -552,14 +611,14 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
           </div>
           <input ref={bgRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadBackground(f); e.target.value = ""; }} />
         </div>
-        <div className="max-w-3xl mx-auto px-6 relative">
+        <div className="max-w-3xl mx-auto px-4 md:px-6 relative">
           {/* Avatar - clickable to change */}
-          <div className="absolute -top-16">
-            <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card relative group cursor-pointer" onClick={() => avatarRef.current?.click()}>
+          <div className="absolute -top-12 md:-top-16">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card relative group cursor-pointer" onClick={() => avatarRef.current?.click()}>
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={profile.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-4xl font-semibold">{profile.name.charAt(0).toUpperCase()}</div>
+                <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-3xl md:text-4xl font-semibold">{profile.name.charAt(0).toUpperCase()}</div>
               )}
               <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
                 <span className="opacity-0 group-hover:opacity-100 transition-all text-white">
@@ -569,10 +628,10 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
               <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); e.target.value = ""; }} />
             </div>
           </div>
-          <div className="pt-20 pb-5 flex items-end gap-4">
+          <div className="pt-14 md:pt-20 pb-5 flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
-              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+              <h1 className="text-xl md:text-2xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>{profile.name}</h1>
+              <div className="flex items-center gap-2 md:gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
                 <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{profile.title || roleLabel(profile.role)}</span>
                 {profile.department && <span className="flex items-center gap-1 text-xs"><Building2 size={11} /> {profile.department}</span>}
                 {profile.specialty && <span className="flex items-center gap-1 text-xs"><Star size={11} /> {profile.specialty}</span>}

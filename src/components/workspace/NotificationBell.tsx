@@ -87,7 +87,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 w-[380px] bg-card border border-border/30 rounded-2xl shadow-2xl z-50 max-h-[500px] flex flex-col animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-11 w-[calc(100vw-2rem)] max-w-[380px] bg-card border border-border/30 rounded-2xl shadow-2xl z-50 max-h-[70vh] md:max-h-[500px] flex flex-col animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border/10">
             <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Varsler</h3>
             {unreadCount > 0 && (
