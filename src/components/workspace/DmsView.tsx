@@ -174,7 +174,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
       {active ? (
         <div className="flex-1 flex flex-col min-w-0">
           <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} />
+            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} isActive={active.other?.active !== false} />
             <div className="flex-1">
               <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
               <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>

@@ -83,6 +83,8 @@ const Workspace = () => {
     if (!profile) return;
     if (view === "feed") wsNotifs.markTypeRead(["feed_post", "feed_comment", "feed_reaction"]);
     if (view === "groups") wsNotifs.markTypeRead(["group_message"]);
+    if (view === "dms") wsNotifs.markTypeRead(["dm_message"]);
+    if (view === "friends") wsNotifs.markTypeRead(["friend_request"]);
   }, [view, profile?.id]);
 
   if (!user || !profile) return (
