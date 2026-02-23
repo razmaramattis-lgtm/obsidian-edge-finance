@@ -6,7 +6,7 @@ import {
   Hash, Send, Plus, Trash2, Users, MessageSquare, Newspaper,
   PanelLeftClose, PanelLeft, MessageCircle, Pin, Eye, EyeOff,
   ArrowLeft, Image, Lock, Globe, Search, Bell, Settings, Sparkles,
-  Phone, Video, User, Heart, UserPlus, MapPin, Calendar, ThumbsUp,
+  Phone, Video, User, Heart, UserPlus, MapPin, Calendar, ThumbsUp, X,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/components/workspace/UserAvatar";
@@ -14,13 +14,14 @@ import ChatInput from "@/components/workspace/ChatInput";
 import MessageBubble from "@/components/workspace/MessageBubble";
 import PostReactions from "@/components/workspace/PostReactions";
 import EmojiPicker from "@/components/workspace/EmojiPicker";
+import GifPicker from "@/components/workspace/GifPicker";
 import VideoCall from "@/components/workspace/VideoCall";
 
 // ─── Types ───
 interface Profile { id: string; name: string; role: string; avatar_url?: string | null; email?: string }
 interface Channel { id: string; name: string; description: string; color: string }
 interface ChatMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
-interface Post { id: string; title?: string; content: string; pinned: boolean; created_at: string; author_id: string; profiles?: Profile }
+interface Post { id: string; title?: string; content: string; pinned: boolean; created_at: string; author_id: string; image_url?: string | null; profiles?: Profile }
 interface PostComment { id: string; content: string; created_at: string; author_id: string; profiles?: Profile }
 interface Group { id: string; name: string; description?: string; color: string; is_private: boolean; created_by: string }
 interface GroupMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
@@ -331,9 +332,16 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
                       <p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p>
                     </div>
                   </div>
-                  <div className="px-5 pt-3 pb-4 text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
-                    <ReactMarkdown>{post.content}</ReactMarkdown>
-                  </div>
+                  {post.content && (
+                    <div className="px-5 pt-3 pb-2 text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
+                      <ReactMarkdown>{post.content}</ReactMarkdown>
+                    </div>
+                  )}
+                  {(post as any).image_url && (
+                    <div className="px-5 pb-3">
+                      <img src={(post as any).image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
+                    </div>
+                  )}
                   <div className="px-5 pb-3">
                     <PostReactions postId={post.id} profileId={profile.id} />
                   </div>
@@ -502,15 +510,47 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
 const QuickPost = ({ profile, onPosted }: { profile: Profile; onPosted: () => void }) => {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const imgRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+    if (error) return null;
+    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+    return data.publicUrl;
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim()) return;
+    if (!text.trim() && !imageFile) return;
     setSending(true);
-    await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: text.trim() }]);
+    let image_url: string | null = null;
+    if (imageFile) image_url = await uploadImage(imageFile);
+    await supabase.from("workspace_posts").insert([{
+      author_id: profile.id,
+      content: text.trim(),
+      ...(image_url ? { image_url } : {}),
+    }]);
     setText("");
+    setImageFile(null);
+    setImagePreview(null);
     setSending(false);
     onPosted();
+  };
+
+  const submitGif = async (url: string) => {
+    await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: "", image_url: url }]);
+    onPosted();
+  };
+
+  const handleImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setImageFile(f);
+    setImagePreview(URL.createObjectURL(f));
   };
 
   return (
@@ -525,10 +565,22 @@ const QuickPost = ({ profile, onPosted }: { profile: Profile; onPosted: () => vo
             rows={2}
             className="w-full resize-none bg-muted/30 rounded-xl px-4 py-3 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/40 border border-border/15"
           />
-          <div className="flex items-center justify-end mt-2">
+          {imagePreview && (
+            <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-48">
+              <img src={imagePreview} alt="preview" className="w-full max-h-48 object-cover" />
+              <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"><X size={12} /></button>
+            </div>
+          )}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex gap-1">
+              <EmojiPicker onSelect={e => setText(prev => prev + e)} />
+              <GifPicker onSelect={submitGif} />
+              <input ref={imgRef} type="file" accept="image/*" className="hidden" onChange={handleImg} />
+              <button type="button" onClick={() => imgRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={16} /></button>
+            </div>
             <button
               type="submit"
-              disabled={!text.trim() || sending}
+              disabled={(!text.trim() && !imageFile) || sending}
               className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
             >
               Publiser
@@ -546,6 +598,9 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   const [newPost, setNewPost] = useState("");
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPosts = async () => {
     const { data } = await supabase
@@ -563,13 +618,45 @@ const FeedView = ({ profile }: { profile: Profile }) => {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+    if (error) return null;
+    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
   const submitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPost.trim()) return;
+    if (!newPost.trim() && !imageFile) return;
     setSending(true);
-    await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: newPost.trim() }]);
+    let image_url: string | null = null;
+    if (imageFile) image_url = await uploadImage(imageFile);
+    await supabase.from("workspace_posts").insert([{
+      author_id: profile.id,
+      content: newPost.trim(),
+      ...(image_url ? { image_url } : {}),
+    }]);
     setNewPost("");
+    setImageFile(null);
+    setImagePreview(null);
     setSending(false);
+  };
+
+  const submitGif = async (url: string) => {
+    await supabase.from("workspace_posts").insert([{
+      author_id: profile.id,
+      content: "",
+      image_url: url,
+    }]);
   };
 
   const togglePin = async (post: Post) => {
@@ -602,16 +689,31 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                   rows={3}
                   className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40"
                 />
+                {/* Image preview */}
+                {imagePreview && (
+                  <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-64">
+                    <img src={imagePreview} alt="preview" className="w-full max-h-64 object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => { setImageFile(null); setImagePreview(null); }}
+                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
                 <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2">
                   <div className="flex gap-1">
                     <EmojiPicker onSelect={(e) => setNewPost(prev => prev + e)} />
-                    <button type="button" className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
+                    <GifPicker onSelect={submitGif} />
+                    <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+                    <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
                       <Image size={18} />
                     </button>
                   </div>
                   <button
                     type="submit"
-                    disabled={!newPost.trim() || sending}
+                    disabled={(!newPost.trim() && !imageFile) || sending}
                     className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
                   >
                     Publiser
@@ -656,11 +758,25 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                 </div>
 
                 {/* Content */}
-                <div className="px-5 pt-3 pb-4">
-                  <div className="text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
-                    <ReactMarkdown>{post.content}</ReactMarkdown>
-                  </div>
+                <div className="px-5 pt-3 pb-2">
+                  {post.content && (
+                    <div className="text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
+                      <ReactMarkdown>{post.content}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
+
+                {/* Image / GIF */}
+                {(post as any).image_url && (
+                  <div className="px-5 pb-3">
+                    <img
+                      src={(post as any).image_url}
+                      alt="Post media"
+                      className="w-full max-h-96 object-cover rounded-xl border border-border/10"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
 
                 {/* Reactions */}
                 <div className="px-5 pb-3">
