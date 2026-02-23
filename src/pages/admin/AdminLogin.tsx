@@ -84,8 +84,8 @@ const AdminLogin = () => {
                 <p className="text-sm text-muted-foreground">
                   Hvis e-posten er registrert, har vi sendt et midlertidig passord til <strong>{forgotEmail}</strong>.
                 </p>
-                <button onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); }}
-                  className="text-sm text-primary hover:underline">
+                <button type="button" onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); setError(""); }}
+                  className="text-sm text-primary hover:underline cursor-pointer relative z-10">
                   Tilbake til innlogging
                 </button>
               </div>
@@ -104,7 +104,7 @@ const AdminLogin = () => {
                   {forgotLoading ? "Sender…" : "Send midlertidig passord"}
                 </button>
                 <button type="button" onClick={() => { setShowForgot(false); setError(""); }}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer relative z-10">
                   Tilbake til innlogging
                 </button>
               </form>
@@ -146,8 +146,8 @@ const AdminLogin = () => {
             <p className="text-xs text-muted-foreground/40">
               Tilgang kun for autoriserte Avargo-ansatte
             </p>
-            <button type="button" onClick={() => window.history.length > 1 ? navigate(-1) : navigate("/")}
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <button type="button" onClick={() => navigate("/")}
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer relative z-10">
               <ArrowLeft size={13} /> Gå tilbake
             </button>
           </div>
