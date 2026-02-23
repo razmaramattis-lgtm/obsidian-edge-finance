@@ -3,6 +3,7 @@ import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import SectionSwitcher from "@/components/SectionSwitcher";
 import { useSection } from "@/contexts/SectionContext";
+import { sectionTjenesterGroups } from "@/config/sectionContent";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
@@ -123,6 +124,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   // Section-aware path helper
   const sp = (path: string) => isInSection && section ? `${section.basePath}${path}` : path;
 
+  // Filter tjenester groups when inside a section
+  const visibleTjenesterGroups = useMemo(() => {
+    if (!isInSection || !section) return tjenesterGroups;
+    const allowed = sectionTjenesterGroups[section.id];
+    return tjenesterGroups.filter(g => allowed.includes(g.label));
+  }, [isInSection, section]);
+
   const makeHandlers = (
     setter: (v: boolean) => void,
     timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
@@ -150,13 +158,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </button>
               <DropdownPanel open={tjenesterOpen} className="fixed top-[72px] left-0 right-0 bg-card/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl p-6">
                 <div className="container mx-auto">
-                  <div className="grid grid-cols-5 gap-6">
-                    {tjenesterGroups.map((group) => (
+                  <div className={`grid gap-6`} style={{ gridTemplateColumns: `repeat(${Math.min(visibleTjenesterGroups.length, 5)}, 1fr)` }}>
+                    {visibleTjenesterGroups.map((group) => (
                       <div key={group.label}>
                         <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>
                         <div className="flex flex-col gap-0.5">
-                          {group.items.slice(0, 4).map((item) => (
-                            <Link key={item.href} to={item.href} onClick={() => setTjenesterOpen(false)}
+                          {group.items.map((item) => (
+                            <Link key={item.href} to={sp(item.href)} onClick={() => setTjenesterOpen(false)}
                               className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                             >
                               <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
@@ -170,7 +178,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     ))}
                   </div>
                   <div className="mt-3 pt-3 border-t border-border/15">
-                    <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle tjenester →</Link>
+                    <Link to={sp("/tjenester")} onClick={() => setTjenesterOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle tjenester →</Link>
                   </div>
                 </div>
               </DropdownPanel>
@@ -184,7 +192,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-72 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
                 <div className="flex flex-col gap-0.5">
                   {bransjerItems.map((item) => (
-                    <Link key={item.href} to={item.href} onClick={() => setBransjerOpen(false)}
+                    <Link key={item.href} to={sp(item.href)} onClick={() => setBransjerOpen(false)}
                       className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                     >
                       <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
@@ -195,7 +203,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   ))}
                 </div>
                 <div className="mt-2 pt-2 border-t border-border/15">
-                  <Link to="/bransjer" onClick={() => setBransjerOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle bransjer →</Link>
+                  <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="text-[12px] tracking-wider text-primary/80 hover:text-primary transition-colors duration-200 font-medium">Se alle bransjer →</Link>
                 </div>
               </DropdownPanel>
             </div>
@@ -209,7 +217,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </button>
               <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-3 w-60 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
                 {selskapetLinks.map((item) => (
-                  <Link key={item.href} to={item.href} onClick={() => setSelskapetOpen(false)}
+                  <Link key={item.href} to={sp(item.href)} onClick={() => setSelskapetOpen(false)}
                     className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                   >
                     <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200 mt-0.5">
@@ -246,7 +254,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownPanel>
             </div>
 
-            <Link to="/kontakt" className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
+            <Link to={sp("/kontakt")} className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
               Få tilbud
             </Link>
           </div>
@@ -263,18 +271,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }`}
         >
           <div className="flex flex-col p-5 pb-8">
-            <Link to="/" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Hjem</Link>
-            <Link to="/metoden" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Metoden</Link>
+            <Link to={isInSection && section ? section.basePath : "/"} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Hjem</Link>
+            <Link to={sp("/metoden")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Metoden</Link>
 
             <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
               Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-200 ${mobileTjenesterOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="py-2 pl-2 flex flex-col gap-0.5">
-                {tjenesterGroups.map((group) => {
+                {visibleTjenesterGroups.map((group) => {
                   const Icon = group.items[0].icon;
                   return (
-                    <Link key={group.label} to="/tjenester" onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                    <Link key={group.label} to={sp("/tjenester")} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
                       className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
                     >
                       <Icon size={14} className="text-primary shrink-0" strokeWidth={1.5} />
@@ -282,7 +290,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     </Link>
                   );
                 })}
-                <Link to="/tjenester" onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                <Link to={sp("/tjenester")} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
                   className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
                   Se alle tjenester →
                 </Link>
@@ -295,22 +303,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className={`overflow-hidden transition-all duration-200 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="py-2 pl-2 flex flex-col gap-0.5">
                 {bransjerItems.slice(0, 5).map((item) => (
-                  <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                  <Link key={item.href} to={sp(item.href)} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
                     className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
                   >
                     <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
                   </Link>
                 ))}
-                <Link to="/bransjer" onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                <Link to={sp("/bransjer")} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
                   className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
                   Se alle bransjer →
                 </Link>
               </div>
             </div>
 
-            <Link to="/priser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
-            <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
-            <Link to="/om-oss" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
+            <Link to={sp("/priser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
+            <Link to={sp("/om-oss")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
             <Link to="/ressurser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
             <Link to="/ressurser/kontohjelp" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
             <Link to="/ressurser?tab=arkiv" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
@@ -324,7 +332,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </Link>
             </div>
 
-            <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-3 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all">
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-3 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all">
               Få tilbud
             </Link>
           </div>
