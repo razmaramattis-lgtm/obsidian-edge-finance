@@ -171,7 +171,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </Link>
 
           <div className="hidden md:flex items-center gap-5 lg:gap-7">
-            <Link to={isInSection && section ? section.basePath : "/"} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Hjem</Link>
+            <Link to="/" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Hjem</Link>
             <Link to={sp("/metoden")} className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Metoden</Link>
 
             {/* Tjenester */}
@@ -311,7 +311,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }`}
         >
           <div className="flex flex-col p-5 pb-8">
-            <Link to={isInSection && section ? section.basePath : "/"} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Hjem</Link>
+            <Link to="/" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Hjem</Link>
             <Link to={sp("/metoden")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Metoden</Link>
 
             <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/80 border-b border-border/10 tracking-wide w-full">
