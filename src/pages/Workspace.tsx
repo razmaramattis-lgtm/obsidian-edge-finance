@@ -214,9 +214,9 @@ const Workspace = () => {
         <main className="flex-1 overflow-hidden bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
           {view === "view-profile" && viewingProfile && <ViewProfilePage profile={viewingProfile} myProfile={profile} onBack={() => setView("feed")} onNavigate={setView} />}
-          {view === "feed" && <FeedView profile={profile} />}
-          {view === "groups" && <GroupsView profile={profile} />}
-          {view === "dms" && <DmsView profile={profile} />}
+          {view === "feed" && <FeedView profile={profile} onViewProfile={openProfile} />}
+          {view === "groups" && <GroupsView profile={profile} onViewProfile={openProfile} />}
+          {view === "dms" && <DmsView profile={profile} onViewProfile={openProfile} />}
           {view === "friends" && <FriendsView profile={profile} />}
           {view === "conference" && <ConferenceView profile={profile} />}
         </main>

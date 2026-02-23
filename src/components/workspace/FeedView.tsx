@@ -80,7 +80,7 @@ const CommentReactions = ({ commentId, profileId }: { commentId: string; profile
 };
 
 // ─── Comment Replies ───
-const CommentReplies = ({ commentId, profileId, profileData }: { commentId: string; profileId: string; profileData: Profile }) => {
+const CommentReplies = ({ commentId, profileId, profileData, onViewProfile }: { commentId: string; profileId: string; profileData: Profile; onViewProfile?: (p: Profile) => void }) => {
   const [replies, setReplies] = useState<any[]>([]);
   const [text, setText] = useState("");
   const [showInput, setShowInput] = useState(false);
@@ -117,7 +117,7 @@ const CommentReplies = ({ commentId, profileId, profileData }: { commentId: stri
                 <UserAvatar name={rp?.name} avatarUrl={rp?.avatar_url} size="xs" isActive={rp?.active !== false} />
                 <div className="flex-1">
                   <div className="bg-muted/30 rounded-2xl rounded-tl-md px-3 py-1.5 relative">
-                    <span className="text-[10px] font-semibold">{rp?.name}</span>
+                    <span className={`text-[10px] font-semibold ${onViewProfile && rp ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && rp && onViewProfile(rp as Profile)}>{rp?.name}</span>
                     {isGifContent(r.content) ? (
                       <img src={extractGifUrl(r.content)} alt="GIF" className="mt-1 max-h-32 rounded-lg" loading="lazy" />
                     ) : (
@@ -153,7 +153,7 @@ const CommentReplies = ({ commentId, profileId, profileData }: { commentId: stri
 };
 
 // ─── Post Comments ───
-const PostComments = ({ postId, profileId, profileData }: { postId: string; profileId: string; profileData: Profile }) => {
+const PostComments = ({ postId, profileId, profileData, onViewProfile }: { postId: string; profileId: string; profileData: Profile; onViewProfile?: (p: Profile) => void }) => {
   const [comments, setComments] = useState<PostComment[]>([]);
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -252,7 +252,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
                   ) : (
                     <>
                       <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2 relative">
-                        <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
+                        <span className={`text-[11px] font-semibold ${onViewProfile && cp ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && cp && onViewProfile(cp as Profile)}>{cp?.name || "Ukjent"}</span>
                         {isGifContent(c.content) ? (
                           <img src={extractGifUrl(c.content)} alt="GIF" className="mt-1 max-h-40 rounded-lg" loading="lazy" />
                         ) : (
@@ -277,7 +277,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
                   )}
                 </div>
               </div>
-              <CommentReplies commentId={c.id} profileId={profileId} profileData={profileData} />
+              <CommentReplies commentId={c.id} profileId={profileId} profileData={profileData} onViewProfile={onViewProfile} />
             </div>
           );
         })}
@@ -296,7 +296,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
 };
 
 // ─── Feed View ───
-const FeedView = ({ profile }: { profile: Profile }) => {
+const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
   const { isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
@@ -450,7 +450,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                 <div className="flex items-start gap-3 p-5 pb-0">
                   <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" isActive={ap?.active !== false} />
                   <div className="flex-1">
-                    <span className="text-sm font-semibold">{ap?.name}</span>
+                    <span className={`text-sm font-semibold ${onViewProfile && ap ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={() => onViewProfile && ap && onViewProfile(ap as Profile)}>{ap?.name}</span>
                     <p className="text-[11px] text-muted-foreground">
                       {timeAgo(post.created_at)}
                       {(post as any).edited_at && <span className="ml-1 italic">· redigert</span>}
@@ -503,7 +503,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
                     <MessageCircle size={15} /> Kommenter {commentCounts[post.id] > 0 && <span className="px-1.5 py-0.5 rounded-full bg-muted/50 text-[10px] font-medium">{commentCounts[post.id]}</span>}
                   </button>
                 </div>
-                {expandedPost === post.id && <PostComments postId={post.id} profileId={profile.id} profileData={profile} />}
+                {expandedPost === post.id && <PostComments postId={post.id} profileId={profile.id} profileData={profile} onViewProfile={onViewProfile} />}
               </article>
             );
           })}
