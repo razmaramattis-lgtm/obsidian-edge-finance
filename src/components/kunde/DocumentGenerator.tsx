@@ -174,7 +174,7 @@ const DocumentGenerator = ({ config }: Props) => {
         });
       }
 
-      // Auto-publish each section as individual chapters to HMS-håndbok
+      // Auto-publish each section as individual chapters to HMS-håndbok (with HTML)
       const prefix = `${config.title}`;
       
       // Delete old HMS chapters for this generator
@@ -207,19 +207,38 @@ const DocumentGenerator = ({ config }: Props) => {
         .maybeSingle();
       let nextOrder = (maxDoc?.sort_order || 0) + 1;
 
-      // Insert each section as a separate HMS chapter
+      // Insert each section as a separate HMS chapter (keep HTML for rich rendering)
       for (const section of config.sections) {
         const sectionHtml = section.content(form);
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = sectionHtml;
-        const plainText = tempDiv.textContent || tempDiv.innerText || "";
-
         await supabase.from("hms_documents").insert({
           title: `${prefix}: ${section.title}`,
-          content: plainText,
+          content: sectionHtml,
           sort_order: nextOrder,
         });
         nextOrder++;
+      }
+
+      // Also save to HR-dokumenter (internal_resources) for the admin HR panel
+      const hrDocTitle = config.title;
+      const hrCategory = config.documentCategory || "Personalhåndbok";
+      const { data: existingHrDoc } = await supabase
+        .from("internal_resources")
+        .select("id")
+        .eq("title", hrDocTitle)
+        .eq("category", hrCategory)
+        .maybeSingle();
+
+      if (existingHrDoc) {
+        await supabase.from("internal_resources")
+          .update({ description: `Generert ${new Date().toLocaleDateString("nb-NO")}`, updated_at: new Date().toISOString() })
+          .eq("id", existingHrDoc.id);
+      } else {
+        await supabase.from("internal_resources").insert({
+          title: hrDocTitle,
+          description: `Generert ${new Date().toLocaleDateString("nb-NO")}`,
+          category: hrCategory,
+          file_name: `${hrDocTitle}.pdf`,
+        });
       }
 
       setSaved(true);

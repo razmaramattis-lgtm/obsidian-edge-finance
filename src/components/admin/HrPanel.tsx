@@ -26,7 +26,7 @@ interface HrResource {
 }
 
 // ── Constants ──
-const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "Annet"];
+const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "HR-Personalhåndbok", "HR-Arbeidsreglement", "HR-Varslingsrutiner", "HR-GDPR", "HR-DIGIS", "HR-Psykososialt", "Annet"];
 
 type Tab = "hms" | "documents" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
 
