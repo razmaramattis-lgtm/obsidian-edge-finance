@@ -1820,6 +1820,42 @@ export type Database = {
         }
         Relationships: []
       }
+      workspace_comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_comment_likes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_group_members: {
         Row: {
           group_id: string

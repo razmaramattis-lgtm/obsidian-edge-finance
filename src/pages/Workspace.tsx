@@ -825,6 +825,38 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   );
 };
 
+// ─── Comment Like Button ───
+const CommentLikeButton = ({ commentId, profileId }: { commentId: string; profileId: string }) => {
+  const [count, setCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+
+  const fetch = async () => {
+    const { data } = await supabase.from("workspace_comment_likes").select("profile_id").eq("comment_id", commentId);
+    const likes = data || [];
+    setCount(likes.length);
+    setLiked(likes.some((l: any) => l.profile_id === profileId));
+  };
+
+  useEffect(() => { fetch(); }, [commentId]);
+
+  const toggle = async () => {
+    if (liked) {
+      await supabase.from("workspace_comment_likes").delete().match({ comment_id: commentId, profile_id: profileId });
+    } else {
+      await supabase.from("workspace_comment_likes").insert([{ comment_id: commentId, profile_id: profileId }]);
+    }
+    fetch();
+  };
+
+  return (
+    <button onClick={toggle} className={`flex items-center gap-1 text-[10px] font-medium transition-all hover:scale-105 active:scale-95 ${liked ? "text-primary" : "text-muted-foreground hover:text-primary/70"}`}>
+      <ThumbsUp size={11} className={liked ? "fill-primary" : ""} />
+      {count > 0 && <span>{count}</span>}
+      <span>Liker</span>
+    </button>
+  );
+};
+
 // ─── Post Comments ───
 const PostComments = ({ postId, profileId, profileData }: { postId: string; profileId: string; profileData: Profile }) => {
   const [comments, setComments] = useState<PostComment[]>([]);
@@ -858,7 +890,10 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
                   <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
                   <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
                 </div>
-                <span className="text-[10px] text-muted-foreground ml-2">{timeAgo(c.created_at)}</span>
+                <div className="flex items-center gap-3 ml-2 mt-0.5">
+                  <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
+                  <CommentLikeButton commentId={c.id} profileId={profileId} />
+                </div>
               </div>
             </div>
           );
