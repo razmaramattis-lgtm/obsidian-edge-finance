@@ -500,6 +500,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               {/* Avdelinger — compact inline pills */}
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-3 mt-6 font-medium">Avdelinger</p>
               <div className="flex flex-wrap gap-1.5">
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] tracking-wide border border-primary/25 bg-primary/8 text-primary transition-all duration-300 hover:scale-[1.03]"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-primary" />
+                  Avargo
+                </Link>
                 {SECTION_LIST.map((s) => (
                   <Link
                     key={s.id}
