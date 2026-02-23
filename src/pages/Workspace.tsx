@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Users, MessageSquare, Video, User, UserPlus, Search, X,
   PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
-  Globe, Lock, MapPin, Briefcase, Building2, Star, Heart, Camera,
+  Globe, Lock, MapPin, Briefcase, Building2, Star, Heart, Camera, MessageCircle, Pin,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
 import FeedView from "@/components/workspace/FeedView";
@@ -518,14 +518,37 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
             {myPosts.map(post => {
               const ap = post.profiles as any;
               return (
-                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
+                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 hover:border-border/25 transition-all hover:shadow-md overflow-hidden">
                   <div className="flex items-start gap-3 p-5 pb-0">
                     <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
-                    <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold">{ap?.name}</span>
+                      <p className="text-[11px] text-muted-foreground">
+                        {timeAgo(post.created_at)}
+                        {(post as any).edited_at && <span className="ml-1 italic">· redigert</span>}
+                        {" · "}<Globe size={9} className="inline" /> Alle
+                      </p>
+                    </div>
+                    {post.pinned && <Pin size={13} className="text-primary shrink-0" />}
                   </div>
-                  {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
-                  {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
-                  <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={profile.id} /></div>
+                  {post.content && (
+                    <div className="px-5 pt-3 pb-2 text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
+                      <ReactMarkdown>{post.content}</ReactMarkdown>
+                    </div>
+                  )}
+                  {post.image_url && (
+                    <div className="px-5 pb-3">
+                      <img src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="px-5 pb-3">
+                    <PostReactions postId={post.id} profileId={profile.id} />
+                  </div>
+                  <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
+                    <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
+                      <MessageCircle size={15} /> Kommenter
+                    </button>
+                  </div>
                 </article>
               );
             })}
