@@ -10,6 +10,7 @@ import { SectionProvider } from "@/contexts/SectionContext";
 import Layout from "./components/Layout";
 import SectionTheme from "./components/SectionTheme";
 import ScrollToTop from "./components/ScrollToTop";
+import { useSubdomainRedirect } from "./hooks/useSubdomainRedirect";
 
 // Eagerly load Hub (new landing page)
 import Hub from "./pages/Hub";
@@ -152,6 +153,11 @@ const PrefetchTrigger = () => {
   return null;
 };
 
+const SubdomainRedirect = () => {
+  useSubdomainRedirect();
+  return null;
+};
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
@@ -163,6 +169,7 @@ const App = () => (
             <SectionProvider>
               <ScrollToTop />
               <PrefetchTrigger />
+              <SubdomainRedirect />
               <Suspense fallback={<PageFallback />}>
                 <Routes>
                   {/* Admin routes (no Layout wrapper) */}
