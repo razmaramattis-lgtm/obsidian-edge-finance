@@ -235,6 +235,9 @@ const DocumentGenerator = ({ config }: Props) => {
         container.style.backgroundColor = "#ffffff";
         document.body.appendChild(container);
 
+        // Allow DOM to render the content before capturing
+        await new Promise(r => setTimeout(r, 300));
+
         const pdfBlob: Blob = await html2pdf()
           .set({
             margin: [15, 18, 15, 18],
@@ -245,7 +248,7 @@ const DocumentGenerator = ({ config }: Props) => {
             pagebreak: { mode: ["avoid-all", "css", "legacy"] },
           })
           .from(container)
-          .outputPdf("blob");
+          .output("blob");
 
         document.body.removeChild(container);
 
