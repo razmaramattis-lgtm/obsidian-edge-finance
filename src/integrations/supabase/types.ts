@@ -1208,6 +1208,8 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          file_name: string | null
+          file_url: string | null
           id: string
           sender_id: string
         }
@@ -1215,6 +1217,8 @@ export type Database = {
           content: string
           conversation_id: string
           created_at?: string
+          file_name?: string | null
+          file_url?: string | null
           id?: string
           sender_id: string
         }
@@ -1222,6 +1226,8 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          file_name?: string | null
+          file_url?: string | null
           id?: string
           sender_id?: string
         }
@@ -1859,6 +1865,48 @@ export type Database = {
           },
         ]
       }
+      workspace_friends: {
+        Row: {
+          created_at: string
+          id: string
+          receiver_id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          receiver_id: string
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          receiver_id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_friends_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_friends_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_group_members: {
         Row: {
           group_id: string
@@ -1902,6 +1950,8 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          file_name: string | null
+          file_url: string | null
           group_id: string
           id: string
           sender_id: string
@@ -1909,6 +1959,8 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          file_name?: string | null
+          file_url?: string | null
           group_id: string
           id?: string
           sender_id: string
@@ -1916,6 +1968,8 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          file_name?: string | null
+          file_url?: string | null
           group_id?: string
           id?: string
           sender_id?: string
@@ -1940,6 +1994,7 @@ export type Database = {
       workspace_groups: {
         Row: {
           color: string | null
+          cover_image_url: string | null
           created_at: string
           created_by: string
           description: string | null
@@ -1950,6 +2005,7 @@ export type Database = {
         }
         Insert: {
           color?: string | null
+          cover_image_url?: string | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -1960,6 +2016,7 @@ export type Database = {
         }
         Update: {
           color?: string | null
+          cover_image_url?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
@@ -1983,6 +2040,7 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          edited_at: string | null
           id: string
           post_id: string
         }
@@ -1990,6 +2048,7 @@ export type Database = {
           author_id: string
           content: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           post_id: string
         }
@@ -1997,6 +2056,7 @@ export type Database = {
           author_id?: string
           content?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           post_id?: string
         }
@@ -2061,6 +2121,7 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          edited_at: string | null
           id: string
           image_url: string | null
           pinned: boolean
@@ -2071,6 +2132,7 @@ export type Database = {
           author_id: string
           content: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           image_url?: string | null
           pinned?: boolean
@@ -2081,6 +2143,7 @@ export type Database = {
           author_id?: string
           content?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           image_url?: string | null
           pinned?: boolean
