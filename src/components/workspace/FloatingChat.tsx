@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   MessageCircle, X, Minus, Send, Trash2, Pencil, Phone, Video,
-  Paperclip, Image, XCircle, Check, CheckCheck,
+  Paperclip, Image, XCircle, Check, CheckCheck, EyeOff,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import EmojiPicker from "./EmojiPicker";
@@ -15,6 +15,7 @@ import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 interface FloatingChatProps {
   profile: Profile;
+  onViewProfile?: (p: Profile) => void;
 }
 
 interface MiniChat {
@@ -23,13 +24,17 @@ interface MiniChat {
   minimized: boolean;
 }
 
-const FloatingChat = ({ profile }: FloatingChatProps) => {
+const FloatingChat = ({ profile, onViewProfile }: FloatingChatProps) => {
   const [showPicker, setShowPicker] = useState(false);
   const [conversations, setConversations] = useState<DmConv[]>([]);
   const [openChats, setOpenChats] = useState<MiniChat[]>([]);
   const [unread, setUnread] = useState<Record<string, number>>({});
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isActive, setIsActive] = useState(() => {
+    const stored = localStorage.getItem("floatingChatActive");
+    return stored !== null ? stored === "true" : true;
+  });
 
   const fetchConvs = async () => {
     const { data } = await supabase.from("dm_conversations").select("*").order("updated_at", { ascending: false });
@@ -114,6 +119,23 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
   const totalUnread = Object.values(unread).reduce((a, b) => a + b, 0);
   const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  const toggleActive = () => {
+    const next = !isActive;
+    setIsActive(next);
+    localStorage.setItem("floatingChatActive", String(next));
+    if (!next) { setOpenChats([]); setShowPicker(false); }
+  };
+
+  if (!isActive) {
+    return (
+      <div className="fixed bottom-0 right-0 z-50 pr-4 pb-24">
+        <button onClick={toggleActive} className="w-14 h-14 rounded-full bg-muted/60 text-muted-foreground border border-border/30 shadow-lg hover:bg-muted hover:text-foreground transition-all flex items-center justify-center" title="Aktiver chat">
+          <MessageCircle size={22} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed bottom-0 right-0 z-50 flex flex-col items-end pr-4 pb-24 gap-3 max-h-screen">
       {/* Open mini chats - vertical stack */}
@@ -125,6 +147,7 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
             profile={profile}
             onClose={() => closeChat(chat.conv.id)}
             onMinimize={() => setOpenChats(prev => prev.map(c => c.conv.id === chat.conv.id ? { ...c, minimized: !c.minimized } : c))}
+            onViewProfile={onViewProfile}
           />
         ))}
       </div>
@@ -148,13 +171,18 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
           </button>
         )}
 
-        {/* Main chat button */}
-        <button onClick={() => setShowPicker(!showPicker)} className="relative w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all active:scale-95 flex items-center justify-center">
-          <MessageCircle size={22} />
-          {totalUnread > 0 && (
-            <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-white text-[11px] font-bold flex items-center justify-center">{totalUnread}</span>
-          )}
-        </button>
+        {/* Toggle active / Main chat button */}
+        <div className="flex items-center gap-1.5">
+          <button onClick={toggleActive} className="w-8 h-8 rounded-full bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted transition-all flex items-center justify-center shadow-md" title="Deaktiver chat-boble">
+            <EyeOff size={13} />
+          </button>
+          <button onClick={() => setShowPicker(!showPicker)} className="relative w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all active:scale-95 flex items-center justify-center">
+            <MessageCircle size={22} />
+            {totalUnread > 0 && (
+              <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive text-white text-[11px] font-bold flex items-center justify-center">{totalUnread}</span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Contact picker */}
@@ -188,12 +216,13 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
 
 // ─── Mini Chat Window ───
 const MiniChatWindow = ({
-  chat, profile, onClose, onMinimize,
+  chat, profile, onClose, onMinimize, onViewProfile,
 }: {
   chat: MiniChat;
   profile: Profile;
   onClose: () => void;
   onMinimize: () => void;
+  onViewProfile?: (p: Profile) => void;
 }) => {
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -306,7 +335,7 @@ const MiniChatWindow = ({
         {/* Header */}
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/10 bg-card/80 shrink-0">
           <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" profileId={chat.conv.other?.id} isActive={chat.conv.other?.active !== false} />
-          <span className="text-xs font-semibold flex-1 truncate">{chat.conv.other?.name}</span>
+          <span className="text-xs font-semibold flex-1 truncate cursor-pointer hover:underline hover:text-primary transition-colors" onClick={() => chat.conv.other && onViewProfile?.(chat.conv.other)}>{chat.conv.other?.name}</span>
           <button onClick={() => { setCallWithVideo(false); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-green-500 hover:bg-green-500/10 transition-all" title="Ring"><Phone size={13} /></button>
           <button onClick={() => { setCallWithVideo(true); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Videosamtale"><Video size={13} /></button>
           <button onClick={onMinimize} className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"><Minus size={14} /></button>
@@ -343,8 +372,8 @@ const MiniChatWindow = ({
                       {msg.read_at ? <CheckCheck size={10} className="text-blue-400" /> : <Check size={10} className="text-muted-foreground/50" />}
                     </div>
                   )}
-                  {/* Reactions */}
-                  <div className="mt-0.5">
+                  {/* Reactions - always left/center aligned */}
+                  <div className="mt-0.5 flex justify-start">
                     <MessageReactions messageId={msg.id} profileId={profile.id} table="dm_message_reactions" size="sm" />
                   </div>
                   {/* Actions */}

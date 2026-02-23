@@ -51,7 +51,7 @@ const MessageReactions = ({ messageId, profileId, table, size = "sm" }: MessageR
   const isSm = size === "sm";
 
   return (
-    <div ref={ref} className="flex items-center gap-0.5 flex-wrap">
+    <div ref={ref} className="flex items-center gap-0.5 flex-wrap justify-start">
       {reactions.map(r => (
         <button
           key={r.emoji}
@@ -74,7 +74,7 @@ const MessageReactions = ({ messageId, profileId, table, size = "sm" }: MessageR
           <SmilePlus size={isSm ? 12 : 14} />
         </button>
         {showPicker && (
-          <div className="absolute bottom-7 left-0 bg-card border border-border/30 rounded-xl shadow-2xl shadow-black/40 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+          <div className="absolute bottom-7 left-0 right-auto bg-card border border-border/30 rounded-xl shadow-2xl shadow-black/40 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex gap-0.5">
               {REACTION_EMOJIS.map(emoji => (
                 <button key={emoji} onClick={() => toggle(emoji)} className="w-7 h-7 flex items-center justify-center text-sm rounded-lg hover:bg-muted/60 hover:scale-125 transition-all">{emoji}</button>
