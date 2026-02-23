@@ -4,11 +4,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Users, Plus, Lock, Globe, ArrowLeft, Video, Trash2,
   Search, Paperclip, UserPlus, Clock, Check, X as XIcon,
+  MessageCircle, FileText, Image as ImageIcon, BookOpen, Settings2,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
 import VideoCall from "./VideoCall";
+import GroupFilesPanel from "./GroupFilesPanel";
+import GroupCoverPicker from "./GroupCoverPicker";
 import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
@@ -27,6 +30,8 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
   const [myMembership, setMyMembership] = useState<Record<string, string>>({}); // group_id -> status
   const [pendingRequests, setPendingRequests] = useState<Array<{ id: string; profile_id: string; group_id: string; profiles?: any }>>([]);
   const [showMembers, setShowMembers] = useState(false);
+  const [groupTab, setGroupTab] = useState<"chat" | "filer" | "bilder" | "ressurser">("chat");
+  const [showCoverPicker, setShowCoverPicker] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   const fetchGroups = async () => {
@@ -328,30 +333,83 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
         </>
       ) : (
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <button onClick={() => { setActive(null); setShowMembers(false); setShowInvite(false); }} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={16} /></button>
-            <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getGroupGradient(active.color, active.name)} flex items-center justify-center`}>
-              <Users size={14} className="text-white" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
-                {active.is_private && <Lock size={11} className="text-muted-foreground" />}
+          {/* Cover header */}
+          {(() => {
+            const coverUrl = (active as any).cover_url;
+            const avatarUrl = (active as any).avatar_url;
+            const isGradient = coverUrl?.startsWith("linear-gradient");
+            const gradient = getGroupGradient(active.color, active.name);
+            return (
+              <div
+                className="h-28 relative shrink-0 overflow-hidden"
+                style={isGradient ? { background: coverUrl } : coverUrl ? { backgroundImage: `url(${coverUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+              >
+                {!coverUrl && <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute top-3 left-4 flex items-center gap-2">
+                  <button onClick={() => { setActive(null); setShowMembers(false); setShowInvite(false); setGroupTab("chat"); }} className="p-1.5 rounded-lg bg-black/30 backdrop-blur-sm text-white/90 hover:text-white hover:bg-black/50 transition-all"><ArrowLeft size={14} /></button>
+                </div>
+                <div className="absolute top-3 right-4 flex items-center gap-1.5">
+                  {(active.created_by === profile.id || isAdmin) && (
+                    <button onClick={() => setShowCoverPicker(true)} className="p-1.5 rounded-lg bg-black/30 backdrop-blur-sm text-white/80 hover:text-white hover:bg-black/50 transition-all" title="Tilpass"><Settings2 size={13} /></button>
+                  )}
+                  <button onClick={() => setConferenceActive(true)} className="p-1.5 rounded-lg bg-black/30 backdrop-blur-sm text-white/80 hover:text-white hover:bg-black/50 transition-all" title="Videokonferanse"><Video size={13} /></button>
+                  {(active.created_by === profile.id || isAdmin) && (
+                    <button onClick={() => deleteGroup(active.id)} className="p-1.5 rounded-lg bg-black/30 backdrop-blur-sm text-white/80 hover:text-destructive hover:bg-black/50 transition-all" title="Slett"><Trash2 size={13} /></button>
+                  )}
+                </div>
+                <div className="absolute bottom-3 left-4 flex items-end gap-3">
+                  <div className="w-12 h-12 rounded-xl border-2 border-background overflow-hidden shadow-lg">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt={active.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-sm`}>
+                        {active.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-white font-semibold text-sm drop-shadow-md" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
+                      {active.is_private && <Lock size={10} className="text-white/70" />}
+                    </div>
+                    {active.description && <p className="text-white/70 text-[10px] drop-shadow-sm">{active.description}</p>}
+                  </div>
+                </div>
+                <div className="absolute bottom-3 right-4 flex items-center gap-1.5">
+                  {(active.created_by === profile.id || isAdmin) && (
+                    <button onClick={() => setShowInvite(!showInvite)} className="px-2.5 py-1 rounded-lg bg-white/15 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 hover:bg-white/25 transition-all">
+                      <UserPlus size={10} /> Inviter
+                    </button>
+                  )}
+                  <button onClick={() => setShowMembers(!showMembers)} className="px-2.5 py-1 rounded-lg bg-white/15 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 hover:bg-white/25 transition-all">
+                    <Users size={10} /> {memberCount[active.id] || 0}
+                  </button>
+                </div>
               </div>
-              {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
-            </div>
-            {(active.created_by === profile.id || isAdmin) && (
-              <button onClick={() => setShowInvite(!showInvite)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all" title="Inviter medlem">
-                <UserPlus size={16} />
+            );
+          })()}
+
+          {/* Group tabs */}
+          <div className="flex items-center gap-1 px-4 py-2 border-b border-border/10 bg-card/20 overflow-x-auto">
+            {([
+              { key: "chat", icon: MessageCircle, label: "Chat" },
+              { key: "filer", icon: FileText, label: "Filer" },
+              { key: "bilder", icon: ImageIcon, label: "Bilder" },
+              { key: "ressurser", icon: BookOpen, label: "Ressurser" },
+            ] as const).map(t => (
+              <button
+                key={t.key}
+                onClick={() => setGroupTab(t.key)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                  groupTab === t.key
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                }`}
+              >
+                <t.icon size={13} /> {t.label}
               </button>
-            )}
-            <button onClick={() => setShowMembers(!showMembers)} className="px-3 py-1.5 rounded-xl bg-muted/40 hover:bg-muted/60 text-[10px] text-muted-foreground flex items-center gap-1 transition-all">
-              <Users size={10} /> {memberCount[active.id] || 0}
-            </button>
-            <button onClick={() => setConferenceActive(true)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all" title="Videokonferanse"><Video size={16} /></button>
-            {(active.created_by === profile.id || isAdmin) && (
-              <button onClick={() => deleteGroup(active.id)} className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all" title="Slett gruppe"><Trash2 size={14} /></button>
-            )}
+            ))}
           </div>
 
           {/* Pending requests panel */}
@@ -402,47 +460,70 @@ const GroupsView = ({ profile }: { profile: Profile }) => {
             </div>
           )}
 
-          <div className="flex-1 overflow-y-auto p-5 space-y-1">
-            {messages.map((msg, i) => {
-              const isOwn = msg.sender_id === profile.id;
-              const mp = msg.profiles as any;
-              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
-              return (
-                <div key={msg.id} className="group/msg">
-                  <MessageBubble
-                    content={msg.content}
-                    senderName={mp?.name}
-                    senderAvatar={mp?.avatar_url}
-                    time={formatTime(msg.created_at)}
-                    isOwn={isOwn}
-                    showAvatar={showAv}
-                    messageId={msg.id}
-                    profileId={profile.id}
-                    reactionTable="group_message_reactions"
-                    fileUrl={msg.file_url}
-                    fileName={msg.file_name}
-                    readAt={isOwn && readStatus[msg.id] ? "read" : null}
-                  />
-                  {(isOwn || (isAdmin && !isOwn)) && (
-                    <div className={`flex ${isOwn ? "justify-end" : "justify-start"} mt-0.5 mb-1`}>
-                      <button onClick={() => deleteMsg(msg.id)} className="opacity-0 group-hover/msg:opacity-100 px-2 py-0.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-[10px] flex items-center gap-1"><Trash2 size={10} /> Slett</button>
+          {/* Tab content */}
+          {groupTab === "chat" ? (
+            <>
+              <div className="flex-1 overflow-y-auto p-5 space-y-1">
+                {messages.map((msg, i) => {
+                  const isOwn = msg.sender_id === profile.id;
+                  const mp = msg.profiles as any;
+                  const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
+                  return (
+                    <div key={msg.id} className="group/msg">
+                      <MessageBubble
+                        content={msg.content}
+                        senderName={mp?.name}
+                        senderAvatar={mp?.avatar_url}
+                        time={formatTime(msg.created_at)}
+                        isOwn={isOwn}
+                        showAvatar={showAv}
+                        messageId={msg.id}
+                        profileId={profile.id}
+                        reactionTable="group_message_reactions"
+                        fileUrl={msg.file_url}
+                        fileName={msg.file_name}
+                        readAt={isOwn && readStatus[msg.id] ? "read" : null}
+                      />
+                      {(isOwn || (isAdmin && !isOwn)) && (
+                        <div className={`flex ${isOwn ? "justify-end" : "justify-start"} mt-0.5 mb-1`}>
+                          <button onClick={() => deleteMsg(msg.id)} className="opacity-0 group-hover/msg:opacity-100 px-2 py-0.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all text-[10px] flex items-center gap-1"><Trash2 size={10} /> Slett</button>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-            <div ref={endRef} />
-          </div>
-          <ChatInput
-            placeholder={`Skriv i ${active.name}…`}
-            onSend={send}
-            onSendFile={sendFile}
-          />
+                  );
+                })}
+                <div ref={endRef} />
+              </div>
+              <ChatInput
+                placeholder={`Skriv i ${active.name}…`}
+                onSend={send}
+                onSendFile={sendFile}
+              />
+            </>
+          ) : (
+            <GroupFilesPanel
+              groupId={active.id}
+              profileId={profile.id}
+              isAdmin={isAdmin}
+              tab={groupTab as "filer" | "bilder" | "ressurser"}
+            />
+          )}
         </div>
       )}
 
       {conferenceActive && active && (
         <VideoCall conversationId={active.id} profileId={profile.id} profileName={profile.name} profileAvatar={profile.avatar_url} isConference conferenceId={active.id} participants={groupMembers} onClose={() => setConferenceActive(false)} />
+      )}
+
+      {showCoverPicker && active && (
+        <GroupCoverPicker
+          groupId={active.id}
+          currentCover={(active as any).cover_url}
+          currentAvatar={(active as any).avatar_url}
+          groupName={active.name}
+          onUpdate={fetchGroups}
+          onClose={() => setShowCoverPicker(false)}
+        />
       )}
     </div>
   );
