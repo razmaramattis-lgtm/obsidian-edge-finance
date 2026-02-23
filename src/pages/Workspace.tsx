@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Users, MessageSquare, Video, User, UserPlus, Search, X,
   PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
-  Globe, Lock, MapPin, Briefcase, Building2, Star, Heart,
+  Globe, Lock, MapPin, Briefcase, Building2, Star, Heart, Camera,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
 import FeedView from "@/components/workspace/FeedView";
@@ -388,12 +388,50 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
 };
 
 // ─── Profile View ───
-const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v: View) => void }) => {
+const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile; onNavigate: (v: View) => void }) => {
+  const [profile, setProfile] = useState<Profile>(initialProfile);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [myGroupIds, setMyGroupIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"feed" | "groups" | "about">("feed");
   const [friendCount, setFriendCount] = useState(0);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingBg, setUploadingBg] = useState(false);
+  const avatarRef = useRef<HTMLInputElement>(null);
+  const bgRef = useRef<HTMLInputElement>(null);
+
+  const refetchProfile = async () => {
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email").eq("id", profile.id).single();
+    if (data) setProfile(data as Profile);
+  };
+
+  const uploadAvatar = async (file: File) => {
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `avatars/${profile.id}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+      await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", profile.id);
+      await refetchProfile();
+    } catch { /* ignore */ }
+    setUploadingAvatar(false);
+  };
+
+  const uploadBackground = async (file: File) => {
+    setUploadingBg(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `backgrounds/${profile.id}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+      await supabase.from("profiles").update({ background_url: data.publicUrl }).eq("id", profile.id);
+      await refetchProfile();
+    } catch { /* ignore */ }
+    setUploadingBg(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -415,11 +453,31 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
   return (
     <div className="h-full overflow-y-auto">
       <div className="relative">
-        <div className="h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
+        {/* Background - clickable to change */}
+        <div
+          className="h-48 relative group cursor-pointer"
+          style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
+          onClick={() => bgRef.current?.click()}
+        >
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+            <span className="opacity-0 group-hover:opacity-100 transition-all text-white text-xs font-medium flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black/40 backdrop-blur-sm">
+              {uploadingBg ? <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Camera size={14} />}
+              Endre bakgrunnsbilde
+            </span>
+          </div>
+          <input ref={bgRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadBackground(f); e.target.value = ""; }} />
+        </div>
         <div className="max-w-3xl mx-auto px-6 relative">
+          {/* Avatar - clickable to change */}
           <div className="absolute -top-16">
-            <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
+            <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card relative group cursor-pointer" onClick={() => avatarRef.current?.click()}>
               <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="lg" />
+              <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
+                <span className="opacity-0 group-hover:opacity-100 transition-all text-white">
+                  {uploadingAvatar ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Camera size={22} />}
+                </span>
+              </div>
+              <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); e.target.value = ""; }} />
             </div>
           </div>
           <div className="pt-20 pb-5 flex items-end gap-4">
@@ -491,7 +549,7 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
 
         {activeTab === "about" && (
           <div className="space-y-6">
-            <ProfileEditView profile={profile} />
+            <ProfileEditView profile={profile} onUpdated={refetchProfile} />
           </div>
         )}
       </div>
