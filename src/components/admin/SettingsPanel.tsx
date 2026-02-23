@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Link2, Download, Copy, RefreshCw, ExternalLink, AlertCircle, CheckCircle2, Loader2, HelpCircle, X } from "lucide-react";
+import { Key, User, Check, Camera, Phone, Mail, Briefcase, Sparkles, Save, CalendarDays, Clock, Trash2, Plus, Video, Power, Users, UserPlus, GripVertical, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Link2, Download, Copy, RefreshCw, ExternalLink, AlertCircle, CheckCircle2, Loader2, HelpCircle, X, Smartphone, Share, MoreVertical } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -994,12 +994,119 @@ const SettingsPanel = ({ defaultTab = "profile" }: SettingsPanelProps) => {
             <Users size={13} /> Ansatte
           </TabsTrigger>
         )}
+        <TabsTrigger value="app" className="rounded-lg text-xs gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <Smartphone size={13} /> Last ned app
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="profile"><ProfileTab /></TabsContent>
       <TabsContent value="availability"><AvailabilityTab /></TabsContent>
       {isAdmin && <TabsContent value="employees"><EmployeesPanel /></TabsContent>}
+      <TabsContent value="app"><AppInstallTab /></TabsContent>
     </Tabs>
+  );
+};
+
+/* ─────────── App Install Tab ─────────── */
+
+const AppInstallTab = () => {
+  const [copied, setCopied] = useState(false);
+  const appUrl = window.location.origin;
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(appUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="space-y-6 max-w-2xl">
+      <div className="rounded-2xl border border-border/20 bg-card/60 p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+            <Smartphone size={24} className="text-primary-foreground" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg">Installer Avargo-appen</h3>
+            <p className="text-sm text-muted-foreground">Tilgjengelig for iPhone og Android</p>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Avargo kan installeres som en app direkte fra nettleseren — ingen App Store eller Google Play nødvendig. Appen fungerer offline, laster raskt, og føles som en ekte app.
+        </p>
+      </div>
+
+      {/* Copy link */}
+      <div className="rounded-2xl border border-border/20 bg-card/60 p-5 space-y-3">
+        <h4 className="text-sm font-semibold flex items-center gap-2"><Link2 size={14} /> Del installasjonslenke</h4>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 px-4 py-2.5 rounded-xl bg-muted/30 border border-border/20 text-sm text-muted-foreground truncate font-mono">
+            {appUrl}
+          </div>
+          <button onClick={copyLink} className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2 shrink-0">
+            {copied ? <><CheckCircle2 size={14} /> Kopiert!</> : <><Copy size={14} /> Kopier</>}
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">Send denne lenken til ansatte og kunder for enkel installasjon.</p>
+      </div>
+
+      {/* iPhone instructions */}
+      <div className="rounded-2xl border border-border/20 bg-card/60 p-5 space-y-4">
+        <h4 className="text-sm font-semibold flex items-center gap-2">
+          <span className="text-lg">🍎</span> iPhone (Safari)
+        </h4>
+        <ol className="space-y-3 text-sm text-muted-foreground">
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <span>Åpne <strong className="text-foreground">{appUrl}</strong> i <strong className="text-foreground">Safari</strong></span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <span>Trykk på <strong className="text-foreground">Del-knappen</strong> <Share size={14} className="inline text-primary" /> (firkant med pil opp) nederst i Safari</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <span>Bla ned og trykk <strong className="text-foreground">«Legg til på Hjem-skjerm»</strong></span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <span>Trykk <strong className="text-foreground">«Legg til»</strong> — ferdig! Appen vises på Hjem-skjermen</span>
+          </li>
+        </ol>
+      </div>
+
+      {/* Android instructions */}
+      <div className="rounded-2xl border border-border/20 bg-card/60 p-5 space-y-4">
+        <h4 className="text-sm font-semibold flex items-center gap-2">
+          <span className="text-lg">🤖</span> Android / Samsung (Chrome)
+        </h4>
+        <ol className="space-y-3 text-sm text-muted-foreground">
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <span>Åpne <strong className="text-foreground">{appUrl}</strong> i <strong className="text-foreground">Chrome</strong></span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <span>Trykk på <strong className="text-foreground">tre-prikk-menyen</strong> <MoreVertical size={14} className="inline text-primary" /> øverst til høyre</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <span>Velg <strong className="text-foreground">«Installer app»</strong> eller <strong className="text-foreground">«Legg til på startskjermen»</strong></span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <span>Bekreft — ferdig! Appen vises på startskjermen</span>
+          </li>
+        </ol>
+      </div>
+
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+        <AlertCircle size={16} className="text-primary shrink-0 mt-0.5" />
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          <strong className="text-foreground">Tips:</strong> Appen oppdateres automatisk når vi gjør endringer. Brukerne trenger ikke å gjøre noe — de vil alltid ha siste versjon.
+        </p>
+      </div>
+    </div>
   );
 };
 
