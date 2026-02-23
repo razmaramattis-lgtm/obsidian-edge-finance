@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, forwardRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 
 const GIPHY_API_KEY = "GlVGYHkr3WSBnllca54iNt0yFbjz7L65"; // Giphy public beta key
@@ -14,7 +14,7 @@ interface GifPickerProps {
   onSelect: (url: string) => void;
 }
 
-const GifPicker = forwardRef<HTMLDivElement, GifPickerProps>(({ onSelect }, forwardedRef) => {
+const GifPicker = ({ onSelect }: GifPickerProps) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [gifs, setGifs] = useState<GifResult[]>([]);
@@ -127,8 +127,6 @@ const GifPicker = forwardRef<HTMLDivElement, GifPickerProps>(({ onSelect }, forw
       , document.body)}
     </div>
   );
-});
-
-GifPicker.displayName = "GifPicker";
+};
 
 export default GifPicker;
