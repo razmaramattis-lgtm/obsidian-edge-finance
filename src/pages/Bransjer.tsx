@@ -12,6 +12,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture2 from "@/assets/ambient-texture-2.jpg";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPageCopy } from "@/config/sectionContent";
+import { hiddenIndustriesPerSection } from "@/config/sectionBransjeContent";
 
 const industries = [
   { icon: Globe, name: "Tech & SaaS", slug: "tech-saas", tagline: "Vi vokser i takt med deg", short: "Fra pre-revenue til scale-up. Vi forstår investorrunder, MRR-rapportering og alt mellom." },
@@ -47,16 +48,23 @@ const Bransjer = () => {
   const copy = isInSection && section ? sectionPageCopy[section.id].bransjer : null;
   const sectionPath = isInSection && section ? section.basePath : "";
 
+  // Filter out hidden industries for the current section
+  const visibleIndustries = useMemo(() => {
+    if (!isInSection || !section) return industries;
+    const hidden = hiddenIndustriesPerSection[section.id] || [];
+    return industries.filter((ind) => !hidden.includes(ind.slug));
+  }, [isInSection, section]);
+
   const filtered = useMemo(() => {
-    if (!search.trim()) return industries;
+    if (!search.trim()) return visibleIndustries;
     const q = search.toLowerCase();
-    return industries.filter(
+    return visibleIndustries.filter(
       (ind) =>
         ind.name.toLowerCase().includes(q) ||
         ind.tagline.toLowerCase().includes(q) ||
         ind.short.toLowerCase().includes(q)
     );
-  }, [search]);
+  }, [search, visibleIndustries]);
 
   return (
   <>
@@ -86,7 +94,7 @@ const Bransjer = () => {
             {copy?.sub || "Uansett hvilken bransje du er i, møter du noen hos oss som forstår hverdagen din — sesongsvingninger, bransjespesifikke skatteregler, og utfordringene du faktisk møter i driften."}
           </p>
           <p className="text-sm text-primary/60 italic font-light mb-10 md:mb-14">
-            {industries.length} spesialiserte bransjeområder.
+            {visibleIndustries.length} spesialiserte bransjeområder.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
@@ -144,7 +152,7 @@ const Bransjer = () => {
           {filtered.map((ind, i) => (
             <AnimatedSection key={ind.slug} delay={i * 0.05}>
               <Link
-                to={`/bransjer/${ind.slug}`}
+                to={`${sectionPath}/bransjer/${ind.slug}`}
                 className="group p-7 md:p-9 glass rounded-3xl card-lift relative overflow-hidden flex flex-col h-full"
               >
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

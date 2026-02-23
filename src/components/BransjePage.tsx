@@ -8,6 +8,7 @@ import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
 import ambientTexture4 from "@/assets/ambient-texture-4.jpg";
 import { useIndustryContent } from "@/hooks/useIndustryContent";
 import { useSection } from "@/contexts/SectionContext";
+import { getSectionBransjeContent } from "@/config/sectionBransjeContent";
 
 interface BransjePageProps {
   href: string;
@@ -25,6 +26,13 @@ interface BransjePageProps {
 }
 
 const sectionRoleLabel: Record<string, string> = {
+  regnskap: "regnskapsfører",
+  hr: "HR-rådgiver",
+  markedsforing: "markedsfører",
+  it: "IT-rådgiver",
+};
+
+const sectionTitlePrefix: Record<string, string> = {
   regnskap: "Regnskapsfører",
   hr: "HR-rådgiver",
   markedsforing: "Markedsfører",
@@ -47,21 +55,21 @@ const BransjePage = ({
 }: BransjePageProps) => {
   const dbContent = useIndustryContent(href);
   const { section, isInSection } = useSection();
+
+  // Section-specific content overrides
+  const sectionContent = isInSection && section
+    ? getSectionBransjeContent(section.id, href)
+    : null;
+
   const tagline = dbContent?.tagline || defaultTagline;
-  const intro = dbContent?.intro || defaultIntro;
-  const body = dbContent?.body || defaultBody;
-  const deliverables = dbContent?.deliverables || defaultDeliverables;
+  const intro = sectionContent?.intro || dbContent?.intro || defaultIntro;
+  const body = sectionContent?.body || dbContent?.body || defaultBody;
+  const deliverables = sectionContent?.deliverables || dbContent?.deliverables || defaultDeliverables;
   const ctaHeadline = dbContent?.cta_headline || defaultCtaHeadline;
 
   const sp = (path: string) => (isInSection && section ? `${section.basePath}${path}` : path);
   const roleLabel = section ? sectionRoleLabel[section.id] || "rådgiver" : "regnskapsfører";
-
-  const titlePrefix = section
-    ? section.id === "regnskap" ? "Regnskapsfører"
-    : section.id === "hr" ? "HR-rådgiver"
-    : section.id === "markedsforing" ? "Markedsfører"
-    : "IT-rådgiver"
-    : "Regnskapsfører";
+  const titlePrefix = section ? sectionTitlePrefix[section.id] || "Rådgiver" : "Regnskapsfører";
 
   return (
   <>
@@ -91,7 +99,9 @@ const BransjePage = ({
             <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
               <Icon size={17} className="text-primary" strokeWidth={1.5} />
             </div>
-            <p className="text-[10px] tracking-[0.45em] uppercase text-secondary">{name}</p>
+            <p className="text-[10px] tracking-[0.45em] uppercase text-secondary">
+              {isInSection && section ? `${section.shortName} · ${name}` : name}
+            </p>
           </div>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-6 md:mb-8">
             {tagline.split(" ").slice(0, Math.ceil(tagline.split(" ").length / 2)).join(" ")}{" "}
