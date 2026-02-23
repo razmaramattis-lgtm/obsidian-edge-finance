@@ -390,8 +390,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <footer className="border-t border-border/15 py-12 md:py-24 relative">
         <div className="absolute inset-0 ambient-glow opacity-20" />
         <div className="container mx-auto px-5 md:px-6 relative">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-8">
-            {/* Brand column — section-aware */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-6">
+            {/* Brand */}
             <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
               <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-2xl text-primary">
                 Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
@@ -410,35 +410,39 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </Link>
             </div>
 
-            {/* Tjenester — section-filtered */}
+            {/* Tjenester — hub shows section names, sections show their own */}
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Tjenester</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
-                {(!isInSection || !section || section.id === "regnskap") && (
+                {!isInSection || !section ? (
+                  <>
+                    <Link to="/hr/tjenester" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Personal</Link>
+                    <Link to="/markedsforing/tjenester" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Marked</Link>
+                    <Link to="/it/tjenester" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">IT</Link>
+                    <Link to="/regnskap/tjenester" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Regnskap</Link>
+                  </>
+                ) : section.id === "regnskap" ? (
                   <>
                     <Link to={sp("/tjenester/regnskapsforer")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Dedikert regnskapsfører</Link>
                     <Link to={sp("/tjenester/cfo")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">CFO-as-a-Service</Link>
                     <Link to={sp("/tjenester/lonn")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Lønn & lønnskjøring</Link>
                     <Link to={sp("/tjenester/skatteplanlegging")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Skatteplanlegging</Link>
                   </>
-                )}
-                {isInSection && section?.id === "hr" && (
+                ) : section.id === "hr" ? (
                   <>
                     <Link to={sp("/tjenester/hr-og-lonn")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Lønn & HR</Link>
                     <Link to={sp("/tjenester/ansettelse")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Ansettelse & rekruttering</Link>
                     <Link to={sp("/tjenester/personalhandbok")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Personalhåndbok</Link>
                     <Link to={sp("/tjenester/arbeidsrett")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Arbeidsrett & HMS</Link>
                   </>
-                )}
-                {isInSection && section?.id === "markedsforing" && (
+                ) : section.id === "markedsforing" ? (
                   <>
                     <Link to={sp("/tjenester/seo")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">SEO & søkbarhet</Link>
                     <Link to={sp("/tjenester/meta-annonser")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Meta-annonser</Link>
                     <Link to={sp("/tjenester/google-ads")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Google Ads</Link>
                     <Link to={sp("/tjenester/nettbutikk")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Nettbutikk & e-handel</Link>
                   </>
-                )}
-                {isInSection && section?.id === "it" && (
+                ) : (
                   <>
                     <Link to={sp("/tjenester/nettsider")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Skreddersydde nettsider</Link>
                     <Link to={sp("/tjenester/chatbot")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">AI-chatbot</Link>
@@ -450,7 +454,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
 
-            {/* Bransjer — section-aware */}
+            {/* Bransjer — 4 bransjer on hub/regnskap, general text on others */}
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Bransjer</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
@@ -460,7 +464,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <Link to={sp("/bransjer/eiendom")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Eiendom</Link>
                     <Link to={sp("/bransjer/bygg-anlegg")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Bygg & Anlegg</Link>
                     <Link to={sp("/bransjer/restaurant")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Restaurant & Uteliv</Link>
-                    <Link to={sp("/bransjer/consulting")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Consulting</Link>
                     <Link to={sp("/bransjer")} className="text-primary hover:text-primary/80 transition-colors text-[13px] mt-1 py-0.5">Se alle bransjer →</Link>
                   </>
                 ) : (
@@ -476,49 +479,31 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Ressurser</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to="/ressurser?tab=blogg" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Blogg</Link>
-                <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Guider</Link>
                 <Link to="/ressurser?tab=arkiv" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Arkiv & maler</Link>
                 <Link to="/ressurser/kontohjelp" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kontohjelp</Link>
-                <Link to="/ressurser/skattekalender" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Skattekalender</Link>
-                <Link to={sp("/priser")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Priser</Link>
-                <Link to={sp("/metoden")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Vår metode</Link>
+                <Link to="/ressurser?tab=guider" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Guider</Link>
+                <Link to="/ressurser?tab=blogg" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Blogg</Link>
               </div>
             </div>
 
-            {/* Selskapet + Avdelinger */}
+            {/* Selskapet */}
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Selskapet</p>
               <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to={sp("/om-oss")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Om Avargo</Link>
                 <Link to={sp("/kontakt")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kontakt oss</Link>
-                <Link to="/kunde/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kundeportal</Link>
                 <Link to="/faq" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Vanlige spørsmål</Link>
-                <Link to="/admin/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Ansatt-innlogging</Link>
+                <Link to="/kunde/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kundeportal</Link>
+                <Link to={sp("/om-oss")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Om Avargo</Link>
               </div>
+            </div>
 
-              {/* Avdelinger — compact inline pills */}
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-3 mt-6 font-medium">Avdelinger</p>
-              <div className="flex flex-wrap gap-1.5">
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] tracking-wide border border-primary/25 bg-primary/8 text-primary transition-all duration-300 hover:scale-[1.03]"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-primary" />
-                  Avargo
-                </Link>
+            {/* Avdelinger — own column */}
+            <div>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-5 font-medium">Avdelinger</p>
+              <div className="flex flex-col gap-2.5 text-sm font-light">
+                <Link to="/" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Avargo</Link>
                 {SECTION_LIST.map((s) => (
-                  <Link
-                    key={s.id}
-                    to={s.basePath}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] tracking-wide border transition-all duration-300 hover:scale-[1.03]"
-                    style={{
-                      color: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)`,
-                      borderColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.25)`,
-                      backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.08)`,
-                    }}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)` }} />
+                  <Link key={s.id} to={s.basePath} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">
                     {s.shortName}
                   </Link>
                 ))}
