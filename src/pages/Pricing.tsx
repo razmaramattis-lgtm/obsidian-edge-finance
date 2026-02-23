@@ -6,7 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
-import { sectionPageCopy } from "@/config/sectionContent";
+import { sectionPricingPlans, sectionPricingCopy } from "@/config/sectionPricing";
 
 interface PricingPlan {
   id: string;
@@ -21,24 +21,38 @@ interface PricingPlan {
 }
 
 const Pricing = () => {
-  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [dbPlans, setDbPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const { section, isInSection } = useSection();
-  const copy = isInSection && section ? sectionPageCopy[section.id].priser : null;
   const sectionPath = isInSection && section ? section.basePath : "";
 
+  // Section-specific data
+  const sectionPlans = isInSection && section ? sectionPricingPlans[section.id] : null;
+  const copy = isInSection && section ? sectionPricingCopy[section.id] : null;
+
   useEffect(() => {
+    if (sectionPlans) {
+      setLoading(false);
+      return;
+    }
     const fetchPlans = async () => {
       const { data } = await supabase
         .from("pricing_plans")
         .select("*")
         .eq("active", true)
         .order("sort_order");
-      setPlans((data as PricingPlan[]) || []);
+      setDbPlans((data as PricingPlan[]) || []);
       setLoading(false);
     };
     fetchPlans();
-  }, []);
+  }, [sectionPlans]);
+
+  const plans = sectionPlans || dbPlans;
+  const comparisons = copy?.comparisons || [
+    { name: "Billigalternativene", body: "Lav inngangsbillett og enkel løsning. Men når selskapet vokser, kommer spørsmålene — hvem følger opp?", us: "Hos Avargo er rådgivning og oppfølging inkludert — uansett pakke.", tag: "Helhet fra dag én." },
+    { name: "De store byråene", body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster.", us: "Hos oss betaler du fast pris og kan ta kontakt uten å tenke på timebudsjettet.", tag: "Relasjon foran ressursnummer." },
+    { name: "Gjør-det-selv-systemer", body: "Gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.", us: "Med Avargo får du systemet, eksperten og strukturen — satt opp riktig.", tag: "Teknologi med eierskap." },
+  ];
 
   return (
     <>
@@ -54,7 +68,11 @@ const Pricing = () => {
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
               <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-10 leading-snug">
-                {copy?.headline || <>Enkel pris.{" "}<span className="italic text-gradient-rose">Full kontroll.</span></>}
+                {copy ? (
+                  <>{copy.headline.split(".")[0]}.<span className="italic text-gradient-rose"> {copy.headline.split(".").slice(1).join(".")}</span></>
+                ) : (
+                  <>Enkel pris.<span className="italic text-gradient-rose"> Full kontroll.</span></>
+                )}
               </h1>
               <p className="text-foreground/70 font-light leading-relaxed max-w-lg mx-auto mb-5 md:mb-6 text-base md:text-lg">
                 {copy?.sub || "Hos Avargo betaler du én fast månedspris. Ingen tillegg for MVA-rapportering, lønnskjøring eller rådgivning. Alt er inkludert fra dag én."}
@@ -151,11 +169,7 @@ const Pricing = () => {
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mt-12 md:mt-16">
-            {[
-              { name: "Billigalternativene", body: "Lav inngangsbillett og enkel løsning. Men når selskapet vokser, kommer spørsmålene — hvem følger opp?", us: "Hos Avargo er rådgivning og oppfølging inkludert — uansett pakke.", tag: "Helhet fra dag én." },
-              { name: "De store byråene", body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster.", us: "Hos oss betaler du fast pris og kan ta kontakt uten å tenke på timebudsjettet.", tag: "Relasjon foran ressursnummer." },
-              { name: "Gjør-det-selv-systemer", body: "Gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.", us: "Med Avargo får du systemet, eksperten og strukturen — satt opp riktig.", tag: "Teknologi med eierskap." },
-            ].map((comp, i) => (
+            {comparisons.map((comp, i) => (
               <AnimatedSection key={comp.name} delay={i * 0.1}>
                 <div className="p-7 md:p-8 glass rounded-3xl card-lift text-left h-full flex flex-col">
                   <h3 className="font-heading text-xl md:text-2xl mb-4 md:mb-5">{comp.name}</h3>
@@ -170,10 +184,10 @@ const Pricing = () => {
 
           <AnimatedSection delay={0.4}>
             <div className="max-w-xl mx-auto text-center mt-16 md:mt-20">
-              <p className="text-foreground/60 font-light leading-relaxed mb-2 text-sm md:text-base">
-                Å bytte leverandør handler sjelden om pris.<br />Det handler om kontroll, tilgjengelighet og tillit.
+              <p className="text-foreground/60 font-light leading-relaxed mb-2 text-sm md:text-base whitespace-pre-line">
+                {copy?.bottomText || "Å bytte leverandør handler sjelden om pris.\nDet handler om kontroll, tilgjengelighet og tillit."}
               </p>
-              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">Når det først fungerer, blir du.</p>
+              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">{copy?.bottomItalic || "Når det først fungerer, blir du."}</p>
               <Link
                 to={`${sectionPath}/kontakt`}
                 className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
