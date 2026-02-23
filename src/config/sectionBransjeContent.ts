@@ -6,9 +6,18 @@ import type { SectionId } from "@/contexts/SectionContext";
  */
 export const hiddenIndustriesPerSection: Record<SectionId, string[]> = {
   regnskap: [],
-  hr: ["bemanning"],
-  markedsforing: ["markedsforing"],
-  it: ["tech-saas"],
+  hr: [
+    "bemanning", "landbruk", "nettbutikk", "arkitektur", "markedsforing",
+    "energi", "kultur", "sport", "reiseliv", "bil",
+  ],
+  markedsforing: [
+    "markedsforing", "holding", "landbruk", "juridisk",
+    "energi", "industri", "transport", "bemanning",
+  ],
+  it: [
+    "tech-saas", "holding", "landbruk", "juridisk",
+    "bemanning", "bil", "energi", "renhold",
+  ],
 };
 
 /* ─────────── Section-specific industry content ─────────── */
