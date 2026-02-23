@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Globe, MessageCircle, Image, X, Pin, Trash2,
-  MoreHorizontal, Pencil, SmilePlus,
+  MoreHorizontal, Pencil, SmilePlus, Search,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "./UserAvatar";
@@ -308,6 +308,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   const [editContent, setEditContent] = useState("");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+  const [feedSearch, setFeedSearch] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPosts = async () => {
@@ -390,11 +391,27 @@ const FeedView = ({ profile }: { profile: Profile }) => {
     setEditContent("");
   };
 
+  const filteredPosts = feedSearch.trim()
+    ? posts.filter(p =>
+        p.content?.toLowerCase().includes(feedSearch.toLowerCase()) ||
+        (p.profiles as any)?.name?.toLowerCase().includes(feedSearch.toLowerCase())
+      )
+    : posts;
+
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 py-5 border-b border-border/10 bg-card/20">
-        <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Feed</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">Kunngjøringer, oppdateringer og alt som skjer</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Feed</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Kunngjøringer, oppdateringer og alt som skjer</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 border border-border/15 mt-4 max-w-md">
+          <Search size={14} className="text-muted-foreground" />
+          <input value={feedSearch} onChange={e => setFeedSearch(e.target.value)} placeholder="Søk i innlegg…" className="h-10 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40" />
+          {feedSearch && <button onClick={() => setFeedSearch("")} className="text-muted-foreground hover:text-foreground"><X size={14} /></button>}
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto p-6 space-y-5">
@@ -424,7 +441,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
           </div>
 
           {/* Posts */}
-          {posts.map(post => {
+          {filteredPosts.map(post => {
             const ap = post.profiles as any;
             const isOwn = post.author_id === profile.id;
             const canManage = isOwn || isAdmin;
@@ -490,10 +507,10 @@ const FeedView = ({ profile }: { profile: Profile }) => {
               </article>
             );
           })}
-          {posts.length === 0 && (
+          {filteredPosts.length === 0 && (
             <div className="text-center py-16">
               <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4"><Newspaper size={28} className="text-muted-foreground/40" /></div>
-              <p className="text-muted-foreground text-sm">Ingen innlegg ennå</p>
+              <p className="text-muted-foreground text-sm">{feedSearch ? "Ingen innlegg matcher søket" : "Ingen innlegg ennå"}</p>
             </div>
           )}
         </div>

@@ -2091,6 +2091,7 @@ export type Database = {
           joined_at: string
           profile_id: string
           role: string
+          status: string
         }
         Insert: {
           group_id: string
@@ -2098,6 +2099,7 @@ export type Database = {
           joined_at?: string
           profile_id: string
           role?: string
+          status?: string
         }
         Update: {
           group_id?: string
@@ -2105,6 +2107,7 @@ export type Database = {
           joined_at?: string
           profile_id?: string
           role?: string
+          status?: string
         }
         Relationships: [
           {
