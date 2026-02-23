@@ -9,6 +9,7 @@ import {
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "dompurify";
+import { useSection } from "@/contexts/SectionContext";
 
 interface CourseDetail {
   id: string;
@@ -28,6 +29,8 @@ interface CourseDetail {
 
 const KursDetalj = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { section, isInSection } = useSection();
+  const sp = (path: string) => (isInSection && section ? `${section.basePath}${path}` : path);
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showBooking, setShowBooking] = useState(false);
@@ -84,7 +87,7 @@ const KursDetalj = () => {
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
       <GraduationCap size={40} className="text-muted-foreground/30" />
       <p className="text-muted-foreground">Kurset ble ikke funnet.</p>
-      <Link to="/tjenester/kurs" className="text-sm text-primary hover:underline">← Tilbake til alle kurs</Link>
+      <Link to={sp("/tjenester/kurs")} className="text-sm text-primary hover:underline">← Tilbake til alle kurs</Link>
     </div>
   );
 
@@ -107,7 +110,7 @@ const KursDetalj = () => {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-4xl"
           >
-            <Link to="/tjenester/kurs" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8">
+            <Link to={sp("/tjenester/kurs")} className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8">
               <ArrowLeft size={12} /> Alle kurs
             </Link>
             <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5">{course.category}</p>
@@ -265,7 +268,7 @@ const KursDetalj = () => {
                 Bestill kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
-              <Link to="/tjenester/kurs" className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all">
+              <Link to={sp("/tjenester/kurs")} className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all">
                 <BookOpen size={14} /> Se alle kurs
               </Link>
             </div>

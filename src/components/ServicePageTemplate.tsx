@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight, ArrowLeft, ChevronRight, Phone, CheckCircle2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
-
+import { useSection } from "@/contexts/SectionContext";
 
 export interface ServicePageProps {
   meta: {
@@ -31,7 +31,11 @@ const ServicePageTemplate = ({
   relatedServices,
   ctaTitle = "La oss snakke om mulighetene.",
   ctaSubtitle = "En samtale er nok til å komme i gang.",
-}: ServicePageProps) => (
+}: ServicePageProps) => {
+  const { section, isInSection } = useSection();
+  const sp = (path: string) => (isInSection && section ? `${section.basePath}${path}` : path);
+
+  return (
   <>
     <Helmet>
       <title>{meta.title}</title>
@@ -54,7 +58,7 @@ const ServicePageTemplate = ({
     </Helmet>
     <BreadcrumbJsonLd items={[
       { name: "Hjem", href: "/" },
-      { name: "Tjenester", href: "/tjenester" },
+      { name: "Tjenester", href: sp("/tjenester") },
       { name: typeof meta.title === "string" ? meta.title.split("|")[0].trim() : "Tjeneste", href: meta.canonical.replace("https://avargo.no", "") },
     ]} />
 
@@ -62,11 +66,9 @@ const ServicePageTemplate = ({
     <section className="py-28 md:py-44 relative overflow-hidden">
       <div className="absolute inset-0 ambient-glow opacity-30" />
       <div className="container mx-auto px-4 md:px-6 relative">
-        <div
-          className="max-w-4xl animate-fade-up"
-        >
+        <div className="max-w-4xl animate-fade-up">
           <Link
-            to="/tjenester"
+            to={sp("/tjenester")}
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12"
           >
             <ArrowLeft size={12} /> Alle tjenester
@@ -82,14 +84,14 @@ const ServicePageTemplate = ({
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              to="/kontakt"
+              to={sp("/kontakt")}
               className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Kom i gang
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
-              to="/priser"
+              to={sp("/priser")}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se priser
@@ -159,7 +161,7 @@ const ServicePageTemplate = ({
             {relatedServices.map((s) => (
               <Link
                 key={s.href}
-                to={s.href}
+                to={sp(s.href)}
                 className="inline-flex items-center gap-2 px-5 py-2.5 text-[12px] tracking-wide text-muted-foreground border border-border/20 rounded-full hover:border-primary/30 hover:text-foreground transition-all duration-300"
               >
                 {s.label}
@@ -186,7 +188,7 @@ const ServicePageTemplate = ({
             {ctaSubtitle}
           </p>
           <Link
-            to="/kontakt"
+            to={sp("/kontakt")}
             className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
           >
             Book en gjennomgang
@@ -196,6 +198,7 @@ const ServicePageTemplate = ({
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default ServicePageTemplate;
