@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Save, X, Plus, Briefcase, Building2, Star, Heart, FileText, Calculator, Pencil } from "lucide-react";
+import { Save, X, Plus, Briefcase, Building2, Star, Heart, FileText, Calculator, Pencil, Phone } from "lucide-react";
 import type { Profile } from "./types";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ const ProfileEditView = ({ profile, onUpdated }: ProfileEditViewProps) => {
   const [title, setTitle] = useState(profile.title || "");
   const [department, setDepartment] = useState(profile.department || "");
   const [bio, setBio] = useState(profile.bio || "");
+  const [phone, setPhone] = useState(profile.phone || "");
 
   // Tags-based specialty
   const [specialtyTags, setSpecialtyTags] = useState<string[]>(
@@ -39,6 +40,7 @@ const ProfileEditView = ({ profile, onUpdated }: ProfileEditViewProps) => {
     await supabase.from("profiles").update({
       title: title.trim() || null,
       department: department.trim() || null,
+      phone: phone.trim() || null,
       specialty: specialtyTags.join(", ") || null,
       interests,
       bio: bio.trim() || null,
@@ -96,6 +98,10 @@ const ProfileEditView = ({ profile, onUpdated }: ProfileEditViewProps) => {
             <div>
               <label className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5"><Building2 size={10} /> Avdeling</label>
               <input value={department} onChange={e => setDepartment(e.target.value)} placeholder="F.eks. Regnskap, Teknologi" className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5"><Phone size={10} /> Telefon</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="F.eks. 912 34 567" className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
             </div>
           </div>
 
@@ -171,6 +177,10 @@ const ProfileEditView = ({ profile, onUpdated }: ProfileEditViewProps) => {
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Building2 size={9} /> Avdeling</p>
               <p className="text-sm font-medium mt-0.5">{profile.department || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Phone size={9} /> Telefon</p>
+              <p className="text-sm font-medium mt-0.5">{profile.phone || <span className="text-muted-foreground/50 italic">Ikke angitt</span>}</p>
             </div>
           </div>
 
