@@ -177,7 +177,7 @@ const Workspace = () => {
         </aside>
 
         {/* Content */}
-        <main className="flex-1 overflow-hidden bg-background">
+        <main className="flex-1 overflow-y-auto bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
           {view === "view-profile" && viewingProfile && <ViewProfilePage profile={viewingProfile} myProfile={profile} onBack={() => setView("feed")} onNavigate={setView} />}
           {view === "feed" && <FeedView profile={profile} />}
