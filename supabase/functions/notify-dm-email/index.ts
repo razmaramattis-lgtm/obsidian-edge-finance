@@ -34,17 +34,22 @@ async function sendEmail(opts: {
   }
 
   try {
-    await readResponse();
-    await send("EHLO localhost");
+    const greeting = await readResponse();
+    console.log("SMTP greeting:", greeting.trim());
+    const ehlo = await send("EHLO localhost");
+    console.log("SMTP EHLO:", ehlo.substring(0, 80));
     const authResp = await send("AUTH LOGIN");
-    if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed");
+    if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed: " + authResp);
     const userResp = await send(btoa(opts.username));
-    if (!userResp.startsWith("334")) throw new Error("AUTH user failed");
+    if (!userResp.startsWith("334")) throw new Error("AUTH user failed: " + userResp);
     const passResp = await send(btoa(opts.password));
-    if (!passResp.startsWith("235")) throw new Error("AUTH pass failed");
-    await send(`MAIL FROM:<${opts.from}>`);
-    await send(`RCPT TO:<${opts.to}>`);
-    await send("DATA");
+    if (!passResp.startsWith("235")) throw new Error("AUTH pass failed: " + passResp);
+    const mailFrom = await send(`MAIL FROM:<${opts.from}>`);
+    console.log("SMTP MAIL FROM:", mailFrom.trim());
+    const rcptTo = await send(`RCPT TO:<${opts.to}>`);
+    console.log("SMTP RCPT TO:", rcptTo.trim());
+    const dataResp = await send("DATA");
+    console.log("SMTP DATA:", dataResp.trim());
     const message = [
       `From: Avargo <${opts.from}>`,
       `To: ${opts.to}`,
@@ -55,8 +60,10 @@ async function sendEmail(opts: {
       opts.html,
       `.`,
     ].join("\r\n");
-    await send(message);
-    await send("QUIT");
+    const sendResp = await send(message);
+    console.log("SMTP send result:", sendResp.trim());
+    const quitResp = await send("QUIT");
+    console.log("SMTP QUIT:", quitResp.trim());
   } finally {
     try { conn.close(); } catch { /* ignore */ }
   }
@@ -81,6 +88,7 @@ Deno.serve(async (req) => {
     if (authError || !user) throw new Error("Unauthorized");
 
     const { recipientId, senderName, messagePreview } = await req.json();
+    console.log("notify-dm-email called:", { recipientId, senderName, messagePreview: (messagePreview || "").substring(0, 30) });
     if (!recipientId) throw new Error("Missing recipientId");
 
     // Get recipient profile
@@ -90,7 +98,10 @@ Deno.serve(async (req) => {
       .eq("id", recipientId)
       .single();
 
+    console.log("Recipient:", { email: recipient?.email, name: recipient?.name, last_seen_at: recipient?.last_seen_at });
+
     if (!recipient || !recipient.email) {
+      console.log("No email found for recipient");
       return new Response(JSON.stringify({ sent: false, reason: "no_email" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -100,8 +111,10 @@ Deno.serve(async (req) => {
     const TWO_MINUTES = 2 * 60 * 1000;
     const lastSeen = recipient.last_seen_at ? new Date(recipient.last_seen_at).getTime() : 0;
     const isOnline = (Date.now() - lastSeen) < TWO_MINUTES;
+    console.log("Online check:", { lastSeen: recipient.last_seen_at, isOnline, diff: Date.now() - lastSeen });
 
     if (isOnline) {
+      console.log("Recipient is online, skipping email");
       return new Response(JSON.stringify({ sent: false, reason: "online" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
