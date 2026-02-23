@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays, Plus, Trash2, Clock, CheckCircle2, XCircle, Users, Video } from "lucide-react";
 import { format, addDays, startOfWeek } from "date-fns";
@@ -78,6 +79,12 @@ const BookingsPanel = ({ onStatusChange }: { onStatusChange?: () => void }) => {
   };
 
   const updateBookingStatus = async (id: string, status: string) => {
+    if (status === "cancelled") {
+      await supabase.from("bookings").delete().eq("id", id);
+      toast.success("Booking slettet");
+      fetchAll();
+      return;
+    }
     await supabase.from("bookings").update({ status }).eq("id", id);
 
     // Send confirmation emails when booking is confirmed
