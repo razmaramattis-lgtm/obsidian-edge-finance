@@ -1300,50 +1300,74 @@ export type Database = {
         Row: {
           active: boolean | null
           body: string | null
+          challenges: Json | null
           created_at: string
           cta_headline: string | null
           deliverables: string[] | null
           description: string | null
+          hero_image_url: string | null
           href: string | null
           icon: string | null
           id: string
           intro: string | null
+          meta_description: string | null
+          meta_title: string | null
+          quote: Json | null
+          related_slugs: Json | null
+          slug: string | null
           sort_order: number | null
           tagline: string | null
           title: string
           updated_at: string
+          why_avargo: Json | null
         }
         Insert: {
           active?: boolean | null
           body?: string | null
+          challenges?: Json | null
           created_at?: string
           cta_headline?: string | null
           deliverables?: string[] | null
           description?: string | null
+          hero_image_url?: string | null
           href?: string | null
           icon?: string | null
           id?: string
           intro?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          quote?: Json | null
+          related_slugs?: Json | null
+          slug?: string | null
           sort_order?: number | null
           tagline?: string | null
           title: string
           updated_at?: string
+          why_avargo?: Json | null
         }
         Update: {
           active?: boolean | null
           body?: string | null
+          challenges?: Json | null
           created_at?: string
           cta_headline?: string | null
           deliverables?: string[] | null
           description?: string | null
+          hero_image_url?: string | null
           href?: string | null
           icon?: string | null
           id?: string
           intro?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          quote?: Json | null
+          related_slugs?: Json | null
+          slug?: string | null
           sort_order?: number | null
           tagline?: string | null
           title?: string
           updated_at?: string
+          why_avargo?: Json | null
         }
         Relationships: []
       }
@@ -1640,39 +1664,81 @@ export type Database = {
       services: {
         Row: {
           active: boolean | null
+          body_content: string | null
+          category: string | null
           created_at: string
+          cta_subtitle: string | null
+          cta_title: string | null
+          deliverables: string[] | null
           description: string | null
           group_name: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
           href: string | null
           icon: string | null
           id: string
+          meta_description: string | null
+          meta_title: string | null
+          related_services: Json | null
+          section: string | null
+          slug: string | null
           sort_order: number | null
           title: string
           updated_at: string
+          why_items: Json | null
         }
         Insert: {
           active?: boolean | null
+          body_content?: string | null
+          category?: string | null
           created_at?: string
+          cta_subtitle?: string | null
+          cta_title?: string | null
+          deliverables?: string[] | null
           description?: string | null
           group_name?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           href?: string | null
           icon?: string | null
           id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          related_services?: Json | null
+          section?: string | null
+          slug?: string | null
           sort_order?: number | null
           title: string
           updated_at?: string
+          why_items?: Json | null
         }
         Update: {
           active?: boolean | null
+          body_content?: string | null
+          category?: string | null
           created_at?: string
+          cta_subtitle?: string | null
+          cta_title?: string | null
+          deliverables?: string[] | null
           description?: string | null
           group_name?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           href?: string | null
           icon?: string | null
           id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          related_services?: Json | null
+          section?: string | null
+          slug?: string | null
           sort_order?: number | null
           title?: string
           updated_at?: string
+          why_items?: Json | null
         }
         Relationships: []
       }
