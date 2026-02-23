@@ -6,6 +6,7 @@ interface UserAvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   online?: boolean;
   profileId?: string;
+  isActive?: boolean;
   className?: string;
 }
 
@@ -42,11 +43,12 @@ const getColorFromName = (name: string) => {
   return colorPalette[Math.abs(hash) % colorPalette.length];
 };
 
-const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, className = "" }: UserAvatarProps) => {
+const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, isActive = true, className = "" }: UserAvatarProps) => {
   const { isOnline } = usePresenceContext();
   const resolved = online !== undefined ? online : profileId ? isOnline(profileId) : undefined;
   const initial = name.charAt(0).toUpperCase();
   const gradient = getColorFromName(name);
+  const inactiveClass = !isActive ? "opacity-40 blur-[1.5px] grayscale" : "";
 
   return (
     <div className={`relative shrink-0 ${className}`}>
@@ -54,10 +56,10 @@ const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, cla
         <img
           src={avatarUrl}
           alt={name}
-          className={`${sizeMap[size]} rounded-full object-cover ring-2 ring-background`}
+          className={`${sizeMap[size]} rounded-full object-cover ring-2 ring-background ${inactiveClass}`}
         />
       ) : (
-        <div className={`${sizeMap[size]} rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center font-semibold text-white ring-2 ring-background`}>
+        <div className={`${sizeMap[size]} rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center font-semibold text-white ring-2 ring-background ${inactiveClass}`}>
           {initial}
         </div>
       )}

@@ -25,7 +25,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
   };
 
   const fetchProfiles = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, specialty, interests, preferred_accounting_systems, title, department, bio").neq("id", profile.id).order("name");
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, active, specialty, interests, preferred_accounting_systems, title, department, bio").neq("id", profile.id).order("name");
     setAllProfiles((data as Profile[]) || []);
   };
 
@@ -144,7 +144,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
               const fp = getFriendProfile(f);
               return (
                 <div key={f.id} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/30 transition-all group">
-                  <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" profileId={fp?.id} />
+                  <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" profileId={fp?.id} isActive={fp?.active !== false} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{fp?.name || "Ukjent"}</p>
                     <p className="text-[10px] text-muted-foreground">{roleLabel(fp?.role || "")}</p>
@@ -167,7 +167,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                     const fp = (f as any).requester;
                     return (
                       <div key={f.id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card/50 border border-border/15">
-                        <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" />
+                        <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" isActive={fp?.active !== false} />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{fp?.name}</p>
                           <p className="text-[10px] text-muted-foreground">{roleLabel(fp?.role || "")}</p>
@@ -190,7 +190,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                     const fp = (f as any).receiver;
                     return (
                       <div key={f.id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/20">
-                        <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" />
+                        <UserAvatar name={fp?.name} avatarUrl={fp?.avatar_url} size="md" isActive={fp?.active !== false} />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{fp?.name}</p>
                           <p className="text-[10px] text-muted-foreground">Venter på svar…</p>
@@ -268,7 +268,7 @@ const FriendsView = ({ profile }: { profile: Profile }) => {
                 const intTags = p.interests || [];
                 return (
                   <div key={p.id} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/30 transition-all">
-                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" />
+                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" isActive={p.active !== false} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{p.name}</p>
                       <p className="text-[10px] text-muted-foreground">{p.title ? `${p.title} · ` : ""}{roleLabel(p.role)}</p>

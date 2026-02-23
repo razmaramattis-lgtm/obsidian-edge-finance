@@ -86,7 +86,7 @@ const CommentReplies = ({ commentId, profileId, profileData }: { commentId: stri
   const [showInput, setShowInput] = useState(false);
 
   const fetchReplies = async () => {
-    const { data } = await supabase.from("workspace_comment_replies").select("*, profiles(id, name, role, avatar_url)").eq("comment_id", commentId).order("created_at");
+    const { data } = await supabase.from("workspace_comment_replies").select("*, profiles(id, name, role, avatar_url, active)").eq("comment_id", commentId).order("created_at");
     setReplies((data as any[]) || []);
   };
 
@@ -114,7 +114,7 @@ const CommentReplies = ({ commentId, profileId, profileData }: { commentId: stri
             const isOwn = r.author_id === profileId;
             return (
               <div key={r.id} className="flex gap-2 group/reply">
-                <UserAvatar name={rp?.name} avatarUrl={rp?.avatar_url} size="xs" />
+                <UserAvatar name={rp?.name} avatarUrl={rp?.avatar_url} size="xs" isActive={rp?.active !== false} />
                 <div className="flex-1">
                   <div className="bg-muted/30 rounded-2xl rounded-tl-md px-3 py-1.5 relative">
                     <span className="text-[10px] font-semibold">{rp?.name}</span>
@@ -161,7 +161,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
   const [replyCounts, setReplyCounts] = useState<Record<string, number>>({});
 
   const fetchComments = async () => {
-    const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role, avatar_url)").eq("post_id", postId).order("created_at");
+    const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role, avatar_url, active)").eq("post_id", postId).order("created_at");
     const cs = (data as any[]) || [];
     setComments(cs);
     const counts: Record<string, number> = {};
@@ -228,7 +228,7 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
           return (
             <div key={c.id}>
               <div className="flex gap-2.5 group/comment">
-                <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
+                <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" isActive={cp?.active !== false} />
                 <div className="flex-1">
                   {editingId === c.id ? (
                     <div className="space-y-2">
@@ -300,7 +300,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchPosts = async () => {
-    const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(50);
+    const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url, active)").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(50);
     const ps = (data as any[]) || [];
     setPosts(ps);
     // Fetch comment counts
@@ -420,7 +420,7 @@ const FeedView = ({ profile }: { profile: Profile }) => {
             return (
               <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 hover:border-border/25 transition-all hover:shadow-md overflow-hidden">
                 <div className="flex items-start gap-3 p-5 pb-0">
-                  <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
+                  <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" isActive={ap?.active !== false} />
                   <div className="flex-1">
                     <span className="text-sm font-semibold">{ap?.name}</span>
                     <p className="text-[11px] text-muted-foreground">

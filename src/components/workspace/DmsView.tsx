@@ -29,7 +29,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
     if (!data) return;
     const profileIds = new Set<string>();
     data.forEach((c: any) => { profileIds.add(c.participant_1); profileIds.add(c.participant_2); });
-    const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url").in("id", [...profileIds]);
+    const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url, active").in("id", [...profileIds]);
     const pMap = new Map((profiles || []).map((p: any) => [p.id, p]));
     setConversations(data.map((c: any) => ({ ...c, other: pMap.get(c.participant_1 === profile.id ? c.participant_2 : c.participant_1) })));
   };
@@ -41,7 +41,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   };
 
   const fetchProfiles = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name");
+    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, active").neq("id", profile.id).order("name");
     setAllProfiles((data as Profile[]) || []);
   };
 
@@ -141,7 +141,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
             <div className="max-h-48 overflow-y-auto p-2 space-y-0.5">
               {filteredProfiles.map(p => (
                 <button key={p.id} onClick={() => startDm(p.id)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
-                  <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" />
+                  <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" isActive={p.active !== false} />
                   <div className="text-left"><p className="font-medium">{p.name}</p><p className="text-[10px] text-muted-foreground capitalize">{p.role}</p></div>
                 </button>
               ))}
@@ -153,7 +153,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
           {conversations.map(conv => (
             <div key={conv.id} className="group/conv flex items-center">
               <button onClick={() => setActive(conv)} className={`flex-1 flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${active?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/40"}`}>
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} />
+                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} isActive={conv.other?.active !== false} />
                 <div className="text-left flex-1 min-w-0">
                   <p className={`text-sm truncate ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
                   <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
