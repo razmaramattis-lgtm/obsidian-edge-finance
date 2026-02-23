@@ -29,6 +29,7 @@ const Workspace = () => {
   const { user, profile, isAdmin, isCustomer } = useAuth();
   const navigate = useNavigate();
   const [view, setView] = useState<View>("feed");
+  const [composing, setComposing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -253,15 +254,16 @@ const Workspace = () => {
         <main className="flex-1 overflow-hidden bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
           {view === "view-profile" && viewingProfile && <ViewProfilePage profile={viewingProfile} myProfile={profile} onBack={() => setView("feed")} onNavigate={setView} />}
-          {view === "feed" && <FeedView profile={profile} onViewProfile={openProfile} />}
-          {view === "groups" && <GroupsView profile={profile} onViewProfile={openProfile} />}
-          {view === "dms" && <DmsView profile={profile} onViewProfile={openProfile} />}
+          {view === "feed" && <FeedView profile={profile} onViewProfile={openProfile} onComposingChange={setComposing} />}
+          {view === "groups" && <GroupsView profile={profile} onViewProfile={openProfile} onComposingChange={setComposing} />}
+          {view === "dms" && <DmsView profile={profile} onViewProfile={openProfile} onComposingChange={setComposing} />}
           {view === "friends" && <FriendsView profile={profile} onViewProfile={openProfile} />}
           {view === "conference" && <ConferenceView profile={profile} />}
         </main>
       </div>
 
       {/* Mobile bottom tab bar */}
+      {!composing && (
       <nav className="md:hidden flex items-center border-t border-border/15 bg-card/90 backdrop-blur-xl shrink-0 z-30 safe-area-bottom">
         {navItems.slice(0, 5).map(item => (
           <button
@@ -277,6 +279,7 @@ const Workspace = () => {
           </button>
         ))}
       </nav>
+      )}
 
       {/* Hide floating chat on mobile */}
       <div className="hidden md:block">

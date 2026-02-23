@@ -13,7 +13,7 @@ import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, formatDate, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const DmsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
+const DmsView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
   const { isAdmin } = useAuth();
   const [conversations, setConversations] = useState<DmConv[]>([]);
   const [active, setActive] = useState<DmConv | null>(null);
@@ -313,6 +313,7 @@ const DmsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?:
             placeholder={`Skriv til ${active.other?.name}…`}
             onSend={send}
             onSendFile={sendFile}
+            onComposingChange={onComposingChange}
           />
         </div>
       ) : (

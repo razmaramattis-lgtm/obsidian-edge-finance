@@ -16,7 +16,7 @@ import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const GroupsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
+const GroupsView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
   const { isAdmin } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
@@ -503,6 +503,7 @@ const GroupsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfil
                 placeholder={`Skriv i ${active.name}…`}
                 onSend={send}
                 onSendFile={sendFile}
+                onComposingChange={onComposingChange}
               />
             </>
           ) : (
