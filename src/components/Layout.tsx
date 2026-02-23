@@ -156,7 +156,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
+      {/* Section switcher bar — above header */}
+      <div className="fixed top-0 left-0 right-0 z-[51] bg-background/90 backdrop-blur-xl border-b border-border/10">
+        <div className="container mx-auto px-4 md:px-6 py-1.5 flex justify-center">
+          <SectionSwitcher />
+        </div>
+      </div>
+
+      <nav className="fixed top-[38px] left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
         <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
           <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-xl md:text-2xl text-primary tracking-wide">
             Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
@@ -171,7 +178,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
                 Tjenester <ChevronDown size={12} className={`transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
               </button>
-              <DropdownPanel open={tjenesterOpen} className="fixed top-[72px] left-0 right-0 bg-card/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl p-6">
+              <DropdownPanel open={tjenesterOpen} className="fixed top-[110px] left-0 right-0 bg-card/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl p-6">
                 <div className="container mx-auto">
                   <div className={`grid gap-6`} style={{ gridTemplateColumns: `repeat(${Math.min(visibleTjenesterGroups.length, 5)}, 1fr)` }}>
                     {visibleTjenesterGroups.map((group) => (
@@ -354,14 +361,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </nav>
 
-      {/* Section switcher bar — always visible */}
-      <div className="fixed top-16 md:top-[72px] left-0 right-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/10">
-        <div className="container mx-auto px-4 md:px-6 py-2">
-          <SectionSwitcher />
-        </div>
-      </div>
 
-      <main className="pt-[104px] md:pt-[116px]">{children}</main>
+      <main className="pt-[102px] md:pt-[110px]">{children}</main>
 
       <footer className="border-t border-border/15 py-12 md:py-24 relative">
         <div className="absolute inset-0 ambient-glow opacity-20" />
