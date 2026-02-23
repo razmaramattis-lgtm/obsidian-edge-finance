@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 const GIPHY_API_KEY = "GlVGYHkr3WSBnllca54iNt0yFbjz7L65"; // Giphy public beta key
 
@@ -73,8 +74,8 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
         <span className="text-xs font-bold">GIF</span>
       </button>
 
-      {open && (
-        <div className="fixed inset-x-0 bottom-0 z-50 sm:fixed sm:inset-0 sm:flex sm:items-center sm:justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
+      {open && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setOpen(false)}>
         <div className="w-full sm:w-96 bg-card border border-border/30 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
           {/* Drag handle on mobile */}
           <div className="sm:hidden flex justify-center pt-2 pb-1">
@@ -121,7 +122,7 @@ const GifPicker = ({ onSelect }: GifPickerProps) => {
           </div>
         </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 };
