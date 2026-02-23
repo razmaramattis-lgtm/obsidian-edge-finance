@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Send, Plus, Hash, Trash2 } from "lucide-react";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 interface Category {
   id: string;
@@ -65,11 +66,31 @@ const ChatPanel = () => {
     e.preventDefault();
     if (!newMessage.trim() || !activeCategory || !profile) return;
     setSending(true);
+    const content = newMessage.trim();
     await supabase.from("chat_messages").insert([{
       category_id: activeCategory.id,
       sender_id: profile.id,
-      content: newMessage.trim(),
+      content,
     }]);
+    // Notify all other employees/admins in this channel
+    const { data: allProfiles } = await supabase.from("profiles").select("id").neq("id", profile.id);
+    (allProfiles || []).forEach((p: any) => {
+      createNotification({
+        recipientId: p.id,
+        actorId: profile.id,
+        type: "chat_message",
+        referenceId: activeCategory.id,
+        referenceType: "chat_category",
+        title: `#${activeCategory.name}`,
+        body: `${profile.name}: ${content.slice(0, 80)}`,
+      });
+    });
+    // Send email to offline users
+    (allProfiles || []).forEach((p: any) => {
+      supabase.functions.invoke("notify-dm-email", {
+        body: { recipientId: p.id, senderName: profile.name, messagePreview: `[#${activeCategory.name}] ${content.slice(0, 100)}` },
+      }).catch(() => {});
+    });
     setNewMessage("");
     setSending(false);
   };
