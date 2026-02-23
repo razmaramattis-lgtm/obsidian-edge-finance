@@ -87,9 +87,13 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   useEffect(() => {
     if (!active) return;
     fetchMsgs(active.id);
-    const ch = supabase.channel(`ws-dm-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${active.id}` }, () => {
+    const ch = supabase.channel(`ws-dm-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${active.id}` }, (payload: any) => {
+      // If a new message arrives from the other person while chat is open, mark it as read immediately
+      if (payload.eventType === "INSERT" && payload.new?.sender_id !== profile.id) {
+        supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).eq("id", payload.new.id).then(() => {});
+      }
       fetchMsgs(active.id);
-      fetchConvs(); // Refresh conversation list to update read status & last message
+      fetchConvs();
     }).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [active?.id]);
