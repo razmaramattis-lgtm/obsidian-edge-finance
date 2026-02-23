@@ -234,7 +234,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
             <button onClick={() => setCallActive(true)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"><Video size={16} /></button>
             <button onClick={() => deleteConversation(active.id)} className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-destructive/15 text-muted-foreground hover:text-destructive flex items-center justify-center transition-all"><Trash2 size={16} /></button>
           </div>
-          <div className="flex-1 overflow-y-auto p-5 space-y-1">
+          <div className="flex-1 overflow-y-auto p-5 pb-8 space-y-1">
             {messages.map((msg, i) => {
               const isOwn = msg.sender_id === profile.id;
               const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
