@@ -433,7 +433,7 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
           <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
             <div className="flex items-start gap-3 p-4">
               <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
-              <form onSubmit={submitPost} className="flex-1">
+              <form onSubmit={submitPost} className="flex-1 min-w-0">
                 <textarea value={newPost} onChange={e => setNewPost(e.target.value)} placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`} rows={3} className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40" />
                 {imagePreview && (
                   <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-64">
@@ -441,14 +441,14 @@ const FeedView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?
                     <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"><X size={14} /></button>
                   </div>
                 )}
-                <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2">
-                  <div className="flex gap-1">
+                <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2 gap-2">
+                  <div className="flex gap-0.5 shrink-0">
                     <EmojiPicker onSelect={e => setNewPost(prev => prev + e)} />
                     <GifPicker onSelect={submitGif} />
                     <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
                     <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={18} /></button>
                   </div>
-                  <button type="submit" disabled={(!newPost.trim() && !imageFile) || sending} className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">Publiser</button>
+                  <button type="submit" disabled={(!newPost.trim() && !imageFile) || sending} className="px-4 sm:px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0 whitespace-nowrap">Publiser</button>
                 </div>
               </form>
             </div>

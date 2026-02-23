@@ -46,37 +46,37 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
 
   return (
     <form onSubmit={handleSubmit} className="p-3 border-t border-border/15 bg-card/30">
-      <div className="flex items-center gap-1.5 sm:gap-1 bg-muted/30 rounded-2xl border border-border/20 pr-2 sm:pr-1.5 focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
-        <div className="flex items-center pl-1.5 sm:pl-1">
-          <EmojiPicker onSelect={handleEmoji} />
-          <GifPicker onSelect={handleGif} />
-          {onSendFile && (
-            <>
-              <button type="button" onClick={() => fileRef.current?.click()} className="p-2.5 sm:p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg">
-                <Paperclip size={18} className="sm:w-4 sm:h-4" />
-              </button>
-              <button type="button" onClick={() => imageRef.current?.click()} className="p-2.5 sm:p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all" title="Bilde">
-                <Image size={18} className="sm:w-4 sm:h-4" />
-              </button>
-              <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
-              <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
-            </>
-          )}
-        </div>
+      <div className="flex items-center gap-1.5 bg-muted/30 rounded-2xl border border-border/20 focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
         <input
           value={text}
           onChange={e => setText(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          className="flex-1 h-12 sm:h-11 bg-transparent px-2 text-sm focus:outline-none placeholder:text-muted-foreground/40"
+          className="flex-1 min-w-0 h-12 sm:h-11 bg-transparent pl-3 pr-1 text-sm focus:outline-none placeholder:text-muted-foreground/40"
         />
-        <button
-          type="submit"
-          disabled={!text.trim() || sending || disabled}
-          className="h-10 w-10 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0"
-        >
-          <Send size={16} className="sm:w-3.5 sm:h-3.5" />
-        </button>
+        <div className="flex items-center shrink-0 pr-1.5">
+          <EmojiPicker onSelect={handleEmoji} />
+          <GifPicker onSelect={handleGif} />
+          {onSendFile && (
+            <>
+              <button type="button" onClick={() => fileRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg">
+                <Paperclip size={16} />
+              </button>
+              <button type="button" onClick={() => imageRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all" title="Bilde">
+                <Image size={16} />
+              </button>
+              <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
+              <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+            </>
+          )}
+          <button
+            type="submit"
+            disabled={!text.trim() || sending || disabled}
+            className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0 ml-0.5"
+          >
+            <Send size={14} />
+          </button>
+        </div>
       </div>
     </form>
   );
