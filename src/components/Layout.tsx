@@ -11,6 +11,15 @@ import {
   Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive, CalendarClock,
 } from "lucide-react";
 
+/** Maps tjenester group label → section basePath for auto-routing */
+const groupSectionMap: Record<string, string> = {
+  "Regnskap & Økonomi": "/regnskap",
+  "HR & Personal": "/hr",
+  "Markedsføring & Vekst": "/markedsforing",
+  "IT & Utvikling": "/it",
+  "Kurs & Opplæring": "/regnskap",
+};
+
 const tjenesterGroups = [
   {
     label: "Regnskap & Økonomi",
@@ -124,6 +133,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   // Section-aware path helper
   const sp = (path: string) => isInSection && section ? `${section.basePath}${path}` : path;
 
+  // For tjenester items: use current section prefix if in a section, otherwise auto-route to the group's section
+  const tjenesterPath = (href: string, groupLabel: string) => {
+    if (isInSection && section) return `${section.basePath}${href}`;
+    return `${groupSectionMap[groupLabel] || ""}${href}`;
+  };
+
   // Filter tjenester groups when inside a section
   const visibleTjenesterGroups = useMemo(() => {
     if (!isInSection || !section) return tjenesterGroups;
@@ -164,7 +179,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         <p className="text-[10px] tracking-[0.35em] uppercase text-foreground/50 px-2.5 mb-2 font-medium">{group.label}</p>
                         <div className="flex flex-col gap-0.5">
                           {group.items.map((item) => (
-                            <Link key={item.href} to={sp(item.href)} onClick={() => setTjenesterOpen(false)}
+                            <Link key={item.href} to={tjenesterPath(item.href, group.label)} onClick={() => setTjenesterOpen(false)}
                               className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
                             >
                               <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
@@ -282,7 +297,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 {visibleTjenesterGroups.map((group) => {
                   const Icon = group.items[0].icon;
                   return (
-                    <Link key={group.label} to={sp("/tjenester")} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                    <Link key={group.label} to={tjenesterPath("/tjenester", group.label)} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
                       className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/70 active:text-foreground active:bg-primary/5 transition-colors"
                     >
                       <Icon size={14} className="text-primary shrink-0" strokeWidth={1.5} />
@@ -339,16 +354,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </nav>
 
-      {/* Section switcher bar */}
-      {isInSection && (
-        <div className="fixed top-16 md:top-[72px] left-0 right-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/10">
-          <div className="container mx-auto px-4 md:px-6 py-2">
-            <SectionSwitcher />
-          </div>
+      {/* Section switcher bar — always visible */}
+      <div className="fixed top-16 md:top-[72px] left-0 right-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/10">
+        <div className="container mx-auto px-4 md:px-6 py-2">
+          <SectionSwitcher />
         </div>
-      )}
+      </div>
 
-      <main className={isInSection ? "pt-[104px] md:pt-[116px]" : "pt-16 md:pt-[72px]"}>{children}</main>
+      <main className="pt-[104px] md:pt-[116px]">{children}</main>
 
       <footer className="border-t border-border/15 py-12 md:py-24 relative">
         <div className="absolute inset-0 ambient-glow opacity-20" />

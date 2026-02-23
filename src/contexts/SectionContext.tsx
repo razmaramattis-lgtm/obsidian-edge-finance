@@ -28,7 +28,7 @@ export const SECTIONS: Record<SectionId, SectionConfig> = {
   hr: {
     id: "hr",
     name: "HR & Personal",
-    shortName: "HR",
+    shortName: "Personal",
     basePath: "/hr",
     accent: { h: 35, s: 75, l: 55 },
     accentGlow: { h: 35, s: 85, l: 65 },
@@ -38,7 +38,7 @@ export const SECTIONS: Record<SectionId, SectionConfig> = {
   markedsforing: {
     id: "markedsforing",
     name: "Markedsføring & Vekst",
-    shortName: "Markedsføring",
+    shortName: "Marked",
     basePath: "/markedsforing",
     accent: { h: 265, s: 55, l: 65 },
     accentGlow: { h: 265, s: 65, l: 75 },
