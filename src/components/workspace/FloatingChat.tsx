@@ -128,7 +128,7 @@ const FloatingChat = ({ profile, onViewProfile }: FloatingChatProps) => {
 
   if (!isActive) {
     return (
-      <div className="fixed bottom-0 right-0 z-50 pr-4 pb-24">
+      <div className="fixed bottom-0 right-0 z-50 pr-4 pb-24 hidden md:block">
         <button onClick={toggleActive} className="w-14 h-14 rounded-full bg-muted/60 text-muted-foreground border border-border/30 shadow-lg hover:bg-muted hover:text-foreground transition-all flex items-center justify-center" title="Aktiver chat">
           <MessageCircle size={22} />
         </button>
@@ -137,7 +137,7 @@ const FloatingChat = ({ profile, onViewProfile }: FloatingChatProps) => {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 z-50 flex flex-col items-end pr-4 pb-24 gap-3 max-h-screen">
+    <div className="fixed bottom-0 right-0 z-50 flex-col items-end pr-4 pb-24 gap-3 max-h-screen hidden md:flex">
       {/* Open mini chats - vertical stack */}
       <div className="flex flex-col items-end gap-2 overflow-y-auto max-h-[calc(100vh-120px)]" style={{ scrollbarWidth: "none" }}>
         {openChats.map(chat => (
@@ -187,7 +187,7 @@ const FloatingChat = ({ profile, onViewProfile }: FloatingChatProps) => {
 
       {/* Contact picker */}
       {showPicker && (
-        <div className="absolute bottom-20 right-0 w-72 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
+        <div className="absolute bottom-20 right-0 w-72 sm:w-72 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
           <div className="p-3 border-b border-border/10">
             <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
               <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk etter personer…" className="h-9 flex-1 bg-transparent text-xs focus:outline-none placeholder:text-muted-foreground/40" autoFocus />
