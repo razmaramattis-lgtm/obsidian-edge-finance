@@ -78,16 +78,97 @@ const CommentReactions = ({ commentId, profileId }: { commentId: string; profile
   );
 };
 
+// ─── Comment Replies ───
+const CommentReplies = ({ commentId, profileId, profileData }: { commentId: string; profileId: string; profileData: Profile }) => {
+  const [replies, setReplies] = useState<any[]>([]);
+  const [text, setText] = useState("");
+  const [showInput, setShowInput] = useState(false);
+
+  const fetchReplies = async () => {
+    const { data } = await supabase.from("workspace_comment_replies").select("*, profiles(id, name, role, avatar_url)").eq("comment_id", commentId).order("created_at");
+    setReplies((data as any[]) || []);
+  };
+
+  useEffect(() => { fetchReplies(); }, [commentId]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    await supabase.from("workspace_comment_replies").insert([{ comment_id: commentId, author_id: profileId, content: text.trim() }]);
+    setText("");
+    fetchReplies();
+  };
+
+  const deleteReply = async (id: string) => {
+    await supabase.from("workspace_comment_replies").delete().eq("id", id);
+    fetchReplies();
+  };
+
+  return (
+    <div className="ml-6 mt-1.5">
+      {replies.length > 0 && (
+        <div className="space-y-2 mb-1.5">
+          {replies.map(r => {
+            const rp = r.profiles as any;
+            const isOwn = r.author_id === profileId;
+            return (
+              <div key={r.id} className="flex gap-2 group/reply">
+                <UserAvatar name={rp?.name} avatarUrl={rp?.avatar_url} size="xs" />
+                <div className="flex-1">
+                  <div className="bg-muted/30 rounded-2xl rounded-tl-md px-3 py-1.5 relative">
+                    <span className="text-[10px] font-semibold">{rp?.name}</span>
+                    {isGifContent(r.content) ? (
+                      <img src={extractGifUrl(r.content)} alt="GIF" className="mt-1 max-h-32 rounded-lg" loading="lazy" />
+                    ) : (
+                      <p className="text-[11px] text-foreground/80 mt-0.5">{r.content}</p>
+                    )}
+                    {isOwn && (
+                      <button onClick={() => deleteReply(r.id)} className="absolute top-1 right-1 opacity-0 group-hover/reply:opacity-100 p-0.5 rounded-lg text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={9} /></button>
+                    )}
+                  </div>
+                  <span className="text-[9px] text-muted-foreground ml-2">{timeAgo(r.created_at)}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {!showInput ? (
+        <button onClick={() => setShowInput(true)} className="text-[10px] text-muted-foreground hover:text-primary transition-colors ml-1">
+          Svar{replies.length > 0 ? ` · ${replies.length} svar` : ""}
+        </button>
+      ) : (
+        <form onSubmit={submit} className="flex items-center gap-2 mt-1">
+          <UserAvatar name={profileData.name} avatarUrl={profileData.avatar_url} size="xs" />
+          <div className="flex-1 flex items-center bg-muted/20 rounded-2xl border border-border/15 pr-1">
+            <input value={text} onChange={e => setText(e.target.value)} placeholder="Skriv et svar…" autoFocus className="flex-1 h-8 bg-transparent px-3 text-[11px] focus:outline-none placeholder:text-muted-foreground/40" />
+            <button type="submit" disabled={!text.trim()} className="h-6 px-2.5 rounded-lg bg-primary/10 text-primary text-[9px] font-semibold disabled:opacity-30 transition-all">Send</button>
+          </div>
+          <button type="button" onClick={() => setShowInput(false)} className="text-muted-foreground hover:text-foreground"><X size={12} /></button>
+        </form>
+      )}
+    </div>
+  );
+};
+
 // ─── Post Comments ───
 const PostComments = ({ postId, profileId, profileData }: { postId: string; profileId: string; profileData: Profile }) => {
   const [comments, setComments] = useState<PostComment[]>([]);
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [replyCounts, setReplyCounts] = useState<Record<string, number>>({});
 
   const fetchComments = async () => {
     const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role, avatar_url)").eq("post_id", postId).order("created_at");
-    setComments((data as any[]) || []);
+    const cs = (data as any[]) || [];
+    setComments(cs);
+    const counts: Record<string, number> = {};
+    for (const c of cs) {
+      const { count } = await supabase.from("workspace_comment_replies").select("*", { count: "exact", head: true }).eq("comment_id", c.id);
+      counts[c.id] = count || 0;
+    }
+    setReplyCounts(counts);
   };
 
   useEffect(() => { fetchComments(); }, [postId]);
@@ -125,46 +206,52 @@ const PostComments = ({ postId, profileId, profileData }: { postId: string; prof
 
   return (
     <div className="border-t border-border/10 bg-muted/10">
-      <div className="px-5 py-3 space-y-3 max-h-64 overflow-y-auto">
+      <div className="px-5 py-3 space-y-3 max-h-[400px] overflow-y-auto">
         {comments.map(c => {
           const cp = c.profiles as any;
           const isOwn = c.author_id === profileId;
           return (
-            <div key={c.id} className="flex gap-2.5 group/comment">
-              <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
-              <div className="flex-1">
-                {editingId === c.id ? (
-                  <div className="space-y-2">
-                    <textarea value={editText} onChange={e => setEditText(e.target.value)} className="w-full resize-none bg-muted/40 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/30 border border-border/20" rows={2} autoFocus />
-                    <div className="flex gap-2">
-                      <button onClick={saveEdit} className="px-3 py-1 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium">Lagre</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1 rounded-lg bg-muted/50 text-muted-foreground text-[10px]">Avbryt</button>
+            <div key={c.id}>
+              <div className="flex gap-2.5 group/comment">
+                <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
+                <div className="flex-1">
+                  {editingId === c.id ? (
+                    <div className="space-y-2">
+                      <textarea value={editText} onChange={e => setEditText(e.target.value)} className="w-full resize-none bg-muted/40 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/30 border border-border/20" rows={2} autoFocus />
+                      <div className="flex gap-2">
+                        <button onClick={saveEdit} className="px-3 py-1 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium">Lagre</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1 rounded-lg bg-muted/50 text-muted-foreground text-[10px]">Avbryt</button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2 relative">
-                      <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
-                      {isGifContent(c.content) ? (
-                        <img src={extractGifUrl(c.content)} alt="GIF" className="mt-1 max-h-40 rounded-lg" loading="lazy" />
-                      ) : (
-                        <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
-                      )}
-                      {isOwn && (
-                        <div className="absolute top-1 right-1 opacity-0 group-hover/comment:opacity-100 flex gap-0.5 transition-all">
-                          <button onClick={() => startEdit(c)} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Pencil size={10} /></button>
-                          <button onClick={() => deleteComment(c.id)} className="p-1 rounded-lg text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={10} /></button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 ml-2 mt-0.5">
-                      <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
-                      {(c as any).edited_at && <span className="text-[9px] text-muted-foreground/60 italic">redigert</span>}
-                      <CommentReactions commentId={c.id} profileId={profileId} />
-                    </div>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2 relative">
+                        <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
+                        {isGifContent(c.content) ? (
+                          <img src={extractGifUrl(c.content)} alt="GIF" className="mt-1 max-h-40 rounded-lg" loading="lazy" />
+                        ) : (
+                          <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
+                        )}
+                        {isOwn && (
+                          <div className="absolute top-1 right-1 opacity-0 group-hover/comment:opacity-100 flex gap-0.5 transition-all">
+                            <button onClick={() => startEdit(c)} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Pencil size={10} /></button>
+                            <button onClick={() => deleteComment(c.id)} className="p-1 rounded-lg text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={10} /></button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 ml-2 mt-0.5">
+                        <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
+                        {(c as any).edited_at && <span className="text-[9px] text-muted-foreground/60 italic">redigert</span>}
+                        <CommentReactions commentId={c.id} profileId={profileId} />
+                        {replyCounts[c.id] > 0 && (
+                          <span className="text-[10px] text-muted-foreground font-medium">{replyCounts[c.id]} svar</span>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
+              <CommentReplies commentId={c.id} profileId={profileId} profileData={profileData} />
             </div>
           );
         })}

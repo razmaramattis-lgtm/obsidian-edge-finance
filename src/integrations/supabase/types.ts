@@ -1955,6 +1955,48 @@ export type Database = {
           },
         ]
       }
+      workspace_comment_replies: {
+        Row: {
+          author_id: string
+          comment_id: string
+          content: string
+          created_at: string
+          edited_at: string | null
+          id: string
+        }
+        Insert: {
+          author_id: string
+          comment_id: string
+          content: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          comment_id?: string
+          content?: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_comment_replies_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_comment_replies_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_post_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_friends: {
         Row: {
           created_at: string
