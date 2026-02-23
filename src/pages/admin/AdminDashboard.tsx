@@ -60,15 +60,17 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
   { id: "chat", label: "Workspace", icon: MessageSquare, group: "Hoved" },
   { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
+  { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Hoved" },
+  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Hoved" },
+  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Hoved" },
+  { id: "hms", label: "HMS-assistent", icon: Shield, group: "Hoved" },
 
   // Kunder
-  { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Kunder" },
   { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
   { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
 
   // Avtaler
-  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Avtaler" },
   { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Avtaler" },
   { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Avtaler" },
 
@@ -80,7 +82,6 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Internt
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
-  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Internt" },
 
   // Admin
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
