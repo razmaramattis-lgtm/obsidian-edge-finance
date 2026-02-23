@@ -8,7 +8,7 @@ import {
   Globe, Lock, MapPin, Briefcase, Building2, Star, Heart, Camera, MessageCircle, Pin,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
-import FeedView from "@/components/workspace/FeedView";
+import FeedView, { PostComments } from "@/components/workspace/FeedView";
 import GroupsView from "@/components/workspace/GroupsView";
 import DmsView from "@/components/workspace/DmsView";
 import FriendsView from "@/components/workspace/FriendsView";
@@ -202,6 +202,8 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
   const [activeTab, setActiveTab] = useState<"feed" | "groups" | "about">("feed");
   const [friendStatus, setFriendStatus] = useState<"none" | "pending_sent" | "pending_received" | "accepted">("none");
   const [friendRowId, setFriendRowId] = useState<string | null>(null);
+  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
 
   const fetchFriendStatus = async () => {
     const { data } = await supabase.from("workspace_friends").select("*").or(`and(requester_id.eq.${myProfile.id},receiver_id.eq.${profile.id}),and(requester_id.eq.${profile.id},receiver_id.eq.${myProfile.id})`);
@@ -216,7 +218,14 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(20);
-      setPosts((data as any[]) || []);
+      const ps = (data as any[]) || [];
+      setPosts(ps);
+      const counts: Record<string, number> = {};
+      for (const p of ps) {
+        const { count } = await supabase.from("workspace_post_comments").select("*", { count: "exact", head: true }).eq("post_id", p.id);
+        counts[p.id] = count || 0;
+      }
+      setCommentCounts(counts);
     })();
     (async () => {
       const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("status", "accepted").or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
@@ -323,6 +332,12 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                   {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
                   {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
                   <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
+                  <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
+                    <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
+                      <MessageCircle size={15} /> Kommenter {commentCounts[post.id] > 0 && <span className="px-1.5 py-0.5 rounded-full bg-muted/50 text-[10px] font-medium">{commentCounts[post.id]}</span>}
+                    </button>
+                  </div>
+                  {expandedPost === post.id && <PostComments postId={post.id} profileId={myProfile.id} profileData={myProfile} />}
                 </article>
               );
             })}
@@ -397,6 +412,8 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
   const [friendCount, setFriendCount] = useState(0);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingBg, setUploadingBg] = useState(false);
+  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const avatarRef = useRef<HTMLInputElement>(null);
   const bgRef = useRef<HTMLInputElement>(null);
 
@@ -436,7 +453,14 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
-      setMyPosts((data as any[]) || []);
+      const ps = (data as any[]) || [];
+      setMyPosts(ps);
+      const counts: Record<string, number> = {};
+      for (const p of ps) {
+        const { count } = await supabase.from("workspace_post_comments").select("*", { count: "exact", head: true }).eq("post_id", p.id);
+        counts[p.id] = count || 0;
+      }
+      setCommentCounts(counts);
     })();
     (async () => {
       const { data: gs } = await supabase.from("workspace_groups").select("*").order("created_at");
@@ -545,10 +569,11 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
                     <PostReactions postId={post.id} profileId={profile.id} />
                   </div>
                   <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
-                    <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
-                      <MessageCircle size={15} /> Kommenter
+                    <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
+                      <MessageCircle size={15} /> Kommenter {commentCounts[post.id] > 0 && <span className="px-1.5 py-0.5 rounded-full bg-muted/50 text-[10px] font-medium">{commentCounts[post.id]}</span>}
                     </button>
                   </div>
+                  {expandedPost === post.id && <PostComments postId={post.id} profileId={profile.id} profileData={profile} />}
                 </article>
               );
             })}

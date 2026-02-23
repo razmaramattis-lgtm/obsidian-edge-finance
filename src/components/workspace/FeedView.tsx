@@ -461,3 +461,4 @@ const FeedView = ({ profile }: { profile: Profile }) => {
 };
 
 export default FeedView;
+export { PostComments };
