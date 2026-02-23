@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Building2, Archive, BookOpen, AlertTriangle, FileText, FileCheck, Shield, FolderOpen } from "lucide-react";
+import { Building2, Archive, BookOpen, AlertTriangle, FileText, FileCheck, FolderOpen } from "lucide-react";
 import DataCenterPanel from "./DataCenterPanel";
 import ArchivePanel from "./ArchivePanel";
 import ResourcesPanel from "./ResourcesPanel";
@@ -7,7 +7,6 @@ import AccountEntriesPanel from "./AccountEntriesPanel";
 import AccountFeedbackPanel from "./AccountFeedbackPanel";
 import GlossaryPanel from "./GlossaryPanel";
 import DocumentTemplatesPanel from "./DocumentTemplatesPanel";
-import HmsPanel from "./HmsPanel";
 
 const TABS = [
   { id: "datacenter", label: "Datasenter", icon: Building2 },
@@ -17,7 +16,6 @@ const TABS = [
   { id: "account_feedback", label: "Kontohjelp-meldinger", icon: AlertTriangle },
   { id: "glossary", label: "Regnskapsord", icon: FileText },
   { id: "doc_templates", label: "Dokumentmaler", icon: FileCheck },
-  { id: "hms", label: "HMS-bok", icon: Shield },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -40,7 +38,7 @@ const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab, badgeCou
         </div>
         <div>
           <p className="text-sm font-medium">Organisasjonsressurser</p>
-          <p className="text-[10px] text-muted-foreground">Datasenter, arkiv, maler, kontohjelp, regnskapsord, dokumentmaler og HMS</p>
+          <p className="text-[10px] text-muted-foreground">Datasenter, arkiv, maler, kontohjelp, regnskapsord og dokumentmaler</p>
         </div>
       </div>
 
@@ -71,7 +69,6 @@ const OrgResourcesPanel = ({ onStatusChange, initialSearch, initialTab, badgeCou
       {tab === "account_feedback" && <AccountFeedbackPanel onStatusChange={onStatusChange} />}
       {tab === "glossary" && <GlossaryPanel />}
       {tab === "doc_templates" && <DocumentTemplatesPanel />}
-      {tab === "hms" && <HmsPanel />}
     </div>
   );
 };
