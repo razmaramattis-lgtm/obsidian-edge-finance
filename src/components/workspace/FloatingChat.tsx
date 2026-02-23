@@ -273,7 +273,7 @@ const MiniChatWindow = ({
       <div className="w-80 h-[420px] bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
         {/* Header */}
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/10 bg-card/80 shrink-0">
-          <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" online isActive={chat.conv.other?.active !== false} />
+          <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" profileId={chat.conv.other?.id} isActive={chat.conv.other?.active !== false} />
           <span className="text-xs font-semibold flex-1 truncate">{chat.conv.other?.name}</span>
           <button onClick={() => { setCallWithVideo(false); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-green-500 hover:bg-green-500/10 transition-all" title="Ring"><Phone size={13} /></button>
           <button onClick={() => { setCallWithVideo(true); setCallActive(true); }} className="p-1 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Videosamtale"><Video size={13} /></button>
