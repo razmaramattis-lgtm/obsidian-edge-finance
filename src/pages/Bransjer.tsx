@@ -176,29 +176,6 @@ const Bransjer = () => {
           </div>
         )}
 
-        {/* General page link for non-regnskap sections */}
-        {isInSection && section && section.id !== "regnskap" && (
-          <AnimatedSection delay={0.4}>
-            <Link
-              to={`${sectionPath}/bransjer/alle`}
-              className="group mt-10 md:mt-14 p-8 md:p-12 glass rounded-3xl flex flex-col md:flex-row items-start md:items-center gap-6 card-lift"
-            >
-              <div className="flex-1">
-                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-3">Generelt</p>
-                <h3 className="font-heading text-2xl md:text-3xl mb-2">
-                  Hvordan vi hjelper bedrifter{" "}
-                  <span className="italic text-gradient-teal">uansett bransje.</span>
-                </h3>
-                <p className="text-sm text-muted-foreground font-light">
-                  Les mer om hvordan vi jobber, hva vi leverer og hvorfor bedrifter velger oss som sin {section.shortName.toLowerCase()}-partner.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all duration-300 shrink-0">
-                Les mer <ArrowRight size={15} />
-              </div>
-            </Link>
-          </AnimatedSection>
-        )}
 
         <AnimatedSection delay={0.5}>
           <div className="mt-10 md:mt-14 p-7 md:p-10 glass rounded-3xl text-center">

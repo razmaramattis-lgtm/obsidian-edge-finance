@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SectionProvider } from "@/contexts/SectionContext";
@@ -159,6 +159,15 @@ const SubdomainRedirect = () => {
   return null;
 };
 
+/** Show generell page for hr/marked/it, full bransjer for regnskap */
+const SectionBransjerRoute = () => {
+  const { sectionId } = useParams<{ sectionId: string }>();
+  if (sectionId && sectionId !== "regnskap" && ["hr", "markedsforing", "it"].includes(sectionId)) {
+    return <Suspense fallback={<PageFallback />}><SectionBransjerGenerell /></Suspense>;
+  }
+  return <Suspense fallback={<PageFallback />}><Bransjer /></Suspense>;
+};
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
@@ -195,8 +204,7 @@ const App = () => (
                             {/* Section routes */}
                             <Route path="/:sectionId" element={<SectionHome />} />
                             <Route path="/:sectionId/tjenester" element={<SectionTjenester />} />
-                            <Route path="/:sectionId/bransjer" element={<Bransjer />} />
-                            <Route path="/:sectionId/bransjer/alle" element={<SectionBransjerGenerell />} />
+                            <Route path="/:sectionId/bransjer" element={<SectionBransjerRoute />} />
                             <Route path="/:sectionId/priser" element={<Pricing />} />
                             <Route path="/:sectionId/kontakt" element={<Contact />} />
                             <Route path="/:sectionId/om-oss" element={<About />} />
