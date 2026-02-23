@@ -6,6 +6,7 @@ import {
   Hash, Send, Plus, Trash2, Users, MessageSquare, Newspaper,
   PanelLeftClose, PanelLeft, MessageCircle, Pin, Eye, EyeOff,
   ArrowLeft, Image, Lock, Globe, Search, Bell, Settings, Sparkles,
+  Phone, Video,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/components/workspace/UserAvatar";
@@ -13,6 +14,7 @@ import ChatInput from "@/components/workspace/ChatInput";
 import MessageBubble from "@/components/workspace/MessageBubble";
 import PostReactions from "@/components/workspace/PostReactions";
 import EmojiPicker from "@/components/workspace/EmojiPicker";
+import VideoCall from "@/components/workspace/VideoCall";
 
 // ─── Types ───
 interface Profile { id: string; name: string; role: string; avatar_url?: string | null; email?: string }
@@ -714,6 +716,8 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [callActive, setCallActive] = useState(false);
+  const [incomingCall, setIncomingCall] = useState<{ from: string; withVideo: boolean; convId: string } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   const fetchConvs = async () => {
@@ -741,6 +745,24 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   };
 
   useEffect(() => { fetchConvs(); fetchProfiles(); }, []);
+
+  // Listen for incoming calls across all conversations
+  useEffect(() => {
+    const callChannels: any[] = [];
+    conversations.forEach(conv => {
+      const chName = `call-${[profile.id, conv.id].sort().join("-")}`;
+      const ch = supabase.channel(`listen-${chName}`, { config: { broadcast: { self: false } } });
+      ch.on("broadcast", { event: "invite" }, ({ payload }) => {
+        if (payload.from !== profile.id) {
+          setIncomingCall({ from: payload.from, withVideo: payload.withVideo, convId: conv.id });
+        }
+      });
+      ch.subscribe();
+      callChannels.push(ch);
+    });
+    return () => { callChannels.forEach(ch => supabase.removeChannel(ch)); };
+  }, [conversations, profile.id]);
+
   useEffect(() => {
     if (!active) return;
     fetchMsgs(active.id);
@@ -841,10 +863,24 @@ const DmsView = ({ profile }: { profile: Profile }) => {
         <div className="flex-1 flex flex-col min-w-0">
           <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
             <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" online />
-            <div>
+            <div className="flex-1">
               <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
               <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
             </div>
+            <button
+              onClick={() => { setCallActive(true); }}
+              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-green-500/15 text-muted-foreground hover:text-green-500 flex items-center justify-center transition-all"
+              title="Lydsamtale"
+            >
+              <Phone size={16} />
+            </button>
+            <button
+              onClick={() => { setCallActive(true); }}
+              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"
+              title="Videosamtale"
+            >
+              <Video size={16} />
+            </button>
           </div>
           <div className="flex-1 overflow-y-auto p-5 space-y-1">
             {messages.map((msg, i) => {
@@ -874,6 +910,33 @@ const DmsView = ({ profile }: { profile: Profile }) => {
             <p className="text-muted-foreground/60 text-xs mt-1">eller start en ny</p>
           </div>
         </div>
+      )}
+
+      {/* Active call */}
+      {callActive && active && (
+        <VideoCall
+          conversationId={active.id}
+          profileId={profile.id}
+          profileName={profile.name}
+          profileAvatar={profile.avatar_url}
+          otherName={active.other?.name}
+          otherAvatar={active.other?.avatar_url}
+          onClose={() => setCallActive(false)}
+        />
+      )}
+
+      {/* Incoming call */}
+      {incomingCall && !callActive && (
+        <VideoCall
+          conversationId={incomingCall.convId}
+          profileId={profile.id}
+          profileName={profile.name}
+          profileAvatar={profile.avatar_url}
+          otherName={conversations.find(c => c.id === incomingCall.convId)?.other?.name}
+          otherAvatar={conversations.find(c => c.id === incomingCall.convId)?.other?.avatar_url}
+          incoming={incomingCall}
+          onClose={() => setIncomingCall(null)}
+        />
       )}
     </div>
   );
