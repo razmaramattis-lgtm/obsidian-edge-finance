@@ -235,8 +235,8 @@ const DocumentGenerator = ({ config }: Props) => {
         container.style.backgroundColor = "#ffffff";
         document.body.appendChild(container);
 
-        // Allow DOM to render the content before capturing
-        await new Promise(r => setTimeout(r, 300));
+        // Allow DOM to fully render before capturing
+        await new Promise(r => setTimeout(r, 500));
 
         const pdfBlob: Blob = await html2pdf()
           .set({
@@ -301,26 +301,21 @@ const DocumentGenerator = ({ config }: Props) => {
   };
 
   const handleDownloadPdf = async () => {
-    if (!docRef.current) {
-      toast.error("Ingen dokumentinnhold funnet");
-      return;
-    }
     setDownloading(true);
     try {
       const html2pdf = (await import("html2pdf.js")).default;
       const filename = `${config.title} - ${form.companyName || "Bedrift"}.pdf`;
 
-      // Clone content into an off-screen container with forced white styling
-      const clone = docRef.current.cloneNode(true) as HTMLElement;
-      clone.style.cssText = "position:absolute;left:-9999px;top:0;width:794px;background:#fff;color:#000;z-index:-1;padding:20px;";
-      // Force all nested elements to have white bg and dark text
-      clone.querySelectorAll("*").forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        htmlEl.style.backgroundColor = "transparent";
-        htmlEl.style.color = htmlEl.style.color || "#1a1a1a";
-      });
-      clone.style.backgroundColor = "#ffffff";
-      document.body.appendChild(clone);
+      // Build clean HTML with all inline styles (same as handleSave)
+      const fullHtml = buildFullHtml();
+      const container = document.createElement("div");
+      container.style.cssText = "position:absolute;left:-9999px;top:0;width:794px;background:#fff;color:#000;z-index:-1;padding:20px;font-family:'Georgia',serif;font-size:13px;line-height:1.8;";
+      container.innerHTML = fullHtml;
+      container.style.backgroundColor = "#ffffff";
+      document.body.appendChild(container);
+
+      // Allow DOM to fully render before capturing
+      await new Promise(r => setTimeout(r, 500));
 
       await html2pdf()
         .set({
@@ -337,10 +332,10 @@ const DocumentGenerator = ({ config }: Props) => {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
         })
-        .from(clone)
+        .from(container)
         .save();
 
-      document.body.removeChild(clone);
+      document.body.removeChild(container);
       toast.success("PDF lastet ned");
     } catch (err) {
       console.error("PDF error:", err);
