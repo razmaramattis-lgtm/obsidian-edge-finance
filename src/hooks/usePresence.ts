@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 /**
  * Tracks which users are currently on the Workspace page
  * using Supabase Realtime Presence.
+ * Also persists last_seen_at to profiles for offline email notifications.
  */
 export const usePresence = (profileId: string | undefined) => {
   const [onlineIds, setOnlineIds] = useState<Set<string>>(new Set());
@@ -11,6 +12,13 @@ export const usePresence = (profileId: string | undefined) => {
 
   useEffect(() => {
     if (!profileId) return;
+
+    // Update last_seen_at on mount and periodically
+    const updateLastSeen = () => {
+      supabase.from("profiles").update({ last_seen_at: new Date().toISOString() } as any).eq("id", profileId).then(() => {});
+    };
+    updateLastSeen();
+    const interval = setInterval(updateLastSeen, 60_000); // every 60s
 
     const channel = supabase.channel("workspace-presence", {
       config: { presence: { key: profileId } },
@@ -31,6 +39,7 @@ export const usePresence = (profileId: string | undefined) => {
     channelRef.current = channel;
 
     return () => {
+      clearInterval(interval);
       channel.untrack();
       supabase.removeChannel(channel);
     };

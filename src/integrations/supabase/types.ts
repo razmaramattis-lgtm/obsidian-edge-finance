@@ -1781,6 +1781,7 @@ export type Database = {
           email: string
           id: string
           interests: string[] | null
+          last_seen_at: string | null
           name: string
           outlook_calendar_url: string | null
           phone: string | null
@@ -1803,6 +1804,7 @@ export type Database = {
           email: string
           id?: string
           interests?: string[] | null
+          last_seen_at?: string | null
           name: string
           outlook_calendar_url?: string | null
           phone?: string | null
@@ -1825,6 +1827,7 @@ export type Database = {
           email?: string
           id?: string
           interests?: string[] | null
+          last_seen_at?: string | null
           name?: string
           outlook_calendar_url?: string | null
           phone?: string | null

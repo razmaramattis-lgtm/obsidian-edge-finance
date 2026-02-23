@@ -105,6 +105,10 @@ const DmsView = ({ profile }: { profile: Profile }) => {
       body: profile.name + " sendte deg en melding",
       imageUrl: profile.avatar_url || undefined,
     });
+    // Send email if recipient is offline
+    supabase.functions.invoke("notify-dm-email", {
+      body: { recipientId, senderName: profile.name, messagePreview: content.slice(0, 100) },
+    }).catch(() => {});
   };
 
   const sendFile = async (file: File) => {
