@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { Send, Paperclip, Image } from "lucide-react";
-import EmojiPicker from "./EmojiPicker";
 import GifPicker from "./GifPicker";
 
 interface ChatInputProps {
@@ -26,9 +25,6 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
     setSending(false);
   };
 
-  const handleEmoji = (emoji: string) => {
-    setText(prev => prev + emoji);
-  };
 
   const handleGif = async (url: string) => {
     if (onSendGif) {
@@ -55,7 +51,6 @@ const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: Cha
           className="flex-1 min-w-0 h-12 sm:h-11 bg-transparent pl-3 pr-1 text-sm focus:outline-none placeholder:text-muted-foreground/40"
         />
         <div className="flex items-center shrink-0 pr-1.5">
-          <EmojiPicker onSelect={handleEmoji} />
           <GifPicker onSelect={handleGif} />
           {onSendFile && (
             <>
