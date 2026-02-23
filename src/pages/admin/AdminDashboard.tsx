@@ -53,6 +53,7 @@ interface NavItem {
   icon: React.ElementType;
   adminOnly?: boolean;
   group: string;
+  employeeHidden?: boolean; // hidden from employees unless granted
 }
 
 const DEFAULT_NAV_ITEMS: NavItem[] = [
@@ -60,28 +61,28 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Oversikt", icon: LayoutDashboard, group: "Hoved" },
   { id: "chat", label: "Workspace", icon: MessageSquare, group: "Hoved" },
   { id: "knowledge", label: "Oppslagsverk", icon: Sparkles, group: "Hoved" },
-  { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, group: "Hoved" },
-  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, group: "Hoved" },
-  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, group: "Hoved" },
+  { id: "customers", label: "Kundearkiv", icon: Users, adminOnly: true, employeeHidden: true, group: "Hoved" },
+  { id: "collab", label: "Samarbeidsavtaler", icon: Handshake, employeeHidden: true, group: "Hoved" },
+  { id: "bookings", label: "1-1 Bookinger", icon: CalendarDays, adminOnly: true, employeeHidden: true, group: "Hoved" },
   { id: "hms", label: "HMS-assistent", icon: Shield, group: "Hoved" },
 
   // Kunder
-  { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, group: "Kunder" },
-  { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, group: "Kunder" },
-  { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, group: "Kunder" },
+  { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Kunder" },
+  { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, employeeHidden: true, group: "Kunder" },
+  { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, employeeHidden: true, group: "Kunder" },
 
   // Avtaler
-  { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, group: "Avtaler" },
-  { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, group: "Avtaler" },
+  { id: "partner_requests", label: "Avtaleforespørsler", icon: Inbox, adminOnly: true, employeeHidden: true, group: "Avtaler" },
+  { id: "benefit_applications", label: "Fordelsavtale-søknader", icon: Handshake, adminOnly: true, employeeHidden: true, group: "Avtaler" },
 
   // Innhold
-  { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, group: "Innhold" },
-  { id: "page_changes", label: "Sideendringer", icon: Briefcase, adminOnly: true, group: "Innhold" },
-  { id: "org_resources", label: "Organisasjonsressurser", icon: FolderOpen, adminOnly: true, group: "Innhold" },
+  { id: "blog", label: "Blogg & Nyheter", icon: FileText, adminOnly: true, employeeHidden: true, group: "Innhold" },
+  { id: "page_changes", label: "Sideendringer", icon: Briefcase, adminOnly: true, employeeHidden: true, group: "Innhold" },
+  { id: "org_resources", label: "Organisasjonsressurser", icon: FolderOpen, adminOnly: true, employeeHidden: true, group: "Innhold" },
 
   // Internt
-  { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, group: "Internt" },
-  { id: "internal", label: "Interne ressurser", icon: FolderOpen, group: "Internt" },
+  { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, employeeHidden: true, group: "Internt" },
+  { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
   // Admin
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
@@ -115,6 +116,7 @@ const AdminDashboard = () => {
   const bellRef = useRef<HTMLDivElement>(null);
   const notifications = useAdminNotifications();
   const [wsUnread, setWsUnread] = useState(0);
+  const [grantedPanels, setGrantedPanels] = useState<Set<string>>(new Set());
 
   // Fetch workspace notification count
   useEffect(() => {
@@ -127,6 +129,16 @@ const AdminDashboard = () => {
     const ch = supabase.channel("admin-ws-badge").on("postgres_changes", { event: "*", schema: "public", table: "workspace_notifications" }, () => fetchWsCount()).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [profile?.id]);
+
+  // Fetch employee panel access
+  useEffect(() => {
+    if (!profile?.id || isAdmin) return;
+    const fetchAccess = async () => {
+      const { data } = await supabase.from("employee_panel_access").select("panel_key").eq("profile_id", profile.id);
+      if (data) setGrantedPanels(new Set(data.map((r: any) => r.panel_key)));
+    };
+    fetchAccess();
+  }, [profile?.id, isAdmin]);
 
   // Build ordered nav items
   const [navOrder, setNavOrder] = useState<Panel[]>(() => {
@@ -183,7 +195,14 @@ const AdminDashboard = () => {
     chat: wsUnread,
   };
 
-  const visibleItems = orderedNavItems.filter(item => !item.adminOnly || isAdmin);
+  const visibleItems = orderedNavItems.filter(item => {
+    if (isAdmin) return true;
+    // Employee: hide items marked employeeHidden unless granted
+    if (item.employeeHidden) return grantedPanels.has(item.id);
+    // Also hide adminOnly items not explicitly granted
+    if (item.adminOnly) return grantedPanels.has(item.id);
+    return true;
+  });
   const groups = [...new Set(visibleItems.map(i => i.group))];
 
   const refreshNotifications = notifications.refresh;

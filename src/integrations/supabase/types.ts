@@ -1326,6 +1326,45 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_panel_access: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          panel_key: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          panel_key: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          panel_key?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_panel_access_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_panel_access_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       glossary_terms: {
         Row: {
           active: boolean
