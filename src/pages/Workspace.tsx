@@ -53,7 +53,11 @@ const Workspace = () => {
     if (!searchQuery.trim()) { setSearchResults([]); setShowSearchResults(false); return; }
     setShowSearchResults(true);
     const timer = setTimeout(async () => {
-      const { data } = await supabase.from("profiles").select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems").ilike("name", `%${searchQuery}%`).limit(10);
+      const q = searchQuery.trim();
+      const { data } = await supabase.from("profiles")
+        .select("id, name, role, avatar_url, title, department, specialty, interests, bio, background_url, email, preferred_accounting_systems")
+        .or(`name.ilike.%${q}%,title.ilike.%${q}%,specialty.ilike.%${q}%,department.ilike.%${q}%,bio.ilike.%${q}%,interests.cs.{"${q}"},preferred_accounting_systems.cs.{"${q}"}`)
+        .limit(10);
       setSearchResults((data as Profile[]) || []);
     }, 300);
     return () => clearTimeout(timer);
