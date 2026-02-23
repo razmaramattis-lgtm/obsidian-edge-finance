@@ -1,77 +1,48 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Hash, Send, Plus, Trash2, Users, MessageSquare, Newspaper,
-  PanelLeftClose, PanelLeft, MessageCircle, Pin, Eye, EyeOff,
-  ArrowLeft, Image, Lock, Globe, Search, Bell, Settings, Sparkles,
-  Phone, Video, User, Heart, UserPlus, MapPin, Calendar, ThumbsUp, X, SmilePlus,
+  Newspaper, Users, MessageSquare, Video, User, UserPlus, Search,
+  PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
+  Globe, Lock, MapPin, Bell,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/components/workspace/UserAvatar";
-import ChatInput from "@/components/workspace/ChatInput";
-import MessageBubble from "@/components/workspace/MessageBubble";
-import PostReactions from "@/components/workspace/PostReactions";
-import EmojiPicker from "@/components/workspace/EmojiPicker";
-import GifPicker from "@/components/workspace/GifPicker";
+import FeedView from "@/components/workspace/FeedView";
+import GroupsView from "@/components/workspace/GroupsView";
+import DmsView from "@/components/workspace/DmsView";
+import FriendsView from "@/components/workspace/FriendsView";
+import FloatingChat from "@/components/workspace/FloatingChat";
 import VideoCall from "@/components/workspace/VideoCall";
-
-// ─── Types ───
-interface Profile { id: string; name: string; role: string; avatar_url?: string | null; email?: string }
-interface Channel { id: string; name: string; description: string; color: string }
-interface ChatMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
-interface Post { id: string; title?: string; content: string; pinned: boolean; created_at: string; author_id: string; image_url?: string | null; profiles?: Profile }
-interface PostComment { id: string; content: string; created_at: string; author_id: string; profiles?: Profile }
-interface Group { id: string; name: string; description?: string; color: string; is_private: boolean; created_by: string }
-interface GroupMsg { id: string; content: string; created_at: string; sender_id: string; profiles?: Profile }
-interface DmConv { id: string; participant_1: string; participant_2: string; other?: Profile }
-interface DmMsg { id: string; content: string; created_at: string; sender_id: string }
-
-type View = "feed" | "channels" | "groups" | "dms" | "conference" | "profile";
-
-// ─── Helpers ───
-const formatTime = (ts: string) => new Date(ts).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-const formatDate = (ts: string) => new Date(ts).toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
-const timeAgo = (ts: string) => {
-  const diff = Date.now() - new Date(ts).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "nå";
-  if (mins < 60) return `${mins} min`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}t`;
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d`;
-  return formatDate(ts);
-};
-
-const groupColors = [
-  "from-violet-600 to-purple-500",
-  "from-blue-600 to-cyan-500",
-  "from-emerald-600 to-teal-500",
-  "from-rose-600 to-pink-500",
-  "from-amber-600 to-orange-500",
-  "from-indigo-600 to-blue-500",
-  "from-fuchsia-600 to-pink-500",
-];
-
-const getGroupGradient = (color: string, name: string) => {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return groupColors[Math.abs(hash) % groupColors.length];
-};
+import PostReactions from "@/components/workspace/PostReactions";
+import type { Profile, Post, Group, View } from "@/components/workspace/types";
+import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
+import ReactMarkdown from "react-markdown";
 
 // ─── Main ───
 const Workspace = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, isCustomer } = useAuth();
   const navigate = useNavigate();
   const [view, setView] = useState<View>("feed");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [headerHidden, setHeaderHidden] = useState(false);
+  const [pendingFriendCount, setPendingFriendCount] = useState(0);
 
   useEffect(() => {
     if (!user) navigate("/admin/logg-inn");
   }, [user]);
+
+  // Fetch pending friend requests count
+  useEffect(() => {
+    if (!profile) return;
+    const fetchPending = async () => {
+      const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("receiver_id", profile.id).eq("status", "pending");
+      setPendingFriendCount(count || 0);
+    };
+    fetchPending();
+    const ch = supabase.channel("friend-badge").on("postgres_changes", { event: "*", schema: "public", table: "workspace_friends" }, () => fetchPending()).subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [profile?.id]);
 
   if (!user || !profile) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -82,36 +53,38 @@ const Workspace = () => {
     </div>
   );
 
-  const navItems = [
-    { id: "profile" as View, icon: User, label: "Profil", badge: null },
-    { id: "feed" as View, icon: Newspaper, label: "Feed", badge: null },
-    { id: "channels" as View, icon: Hash, label: "Kanaler", badge: null },
-    { id: "groups" as View, icon: Users, label: "Grupper", badge: null },
-    { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: null },
-    { id: "conference" as View, icon: Video, label: "Konferanse", badge: null },
-  ];
+  // Customer can only see: profile, feed (public groups), messages, friends
+  const navItems = isCustomer
+    ? [
+        { id: "profile" as View, icon: User, label: "Profil", badge: 0 },
+        { id: "groups" as View, icon: Users, label: "Grupper", badge: 0 },
+        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: 0 },
+        { id: "friends" as View, icon: UserPlus, label: "Venner", badge: pendingFriendCount },
+      ]
+    : [
+        { id: "profile" as View, icon: User, label: "Profil", badge: 0 },
+        { id: "feed" as View, icon: Newspaper, label: "Feed", badge: 0 },
+        { id: "groups" as View, icon: Users, label: "Grupper", badge: 0 },
+        { id: "dms" as View, icon: MessageSquare, label: "Meldinger", badge: 0 },
+        { id: "friends" as View, icon: UserPlus, label: "Venner", badge: pendingFriendCount },
+        { id: "conference" as View, icon: Video, label: "Konferanse", badge: 0 },
+      ];
 
   return (
     <div className={`flex flex-col ${headerHidden ? "h-screen" : "min-h-screen"}`}>
       {/* Header */}
       {!headerHidden && (
         <header className="h-14 border-b border-border/15 bg-card/80 backdrop-blur-xl flex items-center px-5 gap-4 shrink-0 z-30">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft size={18} />
-          </button>
+          <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft size={18} /></button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Sparkles size={16} className="text-white" />
-            </div>
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Sparkles size={16} className="text-white" /></div>
             <div>
               <h1 className="text-sm font-semibold leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Avargo Workspace</h1>
               <p className="text-[10px] text-muted-foreground leading-tight">Samhandling & kommunikasjon</p>
             </div>
           </div>
           <div className="flex-1" />
-          <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40">
-            <EyeOff size={15} />
-          </button>
+          <button onClick={() => setHeaderHidden(true)} className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-xl hover:bg-muted/40"><EyeOff size={15} /></button>
           <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
         </header>
       )}
@@ -125,39 +98,31 @@ const Workspace = () => {
               {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeft size={15} />}
             </button>
           </div>
-
           {headerHidden && (
             <button onClick={() => setHeaderHidden(false)} className="mx-2 mt-2 flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
-              <Eye size={13} />
-              {sidebarOpen && <span>Vis header</span>}
+              <Eye size={13} />{sidebarOpen && <span>Vis header</span>}
             </button>
           )}
-
           <nav className="flex-1 overflow-y-auto p-2 space-y-1">
             {navItems.map(item => (
-              <button
-                key={item.id}
-                onClick={() => setView(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                  view === item.id
-                    ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                }`}
-              >
+              <button key={item.id} onClick={() => setView(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${view === item.id ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
                 <item.icon size={17} strokeWidth={view === item.id ? 2 : 1.5} />
-                {sidebarOpen && <span className={view === item.id ? "font-medium" : "font-light"}>{item.label}</span>}
+                {sidebarOpen && (
+                  <span className={`flex-1 text-left ${view === item.id ? "font-medium" : "font-light"}`}>{item.label}</span>
+                )}
+                {sidebarOpen && item.badge > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-destructive text-white text-[9px] font-bold min-w-[16px] text-center">{item.badge}</span>
+                )}
               </button>
             ))}
           </nav>
-
-          {/* Profile card */}
           <div className="p-3 border-t border-border/10">
             <div className={`flex items-center gap-2.5 ${sidebarOpen ? "" : "justify-center"}`}>
               <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="sm" online />
               {sidebarOpen && (
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">{profile.name}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{profile.role === "admin" ? "Administrator" : profile.role === "employee" ? "Ansatt" : "Kunde"}</p>
+                  <p className="text-[10px] text-muted-foreground capitalize">{roleLabel(profile.role)}</p>
                 </div>
               )}
             </div>
@@ -168,85 +133,54 @@ const Workspace = () => {
         <main className="flex-1 overflow-hidden bg-background">
           {view === "profile" && <ProfileView profile={profile} onNavigate={setView} />}
           {view === "feed" && <FeedView profile={profile} />}
-          {view === "channels" && <ChannelsView profile={profile} />}
           {view === "groups" && <GroupsView profile={profile} />}
           {view === "dms" && <DmsView profile={profile} />}
+          {view === "friends" && <FriendsView profile={profile} />}
           {view === "conference" && <ConferenceView profile={profile} />}
         </main>
       </div>
+
+      {/* Floating chat widget */}
+      <FloatingChat profile={profile} />
     </div>
   );
 };
 
-// ─── Profile View (Facebook/Workchat-style) ───
+// ─── Profile View ───
 const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v: View) => void }) => {
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [myGroupIds, setMyGroupIds] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"feed" | "groups" | "about">("feed");
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
-  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [friendCount, setFriendCount] = useState(0);
 
   useEffect(() => {
-    // Fetch user's posts
     (async () => {
-      const { data } = await supabase
-        .from("workspace_posts")
-        .select("*, profiles(id, name, role, avatar_url)")
-        .eq("author_id", profile.id)
-        .order("created_at", { ascending: false })
-        .limit(30);
+      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
       setMyPosts((data as any[]) || []);
     })();
-    // Fetch all groups and membership
     (async () => {
       const { data: gs } = await supabase.from("workspace_groups").select("*").order("created_at");
       setAllGroups((gs as Group[]) || []);
       const { data: memberships } = await supabase.from("workspace_group_members").select("group_id").eq("profile_id", profile.id);
       setMyGroupIds((memberships || []).map((m: any) => m.group_id));
     })();
-    // Fetch colleagues
     (async () => {
       const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name").limit(20);
       setAllProfiles((data as Profile[]) || []);
     })();
-
-    // Realtime for posts
-    const ch = supabase.channel("profile-posts").on("postgres_changes", { event: "*", schema: "public", table: "workspace_posts", filter: `author_id=eq.${profile.id}` }, async () => {
-      const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
-      setMyPosts((data as any[]) || []);
-    }).subscribe();
-    return () => { supabase.removeChannel(ch); };
+    (async () => {
+      const { count } = await supabase.from("workspace_friends").select("*", { count: "exact", head: true }).eq("status", "accepted").or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
+      setFriendCount(count || 0);
+    })();
   }, [profile.id]);
-
-  const joinGroup = async (groupId: string) => {
-    await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]);
-    setMyGroupIds(prev => [...prev, groupId]);
-  };
-
-  const leaveGroup = async (groupId: string) => {
-    await supabase.from("workspace_group_members").delete().match({ group_id: groupId, profile_id: profile.id });
-    setMyGroupIds(prev => prev.filter(id => id !== groupId));
-  };
-
-  const filteredGroups = allGroups.filter(g =>
-    g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (g.description || "").toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const myGroups = filteredGroups.filter(g => myGroupIds.includes(g.id));
-  const discoverGroups = filteredGroups.filter(g => !myGroupIds.includes(g.id));
-
-  const roleLabel = (r: string) => r === "admin" ? "Administrator" : r === "employee" ? "Ansatt" : "Kunde";
 
   return (
     <div className="h-full overflow-y-auto">
-      {/* Cover / Profile Header */}
       <div className="relative">
         <div className="h-48 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/10" />
         <div className="max-w-3xl mx-auto px-6 relative">
-          {/* Avatar overlapping cover */}
           <div className="absolute -top-16">
             <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden shadow-xl bg-card">
               <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="lg" />
@@ -260,42 +194,18 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
                 {profile.email && <span className="flex items-center gap-1"><MapPin size={12} /> {profile.email}</span>}
               </div>
             </div>
-            <button
-              onClick={() => onNavigate("dms")}
-              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
-            >
+            <button onClick={() => onNavigate("dms")} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
               <MessageSquare size={16} /> Melding
             </button>
           </div>
-
-          {/* Stats row */}
           <div className="flex items-center gap-8 pb-4 border-b border-border/15">
-            <button className="text-center group" onClick={() => setActiveTab("feed")}>
-              <p className="text-lg font-bold">{myPosts.length}</p>
-              <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Innlegg</p>
-            </button>
-            <button className="text-center group" onClick={() => setActiveTab("groups")}>
-              <p className="text-lg font-bold">{myGroupIds.length}</p>
-              <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Grupper</p>
-            </button>
-            <div className="text-center">
-              <p className="text-lg font-bold">{allProfiles.length}</p>
-              <p className="text-xs text-muted-foreground">Kollegaer</p>
-            </div>
+            <button className="text-center group" onClick={() => setActiveTab("feed")}><p className="text-lg font-bold">{myPosts.length}</p><p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Innlegg</p></button>
+            <button className="text-center group" onClick={() => setActiveTab("groups")}><p className="text-lg font-bold">{myGroupIds.length}</p><p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Grupper</p></button>
+            <button className="text-center group" onClick={() => onNavigate("friends")}><p className="text-lg font-bold">{friendCount}</p><p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Venner</p></button>
           </div>
-
-          {/* Tabs */}
           <div className="flex gap-1 mt-2">
             {(["feed", "groups", "about"] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === tab
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
-                }`}
-              >
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === tab ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"}`}>
                 {tab === "feed" ? "Innlegg" : tab === "groups" ? "Grupper" : "Om meg"}
               </button>
             ))}
@@ -303,162 +213,42 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
         </div>
       </div>
 
-      {/* Tab Content */}
       <div className="max-w-3xl mx-auto px-6 py-6">
         {activeTab === "feed" && (
-          <div className="grid grid-cols-1 gap-5">
-            {/* Quick post */}
-            <QuickPost profile={profile} onPosted={async () => {
-              const { data } = await supabase.from("workspace_posts").select("*, profiles(id, name, role, avatar_url)").eq("author_id", profile.id).order("created_at", { ascending: false }).limit(30);
-              setMyPosts((data as any[]) || []);
-            }} />
-
-            {myPosts.length === 0 && (
-              <div className="text-center py-12">
-                <Newspaper size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground text-sm">Du har ingen innlegg ennå</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">Del noe med kollegaene dine!</p>
-              </div>
-            )}
-
+          <div className="space-y-5">
             {myPosts.map(post => {
               const ap = post.profiles as any;
               return (
-                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 hover:border-border/25 transition-all hover:shadow-md overflow-hidden">
+                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
                   <div className="flex items-start gap-3 p-5 pb-0">
                     <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
-                    <div className="flex-1">
-                      <span className="text-sm font-semibold">{ap?.name}</span>
-                      <p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p>
-                    </div>
+                    <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
                   </div>
-                  {post.content && (
-                    <div className="px-5 pt-3 pb-2 text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
-                      <ReactMarkdown>{post.content}</ReactMarkdown>
-                    </div>
-                  )}
-                  {(post as any).image_url && (
-                    <div className="px-5 pb-3">
-                      <img src={(post as any).image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
-                    </div>
-                  )}
-                  <div className="px-5 pb-3">
-                    <PostReactions postId={post.id} profileId={profile.id} />
-                  </div>
-                  <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
-                    <button
-                      onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
-                    >
-                      <MessageCircle size={15} /> Kommenter
-                    </button>
-                  </div>
-                  {expandedPost === post.id && (
-                    <PostComments postId={post.id} profileId={profile.id} profileData={profile} />
-                  )}
+                  {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
+                  {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
+                  <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={profile.id} /></div>
                 </article>
               );
             })}
+            {myPosts.length === 0 && <div className="text-center py-12"><p className="text-muted-foreground text-sm">Ingen innlegg ennå</p></div>}
           </div>
         )}
 
         {activeTab === "groups" && (
-          <div className="space-y-6">
-            {/* Search groups */}
-            <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 border border-border/15">
-              <Search size={14} className="text-muted-foreground" />
-              <input
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Søk etter grupper…"
-                className="h-11 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40"
-              />
-            </div>
-
-            {/* My groups */}
-            {myGroups.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <Users size={14} className="text-primary" /> Mine grupper
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {myGroups.map(g => {
-                    const grad = getGroupGradient(g.color, g.name);
-                    return (
-                      <div key={g.id} className="rounded-2xl border border-border/15 bg-card/60 overflow-hidden hover:shadow-md transition-all group">
-                        <div className={`h-16 bg-gradient-to-r ${grad} relative`}>
-                          <div className="absolute inset-0 bg-black/10" />
-                        </div>
-                        <div className="p-4 -mt-5 relative">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-background`}>
-                            {g.name.charAt(0)}
-                          </div>
-                          <h4 className="text-sm font-semibold mt-2">{g.name}</h4>
-                          {g.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{g.description}</p>}
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                              {g.is_private ? <Lock size={9} /> : <Globe size={9} />} {g.is_private ? "Privat" : "Offentlig"}
-                            </span>
-                            <div className="flex-1" />
-                            <button
-                              onClick={() => onNavigate("groups")}
-                              className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold hover:bg-primary/20 transition-all"
-                            >
-                              Åpne
-                            </button>
-                            <button
-                              onClick={() => leaveGroup(g.id)}
-                              className="px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive text-[10px] font-semibold hover:bg-destructive/20 transition-all"
-                            >
-                              Forlat
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Discover groups */}
-            {discoverGroups.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <Sparkles size={14} className="text-accent" /> Oppdag grupper
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {discoverGroups.map(g => {
-                    const grad = getGroupGradient(g.color, g.name);
-                    return (
-                      <div key={g.id} className="rounded-2xl border border-border/15 bg-card/60 overflow-hidden hover:shadow-md transition-all">
-                        <div className={`h-12 bg-gradient-to-r ${grad} opacity-70`} />
-                        <div className="p-4 -mt-3 relative">
-                          <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-xs shadow-lg border-2 border-background`}>
-                            {g.name.charAt(0)}
-                          </div>
-                          <h4 className="text-sm font-semibold mt-2">{g.name}</h4>
-                          {g.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{g.description}</p>}
-                          <button
-                            onClick={() => joinGroup(g.id)}
-                            className="mt-3 w-full py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5"
-                          >
-                            <UserPlus size={13} /> Bli med
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {filteredGroups.length === 0 && (
-              <div className="text-center py-12">
-                <Users size={32} className="text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground text-sm">Ingen grupper funnet</p>
-              </div>
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {allGroups.filter(g => myGroupIds.includes(g.id)).map(g => {
+              const grad = getGroupGradient(g.color, g.name);
+              return (
+                <button key={g.id} onClick={() => onNavigate("groups")} className="text-left rounded-2xl border border-border/15 bg-card/60 overflow-hidden hover:shadow-md transition-all">
+                  <div className={`h-20 bg-gradient-to-br ${grad} relative`}><div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" /></div>
+                  <div className="p-4 -mt-5 relative">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-background`}>{g.name.charAt(0)}</div>
+                    <h4 className="text-sm font-semibold mt-2">{g.name}</h4>
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">{g.is_private ? <Lock size={9} /> : <Globe size={9} />} {g.is_private ? "Privat" : "Offentlig"}</span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -467,36 +257,9 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
             <div className="rounded-2xl border border-border/15 bg-card/60 p-6 space-y-4">
               <h3 className="text-sm font-semibold flex items-center gap-2"><User size={14} className="text-primary" /> Profilinformasjon</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Navn</p>
-                  <p className="text-sm font-medium">{profile.name}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Rolle</p>
-                  <p className="text-sm font-medium">{roleLabel(profile.role)}</p>
-                </div>
-                {profile.email && (
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">E-post</p>
-                    <p className="text-sm font-medium">{profile.email}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Colleagues */}
-            <div className="rounded-2xl border border-border/15 bg-card/60 p-6">
-              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2"><Users size={14} className="text-primary" /> Kollegaer</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {allProfiles.slice(0, 9).map(p => (
-                  <div key={p.id} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-all">
-                    <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" />
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium truncate">{p.name}</p>
-                      <p className="text-[10px] text-muted-foreground capitalize">{roleLabel(p.role)}</p>
-                    </div>
-                  </div>
-                ))}
+                <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Navn</p><p className="text-sm font-medium">{profile.name}</p></div>
+                <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Rolle</p><p className="text-sm font-medium">{roleLabel(profile.role)}</p></div>
+                {profile.email && <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">E-post</p><p className="text-sm font-medium">{profile.email}</p></div>}
               </div>
             </div>
           </div>
@@ -506,855 +269,7 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
   );
 };
 
-// ─── Quick Post (used inside Profile) ───
-const QuickPost = ({ profile, onPosted }: { profile: Profile; onPosted: () => void }) => {
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const imgRef = useRef<HTMLInputElement>(null);
-
-  const uploadImage = async (file: File): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
-    const path = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
-    if (error) return null;
-    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
-    return data.publicUrl;
-  };
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() && !imageFile) return;
-    setSending(true);
-    let image_url: string | null = null;
-    if (imageFile) image_url = await uploadImage(imageFile);
-    await supabase.from("workspace_posts").insert([{
-      author_id: profile.id,
-      content: text.trim(),
-      ...(image_url ? { image_url } : {}),
-    }]);
-    setText("");
-    setImageFile(null);
-    setImagePreview(null);
-    setSending(false);
-    onPosted();
-  };
-
-  const submitGif = async (url: string) => {
-    await supabase.from("workspace_posts").insert([{ author_id: profile.id, content: "", image_url: url }]);
-    onPosted();
-  };
-
-  const handleImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setImageFile(f);
-    setImagePreview(URL.createObjectURL(f));
-  };
-
-  return (
-    <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
-      <form onSubmit={submit} className="flex items-start gap-3 p-4">
-        <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" />
-        <div className="flex-1">
-          <textarea
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
-            rows={2}
-            className="w-full resize-none bg-muted/30 rounded-xl px-4 py-3 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/40 border border-border/15"
-          />
-          {imagePreview && (
-            <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-48">
-              <img src={imagePreview} alt="preview" className="w-full max-h-48 object-cover" />
-              <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"><X size={12} /></button>
-            </div>
-          )}
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex gap-1">
-              <EmojiPicker onSelect={e => setText(prev => prev + e)} />
-              <GifPicker onSelect={submitGif} />
-              <input ref={imgRef} type="file" accept="image/*" className="hidden" onChange={handleImg} />
-              <button type="button" onClick={() => imgRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"><Image size={16} /></button>
-            </div>
-            <button
-              type="submit"
-              disabled={(!text.trim() && !imageFile) || sending}
-              className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
-            >
-              Publiser
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-// ─── Feed View ───
-const FeedView = ({ profile }: { profile: Profile }) => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [newPost, setNewPost] = useState("");
-  const [expandedPost, setExpandedPost] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const fetchPosts = async () => {
-    const { data } = await supabase
-      .from("workspace_posts")
-      .select("*, profiles(id, name, role, avatar_url)")
-      .order("pinned", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setPosts((data as any[]) || []);
-  };
-
-  useEffect(() => {
-    fetchPosts();
-    const ch = supabase.channel("ws-posts").on("postgres_changes", { event: "*", schema: "public", table: "workspace_posts" }, () => fetchPosts()).subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, []);
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  };
-
-  const uploadImage = async (file: File): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
-    const path = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
-    if (error) return null;
-    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
-    return data.publicUrl;
-  };
-
-  const submitPost = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPost.trim() && !imageFile) return;
-    setSending(true);
-    let image_url: string | null = null;
-    if (imageFile) image_url = await uploadImage(imageFile);
-    await supabase.from("workspace_posts").insert([{
-      author_id: profile.id,
-      content: newPost.trim(),
-      ...(image_url ? { image_url } : {}),
-    }]);
-    setNewPost("");
-    setImageFile(null);
-    setImagePreview(null);
-    setSending(false);
-  };
-
-  const submitGif = async (url: string) => {
-    await supabase.from("workspace_posts").insert([{
-      author_id: profile.id,
-      content: "",
-      image_url: url,
-    }]);
-  };
-
-  const togglePin = async (post: Post) => {
-    await supabase.from("workspace_posts").update({ pinned: !post.pinned }).eq("id", post.id);
-  };
-
-  const deletePost = async (id: string) => {
-    if (!confirm("Slett innlegget?")) return;
-    await supabase.from("workspace_posts").delete().eq("id", id);
-  };
-
-  return (
-    <div className="h-full flex flex-col">
-      <div className="px-6 py-5 border-b border-border/10 bg-card/20">
-        <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Feed</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">Kunngjøringer, oppdateringer og alt som skjer</p>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-2xl mx-auto p-6 space-y-5">
-          {/* Composer */}
-          <div className="rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-sm">
-            <div className="flex items-start gap-3 p-4">
-              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
-              <form onSubmit={submitPost} className="flex-1">
-                <textarea
-                  value={newPost}
-                  onChange={e => setNewPost(e.target.value)}
-                  placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
-                  rows={3}
-                  className="w-full resize-none bg-transparent text-sm leading-relaxed focus:outline-none placeholder:text-muted-foreground/40"
-                />
-                {/* Image preview */}
-                {imagePreview && (
-                  <div className="relative mt-2 rounded-xl overflow-hidden border border-border/20 max-h-64">
-                    <img src={imagePreview} alt="preview" className="w-full max-h-64 object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => { setImageFile(null); setImagePreview(null); }}
-                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                )}
-                <div className="flex items-center justify-between pt-2 border-t border-border/10 mt-2">
-                  <div className="flex gap-1">
-                    <EmojiPicker onSelect={(e) => setNewPost(prev => prev + e)} />
-                    <GifPicker onSelect={submitGif} />
-                    <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
-                    <button type="button" onClick={() => imageInputRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
-                      <Image size={18} />
-                    </button>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={(!newPost.trim() && !imageFile) || sending}
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
-                  >
-                    Publiser
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* Posts */}
-          {posts.map(post => {
-            const authorProfile = post.profiles as any;
-            return (
-              <article
-                key={post.id}
-                className={`rounded-2xl border overflow-hidden transition-all hover:shadow-md ${
-                  post.pinned
-                    ? "border-primary/25 bg-gradient-to-br from-primary/5 to-transparent shadow-sm"
-                    : "border-border/15 bg-card/50 hover:border-border/25"
-                }`}
-              >
-                {/* Author header */}
-                <div className="flex items-start gap-3 p-5 pb-0">
-                  <UserAvatar name={authorProfile?.name} avatarUrl={authorProfile?.avatar_url} size="md" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold">{authorProfile?.name || "Ukjent"}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground capitalize">
-                        {authorProfile?.role === "admin" ? "Admin" : authorProfile?.role === "employee" ? "Ansatt" : "Kunde"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)}</span>
-                      {post.pinned && (
-                        <span className="flex items-center gap-1 text-[10px] text-primary">
-                          <Pin size={9} /> Festet
-                        </span>
-                      )}
-                      <span className="text-[11px] text-muted-foreground">· <Globe size={9} className="inline" /> Alle</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-5 pt-3 pb-2">
-                  {post.content && (
-                    <div className="text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none">
-                      <ReactMarkdown>{post.content}</ReactMarkdown>
-                    </div>
-                  )}
-                </div>
-
-                {/* Image / GIF */}
-                {(post as any).image_url && (
-                  <div className="px-5 pb-3">
-                    <img
-                      src={(post as any).image_url}
-                      alt="Post media"
-                      className="w-full max-h-96 object-cover rounded-xl border border-border/10"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-
-                {/* Reactions */}
-                <div className="px-5 pb-3">
-                  <PostReactions postId={post.id} profileId={profile.id} />
-                </div>
-
-                {/* Action bar */}
-                <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
-                  <button
-                    onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
-                  >
-                    <MessageCircle size={15} /> Kommenter
-                  </button>
-                  {(post.author_id === profile.id || profile.role === "admin") && (
-                    <>
-                      <button onClick={() => togglePin(post)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
-                        <Pin size={15} /> {post.pinned ? "Løsne" : "Fest"}
-                      </button>
-                      <button onClick={() => deletePost(post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
-                        <Trash2 size={15} /> Slett
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                {/* Comments */}
-                {expandedPost === post.id && (
-                  <PostComments postId={post.id} profileId={profile.id} profileData={profile} />
-                )}
-              </article>
-            );
-          })}
-          {posts.length === 0 && (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
-                <Newspaper size={28} className="text-muted-foreground/40" />
-              </div>
-              <p className="text-muted-foreground text-sm">Ingen innlegg ennå</p>
-              <p className="text-muted-foreground/60 text-xs mt-1">Vær den første til å dele noe!</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ─── Comment Reactions (emoji-based like PostReactions) ───
-const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];
-
-const CommentReactions = ({ commentId, profileId }: { commentId: string; profileId: string }) => {
-  const [reactions, setReactions] = useState<{ emoji: string; count: number; mine: boolean }[]>([]);
-  const [showPicker, setShowPicker] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setShowPicker(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const fetchReactions = async () => {
-    const { data } = await supabase.from("workspace_comment_likes").select("emoji, profile_id").eq("comment_id", commentId);
-    const map: Record<string, { count: number; mine: boolean }> = {};
-    (data || []).forEach((r: any) => {
-      if (!map[r.emoji]) map[r.emoji] = { count: 0, mine: false };
-      map[r.emoji].count++;
-      if (r.profile_id === profileId) map[r.emoji].mine = true;
-    });
-    setReactions(Object.entries(map).map(([emoji, d]) => ({ emoji, ...d })).sort((a, b) => b.count - a.count));
-  };
-
-  useEffect(() => { fetchReactions(); }, [commentId]);
-
-  const toggle = async (emoji: string) => {
-    const existing = reactions.find(r => r.emoji === emoji);
-    if (existing?.mine) {
-      await supabase.from("workspace_comment_likes").delete().match({ comment_id: commentId, profile_id: profileId, emoji });
-    } else {
-      await supabase.from("workspace_comment_likes").insert([{ comment_id: commentId, profile_id: profileId, emoji }]);
-    }
-    fetchReactions();
-    setShowPicker(false);
-  };
-
-  return (
-    <div ref={ref} className="flex items-center gap-1 flex-wrap">
-      {reactions.map(r => (
-        <button
-          key={r.emoji}
-          onClick={() => toggle(r.emoji)}
-          className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium transition-all hover:scale-105 active:scale-95 ${
-            r.mine ? "bg-primary/15 text-primary ring-1 ring-primary/30" : "bg-muted/40 text-foreground hover:bg-muted/60"
-          }`}
-        >
-          <span className="text-xs">{r.emoji}</span>
-          <span>{r.count}</span>
-        </button>
-      ))}
-      <div className="relative">
-        <button
-          onClick={() => setShowPicker(!showPicker)}
-          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
-        >
-          <SmilePlus size={12} />
-        </button>
-        {showPicker && (
-          <div className="absolute bottom-7 left-0 bg-card border border-border/30 rounded-xl shadow-2xl shadow-black/40 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex gap-0.5">
-              {COMMENT_EMOJIS.map(emoji => (
-                <button
-                  key={emoji}
-                  onClick={() => toggle(emoji)}
-                  className="w-7 h-7 flex items-center justify-center text-sm rounded-lg hover:bg-muted/60 hover:scale-125 transition-all"
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// ─── Post Comments ───
-const PostComments = ({ postId, profileId, profileData }: { postId: string; profileId: string; profileData: Profile }) => {
-  const [comments, setComments] = useState<PostComment[]>([]);
-  const [text, setText] = useState("");
-
-  const fetchComments = async () => {
-    const { data } = await supabase.from("workspace_post_comments").select("*, profiles(id, name, role, avatar_url)").eq("post_id", postId).order("created_at");
-    setComments((data as any[]) || []);
-  };
-
-  useEffect(() => { fetchComments(); }, [postId]);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim()) return;
-    await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: text.trim() }]);
-    setText("");
-    fetchComments();
-  };
-
-  const submitGif = async (url: string) => {
-    await supabase.from("workspace_post_comments").insert([{ post_id: postId, author_id: profileId, content: `![gif](${url})` }]);
-    fetchComments();
-  };
-
-  const deleteComment = async (id: string) => {
-    await supabase.from("workspace_post_comments").delete().eq("id", id);
-    fetchComments();
-  };
-
-  const isGif = (content: string) => /^!\[gif\]\((.+)\)$/.test(content);
-  const gifUrl = (content: string) => content.match(/^!\[gif\]\((.+)\)$/)?.[1] || "";
-
-  return (
-    <div className="border-t border-border/10 bg-muted/10">
-      <div className="px-5 py-3 space-y-3 max-h-64 overflow-y-auto">
-        {comments.map(c => {
-          const cp = c.profiles as any;
-          const isOwn = c.author_id === profileId;
-          return (
-            <div key={c.id} className="flex gap-2.5 group/comment">
-              <UserAvatar name={cp?.name} avatarUrl={cp?.avatar_url} size="xs" />
-              <div className="flex-1">
-                <div className="bg-muted/40 rounded-2xl rounded-tl-md px-3 py-2 relative">
-                  <span className="text-[11px] font-semibold">{cp?.name || "Ukjent"}</span>
-                  {isGif(c.content) ? (
-                    <img src={gifUrl(c.content)} alt="GIF" className="mt-1 max-h-40 rounded-lg" loading="lazy" />
-                  ) : (
-                    <p className="text-xs text-foreground/80 mt-0.5">{c.content}</p>
-                  )}
-                  {isOwn && (
-                    <button
-                      onClick={() => deleteComment(c.id)}
-                      className="absolute top-1 right-1 opacity-0 group-hover/comment:opacity-100 p-1 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
-                    >
-                      <Trash2 size={10} />
-                    </button>
-                  )}
-                </div>
-                <div className="flex items-center gap-3 ml-2 mt-0.5">
-                  <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
-                  <CommentReactions commentId={c.id} profileId={profileId} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <form onSubmit={submit} className="flex items-center gap-2.5 px-5 py-3 border-t border-border/10">
-        <UserAvatar name={profileData.name} avatarUrl={profileData.avatar_url} size="xs" />
-        <div className="flex-1 flex items-center bg-muted/30 rounded-2xl border border-border/15 pr-1 gap-0.5">
-          <input
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder="Skriv en kommentar…"
-            className="flex-1 h-9 bg-transparent px-3 text-xs focus:outline-none placeholder:text-muted-foreground/40"
-          />
-          <EmojiPicker onSelect={e => setText(prev => prev + e)} />
-          <GifPicker onSelect={submitGif} />
-          <button type="submit" disabled={!text.trim()} className="h-7 px-3 rounded-xl bg-primary/10 text-primary text-[10px] font-semibold disabled:opacity-30 transition-all">
-            Send
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-// ─── Channels View ───
-const ChannelsView = ({ profile }: { profile: Profile }) => {
-  const [categories, setCategories] = useState<Channel[]>([]);
-  const [active, setActive] = useState<Channel | null>(null);
-  const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const [showNew, setShowNew] = useState(false);
-  const [catForm, setCatForm] = useState({ name: "", description: "", color: "#6366f1" });
-  const endRef = useRef<HTMLDivElement>(null);
-  const { isAdmin } = useAuth();
-
-  const fetchCats = async () => {
-    const { data } = await supabase.from("chat_categories").select("*").order("sort_order").order("created_at");
-    const cats = (data as Channel[]) || [];
-    setCategories(cats);
-    if (cats.length > 0 && !active) setActive(cats[0]);
-  };
-
-  const fetchMsgs = async (id: string) => {
-    const { data } = await supabase.from("chat_messages").select("*, profiles(id, name, role, avatar_url)").eq("category_id", id).order("created_at");
-    setMessages((data as ChatMsg[]) || []);
-    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-  };
-
-  useEffect(() => { fetchCats(); }, []);
-  useEffect(() => {
-    if (!active) return;
-    fetchMsgs(active.id);
-    const ch = supabase.channel(`ws-chat-${active.id}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `category_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [active?.id]);
-
-  const send = async (content: string) => {
-    if (!active) return;
-    await supabase.from("chat_messages").insert([{ category_id: active.id, sender_id: profile.id, content }]);
-  };
-
-  const addCat = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await supabase.from("chat_categories").insert([catForm]);
-    setCatForm({ name: "", description: "", color: "#6366f1" });
-    setShowNew(false);
-    fetchCats();
-  };
-
-  const delCat = async (id: string) => {
-    if (!confirm("Slett kanal og alle meldinger?")) return;
-    await supabase.from("chat_categories").delete().eq("id", id);
-    setActive(null);
-    fetchCats();
-  };
-
-  return (
-    <div className="h-full flex">
-      {/* Channel list */}
-      <div className="w-52 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
-        <div className="p-3 border-b border-border/10 flex items-center justify-between">
-          <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 font-medium">Kanaler</span>
-          {isAdmin && <button onClick={() => setShowNew(!showNew)} className="text-muted-foreground hover:text-primary transition-colors"><Plus size={14} /></button>}
-        </div>
-        {showNew && isAdmin && (
-          <form onSubmit={addCat} className="p-3 border-b border-border/10 space-y-2">
-            <input value={catForm.name} onChange={e => setCatForm({ ...catForm, name: e.target.value })} placeholder="Kanalnavn" required className="w-full h-8 rounded-xl border border-border/20 bg-muted/20 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20" />
-            <div className="flex gap-2">
-              <input type="color" value={catForm.color} onChange={e => setCatForm({ ...catForm, color: e.target.value })} className="h-8 w-8 rounded-lg border-0 bg-transparent cursor-pointer" />
-              <button type="submit" className="flex-1 h-8 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl text-xs font-medium">Opprett</button>
-            </div>
-          </form>
-        )}
-        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {categories.map(cat => (
-            <div key={cat.id} className="group flex items-center">
-              <button onClick={() => setActive(cat)} className={`flex-1 flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all ${active?.id === cat.id ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}>
-                <div className="w-5 h-5 rounded-lg flex items-center justify-center" style={{ backgroundColor: cat.color + "20" }}>
-                  <Hash size={11} style={{ color: cat.color }} />
-                </div>
-                <span className="truncate">{cat.name}</span>
-              </button>
-              {isAdmin && <button onClick={() => delCat(cat.id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive p-1 transition-all"><Trash2 size={11} /></button>}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Chat area */}
-      {active ? (
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: active.color + "20" }}>
-              <Hash size={15} style={{ color: active.color }} />
-            </div>
-            <div>
-              <span className="font-semibold text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
-              {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto p-5 space-y-1">
-            {messages.map((msg, i) => {
-              const isOwn = msg.sender_id === profile.id;
-              const mp = msg.profiles as any;
-              const showDateSep = i === 0 || formatDate(msg.created_at) !== formatDate(messages[i - 1].created_at);
-              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
-              const deleteMsg = async () => {
-                if (!confirm("Slett denne meldingen?")) return;
-                await supabase.from("chat_messages").delete().eq("id", msg.id);
-                if (active) fetchMsgs(active.id);
-              };
-              return (
-                <div key={msg.id} className="group/msg relative">
-                  {showDateSep && (
-                    <div className="flex items-center gap-3 my-5">
-                      <div className="flex-1 h-px bg-border/15" />
-                      <span className="text-[10px] text-muted-foreground bg-background px-3 py-1 rounded-full border border-border/15">{formatDate(msg.created_at)}</span>
-                      <div className="flex-1 h-px bg-border/15" />
-                    </div>
-                  )}
-                  <div className="relative">
-                    <MessageBubble
-                      content={msg.content}
-                      senderName={mp?.name}
-                      senderAvatar={mp?.avatar_url}
-                      time={formatTime(msg.created_at)}
-                      isOwn={isOwn}
-                      showAvatar={showAv}
-                    />
-                    {(isOwn || isAdmin) && (
-                      <button
-                        onClick={deleteMsg}
-                        className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
-                        title="Slett melding"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-            <div ref={endRef} />
-          </div>
-          <ChatInput placeholder={`Skriv i #${active.name}…`} onSend={send} />
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Hash size={32} className="text-muted-foreground/20 mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">Velg en kanal for å starte</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ─── Groups View ───
-const GroupsView = ({ profile }: { profile: Profile }) => {
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [active, setActive] = useState<Group | null>(null);
-  const [messages, setMessages] = useState<GroupMsg[]>([]);
-  const [showNew, setShowNew] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "", color: "#6366f1", is_private: false });
-  const [conferenceActive, setConferenceActive] = useState(false);
-  const [groupMembers, setGroupMembers] = useState<Array<{ id: string; name: string; avatar_url?: string | null }>>([]);
-  const [memberCount, setMemberCount] = useState<Record<string, number>>({});
-  const endRef = useRef<HTMLDivElement>(null);
-
-  const fetchGroups = async () => {
-    const { data } = await supabase.from("workspace_groups").select("*").order("created_at");
-    const gs = (data as Group[]) || [];
-    setGroups(gs);
-    // Fetch member counts
-    const counts: Record<string, number> = {};
-    for (const g of gs) {
-      const { count } = await supabase.from("workspace_group_members").select("*", { count: "exact", head: true }).eq("group_id", g.id);
-      counts[g.id] = count || 0;
-    }
-    setMemberCount(counts);
-  };
-
-  const fetchMsgs = async (id: string) => {
-    const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role, avatar_url)").eq("group_id", id).order("created_at");
-    setMessages((data as GroupMsg[]) || []);
-    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-  };
-
-  useEffect(() => { fetchGroups(); }, []);
-  useEffect(() => {
-    if (!active) return;
-    fetchMsgs(active.id);
-    // Fetch group members for conference
-    (async () => {
-      const { data } = await supabase
-        .from("workspace_group_members")
-        .select("profile_id, profiles(id, name, avatar_url)")
-        .eq("group_id", active.id);
-      setGroupMembers((data || []).map((d: any) => ({
-        id: d.profiles?.id,
-        name: d.profiles?.name,
-        avatar_url: d.profiles?.avatar_url,
-      })).filter((m: any) => m.id));
-    })();
-    const ch = supabase.channel(`ws-grp-${active.id}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "workspace_group_messages", filter: `group_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [active?.id]);
-
-  const createGroup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { data } = await supabase.from("workspace_groups").insert([{ ...form, created_by: profile.id }]).select().single();
-    if (data) {
-      await supabase.from("workspace_group_members").insert([{ group_id: data.id, profile_id: profile.id }]);
-    }
-    setForm({ name: "", description: "", color: "#6366f1", is_private: false });
-    setShowNew(false);
-    fetchGroups();
-  };
-
-  const send = async (content: string) => {
-    if (!active) return;
-    await supabase.from("workspace_group_messages").insert([{ group_id: active.id, sender_id: profile.id, content }]);
-  };
-
-  const joinGroup = async (groupId: string) => {
-    try { await supabase.from("workspace_group_members").insert([{ group_id: groupId, profile_id: profile.id }]); } catch {}
-  };
-
-  return (
-    <div className="h-full flex flex-col">
-      {!active ? (
-        /* Groups grid */
-        <>
-          <div className="px-6 py-5 border-b border-border/10 bg-card/20 flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Grupper</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Teams og spesialiserte grupper</p>
-            </div>
-            <button onClick={() => setShowNew(!showNew)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
-              <Plus size={14} /> Ny gruppe
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-6">
-            {showNew && (
-              <form onSubmit={createGroup} className="max-w-md mx-auto mb-8 rounded-2xl border border-border/20 bg-card/60 p-5 space-y-3">
-                <h3 className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Opprett ny gruppe</h3>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Gruppenavn" required className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
-                <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Beskrivelse (valgfritt)" className="w-full h-10 rounded-xl border border-border/20 bg-muted/20 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/20" />
-                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                  <input type="checkbox" checked={form.is_private} onChange={e => setForm({ ...form, is_private: e.target.checked })} className="rounded" />
-                  <Lock size={13} /> Privat gruppe
-                </label>
-                <button type="submit" className="w-full h-10 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl text-sm font-semibold">Opprett</button>
-              </form>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {groups.map(g => {
-                const gradient = getGroupGradient(g.color, g.name);
-                return (
-                  <button
-                    key={g.id}
-                    onClick={() => { setActive(g); joinGroup(g.id); }}
-                    className="group text-left rounded-2xl border border-border/15 bg-card/50 overflow-hidden hover:border-border/30 hover:shadow-lg transition-all"
-                  >
-                    {/* Cover */}
-                    <div className={`h-20 bg-gradient-to-br ${gradient} relative`}>
-                      <div className="absolute inset-0 bg-black/10" />
-                      <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-[10px]">
-                        <Users size={10} /> {memberCount[g.id] || 0}
-                      </div>
-                      {g.is_private && (
-                        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-[10px] flex items-center gap-1">
-                          <Lock size={9} /> Privat
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">{g.name}</h3>
-                      {g.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{g.description}</p>}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            {groups.length === 0 && (
-              <div className="text-center py-16">
-                <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
-                  <Users size={28} className="text-muted-foreground/40" />
-                </div>
-                <p className="text-muted-foreground text-sm">Ingen grupper ennå</p>
-                <p className="text-muted-foreground/60 text-xs mt-1">Opprett den første gruppen!</p>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        /* Group chat */
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <button onClick={() => setActive(null)} className="text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft size={16} />
-            </button>
-            <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getGroupGradient(active.color, active.name)} flex items-center justify-center`}>
-              <Users size={14} className="text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{active.name}</span>
-                {active.is_private && <Lock size={11} className="text-muted-foreground" />}
-              </div>
-              {active.description && <p className="text-[10px] text-muted-foreground">{active.description}</p>}
-            </div>
-            <div className="flex-1" />
-            <button
-              onClick={() => setConferenceActive(true)}
-              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"
-              title="Videokonferanse"
-            >
-              <Video size={16} />
-            </button>
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Users size={10} /> {memberCount[active.id] || 0} medlemmer</span>
-          </div>
-          <div className="flex-1 overflow-y-auto p-5 space-y-1">
-            {messages.map((msg, i) => {
-              const isOwn = msg.sender_id === profile.id;
-              const mp = msg.profiles as any;
-              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
-              return (
-                <MessageBubble
-                  key={msg.id}
-                  content={msg.content}
-                  senderName={mp?.name}
-                  senderAvatar={mp?.avatar_url}
-                  time={formatTime(msg.created_at)}
-                  isOwn={isOwn}
-                  showAvatar={showAv}
-                />
-              );
-            })}
-            <div ref={endRef} />
-          </div>
-          <ChatInput placeholder={`Skriv i ${active.name}…`} onSend={send} />
-        </div>
-      )}
-
-      {/* Conference call overlay */}
-      {conferenceActive && active && (
-        <VideoCall
-          conversationId={active.id}
-          profileId={profile.id}
-          profileName={profile.name}
-          profileAvatar={profile.avatar_url}
-          isConference
-          conferenceId={active.id}
-          participants={groupMembers}
-          onClose={() => setConferenceActive(false)}
-        />
-      )}
-    </div>
-  );
-};
-
-// ─── Conference View (standalone) ───
+// ─── Conference View ───
 const ConferenceView = ({ profile }: { profile: Profile }) => {
   const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -1386,321 +301,40 @@ const ConferenceView = ({ profile }: { profile: Profile }) => {
         <h2 className="text-xl font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Konferanse</h2>
         <p className="text-xs text-muted-foreground mt-0.5">Start en videokonferanse med opptil 4 deltakere</p>
       </div>
-
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-lg mx-auto space-y-6">
-          {/* Search */}
           <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 border border-border/15">
             <Search size={14} className="text-muted-foreground" />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Søk etter deltakere…"
-              className="h-11 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40"
-            />
+            <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk etter deltakere…" className="h-11 flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/40" />
           </div>
-
-          {/* Selected */}
           {selected.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-muted-foreground">Valgte ({selected.length}/3):</span>
               {selected.map(id => {
                 const p = allProfiles.find(pp => pp.id === id);
                 return (
-                  <button
-                    key={id}
-                    onClick={() => toggleSelect(id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-all"
-                  >
-                    <UserAvatar name={p?.name} avatarUrl={p?.avatar_url} size="xs" />
-                    {p?.name}
-                    <span className="ml-1 opacity-60">✕</span>
+                  <button key={id} onClick={() => toggleSelect(id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-all">
+                    <UserAvatar name={p?.name} avatarUrl={p?.avatar_url} size="xs" />{p?.name}<span className="ml-1 opacity-60">✕</span>
                   </button>
                 );
               })}
             </div>
           )}
-
-          {/* Profiles list */}
           <div className="space-y-1 max-h-[400px] overflow-y-auto">
             {filteredProfiles.map(p => (
-              <button
-                key={p.id}
-                onClick={() => toggleSelect(p.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  selected.includes(p.id) ? "bg-primary/10 border border-primary/20" : "hover:bg-muted/40"
-                }`}
-              >
+              <button key={p.id} onClick={() => toggleSelect(p.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${selected.includes(p.id) ? "bg-primary/10 border border-primary/20" : "hover:bg-muted/40"}`}>
                 <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="md" />
-                <div className="text-left flex-1">
-                  <p className="text-sm font-medium">{p.name}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{p.role === "admin" ? "Administrator" : p.role === "employee" ? "Ansatt" : "Kunde"}</p>
-                </div>
-                {selected.includes(p.id) && (
-                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">✓</div>
-                )}
+                <div className="text-left flex-1"><p className="text-sm font-medium">{p.name}</p><p className="text-[10px] text-muted-foreground capitalize">{roleLabel(p.role)}</p></div>
+                {selected.includes(p.id) && <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">✓</div>}
               </button>
             ))}
           </div>
-
-          {/* Start button */}
-          <button
-            onClick={() => setConferenceActive(true)}
-            disabled={selected.length === 0}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-sm disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            <Video size={18} />
-            Start konferanse ({participants.length} deltakere)
+          <button onClick={() => setConferenceActive(true)} disabled={selected.length === 0} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-sm disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <Video size={18} /> Start konferanse ({participants.length} deltakere)
           </button>
         </div>
       </div>
-
-      {conferenceActive && (
-        <VideoCall
-          conversationId={confId}
-          profileId={profile.id}
-          profileName={profile.name}
-          profileAvatar={profile.avatar_url}
-          isConference
-          conferenceId={confId}
-          participants={participants}
-          onClose={() => setConferenceActive(false)}
-        />
-      )}
-    </div>
-  );
-};
-
-// ─── DMs View ───
-const DmsView = ({ profile }: { profile: Profile }) => {
-  const [conversations, setConversations] = useState<DmConv[]>([]);
-  const [active, setActive] = useState<DmConv | null>(null);
-  const [messages, setMessages] = useState<DmMsg[]>([]);
-  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
-  const [showNew, setShowNew] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [callActive, setCallActive] = useState(false);
-  const [incomingCall, setIncomingCall] = useState<{ from: string; withVideo: boolean; convId: string } | null>(null);
-  const endRef = useRef<HTMLDivElement>(null);
-
-  const fetchConvs = async () => {
-    const { data } = await supabase.from("dm_conversations").select("*").order("updated_at", { ascending: false });
-    if (!data) return;
-    const profileIds = new Set<string>();
-    data.forEach((c: any) => { profileIds.add(c.participant_1); profileIds.add(c.participant_2); });
-    const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url").in("id", [...profileIds]);
-    const pMap = new Map((profiles || []).map((p: any) => [p.id, p]));
-    setConversations(data.map((c: any) => ({
-      ...c,
-      other: pMap.get(c.participant_1 === profile.id ? c.participant_2 : c.participant_1),
-    })));
-  };
-
-  const fetchMsgs = async (id: string) => {
-    const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", id).order("created_at");
-    setMessages((data as DmMsg[]) || []);
-    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-  };
-
-  const fetchProfiles = async () => {
-    const { data } = await supabase.from("profiles").select("id, name, role, avatar_url").neq("id", profile.id).order("name");
-    setAllProfiles((data as Profile[]) || []);
-  };
-
-  useEffect(() => { fetchConvs(); fetchProfiles(); }, []);
-
-  // Listen for incoming calls across all conversations
-  useEffect(() => {
-    const callChannels: any[] = [];
-    conversations.forEach(conv => {
-      const chName = `call-${[profile.id, conv.id].sort().join("-")}`;
-      const ch = supabase.channel(`listen-${chName}`, { config: { broadcast: { self: false } } });
-      ch.on("broadcast", { event: "invite" }, ({ payload }) => {
-        if (payload.from !== profile.id) {
-          setIncomingCall({ from: payload.from, withVideo: payload.withVideo, convId: conv.id });
-        }
-      });
-      ch.subscribe();
-      callChannels.push(ch);
-    });
-    return () => { callChannels.forEach(ch => supabase.removeChannel(ch)); };
-  }, [conversations, profile.id]);
-
-  useEffect(() => {
-    if (!active) return;
-    fetchMsgs(active.id);
-    const ch = supabase.channel(`ws-dm-${active.id}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [active?.id]);
-
-  const startDm = async (otherId: string) => {
-    const { data: existing } = await supabase.from("dm_conversations").select("*")
-      .or(`and(participant_1.eq.${profile.id},participant_2.eq.${otherId}),and(participant_1.eq.${otherId},participant_2.eq.${profile.id})`);
-    if (existing && existing.length > 0) {
-      const other = allProfiles.find(p => p.id === otherId);
-      setActive({ ...existing[0], other } as DmConv);
-    } else {
-      const { data } = await supabase.from("dm_conversations").insert([{ participant_1: profile.id, participant_2: otherId }]).select().single();
-      if (data) {
-        const other = allProfiles.find(p => p.id === otherId);
-        setActive({ ...data, other } as DmConv);
-        fetchConvs();
-      }
-    }
-    setShowNew(false);
-  };
-
-  const send = async (content: string) => {
-    if (!active) return;
-    await supabase.from("dm_messages").insert([{ conversation_id: active.id, sender_id: profile.id, content }]);
-  };
-
-  const filteredProfiles = allProfiles.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
-  return (
-    <div className="h-full flex">
-      {/* Conversations list */}
-      <div className="w-64 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
-        <div className="p-3 border-b border-border/10 flex items-center justify-between">
-          <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Meldinger</span>
-          <button onClick={() => setShowNew(!showNew)} className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-all">
-            <Plus size={14} />
-          </button>
-        </div>
-
-        {showNew && (
-          <div className="border-b border-border/10">
-            <div className="p-2">
-              <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-3 border border-border/15">
-                <Search size={13} className="text-muted-foreground" />
-                <input
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Søk etter personer…"
-                  className="h-9 flex-1 bg-transparent text-xs focus:outline-none placeholder:text-muted-foreground/40"
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="max-h-48 overflow-y-auto p-2 space-y-0.5">
-              {filteredProfiles.map(p => (
-                <button key={p.id} onClick={() => startDm(p.id)} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs hover:bg-muted/40 transition-all">
-                  <UserAvatar name={p.name} avatarUrl={p.avatar_url} size="sm" />
-                  <div className="text-left">
-                    <p className="font-medium">{p.name}</p>
-                    <p className="text-[10px] text-muted-foreground capitalize">{p.role}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {conversations.map(conv => (
-            <button
-              key={conv.id}
-              onClick={() => setActive(conv)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                active?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/40"
-              }`}
-            >
-              <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" online />
-              <div className="text-left flex-1 min-w-0">
-                <p className={`text-sm truncate ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
-                <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
-              </div>
-            </button>
-          ))}
-          {conversations.length === 0 && !showNew && (
-            <div className="text-center py-8">
-              <p className="text-xs text-muted-foreground">Ingen samtaler</p>
-              <button onClick={() => setShowNew(true)} className="text-xs text-primary hover:underline mt-1">Start en ny</button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Chat */}
-      {active ? (
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
-            <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" online />
-            <div className="flex-1">
-              <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
-              <p className="text-[10px] text-muted-foreground capitalize">{active.other?.role || ""}</p>
-            </div>
-            <button
-              onClick={() => { setCallActive(true); }}
-              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-green-500/15 text-muted-foreground hover:text-green-500 flex items-center justify-center transition-all"
-              title="Lydsamtale"
-            >
-              <Phone size={16} />
-            </button>
-            <button
-              onClick={() => { setCallActive(true); }}
-              className="w-9 h-9 rounded-xl bg-muted/40 hover:bg-primary/15 text-muted-foreground hover:text-primary flex items-center justify-center transition-all"
-              title="Videosamtale"
-            >
-              <Video size={16} />
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-5 space-y-1">
-            {messages.map((msg, i) => {
-              const isOwn = msg.sender_id === profile.id;
-              const showAv = i === 0 || messages[i - 1].sender_id !== msg.sender_id;
-              return (
-                <MessageBubble
-                  key={msg.id}
-                  content={msg.content}
-                  senderName={isOwn ? profile.name : active.other?.name}
-                  senderAvatar={isOwn ? profile.avatar_url : active.other?.avatar_url}
-                  time={formatTime(msg.created_at)}
-                  isOwn={isOwn}
-                  showAvatar={showAv}
-                />
-              );
-            })}
-            <div ref={endRef} />
-          </div>
-          <ChatInput placeholder={`Skriv til ${active.other?.name}…`} onSend={send} />
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <MessageSquare size={32} className="text-muted-foreground/20 mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">Velg en samtale</p>
-            <p className="text-muted-foreground/60 text-xs mt-1">eller start en ny</p>
-          </div>
-        </div>
-      )}
-
-      {/* Active call */}
-      {callActive && active && (
-        <VideoCall
-          conversationId={active.id}
-          profileId={profile.id}
-          profileName={profile.name}
-          profileAvatar={profile.avatar_url}
-          otherName={active.other?.name}
-          otherAvatar={active.other?.avatar_url}
-          onClose={() => setCallActive(false)}
-        />
-      )}
-
-      {/* Incoming call */}
-      {incomingCall && !callActive && (
-        <VideoCall
-          conversationId={incomingCall.convId}
-          profileId={profile.id}
-          profileName={profile.name}
-          profileAvatar={profile.avatar_url}
-          otherName={conversations.find(c => c.id === incomingCall.convId)?.other?.name}
-          otherAvatar={conversations.find(c => c.id === incomingCall.convId)?.other?.avatar_url}
-          incoming={incomingCall}
-          onClose={() => setIncomingCall(null)}
-        />
-      )}
+      {conferenceActive && <VideoCall conversationId={confId} profileId={profile.id} profileName={profile.name} profileAvatar={profile.avatar_url} isConference conferenceId={confId} participants={participants} onClose={() => setConferenceActive(false)} />}
     </div>
   );
 };
