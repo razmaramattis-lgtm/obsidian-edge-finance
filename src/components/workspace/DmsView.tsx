@@ -136,7 +136,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   return (
     <div className="h-full flex">
       <div className="w-64 shrink-0 border-r border-border/10 bg-card/20 flex flex-col">
-        <div className="p-3 border-b border-border/10 flex items-center justify-between">
+        <div className="p-3 border-b border-border/10 flex items-center justify-between sticky top-0 z-20 bg-card/80 backdrop-blur-xl">
           <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Meldinger</span>
           <button onClick={() => setShowNew(!showNew)} className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-all"><Plus size={14} /></button>
         </div>
@@ -184,7 +184,7 @@ const DmsView = ({ profile }: { profile: Profile }) => {
 
       {active ? (
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 flex items-center gap-3">
+          <div className="px-5 py-3.5 border-b border-border/10 bg-card/20 sticky top-0 z-20 backdrop-blur-xl flex items-center gap-3">
             <UserAvatar name={active.other?.name} avatarUrl={active.other?.avatar_url} size="md" profileId={active.other?.id} isActive={active.other?.active !== false} />
             <div className="flex-1">
               <span className="font-semibold text-sm">{active.other?.name || "Ukjent"}</span>
