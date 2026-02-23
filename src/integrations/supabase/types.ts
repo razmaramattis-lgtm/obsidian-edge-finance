@@ -1824,18 +1824,21 @@ export type Database = {
         Row: {
           comment_id: string
           created_at: string
+          emoji: string
           id: string
           profile_id: string
         }
         Insert: {
           comment_id: string
           created_at?: string
+          emoji?: string
           id?: string
           profile_id: string
         }
         Update: {
           comment_id?: string
           created_at?: string
+          emoji?: string
           id?: string
           profile_id?: string
         }
