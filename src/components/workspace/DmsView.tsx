@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Plus, Search, MessageSquare, Phone, Video, ArrowLeft, Trash2, Paperclip,
+  Plus, Search, MessageSquare, Phone, Video, ArrowLeft, Trash2,
 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 import ChatInput from "./ChatInput";
@@ -22,7 +22,6 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const [callActive, setCallActive] = useState(false);
   const [incomingCall, setIncomingCall] = useState<{ from: string; withVideo: boolean; convId: string } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchConvs = async () => {
     const { data } = await supabase.from("dm_conversations").select("*").order("updated_at", { ascending: false });
@@ -186,14 +185,19 @@ const DmsView = ({ profile }: { profile: Profile }) => {
                       <div className="flex-1 h-px bg-border/15" />
                     </div>
                   )}
-                  <MessageBubble content={msg.content} senderName={isOwn ? profile.name : active.other?.name} senderAvatar={isOwn ? profile.avatar_url : active.other?.avatar_url} time={formatTime(msg.created_at)} isOwn={isOwn} showAvatar={showAv} />
-                  {(msg as any).file_url && (
-                    <div className={`ml-10 mt-1 ${isOwn ? "text-right mr-10" : ""}`}>
-                      <a href={(msg as any).file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">
-                        <Paperclip size={10} /> {(msg as any).file_name || "Vedlegg"}
-                      </a>
-                    </div>
-                  )}
+                  <MessageBubble
+                    content={msg.content}
+                    senderName={isOwn ? profile.name : active.other?.name}
+                    senderAvatar={isOwn ? profile.avatar_url : active.other?.avatar_url}
+                    time={formatTime(msg.created_at)}
+                    isOwn={isOwn}
+                    showAvatar={showAv}
+                    messageId={msg.id}
+                    profileId={profile.id}
+                    reactionTable="dm_message_reactions"
+                    fileUrl={msg.file_url}
+                    fileName={msg.file_name}
+                  />
                   {(isOwn || isAdmin) && (
                     <button onClick={() => deleteMsg(msg.id)} className="absolute top-1 right-1 opacity-0 group-hover/msg:opacity-100 p-1 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"><Trash2 size={12} /></button>
                   )}
@@ -202,13 +206,11 @@ const DmsView = ({ profile }: { profile: Profile }) => {
             })}
             <div ref={endRef} />
           </div>
-          <div className="border-t border-border/10">
-            <input ref={fileRef} type="file" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) sendFile(f); }} />
-            <div className="flex items-center gap-1 px-3 pt-2">
-              <button onClick={() => fileRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg"><Paperclip size={16} /></button>
-            </div>
-            <ChatInput placeholder={`Skriv til ${active.other?.name}…`} onSend={send} />
-          </div>
+          <ChatInput
+            placeholder={`Skriv til ${active.other?.name}…`}
+            onSend={send}
+            onSendFile={sendFile}
+          />
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center">

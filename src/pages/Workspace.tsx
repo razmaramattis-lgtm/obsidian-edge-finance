@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Users, MessageSquare, Video, User, UserPlus, Search,
   PanelLeftClose, PanelLeft, EyeOff, Eye, ArrowLeft, Sparkles,
-  Globe, Lock, MapPin, Bell,
+  Globe, Lock, MapPin, Bell, Briefcase, Building2, Star, Heart,
 } from "lucide-react";
 import UserAvatar from "@/components/workspace/UserAvatar";
 import FeedView from "@/components/workspace/FeedView";
@@ -15,10 +15,10 @@ import FriendsView from "@/components/workspace/FriendsView";
 import FloatingChat from "@/components/workspace/FloatingChat";
 import VideoCall from "@/components/workspace/VideoCall";
 import PostReactions from "@/components/workspace/PostReactions";
+import ProfileEditView from "@/components/workspace/ProfileEditView";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
-
 // ─── Main ───
 const Workspace = () => {
   const { user, profile, isAdmin, isCustomer } = useAuth();
@@ -254,14 +254,7 @@ const ProfileView = ({ profile, onNavigate }: { profile: Profile; onNavigate: (v
 
         {activeTab === "about" && (
           <div className="space-y-6">
-            <div className="rounded-2xl border border-border/15 bg-card/60 p-6 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2"><User size={14} className="text-primary" /> Profilinformasjon</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Navn</p><p className="text-sm font-medium">{profile.name}</p></div>
-                <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">Rolle</p><p className="text-sm font-medium">{roleLabel(profile.role)}</p></div>
-                {profile.email && <div><p className="text-[10px] text-muted-foreground uppercase tracking-wider">E-post</p><p className="text-sm font-medium">{profile.email}</p></div>}
-              </div>
-            </div>
+            <ProfileEditView profile={profile} />
           </div>
         )}
       </div>

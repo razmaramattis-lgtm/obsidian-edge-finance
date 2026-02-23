@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState, useRef } from "react";
+import { Send, Paperclip, Image } from "lucide-react";
 import EmojiPicker from "./EmojiPicker";
 import GifPicker from "./GifPicker";
 
@@ -7,12 +7,15 @@ interface ChatInputProps {
   placeholder: string;
   onSend: (content: string) => Promise<void>;
   onSendGif?: (url: string) => Promise<void>;
+  onSendFile?: (file: File) => Promise<void>;
   disabled?: boolean;
 }
 
-const ChatInput = ({ placeholder, onSend, onSendGif, disabled }: ChatInputProps) => {
+const ChatInput = ({ placeholder, onSend, onSendGif, onSendFile, disabled }: ChatInputProps) => {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,12 +38,30 @@ const ChatInput = ({ placeholder, onSend, onSendGif, disabled }: ChatInputProps)
     }
   };
 
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f && onSendFile) onSendFile(f);
+    e.target.value = "";
+  };
+
   return (
     <form onSubmit={handleSubmit} className="p-3 border-t border-border/15 bg-card/30">
       <div className="flex items-center gap-1 bg-muted/30 rounded-2xl border border-border/20 pr-1.5 focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
         <div className="flex items-center pl-1">
           <EmojiPicker onSelect={handleEmoji} />
           <GifPicker onSelect={handleGif} />
+          {onSendFile && (
+            <>
+              <button type="button" onClick={() => fileRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="Vedlegg">
+                <Paperclip size={16} />
+              </button>
+              <button type="button" onClick={() => imageRef.current?.click()} className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all" title="Bilde">
+                <Image size={16} />
+              </button>
+              <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
+              <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+            </>
+          )}
         </div>
         <input
           value={text}
