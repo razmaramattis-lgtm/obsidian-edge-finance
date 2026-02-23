@@ -1011,13 +1011,47 @@ const SettingsPanel = ({ defaultTab = "profile" }: SettingsPanelProps) => {
 
 const AppInstallTab = () => {
   const [copied, setCopied] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [installStatus, setInstallStatus] = useState<"idle" | "installing" | "installed">("idle");
   const appUrl = window.location.origin;
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
+    // Check if already installed
+    const matchMedia = window.matchMedia?.("(display-mode: standalone)");
+    if (matchMedia?.matches || (window.navigator as any).standalone) {
+      setInstallStatus("installed");
+    }
+
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    setInstallStatus("installing");
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    if (result.outcome === "accepted") {
+      setInstallStatus("installed");
+    } else {
+      setInstallStatus("idle");
+    }
+    setDeferredPrompt(null);
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(appUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const canAutoInstall = !!deferredPrompt;
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -1032,8 +1066,38 @@ const AppInstallTab = () => {
           </div>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Avargo kan installeres som en app direkte fra nettleseren — ingen App Store eller Google Play nødvendig. Appen fungerer offline, laster raskt, og føles som en ekte app.
+          Avargo kan installeres som en app direkte fra nettleseren — ingen App Store eller Google Play nødvendig.
         </p>
+      </div>
+
+      {/* Auto-install button (Android/Chrome) */}
+      <div className="rounded-2xl border border-border/20 bg-card/60 p-5 space-y-3">
+        <h4 className="text-sm font-semibold flex items-center gap-2"><Download size={14} /> Installer direkte</h4>
+        {installStatus === "installed" ? (
+          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-primary/10 text-sm text-primary font-medium">
+            <CheckCircle2 size={16} /> Appen er allerede installert!
+          </div>
+        ) : canAutoInstall ? (
+          <button
+            onClick={handleInstall}
+            disabled={installStatus === "installing"}
+            className="w-full px-4 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
+          >
+            {installStatus === "installing" ? (
+              <><Loader2 size={16} className="animate-spin" /> Installerer…</>
+            ) : (
+              <><Download size={16} /> Installer Avargo-appen nå</>
+            )}
+          </button>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {isIOS
+                ? "Automatisk installasjon støttes ikke i Safari. Følg instruksjonene nedenfor."
+                : "Åpne denne siden i Chrome på mobilen for å få automatisk installasjonsknapp. Du kan også følge instruksjonene nedenfor."}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Copy link */}
@@ -1062,15 +1126,15 @@ const AppInstallTab = () => {
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <span>Trykk på <strong className="text-foreground">Del-knappen</strong> <Share size={14} className="inline text-primary" /> (firkant med pil opp) nederst i Safari</span>
+            <span>Trykk på <strong className="text-foreground">Del-knappen</strong> <Share size={14} className="inline text-primary" /> nederst</span>
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-            <span>Bla ned og trykk <strong className="text-foreground">«Legg til på Hjem-skjerm»</strong></span>
+            <span>Velg <strong className="text-foreground">«Legg til på Hjem-skjerm»</strong></span>
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-            <span>Trykk <strong className="text-foreground">«Legg til»</strong> — ferdig! Appen vises på Hjem-skjermen</span>
+            <span>Trykk <strong className="text-foreground">«Legg til»</strong> — ferdig!</span>
           </li>
         </ol>
       </div>
@@ -1087,15 +1151,15 @@ const AppInstallTab = () => {
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <span>Trykk på <strong className="text-foreground">tre-prikk-menyen</strong> <MoreVertical size={14} className="inline text-primary" /> øverst til høyre</span>
+            <span>Trykk <strong className="text-foreground">tre-prikk-menyen</strong> <MoreVertical size={14} className="inline text-primary" /> øverst til høyre</span>
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-            <span>Velg <strong className="text-foreground">«Installer app»</strong> eller <strong className="text-foreground">«Legg til på startskjermen»</strong></span>
+            <span>Velg <strong className="text-foreground">«Installer app»</strong></span>
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-            <span>Bekreft — ferdig! Appen vises på startskjermen</span>
+            <span>Bekreft — ferdig!</span>
           </li>
         </ol>
       </div>
@@ -1103,7 +1167,7 @@ const AppInstallTab = () => {
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
         <AlertCircle size={16} className="text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground leading-relaxed">
-          <strong className="text-foreground">Tips:</strong> Appen oppdateres automatisk når vi gjør endringer. Brukerne trenger ikke å gjøre noe — de vil alltid ha siste versjon.
+          <strong className="text-foreground">Tips:</strong> Appen oppdateres automatisk. Brukerne vil alltid ha siste versjon.
         </p>
       </div>
     </div>
