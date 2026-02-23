@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, ArrowLeft, CheckCircle2, ChevronRight, Phone,
@@ -13,6 +13,8 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
+import { useSection } from "@/contexts/SectionContext";
+import { sectionKursCategories } from "@/config/sectionContent";
 
 /* ───────── Kategori-ikoner ───────── */
 const categoryConfig: Record<string, { icon: React.ElementType; color: string }> = {
@@ -173,6 +175,7 @@ const Kurs = () => {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const { section, isInSection } = useSection();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -183,7 +186,15 @@ const Kurs = () => {
     fetchCourses();
   }, []);
 
-  const allCategories = [...new Set(courses.map(c => c.category))];
+  // Filter courses by section categories
+  const sectionCourses = useMemo(() => {
+    if (!isInSection || !section) return courses;
+    const allowed = sectionKursCategories[section.id];
+    if (!allowed) return courses;
+    return courses.filter(c => allowed.includes(c.category));
+  }, [courses, isInSection, section]);
+
+  const allCategories = [...new Set(sectionCourses.map(c => c.category))];
   const categoryButtons = [
     { id: "alle", label: "Alle kurs", icon: BookOpen },
     ...allCategories.map(cat => ({
@@ -193,7 +204,7 @@ const Kurs = () => {
     })),
   ];
 
-  const filtered = courses.filter(c => {
+  const filtered = sectionCourses.filter(c => {
     const matchCat = activeCat === "alle" || c.category === activeCat;
     const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
       (c.description || "").toLowerCase().includes(search.toLowerCase());
@@ -208,7 +219,7 @@ const Kurs = () => {
   }, {} as Record<string, Course[]>);
 
   const stats = [
-    { value: `${courses.length}+`, label: "Tilgjengelige kurs" },
+    { value: `${sectionCourses.length}+`, label: "Tilgjengelige kurs" },
     { value: `${allCategories.length}`, label: "Fagområder" },
     { value: "98%", label: "Anbefaler oss" },
     { value: "4.9/5", label: "Gjennomsnittlig rating" },
@@ -217,8 +228,8 @@ const Kurs = () => {
   return (
     <>
       <Helmet>
-        <title>{`Kurs — ${courses.length}+ spesialiserte kurs | Avargo`}</title>
-        <meta name="description" content={`Velg blant ${courses.length}+ spesialiserte kurs innen regnskap, HR, AI, markedsføring og mer.`} />
+        <title>{`Kurs — ${sectionCourses.length}+ spesialiserte kurs | Avargo`}</title>
+        <meta name="description" content={`Velg blant ${sectionCourses.length}+ spesialiserte kurs innen regnskap, HR, AI, markedsføring og mer.`} />
       </Helmet>
 
       {/* HERO */}
@@ -237,7 +248,7 @@ const Kurs = () => {
             </Link>
             <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">Kompetanseheving · Kurs</p>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-              {courses.length}+ kurs.{" "}
+              {sectionCourses.length}+ kurs.{" "}
               <span className="italic text-gradient-rose">Alle fagfelt.</span>
             </h1>
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">

@@ -23,6 +23,17 @@ export const sectionKursHrefs: Record<SectionId, string[]> = {
 };
 
 /**
+ * Course categories visible per section on the Kurs page.
+ * When inside a section, only these categories are shown.
+ */
+export const sectionKursCategories: Record<SectionId, string[]> = {
+  regnskap: ["Bokføring", "MVA", "Skatt & Skattelov", "Årsregnskap", "Selskapsrett", "Analyse & Rapportering", "Lønn & Personal"],
+  hr: ["HR & Personal", "HMS", "Lønn & Personal", "Ledelse & Strategi"],
+  markedsforing: ["Markedsføring", "Nettbutikk & E-handel", "Ledelse & Strategi"],
+  it: ["AI & Automatisering", "Integrasjon & Teknologi", "Nettside & Web", "Nettbutikk & E-handel"],
+};
+
+/**
  * Header tjenester groups that should be visible per section.
  * Maps section ID → group labels to show.
  */
