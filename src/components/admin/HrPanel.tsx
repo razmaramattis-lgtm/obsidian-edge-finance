@@ -2,10 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Plus, Trash2, Download, Upload, FileText, Edit2, Search, ChevronLeft, ChevronRight,
-  BookOpen, Save, X, Eye, Check, GripVertical, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator
+  Plus, Trash2, Download, Upload, FileText, Edit2, Search,
+  X, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator, BookOpen
 } from "lucide-react";
-import RichTextEditor from "./RichTextEditor";
 import HmsPanel from "./HmsPanel";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
@@ -15,7 +14,6 @@ import { varslingsrutinerConfig } from "@/components/kunde/generators/varslingsr
 import { gdprConfig } from "@/components/kunde/generators/gdpr";
 import { digitalSikkerhetConfig } from "@/components/kunde/generators/digital-sikkerhet";
 import { psykososialtConfig } from "@/components/kunde/generators/psykososialt";
-import DOMPurify from "dompurify";
 
 // ── Types ──
 interface HrResource {
@@ -27,20 +25,12 @@ interface HrResource {
   file_name: string;
 }
 
-interface HandbookChapter {
-  id: string;
-  title: string;
-  content: string | null;
-  sort_order: number;
-}
-
 // ── Constants ──
 const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "Annet"];
 
-type Tab = "handbook" | "hms" | "documents" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
+type Tab = "hms" | "documents" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
 
 const HR_TABS: { id: Tab; label: string; icon: React.ElementType; group: string }[] = [
-  { id: "handbook", label: "Avargo Håndbok", icon: BookOpen, group: "Håndbøker" },
   { id: "hms", label: "HMS-håndbok", icon: Shield, group: "Håndbøker" },
   { id: "documents", label: "HR-dokumenter", icon: FileText, group: "Håndbøker" },
   { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "Generatorer" },
@@ -54,13 +44,12 @@ const HR_TABS: { id: Tab; label: string; icon: React.ElementType; group: string 
 
 const HrPanel = () => {
   const { isAdmin } = useAuth();
-  const [tab, setTab] = useState<Tab>("handbook");
+  const [tab, setTab] = useState<Tab>("hms");
 
   const groups = [...new Set(HR_TABS.map(t => t.group))];
 
   const renderTab = () => {
     switch (tab) {
-      case "handbook": return <HandbookTab isAdmin={isAdmin} />;
       case "hms": return <HmsPanel />;
       case "documents": return <DocumentsTab isAdmin={isAdmin} />;
       case "personalhandbok": return <DocumentGenerator config={personalhandbokConfig} />;
@@ -83,7 +72,7 @@ const HrPanel = () => {
         </div>
         <div>
           <p className="text-sm font-medium">HR & Personal</p>
-          <p className="text-[10px] text-muted-foreground">Håndbøker, dokumentgeneratorer og verktøy</p>
+          <p className="text-[10px] text-muted-foreground">HMS-håndbok, dokumentgeneratorer og verktøy</p>
         </div>
       </div>
 
@@ -117,325 +106,7 @@ const HrPanel = () => {
   );
 };
 
-// ══════════════════════════════════════
-//  Personalhåndbok Tab – Streamlined
-// ══════════════════════════════════════
-const HandbookTab = ({ isAdmin }: { isAdmin: boolean }) => {
-  const [chapters, setChapters] = useState<HandbookChapter[]>([]);
-  const [active, setActive] = useState<HandbookChapter | null>(null);
-  const [search, setSearch] = useState("");
-  const [editing, setEditing] = useState(false);
-  const [editContent, setEditContent] = useState("");
-  const [editTitle, setEditTitle] = useState("");
-  const [showNew, setShowNew] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [titleEditing, setTitleEditing] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const titleRef = useRef<HTMLInputElement>(null);
-
-  const fetchChapters = async () => {
-    const { data } = await supabase
-      .from("hr_handbook")
-      .select("*")
-      .order("sort_order")
-      .order("created_at");
-    const ch = (data as HandbookChapter[]) || [];
-    setChapters(ch);
-    if (ch.length > 0 && !active) setActive(ch[0]);
-  };
-
-  useEffect(() => { fetchChapters(); }, []);
-
-  const filtered = chapters.filter(c =>
-    c.title.toLowerCase().includes(search.toLowerCase()) ||
-    (c.content || "").toLowerCase().includes(search.toLowerCase())
-  );
-
-  const saveChapter = async () => {
-    if (!active) return;
-    setSaving(true);
-    await supabase
-      .from("hr_handbook")
-      .update({ title: editTitle, content: editContent } as any)
-      .eq("id", active.id);
-    setActive({ ...active, title: editTitle, content: editContent });
-    setEditing(false);
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-    fetchChapters();
-  };
-
-  const saveTitle = async () => {
-    if (!active || !editTitle.trim()) return;
-    setSaving(true);
-    await supabase
-      .from("hr_handbook")
-      .update({ title: editTitle } as any)
-      .eq("id", active.id);
-    setActive({ ...active, title: editTitle });
-    setTitleEditing(false);
-    setSaving(false);
-    fetchChapters();
-  };
-
-  const addChapter = async () => {
-    if (!newTitle.trim()) return;
-    const maxOrder = Math.max(0, ...chapters.map(c => c.sort_order));
-    await supabase.from("hr_handbook").insert({ title: newTitle, sort_order: maxOrder + 1, content: "" } as any);
-    setNewTitle("");
-    setShowNew(false);
-    fetchChapters();
-  };
-
-  const delChapter = async (ch: HandbookChapter) => {
-    if (!confirm(`Slett kapittel "${ch.title}"?`)) return;
-    await supabase.from("hr_handbook").delete().eq("id", ch.id);
-    if (active?.id === ch.id) setActive(null);
-    fetchChapters();
-  };
-
-  const activeIdx = chapters.findIndex(c => c.id === active?.id);
-  const prev = activeIdx > 0 ? chapters[activeIdx - 1] : null;
-  const next = activeIdx < chapters.length - 1 ? chapters[activeIdx + 1] : null;
-
-  // Quick toggle edit
-  const startEditing = () => {
-    if (!active) return;
-    setEditing(true);
-    setEditContent(active.content || "");
-    setEditTitle(active.title);
-  };
-
-  return (
-    <div className="flex gap-5 h-[calc(100vh-14rem)]">
-      {/* Sidebar */}
-      <div className="w-56 shrink-0 flex flex-col glass rounded-2xl border border-border/20 overflow-hidden">
-        <div className="p-3 border-b border-border/10">
-          <div className="relative">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Søk i håndbok…"
-              className="w-full h-8 pl-8 pr-3 rounded-lg border border-border/20 bg-muted/20 text-xs focus:outline-none focus:ring-1 focus:ring-primary/30"
-            />
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {filtered.map((ch, i) => (
-            <button
-              key={ch.id}
-              onClick={() => { setActive(ch); setEditing(false); setTitleEditing(false); }}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center gap-2 group ${
-                active?.id === ch.id
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              }`}
-            >
-              <span className="w-5 h-5 rounded-md bg-muted/50 flex items-center justify-center text-[10px] font-medium shrink-0">
-                {i + 1}
-              </span>
-              <span className="truncate flex-1">{ch.title}</span>
-              {isAdmin && (
-                <button
-                  onClick={e => { e.stopPropagation(); delChapter(ch); }}
-                  className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
-                >
-                  <Trash2 size={11} />
-                </button>
-              )}
-            </button>
-          ))}
-          {filtered.length === 0 && (
-            <p className="text-[11px] text-muted-foreground text-center py-6">
-              {search ? "Ingen treff" : "Ingen kapitler ennå"}
-            </p>
-          )}
-        </div>
-
-        {isAdmin && (
-          <div className="p-3 border-t border-border/10">
-            {showNew ? (
-              <div className="space-y-2">
-                <input
-                  value={newTitle}
-                  onChange={e => setNewTitle(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && addChapter()}
-                  placeholder="Kapitteltittel"
-                  autoFocus
-                  className="w-full h-8 rounded-lg border border-border/20 bg-muted/20 px-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary/30"
-                />
-                <div className="flex gap-1.5">
-                  <button onClick={addChapter} className="flex-1 h-7 bg-primary text-primary-foreground rounded-lg text-[11px] hover:opacity-90">Opprett</button>
-                  <button onClick={() => { setShowNew(false); setNewTitle(""); }} className="h-7 px-2 rounded-lg border border-border/20 text-[11px] text-muted-foreground hover:text-foreground">Avbryt</button>
-                </div>
-              </div>
-            ) : (
-              <button onClick={() => setShowNew(true)} className="w-full h-8 rounded-xl border border-dashed border-border/30 text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 flex items-center justify-center gap-1.5 transition-all">
-                <Plus size={12} /> Nytt kapittel
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 flex flex-col min-w-0 glass rounded-2xl border border-border/20 overflow-hidden">
-        {active ? (
-          <>
-            {/* Chapter header — click title to rename */}
-            <div className="px-5 py-3 border-b border-border/10 flex items-center justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5">Kapittel {activeIdx + 1}</p>
-                {titleEditing && isAdmin ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      ref={titleRef}
-                      value={editTitle}
-                      onChange={e => setEditTitle(e.target.value)}
-                      onKeyDown={e => { if (e.key === "Enter") saveTitle(); if (e.key === "Escape") setTitleEditing(false); }}
-                      autoFocus
-                      className="text-lg font-heading font-medium bg-transparent border-b-2 border-primary/40 focus:outline-none w-full"
-                    />
-                    <button onClick={saveTitle} className="shrink-0 h-7 w-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90">
-                      <Check size={13} />
-                    </button>
-                    <button onClick={() => setTitleEditing(false)} className="shrink-0 h-7 w-7 rounded-lg border border-border/20 text-muted-foreground flex items-center justify-center hover:text-foreground">
-                      <X size={13} />
-                    </button>
-                  </div>
-                ) : (
-                  <h2
-                    className={`text-lg font-heading font-medium truncate ${isAdmin ? "cursor-pointer hover:text-primary transition-colors" : ""}`}
-                    onClick={() => {
-                      if (!isAdmin) return;
-                      setEditTitle(active.title);
-                      setTitleEditing(true);
-                    }}
-                    title={isAdmin ? "Klikk for å endre tittel" : ""}
-                  >
-                    {active.title}
-                    {isAdmin && <Edit2 size={11} className="inline ml-2 opacity-30" />}
-                  </h2>
-                )}
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex items-center gap-2 shrink-0">
-                {saved && (
-                  <span className="text-[11px] text-emerald-500 flex items-center gap-1 animate-in fade-in">
-                    <Check size={12} /> Lagret
-                  </span>
-                )}
-                {isAdmin && !editing && (
-                  <button
-                    onClick={startEditing}
-                    className="h-8 px-4 rounded-xl bg-primary/10 text-primary text-xs font-medium flex items-center gap-1.5 hover:bg-primary/20 transition-all"
-                  >
-                    <Edit2 size={12} /> Rediger innhold
-                  </button>
-                )}
-                {editing && (
-                  <>
-                    <button
-                      onClick={saveChapter}
-                      disabled={saving}
-                      className="h-8 px-4 rounded-xl bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1.5 hover:opacity-90 disabled:opacity-50"
-                    >
-                      <Save size={12} /> {saving ? "Lagrer…" : "Lagre"}
-                    </button>
-                    <button
-                      onClick={() => setEditing(false)}
-                      className="h-8 w-8 rounded-xl border border-border/20 text-muted-foreground hover:text-foreground flex items-center justify-center"
-                    >
-                      <X size={14} />
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Chapter content */}
-            <div className="flex-1 overflow-y-auto">
-              {editing ? (
-                <RichTextEditor
-                  content={editContent}
-                  onChange={setEditContent}
-                  placeholder="Skriv kapittelinnholdet her…"
-                />
-              ) : (
-                <div
-                  className="p-6 cursor-pointer group"
-                  onDoubleClick={() => isAdmin && startEditing()}
-                  title={isAdmin ? "Dobbeltklikk for å redigere" : ""}
-                >
-                  {active.content ? (
-                    <>
-                      {isAdmin && (
-                        <p className="text-[10px] text-muted-foreground/40 mb-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                          Dobbeltklikk for å redigere
-                        </p>
-                      )}
-                      <div
-                        className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-heading prose-img:rounded-xl prose-blockquote:border-l-primary/40 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-xl prose-a:text-primary"
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(active.content) }}
-                      />
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center">
-                      <FileText size={32} strokeWidth={1} className="text-muted-foreground/20 mb-3" />
-                      <p className="text-sm text-muted-foreground">Ingen innhold ennå</p>
-                      {isAdmin && (
-                        <button
-                          onClick={startEditing}
-                          className="mt-3 px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-all"
-                        >
-                          <Edit2 size={12} className="inline mr-1.5" /> Legg til innhold
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Navigation */}
-            <div className="px-5 py-3 border-t border-border/10 flex items-center justify-between">
-              <button
-                onClick={() => prev && setActive(prev)}
-                disabled={!prev}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all"
-              >
-                <ChevronLeft size={14} />
-                {prev?.title || "Forrige"}
-              </button>
-              <span className="text-[10px] text-muted-foreground">{activeIdx + 1} / {chapters.length}</span>
-              <button
-                onClick={() => next && setActive(next)}
-                disabled={!next}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all"
-              >
-                {next?.title || "Neste"}
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-            <BookOpen size={40} strokeWidth={1} className="mb-3 opacity-20" />
-            <p className="text-sm">Velg et kapittel for å lese</p>
-            {isAdmin && chapters.length === 0 && (
-              <p className="text-xs mt-1">Opprett ditt første kapittel i sidepanelet</p>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+// HandbookTab removed – content now flows through generators into HMS-håndbok
 
 // ══════════════════════════════════════
 //  HR Documents Tab (unchanged)
