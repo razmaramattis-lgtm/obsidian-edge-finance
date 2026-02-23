@@ -55,6 +55,9 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
         const isOpen = openChats.some(c => c.conv.id === msg.conversation_id && !c.minimized);
         if (!isOpen) {
           setUnread(prev => ({ ...prev, [msg.conversation_id]: (prev[msg.conversation_id] || 0) + 1 }));
+        } else {
+          // Chat is open and visible — mark as read immediately
+          supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).eq("id", msg.id).then(() => {});
         }
         setOpenChats(prev => prev.map(c => c.conv.id === msg.conversation_id ? { ...c, messages: [...c.messages, msg] } : c));
       }
@@ -62,20 +65,26 @@ const FloatingChat = ({ profile }: FloatingChatProps) => {
     return () => { supabase.removeChannel(ch); };
   }, [openChats, profile.id]);
 
+  const markAsRead = async (convId: string, messages: DmMsg[]) => {
+    const unreadIds = messages.filter(m => m.sender_id !== profile.id && !m.read_at).map(m => m.id);
+    if (unreadIds.length > 0) {
+      await supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+      // Update local state so read receipts show immediately
+      setOpenChats(prev => prev.map(c => c.conv.id === convId ? { ...c, messages: c.messages.map(m => unreadIds.includes(m.id) ? { ...m, read_at: new Date().toISOString() } : m) } : c));
+    }
+  };
+
   const openChat = async (conv: DmConv) => {
     if (openChats.some(c => c.conv.id === conv.id)) {
       setOpenChats(prev => prev.map(c => c.conv.id === conv.id ? { ...c, minimized: false } : c));
+      // Mark unread when restoring minimized chat
+      const chat = openChats.find(c => c.conv.id === conv.id);
+      if (chat) markAsRead(conv.id, chat.messages);
     } else {
       const { data } = await supabase.from("dm_messages").select("*").eq("conversation_id", conv.id).order("created_at").limit(50);
-      setOpenChats(prev => [...prev.slice(-2), { conv, messages: (data as DmMsg[]) || [], minimized: false }]);
-      // Mark unread messages as read
-      if (data && data.length > 0) {
-        const myProfileId = profile.id;
-        const unreadIds = data.filter((m: any) => m.sender_id !== myProfileId && !m.read_at).map((m: any) => m.id);
-        if (unreadIds.length > 0) {
-          await supabase.from("dm_messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
-        }
-      }
+      const msgs = (data as DmMsg[]) || [];
+      setOpenChats(prev => [...prev.slice(-2), { conv, messages: msgs, minimized: false }]);
+      markAsRead(conv.id, msgs);
     }
     setUnread(prev => ({ ...prev, [conv.id]: 0 }));
     setShowPicker(false);
