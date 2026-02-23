@@ -10,6 +10,7 @@ export interface Profile {
   interests?: string[];
   background_url?: string | null;
   bio?: string | null;
+  preferred_accounting_systems?: string[];
 }
 
 export type View = "feed" | "groups" | "dms" | "conference" | "profile" | "friends" | "view-profile";
