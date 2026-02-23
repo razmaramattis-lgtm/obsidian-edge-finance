@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper, Globe, MessageCircle, Image, X, Pin, Trash2,
-  MoreHorizontal, Pencil, SmilePlus, Search, Plus, Paperclip,
+  MoreHorizontal, Pencil, SmilePlus, Search, Plus, Paperclip, Send,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "./UserAvatar";
@@ -549,69 +549,38 @@ const FeedView = ({ profile, onViewProfile, onComposingChange }: { profile: Prof
       {isMobile && !mobileComposer && (
         <button
           onClick={openMobileComposer}
-          className="absolute bottom-6 right-4 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/25 flex items-center justify-center active:scale-90 transition-all z-20 hover:shadow-2xl hover:shadow-primary/30"
+          className="absolute bottom-6 right-4 h-11 px-5 rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/25 flex items-center gap-2 active:scale-90 transition-all z-20 hover:shadow-2xl hover:shadow-primary/30"
         >
-          <Plus size={24} strokeWidth={2.5} />
+          <Plus size={18} strokeWidth={2.5} />
+          <span className="text-xs font-semibold">Legg ut ny</span>
         </button>
       )}
 
-      {/* Mobile: Full-screen composer overlay */}
+      {/* Mobile: Composer — same style as chat input */}
       {isMobile && mobileComposer && (
-        <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-250">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/15 bg-card/80 backdrop-blur-xl safe-area-top">
-            <button onClick={closeMobileComposer} className="p-2 -ml-2 rounded-xl text-muted-foreground hover:text-foreground transition-all">
-              <X size={20} />
-            </button>
-            <span className="text-sm font-semibold" style={{ fontFamily: "Outfit, sans-serif" }}>Nytt innlegg</span>
-            <button
-              onClick={submitPost as any}
-              disabled={(!newPost.trim() && !imageFile) || sending}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold disabled:opacity-30 transition-all active:scale-95"
-            >
-              Publiser
-            </button>
-          </div>
-
-          {/* Composer body */}
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="flex gap-3">
-              <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} size="md" online />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold mb-0.5">{profile.name}</p>
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-3"><Globe size={9} /> Alle</p>
+        <div className="sticky bottom-0 z-20 bg-card/30 border-t border-border/15 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          {imagePreview && (
+            <div className="px-3 pt-2">
+              <div className="relative rounded-xl overflow-hidden border border-border/20 max-h-32">
+                <img src={imagePreview} alt="preview" className="w-full max-h-32 object-cover" />
+                <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center active:scale-90"><X size={14} /></button>
               </div>
             </div>
-            <textarea
-              value={newPost}
-              onChange={e => setNewPost(e.target.value)}
-              placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
-              rows={6}
-              autoFocus
-              className="w-full resize-none bg-transparent text-base leading-relaxed focus:outline-none placeholder:text-muted-foreground/40"
-            />
-            {imagePreview && (
-              <div className="relative mt-3 rounded-2xl overflow-hidden border border-border/20 max-h-72">
-                <img src={imagePreview} alt="preview" className="w-full max-h-72 object-cover" />
-                <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 active:scale-90"><X size={16} /></button>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom toolbar */}
-          <div className="border-t border-border/15 bg-card/80 backdrop-blur-xl p-3 safe-area-bottom">
-            <div className="flex items-center gap-1">
-              <div className="relative">
+          )}
+          <form onSubmit={submitPost} className="p-3">
+            <div className="flex items-center gap-1.5 bg-muted/30 rounded-2xl border border-border/20 focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+              {/* + button */}
+              <div className="relative pl-1.5">
                 <button
                   type="button"
                   onClick={() => setMobileAttachOpen(!mobileAttachOpen)}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
                     mobileAttachOpen
                       ? "bg-primary text-primary-foreground rotate-45"
                       : "bg-primary/10 text-primary hover:bg-primary/20"
                   }`}
                 >
-                  {mobileAttachOpen ? <X size={16} /> : <Plus size={20} />}
+                  {mobileAttachOpen ? <X size={16} /> : <Plus size={18} />}
                 </button>
                 {mobileAttachOpen && (
                   <div className="absolute bottom-12 left-0 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 p-2 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200 min-w-[180px]">
@@ -627,13 +596,45 @@ const FeedView = ({ profile, onViewProfile, onComposingChange }: { profile: Prof
                         </div>
                         <span className="text-xs font-medium">Bilde / Video</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => { imageInputRef.current?.click(); setMobileAttachOpen(false); }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground hover:bg-muted/50 transition-all active:scale-[0.98]"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
+                          <Paperclip size={16} />
+                        </div>
+                        <span className="text-xs font-medium">Fil / Vedlegg</span>
+                      </button>
                     </div>
                   </div>
                 )}
               </div>
-              <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
+
+              <input
+                value={newPost}
+                onChange={e => setNewPost(e.target.value)}
+                placeholder={`Hva tenker du på, ${profile.name.split(" ")[0]}?`}
+                autoFocus
+                className="flex-1 min-w-0 h-12 bg-transparent pl-3 pr-1 text-sm focus:outline-none placeholder:text-muted-foreground/40"
+                onFocus={() => onComposingChange?.(true)}
+              />
+
+              <div className="flex items-center shrink-0 pr-1.5 gap-0.5">
+                <button onClick={closeMobileComposer} type="button" className="p-2 rounded-xl text-muted-foreground hover:text-foreground transition-all">
+                  <X size={16} />
+                </button>
+                <button
+                  type="submit"
+                  disabled={(!newPost.trim() && !imageFile) || sending}
+                  className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 shrink-0"
+                >
+                  <Send size={14} />
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
+          <input ref={imageInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setImageFile(f); setImagePreview(URL.createObjectURL(f)); } }} />
         </div>
       )}
     </div>
