@@ -222,7 +222,7 @@ const Workspace = () => {
         </main>
       </div>
 
-      <FloatingChat profile={profile} />
+      <FloatingChat profile={profile} onViewProfile={openProfile} />
     </div>
     </PresenceContext.Provider>
   );
