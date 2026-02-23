@@ -302,7 +302,7 @@ const HmsPanel = () => {
               </div>
               <div className="line-accent mb-6" />
               {currentDoc.content ? (
-                <div className="text-sm text-foreground/80 font-light leading-relaxed whitespace-pre-wrap space-y-4">
+                <div className="bg-white dark:bg-white/95 text-black rounded-xl shadow-md border border-border/10 p-8 md:p-12 max-w-[210mm] mx-auto font-serif text-[13px] leading-[1.8] space-y-4 whitespace-pre-wrap">
                   {currentDoc.content}
                 </div>
               ) : (
