@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Check, CheckCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -22,6 +23,8 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [callActive, setCallActive] = useState(false);
   const [incomingCall, setIncomingCall] = useState<{ from: string; withVideo: boolean; convId: string } | null>(null);
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const [lastMessages, setLastMessages] = useState<Record<string, { content: string; sender_id: string; read_at: string | null }>>({});
   const endRef = useRef<HTMLDivElement>(null);
 
   const fetchConvs = async () => {
@@ -31,6 +34,19 @@ const DmsView = ({ profile }: { profile: Profile }) => {
     data.forEach((c: any) => { profileIds.add(c.participant_1); profileIds.add(c.participant_2); });
     const { data: profiles } = await supabase.from("profiles").select("id, name, role, avatar_url, active").in("id", [...profileIds]);
     const pMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+
+    // Fetch last message and unread counts per conversation
+    const counts: Record<string, number> = {};
+    const lastMsgs: Record<string, { content: string; sender_id: string; read_at: string | null }> = {};
+    for (const c of data) {
+      const { count } = await supabase.from("dm_messages").select("*", { count: "exact", head: true }).eq("conversation_id", c.id).neq("sender_id", profile.id).is("read_at", null);
+      if (count && count > 0) counts[c.id] = count;
+      const { data: last } = await supabase.from("dm_messages").select("content, sender_id, read_at").eq("conversation_id", c.id).order("created_at", { ascending: false }).limit(1);
+      if (last?.[0]) lastMsgs[c.id] = last[0] as any;
+    }
+    setUnreadCounts(counts);
+    setLastMessages(lastMsgs);
+
     setConversations(data.map((c: any) => ({ ...c, other: pMap.get(c.participant_1 === profile.id ? c.participant_2 : c.participant_1) })));
   };
 
@@ -71,7 +87,10 @@ const DmsView = ({ profile }: { profile: Profile }) => {
   useEffect(() => {
     if (!active) return;
     fetchMsgs(active.id);
-    const ch = supabase.channel(`ws-dm-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${active.id}` }, () => fetchMsgs(active.id)).subscribe();
+    const ch = supabase.channel(`ws-dm-${active.id}`).on("postgres_changes", { event: "*", schema: "public", table: "dm_messages", filter: `conversation_id=eq.${active.id}` }, () => {
+      fetchMsgs(active.id);
+      fetchConvs(); // Refresh conversation list to update read status & last message
+    }).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [active?.id]);
 
@@ -161,18 +180,39 @@ const DmsView = ({ profile }: { profile: Profile }) => {
         )}
 
         <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {conversations.map(conv => (
+          {conversations.map(conv => {
+            const unread = unreadCounts[conv.id] || 0;
+            return (
             <div key={conv.id} className="group/conv flex items-center">
               <button onClick={() => setActive(conv)} className={`flex-1 flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${active?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/40"}`}>
-                <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} isActive={conv.other?.active !== false} />
+                <div className="relative">
+                  <UserAvatar name={conv.other?.name} avatarUrl={conv.other?.avatar_url} size="md" profileId={conv.other?.id} isActive={conv.other?.active !== false} />
+                  {unread > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-white text-[9px] font-bold flex items-center justify-center">{unread}</span>
+                  )}
+                </div>
                 <div className="text-left flex-1 min-w-0">
-                  <p className={`text-sm truncate ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
+                  <p className={`text-sm truncate ${unread > 0 ? "font-semibold" : ""} ${active?.id === conv.id ? "text-primary font-medium" : ""}`}>{conv.other?.name || "Ukjent"}</p>
+                  {lastMessages[conv.id] ? (
+                    <div className="flex items-center gap-1">
+                      {lastMessages[conv.id].sender_id === profile.id && (
+                        lastMessages[conv.id].read_at
+                          ? <CheckCheck size={10} className="text-blue-400 shrink-0" />
+                          : <Check size={10} className="text-muted-foreground/50 shrink-0" />
+                      )}
+                      <p className={`text-[10px] truncate ${unread > 0 ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                        {lastMessages[conv.id].sender_id === profile.id ? "Du: " : ""}{lastMessages[conv.id].content.slice(0, 40)}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-muted-foreground capitalize">{conv.other?.role || ""}</p>
+                  )}
                 </div>
               </button>
               <button onClick={() => deleteConversation(conv.id)} className="opacity-0 group-hover/conv:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={11} /></button>
             </div>
-          ))}
+            );
+          })}
           {conversations.length === 0 && !showNew && (
             <div className="text-center py-8">
               <p className="text-xs text-muted-foreground">Ingen samtaler</p>
