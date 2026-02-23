@@ -31,7 +31,7 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
       ) : (
         <div className="w-8 shrink-0" />
       )}
-      <div className={`max-w-[65%] min-w-0 flex flex-col ${isOwn ? "items-end" : ""}`}>
+      <div className={`max-w-[85%] sm:max-w-[65%] min-w-0 flex flex-col ${isOwn ? "items-end" : ""}`}>
         {showAvatar && (
           <div className="flex items-baseline gap-2 mb-1">
             <span className={`text-xs font-semibold ${onNameClick ? "cursor-pointer hover:underline hover:text-primary transition-colors" : ""}`} onClick={onNameClick}>{senderName || "Ukjent"}</span>

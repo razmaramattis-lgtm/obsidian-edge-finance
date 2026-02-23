@@ -78,19 +78,27 @@ const PostReactions = ({ postId, profileId }: PostReactionsProps) => {
           <SmilePlus size={14} />
         </button>
         {showPicker && (
-          <div className="absolute bottom-8 left-0 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex gap-1">
-              {REACTION_EMOJIS.map(emoji => (
-                <button
-                  key={emoji}
-                  onClick={() => toggle(emoji)}
-                  className="w-8 h-8 flex items-center justify-center text-lg rounded-lg hover:bg-muted/60 hover:scale-125 transition-all"
-                >
-                  {emoji}
-                </button>
-              ))}
+          <>
+            {/* Mobile: fixed bottom sheet */}
+            <div className="sm:hidden fixed inset-0 z-50 flex items-end justify-center bg-black/30 backdrop-blur-[2px]" onClick={() => setShowPicker(false)}>
+              <div className="w-full bg-card border-t border-border/30 rounded-t-2xl shadow-2xl p-3 animate-in slide-in-from-bottom-5 duration-200" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-center mb-2"><div className="w-10 h-1 rounded-full bg-muted-foreground/30" /></div>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {REACTION_EMOJIS.map(emoji => (
+                    <button key={emoji} onClick={() => toggle(emoji)} className="w-11 h-11 flex items-center justify-center text-xl rounded-xl hover:bg-muted/60 active:scale-90 transition-all">{emoji}</button>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+            {/* Desktop: absolute popover */}
+            <div className="hidden sm:block absolute bottom-8 left-0 bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/40 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex gap-1">
+                {REACTION_EMOJIS.map(emoji => (
+                  <button key={emoji} onClick={() => toggle(emoji)} className="w-8 h-8 flex items-center justify-center text-lg rounded-lg hover:bg-muted/60 hover:scale-125 transition-all">{emoji}</button>
+                ))}
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

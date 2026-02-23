@@ -333,7 +333,7 @@ const MiniChatWindow = ({
 
   return (
     <>
-      <div className="w-80 h-[420px] bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
+      <div className="w-[calc(100vw-2rem)] sm:w-80 h-[70vh] sm:h-[420px] bg-card border border-border/30 rounded-2xl shadow-2xl shadow-black/30 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-200">
         {/* Header */}
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/10 bg-card/80 shrink-0">
           <UserAvatar name={chat.conv.other?.name} avatarUrl={chat.conv.other?.avatar_url} size="sm" profileId={chat.conv.other?.id} isActive={chat.conv.other?.active !== false} />
