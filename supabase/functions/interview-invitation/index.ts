@@ -130,6 +130,13 @@ function buildInterviewEmail(
               </p>
             </div>
 
+            <div style="text-align:center;margin:28px 0;">
+              <a href="https://www.avargo.no/karriere/intervjutips" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+                &#128218; Les v&#229;re intervjutips
+              </a>
+              <p style="margin:10px 0 0;font-size:12px;color:#a1a1aa;">Tips og r&#229;d for &#229; f&#248;le deg trygg og forberedt</p>
+            </div>
+
             <div style="background:#f8fafc;border:1px solid #e4e4e7;border-radius:10px;padding:20px;margin:24px 0;">
               <p style="margin:0 0 14px;font-size:13px;color:#71717a;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Din kontaktperson</p>
               <table style="border-collapse:collapse;width:100%;">
