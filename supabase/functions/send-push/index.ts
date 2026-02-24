@@ -61,9 +61,21 @@ async function createVapidJwt(
   subject: string,
   expSeconds: number = 86400
 ): Promise<string> {
+  // Ensure privateJwk is a proper object
+  const jwk = typeof privateJwk === "string" ? JSON.parse(privateJwk) : privateJwk;
+  
+  // Ensure required fields for ECDSA import
+  const importJwk = {
+    kty: jwk.kty,
+    crv: jwk.crv,
+    x: jwk.x,
+    y: jwk.y,
+    d: jwk.d,
+  };
+
   const key = await crypto.subtle.importKey(
     "jwk",
-    privateJwk,
+    importJwk,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"]
@@ -225,7 +237,8 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const vapidPrivateJwk: JsonWebKey = JSON.parse(Deno.env.get("VAPID_PRIVATE_JWK")!);
+    const rawJwk = Deno.env.get("VAPID_PRIVATE_JWK")!;
+    const vapidPrivateJwk = typeof rawJwk === "string" ? JSON.parse(rawJwk) : rawJwk;
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
