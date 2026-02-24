@@ -98,7 +98,7 @@ const JobListingsPanel = () => {
   const [viewApps, setViewApps] = useState<string | null>(null);
   const [showOpenApps, setShowOpenApps] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"listings" | "open">("listings");
+  const [activeTab, setActiveTab] = useState<"listings" | "applications" | "open" | "fri">("listings");
   const [expandedApp, setExpandedApp] = useState<string | null>(null);
   const [expandedOpenApp, setExpandedOpenApp] = useState<string | null>(null);
   const [appNotes, setAppNotes] = useState<Record<string, string>>({});
@@ -313,9 +313,31 @@ const JobListingsPanel = () => {
     intervju: "Under intervju", tilbud: "Tilbud", ansatt: "Ansatt", avslått: "Avslått",
   };
 
-  const filteredOpenApps = openApps.filter(app => {
+  // Separate Avargo Fri from regular open apps
+  const regularOpenApps = openApps.filter(app => !app.message?.startsWith("[AVARGO FRI]"));
+  const friOpenApps = openApps.filter(app => app.message?.startsWith("[AVARGO FRI]"));
+
+  const filteredOpenApps = regularOpenApps.filter(app => {
     if (openCatFilter !== "alle" && app.preferred_category !== openCatFilter) return false;
     if (openStatusFilter !== "alle" && app.status !== openStatusFilter) return false;
+    return true;
+  });
+
+  const filteredFriApps = friOpenApps.filter(app => {
+    if (openCatFilter !== "alle" && app.preferred_category !== openCatFilter) return false;
+    if (openStatusFilter !== "alle" && app.status !== openStatusFilter) return false;
+    return true;
+  });
+
+  // All job applications with category from listing
+  const allJobAppsWithCategory = applications.map(app => {
+    const job = listings.find(j => j.id === app.job_listing_id);
+    return { ...app, jobCategory: job?.category || "Ukjent", jobTitle: job?.title || "Ukjent stilling" };
+  });
+
+  const filteredAllJobApps = allJobAppsWithCategory.filter(app => {
+    if (jobCatFilter !== "alle" && app.jobCategory !== jobCatFilter) return false;
+    if (jobStatusFilter !== "alle" && app.status !== jobStatusFilter) return false;
     return true;
   });
 
@@ -325,34 +347,413 @@ const JobListingsPanel = () => {
     return true;
   });
 
+  const renderOpenAppCard = (app: OpenApplication) => {
+    const isExpanded = expandedOpenApp === app.id;
+    const isSelected = selectedOpenApps.has(app.id);
+    return (
+      <div key={app.id} className={`glass rounded-2xl border overflow-hidden transition-colors ${isSelected ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
+        <div className="flex items-center">
+          <button type="button" onClick={() => toggleSelectOpen(app.id)}
+            className="px-3 py-3 text-muted-foreground hover:text-primary transition-colors shrink-0">
+            {isSelected ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
+          </button>
+          <button type="button" onClick={() => setExpandedOpenApp(isExpanded ? null : app.id)}
+            className="flex-1 px-2 py-3 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
+            <div className="min-w-0 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <User size={14} className="text-primary" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-medium">{app.full_name}</p>
+                  {app.preferred_category && (
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.preferred_category}</span>
+                  )}
+                  {app.message?.startsWith("[AVARGO FRI]") && (
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Avargo Fri</span>
+                  )}
+                  <span className={`text-[9px] px-2 py-0.5 rounded-full ${
+                    app.status === "ny" ? "bg-primary/10 text-primary" :
+                    app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
+                    app.status === "avslått" ? "bg-destructive/10 text-destructive" :
+                    app.status === "ansatt" ? "bg-primary/20 text-primary" :
+                    "bg-muted text-muted-foreground"
+                  }`}>{STATUS_LABELS[app.status] || app.status}</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button type="button" onClick={e => { e.stopPropagation(); deleteOpenApp(app.id); }}
+                className="text-muted-foreground hover:text-destructive transition-colors p-1">
+                <Trash2 size={12} />
+              </button>
+              {isExpanded ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+            </div>
+          </button>
+        </div>
+
+        {isExpanded && (
+          <div className="border-t border-border/10 px-5 py-4 space-y-4 bg-muted/5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                <Mail size={14} className="text-primary shrink-0" />
+                <div>
+                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">E-post</p>
+                  <a href={`mailto:${app.email}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.email}</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                <Phone size={14} className="text-primary shrink-0" />
+                <div>
+                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Telefon</p>
+                  <a href={`tel:${app.phone}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.phone}</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                <Calendar size={14} className="text-primary shrink-0" />
+                <div>
+                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Søkt</p>
+                  <p className="text-xs">{new Date(app.created_at).toLocaleString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+                </div>
+              </div>
+              {app.preferred_category && (
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                  <Briefcase size={14} className="text-primary shrink-0" />
+                  <div>
+                    <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Ønsket fagområde</p>
+                    <p className="text-xs">{app.preferred_category}</p>
+                  </div>
+                </div>
+              )}
+              {(app.address || app.city) && (
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                  <MapPin size={14} className="text-primary shrink-0" />
+                  <div>
+                    <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Adresse</p>
+                    <p className="text-xs">{[app.address, app.postal_code, app.city].filter(Boolean).join(", ")}</p>
+                  </div>
+                </div>
+              )}
+              {app.date_of_birth && (
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                  <User size={14} className="text-primary shrink-0" />
+                  <div>
+                    <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Fødselsdato</p>
+                    <p className="text-xs">{new Date(app.date_of_birth).toLocaleDateString("nb-NO")}</p>
+                  </div>
+                </div>
+              )}
+              {app.available_from && (
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                  <Clock size={14} className="text-primary shrink-0" />
+                  <div>
+                    <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Tilgjengelig fra</p>
+                    <p className="text-xs">{app.available_from}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {(app.linkedin_url || app.portfolio_url) && (
+              <div className="flex flex-wrap gap-2">
+                {app.linkedin_url && (
+                  <a href={app.linkedin_url} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-colors">
+                    <ExternalLink size={11} /> LinkedIn-profil
+                  </a>
+                )}
+                {app.portfolio_url && (
+                  <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-colors">
+                    <ExternalLink size={11} /> Portefølje
+                  </a>
+                )}
+              </div>
+            )}
+
+            {app.cv_file_name && (
+              <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+                <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">CV / Vedlegg</p>
+                <button onClick={() => openCv(app.cv_url)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">
+                  <Download size={13} /> {app.cv_file_name}
+                </button>
+              </div>
+            )}
+
+            {app.message && (
+              <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+                <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">
+                  <MessageSquare size={10} className="inline mr-1" />Melding fra søker
+                </p>
+                <p className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">{app.message}</p>
+              </div>
+            )}
+
+            <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+              <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">Internt notat</p>
+              <textarea
+                value={appNotes[app.id] ?? app.admin_note ?? ""}
+                onChange={e => setAppNotes(prev => ({ ...prev, [app.id]: e.target.value }))}
+                placeholder="Skriv et internt notat om søkeren…"
+                rows={2}
+                className="w-full rounded-lg border border-border/20 bg-muted/20 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 mb-2"
+              />
+              <button onClick={() => saveAppNote(app.id, "open_applications")}
+                className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90">
+                Lagre notat
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground">Status:</span>
+                <select value={app.status} onChange={e => updateOpenAppStatus(app.id, e.target.value)}
+                  className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                  <option value="ny">Ny</option>
+                  <option value="kontaktet">Kontaktet</option>
+                  <option value="under_vurdering">Under vurdering</option>
+                  <option value="intervju">Under intervju</option>
+                  <option value="tilbud">Tilbud</option>
+                  <option value="ansatt">Ansatt</option>
+                  <option value="avslått">Avslått</option>
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <a href={`mailto:${app.email}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                  <Mail size={11} /> Send e-post
+                </a>
+                <a href={`tel:${app.phone}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-secondary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                  <Phone size={11} /> Ring
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-5">
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-border/10 pb-2">
+      <div className="flex items-center gap-2 border-b border-border/10 pb-2 overflow-x-auto">
         <button onClick={() => setActiveTab("listings")}
-          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all ${activeTab === "listings" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
-          <Briefcase size={12} className="inline mr-1.5" />Stillingsannonser ({listings.length})
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all whitespace-nowrap ${activeTab === "listings" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Briefcase size={12} className="inline mr-1.5" />Stillinger ({listings.length})
+        </button>
+        <button onClick={() => setActiveTab("applications")}
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all whitespace-nowrap ${activeTab === "applications" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Users size={12} className="inline mr-1.5" />S&#248;knader ({applications.length})
         </button>
         <button onClick={() => setActiveTab("open")}
-          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all ${activeTab === "open" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
-          <Inbox size={12} className="inline mr-1.5" />Åpne søknader ({openApps.length})
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all whitespace-nowrap ${activeTab === "open" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Inbox size={12} className="inline mr-1.5" />&#197;pne s&#248;knader ({regularOpenApps.length})
+        </button>
+        <button onClick={() => setActiveTab("fri")}
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all whitespace-nowrap ${activeTab === "fri" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Inbox size={12} className="inline mr-1.5" />Avargo Fri ({friOpenApps.length})
         </button>
       </div>
 
-      {activeTab === "open" ? (
-        /* Open Applications Tab */
+      {/* ============ SØKNADER TAB (all job applications) ============ */}
+      {activeTab === "applications" && (
         <div className="space-y-3">
-          {/* Filters & Bulk Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter size={12} className="text-muted-foreground" />
+              <select value={jobCatFilter} onChange={e => setJobCatFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle avdelinger</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <select value={jobStatusFilter} onChange={e => setJobStatusFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle statuser</option>
+                <option value="ny">Ny</option>
+                <option value="intervju">Under intervju</option>
+                <option value="avslått">Avslått</option>
+                <option value="under_vurdering">Under vurdering</option>
+                <option value="tilbud">Tilbud</option>
+                <option value="ansatt">Ansatt</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              {filteredAllJobApps.length > 0 && (
+                <button type="button" onClick={() => {
+                  if (selectedJobApps.size === filteredAllJobApps.length) setSelectedJobApps(new Set());
+                  else setSelectedJobApps(new Set(filteredAllJobApps.map(a => a.id)));
+                }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/20 hover:bg-muted/30 transition-colors">
+                  {selectedJobApps.size === filteredAllJobApps.length && filteredAllJobApps.length > 0 ? <CheckSquare size={12} /> : <Square size={12} />}
+                  {selectedJobApps.size > 0 ? `${selectedJobApps.size} valgt` : "Velg alle"}
+                </button>
+              )}
+              {selectedJobApps.size > 0 && (
+                <button type="button" onClick={bulkDeleteJobApps}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive bg-destructive/10 hover:bg-destructive/20 transition-colors">
+                  <Trash2 size={12} /> Slett {selectedJobApps.size}
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground">{filteredAllJobApps.length} søknad(er)</p>
+
+          {filteredAllJobApps.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">Ingen søknader matcher filteret</p>
+          ) : filteredAllJobApps.map(app => {
+            const isExpanded = expandedApp === app.id;
+            const isSelected = selectedJobApps.has(app.id);
+            return (
+              <div key={app.id} className={`glass rounded-2xl border overflow-hidden transition-colors ${isSelected ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
+                <div className="flex items-center">
+                  <button type="button" onClick={() => toggleSelectJob(app.id)}
+                    className="px-3 py-3 text-muted-foreground hover:text-primary transition-colors shrink-0">
+                    {isSelected ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
+                  </button>
+                  <button type="button" onClick={() => setExpandedApp(isExpanded ? null : app.id)}
+                    className="flex-1 px-2 py-3 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
+                    <div className="min-w-0 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <User size={14} className="text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium">{app.full_name}</p>
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.jobCategory}</span>
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{app.jobTitle}</span>
+                          <span className={`text-[9px] px-2 py-0.5 rounded-full ${
+                            app.status === "ny" ? "bg-primary/10 text-primary" :
+                            app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
+                            app.status === "avslått" ? "bg-destructive/10 text-destructive" :
+                            app.status === "ansatt" ? "bg-primary/20 text-primary" :
+                            "bg-muted text-muted-foreground"
+                          }`}>{STATUS_LABELS[app.status] || app.status}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button type="button" onClick={e => { e.stopPropagation(); deleteJobApp(app.id); }}
+                        className="text-muted-foreground hover:text-destructive transition-colors p-1">
+                        <Trash2 size={12} />
+                      </button>
+                      {isExpanded ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+                    </div>
+                  </button>
+                </div>
+
+                {isExpanded && (
+                  <div className="border-t border-border/10 px-5 py-4 space-y-4 bg-muted/5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                        <Mail size={14} className="text-primary shrink-0" />
+                        <div>
+                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">E-post</p>
+                          <a href={`mailto:${app.email}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.email}</a>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                        <Phone size={14} className="text-primary shrink-0" />
+                        <div>
+                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Telefon</p>
+                          <a href={`tel:${app.phone}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.phone}</a>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                        <Calendar size={14} className="text-primary shrink-0" />
+                        <div>
+                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Søkt</p>
+                          <p className="text-xs">{new Date(app.created_at).toLocaleString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                        <Briefcase size={14} className="text-primary shrink-0" />
+                        <div>
+                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Stilling / Avdeling</p>
+                          <p className="text-xs">{app.jobTitle} ({app.jobCategory})</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {app.cv_file_name && (
+                      <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+                        <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">CV / Vedlegg</p>
+                        <button onClick={() => openCv(app.cv_url)}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">
+                          <Download size={13} /> {app.cv_file_name}
+                        </button>
+                      </div>
+                    )}
+
+                    {app.message && (
+                      <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+                        <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">
+                          <MessageSquare size={10} className="inline mr-1" />Melding fra søker
+                        </p>
+                        <p className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">{app.message}</p>
+                      </div>
+                    )}
+
+                    <div className="p-3 rounded-xl bg-background/50 border border-border/10">
+                      <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">Internt notat</p>
+                      <textarea
+                        value={appNotes[app.id] ?? app.admin_note ?? ""}
+                        onChange={e => setAppNotes(prev => ({ ...prev, [app.id]: e.target.value }))}
+                        placeholder="Skriv et internt notat om søkeren…"
+                        rows={2}
+                        className="w-full rounded-lg border border-border/20 bg-muted/20 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 mb-2"
+                      />
+                      <button onClick={() => saveAppNote(app.id, "job_applications")}
+                        className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90">
+                        Lagre notat
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground">Status:</span>
+                        <select value={app.status} onChange={e => updateAppStatus(app.id, e.target.value)}
+                          className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                          <option value="ny">Ny</option>
+                          <option value="under_vurdering">Under vurdering</option>
+                          <option value="intervju">Under intervju</option>
+                          <option value="tilbud">Tilbud sendt</option>
+                          <option value="ansatt">Ansatt</option>
+                          <option value="avslått">Avslått</option>
+                        </select>
+                      </div>
+                      <div className="flex gap-2">
+                        <a href={`mailto:${app.email}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                          <Mail size={11} /> Send e-post
+                        </a>
+                        <a href={`tel:${app.phone}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-secondary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                          <Phone size={11} /> Ring
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ============ ÅPNE SØKNADER TAB ============ */}
+      {activeTab === "open" && (
+        <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <Filter size={12} className="text-muted-foreground" />
               <select value={openCatFilter} onChange={e => setOpenCatFilter(e.target.value)}
                 className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
                 <option value="alle">Alle fagområder</option>
-                <option value="Regnskap">Regnskap</option>
-                <option value="Personal">Personal</option>
-                <option value="Marked">Marked</option>
-                <option value="IT">IT</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               <select value={openStatusFilter} onChange={e => setOpenStatusFilter(e.target.value)}
                 className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
@@ -388,203 +789,60 @@ const JobListingsPanel = () => {
 
           {filteredOpenApps.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">Ingen søknader matcher filteret</p>
-          ) : filteredOpenApps.map(app => {
-            const isExpanded = expandedOpenApp === app.id;
-            const isSelected = selectedOpenApps.has(app.id);
-            return (
-              <div key={app.id} className={`glass rounded-2xl border overflow-hidden transition-colors ${isSelected ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
-                <div className="flex items-center">
-                  <button type="button" onClick={() => toggleSelectOpen(app.id)}
-                    className="px-3 py-3 text-muted-foreground hover:text-primary transition-colors shrink-0">
-                    {isSelected ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
-                  </button>
-                  <button type="button" onClick={() => setExpandedOpenApp(isExpanded ? null : app.id)}
-                    className="flex-1 px-2 py-3 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <User size={14} className="text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium">{app.full_name}</p>
-                          {app.preferred_category && (
-                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.preferred_category}</span>
-                          )}
-                          {app.message?.startsWith("[AVARGO FRI]") && (
-                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Avargo Fri</span>
-                          )}
-                          <span className={`text-[9px] px-2 py-0.5 rounded-full ${
-                            app.status === "ny" ? "bg-primary/10 text-primary" :
-                            app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
-                            app.status === "avslått" ? "bg-destructive/10 text-destructive" :
-                            app.status === "ansatt" ? "bg-primary/20 text-primary" :
-                            "bg-muted text-muted-foreground"
-                          }`}>{STATUS_LABELS[app.status] || app.status}</span>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button type="button" onClick={e => { e.stopPropagation(); deleteOpenApp(app.id); }}
-                        className="text-muted-foreground hover:text-destructive transition-colors p-1">
-                        <Trash2 size={12} />
-                      </button>
-                      {isExpanded ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
-                    </div>
-                  </button>
-                </div>
-
-                {isExpanded && (
-                  <div className="border-t border-border/10 px-5 py-4 space-y-4 bg-muted/5">
-                    {/* Contact info */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                        <Mail size={14} className="text-primary shrink-0" />
-                        <div>
-                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">E-post</p>
-                          <a href={`mailto:${app.email}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.email}</a>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                        <Phone size={14} className="text-primary shrink-0" />
-                        <div>
-                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Telefon</p>
-                          <a href={`tel:${app.phone}`} className="text-xs text-foreground hover:text-primary transition-colors">{app.phone}</a>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                        <Calendar size={14} className="text-primary shrink-0" />
-                        <div>
-                          <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Søkt</p>
-                          <p className="text-xs">{new Date(app.created_at).toLocaleString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-                        </div>
-                      </div>
-                      {app.preferred_category && (
-                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                          <Briefcase size={14} className="text-primary shrink-0" />
-                          <div>
-                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Ønsket fagområde</p>
-                            <p className="text-xs">{app.preferred_category}</p>
-                          </div>
-                        </div>
-                      )}
-                      {(app.address || app.city) && (
-                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                          <MapPin size={14} className="text-primary shrink-0" />
-                          <div>
-                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Adresse</p>
-                            <p className="text-xs">{[app.address, app.postal_code, app.city].filter(Boolean).join(", ")}</p>
-                          </div>
-                        </div>
-                      )}
-                      {app.date_of_birth && (
-                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                          <User size={14} className="text-primary shrink-0" />
-                          <div>
-                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Fødselsdato</p>
-                            <p className="text-xs">{new Date(app.date_of_birth).toLocaleDateString("nb-NO")}</p>
-                          </div>
-                        </div>
-                      )}
-                      {app.available_from && (
-                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                          <Clock size={14} className="text-primary shrink-0" />
-                          <div>
-                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Tilgjengelig fra</p>
-                            <p className="text-xs">{app.available_from}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Links */}
-                    {(app.linkedin_url || app.portfolio_url) && (
-                      <div className="flex flex-wrap gap-2">
-                        {app.linkedin_url && (
-                          <a href={app.linkedin_url} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-colors">
-                            <ExternalLink size={11} /> LinkedIn-profil
-                          </a>
-                        )}
-                        {app.portfolio_url && (
-                          <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-colors">
-                            <ExternalLink size={11} /> Portefølje
-                          </a>
-                        )}
-                      </div>
-                    )}
-
-                    {/* CV */}
-                    {app.cv_file_name && (
-                      <div className="p-3 rounded-xl bg-background/50 border border-border/10">
-                        <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">CV / Vedlegg</p>
-                        <button onClick={() => openCv(app.cv_url)}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">
-                          <Download size={13} /> {app.cv_file_name}
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Message */}
-                    {app.message && (
-                      <div className="p-3 rounded-xl bg-background/50 border border-border/10">
-                        <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">
-                          <MessageSquare size={10} className="inline mr-1" />Melding fra søker
-                        </p>
-                        <p className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">{app.message}</p>
-                      </div>
-                    )}
-
-                    {/* Admin note */}
-                    <div className="p-3 rounded-xl bg-background/50 border border-border/10">
-                      <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">Internt notat</p>
-                      <textarea
-                        value={appNotes[app.id] ?? app.admin_note ?? ""}
-                        onChange={e => setAppNotes(prev => ({ ...prev, [app.id]: e.target.value }))}
-                        placeholder="Skriv et internt notat om søkeren…"
-                        rows={2}
-                        className="w-full rounded-lg border border-border/20 bg-muted/20 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 mb-2"
-                      />
-                      <button onClick={() => saveAppNote(app.id, "open_applications")}
-                        className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90">
-                        Lagre notat
-                      </button>
-                    </div>
-
-                    {/* Status */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-muted-foreground">Status:</span>
-                        <select value={app.status} onChange={e => updateOpenAppStatus(app.id, e.target.value)}
-                          className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
-                          <option value="ny">Ny</option>
-                          <option value="kontaktet">Kontaktet</option>
-                          <option value="under_vurdering">Under vurdering</option>
-                          <option value="intervju">Under intervju</option>
-                          <option value="tilbud">Tilbud</option>
-                          <option value="ansatt">Ansatt</option>
-                          <option value="avslått">Avslått</option>
-                        </select>
-                      </div>
-                      <div className="flex gap-2">
-                        <a href={`mailto:${app.email}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
-                          <Mail size={11} /> Send e-post
-                        </a>
-                        <a href={`tel:${app.phone}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-secondary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
-                          <Phone size={11} /> Ring
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          ) : filteredOpenApps.map(app => renderOpenAppCard(app))}
         </div>
-      ) : (
+      )}
+
+      {/* ============ AVARGO FRI TAB ============ */}
+      {activeTab === "fri" && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter size={12} className="text-muted-foreground" />
+              <select value={openCatFilter} onChange={e => setOpenCatFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle fagområder</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <select value={openStatusFilter} onChange={e => setOpenStatusFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle statuser</option>
+                <option value="ny">Ny</option>
+                <option value="intervju">Under intervju</option>
+                <option value="avslått">Avslått</option>
+                <option value="kontaktet">Kontaktet</option>
+                <option value="under_vurdering">Under vurdering</option>
+                <option value="tilbud">Tilbud</option>
+                <option value="ansatt">Ansatt</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              {filteredFriApps.length > 0 && (
+                <button type="button" onClick={() => {
+                  if (selectedOpenApps.size === filteredFriApps.length) setSelectedOpenApps(new Set());
+                  else setSelectedOpenApps(new Set(filteredFriApps.map(a => a.id)));
+                }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/20 hover:bg-muted/30 transition-colors">
+                  {selectedOpenApps.size === filteredFriApps.length && filteredFriApps.length > 0 ? <CheckSquare size={12} /> : <Square size={12} />}
+                  {selectedOpenApps.size > 0 ? `${selectedOpenApps.size} valgt` : "Velg alle"}
+                </button>
+              )}
+              {selectedOpenApps.size > 0 && (
+                <button type="button" onClick={bulkDeleteOpenApps}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive bg-destructive/10 hover:bg-destructive/20 transition-colors">
+                  <Trash2 size={12} /> Slett {selectedOpenApps.size}
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground">{filteredFriApps.length} søknad(er)</p>
+
+          {filteredFriApps.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">Ingen Avargo Fri-søknader matcher filteret</p>
+          ) : filteredFriApps.map(app => renderOpenAppCard(app))}
+        </div>
+      )}
+
+      {activeTab === "listings" && (
       <>
 
       {/* Header */}
