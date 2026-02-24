@@ -33,8 +33,13 @@ const CvUpload = ({ onUploaded, cvUrl, cvFileName, onRemove }: CvUploadProps) =>
       setUploading(false);
       return;
     }
-    const { data: urlData } = supabase.storage.from("cv-uploads").getPublicUrl(path);
-    onUploaded(urlData.publicUrl || path, file.name);
+    const { data: signedData, error: signError } = await supabase.storage.from("cv-uploads").createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
+    if (signError || !signedData?.signedUrl) {
+      toast.error("Kunne ikke generere nedlastingslenke.");
+      setUploading(false);
+      return;
+    }
+    onUploaded(signedData.signedUrl, file.name);
     setUploading(false);
   };
 
