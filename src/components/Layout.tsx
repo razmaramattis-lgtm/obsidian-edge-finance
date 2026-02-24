@@ -16,7 +16,6 @@ const groupSectionMap: Record<string, string> = {
   "HR & Personal": "/hr",
   "Markedsføring & Vekst": "/markedsforing",
   "IT & Utvikling": "/it",
-  "Kurs & Opplæring": "/regnskap",
 };
 
 /** Maps tjenester group label → SectionId for accent colors */
@@ -25,7 +24,6 @@ const groupSectionIdMap: Record<string, string> = {
   "HR & Personal": "hr",
   "Markedsføring & Vekst": "markedsforing",
   "IT & Utvikling": "it",
-  "Kurs & Opplæring": "regnskap",
 };
 
 const tjenesterGroups = [
@@ -69,14 +67,6 @@ const tjenesterGroups = [
       { icon: Bot, title: "AI & automatisering", href: "/tjenester/ai-automatisering" },
     ],
   },
-  {
-    label: "Kurs & Opplæring",
-    items: [
-      { icon: BookOpen, title: "Regnskapskurs", href: "/tjenester/kurs" },
-      { icon: Users, title: "HR & arbeidsgiveransvar", href: "/tjenester/hr-kurs" },
-      { icon: TrendingUp, title: "Skreddersydde bedriftskurs", href: "/tjenester/bedriftskurs" },
-    ],
-  },
 ];
 
 const bransjerItems = [
@@ -99,6 +89,7 @@ const selskapetLinks = [
   { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss", absolute: false },
   { icon: Briefcase, title: "Jobb hos oss", desc: "Se ledige stillinger", href: "/karriere", absolute: true },
+  { icon: BookOpen, title: "Avargo Kurs", desc: "130+ kurs for kompetanseheving", href: "/kurs", absolute: true },
 ];
 
 const ressurserLinks = [
@@ -501,6 +492,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/kunde/logg-inn" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Kundeportal</Link>
                 <Link to={sp("/om-oss")} className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Om Avargo</Link>
                 <Link to="/karriere" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Jobb hos oss</Link>
+                <Link to="/kurs" className="text-foreground/70 hover:text-foreground transition-colors py-0.5">Avargo Kurs</Link>
               </div>
             </div>
 
