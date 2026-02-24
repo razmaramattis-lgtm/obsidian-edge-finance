@@ -56,7 +56,7 @@ export const usePushSubscription = (profileId: string | undefined) => {
           p256dh: subJson.keys.p256dh!,
           auth: subJson.keys.auth!,
         },
-        { onConflict: "endpoint" }
+        { onConflict: "profile_id,endpoint" }
       );
 
       if (error) {
