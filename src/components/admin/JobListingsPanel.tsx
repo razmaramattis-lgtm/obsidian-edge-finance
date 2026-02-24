@@ -12,7 +12,7 @@ interface JobListing {
   tasks: string | null; we_offer: string | null; about_company: string | null;
   contact_name: string | null; contact_title: string | null; contact_email: string | null;
   contact_phone: string | null; published: boolean; active: boolean; created_at: string;
-  images: string[] | null;
+  images: string[] | null; highlights: string[] | null;
 }
 
 interface JobApplication {
@@ -72,7 +72,7 @@ const emptyForm = {
   intro: "", description: "", qualifications: "", tasks: "", we_offer: WE_OFFER,
   about_company: ABOUT_AVARGO, contact_name: "Emil Follaug", contact_title: "Daglig leder",
   contact_email: "Emil@avargo.no", contact_phone: "464 25 354",
-  published: false, active: true, images: [] as string[],
+  published: false, active: true, images: [] as string[], highlights: [] as string[],
 };
 
 const JobListingsPanel = () => {
@@ -300,6 +300,49 @@ const JobListingsPanel = () => {
             </div>
           </div>
 
+          {/* Highlights / Keywords */}
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-1 block">Høydepunkter / nøkkelord (vises som interaktivt spill)</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {form.highlights.map((h, i) => (
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs border border-primary/20">
+                  {h}
+                  <button type="button" onClick={() => setForm(prev => ({ ...prev, highlights: prev.highlights.filter((_, idx) => idx !== i) }))}
+                    className="hover:text-destructive transition-colors"><X size={12} /></button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="F.eks. Teknologidrevet, Fleksibel arbeidstid…"
+                className="flex-1 h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const val = (e.target as HTMLInputElement).value.trim();
+                    if (val && !form.highlights.includes(val)) {
+                      setForm(prev => ({ ...prev, highlights: [...prev.highlights, val] }));
+                      (e.target as HTMLInputElement).value = "";
+                    }
+                  }
+                }}
+              />
+              <button type="button" className="h-9 px-3 rounded-xl bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+                onClick={() => {
+                  const input = document.querySelector<HTMLInputElement>('input[placeholder*="Teknologidrevet"]');
+                  if (input) {
+                    const val = input.value.trim();
+                    if (val && !form.highlights.includes(val)) {
+                      setForm(prev => ({ ...prev, highlights: [...prev.highlights, val] }));
+                      input.value = "";
+                    }
+                  }
+                }}>Legg til</button>
+            </div>
+            <p className="text-[9px] text-muted-foreground/60 mt-1">Trykk Enter eller «Legg til» for hvert nøkkelord</p>
+          </div>
+
           {/* Rich text sections */}
           <div className="space-y-4">
             <div>
@@ -396,7 +439,7 @@ const JobListingsPanel = () => {
                       about_company: job.about_company || "", contact_name: job.contact_name || "",
                       contact_title: job.contact_title || "", contact_email: job.contact_email || "",
                       contact_phone: job.contact_phone || "", published: job.published, active: job.active,
-                      images: job.images || [],
+                      images: job.images || [], highlights: job.highlights || [],
                     });
                     setShowForm(true);
                   }} className="text-muted-foreground hover:text-foreground transition-colors"><Edit2 size={13} /></button>
