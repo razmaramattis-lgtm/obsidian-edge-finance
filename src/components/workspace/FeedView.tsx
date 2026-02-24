@@ -309,7 +309,7 @@ const PostComments = ({ postId, profileId, profileData, onViewProfile }: { postI
 };
 
 // ─── Feed View ───
-const FeedView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
+const FeedView = ({ profile, onViewProfile, onComposingChange, highlightPostId }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void; highlightPostId?: string }) => {
   const { isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");

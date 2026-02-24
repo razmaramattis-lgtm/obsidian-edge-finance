@@ -16,7 +16,7 @@ import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const GroupsView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
+const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void; initialGroupId?: string }) => {
   const { isAdmin } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
@@ -54,6 +54,17 @@ const GroupsView = ({ profile, onViewProfile, onComposingChange }: { profile: Pr
 
   const [readStatus, setReadStatus] = useState<Record<string, boolean>>({});
 
+  // Auto-open group from notification
+  useEffect(() => {
+    if (initialGroupId && groups.length > 0 && !active) {
+      const group = groups.find(g => g.id === initialGroupId);
+      if (group) {
+        setActive(group);
+        fetchMsgs(group.id);
+        fetchMembers(group.id);
+      }
+    }
+  }, [initialGroupId, groups.length]);
   const fetchMsgs = async (id: string) => {
     const { data } = await supabase.from("workspace_group_messages").select("*, profiles(id, name, role, avatar_url)").eq("group_id", id).order("created_at");
     const msgs = (data as GroupMsg[]) || [];

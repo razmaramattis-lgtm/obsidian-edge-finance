@@ -13,7 +13,7 @@ import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, formatDate, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
-const DmsView = ({ profile, onViewProfile, onComposingChange }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void }) => {
+const DmsView = ({ profile, onViewProfile, onComposingChange, initialConversationId }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void; initialConversationId?: string }) => {
   const { isAdmin } = useAuth();
   const [conversations, setConversations] = useState<DmConv[]>([]);
   const [active, setActive] = useState<DmConv | null>(null);
@@ -69,6 +69,17 @@ const DmsView = ({ profile, onViewProfile, onComposingChange }: { profile: Profi
   };
 
   useEffect(() => { fetchConvs(); fetchProfiles(); }, []);
+
+  // Auto-open conversation from notification
+  useEffect(() => {
+    if (initialConversationId && conversations.length > 0 && !active) {
+      const conv = conversations.find(c => c.id === initialConversationId);
+      if (conv) {
+        setActive(conv);
+        fetchMsgs(conv.id);
+      }
+    }
+  }, [initialConversationId, conversations.length]);
 
   useEffect(() => {
     const callChannels: any[] = [];
