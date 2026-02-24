@@ -326,6 +326,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownPanel>
             </div>
 
+            <Link to="/kurs" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Kurs</Link>
+
             <Link to={sp("/kontakt")} className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
               Få tilbud
             </Link>
@@ -401,6 +403,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {isInSection && section && (
               <Link to={sp("/priser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
             )}
+            <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kurs</Link>
             <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
             <Link to={sp("/om-oss")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
             <Link to={sp("/ressurser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
