@@ -254,74 +254,83 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent 10%, ${sectionAccent} 50%, transparent 90%)` }} />
                 )}
                 <div className="container mx-auto px-6 py-8">
-                  {/* ── Unified card layout: same on hub + all sections ── */}
-                  <div className="grid grid-cols-4 gap-5">
-                    {visibleTjenesterGroups.map((group) => {
-                      const sId = groupSectionIdMap[group.label];
-                      const accent = accentHsl(sId);
-                      const bg = accentBg(sId, 0.06);
-                      const targetPath = isInSection && section
-                        ? section.basePath
-                        : (groupSectionMap[group.label] || "");
-                      const sectionData = SECTIONS[sId as SectionId];
-                      return (
-                        <Link
-                          key={group.label}
-                          to={`${targetPath}/tjenester`}
-                          onClick={() => setTjenesterOpen(false)}
-                          className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
-                          style={{ backgroundColor: bg }}
-                        >
-                          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: accent }} />
-                          <div className="relative">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(sId, 0.15), borderColor: accentBg(sId, 0.25) }}>
-                              <Layers size={17} style={{ color: accent }} strokeWidth={1.5} />
-                            </div>
-                            <h3 className="font-heading text-base mb-1.5" style={{ color: accent }}>{group.label}</h3>
-                            <p className="text-[12px] text-foreground/65 font-light leading-relaxed mb-4">
-                              {sectionData?.tagline}
-                            </p>
-                            <div className="space-y-2 mb-4">
-                              {group.items.slice(0, 4).map(item => (
-                                <div key={item.href} className="flex items-center gap-2 text-[12px] text-foreground/75">
-                                  <div className="w-1 h-1 rounded-full" style={{ backgroundColor: accent }} />
-                                  {item.title}
-                                </div>
-                              ))}
-                              {group.items.length > 4 && (
-                                <p className="text-[11px] text-foreground/50 pl-3">+{group.items.length - 4} mer</p>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: accent }}>
-                              Utforsk <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                  {/* Cross-nav when in section */}
                   {isInSection && section && (
-                    <div className="mt-5 pt-4 border-t border-border/15 flex items-center justify-between">
-                      <Link to={sp("/tjenester")} onClick={() => setTjenesterOpen(false)} className="text-[12px] tracking-wider font-medium transition-colors duration-200 flex items-center gap-1.5" style={{ color: sectionAccent }}>
-                        Se alle tjenester <ArrowRight size={11} />
-                      </Link>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-foreground/50 mr-1">Andre avdelinger:</span>
-                        {SECTION_LIST.filter(s => s.id !== section.id).map(s => (
+                    <>
+                      {/* Current section: show its services as direct links */}
+                      <div className="mb-6">
+                        <p className="text-[11px] tracking-[0.3em] uppercase font-medium mb-3 px-1" style={{ color: sectionAccent }}>{section.name} — Tjenester</p>
+                        <div className="flex flex-wrap gap-2">
+                          {(tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id)?.items || []).slice(0, 4).map(item => (
+                            <Link
+                              key={item.href}
+                              to={`${section.basePath}${item.href}`}
+                              onClick={() => setTjenesterOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border/15 hover:border-border/30 hover:bg-muted/40 transition-all duration-200 group/svc"
+                              style={{ backgroundColor: accentBg(section.id, 0.04) }}
+                            >
+                              <item.icon size={14} style={{ color: sectionAccent }} strokeWidth={1.5} />
+                              <span className="text-[13px] text-foreground/90 group-hover/svc:text-foreground font-medium">{item.title}</span>
+                            </Link>
+                          ))}
                           <Link
-                            key={s.id}
-                            to={`${s.basePath}/tjenester`}
+                            to={sp("/tjenester")}
                             onClick={() => setTjenesterOpen(false)}
-                            className="px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all duration-200 hover:scale-[1.03]"
-                            style={{ color: accentHsl(s.id), borderColor: accentBg(s.id, 0.3), backgroundColor: accentBg(s.id, 0.08) }}
+                            className="flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium transition-colors"
+                            style={{ color: sectionAccent }}
                           >
-                            {s.shortName}
+                            Se alle <ArrowRight size={10} />
                           </Link>
-                        ))}
+                        </div>
                       </div>
-                    </div>
+                      <div className="h-px w-full bg-border/15 mb-6" />
+                    </>
                   )}
+                  {/* Department cards — hide current section when inside one */}
+                  <div className={`grid gap-5 ${isInSection ? "grid-cols-3" : "grid-cols-4"}`}>
+                    {tjenesterGroups
+                      .filter(group => !isInSection || !section || groupSectionIdMap[group.label] !== section.id)
+                      .map((group) => {
+                        const sId = groupSectionIdMap[group.label];
+                        const accent = accentHsl(sId);
+                        const bg = accentBg(sId, 0.06);
+                        const targetPath = groupSectionMap[group.label] || "";
+                        const sectionData = SECTIONS[sId as SectionId];
+                        return (
+                          <Link
+                            key={group.label}
+                            to={`${targetPath}/tjenester`}
+                            onClick={() => setTjenesterOpen(false)}
+                            className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
+                            style={{ backgroundColor: bg }}
+                          >
+                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: accent }} />
+                            <div className="relative">
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(sId, 0.15), borderColor: accentBg(sId, 0.25) }}>
+                                <Layers size={17} style={{ color: accent }} strokeWidth={1.5} />
+                              </div>
+                              <h3 className="font-heading text-base mb-1.5" style={{ color: accent }}>{group.label}</h3>
+                              <p className="text-[12px] text-foreground/65 font-light leading-relaxed mb-4">
+                                {sectionData?.tagline}
+                              </p>
+                              <div className="space-y-2 mb-4">
+                                {group.items.slice(0, 4).map(item => (
+                                  <div key={item.href} className="flex items-center gap-2 text-[12px] text-foreground/75">
+                                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: accent }} />
+                                    {item.title}
+                                  </div>
+                                ))}
+                                {group.items.length > 4 && (
+                                  <p className="text-[11px] text-foreground/50 pl-3">+{group.items.length - 4} mer</p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: accent }}>
+                                Utforsk <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                  </div>
                 </div>
               </DropdownPanel>
             </div>
