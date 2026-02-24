@@ -369,7 +369,9 @@ const Metoden = () => {
                 <span className="italic text-gradient-rose">bekymre deg.</span>
               </h2>
               <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed mb-5 md:mb-6 max-w-2xl mx-auto">
-                Regnskap, skattemelding, lønn og rådgivning — alt håndtert av statsautoriserte regnskapsførere som kjenner selskapet ditt. Du slipper å tenke på frister, rapporter eller papirarbeid. Vi tar alt.
+                {isInSection && section && section.id !== "regnskap"
+                  ? `Alt du trenger — håndtert av dedikerte ${section.shortName.toLowerCase()}-spesialister som kjenner bedriften din. Du slipper å koordinere, følge opp eller bekymre deg. Vi tar alt.`
+                  : "Regnskap, skattemelding, lønn og rådgivning — alt håndtert av statsautoriserte regnskapsførere som kjenner selskapet ditt. Du slipper å tenke på frister, rapporter eller papirarbeid. Vi tar alt."}
               </p>
               <p className="text-primary/70 italic font-light mb-12 md:mb-16 text-sm">
                 Én fast kontaktperson. Hele teamet i ryggen. Ingen overraskelser.
@@ -384,7 +386,10 @@ const Metoden = () => {
               </Link>
 
               <div className="mt-12 md:mt-16 flex flex-wrap gap-6 md:gap-10 justify-center">
-                {["Statsautoriserte regnskapsførere", "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"].map((signal) => (
+                {(isInSection && section && section.id !== "regnskap"
+                  ? [`Dedikerte ${section.shortName.toLowerCase()}-spesialister`, "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"]
+                  : ["Statsautoriserte regnskapsførere", "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"]
+                ).map((signal) => (
                   <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/60 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />
                     {signal}
