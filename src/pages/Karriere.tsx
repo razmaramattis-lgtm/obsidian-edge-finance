@@ -115,41 +115,7 @@ const Karriere = () => {
         <meta name="description" content="Se ledige stillinger hos Avargo. Vi søker alltid etter flinke folk innen regnskap, HR, markedsføring og IT." />
       </Helmet>
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-3xl">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground/60 font-medium mb-4">Karriere</p>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6">
-              Bli en del av<br />
-              <span className="text-primary">fremtidens rådgivning</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-              Vi bygger Norges mest moderne rådgivningsmiljø — med spennende kunder, 
-              moderne teknologi og et team som setter kvalitet i sentrum.
-            </p>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-3xl">
-            {[
-              { label: "Kontorer", value: "5" },
-              { label: "Ingen overtid", value: "0 timer" },
-              { label: "Fagområder", value: "4" },
-              { label: "Ledige stillinger", value: String(jobs.length) },
-            ].map((s, i) => (
-              <div key={i} className="glass rounded-2xl p-4 border border-border/10 text-center">
-                <p className="text-2xl font-bold text-primary">{s.value}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">{s.label}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Open Application — immersive section (moved to top) */}
+      {/* Open Application — immersive section (top) */}
       <section className="relative min-h-[700px] overflow-hidden">
         <div className="absolute inset-0">
           <img src={openAppBg} alt="" className="w-full h-full object-cover" />
@@ -272,6 +238,26 @@ const Karriere = () => {
                 )}
               </AnimatePresence>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            {[
+              { label: "Kontorer", value: "5" },
+              { label: "Ingen overtid", value: "0 timer" },
+              { label: "Fagområder", value: "4" },
+              { label: "Ledige stillinger", value: String(jobs.length) },
+            ].map((s, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="glass rounded-2xl p-5 border border-border/10 text-center">
+                <p className="text-2xl font-bold text-primary">{s.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-1">{s.label}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
