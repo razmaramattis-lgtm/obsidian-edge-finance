@@ -6,6 +6,7 @@ import { MapPin, Clock, Briefcase, Building2, Users, Globe, ArrowLeft, Send, Mai
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
+import CvUpload from "@/components/CvUpload";
 
 interface JobListing {
   id: string;
@@ -39,6 +40,8 @@ const KarriereDetalj = () => {
   const [appForm, setAppForm] = useState({ full_name: "", email: "", phone: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [cvFileName, setCvFileName] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -66,6 +69,8 @@ const KarriereDetalj = () => {
       email: appForm.email.trim(),
       phone: appForm.phone.trim(),
       message: appForm.message.trim() || null,
+      cv_url: cvUrl,
+      cv_file_name: cvFileName,
     }]);
     if (error) {
       toast.error("Kunne ikke sende søknad. Prøv igjen.");
@@ -232,6 +237,15 @@ const KarriereDetalj = () => {
                           placeholder="Telefonnummer" maxLength={20}
                           className="w-full h-10 pl-9 pr-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                       </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">Last opp CV</label>
+                      <CvUpload
+                        cvUrl={cvUrl}
+                        cvFileName={cvFileName}
+                        onUploaded={(url, name) => { setCvUrl(url); setCvFileName(name); }}
+                        onRemove={() => { setCvUrl(null); setCvFileName(null); }}
+                      />
                     </div>
                     <div>
                       <label className="text-xs text-muted-foreground mb-1 block">Melding</label>
