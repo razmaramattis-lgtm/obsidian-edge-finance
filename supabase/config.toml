@@ -44,3 +44,9 @@ verify_jwt = false
 
 [functions.workspace-digest]
 verify_jwt = false
+
+[functions.send-push]
+verify_jwt = false
+
+[functions.seed-accounts]
+verify_jwt = false
