@@ -84,6 +84,23 @@ const Karriere = () => {
       toast.error("Noe gikk galt. Prøv igjen.");
     } else {
       setOpenSubmitted(true);
+      // Send email notification
+      supabase.functions.invoke("notify", {
+        body: {
+          type: "open_application",
+          data: {
+            applicant_name: openForm.full_name.trim(),
+            applicant_email: openForm.email.trim(),
+            applicant_phone: openForm.phone.trim(),
+            linkedin_url: openForm.linkedin_url.trim() || null,
+            portfolio_url: openForm.portfolio_url.trim() || null,
+            preferred_category: openForm.preferred_category || null,
+            message: openForm.message.trim() || null,
+            cv_url: cvUrl,
+            cv_file_name: cvFileName,
+          },
+        },
+      }).catch(() => {});
     }
     setOpenSubmitting(false);
   };

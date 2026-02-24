@@ -310,6 +310,45 @@ serve(async (req) => {
       await sendEmail({ ...smtpOpts, to: "kontakt@avargo.no", subject: sectionSubject(section, `Kontohjelp: Manglende treff for «${search_term}»`), html: wrapHtml("🔍 Kontohjelp-tilbakemelding", body, section) });
     }
 
+    if (type === "job_application") {
+      const { applicant_name, applicant_email, applicant_phone, job_title, job_category, message, cv_url, cv_file_name } = data;
+      const body = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">📋 Ny jobbsøknad</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Stilling</td><td style="padding:6px 0;font-size:14px;color:#0f172a;font-weight:600;">${job_title}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Kategori</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${job_category}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Søker</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${applicant_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">E-post</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${applicant_email}" style="color:#2563eb;">${applicant_email}</a></td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Telefon</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${applicant_phone}</td></tr>
+            ${cv_url ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">CV</td><td style="padding:6px 0;font-size:14px;"><a href="${cv_url}" style="color:#2563eb;">${cv_file_name || 'Last ned CV'}</a></td></tr>` : ''}
+          </table>
+        </div>
+        ${message ? `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Melding:</strong><br/>${message}</div>` : ""}
+      `;
+      await sendEmail({ ...smtpOpts, to: "kontakt@avargo.no", subject: `Ny søknad: ${applicant_name} → ${job_title}`, html: wrapHtml("📋 Ny jobbsøknad mottatt", body) });
+    }
+
+    if (type === "open_application") {
+      const { applicant_name, applicant_email, applicant_phone, linkedin_url, portfolio_url, preferred_category, message, cv_url, cv_file_name } = data;
+      const body = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">✨ Åpen søknad</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Søker</td><td style="padding:6px 0;font-size:14px;color:#0f172a;font-weight:600;">${applicant_name}</td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">E-post</td><td style="padding:6px 0;font-size:14px;"><a href="mailto:${applicant_email}" style="color:#2563eb;">${applicant_email}</a></td></tr>
+            <tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Telefon</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${applicant_phone}</td></tr>
+            ${preferred_category ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Ønsket avdeling</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${preferred_category}</td></tr>` : ''}
+            ${linkedin_url ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">LinkedIn</td><td style="padding:6px 0;font-size:14px;"><a href="${linkedin_url}" style="color:#2563eb;">${linkedin_url}</a></td></tr>` : ''}
+            ${portfolio_url ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Portefølje</td><td style="padding:6px 0;font-size:14px;"><a href="${portfolio_url}" style="color:#2563eb;">${portfolio_url}</a></td></tr>` : ''}
+            ${cv_url ? `<tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">CV</td><td style="padding:6px 0;font-size:14px;"><a href="${cv_url}" style="color:#2563eb;">${cv_file_name || 'Last ned CV'}</a></td></tr>` : ''}
+          </table>
+        </div>
+        ${message ? `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Melding:</strong><br/>${message}</div>` : ""}
+      `;
+      await sendEmail({ ...smtpOpts, to: "kontakt@avargo.no", subject: `Åpen søknad: ${applicant_name}${preferred_category ? ` (${preferred_category})` : ''}`, html: wrapHtml("✨ Ny åpen søknad mottatt", body) });
+    }
+
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (error) {
     console.error("Notify error:", error);
