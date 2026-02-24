@@ -77,6 +77,22 @@ const KarriereDetalj = () => {
     } else {
       setSubmitted(true);
       toast.success("Søknad sendt!");
+      // Send email notification
+      supabase.functions.invoke("notify", {
+        body: {
+          type: "job_application",
+          data: {
+            applicant_name: appForm.full_name.trim(),
+            applicant_email: appForm.email.trim(),
+            applicant_phone: appForm.phone.trim(),
+            job_title: job.title,
+            job_category: job.category,
+            message: appForm.message.trim() || null,
+            cv_url: cvUrl,
+            cv_file_name: cvFileName,
+          },
+        },
+      }).catch(() => {});
     }
     setSubmitting(false);
   };
