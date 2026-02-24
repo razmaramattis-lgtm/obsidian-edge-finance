@@ -49,14 +49,12 @@ const DraggableKeyword = ({
   const [gone, setGone] = useState(false);
   const MAX_TAPS = 5;
 
-  // Random throw on tap/click
   const handleTap = useCallback(() => {
     if (gone) return;
     const next = tapCount + 1;
     setTapCount(next);
 
     if (next >= MAX_TAPS) {
-      // Disappear with a pop
       controls.start({
         scale: 0,
         opacity: 0,
@@ -65,17 +63,12 @@ const DraggableKeyword = ({
       return;
     }
 
-    // Random throw direction
     const angle = Math.random() * Math.PI * 2;
     const force = 80 + Math.random() * 120;
-    const throwX = Math.cos(angle) * force;
-    const throwY = Math.sin(angle) * force;
-    const spin = (Math.random() - 0.5) * 40;
-
     controls.start({
-      x: throwX,
-      y: throwY,
-      rotate: spin,
+      x: Math.cos(angle) * force,
+      y: Math.sin(angle) * force,
+      rotate: (Math.random() - 0.5) * 40,
       scale: initialPos.scale * (1 - next * 0.08),
       transition: { type: "spring", damping: 12, stiffness: 120, mass: 0.6 },
     });
@@ -83,25 +76,21 @@ const DraggableKeyword = ({
 
   const handleDragEnd = useCallback((_: any, info: PanInfo) => {
     setIsDragging(false);
-    const throwX = info.velocity.x * 0.3;
-    const throwY = info.velocity.y * 0.3;
-    
     controls.start({
-      x: info.point.x + throwX - window.innerWidth / 2,
-      y: info.point.y + throwY - window.innerHeight / 2,
-      rotate: initialPos.rotation + (info.velocity.x * 0.05),
-      transition: { type: "spring", damping: 15, stiffness: 100, mass: 0.8 },
+      x: info.velocity.x * 0.15,
+      y: info.velocity.y * 0.15,
+      rotate: info.velocity.x * 0.03,
+      transition: { type: "spring", damping: 8, stiffness: 60, mass: 1.2 },
     });
-  }, [controls, initialPos.rotation]);
+  }, [controls]);
 
   if (gone) return null;
-
-  const remaining = MAX_TAPS - tapCount;
 
   return (
     <motion.div
       drag
-      dragMomentum={false}
+      dragElastic={0.35}
+      dragTransition={{ bounceStiffness: 80, bounceDamping: 12 }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
       onTap={handleTap}
@@ -117,7 +106,7 @@ const DraggableKeyword = ({
         transition: { delay: index * 0.06, duration: 0.5, ease: "backOut" },
       }}
       whileHover={{ scale: initialPos.scale * 1.1 }}
-      whileDrag={{ scale: 1.15, zIndex: 50 }}
+      whileDrag={{ scale: 1.12, zIndex: 50 }}
       style={{
         position: "absolute",
         left: `${initialPos.x}%`,
@@ -129,7 +118,7 @@ const DraggableKeyword = ({
       className="transform -translate-x-1/2 -translate-y-1/2"
     >
       <div
-        className="px-4 py-2 rounded-full border backdrop-blur-sm whitespace-nowrap text-sm font-medium shadow-lg transition-shadow duration-200 relative"
+        className="px-4 py-2 rounded-full border backdrop-blur-sm whitespace-nowrap text-sm font-medium shadow-lg transition-shadow duration-200"
         style={{
           backgroundColor: color.bg,
           borderColor: color.border,
@@ -140,11 +129,6 @@ const DraggableKeyword = ({
         }}
       >
         {word}
-        {tapCount > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
-            {remaining}
-          </span>
-        )}
       </div>
     </motion.div>
   );
