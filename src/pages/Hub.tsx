@@ -36,6 +36,30 @@ const Hub = () => {
         <title>Avargo | Regnskap, HR, markedsføring og IT for bedrifter</title>
         <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Velg det du trenger — vi tar resten." />
         <link rel="canonical" href="https://avargo.no" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AccountingService",
+          "name": "Avargo",
+          "url": "https://avargo.no",
+          "logo": "https://avargo.no/logo.png",
+          "image": "https://avargo.no/og-image.jpg",
+          "description": "Avargo samler regnskap, HR, markedsføring og IT under ett tak for små og mellomstore bedrifter i Norge.",
+          "address": { "@type": "PostalAddress", "addressLocality": "Oslo", "addressCountry": "NO" },
+          "areaServed": { "@type": "Country", "name": "Norway" },
+          "priceRange": "$$",
+          "sameAs": [],
+          "serviceType": ["Regnskap", "HR", "Markedsføring", "IT"],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Tjenester",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dedikert regnskapsfører" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HR og lønnskjøring" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Markedsføring og SEO" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "IT og utvikling" } }
+            ]
+          }
+        })}</script>
       </Helmet>
 
       {/* HERO */}
