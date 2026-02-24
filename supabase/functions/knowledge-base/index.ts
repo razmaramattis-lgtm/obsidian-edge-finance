@@ -305,8 +305,9 @@ serve(async (req) => {
       answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
     }
 
-    // For non-glossary results: show other matching results as tags
-    if (!isGlossaryResult) {
+    // For non-glossary, non-account results: show other matching results as tags
+    const isAccountSearch = cat === "kontoplan" || (cat === "alt" && best.source === "Kontohjelp");
+    if (!isGlossaryResult && !isAccountSearch) {
       const otherResults = results.filter(r => r !== best).slice(0, 5);
       if (otherResults.length > 0) {
         answer += `\n---\n**Se også:**\n\n`;
@@ -328,8 +329,7 @@ serve(async (req) => {
       }
     }
 
-    // For account searches: include alternatives with 1000-2999 last
-    const isAccountSearch = cat === "kontoplan" || (cat === "alt" && best.source === "Kontohjelp");
+    // For account searches: only best shown above, rest behind toggle
     const accountResults = results.filter(r => r.source === "Kontohjelp" && r !== best);
     if (isAccountSearch && accountResults.length > 0) {
       accountResults.sort((a, b) => {
