@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Shield, Clock, Users, ArrowRight, Send, User, Mail, Phone, Linkedin, Globe, CheckCircle2, Sparkles } from "lucide-react";
+import { Zap, Shield, Clock, Users, ArrowRight, Send, User, Mail, Phone, Linkedin, Globe, CheckCircle2, Sparkles, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CvUpload from "@/components/CvUpload";
 import freelancerImg from "@/assets/karriere-freelancer.jpg";
@@ -18,6 +18,7 @@ const KarriereAvargoFri = () => {
   const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
 
   const setField = (key: string, val: string) => setForm(prev => ({ ...prev, [key]: val }));
   const inputClass = "w-full h-12 pl-10 pr-3 rounded-xl border border-border/20 bg-muted/10 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all";
@@ -296,6 +297,118 @@ const KarriereAvargoFri = () => {
           </div>
         </div>
       </section>
+      {/* Sticky side button */}
+      <AnimatePresence>
+        {!showPanel && !submitted && (
+          <motion.button
+            initial={{ x: 80 }}
+            animate={{ x: 0 }}
+            exit={{ x: 80 }}
+            transition={{ type: "spring", damping: 20, stiffness: 200 }}
+            onClick={() => setShowPanel(true)}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-secondary text-secondary-foreground px-3 py-6 rounded-l-2xl text-xs font-bold tracking-wide shadow-xl shadow-secondary/30 hover:px-4 transition-all duration-300"
+            style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+          >
+            <span className="flex items-center gap-2">
+              <Send size={13} /> Søk nå
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Slide-in application panel */}
+      <AnimatePresence>
+        {showPanel && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+              onClick={() => !submitting && setShowPanel(false)}
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-background border-l border-border/10 shadow-2xl overflow-y-auto"
+            >
+              <div className="p-6 md:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Søk Avargo Fri</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">Frilans eller fleksibel tilknytning</p>
+                  </div>
+                  <button onClick={() => !submitting && setShowPanel(false)} className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center hover:bg-muted/50 transition-colors">
+                    <X size={16} className="text-muted-foreground" />
+                  </button>
+                </div>
+
+                {submitted ? (
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
+                    <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                      <Sparkles size={24} className="text-secondary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Takk for interessen!</h3>
+                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">Vi gjennomgår henvendelsen din og tar kontakt.</p>
+                    <button onClick={() => setShowPanel(false)} className="mt-6 text-sm text-secondary hover:underline">Lukk</button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="relative">
+                      <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                      <input value={form.full_name} onChange={e => setField("full_name", e.target.value)} required placeholder="Fullt navn *" maxLength={100} className={inputClass} />
+                    </div>
+                    <div className="relative">
+                      <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                      <input type="email" value={form.email} onChange={e => setField("email", e.target.value)} required placeholder="E-post *" maxLength={255} className={inputClass} />
+                    </div>
+                    <div className="relative">
+                      <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                      <input type="tel" value={form.phone} onChange={e => setField("phone", e.target.value)} required placeholder="Telefon *" maxLength={20} className={inputClass} />
+                    </div>
+                    <div className="relative">
+                      <Linkedin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                      <input value={form.linkedin_url} onChange={e => setField("linkedin_url", e.target.value)} placeholder="LinkedIn-profil" maxLength={500} className={inputClass} />
+                    </div>
+                    <div className="relative">
+                      <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                      <input value={form.portfolio_url} onChange={e => setField("portfolio_url", e.target.value)} placeholder="Portefølje / nettside" maxLength={500} className={inputClass} />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Hvilken avdeling?</p>
+                      <div className="flex flex-wrap gap-2">
+                        {DEPT_OPTIONS.map(cat => (
+                          <button key={cat} type="button" onClick={() => setField("preferred_category", form.preferred_category === cat ? "" : cat)}
+                            className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 border ${
+                              form.preferred_category === cat
+                                ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
+                                : "bg-muted/20 text-muted-foreground border-border/20 hover:bg-muted/40"
+                            }`}>{cat}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Last opp CV (PDF / Word)</p>
+                      <CvUpload cvUrl={cvUrl} cvFileName={cvFileName} onUploaded={(url, name) => { setCvUrl(url); setCvFileName(name); }} onRemove={() => { setCvUrl(null); setCvFileName(null); }} />
+                    </div>
+                    <textarea value={form.message} onChange={e => setField("message", e.target.value)} placeholder="Fortell oss om din erfaring og hva slags samarbeid du ser for deg…" rows={5} maxLength={3000}
+                      className="w-full rounded-xl border border-border/20 bg-muted/10 px-4 py-3 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-secondary/30 resize-none" />
+                    <button type="submit" disabled={submitting}
+                      className="w-full h-12 bg-secondary text-secondary-foreground rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-secondary/20">
+                      {submitting ? "Sender…" : <><Send size={15} /> Send henvendelse</>}
+                    </button>
+                    <p className="text-[11px] text-muted-foreground/50 text-center leading-relaxed">
+                      Ved å sende inn samtykker du til at vi behandler henvendelsen din i henhold til vår personvernpolicy.
+                    </p>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };
