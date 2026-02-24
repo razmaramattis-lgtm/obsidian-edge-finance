@@ -17,6 +17,11 @@ const KarriereHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
 
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -136,7 +141,8 @@ const KarriereHeader = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-50 bg-background/98 backdrop-blur-3xl md:hidden flex flex-col"
+            className="fixed inset-0 z-[55] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col"
+            onClick={() => setMenuOpen(false)}
           >
             {/* Close button at top */}
             <div className="flex justify-end p-4">
@@ -145,7 +151,7 @@ const KarriereHeader = () => {
               </button>
             </div>
 
-            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6">
+            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6" onClick={(e) => e.stopPropagation()}>
               {NAV_ITEMS.map((item, i) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
