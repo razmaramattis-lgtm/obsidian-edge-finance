@@ -8,6 +8,7 @@ interface Profile {
   role: "admin" | "employee" | "customer";
   name: string;
   email: string;
+  title?: string | null;
   avatar_url?: string | null;
 }
 
