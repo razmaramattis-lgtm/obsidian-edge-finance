@@ -1293,29 +1293,9 @@ const JobListingsPanel = () => {
           return (
             <div key={job.id} className="glass rounded-2xl border border-border/20 overflow-hidden">
               <div className="px-5 py-3 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Briefcase size={16} className="text-primary shrink-0" strokeWidth={1.5} />
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{job.title}</p>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${job.published ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"}`}>
-                        {job.published ? "Publisert" : "Utkast"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{job.category} · {job.location} · {job.work_location}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {appCount > 0 && (
-                    <button onClick={() => setViewApps(viewApps === job.id ? null : job.id)}
-                      className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                      <Users size={11} /> {appCount} {viewApps === job.id ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
-                    </button>
-                  )}
-                  <button onClick={() => togglePublish(job)} className="text-muted-foreground hover:text-primary transition-colors" title={job.published ? "Avpubliser" : "Publiser"}>
-                    {job.published ? <EyeOff size={13} /> : <Eye size={13} />}
-                  </button>
-                  <button onClick={() => {
+                <button
+                  type="button"
+                  onClick={() => {
                     setEditing(job);
                     setForm({
                       title: job.title, slug: job.slug, category: job.category, location: job.location,
@@ -1329,8 +1309,37 @@ const JobListingsPanel = () => {
                       images: job.images || [], highlights: job.highlights || [],
                     });
                     setShowForm(true);
-                  }} className="text-muted-foreground hover:text-foreground transition-colors"><Edit2 size={13} /></button>
-                  <button onClick={() => del(job.id)} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 size={13} /></button>
+                  }}
+                  className="flex items-center gap-3 min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                >
+                  <Briefcase size={16} className="text-primary shrink-0" strokeWidth={1.5} />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">{job.title}</p>
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${job.published ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"}`}>
+                        {job.published ? "Publisert" : "Utkast"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground truncate">{job.category} · {job.location} · {job.work_location}</p>
+                  </div>
+                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  {appCount > 0 && (
+                    <button onClick={() => setViewApps(viewApps === job.id ? null : job.id)}
+                      className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                      <Users size={11} /> {appCount} {viewApps === job.id ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                    </button>
+                  )}
+                  <button onClick={() => togglePublish(job)}
+                    className={`flex items-center gap-1 text-[10px] px-2.5 py-1.5 rounded-lg transition-all font-medium ${
+                      job.published
+                        ? "bg-green-500/10 text-green-600 hover:bg-destructive/10 hover:text-destructive"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}
+                    title={job.published ? "Avpubliser" : "Publiser"}>
+                    {job.published ? <><EyeOff size={11} /><span className="hidden sm:inline">Avpubliser</span></> : <><Eye size={11} /><span className="hidden sm:inline">Publiser</span></>}
+                  </button>
+                  <button onClick={() => del(job.id)} className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-lg hover:bg-destructive/10"><Trash2 size={13} /></button>
                 </div>
               </div>
 
