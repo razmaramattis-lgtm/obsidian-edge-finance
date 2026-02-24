@@ -615,13 +615,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <MobileNavLink to={sp("/priser")} label="Priser" onClick={() => setMenuOpen(false)} />
             )}
 
+            {/* ─── Direct links: Om oss, Karriere, Akademi ─── */}
+            <MobileNavLink to={sp("/om-oss")} label="Om oss" onClick={() => setMenuOpen(false)} />
+            <MobileNavLink to="/karriere" label="Karriere" onClick={() => setMenuOpen(false)} />
+            <MobileNavLink to="/kurs" label="Akademi" onClick={() => setMenuOpen(false)} />
+
             {/* Mobile Selskapet */}
             <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
-              Selskapet <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
+              Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="py-2 pl-1 flex flex-col gap-0.5">
-                {selskapetLinks.map(item => (
+                {selskapetLinks.filter(item => item.href !== "/om-oss" && item.href !== "/karriere").map(item => (
                   <Link key={item.href} to={item.absolute ? item.href : sp(item.href)} onClick={() => { setMenuOpen(false); setMobileSelskapetOpen(false); }}
                     className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
                   >
@@ -633,10 +638,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Mobile Ressurser */}
             {!isInSection && (
-              <>
-                <MobileNavLink to="/ressurser" label="Ressurser" onClick={() => setMenuOpen(false)} />
-                <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/65 active:text-foreground transition-colors border-b border-border/15 tracking-wide">Avargo Kurs</Link>
-              </>
+              <MobileNavLink to="/ressurser" label="Ressurser" onClick={() => setMenuOpen(false)} />
             )}
 
             {/* Cross-navigation on mobile when in section */}
