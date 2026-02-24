@@ -63,7 +63,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
     ],
     hookSlides: [
@@ -72,7 +72,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { heading: <>Samme trygghet som de store.{" "}<span className="italic text-gradient-teal">Uten byråkratiet.</span></>, body: "Storkonsern har egne økonomiavdelinger og rådgivere. Du har Avargo. Samme kompetanse, samme tilgjengelighet — men uten faste ansatte og millionbudsjetter.", tagline: "Laget for bedrifter som tenker stort — uansett størrelse." },
     ],
     services: [
-      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert.", href: "/regnskap/tjenester/regnskapsforer" },
+      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Svar innen 24 timer.", href: "/regnskap/tjenester/regnskapsforer" },
       { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Ingenting er «ekstra».", href: "/regnskap/tjenester/1-1-regnskap" },
       { icon: Users, title: "Lønn & Personal", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift — inkludert i fastprisen.", href: "/regnskap/tjenester/lonn" },
       { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om.", href: "/regnskap/tjenester/cfo" },
@@ -134,7 +134,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: UserCheck, value: "Spesialisert", label: "HR-rådgivning", sub: "Norsk arbeidsrett" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
       { icon: Shield, value: "Trygt", label: "lønn og personal", sub: "Alt inkludert" },
     ],
     hookSlides: [
@@ -205,7 +205,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: TrendingUp, value: "Datadrevet", label: "markedsføring", sub: "Koblet til regnskap" },
       { icon: Eye, value: "Full", label: "synlighet", sub: "Google & SoMe" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen timefakturering" },
     ],
     hookSlides: [
@@ -276,7 +276,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Code, value: "Skreddersydd", label: "utvikling", sub: "Ingen hyllevare" },
       { icon: Bot, value: "AI", label: "integrert", sub: "Chatbot & automatisering" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
       { icon: CheckCircle2, value: "Fast pris", label: "ingen timefakturering", sub: "Forutsigbart" },
     ],
     hookSlides: [

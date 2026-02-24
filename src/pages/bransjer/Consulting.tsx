@@ -28,7 +28,7 @@ const Consulting = () => (
     whyAvargo={[
       { num: "01", title: "Vi forstår hverdagen din.", desc: "Variabel inntekt, prosjektbasert fakturering og behovet for å ha penger i reserve — vi kjenner mønsteret og planlegger deretter." },
       { num: "02", title: "Skatteplanlegging gjennom hele året.", desc: "Ikke bare ved skattemeldingen. Vi følger opp jevnlig og gjør grep når det har mest effekt." },
-      { num: "03", title: "Alltid tilgjengelig for raske spørsmål.", desc: "Som konsulent tar du ofte beslutninger raskt. Du skal kunne ringe oss og få svar med en gang." },
+      { num: "03", title: "Rask respons når det gjelder.", desc: "Som konsulent tar du ofte beslutninger raskt. Du skal kunne kontakte oss og få svar innen 24 timer." },
     ]}
     relatedSlugs={[
       { label: "Tech & SaaS", href: "/bransjer/tech-saas" },
