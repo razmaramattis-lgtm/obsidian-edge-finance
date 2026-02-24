@@ -1,10 +1,4 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import {
-  buildPushPayload,
-  type PushSubscription,
-  type PushMessage,
-  type VapidKeys,
-} from "npm:@block65/webcrypto-web-push@1.0.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,6 +40,173 @@ function typeToUrl(type: string, refId?: string | null): string {
   }
 }
 
+// --- Helpers for base64url ---
+function b64urlEncode(buf: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function b64urlDecode(s: string): Uint8Array {
+  const padded = s.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (s.length % 4)) % 4);
+  const binary = atob(padded);
+  return Uint8Array.from(binary, (c) => c.charCodeAt(0));
+}
+
+// --- VAPID JWT ---
+async function createVapidJwt(
+  privateJwk: JsonWebKey,
+  audience: string,
+  subject: string,
+  expSeconds: number = 86400
+): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "jwk",
+    privateJwk,
+    { name: "ECDSA", namedCurve: "P-256" },
+    false,
+    ["sign"]
+  );
+
+  const header = { typ: "JWT", alg: "ES256" };
+  const now = Math.floor(Date.now() / 1000);
+  const payload = { aud: audience, exp: now + expSeconds, sub: subject };
+
+  const enc = new TextEncoder();
+  const headerB64 = b64urlEncode(enc.encode(JSON.stringify(header)).buffer as ArrayBuffer);
+  const payloadB64 = b64urlEncode(enc.encode(JSON.stringify(payload)).buffer as ArrayBuffer);
+  const unsigned = `${headerB64}.${payloadB64}`;
+
+  const signature = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" },
+    key,
+    enc.encode(unsigned)
+  );
+
+  // Convert DER signature to raw r||s (64 bytes)
+  const sigBytes = new Uint8Array(signature);
+  let r: Uint8Array, s: Uint8Array;
+  if (sigBytes.length === 64) {
+    r = sigBytes.slice(0, 32);
+    s = sigBytes.slice(32);
+  } else {
+    // DER encoded
+    r = sigBytes.slice(0, 32);
+    s = sigBytes.slice(32, 64);
+  }
+
+  return `${unsigned}.${b64urlEncode(new Uint8Array([...r, ...s]).buffer as ArrayBuffer)}`;
+}
+
+// --- Web Push Encryption (aes128gcm) ---
+async function encryptPayload(
+  payload: string,
+  p256dhKey: string,
+  authSecret: string
+): Promise<{ body: Uint8Array; salt: Uint8Array; localPublicKey: Uint8Array }> {
+  // Generate local ECDH key pair
+  const localKeys = await crypto.subtle.generateKey(
+    { name: "ECDH", namedCurve: "P-256" },
+    true,
+    ["deriveBits"]
+  );
+
+  const localPublicRaw = new Uint8Array(await crypto.subtle.exportKey("raw", localKeys.publicKey));
+
+  // Import subscriber's p256dh key
+  const subscriberKey = await crypto.subtle.importKey(
+    "raw",
+    b64urlDecode(p256dhKey),
+    { name: "ECDH", namedCurve: "P-256" },
+    false,
+    []
+  );
+
+  // ECDH shared secret
+  const sharedSecret = new Uint8Array(
+    await crypto.subtle.deriveBits(
+      { name: "ECDH", public: subscriberKey },
+      localKeys.privateKey,
+      256
+    )
+  );
+
+  const auth = b64urlDecode(authSecret);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+
+  const enc = new TextEncoder();
+
+  // IKM = HKDF(auth, sharedSecret, "WebPush: info\0" || subscriberPubKey || localPubKey)
+  const ikmInfo = new Uint8Array([
+    ...enc.encode("WebPush: info\0"),
+    ...b64urlDecode(p256dhKey),
+    ...localPublicRaw,
+  ]);
+
+  const ikmKey = await crypto.subtle.importKey("raw", auth, { name: "HKDF" }, false, [
+    "deriveBits",
+  ]);
+  const ikm = new Uint8Array(
+    await crypto.subtle.deriveBits(
+      { name: "HKDF", hash: "SHA-256", salt: sharedSecret, info: ikmInfo },
+      ikmKey,
+      256
+    )
+  );
+
+  // PRK from HKDF-Extract(salt, IKM)
+  const prkKey = await crypto.subtle.importKey("raw", ikm, { name: "HKDF" }, false, [
+    "deriveBits",
+  ]);
+
+  // CEK = HKDF(salt, IKM, "Content-Encoding: aes128gcm\0", 16)
+  const cekInfo = enc.encode("Content-Encoding: aes128gcm\0");
+  const cek = await crypto.subtle.deriveBits(
+    { name: "HKDF", hash: "SHA-256", salt, info: cekInfo },
+    prkKey,
+    128
+  );
+
+  // Nonce = HKDF(salt, IKM, "Content-Encoding: nonce\0", 12)
+  const nonceInfo = enc.encode("Content-Encoding: nonce\0");
+  const nonce = new Uint8Array(
+    await crypto.subtle.deriveBits(
+      { name: "HKDF", hash: "SHA-256", salt, info: nonceInfo },
+      prkKey,
+      96
+    )
+  );
+
+  // Encrypt with AES-128-GCM
+  const aesKey = await crypto.subtle.importKey("raw", cek, { name: "AES-GCM" }, false, [
+    "encrypt",
+  ]);
+
+  const payloadBytes = enc.encode(payload);
+  // Add padding delimiter (0x02) then pad
+  const paddedPayload = new Uint8Array([...payloadBytes, 2]);
+
+  const ciphertext = new Uint8Array(
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce }, aesKey, paddedPayload)
+  );
+
+  // Build aes128gcm payload: salt(16) || rs(4) || idlen(1) || keyid(65) || ciphertext
+  const rs = 4096;
+  const rsBytes = new Uint8Array(4);
+  new DataView(rsBytes.buffer).setUint32(0, rs);
+
+  const body = new Uint8Array([
+    ...salt,
+    ...rsBytes,
+    localPublicRaw.length,
+    ...localPublicRaw,
+    ...ciphertext,
+  ]);
+
+  return { body, salt, localPublicKey: localPublicRaw };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -64,16 +225,11 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    // Normalize keys to proper base64url (no padding, URL-safe chars)
-    const normalizeB64 = (s: string) =>
-      s.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").trim();
-
-    const vapidPublicKey = normalizeB64(Deno.env.get("VAPID_PUBLIC_KEY")!);
-    const vapidPrivateKey = normalizeB64(Deno.env.get("VAPID_PRIVATE_KEY")!);
+    const vapidPrivateJwk: JsonWebKey = JSON.parse(Deno.env.get("VAPID_PRIVATE_JWK")!);
+    const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Get all push subscriptions for this recipient
     const { data: subscriptions, error: subError } = await supabase
       .from("push_subscriptions")
       .select("*")
@@ -94,12 +250,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const vapid: VapidKeys = {
-      subject: "mailto:kontakt@avargo.no",
-      publicKey: vapidPublicKey,
-      privateKey: vapidPrivateKey,
-    };
-
     const notificationData = {
       title: title || "Avargo",
       body: body || "",
@@ -109,35 +259,38 @@ Deno.serve(async (req) => {
       data: { type, reference_id, url: typeToUrl(type, reference_id) },
     };
 
-    const pushMessage: PushMessage = {
-      data: JSON.stringify(notificationData),
-      options: { ttl: 86400 },
-    };
+    const payloadStr = JSON.stringify(notificationData);
 
     let sent = 0;
     const staleIds: string[] = [];
 
     for (const sub of subscriptions) {
       try {
-        const subscription: PushSubscription = {
-          endpoint: sub.endpoint,
-          expirationTime: null,
-          keys: {
-            p256dh: sub.p256dh,
-            auth: sub.auth,
+        // Get audience from endpoint URL
+        const endpointUrl = new URL(sub.endpoint);
+        const audience = `${endpointUrl.protocol}//${endpointUrl.host}`;
+
+        // Create VAPID JWT
+        const jwt = await createVapidJwt(vapidPrivateJwk, audience, "mailto:kontakt@avargo.no");
+
+        // Encrypt payload
+        const encrypted = await encryptPayload(payloadStr, sub.p256dh, sub.auth);
+
+        // Send push
+        const response = await fetch(sub.endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Encoding": "aes128gcm",
+            TTL: "86400",
+            Authorization: `vapid t=${jwt}, k=${vapidPublicKey}`,
           },
-        };
-
-        const payload = await buildPushPayload(pushMessage, subscription, vapid);
-
-        const response = await fetch(payload.endpoint, {
-          method: payload.method,
-          headers: payload.headers,
-          body: payload.body,
+          body: encrypted.body,
         });
 
         if (response.status === 201 || response.status === 200) {
           sent++;
+          console.log(`Push sent to ${sub.id}`);
         } else if (response.status === 410 || response.status === 404) {
           staleIds.push(sub.id);
         } else {
