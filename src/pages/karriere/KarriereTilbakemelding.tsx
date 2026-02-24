@@ -169,12 +169,14 @@ const KarriereTilbakemelding = () => {
               Vi ønsker deg alt godt videre, og håper veiene våre krysses igjen. 💛
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/"
+              <a
+                href="https://www.avargo.no"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
               >
                 Utforsk avargo.no <ArrowRight size={18} />
-              </Link>
+              </a>
               <Link
                 to="/karriere"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl border border-border/20 text-foreground font-semibold text-base hover:bg-muted/20 transition-all"
