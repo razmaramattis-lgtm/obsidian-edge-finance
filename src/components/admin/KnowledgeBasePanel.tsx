@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useMemo } from "react";
-import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search, ChevronDown, ChevronUp, Link2, X } from "lucide-react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -294,6 +294,14 @@ const AVA_CATEGORIES = [
   { key: "alt", label: "Søk i alt", icon: Search, color: "text-primary" },
 ];
 
+interface OrgDoc {
+  title: string;
+  url?: string;
+  file_name?: string;
+  source: string;
+  category?: string;
+}
+
 const KnowledgeBasePanel = () => {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [input, setInput] = useState("");
@@ -303,6 +311,11 @@ const KnowledgeBasePanel = () => {
   const [overrideInput, setOverrideInput] = useState<{ msgIdx: number; searchTerm: string } | null>(null);
   const [overrideValue, setOverrideValue] = useState("");
   const [overrideSaving, setOverrideSaving] = useState(false);
+  // Document linking state
+  const [docPicker, setDocPicker] = useState<{ msgIdx: number; searchTerm: string } | null>(null);
+  const [docList, setDocList] = useState<OrgDoc[]>([]);
+  const [docListLoading, setDocListLoading] = useState(false);
+  const [docFilter, setDocFilter] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -396,6 +409,50 @@ const KnowledgeBasePanel = () => {
       setMessages(prev => [...prev, { role: "assistant", content: `✅ Lagret! Neste gang noen søker på «${searchTerm}» viser jeg konto **${accountNum}** først.` }]);
     } catch {
       setMessages(prev => [...prev, { role: "assistant", content: "Beklager, kunne ikke lagre endringen. Prøv igjen." }]);
+    }
+    setOverrideSaving(false);
+  };
+
+  const openDocPicker = async (msgIdx: number, searchTerm: string) => {
+    setDocPicker({ msgIdx, searchTerm });
+    setDocFilter("");
+    setDocListLoading(true);
+    try {
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          body: JSON.stringify({ action: "list_documents" }),
+        }
+      );
+      const data = await resp.json();
+      setDocList(data.documents || []);
+    } catch {
+      setDocList([]);
+    }
+    setDocListLoading(false);
+  };
+
+  const linkDocument = async (searchTerm: string, doc: OrgDoc) => {
+    setOverrideSaving(true);
+    try {
+      await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          body: JSON.stringify({
+            action: "set_document_override",
+            search_term: searchTerm,
+            document_override: { title: doc.title, url: doc.url, file_name: doc.file_name, source: doc.source },
+          }),
+        }
+      );
+      setDocPicker(null);
+      setMessages(prev => [...prev, { role: "assistant", content: `✅ Lagret! Neste gang noen søker på «${searchTerm}» viser jeg **${doc.title}** med nedlasting.` }]);
+    } catch {
+      setMessages(prev => [...prev, { role: "assistant", content: "Beklager, kunne ikke lagre koblingen. Prøv igjen." }]);
     }
     setOverrideSaving(false);
   };
@@ -518,10 +575,15 @@ const KnowledgeBasePanel = () => {
                 }`}>
                   {msg.role === "assistant" ? (
                     (() => {
-                      // Extract search term marker
+                      // Extract markers
                       const searchTermMatch = msg.content.match(/\[AVA_SEARCH_TERM:(.+?)\]/);
+                      const docSearchMatch = msg.content.match(/\[AVA_DOC_SEARCH:(.+?)\]/);
                       const searchTerm = searchTermMatch?.[1] || null;
-                      const cleanContent = msg.content.replace(/\[AVA_SEARCH_TERM:.+?\]/g, "").trim();
+                      const docSearchTerm = docSearchMatch?.[1] || null;
+                      const cleanContent = msg.content
+                        .replace(/\[AVA_SEARCH_TERM:.+?\]/g, "")
+                        .replace(/\[AVA_DOC_SEARCH:.+?\]/g, "")
+                        .trim();
 
                       const hasAlts = cleanContent.includes("[FLERE_KONTOER]");
                       const [mainContent, altContent] = hasAlts
@@ -529,6 +591,10 @@ const KnowledgeBasePanel = () => {
                         : [cleanContent, ""];
                       const isExpanded = expandedAlts.has(i);
                       const showingOverride = overrideInput?.msgIdx === i;
+                      const showingDocPicker = docPicker?.msgIdx === i;
+                      const filteredDocs = docList.filter(d =>
+                        !docFilter || d.title.toLowerCase().includes(docFilter.toLowerCase()) || (d.category || "").toLowerCase().includes(docFilter.toLowerCase())
+                      );
                       return (
                         <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed [&_p]:mb-2 [&_ul]:mb-2 [&_ol]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_li]:mb-0.5 [&_strong]:text-foreground">
                           <ReactMarkdown components={mdComponents}>{mainContent}</ReactMarkdown>
@@ -566,6 +632,58 @@ const KnowledgeBasePanel = () => {
                                     Avbryt
                                   </button>
                                 </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Document linking button for doc searches */}
+                          {docSearchTerm && !loading && (
+                            <div className="mt-2 not-prose">
+                              {!showingDocPicker ? (
+                                <button
+                                  onClick={() => openDocPicker(i, docSearchTerm)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] text-muted-foreground hover:text-foreground border border-border/20 hover:border-primary/20 hover:bg-primary/5 transition-all"
+                                >
+                                  <Link2 size={11} /> Koble et dokument til dette søkeordet
+                                </button>
+                              ) : (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="border border-border/30 rounded-xl p-3 bg-background/80 mt-1"
+                                >
+                                  <div className="flex items-center justify-between mb-2">
+                                    <p className="text-[11px] font-medium text-foreground">Velg dokument fra organisasjonsressursene:</p>
+                                    <button onClick={() => setDocPicker(null)} className="text-muted-foreground hover:text-foreground"><X size={14} /></button>
+                                  </div>
+                                  <input
+                                    value={docFilter}
+                                    onChange={e => setDocFilter(e.target.value)}
+                                    placeholder="Filtrer dokumenter…"
+                                    className="w-full h-7 rounded-md border border-border/30 bg-muted/20 px-2 text-xs mb-2 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                                  />
+                                  {docListLoading ? (
+                                    <p className="text-[10px] text-muted-foreground py-2">Henter dokumenter…</p>
+                                  ) : (
+                                    <div className="max-h-40 overflow-y-auto space-y-1">
+                                      {filteredDocs.length === 0 && <p className="text-[10px] text-muted-foreground py-2">Ingen dokumenter funnet.</p>}
+                                      {filteredDocs.map((doc, di) => (
+                                        <button
+                                          key={di}
+                                          onClick={() => linkDocument(docSearchTerm, doc)}
+                                          disabled={overrideSaving}
+                                          className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all flex items-center gap-2 group"
+                                        >
+                                          <FileText size={12} className="text-muted-foreground group-hover:text-primary shrink-0" />
+                                          <div className="min-w-0 flex-1">
+                                            <p className="text-[11px] font-medium truncate text-foreground">{doc.title}</p>
+                                            <p className="text-[9px] text-muted-foreground">{doc.category || doc.source}{doc.url ? " • Nedlastbar" : ""}</p>
+                                          </div>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </motion.div>
                               )}
                             </div>
                           )}

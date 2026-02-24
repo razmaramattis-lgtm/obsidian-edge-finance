@@ -313,6 +313,47 @@ export type Database = {
           },
         ]
       }
+      ava_document_overrides: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          document_title: string
+          document_url: string | null
+          file_name: string | null
+          id: string
+          search_term: string
+          source_table: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          document_title: string
+          document_url?: string | null
+          file_name?: string | null
+          id?: string
+          search_term: string
+          source_table?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          document_title?: string
+          document_url?: string | null
+          file_name?: string | null
+          id?: string
+          search_term?: string
+          source_table?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ava_document_overrides_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benefit_agreement_applications: {
         Row: {
           admin_note: string | null

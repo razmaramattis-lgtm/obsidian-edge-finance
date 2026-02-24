@@ -83,13 +83,13 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { messages, category, action, search_term, preferred_account } = body;
+    const { messages, category, action, search_term, preferred_account, document_override } = body;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, supabaseKey);
 
-    // Handle override action: save preferred account for a search term
+    // Handle account override action
     if (action === "set_override" && search_term && preferred_account) {
       const { error } = await sb.from("ava_account_overrides").upsert(
         { search_term: normalize(search_term), preferred_account_number: preferred_account },
@@ -97,6 +97,38 @@ serve(async (req) => {
       );
       if (error) throw error;
       return respondStream(`✅ Lagret! Neste gang du søker på «${search_term}» viser jeg konto **${preferred_account}** først.`);
+    }
+
+    // Handle document override action
+    if (action === "set_document_override" && search_term && document_override) {
+      const { error } = await sb.from("ava_document_overrides").upsert(
+        {
+          search_term: normalize(search_term),
+          document_title: document_override.title,
+          document_url: document_override.url || null,
+          file_name: document_override.file_name || null,
+          source_table: document_override.source || null,
+        },
+        { onConflict: "search_term" }
+      );
+      if (error) throw error;
+      return respondStream(`✅ Lagret! Neste gang noen søker på «${search_term}» viser jeg dokumentet **${document_override.title}** med nedlasting.`);
+    }
+
+    // Handle listing available documents for linking
+    if (action === "list_documents") {
+      const [archRes, intRes, tmplRes] = await Promise.all([
+        sb.from("archive_files").select("name, file_url, file_name, category").eq("active", true).order("name"),
+        sb.from("internal_resources").select("title, file_url, file_name, category").order("title"),
+        sb.from("document_templates").select("title, category").eq("active", true).order("title"),
+      ]);
+      const docs: { title: string; url?: string; file_name?: string; source: string; category?: string }[] = [];
+      for (const d of archRes.data || []) docs.push({ title: d.name, url: d.file_url, file_name: d.file_name, source: "archive_files", category: d.category });
+      for (const d of intRes.data || []) docs.push({ title: d.title, url: d.file_url, file_name: d.file_name, source: "internal_resources", category: d.category });
+      for (const d of tmplRes.data || []) docs.push({ title: d.title, source: "document_templates", category: d.category });
+      return new Response(JSON.stringify({ documents: docs }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const lastMessage = messages?.filter((m: any) => m.role === "user").pop()?.content || "";
@@ -201,6 +233,24 @@ serve(async (req) => {
       results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}` });
     }
 
+    // Check for document override
+    const { data: docOverride } = await sb.from("ava_document_overrides")
+      .select("document_title, document_url, file_name, source_table")
+      .eq("search_term", normalize(lastMessage))
+      .maybeSingle();
+
+    if (docOverride && docOverride.document_url) {
+      // Inject override as top result
+      results.unshift({
+        source: "Koblet dokument",
+        title: docOverride.document_title,
+        score: 99999,
+        snippet: `Dette dokumentet er koblet til søkeordet «${lastMessage}».`,
+        downloadUrl: docOverride.document_url,
+        fileName: docOverride.file_name || docOverride.document_title,
+      });
+    }
+
     results.sort((a, b) => b.score - a.score);
 
     if (results.length === 0) {
@@ -247,9 +297,14 @@ serve(async (req) => {
       }
     }
 
-    // Add search term marker for override feature
+    // Add search term marker for override features
     if (isAccountSearch) {
       answer += `\n[AVA_SEARCH_TERM:${lastMessage}]`;
+    }
+    // Add doc search term marker for document categories
+    const isDocSearch = ["dokumentmaler", "arkiv", "datasenter", "alt"].includes(cat);
+    if (isDocSearch && !isAccountSearch) {
+      answer += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
     }
 
     return respondStream(answer);
