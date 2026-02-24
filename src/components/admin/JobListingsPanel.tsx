@@ -139,6 +139,17 @@ const JobListingsPanel = () => {
   } | null>(null);
   const [rejectionFeedback, setRejectionFeedback] = useState("");
   const [rejectionSending, setRejectionSending] = useState(false);
+  const [offerConfirm, setOfferConfirm] = useState<{
+    appId: string;
+    name: string;
+    email: string;
+    table: "job_applications" | "open_applications";
+    positionTitle?: string;
+  } | null>(null);
+  const [offerStartDate, setOfferStartDate] = useState("");
+  const [offerSalary, setOfferSalary] = useState("");
+  const [offerWorkLocation, setOfferWorkLocation] = useState("");
+  const [offerSending, setOfferSending] = useState(false);
 
   const fetchAll = async () => {
     const [{ data: jobs }, { data: apps }, { data: opens }] = await Promise.all([
@@ -306,6 +317,12 @@ const JobListingsPanel = () => {
       setRejectionConfirm({ appId, name: app.full_name, email: app.email, table: "job_applications", positionTitle: job?.title });
       return;
     }
+    if (app && status === "tilbud") {
+      const job = listings.find(j => j.id === app.job_listing_id);
+      setOfferStartDate(""); setOfferSalary(""); setOfferWorkLocation("");
+      setOfferConfirm({ appId, name: app.full_name, email: app.email, table: "job_applications", positionTitle: job?.title });
+      return;
+    }
     await supabase.from("job_applications").update({ status }).eq("id", appId);
     if (app) {
       if (status === "ansatt") {
@@ -334,6 +351,11 @@ const JobListingsPanel = () => {
     if (app && status === "avslått") {
       setRejectionFeedback("");
       setRejectionConfirm({ appId, name: app.full_name, email: app.email, table: "open_applications" });
+      return;
+    }
+    if (app && status === "tilbud") {
+      setOfferStartDate(""); setOfferSalary(""); setOfferWorkLocation("");
+      setOfferConfirm({ appId, name: app.full_name, email: app.email, table: "open_applications" });
       return;
     }
     await supabase.from("open_applications").update({ status }).eq("id", appId);
@@ -1504,6 +1526,95 @@ const JobListingsPanel = () => {
               }}
             >
               {rejectionSending ? <><Loader2 size={14} className="animate-spin mr-1" /> Sender…</> : "Send avslag"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Job offer confirmation dialog */}
+      <AlertDialog open={!!offerConfirm} onOpenChange={(open) => { if (!open) setOfferConfirm(null); }}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send jobbtilbud til {offerConfirm?.name}?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  Du er i ferd med å sende et jobbtilbud til <strong>{offerConfirm?.name}</strong> ({offerConfirm?.email}).
+                  {offerConfirm?.positionTitle && <> Stilling: <strong>{offerConfirm.positionTitle}</strong>.</>}
+                </p>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Ønsket tiltredelsesdato *</label>
+                  <input
+                    type="text"
+                    value={offerStartDate}
+                    onChange={e => setOfferStartDate(e.target.value)}
+                    placeholder="F.eks: 1. mars 2026 / Etter avtale"
+                    className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Lønn *</label>
+                  <input
+                    type="text"
+                    value={offerSalary}
+                    onChange={e => setOfferSalary(e.target.value)}
+                    placeholder="F.eks: 550 000 kr / år"
+                    className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Arbeidssted *</label>
+                  <input
+                    type="text"
+                    value={offerWorkLocation}
+                    onChange={e => setOfferWorkLocation(e.target.value)}
+                    placeholder="F.eks: Oscars gate 2B, Skien (hybrid)"
+                    className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  E-posten vil inneholde en varm velkomst, tilbudsdetaljer, og be kandidaten sende personnummer, kontonummer og annen nødvendig informasjon til din e-post.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={offerSending}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={offerSending || !offerStartDate.trim() || !offerSalary.trim() || !offerWorkLocation.trim()}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!offerConfirm) return;
+                setOfferSending(true);
+                const { appId, name, email, table, positionTitle } = offerConfirm;
+                await supabase.from(table).update({ status: "tilbud" }).eq("id", appId);
+                try {
+                  const { error } = await supabase.functions.invoke("job-offer-email", {
+                    body: {
+                      applicant_name: name,
+                      applicant_email: email,
+                      position_title: positionTitle || null,
+                      start_date: offerStartDate.trim(),
+                      salary: offerSalary.trim(),
+                      work_location: offerWorkLocation.trim(),
+                      sender_name: profile?.name || "Rekruttering",
+                      sender_title: profile?.title || null,
+                      sender_email: profile?.email || "kontakt@avargo.no",
+                      sender_phone: profile?.phone || null,
+                    },
+                  });
+                  if (error) throw error;
+                  toast.success("Jobbtilbud sendt til " + name);
+                } catch (err) {
+                  console.error("Job offer email failed:", err);
+                  toast.error("Kunne ikke sende jobbtilbud-e-post");
+                }
+                setOfferConfirm(null);
+                setOfferSending(false);
+                fetchAll();
+              }}
+            >
+              {offerSending ? <><Loader2 size={14} className="animate-spin mr-1" /> Sender…</> : "Send tilbud"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
