@@ -71,6 +71,8 @@ const WorkspacePage = lazy(() => import("./pages/Workspace"));
 const Internsystemer = lazy(() => import("./pages/tjenester/Internsystemer"));
 const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
 const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
+const Karriere = lazy(() => import("./pages/Karriere"));
+const KarriereDetalj = lazy(() => import("./pages/KarriereDetalj"));
 
 // Bransje-undersider
 const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
@@ -213,6 +215,8 @@ const App = () => (
                             <Route path="/:sectionId/kontakt" element={<Contact />} />
                             <Route path="/:sectionId/om-oss" element={<About />} />
                             <Route path="/:sectionId/metoden" element={<Metoden />} />
+                            <Route path="/:sectionId/karriere" element={<Karriere />} />
+                            <Route path="/:sectionId/karriere/:slug" element={<KarriereDetalj />} />
 
                             {/* Section tjeneste sub-pages */}
                             <Route path="/:sectionId/tjenester/regnskapsforer" element={<Regnskapsforer />} />
@@ -345,6 +349,8 @@ const App = () => (
                             <Route path="/kontakt" element={<Contact />} />
                             <Route path="/personvern" element={<Personvern />} />
                             <Route path="/vilkar" element={<Vilkar />} />
+                            <Route path="/karriere" element={<Karriere />} />
+                            <Route path="/karriere/:slug" element={<KarriereDetalj />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>

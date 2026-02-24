@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Plus, Trash2, Download, Upload, FileText, Edit2, Search,
-  X, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator, BookOpen
+  X, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator, BookOpen, Briefcase
 } from "lucide-react";
 import HmsPanel from "./HmsPanel";
+import JobListingsPanel from "./JobListingsPanel";
 import DocumentGenerator from "@/components/kunde/DocumentGenerator";
 import AnsettelsesKalkulator from "@/components/kunde/AnsettelsesKalkulator";
 import { personalhandbokConfig } from "@/components/kunde/generators/personalhandbok";
@@ -28,11 +29,12 @@ interface HrResource {
 // ── Constants ──
 const DOC_CATS = ["Ansettelse", "Kontrakter", "Personalhåndbok", "Rutiner", "Opplæring", "HR-Personalhåndbok", "HR-Arbeidsreglement", "HR-Varslingsrutiner", "HR-GDPR", "HR-DIGIS", "HR-Psykososialt", "Annet"];
 
-type Tab = "hms" | "documents" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
+type Tab = "hms" | "documents" | "job-listings" | "personalhandbok" | "arbeidsreglement" | "varslingsrutiner" | "gdpr" | "digital-sikkerhet" | "psykososialt" | "calculator";
 
 const HR_TABS: { id: Tab; label: string; icon: React.ElementType; group: string }[] = [
   { id: "hms", label: "HMS-håndbok", icon: Shield, group: "Håndbøker" },
   { id: "documents", label: "HR-dokumenter", icon: FileText, group: "Håndbøker" },
+  { id: "job-listings", label: "Stillingsannonser", icon: Briefcase, group: "Rekruttering" },
   { id: "personalhandbok", label: "Personalhåndbok", icon: BookOpen, group: "Generatorer" },
   { id: "arbeidsreglement", label: "Arbeidsreglement", icon: Scale, group: "Generatorer" },
   { id: "varslingsrutiner", label: "Varslingsrutiner", icon: AlertTriangle, group: "Generatorer" },
@@ -52,6 +54,7 @@ const HrPanel = () => {
     switch (tab) {
       case "hms": return <HmsPanel />;
       case "documents": return <DocumentsTab isAdmin={isAdmin} />;
+      case "job-listings": return <JobListingsPanel />;
       case "personalhandbok": return <DocumentGenerator config={personalhandbokConfig} />;
       case "arbeidsreglement": return <DocumentGenerator config={arbeidsreglementConfig} />;
       case "varslingsrutiner": return <DocumentGenerator config={varslingsrutinerConfig} />;

@@ -1695,6 +1695,146 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          cv_file_name: string | null
+          cv_url: string | null
+          email: string
+          full_name: string
+          id: string
+          job_listing_id: string
+          message: string | null
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          cv_file_name?: string | null
+          cv_url?: string | null
+          email: string
+          full_name: string
+          id?: string
+          job_listing_id: string
+          message?: string | null
+          phone: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          cv_file_name?: string | null
+          cv_url?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          job_listing_id?: string
+          message?: string | null
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_listing_id_fkey"
+            columns: ["job_listing_id"]
+            isOneToOne: false
+            referencedRelation: "job_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_listings: {
+        Row: {
+          about_company: string | null
+          active: boolean
+          category: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          contact_title: string | null
+          created_at: string
+          deadline: string | null
+          description: string | null
+          employment_type: string
+          id: string
+          intro: string | null
+          location: string
+          num_positions: number
+          published: boolean
+          qualifications: string | null
+          slug: string
+          start_date: string
+          tasks: string | null
+          title: string
+          updated_at: string
+          we_offer: string | null
+          work_hours: string
+          work_language: string
+          work_location: string
+        }
+        Insert: {
+          about_company?: string | null
+          active?: boolean
+          category?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contact_title?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          intro?: string | null
+          location?: string
+          num_positions?: number
+          published?: boolean
+          qualifications?: string | null
+          slug: string
+          start_date?: string
+          tasks?: string | null
+          title: string
+          updated_at?: string
+          we_offer?: string | null
+          work_hours?: string
+          work_language?: string
+          work_location?: string
+        }
+        Update: {
+          about_company?: string | null
+          active?: boolean
+          category?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contact_title?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          intro?: string | null
+          location?: string
+          num_positions?: number
+          published?: boolean
+          qualifications?: string | null
+          slug?: string
+          start_date?: string
+          tasks?: string | null
+          title?: string
+          updated_at?: string
+          we_offer?: string | null
+          work_hours?: string
+          work_language?: string
+          work_location?: string
+        }
+        Relationships: []
+      }
       knowledge_materials: {
         Row: {
           active: boolean | null
