@@ -300,6 +300,9 @@ const KnowledgeBasePanel = () => {
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedAlts, setExpandedAlts] = useState<Set<number>>(new Set());
+  const [overrideInput, setOverrideInput] = useState<{ msgIdx: number; searchTerm: string } | null>(null);
+  const [overrideValue, setOverrideValue] = useState("");
+  const [overrideSaving, setOverrideSaving] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -372,6 +375,29 @@ const KnowledgeBasePanel = () => {
     setSelectedCategory(null);
     setInput("");
     setExpandedAlts(new Set());
+  };
+
+  const saveOverride = async (searchTerm: string, accountNum: string) => {
+    setOverrideSaving(true);
+    try {
+      await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ action: "set_override", search_term: searchTerm, preferred_account: accountNum }),
+        }
+      );
+      setOverrideInput(null);
+      setOverrideValue("");
+      setMessages(prev => [...prev, { role: "assistant", content: `✅ Lagret! Neste gang noen søker på «${searchTerm}» viser jeg konto **${accountNum}** først.` }]);
+    } catch {
+      setMessages(prev => [...prev, { role: "assistant", content: "Beklager, kunne ikke lagre endringen. Prøv igjen." }]);
+    }
+    setOverrideSaving(false);
   };
 
   const activeCat = AVA_CATEGORIES.find(c => c.key === selectedCategory);
@@ -492,14 +518,58 @@ const KnowledgeBasePanel = () => {
                 }`}>
                   {msg.role === "assistant" ? (
                     (() => {
-                      const hasAlts = msg.content.includes("[FLERE_KONTOER]");
+                      // Extract search term marker
+                      const searchTermMatch = msg.content.match(/\[AVA_SEARCH_TERM:(.+?)\]/);
+                      const searchTerm = searchTermMatch?.[1] || null;
+                      const cleanContent = msg.content.replace(/\[AVA_SEARCH_TERM:.+?\]/g, "").trim();
+
+                      const hasAlts = cleanContent.includes("[FLERE_KONTOER]");
                       const [mainContent, altContent] = hasAlts
-                        ? msg.content.split("[FLERE_KONTOER]")
-                        : [msg.content, ""];
+                        ? cleanContent.split("[FLERE_KONTOER]")
+                        : [cleanContent, ""];
                       const isExpanded = expandedAlts.has(i);
+                      const showingOverride = overrideInput?.msgIdx === i;
                       return (
                         <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed [&_p]:mb-2 [&_ul]:mb-2 [&_ol]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_li]:mb-0.5 [&_strong]:text-foreground">
                           <ReactMarkdown components={mdComponents}>{mainContent}</ReactMarkdown>
+
+                          {/* Override button for account results */}
+                          {searchTerm && !loading && (
+                            <div className="mt-2 not-prose">
+                              {!showingOverride ? (
+                                <button
+                                  onClick={() => { setOverrideInput({ msgIdx: i, searchTerm }); setOverrideValue(""); }}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] text-muted-foreground hover:text-foreground border border-border/20 hover:border-primary/20 hover:bg-primary/5 transition-all"
+                                >
+                                  ✏️ Feil konto? Lær Ava riktig
+                                </button>
+                              ) : (
+                                <div className="flex items-center gap-2 mt-1">
+                                  <input
+                                    value={overrideValue}
+                                    onChange={e => setOverrideValue(e.target.value)}
+                                    placeholder="Kontonummer (f.eks. 6900)"
+                                    className="h-7 w-32 rounded-md border border-border/30 bg-muted/20 px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40"
+                                    onKeyDown={e => e.key === "Enter" && overrideValue.trim() && saveOverride(searchTerm, overrideValue.trim())}
+                                  />
+                                  <button
+                                    onClick={() => overrideValue.trim() && saveOverride(searchTerm, overrideValue.trim())}
+                                    disabled={!overrideValue.trim() || overrideSaving}
+                                    className="px-2 py-1 rounded-md bg-primary text-primary-foreground text-[10px] font-medium disabled:opacity-50 hover:opacity-90 transition-all"
+                                  >
+                                    {overrideSaving ? "Lagrer…" : "Lagre"}
+                                  </button>
+                                  <button
+                                    onClick={() => setOverrideInput(null)}
+                                    className="px-2 py-1 rounded-md text-[10px] text-muted-foreground hover:text-foreground transition-all"
+                                  >
+                                    Avbryt
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {hasAlts && altContent && (
                             <div className="mt-2">
                               <button
