@@ -255,53 +255,77 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 )}
                 <div className="container mx-auto px-6 py-8">
                   {isInSection && section ? (
-                    /* ── Section view: show current section's services as main cards + small dept links top-right ── */
-                    <div className="relative">
-                      {/* Small department links in top-right corner */}
-                      <div className="absolute top-0 right-0 flex items-center gap-3">
-                        {tjenesterGroups
-                          .filter(g => groupSectionIdMap[g.label] !== section.id)
-                          .map(g => {
-                            const sId = groupSectionIdMap[g.label];
-                            const accent = accentHsl(sId);
-                            const targetPath = groupSectionMap[g.label] || "";
-                            const sData = SECTIONS[sId as SectionId];
-                            return (
-                              <Link
-                                key={g.label}
-                                to={`${targetPath}/tjenester`}
-                                onClick={() => setTjenesterOpen(false)}
-                                className="flex items-center gap-1.5 text-[11px] tracking-wide font-medium opacity-60 hover:opacity-100 transition-opacity duration-200"
-                                style={{ color: accent }}
-                              >
-                                {sData?.shortName} <ArrowRight size={9} />
-                              </Link>
-                            );
-                          })}
-                      </div>
+                    /* ── Section view: same rich card layout as hub ── */
+                    (() => {
+                      const currentGroup = tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id);
+                      const otherGroups = tjenesterGroups.filter(g => groupSectionIdMap[g.label] !== section.id);
+                      return (
+                        <div className="relative">
+                          {/* Small department links in top-right corner */}
+                          <div className="absolute top-0 right-0 flex items-center gap-4 z-10">
+                            {otherGroups.map(g => {
+                              const sId = groupSectionIdMap[g.label];
+                              const accent = accentHsl(sId);
+                              const targetPath = groupSectionMap[g.label] || "";
+                              const sData = SECTIONS[sId as SectionId];
+                              return (
+                                <Link
+                                  key={g.label}
+                                  to={`${targetPath}/tjenester`}
+                                  onClick={() => setTjenesterOpen(false)}
+                                  className="group/dept flex items-center gap-2 px-3 py-1.5 rounded-lg border border-transparent hover:border-border/20 transition-all duration-300"
+                                  style={{ color: accent }}
+                                >
+                                  <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ backgroundColor: accentBg(sId, 0.15) }}>
+                                    <Layers size={10} style={{ color: accent }} strokeWidth={1.5} />
+                                  </div>
+                                  <span className="text-[11px] tracking-wide font-medium opacity-60 group-hover/dept:opacity-100 transition-opacity">{sData?.shortName}</span>
+                                  <ArrowRight size={9} className="opacity-0 group-hover/dept:opacity-60 -ml-1 transition-all duration-200" />
+                                </Link>
+                              );
+                            })}
+                          </div>
 
-                      {/* Current section services in card layout */}
-                      <div className="grid grid-cols-4 gap-5">
-                        {(tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id)?.items || []).map(item => (
-                          <Link
-                            key={item.href}
-                            to={`${section.basePath}${item.href}`}
-                            onClick={() => setTjenesterOpen(false)}
-                            className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
-                            style={{ backgroundColor: accentBg(section.id, 0.06) }}
-                          >
-                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: sectionAccent }} />
-                            <div className="relative">
-                              <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
-                                <item.icon size={15} style={{ color: sectionAccent }} strokeWidth={1.5} />
+                          {/* Section heading */}
+                          <div className="mb-6">
+                            <div className="flex items-center gap-3 mb-1">
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
+                                <Layers size={17} style={{ color: sectionAccent }} strokeWidth={1.5} />
                               </div>
-                              <h3 className="font-heading text-[15px] mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
-                              <p className="text-[12px] text-foreground/60 font-light leading-relaxed">{item.desc}</p>
+                              <div>
+                                <h3 className="font-heading text-lg" style={{ color: sectionAccent }}>{section.name}</h3>
+                                <p className="text-[12px] text-foreground/50 font-light">{section.tagline}</p>
+                              </div>
                             </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
+                          </div>
+
+                          {/* Current section services in rich card grid */}
+                          <div className="grid grid-cols-4 gap-5">
+                            {(currentGroup?.items || []).map(item => (
+                              <Link
+                                key={item.href}
+                                to={`${section.basePath}${item.href}`}
+                                onClick={() => setTjenesterOpen(false)}
+                                className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
+                                style={{ backgroundColor: accentBg(section.id, 0.06) }}
+                              >
+                                <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: sectionAccent }} />
+                                <div className="relative">
+                                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
+                                    <item.icon size={17} style={{ color: sectionAccent }} strokeWidth={1.5} />
+                                  </div>
+                                  <h3 className="font-heading text-base mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
+                                  <p className="text-[12px] text-foreground/60 font-light leading-relaxed mb-4">{item.desc}</p>
+                                  <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: sectionAccent }}>
+                                    Les mer <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()
                   ) : (
                   /* ── Hub view: department cards grid ── */
                   <div className="grid gap-5 grid-cols-4">
