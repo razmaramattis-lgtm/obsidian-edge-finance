@@ -166,9 +166,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground relative">
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
         <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
-          <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-xl md:text-2xl text-primary tracking-wide">
-            Avargo{isInSection && section ? <span className="text-foreground/40 text-lg ml-1">· {section.shortName}</span> : null}
-          </Link>
+          {isInSection && section ? (
+            <span className="font-heading text-xl md:text-2xl tracking-wide flex items-baseline">
+              <Link to="/" className="text-primary hover:text-primary/80 transition-colors">Avargo</Link>
+              <Link to={section.basePath} className="text-foreground/40 text-lg ml-1 hover:text-foreground/60 transition-colors">· {section.shortName}</Link>
+            </span>
+          ) : (
+            <Link to="/" className="font-heading text-xl md:text-2xl text-primary tracking-wide">Avargo</Link>
+          )}
 
           <div className="hidden md:flex items-center gap-5 lg:gap-7">
             <Link to="/" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Hjem</Link>
