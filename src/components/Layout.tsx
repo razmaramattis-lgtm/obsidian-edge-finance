@@ -418,7 +418,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
               </button>
               <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-3 w-[300px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                {selskapetLinks.map((item) => (
+                {selskapetLinks.slice(0, 4).map((item) => (
                   <DropdownItem
                     key={item.href}
                     to={item.absolute ? item.href : sp(item.href)}
@@ -428,6 +428,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     onClick={() => setSelskapetOpen(false)}
                   />
                 ))}
+                {selskapetLinks.length > 4 && (
+                  <div className="mt-1 pt-2 border-t border-border/15">
+                    <Link to={sp("/om-oss")} onClick={() => setSelskapetOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                      Se alt om Avargo <ArrowRight size={10} />
+                    </Link>
+                  </div>
+                )}
               </DropdownPanel>
             </div>
 
@@ -438,7 +445,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
                 </button>
                 <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                  {ressurserLinks.map((item) => (
+                  {ressurserLinks.slice(0, 4).map((item) => (
                     <DropdownItem
                       key={item.title}
                       to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
@@ -450,6 +457,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       iconBg={item.accent ? `${item.accent.replace(")", " / 0.12)")}` : undefined}
                     />
                   ))}
+                  <div className="mt-1 pt-2 border-t border-border/15">
+                    <Link to="/ressurser" onClick={() => setRessurserOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                      Se alle ressurser <ArrowRight size={10} />
+                    </Link>
+                  </div>
                 </DropdownPanel>
               </div>
             )}
