@@ -376,33 +376,44 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownPanel>
             </div>
 
-            {/* ─── Bransjer dropdown (all sections + hub) ─── */}
+            {/* ─── Bransjer dropdown (regnskap only) / direct link for others ─── */}
             {isInSection && section ? (
               section.id === "regnskap" ? (
               <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
                 <button className={dropBtnClass(bransjerOpen)}>
                   Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[380px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                  {bransjerItems.slice(0, 4).map((item) => (
-                    <DropdownItem
-                      key={item.href}
-                      to={sp(item.href)}
-                      icon={item.icon}
-                      title={item.title}
-                      desc={item.desc}
-                      onClick={() => setBransjerOpen(false)}
-                    />
-                  ))}
-                  <div className="mt-1 pt-2 border-t border-border/15">
-                    <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
-                      Se alle {bransjerItems.length} bransjer <ArrowRight size={10} />
-                    </Link>
+                <DropdownPanel open={bransjerOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                  <div className="container mx-auto px-6 py-8">
+                    <div className="grid grid-cols-4 gap-5">
+                      {bransjerItems.slice(0, 4).map((item) => (
+                        <Link
+                          key={item.href}
+                          to={sp(item.href)}
+                          onClick={() => setBransjerOpen(false)}
+                          className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
+                          style={{ backgroundColor: accentBg("regnskap", 0.06) }}
+                        >
+                          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: sectionAccent }} />
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg("regnskap", 0.15), borderColor: accentBg("regnskap", 0.25) }}>
+                              <item.icon size={17} style={{ color: sectionAccent }} strokeWidth={1.5} />
+                            </div>
+                            <h3 className="font-heading text-base mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
+                            <p className="text-[12px] text-foreground/60 font-light leading-relaxed">{item.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-5 flex justify-end">
+                      <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="flex items-center gap-1.5 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                        Se alle {bransjerItems.length} bransjer <ArrowRight size={10} />
+                      </Link>
+                    </div>
                   </div>
                 </DropdownPanel>
               </div>
               ) : (
-              /* IT, Marked, Personal — just a direct link to bransjer page */
               <NavButton to={sp("/bransjer")} label="Bransjer" isActive={location.pathname.includes("/bransjer")} />
               )
             ) : null}
@@ -412,55 +423,81 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <NavButton to={sp("/priser")} label="Priser" isActive={location.pathname.includes("/priser")} />
             )}
 
-            {/* ─── Selskapet dropdown ─── */}
+            {/* ─── Selskapet mega-menu ─── */}
             <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
               <button className={dropBtnClass(selskapetOpen)}>
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
               </button>
-              <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-3 w-[300px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                {selskapetLinks.slice(0, 4).map((item) => (
-                  <DropdownItem
-                    key={item.href}
-                    to={item.absolute ? item.href : sp(item.href)}
-                    icon={item.icon}
-                    title={item.title}
-                    desc={item.desc}
-                    onClick={() => setSelskapetOpen(false)}
-                  />
-                ))}
-                {selskapetLinks.length > 4 && (
-                  <div className="mt-1 pt-2 border-t border-border/15">
-                    <Link to={sp("/om-oss")} onClick={() => setSelskapetOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
-                      Se alt om Avargo <ArrowRight size={10} />
-                    </Link>
+              <DropdownPanel open={selskapetOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                <div className="container mx-auto px-6 py-8">
+                  <div className="grid grid-cols-4 gap-5">
+                    {selskapetLinks.slice(0, 4).map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.absolute ? item.href : sp(item.href)}
+                        onClick={() => setSelskapetOpen(false)}
+                        className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/5"
+                      >
+                        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border border-primary/15 bg-primary/8 transition-colors duration-300 group-hover:bg-primary/15">
+                            <item.icon size={17} className="text-primary" strokeWidth={1.5} />
+                          </div>
+                          <h3 className="font-heading text-base mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
+                          <p className="text-[12px] text-foreground/60 font-light leading-relaxed">{item.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                )}
+                  {selskapetLinks.length > 4 && (
+                    <div className="mt-5 flex justify-end">
+                      <Link to={sp("/om-oss")} onClick={() => setSelskapetOpen(false)} className="flex items-center gap-1.5 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                        Se alt om Avargo <ArrowRight size={10} />
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </DropdownPanel>
             </div>
 
-            {/* ─── Ressurser dropdown — only on hub ─── */}
+            {/* ─── Ressurser mega-menu — only on hub ─── */}
             {!isInSection && (
               <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
                 <button className={dropBtnClass(ressurserOpen)}>
                   Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                  {ressurserLinks.slice(0, 4).map((item) => (
-                    <DropdownItem
-                      key={item.title}
-                      to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
-                      icon={item.icon}
-                      title={item.title}
-                      desc={item.desc}
-                      onClick={() => setRessurserOpen(false)}
-                      iconColor={item.accent}
-                      iconBg={item.accent ? `${item.accent.replace(")", " / 0.12)")}` : undefined}
-                    />
-                  ))}
-                  <div className="mt-1 pt-2 border-t border-border/15">
-                    <Link to="/ressurser" onClick={() => setRessurserOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
-                      Se alle ressurser <ArrowRight size={10} />
-                    </Link>
+                <DropdownPanel open={ressurserOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                  <div className="container mx-auto px-6 py-8">
+                    <div className="grid grid-cols-4 gap-5">
+                      {ressurserLinks.slice(0, 4).map((item) => (
+                        <Link
+                          key={item.title}
+                          to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
+                          onClick={() => setRessurserOpen(false)}
+                          className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/5"
+                        >
+                          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
+                          <div className="relative">
+                            <div
+                              className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300"
+                              style={{
+                                backgroundColor: item.accent ? `${item.accent.replace(")", " / 0.12)")}` : "hsl(var(--primary) / 0.08)",
+                                borderColor: item.accent ? `${item.accent.replace(")", " / 0.2)")}` : "hsl(var(--primary) / 0.15)",
+                              }}
+                            >
+                              <item.icon size={17} style={{ color: item.accent || "hsl(var(--primary))" }} strokeWidth={1.5} />
+                            </div>
+                            <h3 className="font-heading text-base mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
+                            <p className="text-[12px] text-foreground/60 font-light leading-relaxed">{item.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-5 flex justify-end">
+                      <Link to="/ressurser" onClick={() => setRessurserOpen(false)} className="flex items-center gap-1.5 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                        Se alle ressurser <ArrowRight size={10} />
+                      </Link>
+                    </div>
                   </div>
                 </DropdownPanel>
               </div>
