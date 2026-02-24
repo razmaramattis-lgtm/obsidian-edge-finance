@@ -71,7 +71,11 @@ const WorkspacePage = lazy(() => import("./pages/Workspace"));
 const Internsystemer = lazy(() => import("./pages/tjenester/Internsystemer"));
 const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
 const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
-const Karriere = lazy(() => import("./pages/Karriere"));
+const KarriereLayout = lazy(() => import("./components/karriere/KarriereLayout"));
+const KarriereForside = lazy(() => import("./pages/karriere/KarriereForside"));
+const KarriereFagomrader = lazy(() => import("./pages/karriere/KarriereFagomrader"));
+const KarriereStillinger = lazy(() => import("./pages/karriere/KarriereStillinger"));
+const KarriereAvargoFri = lazy(() => import("./pages/karriere/KarriereAvargoFri"));
 const KarriereDetalj = lazy(() => import("./pages/KarriereDetalj"));
 
 // Bransje-undersider
@@ -193,6 +197,15 @@ const App = () => (
                   {/* Workspace route (authenticated, no Layout) */}
                   <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />
 
+                  {/* Karriere portal (own layout) */}
+                  <Route path="/karriere" element={<KarriereLayout />}>
+                    <Route index element={<KarriereForside />} />
+                    <Route path="fagomrader" element={<KarriereFagomrader />} />
+                    <Route path="stillinger" element={<KarriereStillinger />} />
+                    <Route path="avargo-fri" element={<KarriereAvargoFri />} />
+                    <Route path=":slug" element={<KarriereDetalj />} />
+                  </Route>
+
                   {/* Customer routes */}
                   <Route path="/kunde/logg-inn" element={<KundeLogin />} />
                   <Route path="/kunde/dashboard" element={<CustomerRoute><KundeDashboard /></CustomerRoute>} />
@@ -215,8 +228,8 @@ const App = () => (
                             <Route path="/:sectionId/kontakt" element={<Contact />} />
                             <Route path="/:sectionId/om-oss" element={<About />} />
                             <Route path="/:sectionId/metoden" element={<Metoden />} />
-                            <Route path="/:sectionId/karriere" element={<Karriere />} />
-                            <Route path="/:sectionId/karriere/:slug" element={<KarriereDetalj />} />
+                            <Route path="/:sectionId/karriere" element={<Navigate to="/karriere" replace />} />
+                            <Route path="/:sectionId/karriere/:slug" element={<Navigate to="/karriere" replace />} />
 
                             {/* Section tjeneste sub-pages */}
                             <Route path="/:sectionId/tjenester/regnskapsforer" element={<Regnskapsforer />} />
@@ -349,8 +362,8 @@ const App = () => (
                             <Route path="/kontakt" element={<Contact />} />
                             <Route path="/personvern" element={<Personvern />} />
                             <Route path="/vilkar" element={<Vilkar />} />
-                            <Route path="/karriere" element={<Karriere />} />
-                            <Route path="/karriere/:slug" element={<KarriereDetalj />} />
+                            <Route path="/karriere" element={<Navigate to="/karriere" replace />} />
+                            <Route path="/karriere/:slug" element={<Navigate to="/karriere" replace />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>
