@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox, Mail, Phone, Calendar, MapPin, User, ExternalLink, MessageSquare, Clock, Download } from "lucide-react";
+import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox, Mail, Phone, Calendar, MapPin, User, ExternalLink, MessageSquare, Clock, Download, CheckSquare, Square, Filter } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 
@@ -103,6 +103,12 @@ const JobListingsPanel = () => {
   const [expandedOpenApp, setExpandedOpenApp] = useState<string | null>(null);
   const [appNotes, setAppNotes] = useState<Record<string, string>>({});
   const imgInputRef = useRef<HTMLInputElement>(null);
+  const [openCatFilter, setOpenCatFilter] = useState<string>("alle");
+  const [openStatusFilter, setOpenStatusFilter] = useState<string>("alle");
+  const [jobCatFilter, setJobCatFilter] = useState<string>("alle");
+  const [jobStatusFilter, setJobStatusFilter] = useState<string>("alle");
+  const [selectedOpenApps, setSelectedOpenApps] = useState<Set<string>>(new Set());
+  const [selectedJobApps, setSelectedJobApps] = useState<Set<string>>(new Set());
 
   const fetchAll = async () => {
     const [{ data: jobs }, { data: apps }, { data: opens }] = await Promise.all([
@@ -228,6 +234,71 @@ const JobListingsPanel = () => {
     else toast.error("Kunne ikke åpne CV");
   };
 
+  const deleteOpenApp = async (id: string) => {
+    if (!confirm("Slett denne søknaden?")) return;
+    await supabase.from("open_applications").delete().eq("id", id);
+    setSelectedOpenApps(prev => { const n = new Set(prev); n.delete(id); return n; });
+    toast.success("Søknad slettet"); fetchAll();
+  };
+
+  const bulkDeleteOpenApps = async () => {
+    if (selectedOpenApps.size === 0) return;
+    if (!confirm(`Slett ${selectedOpenApps.size} søknad(er)?`)) return;
+    const ids = Array.from(selectedOpenApps);
+    await supabase.from("open_applications").delete().in("id", ids);
+    setSelectedOpenApps(new Set());
+    toast.success(`${ids.length} søknad(er) slettet`); fetchAll();
+  };
+
+  const deleteJobApp = async (id: string) => {
+    if (!confirm("Slett denne søknaden?")) return;
+    await supabase.from("job_applications").delete().eq("id", id);
+    setSelectedJobApps(prev => { const n = new Set(prev); n.delete(id); return n; });
+    toast.success("Søknad slettet"); fetchAll();
+  };
+
+  const bulkDeleteJobApps = async () => {
+    if (selectedJobApps.size === 0) return;
+    if (!confirm(`Slett ${selectedJobApps.size} søknad(er)?`)) return;
+    const ids = Array.from(selectedJobApps);
+    await supabase.from("job_applications").delete().in("id", ids);
+    setSelectedJobApps(new Set());
+    toast.success(`${ids.length} søknad(er) slettet`); fetchAll();
+  };
+
+  const toggleSelectOpen = (id: string) => {
+    setSelectedOpenApps(prev => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  };
+
+  const toggleSelectJob = (id: string) => {
+    setSelectedJobApps(prev => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  };
+
+  const STATUS_LABELS: Record<string, string> = {
+    ny: "Ny", kontaktet: "Kontaktet", under_vurdering: "Under vurdering",
+    intervju: "Under intervju", tilbud: "Tilbud", ansatt: "Ansatt", avslått: "Avslått",
+  };
+
+  const filteredOpenApps = openApps.filter(app => {
+    if (openCatFilter !== "alle" && app.preferred_category !== openCatFilter) return false;
+    if (openStatusFilter !== "alle" && app.status !== openStatusFilter) return false;
+    return true;
+  });
+
+  const filteredJobApps = (jobId: string) => applications.filter(a => {
+    if (a.job_listing_id !== jobId) return false;
+    if (jobStatusFilter !== "alle" && a.status !== jobStatusFilter) return false;
+    return true;
+  });
+
   return (
     <div className="space-y-5">
       {/* Tabs */}
@@ -244,40 +315,98 @@ const JobListingsPanel = () => {
 
       {activeTab === "open" ? (
         /* Open Applications Tab */
-        <div className="space-y-2">
-          {openApps.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">Ingen åpne søknader mottatt ennå</p>
-          ) : openApps.map(app => {
-            const isExpanded = expandedOpenApp === app.id;
-            return (
-              <div key={app.id} className="glass rounded-2xl border border-border/20 overflow-hidden">
-                <button type="button" onClick={() => setExpandedOpenApp(isExpanded ? null : app.id)}
-                  className="w-full px-5 py-3 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
-                  <div className="min-w-0 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <User size={14} className="text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-medium">{app.full_name}</p>
-                        {app.preferred_category && (
-                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.preferred_category}</span>
-                        )}
-                        {app.message?.startsWith("[AVARGO FRI]") && (
-                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Avargo Fri</span>
-                        )}
-                        <span className={`text-[9px] px-2 py-0.5 rounded-full ${
-                          app.status === "ny" ? "bg-blue-500/10 text-blue-600" :
-                          app.status === "ansatt" ? "bg-green-500/10 text-green-600" :
-                          app.status === "avslått" ? "bg-red-500/10 text-red-600" :
-                          "bg-amber-500/10 text-amber-600"
-                        }`}>{app.status === "ny" ? "Ny" : app.status === "kontaktet" ? "Kontaktet" : app.status === "under_vurdering" ? "Under vurdering" : app.status === "intervju" ? "Intervju" : app.status === "tilbud" ? "Tilbud" : app.status === "ansatt" ? "Ansatt" : "Avslått"}</span>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
-                    </div>
-                  </div>
-                  <div className="shrink-0">{isExpanded ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}</div>
+        <div className="space-y-3">
+          {/* Filters & Bulk Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter size={12} className="text-muted-foreground" />
+              <select value={openCatFilter} onChange={e => setOpenCatFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle fagområder</option>
+                <option value="Regnskap">Regnskap</option>
+                <option value="Personal">Personal</option>
+                <option value="Marked">Marked</option>
+                <option value="IT">IT</option>
+              </select>
+              <select value={openStatusFilter} onChange={e => setOpenStatusFilter(e.target.value)}
+                className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
+                <option value="alle">Alle statuser</option>
+                <option value="ny">Ny</option>
+                <option value="intervju">Under intervju</option>
+                <option value="avslått">Avslått</option>
+                <option value="kontaktet">Kontaktet</option>
+                <option value="under_vurdering">Under vurdering</option>
+                <option value="tilbud">Tilbud</option>
+                <option value="ansatt">Ansatt</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              {filteredOpenApps.length > 0 && (
+                <button type="button" onClick={() => {
+                  if (selectedOpenApps.size === filteredOpenApps.length) setSelectedOpenApps(new Set());
+                  else setSelectedOpenApps(new Set(filteredOpenApps.map(a => a.id)));
+                }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/20 hover:bg-muted/30 transition-colors">
+                  {selectedOpenApps.size === filteredOpenApps.length && filteredOpenApps.length > 0 ? <CheckSquare size={12} /> : <Square size={12} />}
+                  {selectedOpenApps.size > 0 ? `${selectedOpenApps.size} valgt` : "Velg alle"}
                 </button>
+              )}
+              {selectedOpenApps.size > 0 && (
+                <button type="button" onClick={bulkDeleteOpenApps}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive bg-destructive/10 hover:bg-destructive/20 transition-colors">
+                  <Trash2 size={12} /> Slett {selectedOpenApps.size}
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground">{filteredOpenApps.length} søknad(er)</p>
+
+          {filteredOpenApps.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">Ingen søknader matcher filteret</p>
+          ) : filteredOpenApps.map(app => {
+            const isExpanded = expandedOpenApp === app.id;
+            const isSelected = selectedOpenApps.has(app.id);
+            return (
+              <div key={app.id} className={`glass rounded-2xl border overflow-hidden transition-colors ${isSelected ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
+                <div className="flex items-center">
+                  <button type="button" onClick={() => toggleSelectOpen(app.id)}
+                    className="px-3 py-3 text-muted-foreground hover:text-primary transition-colors shrink-0">
+                    {isSelected ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
+                  </button>
+                  <button type="button" onClick={() => setExpandedOpenApp(isExpanded ? null : app.id)}
+                    className="flex-1 px-2 py-3 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
+                    <div className="min-w-0 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <User size={14} className="text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium">{app.full_name}</p>
+                          {app.preferred_category && (
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.preferred_category}</span>
+                          )}
+                          {app.message?.startsWith("[AVARGO FRI]") && (
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Avargo Fri</span>
+                          )}
+                          <span className={`text-[9px] px-2 py-0.5 rounded-full ${
+                            app.status === "ny" ? "bg-primary/10 text-primary" :
+                            app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
+                            app.status === "avslått" ? "bg-destructive/10 text-destructive" :
+                            app.status === "ansatt" ? "bg-primary/20 text-primary" :
+                            "bg-muted text-muted-foreground"
+                          }`}>{STATUS_LABELS[app.status] || app.status}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button type="button" onClick={e => { e.stopPropagation(); deleteOpenApp(app.id); }}
+                        className="text-muted-foreground hover:text-destructive transition-colors p-1">
+                        <Trash2 size={12} />
+                      </button>
+                      {isExpanded ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+                    </div>
+                  </button>
+                </div>
 
                 {isExpanded && (
                   <div className="border-t border-border/10 px-5 py-4 space-y-4 bg-muted/5">
@@ -313,36 +442,32 @@ const JobListingsPanel = () => {
                           </div>
                         </div>
                       )}
-                      {(app.address || app.city || app.date_of_birth || app.available_from) && (
-                        <>
-                          {(app.address || app.city) && (
-                            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                              <MapPin size={14} className="text-primary shrink-0" />
-                              <div>
-                                <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Adresse</p>
-                                <p className="text-xs">{[app.address, app.postal_code, app.city].filter(Boolean).join(", ")}</p>
-                              </div>
-                            </div>
-                          )}
-                          {app.date_of_birth && (
-                            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                              <User size={14} className="text-primary shrink-0" />
-                              <div>
-                                <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Fødselsdato</p>
-                                <p className="text-xs">{new Date(app.date_of_birth).toLocaleDateString("nb-NO")}</p>
-                              </div>
-                            </div>
-                          )}
-                          {app.available_from && (
-                            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
-                              <Clock size={14} className="text-primary shrink-0" />
-                              <div>
-                                <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Tilgjengelig fra</p>
-                                <p className="text-xs">{app.available_from}</p>
-                              </div>
-                            </div>
-                          )}
-                        </>
+                      {(app.address || app.city) && (
+                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                          <MapPin size={14} className="text-primary shrink-0" />
+                          <div>
+                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Adresse</p>
+                            <p className="text-xs">{[app.address, app.postal_code, app.city].filter(Boolean).join(", ")}</p>
+                          </div>
+                        </div>
+                      )}
+                      {app.date_of_birth && (
+                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                          <User size={14} className="text-primary shrink-0" />
+                          <div>
+                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Fødselsdato</p>
+                            <p className="text-xs">{new Date(app.date_of_birth).toLocaleDateString("nb-NO")}</p>
+                          </div>
+                        </div>
+                      )}
+                      {app.available_from && (
+                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                          <Clock size={14} className="text-primary shrink-0" />
+                          <div>
+                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Tilgjengelig fra</p>
+                            <p className="text-xs">{app.available_from}</p>
+                          </div>
+                        </div>
                       )}
                     </div>
 
@@ -351,7 +476,7 @@ const JobListingsPanel = () => {
                       <div className="flex flex-wrap gap-2">
                         {app.linkedin_url && (
                           <a href={app.linkedin_url} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 text-xs hover:bg-blue-500/20 transition-colors">
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs hover:bg-primary/20 transition-colors">
                             <ExternalLink size={11} /> LinkedIn-profil
                           </a>
                         )}
@@ -410,7 +535,7 @@ const JobListingsPanel = () => {
                           <option value="ny">Ny</option>
                           <option value="kontaktet">Kontaktet</option>
                           <option value="under_vurdering">Under vurdering</option>
-                          <option value="intervju">Til intervju</option>
+                          <option value="intervju">Under intervju</option>
                           <option value="tilbud">Tilbud</option>
                           <option value="ansatt">Ansatt</option>
                           <option value="avslått">Avslått</option>
@@ -699,34 +824,79 @@ const JobListingsPanel = () => {
                 </div>
               </div>
 
-              {viewApps === job.id && (
+              {viewApps === job.id && (() => {
+                const jobApps = filteredJobApps(job.id);
+                return (
                 <div className="border-t border-border/10 px-5 py-4 space-y-3 bg-muted/5">
-                  <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Søknader til «{job.title}»</p>
-                  {applications.filter(a => a.job_listing_id === job.id).map(app => {
-                    const isExp = expandedApp === app.id;
-                    return (
-                      <div key={app.id} className="rounded-xl border border-border/15 overflow-hidden bg-background/30">
-                        <button type="button" onClick={() => setExpandedApp(isExp ? null : app.id)}
-                          className="w-full px-4 py-2.5 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                              <User size={12} className="text-primary" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <p className="text-xs font-medium">{app.full_name}</p>
-                                <span className={`text-[8px] px-1.5 py-0.5 rounded-full ${
-                                  app.status === "ny" ? "bg-blue-500/10 text-blue-600" :
-                                  app.status === "ansatt" ? "bg-green-500/10 text-green-600" :
-                                  app.status === "avslått" ? "bg-red-500/10 text-red-600" :
-                                  "bg-amber-500/10 text-amber-600"
-                                }`}>{app.status === "ny" ? "Ny" : app.status}</span>
-                              </div>
-                              <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
-                            </div>
-                          </div>
-                          {isExp ? <ChevronUp size={12} className="text-muted-foreground shrink-0" /> : <ChevronDown size={12} className="text-muted-foreground shrink-0" />}
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Søknader til «{job.title}» ({jobApps.length})</p>
+                    <div className="flex items-center gap-2">
+                      <select value={jobStatusFilter} onChange={e => setJobStatusFilter(e.target.value)}
+                        className="h-7 rounded-lg border border-border/30 bg-muted/30 px-2 text-[10px] focus:outline-none focus:ring-2 focus:ring-primary/30">
+                        <option value="alle">Alle statuser</option>
+                        <option value="ny">Ny</option>
+                        <option value="intervju">Under intervju</option>
+                        <option value="avslått">Avslått</option>
+                        <option value="under_vurdering">Under vurdering</option>
+                        <option value="tilbud">Tilbud</option>
+                        <option value="ansatt">Ansatt</option>
+                      </select>
+                      {jobApps.length > 0 && (
+                        <button type="button" onClick={() => {
+                          if (selectedJobApps.size === jobApps.length) setSelectedJobApps(new Set());
+                          else setSelectedJobApps(new Set(jobApps.map(a => a.id)));
+                        }} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] text-muted-foreground hover:text-foreground border border-border/20 hover:bg-muted/30 transition-colors">
+                          {selectedJobApps.size === jobApps.length && jobApps.length > 0 ? <CheckSquare size={10} /> : <Square size={10} />}
+                          {selectedJobApps.size > 0 ? `${selectedJobApps.size} valgt` : "Velg"}
                         </button>
+                      )}
+                      {selectedJobApps.size > 0 && (
+                        <button type="button" onClick={bulkDeleteJobApps}
+                          className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] text-destructive bg-destructive/10 hover:bg-destructive/20 transition-colors">
+                          <Trash2 size={10} /> Slett {selectedJobApps.size}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {jobApps.map(app => {
+                    const isExp = expandedApp === app.id;
+                    const isSelected = selectedJobApps.has(app.id);
+                    return (
+                      <div key={app.id} className={`rounded-xl border overflow-hidden transition-colors ${isSelected ? "border-primary/40 bg-primary/5" : "border-border/15 bg-background/30"}`}>
+                        <div className="flex items-center">
+                          <button type="button" onClick={() => toggleSelectJob(app.id)}
+                            className="px-2.5 py-2.5 text-muted-foreground hover:text-primary transition-colors shrink-0">
+                            {isSelected ? <CheckSquare size={12} className="text-primary" /> : <Square size={12} />}
+                          </button>
+                          <button type="button" onClick={() => setExpandedApp(isExp ? null : app.id)}
+                            className="flex-1 px-2 py-2.5 flex items-center justify-between gap-3 text-left hover:bg-muted/10 transition-colors">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                <User size={12} className="text-primary" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-xs font-medium">{app.full_name}</p>
+                                  <span className={`text-[8px] px-1.5 py-0.5 rounded-full ${
+                                    app.status === "ny" ? "bg-primary/10 text-primary" :
+                                    app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
+                                    app.status === "avslått" ? "bg-destructive/10 text-destructive" :
+                                    app.status === "ansatt" ? "bg-primary/20 text-primary" :
+                                    "bg-muted text-muted-foreground"
+                                  }`}>{STATUS_LABELS[app.status] || app.status}</span>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground">{app.email} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button type="button" onClick={e => { e.stopPropagation(); deleteJobApp(app.id); }}
+                                className="text-muted-foreground hover:text-destructive transition-colors p-1">
+                                <Trash2 size={11} />
+                              </button>
+                              {isExp ? <ChevronUp size={12} className="text-muted-foreground" /> : <ChevronDown size={12} className="text-muted-foreground" />}
+                            </div>
+                          </button>
+                        </div>
 
                         {isExp && (
                           <div className="border-t border-border/10 px-4 py-3 space-y-3">
@@ -807,7 +977,7 @@ const JobListingsPanel = () => {
                                   className="h-7 rounded-lg border border-border/30 bg-muted/30 px-2 text-[10px] focus:outline-none focus:ring-2 focus:ring-primary/30">
                                   <option value="ny">Ny</option>
                                   <option value="under_vurdering">Under vurdering</option>
-                                  <option value="intervju">Til intervju</option>
+                                  <option value="intervju">Under intervju</option>
                                   <option value="tilbud">Tilbud sendt</option>
                                   <option value="ansatt">Ansatt</option>
                                   <option value="avslått">Avslått</option>
@@ -829,8 +999,12 @@ const JobListingsPanel = () => {
                       </div>
                     );
                   })}
+                  {jobApps.length === 0 && (
+                    <p className="text-[11px] text-muted-foreground text-center py-4">Ingen søknader matcher filteret</p>
+                  )}
                 </div>
-              )}
+                );
+              })()}
             </div>
           );
         })}
