@@ -70,14 +70,6 @@ const tjenesterGroups = [
       { icon: Bot, title: "AI & automatisering", href: "/tjenester/ai-automatisering" },
     ],
   },
-  {
-    label: "Kurs & Opplæring",
-    items: [
-      { icon: BookOpen, title: "Regnskapskurs", href: "/tjenester/kurs" },
-      { icon: Users, title: "HR & arbeidsgiveransvar", href: "/tjenester/hr-kurs" },
-      { icon: TrendingUp, title: "Skreddersydde bedriftskurs", href: "/tjenester/bedriftskurs" },
-    ],
-  },
 ];
 
 const bransjerItems = [
@@ -100,6 +92,7 @@ const selskapetLinks = [
   { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss", absolute: false },
   { icon: Briefcase, title: "Jobb hos oss", desc: "Se ledige stillinger", href: "/karriere", absolute: true },
+  { icon: BookOpen, title: "Akademi", desc: "Kurs og kompetanse", href: "/akademi", absolute: true },
 ];
 
 const ressurserLinks = [

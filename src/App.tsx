@@ -73,6 +73,7 @@ const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
 const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
 const KarriereLayout = lazy(() => import("./components/karriere/KarriereLayout"));
 const SectionLayout = lazy(() => import("./components/section/SectionLayout"));
+const AkademiLayout = lazy(() => import("./components/akademi/AkademiLayout"));
 const KarriereForside = lazy(() => import("./pages/karriere/KarriereForside"));
 const KarriereFagomrader = lazy(() => import("./pages/karriere/KarriereFagomrader"));
 const KarriereStillinger = lazy(() => import("./pages/karriere/KarriereStillinger"));
@@ -205,6 +206,14 @@ const App = () => (
                     <Route path="stillinger" element={<KarriereStillinger />} />
                     <Route path="avargo-fri" element={<KarriereAvargoFri />} />
                     <Route path=":slug" element={<KarriereDetalj />} />
+                  </Route>
+
+                  {/* Akademi portal (own layout) */}
+                  <Route path="/akademi" element={<AkademiLayout />}>
+                    <Route index element={<Kurs />} />
+                    <Route path="bedriftskurs" element={<Bedriftskurs />} />
+                    <Route path="hr-kurs" element={<HrKurs />} />
+                    <Route path="kurs/:slug" element={<KursDetalj />} />
                   </Route>
 
                   {/* Customer routes */}
