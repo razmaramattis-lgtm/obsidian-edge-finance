@@ -193,10 +193,20 @@ serve(async (req) => {
       const s = scoreText(lastMessage, doc.title, doc.company, doc.offering, doc.description);
       if (s > 0) results.push({ source: "Samarbeidsavtale", title: doc.title, score: s, snippet: [doc.company, doc.offering, doc.description].filter(Boolean).join(" — ") });
     }
-    // Glossary
+    // Glossary — show full description for richer results
     for (const doc of dataMap.glossary || []) {
       const s = scoreText(lastMessage, doc.term, doc.description);
-      if (s > 0) results.push({ source: "Regnskapsord", title: doc.term, score: s, snippet: extractSnippet(doc.description || "", lastMessage) });
+      if (s > 0) {
+        const fullDesc = (doc.description || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+        results.push({
+          source: "Regnskapsord",
+          title: doc.term,
+          score: s,
+          snippet: fullDesc || "(Ingen beskrivelse)",
+          downloadUrl: doc.slug ? `/regnskapsord/${doc.slug}` : undefined,
+          fileName: doc.slug ? `Les mer om ${doc.term}` : undefined,
+        });
+      }
     }
     // Document templates
     for (const doc of dataMap.templates || []) {
@@ -268,11 +278,26 @@ serve(async (req) => {
 
     // Always show best result explanation
     const best = results[0];
+    const isGlossaryResult = best.source === "Regnskapsord";
     let answer = `### 📄 ${best.title}\n`;
     answer += `*Kilde: ${best.source}*\n\n`;
-    answer += `${limitWords(best.snippet, 200)}\n`;
+    answer += `${limitWords(best.snippet, isGlossaryResult ? 500 : 200)}\n`;
     if (best.downloadUrl) {
-      answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
+      const linkLabel = isGlossaryResult ? `🔗 ${best.fileName || "Les mer"}` : `📥 Last ned ${best.fileName || "fil"}`;
+      answer += `\n[${linkLabel}](${best.downloadUrl})\n`;
+    }
+
+    // For glossary: show additional related terms
+    if (isGlossaryResult) {
+      const otherGlossary = results.filter(r => r.source === "Regnskapsord" && r !== best).slice(0, 4);
+      if (otherGlossary.length > 0) {
+        answer += `\n---\n**Relaterte regnskapsord:**\n\n`;
+        for (const r of otherGlossary) {
+          answer += `- **${r.title}** — ${limitWords(r.snippet, 40)}`;
+          if (r.downloadUrl) answer += ` [🔗 Les mer](${r.downloadUrl})`;
+          answer += `\n`;
+        }
+      }
     }
 
     // If there are additional downloadable files, list them
