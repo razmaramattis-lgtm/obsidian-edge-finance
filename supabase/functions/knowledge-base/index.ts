@@ -169,11 +169,6 @@ serve(async (req) => {
       return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`);
     }
 
-    // Show top results, prioritizing ones with downloads
-    const topResults = results.slice(0, 5);
-    const downloadable = topResults.filter(r => r.downloadUrl);
-    const nonDownloadable = topResults.filter(r => !r.downloadUrl);
-
     // Always show best result explanation
     const best = results[0];
     let answer = `### 📄 ${best.title}\n`;
@@ -184,11 +179,35 @@ serve(async (req) => {
     }
 
     // If there are additional downloadable files, list them
-    const otherDownloads = downloadable.filter(r => r !== best);
-    if (otherDownloads.length > 0) {
+    const topResults = results.slice(0, 5);
+    const downloadable = topResults.filter(r => r.downloadUrl && r !== best);
+    if (downloadable.length > 0) {
       answer += `\n---\n**Andre nedlastbare dokumenter:**\n`;
-      for (const r of otherDownloads) {
+      for (const r of downloadable) {
         answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
+      }
+    }
+
+    // For account searches: include alternatives with 1000-2999 last
+    const isAccountSearch = cat === "kontoplan" || (cat === "alt" && best.source === "Kontohjelp");
+    const accountResults = results.filter(r => r.source === "Kontohjelp" && r !== best);
+    if (isAccountSearch && accountResults.length > 0) {
+      // Sort: 3000+ first, then 1000-2999 last
+      const getAccountNum = (title: string) => parseInt(title.split("–")[0]?.trim() || "0", 10);
+      accountResults.sort((a, b) => {
+        const aNum = getAccountNum(a.title);
+        const bNum = getAccountNum(b.title);
+        const aIsBalance = aNum >= 1000 && aNum <= 2999;
+        const bIsBalance = bNum >= 1000 && bNum <= 2999;
+        if (aIsBalance && !bIsBalance) return 1;
+        if (!aIsBalance && bIsBalance) return -1;
+        return b.score - a.score;
+      });
+      const alts = accountResults.slice(0, 8);
+      answer += `\n[FLERE_KONTOER]\n`;
+      answer += `**Andre kontoalternativer:**\n\n`;
+      for (const r of alts) {
+        answer += `- **${r.title}** — ${limitWords(r.snippet, 30)}\n`;
       }
     }
 
