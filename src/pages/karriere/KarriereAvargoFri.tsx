@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +20,16 @@ const KarriereAvargoFri = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
 
+  // Memoize particles to prevent re-render loops from Math.random()
+  const particles = useMemo(() => [...Array(12)].map((_, i) => ({
+    id: i,
+    width: 2 + Math.random() * 3,
+    height: 2 + Math.random() * 3,
+    left: `${10 + Math.random() * 80}%`,
+    top: `${10 + Math.random() * 80}%`,
+    duration: 5 + Math.random() * 5,
+    delay: Math.random() * 4,
+  })), []);
   const setField = (key: string, val: string) => setForm(prev => ({ ...prev, [key]: val }));
   const inputClass = "w-full h-12 pl-10 pr-3 rounded-xl border border-border/20 bg-muted/10 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all";
 
@@ -64,20 +74,20 @@ const KarriereAvargoFri = () => {
         }} />
 
         {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(12)].map((_, i) => (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
+          {particles.map((p) => (
             <motion.div
-              key={i}
+              key={p.id}
               className="absolute rounded-full"
               style={{
-                width: 2 + Math.random() * 3,
-                height: 2 + Math.random() * 3,
+                width: p.width,
+                height: p.height,
                 background: "hsl(var(--secondary) / 0.5)",
-                left: `${10 + Math.random() * 80}%`,
-                top: `${10 + Math.random() * 80}%`,
+                left: p.left,
+                top: p.top,
               }}
               animate={{ y: [0, -40, 0], opacity: [0, 1, 0] }}
-              transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 4 }}
+              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay }}
             />
           ))}
         </div>
@@ -320,12 +330,15 @@ const KarriereAvargoFri = () => {
       {/* Slide-in application panel */}
       <AnimatePresence>
         {showPanel && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          <motion.div
+            key="panel-wrapper"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50"
+          >
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => !submitting && setShowPanel(false)}
             />
             <motion.div
@@ -333,7 +346,7 @@ const KarriereAvargoFri = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-background border-l border-border/10 shadow-2xl overflow-y-auto"
+              className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-background border-l border-border/10 shadow-2xl overflow-y-auto"
             >
               <div className="p-6 md:p-8">
                 <div className="flex items-center justify-between mb-6">
@@ -407,7 +420,7 @@ const KarriereAvargoFri = () => {
                 )}
               </div>
             </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
