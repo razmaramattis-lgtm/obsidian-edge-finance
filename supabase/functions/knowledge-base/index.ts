@@ -74,14 +74,17 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch all sources in parallel
-    const [hmsRes, internalRes, archiveRes, knowledgeRes, hrHandbookRes, collabRes] = await Promise.all([
+    // Fetch ALL org resource sources in parallel
+    const [hmsRes, internalRes, archiveRes, knowledgeRes, hrHandbookRes, collabRes, glossaryRes, docTemplatesRes, accountEntriesRes] = await Promise.all([
       sb.from("hms_documents").select("title, content"),
       sb.from("internal_resources").select("title, description, category, file_name, file_url"),
       sb.from("archive_files").select("name, description, category, file_name, file_url").eq("active", true),
       sb.from("knowledge_materials").select("title, content, category").eq("active", true),
       sb.from("hr_handbook").select("title, content, sort_order").order("sort_order"),
       sb.from("collaboration_agreements").select("title, company, contact_name, offering, description"),
+      sb.from("glossary_terms").select("term, description, slug").eq("active", true),
+      sb.from("document_templates").select("title, description, category, content").eq("active", true),
+      sb.from("account_entries").select("account_number, name, description, category_group, examples, mva_status, tags").eq("active", true),
     ]);
 
     const results: ScoredResult[] = [];
@@ -101,6 +104,7 @@ serve(async (req) => {
       if (s > 0) results.push({
         source: "Intern ressurs", title: doc.title, score: s,
         snippet: doc.description || doc.category || "",
+        downloadUrl: doc.file_url || undefined,
         fileName: doc.file_name || undefined,
       });
     }
@@ -140,6 +144,35 @@ serve(async (req) => {
       if (s > 0) results.push({
         source: "Samarbeidsavtale", title: doc.title, score: s,
         snippet: [doc.company, doc.offering, doc.description].filter(Boolean).join(" — "),
+      });
+    }
+
+    // Glossary terms
+    for (const doc of glossaryRes.data || []) {
+      const s = scoreText(lastMessage, doc.term, doc.description);
+      if (s > 0) results.push({
+        source: "Regnskapsord", title: doc.term, score: s,
+        snippet: extractSnippet(doc.description || "", lastMessage),
+      });
+    }
+
+    // Document templates
+    for (const doc of docTemplatesRes.data || []) {
+      const s = scoreText(lastMessage, doc.title, doc.description, doc.category, doc.content);
+      if (s > 0) results.push({
+        source: "Dokumentmal", title: doc.title, score: s,
+        snippet: doc.description || extractSnippet(doc.content || "", lastMessage, 200),
+      });
+    }
+
+    // Account entries (Kontohjelp)
+    for (const doc of accountEntriesRes.data || []) {
+      const examplesStr = (doc.examples || []).join(", ");
+      const tagsStr = (doc.tags || []).join(", ");
+      const s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr, tagsStr);
+      if (s > 0) results.push({
+        source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s,
+        snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}`,
       });
     }
 
