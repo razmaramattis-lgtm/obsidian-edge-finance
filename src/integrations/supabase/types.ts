@@ -281,6 +281,38 @@ export type Database = {
         }
         Relationships: []
       }
+      ava_account_overrides: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          preferred_account_number: string
+          search_term: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          preferred_account_number: string
+          search_term: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          preferred_account_number?: string
+          search_term?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ava_account_overrides_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benefit_agreement_applications: {
         Row: {
           admin_note: string | null

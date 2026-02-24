@@ -82,16 +82,28 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, category } = await req.json();
+    const body = await req.json();
+    const { messages, category, action, search_term, preferred_account } = body;
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(supabaseUrl, supabaseKey);
+
+    // Handle override action: save preferred account for a search term
+    if (action === "set_override" && search_term && preferred_account) {
+      const { error } = await sb.from("ava_account_overrides").upsert(
+        { search_term: normalize(search_term), preferred_account_number: preferred_account },
+        { onConflict: "search_term" }
+      );
+      if (error) throw error;
+      return respondStream(`✅ Lagret! Neste gang du søker på «${search_term}» viser jeg konto **${preferred_account}** først.`);
+    }
+
     const lastMessage = messages?.filter((m: any) => m.role === "user").pop()?.content || "";
 
     if (!lastMessage.trim()) {
       return respondStream("Hei! Jeg er Ava. Velg en kategori og still meg et spørsmål — jeg finner frem det du trenger. 📚");
     }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const sb = createClient(supabaseUrl, supabaseKey);
 
     const cat = category || "alt";
     const sources = CATEGORY_SOURCES[cat] || CATEGORY_SOURCES["alt"];
@@ -157,12 +169,36 @@ serve(async (req) => {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category, doc.content);
       if (s > 0) results.push({ source: "Dokumentmal", title: doc.title, score: s, snippet: doc.description || extractSnippet(doc.content || "", lastMessage, 200) });
     }
-    // Account entries
+    // Account entries — check for override first
+    const getAccountNum = (title: string) => parseInt(title.split("–")[0]?.trim() || "0", 10);
+
+    // Fetch any saved override for this search term
+    let overrideAccount: string | null = null;
+    if (sources.includes("account_entries")) {
+      const { data: ov } = await sb.from("ava_account_overrides")
+        .select("preferred_account_number")
+        .eq("search_term", normalize(lastMessage))
+        .maybeSingle();
+      if (ov) overrideAccount = ov.preferred_account_number;
+    }
+
     for (const doc of dataMap.accounts || []) {
       const examplesStr = (doc.examples || []).join(", ");
       const tagsStr = (doc.tags || []).join(", ");
-      const s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr, tagsStr);
-      if (s > 0) results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}` });
+      let s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr, tagsStr);
+      if (s <= 0) continue;
+
+      // If this account matches the override, boost it massively
+      if (overrideAccount && doc.account_number === overrideAccount) {
+        s += 10000;
+      }
+
+      // Prioritize 3000-9999 over 1000-2999
+      const num = parseInt(doc.account_number, 10);
+      if (num >= 3000 && num <= 9999) s += 20;
+      if (num >= 1000 && num <= 2999) s -= 10;
+
+      results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}` });
     }
 
     results.sort((a, b) => b.score - a.score);
@@ -194,8 +230,6 @@ serve(async (req) => {
     const isAccountSearch = cat === "kontoplan" || (cat === "alt" && best.source === "Kontohjelp");
     const accountResults = results.filter(r => r.source === "Kontohjelp" && r !== best);
     if (isAccountSearch && accountResults.length > 0) {
-      // Sort: 3000+ first, then 1000-2999 last
-      const getAccountNum = (title: string) => parseInt(title.split("–")[0]?.trim() || "0", 10);
       accountResults.sort((a, b) => {
         const aNum = getAccountNum(a.title);
         const bNum = getAccountNum(b.title);
@@ -211,6 +245,11 @@ serve(async (req) => {
       for (const r of alts) {
         answer += `- **${r.title}** — ${limitWords(r.snippet, 30)}\n`;
       }
+    }
+
+    // Add search term marker for override feature
+    if (isAccountSearch) {
+      answer += `\n[AVA_SEARCH_TERM:${lastMessage}]`;
     }
 
     return respondStream(answer);
