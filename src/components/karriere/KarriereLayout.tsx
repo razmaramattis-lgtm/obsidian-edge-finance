@@ -44,7 +44,7 @@ const KarriereHeader = () => {
   return (
     <>
       <header
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ${
+        className={`fixed top-0 inset-x-0 z-[80] transition-all duration-700 ${
           scrolled
             ? "bg-background/80 backdrop-blur-3xl border-b border-border/10 shadow-2xl shadow-background/50"
             : "bg-transparent"
@@ -114,6 +114,7 @@ const KarriereHeader = () => {
               onClick={() => setMenuOpen(!menuOpen)}
               className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative z-[70]"
               aria-label={menuOpen ? "Lukk meny" : "Åpne meny"}
+              aria-expanded={menuOpen}
             >
               <AnimatePresence mode="wait" initial={false}>
                 {menuOpen ? (
@@ -142,9 +143,10 @@ const KarriereHeader = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.12 }}
-            className="fixed inset-0 z-[60] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col pt-16"
+            className="fixed inset-0 z-[70] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col pt-16"
+            onClick={() => setMenuOpen(false)}
           >
-            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6">
+            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6" onClick={(e) => e.stopPropagation()}>
               {NAV_ITEMS.map((item, i) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
