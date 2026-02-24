@@ -62,6 +62,13 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const ref = useRef<HTMLDivElement>(null);
 
+  // Mark all as read when bell is opened
+  useEffect(() => {
+    if (open && unreadCount > 0) {
+      onMarkAllRead();
+    }
+  }, [open]);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -199,7 +206,7 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
     <button
       key={n.id}
       onClick={() => handleClick(n)}
-      className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-all hover:bg-muted/30 active:bg-muted/40 ${!n.read ? "bg-primary/5" : ""} ${selected.has(n.id) ? "bg-primary/10 ring-1 ring-primary/20" : ""}`}
+      className={`group w-full flex items-start gap-3 px-4 py-3 text-left transition-all hover:bg-muted/30 active:bg-muted/40 ${!n.read ? "bg-primary/5" : ""} ${selected.has(n.id) ? "bg-primary/10 ring-1 ring-primary/20" : ""}`}
     >
       {selectMode && (
         <div className="shrink-0 mt-1.5">
@@ -228,6 +235,15 @@ const NotificationBell = ({ notifications, unreadCount, onMarkRead, onMarkAllRea
         <img src={n.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
       )}
       {!n.read && !selectMode && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+      {!selectMode && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onDeleteSelected?.([n.id]); }}
+          className="shrink-0 p-1 rounded-lg text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all opacity-0 group-hover:opacity-100"
+          title="Slett"
+        >
+          <Trash2 size={13} />
+        </button>
+      )}
     </button>
   );
 
