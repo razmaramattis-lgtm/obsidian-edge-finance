@@ -150,22 +150,13 @@ serve(async (req) => {
       return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i oppslagsverket. Prøv å formulere spørsmålet annerledes, eller kontakt en kollega for hjelp.`);
     }
 
-    // Build response
-    const topResults = results.slice(0, 5);
-    let answer = `**Søkeresultater for «${lastMessage}»:**\n\n`;
-
-    for (const r of topResults) {
-      answer += `### 📄 ${r.title}\n`;
-      answer += `*Kilde: ${r.source}*\n\n`;
-      answer += `${r.snippet}\n`;
-      if (r.downloadUrl) {
-        answer += `\n[📥 Last ned ${r.fileName || "fil"}](${r.downloadUrl})\n`;
-      }
-      answer += "\n---\n\n";
-    }
-
-    if (results.length > 5) {
-      answer += `*${results.length - 5} flere treff ble funnet. Prøv å presisere søket for mer spesifikke resultater.*`;
+    // Take only the single best result
+    const best = results[0];
+    let answer = `### 📄 ${best.title}\n`;
+    answer += `*Kilde: ${best.source}*\n\n`;
+    answer += `${best.snippet}\n`;
+    if (best.downloadUrl) {
+      answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
     }
 
     return respondStream(answer);

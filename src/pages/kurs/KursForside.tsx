@@ -80,7 +80,7 @@ const KursForside = () => {
       </Helmet>
 
       {/* ── HERO ── */}
-      <section ref={heroRef} className="relative h-[90vh] min-h-[600px] flex items-center overflow-hidden">
+      <section ref={heroRef} className="relative h-[85vh] md:h-[90vh] min-h-[500px] md:min-h-[600px] flex items-center overflow-hidden">
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <img src={heroImg} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/40" />
@@ -100,20 +100,20 @@ const KursForside = () => {
               <GraduationCap size={12} /> Avargo Kurs
             </motion.div>
 
-            <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-8xl leading-[1.02] mb-6 md:mb-8">
               Lær det du{" "}
               <span className="italic text-gradient-rose">trenger.</span>
             </h1>
-            <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-10">
-              {courseCount}+ spesialiserte kurs innen regnskap, HR, AI, markedsføring og ledelse — fra korte minikurs til skreddersydde bedriftsprogram.
+            <p className="text-sm md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-8 md:mb-10">
+              {courseCount}+ spesialiserte kurs innen regnskap, HR, AI, markedsføring og ledelse.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/kurs/katalog" className="group inline-flex items-center justify-center gap-3 px-10 py-4 bg-secondary text-secondary-foreground text-sm font-medium tracking-wider rounded-full hover:scale-[1.02] transition-all duration-500 shadow-lg shadow-secondary/20">
+              <Link to="/kurs/katalog" className="group inline-flex items-center justify-center gap-3 px-8 md:px-10 py-3.5 md:py-4 bg-secondary text-secondary-foreground text-sm font-medium tracking-wider rounded-full hover:scale-[1.02] transition-all duration-500 shadow-lg shadow-secondary/20 w-full sm:w-auto">
                 Utforsk kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link to="/kurs/bedriftskurs" className="group inline-flex items-center justify-center gap-3 px-10 py-4 border border-border/20 text-foreground text-sm font-medium tracking-wider rounded-full hover:border-secondary/30 hover:bg-secondary/5 transition-all duration-500">
+              <Link to="/kurs/bedriftskurs" className="group inline-flex items-center justify-center gap-3 px-8 md:px-10 py-3.5 md:py-4 border border-border/20 text-foreground text-sm font-medium tracking-wider rounded-full hover:border-secondary/30 hover:bg-secondary/5 transition-all duration-500 w-full sm:w-auto">
                 Bedriftskurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
@@ -123,9 +123,9 @@ const KursForside = () => {
       </section>
 
       {/* ── STATS ── */}
-      <section className="py-16 md:py-24 relative">
+      <section className="py-12 md:py-24 relative">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
               { val: courseCount, suffix: "+", label: "Tilgjengelige kurs" },
               { val: catCount, suffix: "", label: "Fagområder" },
@@ -133,7 +133,7 @@ const KursForside = () => {
               { val: 4, suffix: ".9/5", label: "Gj.snittlig rating" },
             ].map((s, i) => (
               <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
-                <p className="font-heading text-4xl md:text-5xl text-secondary mb-2">
+                <p className="font-heading text-3xl md:text-5xl text-secondary mb-1 md:mb-2">
                   {i === 3 ? "4.9/5" : <AnimatedCounter target={s.val} suffix={s.suffix} />}
                 </p>
                 <p className="text-xs text-muted-foreground tracking-wide uppercase">{s.label}</p>
@@ -146,20 +146,20 @@ const KursForside = () => {
       <div className="container mx-auto px-4"><div className="line-accent" /></div>
 
       {/* ── CATEGORIES GRID ── */}
-      <section className="py-24 md:py-40 relative">
+      <section className="py-16 md:py-40 relative">
         <FloatingParticles />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Fagområder</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 leading-snug max-w-3xl">
+            <h2 className="font-heading text-2xl sm:text-4xl md:text-6xl mb-4 md:mb-6 leading-snug max-w-3xl">
               Kurs for <span className="italic text-gradient-rose">alle fagfelt.</span>
             </h2>
-            <p className="text-sm md:text-lg text-muted-foreground font-light max-w-xl mb-14">
-              Fra grunnleggende regnskapskurs til avansert AI og ledelse — vi dekker hele spekteret.
+            <p className="text-sm md:text-lg text-muted-foreground font-light max-w-xl mb-10 md:mb-14">
+              Fra grunnleggende regnskapskurs til avansert AI og ledelse.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
             {categories.map((cat, i) => {
               const Icon = cat.icon;
               return (
@@ -172,13 +172,14 @@ const KursForside = () => {
                 >
                   <Link
                     to="/kurs/katalog"
-                    className="group block p-8 rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-500"
+                    className="group block p-5 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-500"
                   >
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.color} border border-border/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
-                      <Icon size={22} className="text-foreground/70" strokeWidth={1.5} />
+                    <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br ${cat.color} border border-border/20 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500`}>
+                      <Icon size={18} className="text-foreground/70 md:hidden" strokeWidth={1.5} />
+                      <Icon size={22} className="text-foreground/70 hidden md:block" strokeWidth={1.5} />
                     </div>
-                    <h3 className="font-heading text-lg mb-2">{cat.title}</h3>
-                    <p className="text-sm text-muted-foreground font-light leading-relaxed">{cat.desc}</p>
+                    <h3 className="font-heading text-sm md:text-lg mb-1 md:mb-2">{cat.title}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground font-light leading-relaxed">{cat.desc}</p>
                     <div className="mt-4 flex items-center gap-2 text-xs text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       Se kurs <ArrowRight size={12} />
                     </div>
@@ -191,7 +192,7 @@ const KursForside = () => {
       </section>
 
       {/* ── IMAGE BREAK ── */}
-      <section className="relative h-[50vh] min-h-[300px] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[50vh] min-h-[250px] md:min-h-[300px] overflow-hidden">
         <motion.div
           initial={{ scale: 1.1 }}
           whileInView={{ scale: 1 }}
@@ -205,18 +206,18 @@ const KursForside = () => {
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Praktisk & interaktivt</p>
-            <h2 className="font-heading text-3xl md:text-5xl">Læring som <span className="italic">fungerer.</span></h2>
+            <h2 className="font-heading text-2xl md:text-5xl">Læring som <span className="italic">fungerer.</span></h2>
           </motion.div>
         </div>
       </section>
 
       {/* ── WHY AVARGO KURS ── */}
-      <section className="py-24 md:py-40 relative">
+      <section className="py-16 md:py-40 relative">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hvorfor Avargo Kurs</p>
-              <h2 className="font-heading text-3xl md:text-5xl mb-8 leading-snug">
+              <h2 className="font-heading text-2xl md:text-5xl mb-6 md:mb-8 leading-snug">
                 Kurs bygget av <span className="italic text-gradient-rose">eksperter.</span>
               </h2>
               <div className="space-y-6">
@@ -251,9 +252,9 @@ const KursForside = () => {
               className="relative"
             >
               <div className="rounded-3xl overflow-hidden">
-                <img src={learningImg} alt="Kursopplevelse" className="w-full h-[500px] object-cover" />
+                <img src={learningImg} alt="Kursopplevelse" className="w-full h-[300px] md:h-[500px] object-cover" />
               </div>
-              <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-6 border border-border/20 max-w-[240px]">
+              <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 glass rounded-2xl p-4 md:p-6 border border-border/20 max-w-[200px] md:max-w-[240px]">
                 <p className="font-heading text-3xl text-secondary mb-1"><AnimatedCounter target={courseCount} suffix="+" /></p>
                 <p className="text-xs text-muted-foreground">kurs tilgjengelig nå</p>
               </div>
@@ -263,19 +264,19 @@ const KursForside = () => {
       </section>
 
       {/* ── AUDIENCE ── */}
-      <section className="py-24 md:py-40 relative">
+      <section className="py-16 md:py-40 relative">
         <div className="absolute inset-0 opacity-[0.04]">
           <img src={patternImg} alt="" className="w-full h-full object-cover" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hvem passer kursene for?</p>
-            <h2 className="font-heading text-3xl md:text-5xl mb-4">
+            <h2 className="font-heading text-2xl md:text-5xl mb-4">
               For <span className="italic text-gradient-rose">alle nivåer.</span>
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
             {[
               { icon: Building2, title: "Gründere & oppstartsbedrifter", desc: "Lær regnskapet fra dag én — unngå de vanligste feilene." },
               { icon: Users, title: "Daglige ledere & styremedlemmer", desc: "Forstå tallene og ta bedre beslutninger for bedriften." },
@@ -290,12 +291,12 @@ const KursForside = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="group p-8 rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 transition-all duration-500"
+                  className="group p-5 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 transition-all duration-500"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Icon size={20} className="text-secondary" />
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-secondary/10 flex items-center justify-center mb-3 md:mb-5 group-hover:scale-110 transition-transform">
+                    <Icon size={18} className="text-secondary" />
                   </div>
-                  <h3 className="font-heading text-lg mb-2">{item.title}</h3>
+                  <h3 className="font-heading text-sm md:text-lg mb-1 md:mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
                 </motion.div>
               );
@@ -305,19 +306,19 @@ const KursForside = () => {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 md:py-40 relative overflow-hidden">
+      <section className="py-16 md:py-40 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-background to-primary/5" />
         <FloatingParticles />
         <div className="container mx-auto px-4 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <Award size={32} className="text-secondary mx-auto mb-6" />
-            <h2 className="font-heading text-3xl md:text-6xl mb-6 leading-snug">
+            <h2 className="font-heading text-2xl md:text-6xl mb-4 md:mb-6 leading-snug">
               Klar for å <span className="italic text-gradient-rose">lære?</span>
             </h2>
-            <p className="text-muted-foreground font-light max-w-lg mx-auto mb-10">
+            <p className="text-sm md:text-base text-muted-foreground font-light max-w-lg mx-auto mb-8 md:mb-10">
               Utforsk kurskatalogen og finn det kurset som tar deg og teamet ditt til neste nivå.
             </p>
-            <Link to="/kurs/katalog" className="group inline-flex items-center justify-center gap-3 px-12 py-4 bg-secondary text-secondary-foreground text-sm font-medium tracking-wider rounded-full hover:scale-[1.02] transition-all duration-500 shadow-lg shadow-secondary/20">
+            <Link to="/kurs/katalog" className="group inline-flex items-center justify-center gap-3 px-10 md:px-12 py-3.5 md:py-4 bg-secondary text-secondary-foreground text-sm font-medium tracking-wider rounded-full hover:scale-[1.02] transition-all duration-500 shadow-lg shadow-secondary/20 w-full sm:w-auto">
               Se alle kurs
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>

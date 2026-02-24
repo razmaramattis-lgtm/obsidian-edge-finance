@@ -54,7 +54,7 @@ const KursBedrift = () => {
       </Helmet>
 
       {/* Hero */}
-      <section ref={heroRef} className="relative h-[70vh] min-h-[500px] flex items-center overflow-hidden">
+      <section ref={heroRef} className="relative h-[60vh] md:h-[70vh] min-h-[400px] md:min-h-[500px] flex items-center overflow-hidden">
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <img src={workshopImg} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
@@ -63,23 +63,23 @@ const KursBedrift = () => {
         <div className="relative z-10 container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="max-w-2xl">
             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5">Bedriftskurs</p>
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl leading-[1.02] mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.02] mb-4 md:mb-6">
               Kurs tilpasset <span className="italic text-gradient-rose">ditt team.</span>
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground font-light max-w-xl">
-              Vi skreddersyr kursopplegg til ditt team — enten det handler om økonomiforståelse, compliance eller digitale verktøy.
+            <p className="text-sm md:text-lg text-muted-foreground font-light max-w-xl">
+              Vi skreddersyr kursopplegg til ditt team — økonomiforståelse, compliance eller digitale verktøy.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Deliverables */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-36">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
             <div>
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
-              <h2 className="font-heading text-3xl md:text-5xl mb-8">Alt <span className="italic text-gradient-rose">inkludert.</span></h2>
+              <h2 className="font-heading text-2xl md:text-5xl mb-6 md:mb-8">Alt <span className="italic text-gradient-rose">inkludert.</span></h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {deliverables.map((d, i) => (
                   <motion.div key={d} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
@@ -109,14 +109,14 @@ const KursBedrift = () => {
       </section>
 
       {/* Formats */}
-      <section className="py-24 md:py-36 relative">
+      <section className="py-16 md:py-36 relative">
         <div className="absolute inset-0 opacity-[0.04]"><img src={patternImg} alt="" className="w-full h-full object-cover" /></div>
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Leveringsformat</p>
-            <h2 className="font-heading text-3xl md:text-5xl">Velg formatet som <span className="italic text-gradient-rose">passer.</span></h2>
+            <h2 className="font-heading text-2xl md:text-5xl">Velg formatet som <span className="italic text-gradient-rose">passer.</span></h2>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
               { icon: MapPin, title: "Fysisk", desc: "Vi kommer til dere. Kurs på deres kontor eller et sted dere velger." },
               { icon: Monitor, title: "Digitalt", desc: "Live kurs via Teams eller Zoom. Like interaktivt som fysisk." },
@@ -125,7 +125,7 @@ const KursBedrift = () => {
               const Icon = f.icon;
               return (
                 <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                  className="group p-8 rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
+                  className="group p-6 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
                   <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                     <Icon size={22} className="text-secondary" />
                   </div>
@@ -139,12 +139,12 @@ const KursBedrift = () => {
       </section>
 
       {/* Contact form */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-36">
         <div className="container mx-auto px-4">
           <div className="max-w-xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Ta kontakt</p>
-              <h2 className="font-heading text-3xl md:text-4xl mb-4">Hva trenger <span className="italic text-gradient-rose">teamet ditt?</span></h2>
+              <h2 className="font-heading text-2xl md:text-4xl mb-3 md:mb-4">Hva trenger <span className="italic text-gradient-rose">teamet ditt?</span></h2>
               <p className="text-sm text-muted-foreground font-light">Vi designer kurset sammen — helt tilpasset dere.</p>
             </motion.div>
 
