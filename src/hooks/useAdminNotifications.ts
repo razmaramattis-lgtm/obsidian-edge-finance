@@ -52,8 +52,8 @@ export const useAdminNotifications = (): AdminNotifications => {
       supabase.from("contact_submissions").select("id, status, company_name, contact_person, email", { count: "exact" }).eq("status", "new").limit(10),
       supabase.from("bookings").select("id, status, customer_name, company_name, booking_date, booking_time", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("account_feedback").select("id, status, search_term, top_result_account, top_result_name, message", { count: "exact" }).eq("status", "new").limit(10),
-      supabase.from("job_applications").select("id, status, full_name, email, job_listing_id", { count: "exact" }).eq("status", "new").limit(10),
-      supabase.from("open_applications").select("id, status, full_name, email, preferred_category", { count: "exact" }).eq("status", "new").limit(10),
+      supabase.from("job_applications").select("id, status, full_name, email, job_listing_id", { count: "exact" }).eq("status", "ny").limit(10),
+      supabase.from("open_applications").select("id, status, full_name, email, preferred_category", { count: "exact" }).eq("status", "ny").limit(10),
     ]);
 
     setCounts({
