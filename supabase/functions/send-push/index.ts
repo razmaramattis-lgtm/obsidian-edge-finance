@@ -64,8 +64,12 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
-    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY")!;
+    // Normalize keys to proper base64url (no padding, URL-safe chars)
+    const normalizeB64 = (s: string) =>
+      s.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").trim();
+
+    const vapidPublicKey = normalizeB64(Deno.env.get("VAPID_PUBLIC_KEY")!);
+    const vapidPrivateKey = normalizeB64(Deno.env.get("VAPID_PRIVATE_KEY")!);
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
