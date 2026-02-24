@@ -287,15 +287,13 @@ serve(async (req) => {
       answer += `\n[${linkLabel}](${best.downloadUrl})\n`;
     }
 
-    // For glossary: show additional related terms
-    if (isGlossaryResult) {
-      const otherGlossary = results.filter(r => r.source === "Regnskapsord" && r !== best).slice(0, 4);
-      if (otherGlossary.length > 0) {
-        answer += `\n---\n**Relaterte regnskapsord:**\n\n`;
-        for (const r of otherGlossary) {
-          answer += `- **${r.title}** — ${limitWords(r.snippet, 40)}`;
-          if (r.downloadUrl) answer += ` [🔗 Les mer](${r.downloadUrl})`;
-          answer += `\n`;
+    // For non-glossary results: show other matching results as tags
+    if (!isGlossaryResult) {
+      const otherResults = results.filter(r => r !== best).slice(0, 5);
+      if (otherResults.length > 0) {
+        answer += `\n---\n**Se også:**\n\n`;
+        for (const r of otherResults) {
+          answer += `- **${r.title}** *(${r.source})* — ${limitWords(r.snippet, 30)}\n`;
         }
       }
     }
