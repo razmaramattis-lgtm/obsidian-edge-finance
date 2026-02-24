@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Clock, Briefcase, Building2, Users, Globe, ArrowLeft, Send, Mail, Phone, User, X, ChevronRight, Monitor, Calendar } from "lucide-react";
+import { MapPin, Clock, Briefcase, Building2, Users, Globe, ArrowLeft, Send, Mail, Phone, User, X, ChevronRight, Monitor, Calendar, FileText, Target, CheckCircle2, Gift, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
@@ -144,12 +144,20 @@ const KarriereDetalj = () => {
     { icon: Users, label: `${job.num_positions} stilling${job.num_positions > 1 ? "er" : ""}` },
   ];
 
+  const sectionIcons: Record<string, React.ReactNode> = {
+    "Om stillingen": <FileText size={18} className="text-primary" />,
+    "Arbeidsoppgaver": <Target size={18} className="text-primary" />,
+    "Kvalifikasjoner": <CheckCircle2 size={18} className="text-primary" />,
+    "Vi tilbyr": <Gift size={18} className="text-primary" />,
+    "Om Avargo": <Building2 size={18} className="text-primary" />,
+  };
+
   const sections = [
-    { title: "Om stillingen", content: job.description, icon: "📋" },
-    { title: "Arbeidsoppgaver", content: job.tasks, icon: "🎯" },
-    { title: "Kvalifikasjoner", content: job.qualifications, icon: "✅" },
-    { title: "Vi tilbyr", content: job.we_offer, icon: "🎁" },
-    { title: "Om Avargo", content: job.about_company, icon: "🏢" },
+    { title: "Om stillingen", content: job.description },
+    { title: "Arbeidsoppgaver", content: job.tasks },
+    { title: "Kvalifikasjoner", content: job.qualifications },
+    { title: "Vi tilbyr", content: job.we_offer },
+    { title: "Om Avargo", content: job.about_company },
   ].filter(s => s.content);
 
   return (
@@ -243,7 +251,7 @@ const KarriereDetalj = () => {
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * (i + 1), duration: 0.5 }}
               className="mb-10">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-3">
-                <span className="text-lg">{section.icon}</span> {section.title}
+                <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">{sectionIcons[section.title]}</span> {section.title}
               </h2>
               <div className="pl-0 md:pl-9">
                 {renderHtml(section.content)}
@@ -255,7 +263,7 @@ const KarriereDetalj = () => {
           {job.images && job.images.length > 1 && (
             <div className="mb-10">
               <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-3">
-                <span className="text-lg">📸</span> Fra arbeidsplassen
+                <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><Camera size={18} className="text-primary" /></span> Fra arbeidsplassen
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {job.images.slice(1).map((img, i) => (
