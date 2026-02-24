@@ -2,12 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Sparkles, Users, Briefcase, Zap, Heart, ChevronRight, Monitor, Calculator, Megaphone, Play } from "lucide-react";
+import { ArrowRight, Sparkles, Users, Briefcase, Zap, Heart, ChevronRight, Monitor, Calculator, Megaphone } from "lucide-react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 
+import heroVideo from "@/assets/karriere-hero-video.mp4";
 import heroImg from "@/assets/karriere-hero-futuristic.jpg";
-import networkImg from "@/assets/karriere-abstract-network.jpg";
+import networkImg from "@/assets/karriere-network-glow.jpg";
 import teamImg from "@/assets/karriere-team-meeting.jpg";
+import cultureImg from "@/assets/karriere-culture.jpg";
+import loungeImg from "@/assets/karriere-lounge.jpg";
+import officeTechImg from "@/assets/karriere-office-tech.jpg";
 import freelancerImg from "@/assets/karriere-freelancer.jpg";
 import patternImg from "@/assets/karriere-pattern.jpg";
 import regnskapImg from "@/assets/karriere-regnskap.jpg";
@@ -43,26 +47,29 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: strin
   return <span ref={ref}>{display}{suffix}</span>;
 };
 
-/* ── Parallax image section ── */
-const ParallaxImage = ({ src, alt, className = "" }: { src: string; alt: string; className?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-
-  return (
-    <div ref={ref} className={`overflow-hidden ${className}`}>
-      <motion.img src={src} alt={alt} style={{ y }} className="w-full h-[130%] object-cover absolute inset-0" />
-    </div>
-  );
-};
+/* ── Horizontal scrolling image strip ── */
+const ImageMarquee = ({ images, reverse = false }: { images: { src: string; alt: string }[]; reverse?: boolean }) => (
+  <div className="overflow-hidden py-4">
+    <motion.div
+      className="flex gap-4"
+      animate={{ x: reverse ? ["0%", "-50%"] : ["-50%", "0%"] }}
+      transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+    >
+      {[...images, ...images].map((img, i) => (
+        <div key={i} className="shrink-0 w-72 md:w-96 h-48 md:h-64 rounded-2xl overflow-hidden">
+          <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </motion.div>
+  </div>
+);
 
 const KarriereForside = () => {
   const [jobCount, setJobCount] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 80]);
+  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   useEffect(() => {
     supabase
@@ -80,35 +87,42 @@ const KarriereForside = () => {
         <meta name="description" content="Utforsk karrieremuligheter hos Avargo. Vi søker dyktige folk innen regnskap, personal, markedsføring og IT. Se ledige stillinger og send åpen søknad." />
       </Helmet>
 
-      {/* ═══ HERO — Cinematic fullscreen ═══ */}
+      {/* ═══ HERO — Fullscreen video ═══ */}
       <section ref={heroRef} className="relative min-h-screen overflow-hidden flex items-center">
-        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
-          <img src={heroImg} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
-        </motion.div>
+        {/* Video background */}
+        <div className="absolute inset-0">
+          <video
+            autoPlay muted loop playsInline
+            poster={heroImg}
+            className="w-full h-full object-cover"
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
+        </div>
 
         {/* Animated grid overlay */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
+        <div className="absolute inset-0 opacity-[0.04]" style={{
           backgroundImage: "linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }} />
 
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(15)].map((_, i) => (
+          {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full"
               style={{
                 width: 2 + Math.random() * 4,
                 height: 2 + Math.random() * 4,
-                background: i % 3 === 0 ? "hsl(var(--primary) / 0.5)" : "hsl(var(--secondary) / 0.4)",
+                background: i % 3 === 0 ? "hsl(var(--primary) / 0.6)" : "hsl(var(--secondary) / 0.5)",
                 left: `${10 + Math.random() * 80}%`,
                 top: `${10 + Math.random() * 80}%`,
               }}
               animate={{
-                y: [0, -50, 0],
+                y: [0, -60, 0],
                 opacity: [0, 1, 0],
               }}
               transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 4 }}
@@ -186,10 +200,10 @@ const KarriereForside = () => {
 
       {/* ═══ Stats — Animated counters ═══ */}
       <section className="py-16 relative">
-        <div className="absolute inset-0 opacity-[0.04]">
+        <div className="absolute inset-0 opacity-[0.06]">
           <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute inset-0 bg-background/90" />
+        <div className="absolute inset-0 bg-background/85" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {[
@@ -217,6 +231,17 @@ const KarriereForside = () => {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ═══ Image marquee — Living visual strip ═══ */}
+      <section className="py-8 overflow-hidden">
+        <ImageMarquee images={[
+          { src: teamImg, alt: "Team" },
+          { src: cultureImg, alt: "Kultur" },
+          { src: loungeImg, alt: "Lounge" },
+          { src: officeTechImg, alt: "Teknologi" },
+          { src: freelancerImg, alt: "Frilanser" },
+        ]} />
       </section>
 
       {/* ═══ Departments — Immersive image grid ═══ */}
@@ -255,7 +280,6 @@ const KarriereForside = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                     <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-700" />
 
-                    {/* Icon badge */}
                     <div className="absolute top-5 right-5 w-10 h-10 rounded-xl glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
                       <Icon size={16} className="text-primary" />
                     </div>
@@ -287,10 +311,18 @@ const KarriereForside = () => {
         </div>
       </section>
 
-      {/* ═══ Visual break — Parallax ═══ */}
-      <section className="relative h-[50vh] md:h-[60vh]">
-        <ParallaxImage src={teamImg} alt="Avargo team" className="absolute inset-0 relative" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background" />
+      {/* ═══ Culture — Full-width cinematic image with overlay ═══ */}
+      <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
+        <motion.img
+          src={cultureImg}
+          alt="Avargo kultur"
+          className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/20" />
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -299,16 +331,17 @@ const KarriereForside = () => {
             className="text-center px-4"
           >
             <p className="text-[11px] tracking-[0.4em] uppercase text-primary/60 font-medium mb-4">Kultur</p>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
+            <h2 className="text-3xl md:text-6xl font-bold text-foreground max-w-3xl mx-auto leading-tight">
               En arbeidsplass der du faktisk <span className="text-gradient-teal">trives</span>
             </h2>
+            <p className="text-muted-foreground mt-6 max-w-xl mx-auto text-lg">Balanse, utvikling og fellesskap — strukturert inn i alt vi gjør.</p>
           </motion.div>
         </div>
       </section>
 
-      {/* ═══ Why Avargo — Card grid ═══ */}
+      {/* ═══ Why Avargo — Bento grid with images ═══ */}
       <section className="py-20 md:py-32 relative">
-        <div className="absolute inset-0 opacity-[0.03]">
+        <div className="absolute inset-0 opacity-[0.04]">
           <img src={patternImg} alt="" className="w-full h-full object-cover" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
@@ -316,14 +349,32 @@ const KarriereForside = () => {
             <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 font-medium mb-3">Hvorfor Avargo</p>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">En arbeidsplass som skiller seg ut</h2>
           </motion.div>
-          <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+
+          {/* Bento-style grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {/* Large card with image */}
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="md:col-span-2 md:row-span-2 rounded-3xl overflow-hidden relative group"
+            >
+              <img src={loungeImg} alt="Avargo lounge" className="w-full h-full object-cover min-h-[300px] md:min-h-[420px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+                <div className="w-10 h-10 rounded-xl bg-primary/20 backdrop-blur-sm flex items-center justify-center mb-4">
+                  <Heart size={18} className="text-primary" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Ingen overtid — på ordentlig</h3>
+                <p className="text-muted-foreground max-w-lg leading-relaxed">Kvalitet skapes best i et bærekraftig tempo. Balanse er ikke en bonus — det er strukturert inn i driften.</p>
+              </div>
+            </motion.div>
+
             {[
-              { title: "Ingen overtid", desc: "Kvalitet skapes best i et bærekraftig tempo. Balanse er strukturert inn i driften." },
               { title: "Moderne teknologi", desc: "Vi utvikler egne løsninger og tar i bruk verktøy som effektiviserer hverdagen." },
               { title: "Bransjens beste vilkår", desc: "Konkurransedyktig lønn, gode vilkår og tydelige utviklingsmuligheter." },
-              { title: "Inkluderende kultur", desc: "En trygg arbeidsplass der du blir sett, hørt og får rom til å bidra." },
               { title: "Faglig utvikling", desc: "Kontinuerlig kompetanseheving gjennom kurs, sertifiseringer og sterkt fagmiljø." },
-              { title: "Spennende samarbeid", desc: "Tett med solide kunder og innovative partnere for faglig variasjon." },
+              { title: "Inkluderende kultur", desc: "En trygg arbeidsplass der du blir sett, hørt og får rom til å bidra." },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -342,6 +393,48 @@ const KarriereForside = () => {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ═══ Office tech — Full width image break ═══ */}
+      <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+        <motion.img
+          src={officeTechImg}
+          alt="Avargo tech"
+          className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
+        <div className="absolute inset-0 flex items-center">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="max-w-lg"
+            >
+              <p className="text-[11px] tracking-[0.3em] uppercase text-secondary/70 font-medium mb-3">Teknologi</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Verktøy som gjør en forskjell</h2>
+              <p className="text-muted-foreground leading-relaxed">Vi bygger egne AI-drevne systemer som gjør hverdagen smartere for oss og kundene våre.</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Reverse image marquee ═══ */}
+      <section className="py-8 overflow-hidden">
+        <ImageMarquee
+          reverse
+          images={[
+            { src: regnskapImg, alt: "Regnskap" },
+            { src: personalImg, alt: "Personal" },
+            { src: markedImg, alt: "Marked" },
+            { src: itImg, alt: "IT" },
+            { src: teamImg, alt: "Team" },
+          ]}
+        />
       </section>
 
       {/* ═══ Avargo Fri teaser ═══ */}
@@ -375,15 +468,16 @@ const KarriereForside = () => {
         </div>
       </section>
 
-      {/* ═══ CTA ═══ */}
-      <section className="py-20 md:py-32 relative">
-        <div className="absolute inset-0 opacity-[0.05]">
+      {/* ═══ CTA — with network glow background ═══ */}
+      <section className="py-20 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.15]">
           <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
+        <div className="absolute inset-0 bg-background/80" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">Klar for neste steg?</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto mb-10">Se våre ledige stillinger, eller send en åpen søknad — vi er alltid på utkikk etter flinke folk.</p>
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Klar for neste steg?</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto mb-10 text-lg">Se våre ledige stillinger, eller send en åpen søknad — vi er alltid på utkikk etter flinke folk.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/karriere/stillinger" className="group inline-flex items-center gap-2 h-14 px-10 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:shadow-2xl hover:shadow-primary/30 transition-all duration-500 relative overflow-hidden">
                 <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

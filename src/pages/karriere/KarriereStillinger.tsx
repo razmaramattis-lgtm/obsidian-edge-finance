@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, MapPin, Clock, ArrowRight, Search, Building2, Send, Sparkles, User, Mail, Phone, Linkedin, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CvUpload from "@/components/CvUpload";
-import networkImg from "@/assets/karriere-abstract-network.jpg";
+import networkImg from "@/assets/karriere-network-glow.jpg";
+import cultureImg from "@/assets/karriere-culture.jpg";
 import patternImg from "@/assets/karriere-pattern.jpg";
 
 interface JobListing {
@@ -87,15 +88,18 @@ const KarriereStillinger = () => {
         <meta name="description" content="Se alle ledige stillinger hos Avargo innen regnskap, personal, markedsføring og IT." />
       </Helmet>
 
-      {/* Hero */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Hero with cinematic image */}
+      <section className="relative py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={cultureImg} alt="" className="w-full h-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
         <div className="absolute inset-0 opacity-[0.06]">
           <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 to-background" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">Ledige stillinger</h1>
+            <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-4">Ledige stillinger</h1>
             <p className="text-lg text-muted-foreground">Finn din neste mulighet hos oss</p>
           </motion.div>
 
@@ -170,7 +174,7 @@ const KarriereStillinger = () => {
 
       {/* Open Application */}
       <section className="py-20 md:py-28 relative overflow-hidden" id="apen-soknad">
-        <div className="absolute inset-0 opacity-[0.03]">
+        <div className="absolute inset-0 opacity-[0.04]">
           <img src={patternImg} alt="" className="w-full h-full object-cover" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
