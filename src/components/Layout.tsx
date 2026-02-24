@@ -410,10 +410,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                           </div>
                         </Link>
                       ))}
-                    </div>
-                    <div className="mt-5 pt-4 border-t border-border/10">
-                      <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="inline-flex items-center gap-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
-                        Se alle {bransjerItems.length} bransjer <ArrowRight size={11} />
+                      {/* "Se alle" card filling the empty grid slot */}
+                      <Link
+                        to={sp("/bransjer")}
+                        onClick={() => setBransjerOpen(false)}
+                        className="group relative p-5 rounded-2xl border border-dashed border-primary/25 hover:border-primary/50 transition-all duration-300 overflow-hidden flex flex-col items-center justify-center text-center bg-primary/[0.03] hover:bg-primary/[0.08]"
+                      >
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-2xl bg-primary" />
+                        <div className="relative flex flex-col items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-primary/20 bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                            <ArrowRight size={20} className="text-primary group-hover:translate-x-0.5 transition-transform duration-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-heading text-sm text-primary/80 group-hover:text-primary transition-colors mb-1">Se alle bransjer</h4>
+                            <p className="text-[11px] text-foreground/45 font-light">Utforsk alle {bransjerItems.length}+ bransjer vi dekker</p>
+                          </div>
+                        </div>
                       </Link>
                     </div>
                   </div>
