@@ -341,7 +341,7 @@ serve(async (req) => {
         if (!aIsBalance && bIsBalance) return -1;
         return b.score - a.score;
       });
-      const alts = accountResults.slice(0, 8);
+      const alts = accountResults.slice(0, 5);
       answer += `\n[FLERE_KONTOER]\n`;
       answer += `**Andre kontoalternativer:**\n\n`;
       for (const r of alts) {
