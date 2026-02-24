@@ -45,9 +45,10 @@ import GlossaryPanel from "@/components/admin/GlossaryPanel";
 import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
 import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
+import JobListingsPanel from "@/components/admin/JobListingsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings";
 
 interface NavItem {
   id: Panel;
@@ -84,6 +85,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Internt
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, employeeHidden: true, group: "Internt" },
+  { id: "job_listings", label: "Stillinger", icon: Briefcase, adminOnly: true, employeeHidden: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
   // Admin
@@ -213,6 +215,7 @@ const AdminDashboard = () => {
     overview: notifications.contactSubmissions,
     account_feedback: notifications.accountFeedback,
     org_resources: notifications.accountFeedback,
+    job_listings: (notifications.jobApplications || 0) + (notifications.openApplications || 0),
     chat: wsUnread,
   };
 
@@ -282,6 +285,7 @@ const AdminDashboard = () => {
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
+      case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
@@ -516,7 +520,11 @@ const AdminDashboard = () => {
                     notifications.items.slice(0, 8).map(item => (
                       <button
                         key={item.id}
-                        onClick={() => { setActivePanel("pending_tasks"); setBellOpen(false); }}
+                        onClick={() => {
+                          const target = (item.category === "job_applications" || item.category === "open_applications") ? "job_listings" : "pending_tasks";
+                          setActivePanel(target as Panel);
+                          setBellOpen(false);
+                        }}
                         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left"
                       >
                         <div className="flex-1 min-w-0">
