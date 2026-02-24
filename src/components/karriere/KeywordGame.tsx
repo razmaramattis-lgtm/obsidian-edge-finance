@@ -45,13 +45,44 @@ const DraggableKeyword = ({
   const controls = useAnimation();
   const color = COLORS[index % COLORS.length];
   const [isDragging, setIsDragging] = useState(false);
-  const velocityRef = useRef({ x: 0, y: 0 });
+  const [tapCount, setTapCount] = useState(0);
+  const [gone, setGone] = useState(false);
+  const MAX_TAPS = 5;
+
+  // Random throw on tap/click
+  const handleTap = useCallback(() => {
+    if (gone) return;
+    const next = tapCount + 1;
+    setTapCount(next);
+
+    if (next >= MAX_TAPS) {
+      // Disappear with a pop
+      controls.start({
+        scale: 0,
+        opacity: 0,
+        transition: { type: "spring", damping: 12, stiffness: 200 },
+      }).then(() => setGone(true));
+      return;
+    }
+
+    // Random throw direction
+    const angle = Math.random() * Math.PI * 2;
+    const force = 80 + Math.random() * 120;
+    const throwX = Math.cos(angle) * force;
+    const throwY = Math.sin(angle) * force;
+    const spin = (Math.random() - 0.5) * 40;
+
+    controls.start({
+      x: throwX,
+      y: throwY,
+      rotate: spin,
+      scale: initialPos.scale * (1 - next * 0.08),
+      transition: { type: "spring", damping: 12, stiffness: 120, mass: 0.6 },
+    });
+  }, [controls, tapCount, gone, initialPos.scale]);
 
   const handleDragEnd = useCallback((_: any, info: PanInfo) => {
     setIsDragging(false);
-    velocityRef.current = { x: info.velocity.x, y: info.velocity.y };
-    
-    // "Throw" effect - animate with velocity then settle
     const throwX = info.velocity.x * 0.3;
     const throwY = info.velocity.y * 0.3;
     
@@ -63,12 +94,17 @@ const DraggableKeyword = ({
     });
   }, [controls, initialPos.rotation]);
 
+  if (gone) return null;
+
+  const remaining = MAX_TAPS - tapCount;
+
   return (
     <motion.div
       drag
       dragMomentum={false}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
+      onTap={handleTap}
       animate={controls}
       initial={{ 
         opacity: 0, 
@@ -93,7 +129,7 @@ const DraggableKeyword = ({
       className="transform -translate-x-1/2 -translate-y-1/2"
     >
       <div
-        className="px-4 py-2 rounded-full border backdrop-blur-sm whitespace-nowrap text-sm font-medium shadow-lg transition-shadow duration-200"
+        className="px-4 py-2 rounded-full border backdrop-blur-sm whitespace-nowrap text-sm font-medium shadow-lg transition-shadow duration-200 relative"
         style={{
           backgroundColor: color.bg,
           borderColor: color.border,
@@ -104,6 +140,11 @@ const DraggableKeyword = ({
         }}
       >
         {word}
+        {tapCount > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+            {remaining}
+          </span>
+        )}
       </div>
     </motion.div>
   );
