@@ -191,8 +191,28 @@ const JobListingsPanel = () => {
     fetchAll();
   };
 
+  const sendRejectionEmail = async (name: string, email: string, positionTitle?: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("rejection-email", {
+        body: { applicant_name: name, applicant_email: email, position_title: positionTitle || null },
+      });
+      if (error) throw error;
+      toast.success("Avslagsmelding sendt til " + name);
+    } catch (err) {
+      console.error("Rejection email failed:", err);
+      toast.error("Kunne ikke sende avslagsmelding");
+    }
+  };
+
   const updateAppStatus = async (appId: string, status: string) => {
     await supabase.from("job_applications").update({ status }).eq("id", appId);
+    if (status === "avslått") {
+      const app = applications.find(a => a.id === appId);
+      if (app) {
+        const job = listings.find(j => j.id === app.job_listing_id);
+        sendRejectionEmail(app.full_name, app.email, job?.title);
+      }
+    }
     fetchAll();
   };
 
@@ -208,6 +228,12 @@ const JobListingsPanel = () => {
 
   const updateOpenAppStatus = async (appId: string, status: string) => {
     await supabase.from("open_applications").update({ status }).eq("id", appId);
+    if (status === "avslått") {
+      const app = openApps.find(a => a.id === appId);
+      if (app) {
+        sendRejectionEmail(app.full_name, app.email);
+      }
+    }
     fetchAll();
   };
 

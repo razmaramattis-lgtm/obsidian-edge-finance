@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.seed-accounts]
 verify_jwt = false
+
+[functions.rejection-email]
+verify_jwt = false
