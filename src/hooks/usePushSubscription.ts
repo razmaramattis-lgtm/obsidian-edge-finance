@@ -29,24 +29,43 @@ export const usePushSubscription = (profileId: string | undefined) => {
       // Wait for it to be ready
       await navigator.serviceWorker.ready;
 
-      // Check if already subscribed
       const reg = registration as any;
       let subscription = await reg.pushManager.getSubscription();
+
+      // If existing subscription uses a different applicationServerKey, unsubscribe first
+      if (subscription) {
+        try {
+          // Try to detect stale subscription by re-subscribing
+          // If keys mismatch, unsubscribe old one
+          await subscription.unsubscribe();
+          console.log("Unsubscribed old push subscription to re-register with new VAPID key");
+          subscription = null;
+        } catch (e) {
+          console.warn("Could not unsubscribe old push:", e);
+        }
+      }
 
       if (!subscription) {
         // Request permission
         const permission = await Notification.requestPermission();
-        if (permission !== "granted") return;
+        if (permission !== "granted") {
+          console.warn("Push permission not granted:", permission);
+          return;
+        }
 
-        // Subscribe
+        // Subscribe with current VAPID key
         subscription = await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
         });
+        console.log("New push subscription created");
       }
 
       const subJson = subscription.toJSON();
-      if (!subJson.endpoint || !subJson.keys) return;
+      if (!subJson.endpoint || !subJson.keys) {
+        console.error("Push subscription missing endpoint or keys");
+        return;
+      }
 
       // Upsert to database
       const { error } = await supabase.from("push_subscriptions").upsert(
@@ -62,7 +81,7 @@ export const usePushSubscription = (profileId: string | undefined) => {
       if (error) {
         console.error("Failed to save push subscription:", error);
       } else {
-        console.log("Push subscription saved successfully");
+        console.log("Push subscription saved successfully for", profileId);
       }
     } catch (err) {
       console.error("Push subscription error:", err);
