@@ -431,10 +431,15 @@ const JobListingsPanel = () => {
 
   const getSignedCvUrl = async (cvUrl: string | null) => {
     if (!cvUrl) return null;
-    // Extract path from the full URL
-    const match = cvUrl.match(/cv-uploads\/(.+)$/);
+    // Extract just the filename (UUID.ext) from any URL format (signed, public, with query params)
+    const match = cvUrl.match(/cv-uploads\/([a-f0-9-]+\.\w+)/);
     if (!match) return cvUrl;
-    const { data } = await supabase.storage.from("cv-uploads").createSignedUrl(match[1], 3600);
+    const { data, error } = await supabase.storage.from("cv-uploads").createSignedUrl(match[1], 3600);
+    if (error) {
+      console.error("CV signed URL error:", error);
+      toast.error("Kunne ikke generere CV-lenke");
+      return null;
+    }
     return data?.signedUrl || cvUrl;
   };
 
