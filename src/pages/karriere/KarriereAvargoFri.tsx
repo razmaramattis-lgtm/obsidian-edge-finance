@@ -6,7 +6,8 @@ import { Zap, Shield, Clock, Users, ArrowRight, Send, User, Mail, Phone, Linkedi
 import { motion, AnimatePresence } from "framer-motion";
 import CvUpload from "@/components/CvUpload";
 import freelancerImg from "@/assets/karriere-freelancer.jpg";
-import networkImg from "@/assets/karriere-abstract-network.jpg";
+import networkImg from "@/assets/karriere-network-glow.jpg";
+import loungeImg from "@/assets/karriere-lounge.jpg";
 import patternImg from "@/assets/karriere-pattern.jpg";
 
 const DEPT_OPTIONS = ["Regnskap", "Personal", "Marked", "IT"];
@@ -46,19 +47,38 @@ const KarriereAvargoFri = () => {
         <meta name="description" content="Bli en del av Avargo Fri — vår fleksible modell for frilansere og prosjektbaserte samarbeidspartnere innen regnskap, HR, marked og IT." />
       </Helmet>
 
-      {/* Hero — cinematic */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+      {/* Hero — cinematic with layered images */}
+      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={freelancerImg} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
         </div>
 
         {/* Animated grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
+        <div className="absolute inset-0 opacity-[0.04]" style={{
           backgroundImage: "linear-gradient(hsl(var(--secondary) / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--secondary) / 0.4) 1px, transparent 1px)",
           backgroundSize: "80px 80px",
         }} />
+
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: 2 + Math.random() * 3,
+                height: 2 + Math.random() * 3,
+                background: "hsl(var(--secondary) / 0.5)",
+                left: `${10 + Math.random() * 80}%`,
+                top: `${10 + Math.random() * 80}%`,
+              }}
+              animate={{ y: [0, -40, 0], opacity: [0, 1, 0] }}
+              transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 4 }}
+            />
+          ))}
+        </div>
 
         <div className="container mx-auto px-4 relative z-10 py-20">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="max-w-3xl">
@@ -70,19 +90,24 @@ const KarriereAvargoFri = () => {
             >
               <Zap size={13} /> Ny modell
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6 leading-tight">
               <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="block">Avargo</motion.span>
               <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="block text-gradient-teal">Fri</motion.span>
             </h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-10">
               En fleksibel samarbeidsmodell for deg som vil jobbe på dine premisser — enten som frilanser eller med prosjektbasert tilknytning.
             </motion.p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+              <a href="#bli-med" className="group inline-flex items-center gap-2 h-14 px-8 bg-secondary text-secondary-foreground rounded-2xl text-sm font-semibold hover:shadow-2xl hover:shadow-secondary/30 transition-all duration-500">
+                Bli med <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </a>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Two models */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
@@ -93,12 +118,12 @@ const KarriereAvargoFri = () => {
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  icon: Zap, title: "Frilansnettverk", color: "secondary",
+                  icon: Zap, title: "Frilansnettverk",
                   desc: "Du driver ditt eget foretak og tar oppdrag gjennom Avargo. Vi kobler deg med kunder som trenger din kompetanse.",
                   items: ["Egne kunder via Avargo", "Fleksibel arbeidstid", "Faktuerer direkte", "Tilgang til fagmiljø og verktøy"],
                 },
                 {
-                  icon: Users, title: "Fleksibel tilknytning", color: "primary",
+                  icon: Users, title: "Fleksibel tilknytning",
                   desc: "En prosjektbasert ansettelsesform der du jobber med utvalgte oppdrag og kunder med tilhørighet til teamet.",
                   items: ["Del av Avargo-teamet", "Velg egne prosjekter", "Sosiale og faglige goder", "Tydelige rammer og trygghet"],
                 },
@@ -137,12 +162,31 @@ const KarriereAvargoFri = () => {
         </div>
       </section>
 
-      {/* Benefits with background */}
+      {/* Full-width lounge image break */}
+      <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+        <motion.img
+          src={loungeImg}
+          alt="Avargo lounge"
+          className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/20" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center px-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground">Frihet med <span className="text-gradient-teal">fellesskap</span></h2>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Benefits */}
       <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.05]">
+        <div className="absolute inset-0 opacity-[0.08]">
           <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute inset-0 bg-background/90" />
+        <div className="absolute inset-0 bg-background/85" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Hva du får</h2>
@@ -174,7 +218,7 @@ const KarriereAvargoFri = () => {
       </section>
 
       {/* Application form */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
+      <section className="py-20 md:py-28 relative overflow-hidden" id="bli-med">
         <div className="absolute inset-0 opacity-[0.03]">
           <img src={patternImg} alt="" className="w-full h-full object-cover" />
         </div>
