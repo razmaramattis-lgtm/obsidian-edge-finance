@@ -73,35 +73,35 @@ const tjenesterGroups = [
 ];
 
 const bransjerItems = [
-  { icon: Globe, title: "Tech & SaaS", desc: "Skalerbare løsninger for teknologiselskaper", href: "/bransjer/tech-saas" },
-  { icon: Building2, title: "Eiendom & Utvikling", desc: "Regnskap og rådgivning for eiendomsbransjen", href: "/bransjer/eiendom" },
-  { icon: Landmark, title: "Holding & Investering", desc: "Strukturering og optimalisering for holdingselskaper", href: "/bransjer/holding" },
-  { icon: Briefcase, title: "Consulting & Rådgivning", desc: "Skreddersydd for konsulent- og rådgivningsfirmaer", href: "/bransjer/consulting" },
-  { icon: Tractor, title: "Landbruk", desc: "Tilpasset regnskapsføring for landbruksnæringen", href: "/bransjer/landbruk" },
-  { icon: HardHat, title: "Bygg & Anlegg", desc: "Prosjektregnskap og rapportering for bygg", href: "/bransjer/bygg-anlegg" },
-  { icon: Store, title: "Nettbutikk & E-commerce", desc: "Økonomi og vekst for netthandel", href: "/bransjer/nettbutikk" },
-  { icon: Heart, title: "Helse & Velvære", desc: "Regnskap tilpasset helsebransjen", href: "/bransjer/helse" },
-  { icon: TrendingUp, title: "Restaurant & Uteliv", desc: "Kontroll på varekost og marginer", href: "/bransjer/restaurant" },
-  { icon: Users, title: "Frisør & Skjønnhet", desc: "Enkel økonomi for skjønnhetsbransjen", href: "/bransjer/frisor" },
-  { icon: Zap, title: "Håndverkere & Fagfolk", desc: "Regnskap og fakturering for håndverkere", href: "/bransjer/handverkere" },
+  { icon: Globe, title: "Tech & SaaS", desc: "Skalerbar økonomistyring tilpasset abonnementsmodeller, MRR-rapportering og investorkommunikasjon.", href: "/bransjer/tech-saas" },
+  { icon: Building2, title: "Eiendom & Utvikling", desc: "Prosjektregnskap, avskrivninger og skatteoptimalisering for eiendomsselskaper og utviklere.", href: "/bransjer/eiendom" },
+  { icon: Landmark, title: "Holding & Investering", desc: "Konsernregnskap, utbytteplanlegging og strukturering for holdingselskaper med flere datterselskaper.", href: "/bransjer/holding" },
+  { icon: Briefcase, title: "Consulting & Rådgivning", desc: "Prosjektbasert fakturering, timeregnskap og lønnsomhetsanalyse for rådgivningsfirmaer.", href: "/bransjer/consulting" },
+  { icon: Tractor, title: "Landbruk", desc: "Spesialtilpasset regnskapsføring med jordbruksfradrag, tilskuddsrapportering og MVA på landbruk.", href: "/bransjer/landbruk" },
+  { icon: HardHat, title: "Bygg & Anlegg", desc: "Prosjektregnskap med løpende avregning, underentreprenørhåndtering og HMS-dokumentasjon.", href: "/bransjer/bygg-anlegg" },
+  { icon: Store, title: "Nettbutikk & E-commerce", desc: "Varelagerføring, integrasjon med Shopify/WooCommerce og MVA på tvers av landegrenser.", href: "/bransjer/nettbutikk" },
+  { icon: Heart, title: "Helse & Velvære", desc: "Regnskap for klinikker, terapeuter og helsebedrifter med fokus på merverdiavgift og konsesjoner.", href: "/bransjer/helse" },
+  { icon: TrendingUp, title: "Restaurant & Uteliv", desc: "Daglig kassaoppgjør, varekostkontroll og personaladministrasjon for serveringsbransjen.", href: "/bransjer/restaurant" },
+  { icon: Users, title: "Frisør & Skjønnhet", desc: "Stolleie-modeller, MVA på tjenester og enkel økonomistyring for frisør- og skjønnhetssalonger.", href: "/bransjer/frisor" },
+  { icon: Zap, title: "Håndverkere & Fagfolk", desc: "Fakturering, prosjektoppfølging og skatteplanlegging skreddersydd for håndverksbedrifter.", href: "/bransjer/handverkere" },
 ];
 
 const selskapetLinks = [
-  { icon: Users, title: "Kundeportal", desc: "Logg inn som kunde", href: "/kunde/logg-inn", absolute: true },
-  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-ansatte", href: "/admin/logg-inn", absolute: true },
-  { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt", absolute: false },
-  { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss", absolute: false },
-  { icon: Briefcase, title: "Jobb hos oss", desc: "Se ledige stillinger", href: "/karriere", absolute: true },
+  { icon: Users, title: "Kundeportal", desc: "Logg inn for å se regnskapet ditt, dokumenter og kommunisere med din rådgiver — alt samlet i én oversiktlig portal.", href: "/kunde/logg-inn", absolute: true },
+  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-teamet med tilgang til arbeidsverktøy, kundedata og samarbeidsplattformen.", href: "/admin/logg-inn", absolute: true },
+  { icon: Mail, title: "Kontakt oss", desc: "Få et uforpliktende tilbud eller still spørsmål om våre tjenester. Vi svarer normalt innen én arbeidsdag.", href: "/kontakt", absolute: false },
+  { icon: Info, title: "Om Avargo", desc: "Møt teamet bak Avargo. Les om vår visjon, metode og hva som driver oss til å levere bedre løsninger for norske bedrifter.", href: "/om-oss", absolute: false },
+  { icon: Briefcase, title: "Karriere", desc: "Se ledige stillinger og bli en del av et voksende team. Vi ser etter dyktige mennesker innen regnskap, HR, marked og teknologi.", href: "/karriere", absolute: true },
 ];
 
 const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
-  { icon: GraduationCap, title: "Avargo Kurs", desc: "130+ kurs for kompetanseheving", href: "/kurs", accent: "hsl(var(--primary))", featured: true },
-  { icon: Calculator, title: "Kontohjelp", desc: "Finn riktig konto for regnskapet", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)" },
-  { icon: Newspaper, title: "Nyheter", desc: "Siste nytt fra Avargo", href: "/ressurser?tab=nyheter" },
-  { icon: Flame, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
-  { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser?tab=guider" },
-  { icon: Download, title: "Arkiv & maler", desc: "Skjemaer og maler til nedlasting", href: "/ressurser?tab=arkiv" },
-  { icon: CalendarClock, title: "Skattekalender", desc: "Alle frister for næringsdrivende", href: "/ressurser/skattekalender" },
+  { icon: GraduationCap, title: "Avargo Kurs", desc: "Over 130 kurs innen regnskap, HR og ledelse. Tilgjengelig digitalt med kursbevis — perfekt for å holde teamet oppdatert.", href: "/kurs", accent: "hsl(var(--primary))", featured: true },
+  { icon: Calculator, title: "Kontohjelp", desc: "Søk opp riktig konto for bokføring. Vår kontoguide dekker alle vanlige og spesielle posteringer med eksempler og forklaringer.", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)" },
+  { icon: Newspaper, title: "Nyheter", desc: "Hold deg oppdatert på endringer i skatteregler, nye lover og viktige frister som påvirker bedriften din.", href: "/ressurser?tab=nyheter" },
+  { icon: Flame, title: "Blogg", desc: "Fagartikler og praktiske tips om regnskap, økonomi, HR og vekst — skrevet for norske bedriftseiere.", href: "/ressurser?tab=blogg" },
+  { icon: BookMarked, title: "Guider", desc: "Steg-for-steg guider til alt fra MVA-registrering og ansettelse til årsoppgjør og skatteplanlegging.", href: "/ressurser?tab=guider" },
+  { icon: Download, title: "Arkiv & maler", desc: "Last ned gratis maler, sjekklister og skjemaer. Alt du trenger for å holde orden på bedriftens dokumenter.", href: "/ressurser?tab=arkiv" },
+  { icon: CalendarClock, title: "Skattekalender", desc: "Oversikt over alle viktige frister for MVA, skattemelding, årsregnskap og a-melding gjennom hele året.", href: "/ressurser/skattekalender" },
 ];
 
 /* ── Dropdown panel ─────────────────────────────── */
@@ -383,26 +383,43 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <button className={dropBtnClass(bransjerOpen)}>
                   Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[380px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                  {bransjerItems.slice(0, 4).map((item) => (
-                    <DropdownItem
-                      key={item.href}
-                      to={sp(item.href)}
-                      icon={item.icon}
-                      title={item.title}
-                      desc={item.desc}
-                      onClick={() => setBransjerOpen(false)}
-                    />
-                  ))}
-                  <div className="mt-1 pt-2 border-t border-border/15">
-                    <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
-                      Se alle {bransjerItems.length} bransjer <ArrowRight size={10} />
-                    </Link>
+                <DropdownPanel open={bransjerOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                  <div className="container mx-auto px-6 py-8">
+                    <div className="mb-6">
+                      <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Bransjeekspertise</p>
+                      <h3 className="font-heading text-lg text-foreground/90">Vi forstår din bransje — og tilpasser regnskapet deretter.</h3>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4">
+                      {bransjerItems.map((item) => (
+                        <Link
+                          key={item.href}
+                          to={sp(item.href)}
+                          onClick={() => setBransjerOpen(false)}
+                          className="group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/20 hover:bg-muted/40"
+                        >
+                          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border border-primary/15 bg-primary/8 group-hover:bg-primary/15 transition-colors duration-300">
+                              <item.icon size={17} className="text-primary" strokeWidth={1.5} />
+                            </div>
+                            <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
+                            <p className="text-[11px] text-foreground/55 font-light leading-relaxed mb-3">{item.desc}</p>
+                            <div className="flex items-center gap-1.5 text-[11px] font-medium text-primary/70 group-hover:text-primary transition-colors">
+                              Les mer <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-5 pt-4 border-t border-border/10">
+                      <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="inline-flex items-center gap-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                        Se alle {bransjerItems.length} bransjer <ArrowRight size={11} />
+                      </Link>
+                    </div>
                   </div>
                 </DropdownPanel>
               </div>
               ) : (
-              /* IT, Marked, Personal — just a direct link to bransjer page */
               <NavButton to={sp("/bransjer")} label="Bransjer" isActive={location.pathname.includes("/bransjer")} />
               )
             ) : null}
@@ -417,17 +434,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <button className={dropBtnClass(selskapetOpen)}>
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
               </button>
-              <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-3 w-[300px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                {selskapetLinks.map((item) => (
-                  <DropdownItem
-                    key={item.href}
-                    to={item.absolute ? item.href : sp(item.href)}
-                    icon={item.icon}
-                    title={item.title}
-                    desc={item.desc}
-                    onClick={() => setSelskapetOpen(false)}
-                  />
-                ))}
+              <DropdownPanel open={selskapetOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                <div className="container mx-auto px-6 py-8">
+                  <div className="mb-6">
+                    <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Avargo</p>
+                    <h3 className="font-heading text-lg text-foreground/90">Bli kjent med oss — eller logg inn på din portal.</h3>
+                  </div>
+                  <div className="grid grid-cols-5 gap-4">
+                    {selskapetLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.absolute ? item.href : sp(item.href)}
+                        onClick={() => setSelskapetOpen(false)}
+                        className="group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/20 hover:bg-muted/40"
+                      >
+                        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border border-primary/15 bg-primary/8 group-hover:bg-primary/15 transition-colors duration-300">
+                            <item.icon size={17} className="text-primary" strokeWidth={1.5} />
+                          </div>
+                          <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
+                          <p className="text-[11px] text-foreground/55 font-light leading-relaxed">{item.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </DropdownPanel>
             </div>
 
@@ -437,19 +469,37 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <button className={dropBtnClass(ressurserOpen)}>
                   Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
-                  {ressurserLinks.map((item) => (
-                    <DropdownItem
-                      key={item.title}
-                      to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
-                      icon={item.icon}
-                      title={item.title}
-                      desc={item.desc}
-                      onClick={() => setRessurserOpen(false)}
-                      iconColor={item.accent}
-                      iconBg={item.accent ? `${item.accent.replace(")", " / 0.12)")}` : undefined}
-                    />
-                  ))}
+                <DropdownPanel open={ressurserOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                  <div className="container mx-auto px-6 py-8">
+                    <div className="mb-6">
+                      <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Kunnskapssenter</p>
+                      <h3 className="font-heading text-lg text-foreground/90">Kurs, guider og verktøy som gjør deg smartere — helt gratis.</h3>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4">
+                      {ressurserLinks.map((item) => {
+                        const itemAccent = item.accent || "hsl(var(--primary))";
+                        const itemBg = item.accent ? `${item.accent.replace(")", " / 0.08)")}` : "hsl(var(--primary) / 0.08)";
+                        const itemBorder = item.accent ? `${item.accent.replace(")", " / 0.15)")}` : "hsl(var(--primary) / 0.15)";
+                        return (
+                          <Link
+                            key={item.title}
+                            to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
+                            onClick={() => setRessurserOpen(false)}
+                            className={`group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden ${item.featured ? "col-span-2 row-span-1" : ""} bg-muted/20 hover:bg-muted/40`}
+                          >
+                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: itemAccent }} />
+                            <div className="relative">
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border transition-colors duration-300" style={{ backgroundColor: itemBg, borderColor: itemBorder }}>
+                                <item.icon size={17} style={{ color: itemAccent }} strokeWidth={1.5} />
+                              </div>
+                              <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
+                              <p className="text-[11px] text-foreground/55 font-light leading-relaxed">{item.desc}</p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </DropdownPanel>
               </div>
             )}
