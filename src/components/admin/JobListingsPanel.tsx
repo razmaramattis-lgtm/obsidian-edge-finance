@@ -1,61 +1,78 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 
 interface JobListing {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
-  location: string;
-  employment_type: string;
-  work_hours: string;
-  work_language: string;
-  work_location: string;
-  num_positions: number;
-  start_date: string;
-  deadline: string | null;
-  intro: string | null;
-  description: string | null;
-  qualifications: string | null;
-  tasks: string | null;
-  we_offer: string | null;
-  about_company: string | null;
-  contact_name: string | null;
-  contact_title: string | null;
-  contact_email: string | null;
-  contact_phone: string | null;
-  published: boolean;
-  active: boolean;
-  created_at: string;
+  id: string; title: string; slug: string; category: string; location: string;
+  employment_type: string; work_hours: string; work_language: string; work_location: string;
+  num_positions: number; start_date: string; deadline: string | null;
+  intro: string | null; description: string | null; qualifications: string | null;
+  tasks: string | null; we_offer: string | null; about_company: string | null;
+  contact_name: string | null; contact_title: string | null; contact_email: string | null;
+  contact_phone: string | null; published: boolean; active: boolean; created_at: string;
+  images: string[] | null;
 }
 
 interface JobApplication {
-  id: string;
-  job_listing_id: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  message: string | null;
-  cv_file_name: string | null;
-  status: string;
-  admin_note: string | null;
-  created_at: string;
+  id: string; job_listing_id: string; full_name: string; email: string; phone: string;
+  message: string | null; cv_file_name: string | null; cv_url: string | null;
+  status: string; admin_note: string | null; created_at: string;
 }
 
 const CATEGORIES = ["Regnskap", "Personal", "Marked", "IT"];
+const WORK_LOCATIONS = [
+  { value: "Hybridkontor", label: "🏠 Hybrid (kontor + hjemme)" },
+  { value: "På kontoret", label: "🏢 På kontoret" },
+  { value: "Remote / hjemmekontor", label: "🌐 Remote / hjemmekontor" },
+];
+
+const ABOUT_AVARGO = `<p>Avargo er et moderne rådgivningsselskap som leverer tjenester innen regnskap, HR, marked og IT. Vi kombinerer faglig tyngde med teknologisk innovasjon for å gi våre kunder innsikt, trygghet og vekst.</p><p>Hos oss jobber du i et tverrfaglig miljø med høy kompetanse, uten overtid, og med bransjens beste vilkår.</p>`;
+
+const WE_OFFER = `<ul><li>Konkurransedyktig lønn og gode pensjonsvilkår</li><li>Fleksibel arbeidstid uten overtid</li><li>Moderne kontorer og teknologi</li><li>Kontinuerlig faglig utvikling og kursing</li><li>Et inkluderende og sosialt arbeidsmiljø</li><li>Gode forsikringsordninger</li></ul>`;
+
+// Templates per category with work_location dynamic text
+const TEMPLATES: Record<string, { title: string; intro: string; description: string; tasks: string; qualifications: string }> = {
+  Regnskap: {
+    title: "Regnskapsfører",
+    intro: "Vi søker en engasjert regnskapsfører som ønsker å jobbe med varierte kunder i et moderne og teknologidrevet miljø. Hos oss får du faglig utvikling, gode vilkår og et sterkt team rundt deg.",
+    description: "<p>Vi ser etter en grundig og løsningsorientert regnskapsfører som trives med kundeansvar og ønsker å jobbe i et dynamisk fagmiljø. Du vil ha ansvar for en egen kundeportefølje og jobbe tett med våre rådgivere.</p>",
+    tasks: "<ul><li>Løpende bokføring og avstemming for kundeportefølje</li><li>Utarbeidelse av årsregnskap og ligningspapirer</li><li>MVA-oppgaver og skattemeldinger</li><li>Rådgivning innen regnskap og økonomi</li><li>Lønn og personaladministrasjon</li></ul>",
+    qualifications: "<ul><li>Regnskapsfører (statsautorisert er et pluss)</li><li>Minimum 2 års relevant erfaring</li><li>God kjennskap til norske regnskapsregler</li><li>Erfaring med Tripletex, Fiken eller tilsvarende</li><li>Gode kommunikasjonsevner på norsk</li></ul>",
+  },
+  Personal: {
+    title: "HR-rådgiver",
+    intro: "Vi søker en dyktig HR-rådgiver som vil hjelpe våre kunder med alt innen personalledelse, arbeidsrett og organisasjonsutvikling.",
+    description: "<p>Som HR-rådgiver hos Avargo vil du jobbe tett med kunder innen personaladministrasjon, arbeidsrett og organisasjonsutvikling. Du får en variert hverdag med høy grad av selvstendighet.</p>",
+    tasks: "<ul><li>Rådgivning innen arbeidsrett og ansettelsesprosesser</li><li>Utarbeidelse av personalhåndbøker og policyer</li><li>Oppfølging av arbeidsmiljø og HMS</li><li>Støtte i omstillings- og endringsprosesser</li><li>Kurs og opplæring for kunders ledere</li></ul>",
+    qualifications: "<ul><li>Utdanning innen HR, juss eller lignende</li><li>Erfaring fra HR-rådgivning eller personalledelse</li><li>God kjennskap til norsk arbeidsrett</li><li>Evne til å bygge relasjoner og gi trygg veiledning</li></ul>",
+  },
+  Marked: {
+    title: "Markedsfører",
+    intro: "Vi søker en kreativ og analytisk markedsfører som vil hjelpe våre kunder med digital synlighet, annonsering og merkevarebygging.",
+    description: "<p>Du vil jobbe med strategi, innholdsproduksjon og digital markedsføring for en rekke kunder. Hos oss får du frihet til å teste nye kanaler og metoder.</p>",
+    tasks: "<ul><li>Planlegge og gjennomføre digitale kampanjer</li><li>Innholdsproduksjon for sosiale medier og nettsider</li><li>SEO-optimalisering og Google Ads</li><li>Analysere resultater og optimalisere</li><li>Rådgivning innen merkevare og posisjonering</li></ul>",
+    qualifications: "<ul><li>Utdanning innen markedsføring eller kommunikasjon</li><li>Erfaring med digitale kanaler og annonsering</li><li>Gode skriftlige ferdigheter på norsk</li><li>Analytisk og kreativ tilnærming</li></ul>",
+  },
+  IT: {
+    title: "IT-rådgiver / Utvikler",
+    intro: "Vi søker en teknisk dyktig IT-rådgiver eller utvikler som vil bygge og vedlikeholde moderne løsninger for våre kunder og interne systemer.",
+    description: "<p>Du vil jobbe med utvikling, integrasjoner og teknisk rådgivning i et tverrfaglig team. Vi bruker moderne teknologi og verdsetter innovasjon og kvalitet.</p>",
+    tasks: "<ul><li>Utvikling og vedlikehold av nettsider og webapplikasjoner</li><li>Integrering av systemer og API-er</li><li>Teknisk rådgivning og behovsanalyse</li><li>Automatisering av prosesser</li><li>Bidra til intern produktutvikling</li></ul>",
+    qualifications: "<ul><li>Relevant utdanning innen IT eller informatikk</li><li>Erfaring med React, TypeScript eller lignende</li><li>Kjennskap til skyløsninger og databaser</li><li>Evne til å forstå forretningsbehov og oversette til tekniske løsninger</li></ul>",
+  },
+};
 
 const emptyForm = {
   title: "", slug: "", category: "Regnskap", location: "Skien",
   employment_type: "Fast, heltid 100%", work_hours: "Dagtid, ukedager",
   work_language: "Norsk eller engelsk", work_location: "Hybridkontor",
   num_positions: 1, start_date: "Etter avtale", deadline: "",
-  intro: "", description: "", qualifications: "", tasks: "", we_offer: "",
-  about_company: "", contact_name: "Emil Follaug", contact_title: "Daglig leder",
+  intro: "", description: "", qualifications: "", tasks: "", we_offer: WE_OFFER,
+  about_company: ABOUT_AVARGO, contact_name: "Emil Follaug", contact_title: "Daglig leder",
   contact_email: "Emil@avargo.no", contact_phone: "464 25 354",
-  published: false, active: true,
+  published: false, active: true, images: [] as string[],
 };
 
 const JobListingsPanel = () => {
@@ -68,6 +85,8 @@ const JobListingsPanel = () => {
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [viewApps, setViewApps] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const imgInputRef = useRef<HTMLInputElement>(null);
 
   const fetchAll = async () => {
     const [{ data: jobs }, { data: apps }] = await Promise.all([
@@ -83,12 +102,49 @@ const JobListingsPanel = () => {
 
   const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-").replace(/^-|-$/g, "");
 
+  const applyTemplate = (category: string) => {
+    const tpl = TEMPLATES[category];
+    if (!tpl) return;
+    const workLocText = WORK_LOCATIONS.find(w => w.value === form.work_location)?.label.replace(/^[^ ]+ /, '') || form.work_location;
+    setForm(prev => ({
+      ...prev,
+      category,
+      title: tpl.title,
+      slug: slugify(tpl.title + "-" + prev.location),
+      intro: tpl.intro.replace(/\{work_location\}/g, workLocText),
+      description: tpl.description.replace(/\{work_location\}/g, workLocText),
+      tasks: tpl.tasks,
+      qualifications: tpl.qualifications,
+      we_offer: WE_OFFER,
+      about_company: ABOUT_AVARGO,
+    }));
+  };
+
+  const updateWorkLocation = (wl: string) => {
+    setForm(prev => ({ ...prev, work_location: wl }));
+  };
+
+  const uploadImage = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) { toast.error("Maks 5 MB per bilde"); return; }
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `job-images/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+    if (error) { toast.error("Kunne ikke laste opp bilde"); setUploading(false); return; }
+    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+    setForm(prev => ({ ...prev, images: [...prev.images, data.publicUrl] }));
+    setUploading(false);
+  };
+
+  const removeImage = (idx: number) => {
+    setForm(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }));
+  };
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     const slug = form.slug || slugify(form.title);
     const payload = { ...form, slug, deadline: form.deadline || null };
-    
     if (editing) {
       const { error } = await supabase.from("job_listings").update(payload).eq("id", editing.id);
       if (error) toast.error("Kunne ikke lagre"); else toast.success("Stilling oppdatert");
@@ -122,6 +178,8 @@ const JobListingsPanel = () => {
     j.location.toLowerCase().includes(search.toLowerCase())
   );
 
+  const inputCls = "w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
+
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   return (
@@ -144,88 +202,156 @@ const JobListingsPanel = () => {
 
       {/* Form */}
       {showForm && (
-        <form onSubmit={save} className="glass rounded-2xl p-5 border border-border/20 space-y-4">
+        <form onSubmit={save} className="glass rounded-2xl p-5 border border-border/20 space-y-5">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-sm">{editing ? "Rediger" : "Ny"} stillingsannonse</h3>
             <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
           </div>
 
+          {/* Quick template selector */}
+          {!editing && (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">Velg mal for rask utfylling:</p>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map(cat => (
+                  <button key={cat} type="button" onClick={() => applyTemplate(cat)}
+                    className={`px-4 py-2 rounded-xl text-xs font-medium transition-all border ${
+                      form.category === cat && form.title === TEMPLATES[cat]?.title
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/30 text-muted-foreground border-border/30 hover:bg-muted/50 hover:text-foreground"
+                    }`}>
+                    📝 {cat}-mal
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Basic fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value, slug: slugify(e.target.value) })} placeholder="Stillingstittel *" required
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="URL-slug"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-            </select>
-            <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Sted"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.employment_type} onChange={e => setForm({ ...form, employment_type: e.target.value })} placeholder="Type ansettelse"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.work_location} onChange={e => setForm({ ...form, work_location: e.target.value })} placeholder="Arbeidssted"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.start_date} onChange={e => setForm({ ...form, start_date: e.target.value })} placeholder="Oppstart"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.deadline || ""} onChange={e => setForm({ ...form, deadline: e.target.value })} placeholder="Søknadsfrist (valgfritt)"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.work_hours} onChange={e => setForm({ ...form, work_hours: e.target.value })} placeholder="Arbeidstid"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input type="number" value={form.num_positions} onChange={e => setForm({ ...form, num_positions: parseInt(e.target.value) || 1 })} placeholder="Antall stillinger"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Stillingstittel *</label>
+              <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value, slug: slugify(e.target.value + "-" + form.location) })} required className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">URL-slug</label>
+              <input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Kategori</label>
+              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inputCls}>
+                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Sted / kontor</label>
+              <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Type ansettelse</label>
+              <input value={form.employment_type} onChange={e => setForm({ ...form, employment_type: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Arbeidssted</label>
+              <select value={form.work_location} onChange={e => updateWorkLocation(e.target.value)} className={inputCls}>
+                {WORK_LOCATIONS.map(wl => <option key={wl.value} value={wl.value}>{wl.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Oppstart</label>
+              <input value={form.start_date} onChange={e => setForm({ ...form, start_date: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Søknadsfrist</label>
+              <input value={form.deadline || ""} onChange={e => setForm({ ...form, deadline: e.target.value })} placeholder="Valgfritt" className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Arbeidstid</label>
+              <input value={form.work_hours} onChange={e => setForm({ ...form, work_hours: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Antall stillinger</label>
+              <input type="number" value={form.num_positions} onChange={e => setForm({ ...form, num_positions: parseInt(e.target.value) || 1 })} className={inputCls} />
+            </div>
           </div>
 
-          <div className="space-y-3">
+          {/* Images */}
+          <div>
+            <label className="text-[10px] text-muted-foreground mb-2 block">Bilder til annonsen</label>
+            <input ref={imgInputRef} type="file" accept="image/*" multiple className="hidden" onChange={e => {
+              const files = e.target.files;
+              if (files) Array.from(files).forEach(f => uploadImage(f));
+              e.target.value = "";
+            }} />
+            <div className="flex flex-wrap gap-3">
+              {form.images.map((url, i) => (
+                <div key={i} className="relative group w-24 h-24 rounded-xl overflow-hidden border border-border/20">
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => removeImage(i)}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Trash2 size={16} className="text-white" />
+                  </button>
+                </div>
+              ))}
+              <button type="button" onClick={() => imgInputRef.current?.click()} disabled={uploading}
+                className="w-24 h-24 rounded-xl border-2 border-dashed border-border/30 hover:border-primary/40 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary transition-all">
+                {uploading ? <Loader2 size={18} className="animate-spin" /> : <><ImagePlus size={18} /><span className="text-[9px]">Legg til</span></>}
+              </button>
+            </div>
+          </div>
+
+          {/* Rich text sections */}
+          <div className="space-y-4">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Intro / kort beskrivelse</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Intro / kort beskrivelse</label>
               <textarea value={form.intro || ""} onChange={e => setForm({ ...form, intro: e.target.value })} rows={2}
                 className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Hva vi ser etter (rik tekst)</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Hva vi ser etter</label>
               <RichTextEditor content={form.description || ""} onChange={v => setForm({ ...form, description: v })} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Arbeidsoppgaver (rik tekst)</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Arbeidsoppgaver</label>
               <RichTextEditor content={form.tasks || ""} onChange={v => setForm({ ...form, tasks: v })} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Kvalifikasjoner (rik tekst)</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Kvalifikasjoner</label>
               <RichTextEditor content={form.qualifications || ""} onChange={v => setForm({ ...form, qualifications: v })} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Vi tilbyr (rik tekst)</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Vi tilbyr</label>
               <RichTextEditor content={form.we_offer || ""} onChange={v => setForm({ ...form, we_offer: v })} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Om bedriften (rik tekst)</label>
+              <label className="text-[10px] text-muted-foreground mb-1 block">Om bedriften</label>
               <RichTextEditor content={form.about_company || ""} onChange={v => setForm({ ...form, about_company: v })} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input value={form.contact_name || ""} onChange={e => setForm({ ...form, contact_name: e.target.value })} placeholder="Kontaktperson"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.contact_title || ""} onChange={e => setForm({ ...form, contact_title: e.target.value })} placeholder="Tittel kontaktperson"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.contact_email || ""} onChange={e => setForm({ ...form, contact_email: e.target.value })} placeholder="E-post kontaktperson"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
-            <input value={form.contact_phone || ""} onChange={e => setForm({ ...form, contact_phone: e.target.value })} placeholder="Telefon kontaktperson"
-              className="w-full h-9 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          {/* Contact */}
+          <div>
+            <p className="text-[10px] text-muted-foreground mb-2">Kontaktperson</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input value={form.contact_name || ""} onChange={e => setForm({ ...form, contact_name: e.target.value })} placeholder="Navn" className={inputCls} />
+              <input value={form.contact_title || ""} onChange={e => setForm({ ...form, contact_title: e.target.value })} placeholder="Tittel" className={inputCls} />
+              <input value={form.contact_email || ""} onChange={e => setForm({ ...form, contact_email: e.target.value })} placeholder="E-post" className={inputCls} />
+              <input value={form.contact_phone || ""} onChange={e => setForm({ ...form, contact_phone: e.target.value })} placeholder="Telefon" className={inputCls} />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Publish + save */}
+          <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 text-xs">
               <input type="checkbox" checked={form.published} onChange={e => setForm({ ...form, published: e.target.checked })} className="rounded" />
-              Publisert
+              Publiser umiddelbart
             </label>
-          </div>
-
-          <div className="flex gap-2">
-            <button type="submit" disabled={saving} className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs hover:opacity-90 disabled:opacity-50">
-              {saving ? "Lagrer…" : "Lagre"}
-            </button>
-            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 rounded-xl text-xs border border-border/30 hover:bg-muted/50">Avbryt</button>
+              <button type="submit" disabled={saving} className="px-5 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-medium hover:opacity-90 disabled:opacity-50">
+                {saving ? "Lagrer…" : editing ? "Oppdater" : "Opprett stilling"}
+              </button>
+            </div>
           </div>
         </form>
       )}
@@ -246,7 +372,7 @@ const JobListingsPanel = () => {
                         {job.published ? "Publisert" : "Utkast"}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{job.category} · {job.location} · {job.employment_type}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{job.category} · {job.location} · {job.work_location}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -270,6 +396,7 @@ const JobListingsPanel = () => {
                       about_company: job.about_company || "", contact_name: job.contact_name || "",
                       contact_title: job.contact_title || "", contact_email: job.contact_email || "",
                       contact_phone: job.contact_phone || "", published: job.published, active: job.active,
+                      images: job.images || [],
                     });
                     setShowForm(true);
                   }} className="text-muted-foreground hover:text-foreground transition-colors"><Edit2 size={13} /></button>
@@ -277,7 +404,6 @@ const JobListingsPanel = () => {
                 </div>
               </div>
 
-              {/* Applications accordion */}
               {viewApps === job.id && (
                 <div className="border-t border-border/10 px-5 py-3 space-y-2 bg-muted/10">
                   <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">Søknader</p>
@@ -286,6 +412,12 @@ const JobListingsPanel = () => {
                       <div className="min-w-0">
                         <p className="text-xs font-medium">{app.full_name}</p>
                         <p className="text-[10px] text-muted-foreground">{app.email} · {app.phone}</p>
+                        {app.cv_file_name && (
+                          <a href={app.cv_url || "#"} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5">
+                            <FileText size={10} /> {app.cv_file_name}
+                          </a>
+                        )}
                         {app.message && <p className="text-[10px] text-muted-foreground/80 mt-0.5 line-clamp-2">{app.message}</p>}
                       </div>
                       <select value={app.status} onChange={e => updateAppStatus(app.id, e.target.value)}

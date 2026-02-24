@@ -1762,6 +1762,7 @@ export type Database = {
           description: string | null
           employment_type: string
           id: string
+          images: string[] | null
           intro: string | null
           location: string
           num_positions: number
@@ -1790,6 +1791,7 @@ export type Database = {
           description?: string | null
           employment_type?: string
           id?: string
+          images?: string[] | null
           intro?: string | null
           location?: string
           num_positions?: number
@@ -1818,6 +1820,7 @@ export type Database = {
           description?: string | null
           employment_type?: string
           id?: string
+          images?: string[] | null
           intro?: string | null
           location?: string
           num_positions?: number
