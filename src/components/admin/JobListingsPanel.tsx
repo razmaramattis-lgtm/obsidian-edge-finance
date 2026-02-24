@@ -429,42 +429,23 @@ const JobListingsPanel = () => {
     fetchAll();
   };
 
-  const getSignedCvUrl = async (cvUrl: string | null) => {
-    if (!cvUrl) return null;
-    // Extract just the filename (UUID.ext) from any URL format (signed, public, with query params)
-    const match = cvUrl.match(/cv-uploads\/([a-f0-9-]+\.\w+)/);
-    if (!match) return cvUrl;
-    const { data, error } = await supabase.storage.from("cv-uploads").createSignedUrl(match[1], 3600);
-    if (error) {
-      console.error("CV signed URL error:", error);
-      toast.error("Kunne ikke generere CV-lenke");
-      return null;
-    }
-    return data?.signedUrl || cvUrl;
-  };
-
-  const openCv = async (cvUrl: string | null) => {
+  const downloadCv = async (cvUrl: string | null, fileName: string | null) => {
     if (!cvUrl) { toast.error("Ingen CV lastet opp"); return; }
-    // Open window synchronously to avoid popup blocker
-    const win = window.open("about:blank", "_blank");
-    const url = await getSignedCvUrl(cvUrl);
-    if (url && win) {
-      win.location.href = url;
-    } else if (win) {
-      win.close();
-      toast.error("Kunne ikke åpne CV");
-    } else {
-      // Fallback: trigger download via anchor
-      const fallbackUrl = await getSignedCvUrl(cvUrl);
-      if (fallbackUrl) {
-        const a = document.createElement("a");
-        a.href = fallbackUrl;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.click();
-      } else {
-        toast.error("Kunne ikke åpne CV");
-      }
+    try {
+      const match = cvUrl.match(/cv-uploads\/([a-f0-9-]+\.\w+)/);
+      if (!match) { toast.error("Ugyldig CV-lenke"); return; }
+      const { data, error } = await supabase.storage.from("cv-uploads").download(match[1]);
+      if (error || !data) { toast.error("Kunne ikke laste ned CV"); return; }
+      const url = URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName || match[1];
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Kunne ikke laste ned CV");
     }
   };
 
@@ -685,7 +666,7 @@ const JobListingsPanel = () => {
             {app.cv_file_name && (
               <div className="p-3 rounded-xl bg-background/50 border border-border/10">
                 <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">CV / Vedlegg</p>
-                <button onClick={() => openCv(app.cv_url)}
+                <button onClick={() => downloadCv(app.cv_url, app.cv_file_name)}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">
                   <Download size={13} /> {app.cv_file_name}
                 </button>
@@ -920,7 +901,7 @@ const JobListingsPanel = () => {
                     {app.cv_file_name && (
                       <div className="p-3 rounded-xl bg-background/50 border border-border/10">
                         <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider mb-2">CV / Vedlegg</p>
-                        <button onClick={() => openCv(app.cv_url)}
+                        <button onClick={() => downloadCv(app.cv_url, app.cv_file_name)}
                           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">
                           <Download size={13} /> {app.cv_file_name}
                         </button>
@@ -1481,7 +1462,7 @@ const JobListingsPanel = () => {
                             {app.cv_file_name && (
                               <div className="p-2.5 rounded-lg bg-background/50 border border-border/10">
                                 <p className="text-[8px] text-muted-foreground/60 uppercase tracking-wider mb-1.5">CV / Vedlegg</p>
-                                <button onClick={() => openCv(app.cv_url)}
+                                <button onClick={() => downloadCv(app.cv_url, app.cv_file_name)}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/20 transition-colors">
                                   <Download size={11} /> {app.cv_file_name}
                                 </button>
