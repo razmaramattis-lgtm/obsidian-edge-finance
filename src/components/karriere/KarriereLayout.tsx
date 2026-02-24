@@ -64,7 +64,7 @@ const KarriereHeader = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-14 md:h-20">
             {/* Logo */}
-            <Link to="/karriere" className="flex items-center gap-2 md:gap-3 group relative">
+            <Link to="/karriere" className="flex items-center gap-2 md:gap-3 group relative z-[70]">
               <img src="/logo.png" alt="Avargo" className="h-6 md:h-7 relative z-10" />
               <div className="relative z-10 flex flex-col">
                 <span className="text-[9px] md:text-[10px] tracking-[0.25em] uppercase font-semibold text-primary leading-none">Karriere</span>
@@ -112,15 +112,16 @@ const KarriereHeader = () => {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative z-[60]"
+              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative z-[70]"
+              aria-label={menuOpen ? "Lukk meny" : "Åpne meny"}
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" initial={false}>
                 {menuOpen ? (
-                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.12 }}>
                     <X size={20} />
                   </motion.div>
                 ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.12 }}>
                     <Menu size={20} />
                   </motion.div>
                 )}
@@ -140,18 +141,10 @@ const KarriereHeader = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-[55] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col"
-            onClick={() => setMenuOpen(false)}
+            transition={{ duration: 0.12 }}
+            className="fixed inset-0 z-[60] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col pt-16"
           >
-            {/* Close button at top */}
-            <div className="flex justify-end p-4">
-              <button onClick={() => setMenuOpen(false)} className="w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6">
               {NAV_ITEMS.map((item, i) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -160,7 +153,7 @@ const KarriereHeader = () => {
                     key={item.path}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                    transition={{ delay: i * 0.04, duration: 0.2 }}
                   >
                     <Link
                       to={item.path}
@@ -183,7 +176,7 @@ const KarriereHeader = () => {
                 );
               })}
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-4 text-center">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 text-center">
                 <Link to="/" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <ArrowLeft size={14} /> Tilbake til avargo.no
                 </Link>
