@@ -1761,6 +1761,7 @@ export type Database = {
           deadline: string | null
           description: string | null
           employment_type: string
+          highlights: string[] | null
           id: string
           images: string[] | null
           intro: string | null
@@ -1790,6 +1791,7 @@ export type Database = {
           deadline?: string | null
           description?: string | null
           employment_type?: string
+          highlights?: string[] | null
           id?: string
           images?: string[] | null
           intro?: string | null
@@ -1819,6 +1821,7 @@ export type Database = {
           deadline?: string | null
           description?: string | null
           employment_type?: string
+          highlights?: string[] | null
           id?: string
           images?: string[] | null
           intro?: string | null

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import CvUpload from "@/components/CvUpload";
+import KeywordGame from "@/components/karriere/KeywordGame";
 
 // Category images
 import regnskapImg from "@/assets/karriere-regnskap.jpg";
@@ -46,6 +47,7 @@ interface JobListing {
   contact_email: string | null;
   contact_phone: string | null;
   images: string[] | null;
+  highlights: string[] | null;
 }
 
 const KarriereDetalj = () => {
@@ -197,6 +199,11 @@ const KarriereDetalj = () => {
               className="mb-12">
               <p className="text-lg md:text-xl leading-relaxed text-foreground/90 font-light">{job.intro}</p>
             </motion.div>
+          )}
+
+          {/* Keyword Game */}
+          {job.highlights && job.highlights.length > 0 && (
+            <KeywordGame keywords={job.highlights} />
           )}
 
           {/* Content sections */}
