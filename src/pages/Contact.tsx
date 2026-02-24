@@ -370,7 +370,7 @@ const Contact = () => {
                   )}
                 </button>
                 <p className="text-xs text-foreground/40 text-center font-light">
-                  Ved å sende inn bekrefter du at en av våre <strong className="text-foreground/60">statsautoriserte regnskapsførere</strong> vil gjennomgå henvendelsen din og ta kontakt innen 24 timer. Helt uforpliktende.
+                  Ved å sende inn bekrefter du at en av våre <strong className="text-foreground/60">rådgivere</strong> vil gjennomgå henvendelsen din og ta kontakt innen 24 timer. Helt uforpliktende.
                 </p>
               </form>
             )}
