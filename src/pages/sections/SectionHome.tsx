@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
@@ -11,10 +11,17 @@ import {
   Search, Share2, Palette, Video, Mail,
   Code, Bot, Cpu, Database, Layers, Monitor, type LucideIcon,
 } from "lucide-react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
+import networkImg from "@/assets/karriere-network-glow.jpg";
+import patternImg from "@/assets/karriere-pattern.jpg";
+import cultureImg from "@/assets/karriere-culture.jpg";
+import officeTechImg from "@/assets/karriere-office-tech.jpg";
+import loungeImg from "@/assets/karriere-lounge.jpg";
+import teamImg from "@/assets/karriere-team-meeting.jpg";
 
 const serviceBgPaths = [
   () => import("@/assets/service-bg-1.jpg"),
@@ -335,8 +342,72 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
 };
 
 /* ——————————————————————————————————
-   SHARED COMPONENTS (mirroring Index.tsx)
+   SHARED COMPONENTS
    —————————————————————————————————— */
+
+/* ── Animated counter ── */
+const AnimatedCounter = ({ value, suffix = "" }: { value: string; suffix?: string }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const num = parseInt(value.replace(/\D/g, ""));
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView || isNaN(num)) return;
+    let start = 0;
+    const step = Math.max(1, Math.floor(num / 30));
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= num) { setDisplay(num); clearInterval(interval); }
+      else setDisplay(start);
+    }, 30);
+    return () => clearInterval(interval);
+  }, [inView, num]);
+
+  if (isNaN(num)) return <span ref={ref}>{value}{suffix}</span>;
+  return <span ref={ref}>{display}{suffix}</span>;
+};
+
+/* ── Horizontal scrolling image strip ── */
+const ImageMarquee = ({ images, reverse = false }: { images: { src: string; alt: string }[]; reverse?: boolean }) => (
+  <div className="overflow-hidden py-4">
+    <motion.div
+      className="flex gap-4"
+      animate={{ x: reverse ? ["0%", "-50%"] : ["-50%", "0%"] }}
+      transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+    >
+      {[...images, ...images].map((img, i) => (
+        <div key={i} className="shrink-0 w-72 md:w-96 h-48 md:h-64 rounded-2xl overflow-hidden">
+          <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </motion.div>
+  </div>
+);
+
+/* ── Floating particles ── */
+const FloatingParticles = ({ count = 15 }: { count?: number }) => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {[...Array(count)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute rounded-full"
+        style={{
+          width: 2 + Math.random() * 4,
+          height: 2 + Math.random() * 4,
+          background: i % 3 === 0 ? "hsl(var(--primary) / 0.5)" : "hsl(var(--secondary) / 0.4)",
+          left: `${10 + Math.random() * 80}%`,
+          top: `${10 + Math.random() * 80}%`,
+        }}
+        animate={{
+          y: [0, -50, 0],
+          opacity: [0, 0.8, 0],
+        }}
+        transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 4 }}
+      />
+    ))}
+  </div>
+);
 
 const FaqAccordion = ({ question, answer }: { question: string; answer: string }) => {
   const [open, setOpen] = useState(false);
@@ -385,7 +456,12 @@ const SectionHome = () => {
   const sId = section?.id ?? "regnskap";
   const c = sectionHomeContent[sId];
 
-  // All hooks must be before early return
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroScrollProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroOpacity = useTransform(heroScrollProgress, [0, 0.5], [1, 0]);
+  const heroY = useTransform(heroScrollProgress, [0, 0.5], [0, 120]);
+  const heroScale = useTransform(heroScrollProgress, [0, 0.5], [1, 1.1]);
+
   const [hookIndex, setHookIndex] = useState(0);
   const [fadeKey, setFadeKey] = useState(0);
   const [activeService, setActiveService] = useState(0);
@@ -437,8 +513,6 @@ const SectionHome = () => {
   const CurrentIcon = current.icon;
   const visibleIndustries = c.industries.slice(industryPage * industriesPerPage, industryPage * industriesPerPage + industriesPerPage);
 
-
-
   return (
     <>
       <Helmet>
@@ -447,43 +521,131 @@ const SectionHome = () => {
         <link rel="canonical" href={`https://avargo.no${section.basePath}`} />
       </Helmet>
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+      {/* ═══ HERO — Immersive parallax with floating particles ═══ */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <motion.div className="absolute inset-0" style={{ scale: heroScale }}>
           <img src={heroBg} alt="" className="w-full h-full object-cover opacity-50" width={1920} height={1080} fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
           <div className="absolute inset-0 ambient-glow" />
-        </div>
-        <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
+        </motion.div>
+
+        {/* Animated grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: "linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }} />
+
+        <FloatingParticles count={20} />
+
+        <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-10 container mx-auto px-4 md:px-6 text-center">
           <div className="max-w-4xl mx-auto">
-            <p className="hero-fade hero-delay-1 text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-8 md:mb-12 backdrop-blur-sm"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
               {c.hero.tagline}
-            </p>
-            <h1 className="hero-fade hero-delay-2 font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.05] mb-6 md:mb-8">
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.05] mb-6 md:mb-8"
+            >
               {c.hero.h1}
-            </h1>
-            <p className="hero-fade hero-delay-3 text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light">
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.7 }}
+              className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light"
+            >
               {c.hero.sub}
-            </p>
-            <p className="hero-fade hero-delay-4 text-sm text-primary italic mb-10 md:mb-14 font-light">
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="text-sm text-primary italic mb-10 md:mb-14 font-light"
+            >
               {c.hero.priceLine}
-            </p>
-            <div className="hero-fade hero-delay-5 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-12 md:mb-16">
-              <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-                {c.hero.ctaPrimary} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-12 md:mb-16"
+            >
+              <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-500 relative overflow-hidden">
+                <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="relative z-10 flex items-center gap-2">{c.hero.ctaPrimary} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></span>
               </Link>
-              <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+              <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground backdrop-blur-sm transition-all duration-500">
                 {c.hero.ctaSecondary}
               </Link>
-            </div>
+            </motion.div>
           </div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        >
+          <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/40">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-5 h-8 rounded-full border border-muted-foreground/20 flex items-start justify-center p-1"
+          >
+            <motion.div className="w-1 h-2 rounded-full bg-primary/50" />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ═══ Social Proof — Animated counter cards ═══ */}
+      <section className="py-16 relative">
+        <div className="absolute inset-0 opacity-[0.06]">
+          <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow">
-          <div className="w-px h-10 md:h-12 bg-gradient-to-b from-primary/40 to-transparent" />
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {c.socialProof.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="glass rounded-2xl p-6 border border-border/10 text-center group hover:border-primary/20 transition-all duration-500"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
+                  <item.icon size={18} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <p className="text-2xl md:text-3xl font-bold text-foreground">
+                  <AnimatedCounter value={item.value} suffix="" />
+                </p>
+                <p className="text-xs text-foreground/70 font-light mt-1">{item.label}</p>
+                <p className="text-[10px] text-foreground/40 font-light">{item.sub}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* MARQUEE BANDS */}
+      {/* ═══ MARQUEE BANDS ═══ */}
       <div className="relative py-8 md:py-10 border-y border-border/15 overflow-hidden select-none">
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="relative flex overflow-hidden mb-4 md:mb-5">
@@ -510,29 +672,21 @@ const SectionHome = () => {
         </div>
       </div>
 
-      {/* SOCIAL PROOF BAR */}
-      <section className="py-12 md:py-16 border-b border-border/15 relative">
-        <div className="absolute inset-0 ambient-glow opacity-20" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {c.socialProof.map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="inline-flex p-2.5 bg-primary/10 rounded-xl mb-3">
-                  <item.icon size={18} className="text-primary" strokeWidth={1.5} />
-                </div>
-                <p className="font-heading text-2xl md:text-3xl text-gradient-rose">{item.value}</p>
-                <p className="text-xs text-foreground/70 font-light mt-1">{item.label}</p>
-                <p className="text-[10px] text-foreground/40 font-light">{item.sub}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* ═══ Image Marquee — Living visual strip ═══ */}
+      <section className="py-8 overflow-hidden">
+        <ImageMarquee images={[
+          { src: teamImg, alt: "Team" },
+          { src: cultureImg, alt: "Kultur" },
+          { src: loungeImg, alt: "Lounge" },
+          { src: officeTechImg, alt: "Teknologi" },
+        ]} />
       </section>
 
-      {/* ROTATING HOOK */}
+      {/* ═══ ROTATING HOOK ═══ */}
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-60" />
-        <div className="container mx-auto px-4 md:px-6 relative">
+        <FloatingParticles count={8} />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <div key={fadeKey} className="css-fade-in">
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">{slide.heading}</h2>
@@ -545,7 +699,7 @@ const SectionHome = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* SERVICES CAROUSEL */}
+      {/* ═══ SERVICES CAROUSEL ═══ */}
       <section className="relative overflow-hidden">
         {serviceBgSrc && (
           <div key={`bg-${activeService}`} className="absolute inset-0 css-fade-in">
@@ -604,10 +758,39 @@ const SectionHome = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* INDUSTRIES */}
+      {/* ═══ Cinematic image break ═══ */}
+      <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
+        <motion.img
+          src={cultureImg}
+          alt="Avargo kultur"
+          className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/20" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-center px-4"
+          >
+            <p className="text-[11px] tracking-[0.4em] uppercase text-primary/60 font-medium mb-4">Avargo</p>
+            <h2 className="text-3xl md:text-6xl font-heading text-foreground max-w-3xl mx-auto leading-tight">
+              Én partner for <span className="text-gradient-teal italic">hele bedriften</span>
+            </h2>
+            <p className="text-muted-foreground mt-6 max-w-xl mx-auto text-lg font-light">Regnskap, HR, markedsføring og IT — alt samlet under ett tak.</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══ INDUSTRIES ═══ */}
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
-        <div className="container mx-auto px-4 md:px-6 relative">
+        <FloatingParticles count={6} />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <AnimatedSection>
             <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bransjer vi dekker</p>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
@@ -687,9 +870,54 @@ const SectionHome = () => {
         </>
       )}
 
-      {/* CONVICTION SECTION */}
-      <section className="py-24 md:py-40 border-y border-border/15">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* ═══ Second image break — Office tech ═══ */}
+      <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+        <motion.img
+          src={officeTechImg}
+          alt="Avargo teknologi"
+          className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
+        <div className="absolute inset-0 flex items-center">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="max-w-lg"
+            >
+              <p className="text-[11px] tracking-[0.3em] uppercase text-secondary/70 font-medium mb-3">Teknologi</p>
+              <h2 className="text-3xl md:text-4xl font-heading text-foreground mb-3">Verktøy som gjør en forskjell</h2>
+              <p className="text-muted-foreground leading-relaxed font-light">Vi bygger egne AI-drevne systemer som gjør hverdagen smartere for oss og kundene våre.</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Reverse image marquee ═══ */}
+      <section className="py-8 overflow-hidden">
+        <ImageMarquee
+          reverse
+          images={[
+            { src: loungeImg, alt: "Lounge" },
+            { src: teamImg, alt: "Team" },
+            { src: cultureImg, alt: "Kultur" },
+            { src: officeTechImg, alt: "Tech" },
+          ]}
+        />
+      </section>
+
+      {/* ═══ CONVICTION — Bento grid ═══ */}
+      <section className="py-24 md:py-40 relative">
+        <div className="absolute inset-0 opacity-[0.04]">
+          <img src={patternImg} alt="" className="w-full h-full object-cover" />
+        </div>
+        <FloatingParticles count={6} />
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <AnimatedSection>
             <div className="text-center mb-14 md:mb-20">
               <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
@@ -698,53 +926,86 @@ const SectionHome = () => {
               </h2>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {c.conviction.items.map((item, i) => (
-              <AnimatedSection key={i} delay={i * 0.12}>
-                <div className="group p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift relative overflow-hidden">
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
-                  <div className="relative">
-                    <div className="flex items-center gap-4 mb-5 md:mb-6">
-                      <div className="p-2.5 bg-primary/10 rounded-xl">
-                        <item.icon size={18} className="text-primary" strokeWidth={1.5} />
-                      </div>
-                      <div>
-                        <span className="font-heading text-3xl md:text-4xl text-gradient-rose">{item.metric}</span>
-                        <p className="text-[10px] text-foreground/50 tracking-widest uppercase">{item.label}</p>
-                      </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {/* Large image card */}
+            {(() => {
+              const FirstIcon = c.conviction.items[0].icon;
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="md:row-span-2 rounded-3xl overflow-hidden relative group"
+                >
+                  <img src={loungeImg} alt="Avargo" className="w-full h-full object-cover min-h-[300px] md:min-h-[420px]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-8">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 backdrop-blur-sm flex items-center justify-center mb-4">
+                      <FirstIcon size={18} className="text-primary" />
                     </div>
-                    <p className="text-foreground/70 leading-relaxed flex-1 font-light text-sm md:text-base">{item.text}</p>
+                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{c.conviction.items[0].metric}</h3>
+                    <p className="text-[10px] text-primary tracking-widest uppercase mb-2">{c.conviction.items[0].label}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{c.conviction.items[0].text}</p>
+                  </div>
+                </motion.div>
+              );
+            })()}
+
+            {/* Remaining conviction items as glass cards */}
+            {c.conviction.items.slice(1).map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i + 1) * 0.1, duration: 0.6 }}
+                className="glass rounded-2xl p-7 border border-border/10 hover:border-primary/20 transition-all duration-500 group"
+              >
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
+                    <item.icon size={18} className="text-primary" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <span className="font-heading text-2xl md:text-3xl text-gradient-rose">{item.metric}</span>
+                    <p className="text-[10px] text-foreground/50 tracking-widest uppercase">{item.label}</p>
                   </div>
                 </div>
-              </AnimatedSection>
+                <p className="text-foreground/70 leading-relaxed font-light text-sm">{item.text}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow" />
-        <div className="container mx-auto px-4 md:px-6 text-center relative">
-          <AnimatedSection>
-            <div className="max-w-2xl mx-auto">
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">{c.cta.tag}</p>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 leading-snug">
-                {c.cta.headline}
-              </h2>
-              <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
-                {c.cta.sub}
-              </p>
-              <p className="text-sm text-primary italic font-light mb-10 md:mb-12">{c.cta.italic}</p>
-              <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-                {c.cta.button} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-              </Link>
-            </div>
-          </AnimatedSection>
+      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
+
+      {/* ═══ CTA — with network glow background ═══ */}
+      <section className="py-24 md:py-40 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.15]">
+          <img src={networkImg} alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="absolute inset-0 bg-background/80" />
+        <FloatingParticles count={10} />
+        <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-6 md:mb-8">{c.cta.tag}</p>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 leading-snug max-w-2xl mx-auto">
+              {c.cta.headline}
+            </h2>
+            <p className="text-foreground/70 text-base md:text-lg font-light mb-5 md:mb-6 leading-relaxed max-w-lg mx-auto">
+              {c.cta.sub}
+            </p>
+            <p className="text-sm text-primary italic font-light mb-10 md:mb-12">{c.cta.italic}</p>
+            <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-500 relative overflow-hidden">
+              <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative z-10 flex items-center gap-2">{c.cta.button} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></span>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ═══ FAQ ═══ */}
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-30" />
         <div className="container mx-auto px-4 md:px-6 relative">
@@ -771,7 +1032,7 @@ const SectionHome = () => {
         </div>
       </section>
 
-      {/* CROSS-SELL TRIGGER POINTS */}
+      {/* ═══ CROSS-SELL ═══ */}
       <section className="py-24 md:py-36 border-t border-border/10 relative">
         <div className="absolute inset-0 ambient-glow opacity-15" />
         <div className="container mx-auto px-4 md:px-6 relative">
