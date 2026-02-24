@@ -118,7 +118,7 @@ serve(async (req) => {
     // Handle listing available documents for linking
     if (action === "list_documents") {
       const [archRes, intRes, tmplRes] = await Promise.all([
-        sb.from("archive_files").select("name, file_url, file_name, category").eq("active", true).order("name"),
+        sb.from("archive_files").select("name, file_url, file_name, category").order("name"),
         sb.from("internal_resources").select("title, file_url, file_name, category").order("title"),
         sb.from("document_templates").select("title, category").eq("active", true).order("title"),
       ]);
@@ -144,7 +144,7 @@ serve(async (req) => {
     const queries: Record<string, Promise<any>> = {};
     if (sources.includes("hms_documents")) queries.hms = sb.from("hms_documents").select("title, content");
     if (sources.includes("internal_resources")) queries.internal = sb.from("internal_resources").select("title, description, category, file_name, file_url");
-    if (sources.includes("archive_files")) queries.archive = sb.from("archive_files").select("name, description, category, file_name, file_url, file_size").eq("active", true);
+    if (sources.includes("archive_files")) queries.archive = sb.from("archive_files").select("name, description, category, file_name, file_url, file_size");
     if (sources.includes("knowledge_materials")) queries.knowledge = sb.from("knowledge_materials").select("title, content, category").eq("active", true);
     if (sources.includes("hr_handbook")) queries.hr = sb.from("hr_handbook").select("title, content, sort_order").order("sort_order");
     if (sources.includes("collaboration_agreements")) queries.collab = sb.from("collaboration_agreements").select("title, company, contact_name, offering, description");
@@ -254,7 +254,12 @@ serve(async (req) => {
     results.sort((a, b) => b.score - a.score);
 
     if (results.length === 0) {
-      return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`);
+      const isDocSearchEmpty = ["dokumentmaler", "arkiv", "datasenter", "alt"].includes(cat);
+      let noHitMsg = `Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`;
+      if (isDocSearchEmpty) {
+        noHitMsg += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
+      }
+      return respondStream(noHitMsg);
     }
 
     // Always show best result explanation
