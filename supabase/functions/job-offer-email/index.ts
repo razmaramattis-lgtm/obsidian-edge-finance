@@ -133,10 +133,9 @@ function buildOfferEmail(opts: {
 
             <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:18px 24px;border-radius:0 12px 12px 0;margin:24px 0;">
               <p style="font-size:13px;color:#92400e;margin:0 0 12px 0;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Vi trenger f&#248;lgende fra deg</p>
-              <ul style="margin:0;padding:0 0 0 18px;font-size:14px;color:#374151;line-height:2;">
+               <ul style="margin:0;padding:0 0 0 18px;font-size:14px;color:#374151;line-height:2;">
                 <li>Fullt personnummer (11 siffer)</li>
                 <li>Kontonummer for l&#248;nnsutbetaling</li>
-                <li>Skattekortet ditt (leveres til Skatteetaten)</li>
                 <li>Eventuelle allergier eller hensyn vi b&#248;r vite om</li>
                 <li>N&#230;rmeste p&#229;r&#248;rende (navn og telefonnummer)</li>
               </ul>
@@ -145,6 +144,13 @@ function buildOfferEmail(opts: {
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vennligst send informasjonen til <a href="mailto:${opts.senderEmail}" style="color:#1a1a1a;font-weight:600;">${opts.senderEmail}</a> s&#229; snart som mulig.</p>
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Har du sp&#248;rsm&#229;l om tilbudet eller noe annet, er det bare &#229; ta kontakt. Vi er her for deg!</p>
+
+            <div style="text-align:center;margin:28px 0;">
+              <a href="https://www.avargo.no/karriere/velkommen" style="display:inline-block;background-color:#10b981;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+                &#127881; Les mer om din oppstart hos Avargo
+              </a>
+              <p style="margin:10px 0 0;font-size:12px;color:#a1a1aa;">Alt du trenger &#229; vite f&#248;r din f&#248;rste dag</p>
+            </div>
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi gleder oss til &#229; &#248;nske deg velkommen hos Avargo! &#129309;</p>
 

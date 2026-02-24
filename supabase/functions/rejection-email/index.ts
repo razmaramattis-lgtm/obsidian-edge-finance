@@ -124,6 +124,12 @@ function buildRejectionEmail(
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi &#248;nsker deg alt godt videre, og h&#229;per veiene v&#229;re krysses igjen.</p>
 
+            <div style="text-align:center;margin:28px 0;">
+              <a href="https://www.avargo.no/karriere/tilbakemelding" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+                &#128218; Les mer og utforsk Avargo
+              </a>
+            </div>
+
             <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
               Med vennlig hilsen<br/>
               <strong>${sigName}</strong>${sigTitle}<br/>
