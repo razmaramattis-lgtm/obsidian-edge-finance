@@ -465,9 +465,7 @@ const SectionHome = () => {
             <p className="hero-fade hero-delay-3 text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light">
               {c.hero.sub}
             </p>
-            <p className="hero-fade hero-delay-4 text-sm text-primary italic mb-10 md:mb-14 font-light">
-              {c.hero.priceLine}
-            </p>
+            <div className="hero-fade hero-delay-4 mb-10 md:mb-14" />
             <div className="hero-fade hero-delay-5 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-12 md:mb-16">
               <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 {c.hero.ctaPrimary} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
