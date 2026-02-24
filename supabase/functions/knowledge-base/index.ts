@@ -228,8 +228,24 @@ serve(async (req) => {
 
     for (const doc of dataMap.accounts || []) {
       const examplesStr = (doc.examples || []).join(", ");
-      const tagsStr = (doc.tags || []).join(", ");
-      let s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr, tagsStr);
+      const tagsArr: string[] = doc.tags || [];
+      const tagsStr = tagsArr.join(", ");
+      let s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr);
+
+      // Boost score heavily for tag matches (tags are curated keywords)
+      const qNorm = normalize(lastMessage);
+      const qWords = qNorm.split(/\s+/).filter(w => w.length > 1);
+      for (const tag of tagsArr) {
+        const tNorm = normalize(tag);
+        if (tNorm === qNorm) { s += 80; }
+        else if (tNorm.includes(qNorm) || qNorm.includes(tNorm)) { s += 40; }
+        else {
+          for (const w of qWords) {
+            if (tNorm.includes(w)) s += 15;
+          }
+        }
+      }
+
       if (s <= 0) continue;
 
       // If this account matches the override, boost it massively
@@ -242,7 +258,10 @@ serve(async (req) => {
       if (num >= 3000 && num <= 9999) s += 20;
       if (num >= 1000 && num <= 2999) s -= 10;
 
-      results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}` });
+      const snippetParts = [doc.description || `Konto ${doc.account_number}: ${doc.name}`, `MVA: ${doc.mva_status}`];
+      if (examplesStr) snippetParts.push(`Eksempler: ${examplesStr}`);
+      if (tagsStr) snippetParts.push(`Stikkord: ${tagsStr}`);
+      results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: snippetParts.join(". ") });
     }
 
     // Check for document override
