@@ -525,10 +525,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-foreground p-2.5 -mr-2 rounded-xl active:bg-muted/40 transition-colors" aria-label="Åpne meny">
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: login buttons + hamburger */}
+          <div className="md:hidden flex items-center gap-2">
+            <Link to="/kunde/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-border/20 text-foreground/80 active:bg-muted/40 transition-colors">
+              Kunde
+            </Link>
+            <Link to="/admin/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-primary/30 text-primary bg-primary/5 active:bg-primary/10 transition-colors">
+              Admin
+            </Link>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-2.5 -mr-2 rounded-xl active:bg-muted/40 transition-colors" aria-label="Åpne meny">
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* ── Mobile menu ──────────────────────────── */}
