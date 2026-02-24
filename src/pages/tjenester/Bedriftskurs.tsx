@@ -27,8 +27,8 @@ const Bedriftskurs = () => (
       { num: "04", title: "Oppfølging inkludert.", desc: "Kurset slutter ikke når dagen er over. Vi følger opp med materiell og spørsmålsrunder i etterkant." },
     ]}
     relatedServices={[
-      { label: "Alle kurs", href: "/akademi" },
-      { label: "HR & arbeidsgiveransvar", href: "/akademi/hr-kurs" },
+      { label: "Regnskapskurs", href: "/tjenester/kurs" },
+      { label: "HR & arbeidsgiveransvar", href: "/tjenester/hr-kurs" },
       { label: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
     ]}
     ctaTitle="Hva trenger teamet ditt?"

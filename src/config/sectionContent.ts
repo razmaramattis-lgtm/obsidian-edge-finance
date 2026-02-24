@@ -38,8 +38,8 @@ export const sectionKursCategories: Record<SectionId, string[]> = {
  * Maps section ID → group labels to show.
  */
 export const sectionTjenesterGroups: Record<SectionId, string[]> = {
-  regnskap: ["Regnskap & Økonomi"],
-  hr: ["HR & Personal"],
+  regnskap: ["Regnskap & Økonomi", "Kurs & Opplæring"],
+  hr: ["HR & Personal", "Kurs & Opplæring"],
   markedsforing: ["Markedsføring & Vekst"],
   it: ["IT & Utvikling"],
 };

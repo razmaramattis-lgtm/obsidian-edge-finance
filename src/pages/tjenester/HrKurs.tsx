@@ -27,8 +27,8 @@ const HrKurs = () => (
       { num: "04", title: "Sertifisert.", desc: "Du får kursbevis som dokumenterer gjennomføring. Verdifullt for deg og for bedriften." },
     ]}
     relatedServices={[
-      { label: "Alle kurs", href: "/akademi" },
-      { label: "Skreddersydde bedriftskurs", href: "/akademi/bedriftskurs" },
+      { label: "Regnskapskurs", href: "/tjenester/kurs" },
+      { label: "Skreddersydde bedriftskurs", href: "/tjenester/bedriftskurs" },
       { label: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },
     ]}
     ctaTitle="Klar for å lære?"
