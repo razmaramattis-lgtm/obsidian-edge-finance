@@ -18,6 +18,8 @@ export interface AdminNotifications {
   contactSubmissions: number;
   pendingBookings: number;
   accountFeedback: number;
+  jobApplications: number;
+  openApplications: number;
   total: number;
   loading: boolean;
   items: PendingItem[];
@@ -35,12 +37,14 @@ export const useAdminNotifications = (): AdminNotifications => {
     contactSubmissions: 0,
     pendingBookings: 0,
     accountFeedback: 0,
+    jobApplications: 0,
+    openApplications: 0,
   });
   const [items, setItems] = useState<PendingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = useCallback(async () => {
-    const [pr, ar, ei, ba, cs, bk, af] = await Promise.all([
+    const [pr, ar, ei, ba, cs, bk, af, ja, oa] = await Promise.all([
       supabase.from("partnership_requests").select("id, status, company_id, message", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("advisor_requests").select("id, status, company_id, message", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("customer_employee_invitations").select("id, status, employee_name, employee_email, company_id", { count: "exact" }).eq("status", "pending").limit(10),
@@ -48,6 +52,8 @@ export const useAdminNotifications = (): AdminNotifications => {
       supabase.from("contact_submissions").select("id, status, company_name, contact_person, email", { count: "exact" }).eq("status", "new").limit(10),
       supabase.from("bookings").select("id, status, customer_name, company_name, booking_date, booking_time", { count: "exact" }).eq("status", "pending").limit(10),
       supabase.from("account_feedback").select("id, status, search_term, top_result_account, top_result_name, message", { count: "exact" }).eq("status", "new").limit(10),
+      supabase.from("job_applications").select("id, status, full_name, email, job_listing_id", { count: "exact" }).eq("status", "new").limit(10),
+      supabase.from("open_applications").select("id, status, full_name, email, preferred_category", { count: "exact" }).eq("status", "new").limit(10),
     ]);
 
     setCounts({
@@ -58,6 +64,8 @@ export const useAdminNotifications = (): AdminNotifications => {
       contactSubmissions: cs.count || 0,
       pendingBookings: bk.count || 0,
       accountFeedback: af.count || 0,
+      jobApplications: ja.count || 0,
+      openApplications: oa.count || 0,
     });
 
     const pendingItems: PendingItem[] = [];
@@ -89,6 +97,14 @@ export const useAdminNotifications = (): AdminNotifications => {
     ((af.data as any[]) || []).forEach(r => pendingItems.push({
       id: r.id, label: "Kontohjelp-melding", sublabel: `«${r.search_term}»${r.top_result_account ? ` → ${r.top_result_account} ${r.top_result_name}` : ""}`,
       table: "account_feedback", statusField: "status", category: "account_feedback",
+    }));
+    ((ja.data as any[]) || []).forEach(r => pendingItems.push({
+      id: r.id, label: "Jobbsøknad", sublabel: r.full_name + " – " + r.email,
+      table: "job_applications", statusField: "status", category: "job_applications",
+    }));
+    ((oa.data as any[]) || []).forEach(r => pendingItems.push({
+      id: r.id, label: "Åpen søknad", sublabel: r.full_name + " – " + r.email,
+      table: "open_applications", statusField: "status", category: "open_applications",
     }));
 
     setItems(pendingItems);
@@ -124,7 +140,9 @@ export const useAdminNotifications = (): AdminNotifications => {
     counts.benefitApplications +
     counts.contactSubmissions +
     counts.pendingBookings +
-    counts.accountFeedback;
+    counts.accountFeedback +
+    counts.jobApplications +
+    counts.openApplications;
 
   return { ...counts, total, loading, items, refresh: fetchAll, approve, reject };
 };
