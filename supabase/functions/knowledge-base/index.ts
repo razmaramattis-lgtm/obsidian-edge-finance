@@ -69,7 +69,7 @@ function limitWords(text: string, max = 200): string {
 const CATEGORY_SOURCES: Record<string, string[]> = {
   kontoplan: ["account_entries"],
   regnskapsord: ["glossary_terms"],
-  dokumentmaler: ["document_templates"],
+  dokumentmaler: ["document_templates", "archive_files"],
   arkiv: ["archive_files", "internal_resources"],
   datasenter: ["knowledge_materials"],
   hms: ["hms_documents"],
@@ -100,7 +100,7 @@ serve(async (req) => {
     const queries: Record<string, Promise<any>> = {};
     if (sources.includes("hms_documents")) queries.hms = sb.from("hms_documents").select("title, content");
     if (sources.includes("internal_resources")) queries.internal = sb.from("internal_resources").select("title, description, category, file_name, file_url");
-    if (sources.includes("archive_files")) queries.archive = sb.from("archive_files").select("name, description, category, file_name, file_url").eq("active", true);
+    if (sources.includes("archive_files")) queries.archive = sb.from("archive_files").select("name, description, category, file_name, file_url, file_size").eq("active", true);
     if (sources.includes("knowledge_materials")) queries.knowledge = sb.from("knowledge_materials").select("title, content, category").eq("active", true);
     if (sources.includes("hr_handbook")) queries.hr = sb.from("hr_handbook").select("title, content, sort_order").order("sort_order");
     if (sources.includes("collaboration_agreements")) queries.collab = sb.from("collaboration_agreements").select("title, company, contact_name, offering, description");
@@ -169,12 +169,27 @@ serve(async (req) => {
       return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`);
     }
 
+    // Show top results, prioritizing ones with downloads
+    const topResults = results.slice(0, 5);
+    const downloadable = topResults.filter(r => r.downloadUrl);
+    const nonDownloadable = topResults.filter(r => !r.downloadUrl);
+
+    // Always show best result explanation
     const best = results[0];
     let answer = `### 📄 ${best.title}\n`;
     answer += `*Kilde: ${best.source}*\n\n`;
     answer += `${limitWords(best.snippet, 200)}\n`;
     if (best.downloadUrl) {
       answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
+    }
+
+    // If there are additional downloadable files, list them
+    const otherDownloads = downloadable.filter(r => r !== best);
+    if (otherDownloads.length > 0) {
+      answer += `\n---\n**Andre nedlastbare dokumenter:**\n`;
+      for (const r of otherDownloads) {
+        answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
+      }
     }
 
     return respondStream(answer);
