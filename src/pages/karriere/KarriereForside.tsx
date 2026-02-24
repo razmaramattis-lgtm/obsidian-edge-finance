@@ -66,6 +66,7 @@ const ImageMarquee = ({ images, reverse = false }: { images: { src: string; alt:
 
 const KarriereForside = () => {
   const [jobCount, setJobCount] = useState(0);
+  const [deptCounts, setDeptCounts] = useState<Record<string, number>>({});
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -74,10 +75,18 @@ const KarriereForside = () => {
   useEffect(() => {
     supabase
       .from("job_listings")
-      .select("id", { count: "exact", head: true })
+      .select("id, category")
       .eq("published", true)
       .eq("active", true)
-      .then(({ count }) => setJobCount(count || 0));
+      .then(({ data }) => {
+        setJobCount(data?.length || 0);
+        const counts: Record<string, number> = {};
+        data?.forEach((j) => {
+          const cat = (j.category || "").toLowerCase();
+          counts[cat] = (counts[cat] || 0) + 1;
+        });
+        setDeptCounts(counts);
+      });
   }, []);
 
   return (
@@ -287,6 +296,7 @@ const KarriereForside = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-6xl mx-auto">
             {DEPARTMENTS.map((dept, i) => {
               const Icon = dept.icon;
+              const count = deptCounts[dept.name.toLowerCase()] || 0;
               return (
                 <motion.div
                   key={dept.name}
@@ -306,15 +316,24 @@ const KarriereForside = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                     <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-700" />
 
-                    <div className="absolute top-5 right-5 w-10 h-10 rounded-xl glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                      <Icon size={16} className="text-primary" />
+                    {/* Job count badge - visible on both mobile and desktop */}
+                    <div className="absolute top-4 right-4 md:top-5 md:right-5 flex items-center gap-2">
+                      {count > 0 && (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs font-semibold shadow-lg">
+                          <Briefcase size={11} />
+                          {count} {count === 1 ? "stilling" : "stillinger"}
+                        </div>
+                      )}
+                      <div className="w-10 h-10 rounded-xl glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+                        <Icon size={16} className="text-primary" />
+                      </div>
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-5 md:p-9">
                       <span className="text-[9px] md:text-[10px] tracking-[0.25em] uppercase font-semibold text-primary">{dept.name}</span>
                       <h3 className="text-lg md:text-2xl font-bold text-foreground mt-1 mb-1 md:mb-2">{dept.name}</h3>
                       <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{dept.desc}</p>
-                      <div className="mt-4 flex items-center gap-2 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                      <div className="mt-3 md:mt-4 flex items-center gap-2 text-xs text-primary font-medium md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0 transition-all duration-500">
                         Utforsk <ArrowRight size={12} />
                       </div>
                     </div>
