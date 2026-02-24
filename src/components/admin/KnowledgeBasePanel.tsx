@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, BookOpen, Sparkles, Download } from "lucide-react";
+import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search } from "lucide-react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -282,10 +282,23 @@ const ThinkingIndicator = () => {
   );
 };
 
+const AVA_CATEGORIES = [
+  { key: "kontoplan", label: "Kontoplan", icon: Calculator, color: "text-blue-500" },
+  { key: "regnskapsord", label: "Regnskapsord", icon: BookOpen, color: "text-emerald-500" },
+  { key: "dokumentmaler", label: "Dokumentmaler", icon: FileText, color: "text-violet-500" },
+  { key: "arkiv", label: "Arkiv & Maler", icon: Archive, color: "text-amber-500" },
+  { key: "datasenter", label: "Datasenter", icon: Database, color: "text-cyan-500" },
+  { key: "hms", label: "HMS-håndbok", icon: Shield, color: "text-red-500" },
+  { key: "personalhandbok", label: "Personalhåndbok", icon: Users, color: "text-pink-500" },
+  { key: "samarbeidsavtaler", label: "Samarbeidsavtaler", icon: Handshake, color: "text-orange-500" },
+  { key: "alt", label: "Søk i alt", icon: Search, color: "text-primary" },
+];
+
 const KnowledgeBasePanel = () => {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -307,7 +320,7 @@ const KnowledgeBasePanel = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ messages: newMsgs }),
+          body: JSON.stringify({ messages: newMsgs, category: selectedCategory || "alt" }),
         }
       );
 
@@ -353,47 +366,75 @@ const KnowledgeBasePanel = () => {
     setLoading(false);
   };
 
-  const quickQuestions = [
-    "Hvilken konto bruker jeg for kontorutstyr?",
-    "Hva dekker HMS-håndboken?",
-    "Vis alle samarbeidsavtaler",
-    "Hva inkluderer Pro-pakken?",
-    "Forklar mva-regler for konto 3000",
-    "Hvilke maler har vi?",
-  ];
+  const resetChat = () => {
+    setMessages([]);
+    setSelectedCategory(null);
+    setInput("");
+  };
+
+  const activeCat = AVA_CATEGORIES.find(c => c.key === selectedCategory);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <AvaAvatar size={42} />
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-medium">Ava — Oppslagsverk</p>
-          <p className="text-[10px] text-muted-foreground">Din personlige rådgiver for alle bedriftens ressurser</p>
+          <p className="text-[10px] text-muted-foreground">
+            {selectedCategory ? `Søker i: ${activeCat?.label}` : "Velg en kategori for å starte"}
+          </p>
         </div>
+        {selectedCategory && (
+          <button onClick={resetChat} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] text-muted-foreground hover:text-foreground border border-border/20 hover:border-primary/20 hover:bg-primary/5 transition-all">
+            <RotateCcw size={11} /> Nullstill
+          </button>
+        )}
       </div>
 
       <div className="glass rounded-2xl border border-border/20 overflow-hidden">
-        {/* Messages */}
         <div className="h-[450px] overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
-            <div className="text-center py-10">
+          {/* Category selection (opening screen) */}
+          {!selectedCategory && messages.length === 0 && (
+            <div className="text-center py-6">
               <AvaAvatar size={56} />
-              <div className="mt-4">
+              <div className="mt-4 mb-6">
                 <p className="text-sm font-medium mb-1">Hei! Jeg er Ava 👋</p>
-                <p className="text-xs text-muted-foreground mb-6 max-w-sm mx-auto">
-                  Spør meg om kontoplan, HMS, maler, avtaler, tjenester eller priser — jeg finner frem det du trenger.
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                  Hva leter du etter? Velg en kategori, så søker jeg kun der — eller velg «Søk i alt» for å lete overalt.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2 justify-center max-w-lg mx-auto">
-                {quickQuestions.map(q => (
-                  <button
-                    key={q}
-                    onClick={() => { setInput(q); }}
-                    className="px-3 py-1.5 rounded-full border border-border/20 text-[11px] text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-all"
-                  >
-                    {q}
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-w-lg mx-auto">
+                {AVA_CATEGORIES.map(cat => {
+                  const Icon = cat.icon;
+                  return (
+                    <button
+                      key={cat.key}
+                      onClick={() => setSelectedCategory(cat.key)}
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/15 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+                    >
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-muted/30 group-hover:bg-primary/10 transition-colors ${cat.color}`}>
+                        <Icon size={16} />
+                      </div>
+                      <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground transition-colors">{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Chat ready state after category selected */}
+          {selectedCategory && messages.length === 0 && (
+            <div className="text-center py-10">
+              <AvaAvatar size={48} />
+              <div className="mt-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium mb-3">
+                  {activeCat && <activeCat.icon size={12} />}
+                  {activeCat?.label}
+                </div>
+                <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                  Skriv inn det du leter etter, så finner jeg det for deg.
+                </p>
               </div>
             </div>
           )}
@@ -468,20 +509,22 @@ const KnowledgeBasePanel = () => {
           <div ref={endRef} />
         </div>
 
-        {/* Input */}
-        <div className="border-t border-border/10 p-3 flex gap-2">
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && send()}
-            placeholder="Spør Ava om hva som helst…"
-            className="flex-1 h-10 rounded-xl border border-border/20 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <button onClick={send} disabled={loading || !input.trim()}
-            className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-all">
-            <Send size={14} />
-          </button>
-        </div>
+        {/* Input — only show after category is selected */}
+        {selectedCategory && (
+          <div className="border-t border-border/10 p-3 flex gap-2">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && send()}
+              placeholder={`Søk i ${activeCat?.label || "alt"}…`}
+              className="flex-1 h-10 rounded-xl border border-border/20 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button onClick={send} disabled={loading || !input.trim()}
+              className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-all">
+              <Send size={14} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
