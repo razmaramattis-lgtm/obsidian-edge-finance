@@ -460,11 +460,19 @@ const AdminDashboard = () => {
           </Link>
 
           <Link
+            to="/karriere"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+          >
+            <Briefcase size={14} strokeWidth={1.5} />
+            <span>Karriere</span>
+          </Link>
+
+          <Link
             to="/"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
           >
             <ExternalLink size={14} strokeWidth={1.5} />
-            <span className="hidden sm:inline">Se nettside</span>
+            <span>Se nettside</span>
           </Link>
 
           {/* Bell notification dropdown */}
