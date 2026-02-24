@@ -1081,7 +1081,22 @@ const BookingPanel = () => {
     setSendingRequest(true);
     const { error } = await supabase.from("advisor_requests").insert({ company_id: company.id, message: requestMessage || null });
     if (error) toast.error("Kunne ikke sende forespørsel");
-    else { setAdvisorRequest({ status: "pending", message: requestMessage }); toast.success("Forespørsel sendt til Avargo!"); }
+    else {
+      setAdvisorRequest({ status: "pending", message: requestMessage });
+      toast.success("Forespørsel sendt til Avargo!");
+      // Send email to assigned advisor
+      supabase.functions.invoke("notify", {
+        body: {
+          type: "advisor_request",
+          data: {
+            company_name: company.company_name,
+            company_id: company.id,
+            message: requestMessage || null,
+            customer_name: profile?.name,
+          },
+        },
+      }).catch(err => console.warn("advisor_request notify failed:", err));
+    }
     setSendingRequest(false);
   };
 
