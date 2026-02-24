@@ -6,6 +6,7 @@ import {
 import UserAvatar from "./UserAvatar";
 import type { Profile, Friend } from "./types";
 import { roleLabel } from "./helpers";
+import { createNotification } from "@/hooks/useWorkspaceNotifications";
 
 const FriendsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfile?: (p: Profile) => void }) => {
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -38,11 +39,28 @@ const FriendsView = ({ profile, onViewProfile }: { profile: Profile; onViewProfi
 
   const sendRequest = async (receiverId: string) => {
     await supabase.from("workspace_friends").insert([{ requester_id: profile.id, receiver_id: receiverId }]);
+    createNotification({
+      recipientId: receiverId,
+      actorId: profile.id,
+      type: "friend_request",
+      title: "Venneforespørsel",
+      body: `${profile.name} vil bli din venn`,
+    });
     fetchFriends();
   };
 
   const acceptRequest = async (id: string) => {
+    const req = pendingReceived.find(f => f.id === id);
     await supabase.from("workspace_friends").update({ status: "accepted" }).eq("id", id);
+    if (req) {
+      createNotification({
+        recipientId: req.requester_id,
+        actorId: profile.id,
+        type: "friend_request",
+        title: "Venneforespørsel godkjent",
+        body: `${profile.name} godtok venneforespørselen din`,
+      });
+    }
     fetchFriends();
   };
 

@@ -310,6 +310,30 @@ serve(async (req) => {
       await sendEmail({ ...smtpOpts, to: "kontakt@avargo.no", subject: sectionSubject(section, `Kontohjelp: Manglende treff for «${search_term}»`), html: wrapHtml("🔍 Kontohjelp-tilbakemelding", body, section) });
     }
 
+    if (type === "advisor_request") {
+      const { company_name, company_id, message: reqMessage, customer_name } = data;
+      const { data: company } = await supabase.from("customer_companies").select("primary_advisor_id, backup_advisor_id").eq("id", company_id).single();
+      const advisorId = company?.primary_advisor_id || company?.backup_advisor_id;
+      let advisorEmail = "kontakt@avargo.no";
+      let advisorName = "Rådgiver";
+      if (advisorId) {
+        const { data: adv } = await supabase.from("profiles").select("email, name").eq("id", advisorId).single();
+        if (adv?.email) { advisorEmail = adv.email; advisorName = adv.name; }
+      }
+      const arBody = `
+        <div style="margin-bottom:20px;"><p style="font-size:14px;color:#0f172a;">Hei ${advisorName} 👋</p><p style="font-size:14px;color:#475569;line-height:1.7;">Du har mottatt en ny forespørsel fra <strong>${customer_name || company_name}</strong>.</p></div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+          <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">📋 Rådgiverforespørsel</h2>
+          <table style="border-collapse:collapse;width:100%;"><tr><td style="padding:6px 12px 6px 0;color:#64748b;font-size:13px;font-weight:600;">Selskap</td><td style="padding:6px 0;font-size:14px;color:#0f172a;">${company_name}</td></tr></table>
+        </div>
+        ${reqMessage ? `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;margin-bottom:20px;"><strong>Melding:</strong><br/>${reqMessage}</div>` : ""}
+        <a href="https://obsidian-edge-finance.lovable.app/admin/dashboard?panel=advisor_requests" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:12px 28px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">Se forespørselen</a>`;
+      await sendEmailsParallel([
+        { ...smtpOpts, to: advisorEmail, subject: `Rådgiverforespørsel: ${company_name}`, html: wrapHtml("📋 Ny rådgiverforespørsel", arBody, section) },
+        { ...smtpOpts, to: "kontakt@avargo.no", subject: `Rådgiverforespørsel: ${company_name} → ${advisorName}`, html: wrapHtml("📋 Ny rådgiverforespørsel", arBody, section) },
+      ]);
+    }
+
     if (type === "job_application") {
       const { applicant_name, applicant_email, applicant_phone, job_title, job_category, message, cv_url, cv_file_name } = data;
       const body = `

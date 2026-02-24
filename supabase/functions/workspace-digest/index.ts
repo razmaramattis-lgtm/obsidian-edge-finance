@@ -100,11 +100,13 @@ serve(async (req) => {
       const feedCount = notifs.filter(n => ["feed_post", "feed_comment", "feed_reaction"].includes(n.type)).length;
       const dmCount = notifs.filter(n => n.type === "dm_message").length;
       const groupCount = notifs.filter(n => n.type === "group_message").length;
+      const friendCount = notifs.filter(n => n.type === "friend_request").length;
 
       const items = [];
       if (feedCount > 0) items.push(`📰 ${feedCount} nye aktiviteter i feeden`);
       if (dmCount > 0) items.push(`💬 ${dmCount} uleste direktemeldinger`);
       if (groupCount > 0) items.push(`👥 ${groupCount} nye gruppemeldinger`);
+      if (friendCount > 0) items.push(`🤝 ${friendCount} venneforespørsler`);
 
       const html = `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#fff;">
         <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
