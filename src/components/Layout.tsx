@@ -73,17 +73,17 @@ const tjenesterGroups = [
 ];
 
 const bransjerItems = [
-  { icon: Globe, title: "Tech & SaaS", href: "/bransjer/tech-saas" },
-  { icon: Building2, title: "Eiendom & Utvikling", href: "/bransjer/eiendom" },
-  { icon: Landmark, title: "Holding & Investering", href: "/bransjer/holding" },
-  { icon: Briefcase, title: "Consulting & Rådgivning", href: "/bransjer/consulting" },
-  { icon: Tractor, title: "Landbruk", href: "/bransjer/landbruk" },
-  { icon: HardHat, title: "Bygg & Anlegg", href: "/bransjer/bygg-anlegg" },
-  { icon: Store, title: "Nettbutikk & E-commerce", href: "/bransjer/nettbutikk" },
-  { icon: Heart, title: "Helse & Velvære", href: "/bransjer/helse" },
-  { icon: TrendingUp, title: "Restaurant & Uteliv", href: "/bransjer/restaurant" },
-  { icon: Users, title: "Frisør & Skjønnhet", href: "/bransjer/frisor" },
-  { icon: Zap, title: "Håndverkere & Fagfolk", href: "/bransjer/handverkere" },
+  { icon: Globe, title: "Tech & SaaS", desc: "Skalerbare løsninger for teknologiselskaper", href: "/bransjer/tech-saas" },
+  { icon: Building2, title: "Eiendom & Utvikling", desc: "Regnskap og rådgivning for eiendomsbransjen", href: "/bransjer/eiendom" },
+  { icon: Landmark, title: "Holding & Investering", desc: "Strukturering og optimalisering for holdingselskaper", href: "/bransjer/holding" },
+  { icon: Briefcase, title: "Consulting & Rådgivning", desc: "Skreddersydd for konsulent- og rådgivningsfirmaer", href: "/bransjer/consulting" },
+  { icon: Tractor, title: "Landbruk", desc: "Tilpasset regnskapsføring for landbruksnæringen", href: "/bransjer/landbruk" },
+  { icon: HardHat, title: "Bygg & Anlegg", desc: "Prosjektregnskap og rapportering for bygg", href: "/bransjer/bygg-anlegg" },
+  { icon: Store, title: "Nettbutikk & E-commerce", desc: "Økonomi og vekst for netthandel", href: "/bransjer/nettbutikk" },
+  { icon: Heart, title: "Helse & Velvære", desc: "Regnskap tilpasset helsebransjen", href: "/bransjer/helse" },
+  { icon: TrendingUp, title: "Restaurant & Uteliv", desc: "Kontroll på varekost og marginer", href: "/bransjer/restaurant" },
+  { icon: Users, title: "Frisør & Skjønnhet", desc: "Enkel økonomi for skjønnhetsbransjen", href: "/bransjer/frisor" },
+  { icon: Zap, title: "Håndverkere & Fagfolk", desc: "Regnskap og fakturering for håndverkere", href: "/bransjer/handverkere" },
 ];
 
 const selskapetLinks = [
@@ -255,47 +255,40 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 )}
                 <div className="container mx-auto px-6 py-8">
                   {!isInSection ? (
-                    /* ── Hub: 4 department cards ────── */
-                    <div className="grid grid-cols-4 gap-5">
+                    /* ── Hub: 4 groups, each with 4 items + Les mer ────── */
+                    <div className="grid grid-cols-4 gap-6">
                       {tjenesterGroups.map((group) => {
                         const sId = groupSectionIdMap[group.label];
                         const accent = accentHsl(sId);
-                        const bg = accentBg(sId, 0.06);
                         const targetPath = groupSectionMap[group.label] || "/tjenester";
-                        const sectionData = SECTIONS[sId as SectionId];
                         return (
-                          <Link
-                            key={group.label}
-                            to={`${targetPath}/tjenester`}
-                            onClick={() => setTjenesterOpen(false)}
-                            className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
-                            style={{ backgroundColor: bg }}
-                          >
-                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: accent }} />
-                            <div className="relative">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(sId, 0.15), borderColor: accentBg(sId, 0.25) }}>
-                                <Layers size={17} style={{ color: accent }} strokeWidth={1.5} />
-                              </div>
-                              <h3 className="font-heading text-base mb-1.5" style={{ color: accent }}>{group.label}</h3>
-                              <p className="text-[12px] text-foreground/65 font-light leading-relaxed mb-4">
-                                {sectionData?.tagline}
-                              </p>
-                              <div className="space-y-2 mb-4">
-                                {group.items.slice(0, 3).map(item => (
-                                  <div key={item.href} className="flex items-center gap-2 text-[12px] text-foreground/70">
-                                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: accent }} />
-                                    {item.title}
-                                  </div>
-                                ))}
-                                {group.items.length > 3 && (
-                                  <p className="text-[11px] text-foreground/50 pl-3">+{group.items.length - 3} mer</p>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: accent }}>
-                                Utforsk <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                              </div>
+                          <div key={group.label}>
+                            <p className="text-[11px] tracking-[0.3em] uppercase font-medium mb-3 px-2" style={{ color: accent }}>{group.label}</p>
+                            <div className="flex flex-col gap-0.5">
+                              {group.items.slice(0, 4).map((item) => (
+                                <DropdownItem
+                                  key={item.href}
+                                  to={`${targetPath}${item.href}`}
+                                  icon={item.icon}
+                                  title={item.title}
+                                  desc={item.desc}
+                                  onClick={() => setTjenesterOpen(false)}
+                                  iconColor={accent}
+                                  iconBg={accentBg(sId, 0.1)}
+                                />
+                              ))}
                             </div>
-                          </Link>
+                            {group.items.length > 4 && (
+                              <Link
+                                to={`${targetPath}/tjenester`}
+                                onClick={() => setTjenesterOpen(false)}
+                                className="flex items-center gap-1.5 px-3 py-2 mt-1 text-[12px] font-medium transition-colors"
+                                style={{ color: accent }}
+                              >
+                                +{group.items.length - 4} mer <ArrowRight size={10} />
+                              </Link>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
@@ -316,7 +309,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                           <div key={group.label}>
                             <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-3 px-2 font-medium">{group.label}</p>
                             <div className="flex flex-col gap-0.5">
-                              {group.items.map((item) => (
+                              {group.items.slice(0, 4).map((item) => (
                                 <DropdownItem
                                   key={item.href}
                                   to={tjenesterPath(item.href, group.label)}
@@ -329,6 +322,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                                 />
                               ))}
                             </div>
+                            {group.items.length > 4 && (
+                              <Link
+                                to={sp("/tjenester")}
+                                onClick={() => setTjenesterOpen(false)}
+                                className="flex items-center gap-1.5 px-3 py-2 mt-1 text-[12px] font-medium transition-colors"
+                                style={{ color: sectionAccent }}
+                              >
+                                +{group.items.length - 4} mer <ArrowRight size={10} />
+                              </Link>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -363,22 +366,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <button className={dropBtnClass(bransjerOpen)}>
                   Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[340px] bg-card rounded-2xl border border-border/20 shadow-2xl p-3 z-50">
-                  <div className="grid grid-cols-2 gap-1">
-                    {bransjerItems.map((item) => (
-                      <Link key={item.href} to={sp(item.href)} onClick={() => setBransjerOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-muted/60 group transition-colors duration-200"
-                      >
-                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
-                          <item.icon size={12} className="text-primary" strokeWidth={1.5} />
-                        </div>
-                        <span className="text-[12px] text-foreground/85 group-hover:text-foreground transition-colors duration-200 leading-tight">{item.title}</span>
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-border/15">
-                    <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium flex items-center gap-1 px-3 py-1.5">
-                      Se alle bransjer <ArrowRight size={10} />
+                <DropdownPanel open={bransjerOpen} className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[380px] bg-card rounded-2xl border border-border/20 shadow-2xl p-2 z-50">
+                  {bransjerItems.slice(0, 4).map((item) => (
+                    <DropdownItem
+                      key={item.href}
+                      to={sp(item.href)}
+                      icon={item.icon}
+                      title={item.title}
+                      desc={item.desc}
+                      onClick={() => setBransjerOpen(false)}
+                    />
+                  ))}
+                  <div className="mt-1 pt-2 border-t border-border/15">
+                    <Link to={sp("/bransjer")} onClick={() => setBransjerOpen(false)} className="flex items-center gap-1.5 px-3 py-2 text-[12px] tracking-wider text-primary hover:text-primary/80 transition-colors duration-200 font-medium">
+                      Se alle {bransjerItems.length} bransjer <ArrowRight size={10} />
                     </Link>
                   </div>
                 </DropdownPanel>
