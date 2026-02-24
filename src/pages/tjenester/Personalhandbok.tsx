@@ -24,7 +24,7 @@ const Personalhandbok = () => (
       { num: "01", title: "Tilpasset din bedrift.", desc: "Ingen generiske maler. Personalhåndboken tilpasses din bransje, kultur og størrelse — slik at den faktisk brukes." },
       { num: "02", title: "Juridisk dekning.", desc: "Alle dokumenter er utarbeidet i tråd med arbeidsmiljøloven og oppdateres ved lovendringer." },
       { num: "03", title: "Forebygger konflikter.", desc: "Klare regler og forventninger forebygger misforståelser og konflikter. Det er billigere å forebygge enn å reparere." },
-      { num: "04", title: "Digital og tilgjengelig.", desc: "Håndboken leveres digitalt og er lett tilgjengelig for alle ansatte. Alltid oppdatert, alltid tilgjengelig." },
+      { num: "04", title: "Digital og tilgjengelig.", desc: "Håndboken leveres digitalt og er lett tilgjengelig for alle ansatte. Alltid oppdatert." },
     ]}
     relatedServices={[
       { label: "Lønn & HR-administrasjon", href: "/tjenester/hr-og-lonn" },

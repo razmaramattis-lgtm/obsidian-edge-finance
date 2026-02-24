@@ -17,7 +17,7 @@ const team = [
   {
     icon: Headphones,
     role: "Regnskapsførere",
-    desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — alltid tilgjengelig, alltid oppdatert.",
+    desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med svar innen 24 timer.",
   },
   {
     icon: Users,
@@ -337,9 +337,9 @@ const Metoden = () => {
                   <Phone size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">Alltid tilgjengelige — for deg.</p>
+                  <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">Rask respons — hver gang.</p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                    Som klient kan du ringe oss når du vil. Ingen timespris. Ingen ventetid. Du er ikke et saksnummer — du er en partner vi bryr oss om.
+                    Ring, send melding eller e-post — vi svarer innen 24 timer. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om.
                   </p>
                 </div>
               </div>

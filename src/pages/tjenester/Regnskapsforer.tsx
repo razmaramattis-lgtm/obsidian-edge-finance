@@ -34,8 +34,8 @@ const why = [
   },
   {
     num: "04",
-    title: "Alltid tilgjengelig.",
-    desc: "Ring, send melding eller still spørsmål. Det koster ingenting ekstra. Du er ikke et saksnummer — du er en klient vi bryr oss om.",
+    title: "Rask respons — ingen ventetid.",
+    desc: "Ring, send melding eller still spørsmål. Svar innen 24 timer. Du er ikke et saksnummer — du er en klient vi bryr oss om.",
   },
 ];
 

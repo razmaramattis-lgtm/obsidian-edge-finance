@@ -184,7 +184,7 @@ const Index = () => {
   );
 
   const services = [
-    { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Alltid tilgjengelig, alltid oppdatert — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
+    { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Svar innen 24 timer — ingen ventelinjer eller chatboter.", href: "/tjenester/regnskapsforer" },
     { icon: Users, title: "Lønn & HR", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift. Alt er inkludert i fastprisen — uten skjulte kostnader.", href: "/tjenester/hr-og-lonn" },
     { icon: Flame, title: "Nettsider & markedsføring", desc: "Moderne nettsider, SEO, Google Ads og sosiale medier — alt koblet til de faktiske tallene dine for smartere vekst.", href: "/tjenester/nettsider" },
     { icon: Sparkles, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv — slik at du alltid ligger et steg foran.", href: "/tjenester/ai-innsikt" },
@@ -354,7 +354,7 @@ const Index = () => {
             {[
               { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
               { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-              { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Alltid tilgjengelig" },
+              { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
               { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
             ].map((item, i) => (
               <div key={i} className="text-center">

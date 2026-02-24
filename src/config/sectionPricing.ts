@@ -321,7 +321,7 @@ const hrCopy: SectionPricingCopy = {
   comparison: "De fleste HR-leverandører fakturerer per oppgave eller per ansatt. Vi inkluderer alt — så du slipper å telle.",
   roleLabel: "HR-rådgiver",
   comparisons: [
-    { name: "Frilans HR-konsulenter", body: "Kompetente, men dyre per time. Og ingen er der når du trenger dem mellom oppdragene.", us: "Hos Avargo har du en fast HR-rådgiver som kjenner bedriften din — hele tiden.", tag: "Alltid tilgjengelig." },
+    { name: "Frilans HR-konsulenter", body: "Kompetente, men dyre per time. Og ingen er der når du trenger dem mellom oppdragene.", us: "Hos Avargo har du en fast HR-rådgiver som kjenner bedriften din — med svar innen 24 timer.", tag: "Rask respons." },
     { name: "HR-systemer", body: "Digitale verktøy gir deg maler og prosesser. Men hvem svarer når du står i en vanskelig personalsak?", us: "Med Avargo får du både systemet og eksperten — som kjenner arbeidsretten.", tag: "Menneske + system." },
     { name: "Gjøre det selv", body: "Du kan Google arbeidsmiljøloven. Men feil kan koste deg hundretusener i arbeidstvister.", us: "Vi tar ansvaret — så du slipper risikoen.", tag: "Trygghet fremfor gjetning." },
   ],

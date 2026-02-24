@@ -18,7 +18,7 @@ const sectionServices: Record<SectionId, {
     headline: "Vi tar oss av tallene. Du tar deg av bedriften.",
     intro: "Godt regnskap handler om å vite hvordan bedriften din faktisk gjør det.",
     services: [
-      { title: "Din egen regnskapsfører", desc: "Én fast person som kjenner bedriften din — alltid tilgjengelig.", href: "/tjenester/regnskapsforer" },
+      { title: "Din egen regnskapsfører", desc: "Én fast person som kjenner bedriften din — med svar innen 24 timer.", href: "/tjenester/regnskapsforer" },
       { title: "Lønnskjøring", desc: "Lønn, feriepenger, sykepenger og all innrapportering.", href: "/tjenester/lonn" },
       { title: "Årsregnskap & skattemelding", desc: "Alt levert innen fristen — uten stress.", href: "/tjenester/arsregnskap" },
       { title: "CFO-rådgivning", desc: "Budsjett, vekstplaner og strategisk økonomisk rådgivning.", href: "/tjenester/cfo" },
