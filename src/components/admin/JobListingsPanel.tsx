@@ -444,9 +444,28 @@ const JobListingsPanel = () => {
   };
 
   const openCv = async (cvUrl: string | null) => {
+    if (!cvUrl) { toast.error("Ingen CV lastet opp"); return; }
+    // Open window synchronously to avoid popup blocker
+    const win = window.open("about:blank", "_blank");
     const url = await getSignedCvUrl(cvUrl);
-    if (url) window.open(url, "_blank");
-    else toast.error("Kunne ikke åpne CV");
+    if (url && win) {
+      win.location.href = url;
+    } else if (win) {
+      win.close();
+      toast.error("Kunne ikke åpne CV");
+    } else {
+      // Fallback: trigger download via anchor
+      const fallbackUrl = await getSignedCvUrl(cvUrl);
+      if (fallbackUrl) {
+        const a = document.createElement("a");
+        a.href = fallbackUrl;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.click();
+      } else {
+        toast.error("Kunne ikke åpne CV");
+      }
+    }
   };
 
   const deleteOpenApp = async (id: string) => {
