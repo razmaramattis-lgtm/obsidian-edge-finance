@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -299,6 +299,7 @@ const KnowledgeBasePanel = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [expandedAlts, setExpandedAlts] = useState<Set<number>>(new Set());
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -370,9 +371,44 @@ const KnowledgeBasePanel = () => {
     setMessages([]);
     setSelectedCategory(null);
     setInput("");
+    setExpandedAlts(new Set());
   };
 
   const activeCat = AVA_CATEGORIES.find(c => c.key === selectedCategory);
+
+  const mdComponents: Components = {
+    a: ({ href, children }) => {
+      const text = String(children);
+      const isDownload = text.includes("📥") || (href && href.includes("/storage/"));
+      if (isDownload && href) {
+        const handleForceDownload = async (e: React.MouseEvent) => {
+          e.preventDefault();
+          try {
+            const res = await fetch(href);
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = text.replace("📥 ", "").replace("Last ned ", "") || "fil";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          } catch {
+            window.location.href = href;
+          }
+        };
+        return (
+          <button onClick={handleForceDownload}
+            className="no-underline inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium mt-1 mb-1 cursor-pointer border-0">
+            <Download size={13} />
+            {text.replace("📥 ", "")}
+          </button>
+        );
+      }
+      return <a href={href} target="_blank" rel="noreferrer" className="text-primary hover:underline">{children}</a>;
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -455,41 +491,42 @@ const KnowledgeBasePanel = () => {
                     : "bg-muted/50 border border-border/10"
                 }`}>
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed [&_p]:mb-2 [&_ul]:mb-2 [&_ol]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_li]:mb-0.5 [&_strong]:text-foreground">
-                      <ReactMarkdown components={{
-                        a: ({ href, children }) => {
-                          const text = String(children);
-                          const isDownload = text.includes("📥") || (href && href.includes("/storage/"));
-                          if (isDownload && href) {
-                            const handleForceDownload = async (e: React.MouseEvent) => {
-                              e.preventDefault();
-                              try {
-                                const res = await fetch(href);
-                                const blob = await res.blob();
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = text.replace("📥 ", "").replace("Last ned ", "") || "fil";
-                                document.body.appendChild(a);
-                                a.click();
-                                document.body.removeChild(a);
-                                URL.revokeObjectURL(url);
-                              } catch {
-                                window.location.href = href;
-                              }
-                            };
-                            return (
-                              <button onClick={handleForceDownload}
-                                className="no-underline inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium mt-1 mb-1 cursor-pointer border-0">
-                                <Download size={13} />
-                                {text.replace("📥 ", "")}
+                    (() => {
+                      const hasAlts = msg.content.includes("[FLERE_KONTOER]");
+                      const [mainContent, altContent] = hasAlts
+                        ? msg.content.split("[FLERE_KONTOER]")
+                        : [msg.content, ""];
+                      const isExpanded = expandedAlts.has(i);
+                      return (
+                        <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed [&_p]:mb-2 [&_ul]:mb-2 [&_ol]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_li]:mb-0.5 [&_strong]:text-foreground">
+                          <ReactMarkdown components={mdComponents}>{mainContent}</ReactMarkdown>
+                          {hasAlts && altContent && (
+                            <div className="mt-2">
+                              <button
+                                onClick={() => setExpandedAlts(prev => {
+                                  const next = new Set(prev);
+                                  if (next.has(i)) next.delete(i); else next.add(i);
+                                  return next;
+                                })}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/60 hover:bg-accent text-foreground text-xs font-medium transition-colors border border-border/20"
+                              >
+                                {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                                {isExpanded ? "Skjul alternativer" : "Vis flere alternativer"}
                               </button>
-                            );
-                          }
-                          return <a href={href} target="_blank" rel="noreferrer" className="text-primary hover:underline">{children}</a>;
-                        }
-                      }}>{msg.content}</ReactMarkdown>
-                    </div>
+                              {isExpanded && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="mt-2"
+                                >
+                                  <ReactMarkdown components={mdComponents}>{altContent}</ReactMarkdown>
+                                </motion.div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()
                   ) : (
                     <p className="whitespace-pre-wrap font-light leading-relaxed">{msg.content}</p>
                   )}
