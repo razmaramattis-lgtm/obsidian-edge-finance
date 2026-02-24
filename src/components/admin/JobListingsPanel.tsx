@@ -296,6 +296,46 @@ const JobListingsPanel = () => {
     fetchAll();
   };
 
+  const sendStandardInterview = async (name: string, email: string, table: "job_applications" | "open_applications", appId: string, positionTitle?: string) => {
+    try {
+      await supabase.from(table).update({ status: "innkalt_intervju" }).eq("id", appId);
+      const { error } = await supabase.functions.invoke("interview-invitation", {
+        body: {
+          applicant_name: name,
+          applicant_email: email,
+          position_title: positionTitle || null,
+          sender_name: profile?.name || "Rekruttering",
+          sender_email: profile?.email || "kontakt@avargo.no",
+          sender_phone: profile?.phone || null,
+          sender_title: profile?.title || null,
+          interview_date: null,
+          interview_time: null,
+          interview_type: null,
+          teams_link: null,
+          interview_location: null,
+        },
+      });
+      if (error) throw error;
+      toast.success("Standardinnkalling sendt til " + name);
+      fetchAll();
+    } catch (err) {
+      console.error("Standard interview failed:", err);
+      toast.error("Kunne ikke sende intervjuinnkalling");
+    }
+  };
+
+  const sendStandardRejection = async (name: string, email: string, table: "job_applications" | "open_applications", appId: string, positionTitle?: string) => {
+    try {
+      await supabase.from(table).update({ status: "avslått" }).eq("id", appId);
+      await sendRejectionEmail(name, email, positionTitle);
+      toast.success("Standardavslag sendt til " + name);
+      fetchAll();
+    } catch (err) {
+      console.error("Standard rejection failed:", err);
+      toast.error("Kunne ikke sende avslag");
+    }
+  };
+
   const hireApplicant = async (name: string, email: string) => {
     const tempPassword = crypto.randomUUID().slice(0, 12);
     try {
@@ -667,7 +707,15 @@ const JobListingsPanel = () => {
                   <option value="avslått">Avslått</option>
                 </select>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => sendStandardInterview(app.full_name, app.email, "open_applications", app.id)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/90 text-white text-[10px] font-medium hover:opacity-90 transition-opacity">
+                  <Calendar size={11} /> Standardinnkalling
+                </button>
+                <button onClick={() => sendStandardRejection(app.full_name, app.email, "open_applications", app.id)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/90 text-destructive-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                  <X size={11} /> Standardavslag
+                </button>
                 <a href={`mailto:${app.email}`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
                   <Mail size={11} /> Send e-post
@@ -893,7 +941,15 @@ const JobListingsPanel = () => {
                           <option value="avslått">Avslått</option>
                         </select>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
+                        <button onClick={() => { const job = listings.find(j => j.id === app.job_listing_id); sendStandardInterview(app.full_name, app.email, "job_applications", app.id, job?.title); }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/90 text-white text-[10px] font-medium hover:opacity-90 transition-opacity">
+                          <Calendar size={11} /> Standardinnkalling
+                        </button>
+                        <button onClick={() => { const job = listings.find(j => j.id === app.job_listing_id); sendStandardRejection(app.full_name, app.email, "job_applications", app.id, job?.title); }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/90 text-destructive-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
+                          <X size={11} /> Standardavslag
+                        </button>
                         <a href={`mailto:${app.email}`}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90 transition-opacity">
                           <Mail size={11} /> Send e-post
@@ -1440,7 +1496,15 @@ const JobListingsPanel = () => {
                                   <option value="avslått">Avslått</option>
                                 </select>
                               </div>
-                              <div className="flex gap-2">
+                              <div className="flex flex-wrap gap-2">
+                                <button onClick={() => sendStandardInterview(app.full_name, app.email, "job_applications", app.id, job.title)}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600/90 text-white text-[10px] font-medium hover:opacity-90">
+                                  <Calendar size={10} /> Standardinnkalling
+                                </button>
+                                <button onClick={() => sendStandardRejection(app.full_name, app.email, "job_applications", app.id, job.title)}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-destructive/90 text-destructive-foreground text-[10px] font-medium hover:opacity-90">
+                                  <X size={10} /> Standardavslag
+                                </button>
                                 <a href={`mailto:${app.email}`}
                                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-medium hover:opacity-90">
                                   <Mail size={10} /> Send e-post
