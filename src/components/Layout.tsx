@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import { useSection, SECTION_LIST, SECTIONS } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
@@ -124,6 +125,7 @@ const DropdownPanel = ({ open, children, className = "" }: { open: boolean; chil
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { section, isInSection } = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
   const [selskapetOpen, setSelskapetOpen] = useState(false);
@@ -136,6 +138,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const selskapetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ressurserRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setSelskapetOpen(false); setRessurserOpen(false); };
 
@@ -165,7 +173,21 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/15 backdrop-blur-2xl bg-background/70">
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        scrolled
+          ? "bg-background/80 backdrop-blur-3xl border-b border-border/10 shadow-2xl shadow-background/50"
+          : "bg-transparent"
+      }`}>
+        {/* Animated accent line */}
+        <div className="h-[2px] w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30" />
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary"
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            style={{ width: "40%" }}
+          />
+        </div>
         <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
           {isInSection && section ? (
             <span className="font-heading text-xl md:text-2xl tracking-wide flex items-baseline">
