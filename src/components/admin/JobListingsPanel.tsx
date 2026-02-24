@@ -130,6 +130,15 @@ const JobListingsPanel = () => {
     table: "job_applications" | "open_applications";
     positionTitle?: string;
   } | null>(null);
+  const [rejectionConfirm, setRejectionConfirm] = useState<{
+    appId: string;
+    name: string;
+    email: string;
+    table: "job_applications" | "open_applications";
+    positionTitle?: string;
+  } | null>(null);
+  const [rejectionFeedback, setRejectionFeedback] = useState("");
+  const [rejectionSending, setRejectionSending] = useState(false);
 
   const fetchAll = async () => {
     const [{ data: jobs }, { data: apps }, { data: opens }] = await Promise.all([
@@ -212,10 +221,17 @@ const JobListingsPanel = () => {
     fetchAll();
   };
 
-  const sendRejectionEmail = async (name: string, email: string, positionTitle?: string) => {
+  const sendRejectionEmail = async (name: string, email: string, positionTitle?: string, feedback?: string) => {
     try {
       const { error } = await supabase.functions.invoke("rejection-email", {
-        body: { applicant_name: name, applicant_email: email, position_title: positionTitle || null },
+        body: {
+          applicant_name: name,
+          applicant_email: email,
+          position_title: positionTitle || null,
+          rejection_feedback: feedback || null,
+          sender_name: profile?.name || "Rekruttering",
+          sender_title: profile?.title || null,
+        },
       });
       if (error) throw error;
       toast.success("Avslagsmelding sendt til " + name);
@@ -284,12 +300,14 @@ const JobListingsPanel = () => {
       setInterviewConfirm({ appId, name: app.full_name, email: app.email, table: "job_applications", positionTitle: job?.title });
       return;
     }
+    if (app && status === "avslått") {
+      const job = listings.find(j => j.id === app.job_listing_id);
+      setRejectionFeedback("");
+      setRejectionConfirm({ appId, name: app.full_name, email: app.email, table: "job_applications", positionTitle: job?.title });
+      return;
+    }
     await supabase.from("job_applications").update({ status }).eq("id", appId);
     if (app) {
-      if (status === "avslått") {
-        const job = listings.find(j => j.id === app.job_listing_id);
-        sendRejectionEmail(app.full_name, app.email, job?.title);
-      }
       if (status === "ansatt") {
         await hireApplicant(app.full_name, app.email);
       }
@@ -313,11 +331,13 @@ const JobListingsPanel = () => {
       setInterviewConfirm({ appId, name: app.full_name, email: app.email, table: "open_applications" });
       return;
     }
+    if (app && status === "avslått") {
+      setRejectionFeedback("");
+      setRejectionConfirm({ appId, name: app.full_name, email: app.email, table: "open_applications" });
+      return;
+    }
     await supabase.from("open_applications").update({ status }).eq("id", appId);
     if (app) {
-      if (status === "avslått") {
-        sendRejectionEmail(app.full_name, app.email);
-      }
       if (status === "ansatt") {
         await hireApplicant(app.full_name, app.email);
       }
@@ -1432,6 +1452,58 @@ const JobListingsPanel = () => {
             <AlertDialogCancel>Avbryt</AlertDialogCancel>
             <AlertDialogAction onClick={confirmInterviewInvitation}>
               Send innkalling
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Rejection confirmation dialog */}
+      <AlertDialog open={!!rejectionConfirm} onOpenChange={(open) => { if (!open) setRejectionConfirm(null); }}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send avslag til {rejectionConfirm?.name}?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  Du er i ferd med å sende et avslag til <strong>{rejectionConfirm?.name}</strong> ({rejectionConfirm?.email}).
+                  {rejectionConfirm?.positionTitle && <> Stilling: <strong>{rejectionConfirm.positionTitle}</strong>.</>}
+                </p>
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">
+                    Tilbakemelding til søkeren (valgfritt)
+                  </label>
+                  <textarea
+                    value={rejectionFeedback}
+                    onChange={e => setRejectionFeedback(e.target.value)}
+                    placeholder="F.eks: Vi savnet noe mer erfaring innen... / Vi anbefaler deg å... / Konkurransen var sterk og vi valgte en kandidat med..."
+                    rows={4}
+                    className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Denne teksten inkluderes i e-posten som konstruktiv tilbakemelding. La feltet stå tomt for standardmelding.
+                  </p>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={rejectionSending}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={rejectionSending}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!rejectionConfirm) return;
+                setRejectionSending(true);
+                const { appId, name, email, table, positionTitle } = rejectionConfirm;
+                await supabase.from(table).update({ status: "avslått" }).eq("id", appId);
+                await sendRejectionEmail(name, email, positionTitle, rejectionFeedback.trim() || undefined);
+                setRejectionConfirm(null);
+                setRejectionFeedback("");
+                setRejectionSending(false);
+                fetchAll();
+              }}
+            >
+              {rejectionSending ? <><Loader2 size={14} className="animate-spin mr-1" /> Sender…</> : "Send avslag"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
