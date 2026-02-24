@@ -130,6 +130,12 @@ const JobListingsPanel = () => {
     table: "job_applications" | "open_applications";
     positionTitle?: string;
   } | null>(null);
+  const [interviewType, setInterviewType] = useState<"standard" | "digital" | "fysisk">("standard");
+  const [interviewDate, setInterviewDate] = useState("");
+  const [interviewTime, setInterviewTime] = useState("");
+  const [interviewTeamsLink, setInterviewTeamsLink] = useState("");
+  const [interviewLocation, setInterviewLocation] = useState("");
+  const [interviewSending, setInterviewSending] = useState(false);
   const [rejectionConfirm, setRejectionConfirm] = useState<{
     appId: string;
     name: string;
@@ -252,7 +258,11 @@ const JobListingsPanel = () => {
     }
   };
 
-  const sendInterviewInvitation = async (name: string, email: string, positionTitle?: string) => {
+  const confirmInterviewInvitation = async () => {
+    if (!interviewConfirm) return;
+    setInterviewSending(true);
+    const { appId, name, email, table, positionTitle } = interviewConfirm;
+    await supabase.from(table).update({ status: "innkalt_intervju" }).eq("id", appId);
     try {
       const { error } = await supabase.functions.invoke("interview-invitation", {
         body: {
@@ -263,6 +273,11 @@ const JobListingsPanel = () => {
           sender_email: profile?.email || "kontakt@avargo.no",
           sender_phone: profile?.phone || null,
           sender_title: profile?.title || null,
+          interview_date: interviewDate.trim() || null,
+          interview_time: interviewTime.trim() || null,
+          interview_type: interviewType === "standard" ? null : interviewType,
+          teams_link: interviewTeamsLink.trim() || null,
+          interview_location: interviewLocation.trim() || null,
         },
       });
       if (error) throw error;
@@ -271,14 +286,13 @@ const JobListingsPanel = () => {
       console.error("Interview invitation failed:", err);
       toast.error("Kunne ikke sende intervjuinnkalling");
     }
-  };
-
-  const confirmInterviewInvitation = async () => {
-    if (!interviewConfirm) return;
-    const { appId, name, email, table, positionTitle } = interviewConfirm;
-    await supabase.from(table).update({ status: "innkalt_intervju" }).eq("id", appId);
-    await sendInterviewInvitation(name, email, positionTitle);
     setInterviewConfirm(null);
+    setInterviewSending(false);
+    setInterviewType("standard");
+    setInterviewDate("");
+    setInterviewTime("");
+    setInterviewTeamsLink("");
+    setInterviewLocation("");
     fetchAll();
   };
 
@@ -1459,21 +1473,83 @@ const JobListingsPanel = () => {
       )}
 
       {/* Interview invitation confirmation dialog */}
-      <AlertDialog open={!!interviewConfirm} onOpenChange={(open) => { if (!open) setInterviewConfirm(null); }}>
-        <AlertDialogContent>
+      <AlertDialog open={!!interviewConfirm} onOpenChange={(open) => {
+        if (!open) {
+          setInterviewConfirm(null);
+          setInterviewType("standard");
+          setInterviewDate("");
+          setInterviewTime("");
+          setInterviewTeamsLink("");
+          setInterviewLocation("");
+        }
+      }}>
+        <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Send intervjuinnkalling?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Dette vil sende en e-post til <strong>{interviewConfirm?.name}</strong> ({interviewConfirm?.email}) med innkalling til intervju.
-              {interviewConfirm?.positionTitle && <> Stillingen: <strong>{interviewConfirm.positionTitle}</strong>.</>}
-              <br /><br />
-              E-posten inneholder ditt navn, e-post og telefonnummer som kontaktinformasjon, og ber kandidaten foreslå tidspunkter for intervjuet.
+            <AlertDialogTitle>Send intervjuinnkalling</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  Innkalling til <strong>{interviewConfirm?.name}</strong> ({interviewConfirm?.email}).
+                  {interviewConfirm?.positionTitle && <> Stilling: <strong>{interviewConfirm.positionTitle}</strong>.</>}
+                </p>
+
+                <div>
+                  <label className="text-xs font-medium text-foreground block mb-1.5">Type intervju</label>
+                  <select value={interviewType} onChange={e => setInterviewType(e.target.value as "standard" | "digital" | "fysisk")}
+                    className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                    <option value="standard">Standardmail (kandidaten foreslår tid)</option>
+                    <option value="digital">Digitalt intervju (Teams/Video)</option>
+                    <option value="fysisk">Fysisk intervju</option>
+                  </select>
+                </div>
+
+                {interviewType !== "standard" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-foreground block mb-1.5">Dato</label>
+                        <input type="date" value={interviewDate} onChange={e => setInterviewDate(e.target.value)}
+                          className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-foreground block mb-1.5">Klokkeslett</label>
+                        <input type="time" value={interviewTime} onChange={e => setInterviewTime(e.target.value)}
+                          className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {interviewType === "digital" && (
+                  <div>
+                    <label className="text-xs font-medium text-foreground block mb-1.5">Teams-lenke (valgfritt)</label>
+                    <input type="url" value={interviewTeamsLink} onChange={e => setInterviewTeamsLink(e.target.value)}
+                      placeholder="https://teams.microsoft.com/l/meetup-join/..."
+                      className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                  </div>
+                )}
+
+                {interviewType === "fysisk" && (
+                  <div>
+                    <label className="text-xs font-medium text-foreground block mb-1.5">Sted / adresse</label>
+                    <input type="text" value={interviewLocation} onChange={e => setInterviewLocation(e.target.value)}
+                      placeholder="F.eks: Oscars gate 2B, 3714 Skien"
+                      className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                  </div>
+                )}
+
+                <p className="text-[10px] text-muted-foreground">
+                  {interviewType === "standard"
+                    ? "E-posten ber kandidaten foreslå tidspunkter. Ditt navn, e-post og telefon legges ved."
+                    : "E-posten vil inneholde intervjudetaljer og dine kontaktopplysninger."}
+                </p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Avbryt</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmInterviewInvitation}>
-              Send innkalling
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={interviewSending}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction disabled={interviewSending} onClick={async (e) => { e.preventDefault(); await confirmInterviewInvitation(); }}>
+              {interviewSending ? <><Loader2 size={14} className="animate-spin mr-1" /> Sender…</> : "Send innkalling"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
