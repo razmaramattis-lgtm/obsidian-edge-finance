@@ -34,7 +34,7 @@ function scoreText(query: string, ...fields: (string | null | undefined)[]): num
   return score;
 }
 
-function extractSnippet(content: string, query: string, maxLen = 400): string {
+function extractSnippet(content: string, query: string, maxLen = 600): string {
   const plain = (content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   if (!plain) return "(Ingen innhold)";
   const q = normalize(query);
@@ -59,135 +59,120 @@ function extractSnippet(content: string, query: string, maxLen = 400): string {
   return snippet + (bestIdx + maxLen < plain.length ? "…" : "");
 }
 
+function limitWords(text: string, max = 200): string {
+  const words = text.split(/\s+/);
+  if (words.length <= max) return text;
+  return words.slice(0, max).join(" ") + "…";
+}
+
+// Category keys map to database sources
+const CATEGORY_SOURCES: Record<string, string[]> = {
+  kontoplan: ["account_entries"],
+  regnskapsord: ["glossary_terms"],
+  dokumentmaler: ["document_templates"],
+  arkiv: ["archive_files", "internal_resources"],
+  datasenter: ["knowledge_materials"],
+  hms: ["hms_documents"],
+  personalhandbok: ["hr_handbook"],
+  samarbeidsavtaler: ["collaboration_agreements"],
+  alt: ["account_entries", "glossary_terms", "document_templates", "archive_files", "internal_resources", "knowledge_materials", "hms_documents", "hr_handbook", "collaboration_agreements"],
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, category } = await req.json();
     const lastMessage = messages?.filter((m: any) => m.role === "user").pop()?.content || "";
 
     if (!lastMessage.trim()) {
-      return respondStream("Hei! Jeg er Ava. Still meg et spørsmål, så søker jeg gjennom hele oppslagsverket for deg. 📚");
+      return respondStream("Hei! Jeg er Ava. Velg en kategori og still meg et spørsmål — jeg finner frem det du trenger. 📚");
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch ALL org resource sources in parallel
-    const [hmsRes, internalRes, archiveRes, knowledgeRes, hrHandbookRes, collabRes, glossaryRes, docTemplatesRes, accountEntriesRes] = await Promise.all([
-      sb.from("hms_documents").select("title, content"),
-      sb.from("internal_resources").select("title, description, category, file_name, file_url"),
-      sb.from("archive_files").select("name, description, category, file_name, file_url").eq("active", true),
-      sb.from("knowledge_materials").select("title, content, category").eq("active", true),
-      sb.from("hr_handbook").select("title, content, sort_order").order("sort_order"),
-      sb.from("collaboration_agreements").select("title, company, contact_name, offering, description"),
-      sb.from("glossary_terms").select("term, description, slug").eq("active", true),
-      sb.from("document_templates").select("title, description, category, content").eq("active", true),
-      sb.from("account_entries").select("account_number, name, description, category_group, examples, mva_status, tags").eq("active", true),
-    ]);
+    const cat = category || "alt";
+    const sources = CATEGORY_SOURCES[cat] || CATEGORY_SOURCES["alt"];
+
+    // Build parallel queries based on selected sources
+    const queries: Record<string, Promise<any>> = {};
+    if (sources.includes("hms_documents")) queries.hms = sb.from("hms_documents").select("title, content");
+    if (sources.includes("internal_resources")) queries.internal = sb.from("internal_resources").select("title, description, category, file_name, file_url");
+    if (sources.includes("archive_files")) queries.archive = sb.from("archive_files").select("name, description, category, file_name, file_url").eq("active", true);
+    if (sources.includes("knowledge_materials")) queries.knowledge = sb.from("knowledge_materials").select("title, content, category").eq("active", true);
+    if (sources.includes("hr_handbook")) queries.hr = sb.from("hr_handbook").select("title, content, sort_order").order("sort_order");
+    if (sources.includes("collaboration_agreements")) queries.collab = sb.from("collaboration_agreements").select("title, company, contact_name, offering, description");
+    if (sources.includes("glossary_terms")) queries.glossary = sb.from("glossary_terms").select("term, description, slug").eq("active", true);
+    if (sources.includes("document_templates")) queries.templates = sb.from("document_templates").select("title, description, category, content").eq("active", true);
+    if (sources.includes("account_entries")) queries.accounts = sb.from("account_entries").select("account_number, name, description, category_group, examples, mva_status, tags").eq("active", true);
+
+    const keys = Object.keys(queries);
+    const responses = await Promise.all(Object.values(queries));
+    const dataMap: Record<string, any[]> = {};
+    keys.forEach((k, i) => { dataMap[k] = responses[i].data || []; });
 
     const results: ScoredResult[] = [];
 
-    // HMS documents
-    for (const doc of hmsRes.data || []) {
+    // HMS
+    for (const doc of dataMap.hms || []) {
       const s = scoreText(lastMessage, doc.title, doc.content);
-      if (s > 0) results.push({
-        source: "HMS-håndbok", title: doc.title, score: s,
-        snippet: extractSnippet(doc.content || "", lastMessage),
-      });
+      if (s > 0) results.push({ source: "HMS-håndbok", title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-
     // Internal resources
-    for (const doc of internalRes.data || []) {
+    for (const doc of dataMap.internal || []) {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category);
-      if (s > 0) results.push({
-        source: "Intern ressurs", title: doc.title, score: s,
-        snippet: doc.description || doc.category || "",
-        downloadUrl: doc.file_url || undefined,
-        fileName: doc.file_name || undefined,
-      });
+      if (s > 0) results.push({ source: "Intern ressurs", title: doc.title, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || undefined });
     }
-
-    // Archive files
-    for (const doc of archiveRes.data || []) {
+    // Archive
+    for (const doc of dataMap.archive || []) {
       const s = scoreText(lastMessage, doc.name, doc.description, doc.category);
-      if (s > 0) results.push({
-        source: "Arkiv", title: doc.name, score: s,
-        snippet: doc.description || doc.category || "",
-        downloadUrl: doc.file_url || undefined,
-        fileName: doc.file_name || undefined,
-      });
+      if (s > 0) results.push({ source: "Arkiv", title: doc.name, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || undefined });
     }
-
-    // Knowledge materials
-    for (const doc of knowledgeRes.data || []) {
+    // Knowledge
+    for (const doc of dataMap.knowledge || []) {
       const s = scoreText(lastMessage, doc.title, doc.content, doc.category);
-      if (s > 0) results.push({
-        source: `Datasenter (${doc.category || "Generelt"})`, title: doc.title, score: s,
-        snippet: extractSnippet(doc.content || "", lastMessage),
-      });
+      if (s > 0) results.push({ source: `Datasenter (${doc.category || "Generelt"})`, title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-
     // HR handbook
-    for (const doc of hrHandbookRes.data || []) {
+    for (const doc of dataMap.hr || []) {
       const s = scoreText(lastMessage, doc.title, doc.content);
-      if (s > 0) results.push({
-        source: "Personalhåndbok", title: doc.title, score: s,
-        snippet: extractSnippet(doc.content || "", lastMessage),
-      });
+      if (s > 0) results.push({ source: "Personalhåndbok", title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-
-    // Collaboration agreements
-    for (const doc of collabRes.data || []) {
+    // Collaboration
+    for (const doc of dataMap.collab || []) {
       const s = scoreText(lastMessage, doc.title, doc.company, doc.offering, doc.description);
-      if (s > 0) results.push({
-        source: "Samarbeidsavtale", title: doc.title, score: s,
-        snippet: [doc.company, doc.offering, doc.description].filter(Boolean).join(" — "),
-      });
+      if (s > 0) results.push({ source: "Samarbeidsavtale", title: doc.title, score: s, snippet: [doc.company, doc.offering, doc.description].filter(Boolean).join(" — ") });
     }
-
-    // Glossary terms
-    for (const doc of glossaryRes.data || []) {
+    // Glossary
+    for (const doc of dataMap.glossary || []) {
       const s = scoreText(lastMessage, doc.term, doc.description);
-      if (s > 0) results.push({
-        source: "Regnskapsord", title: doc.term, score: s,
-        snippet: extractSnippet(doc.description || "", lastMessage),
-      });
+      if (s > 0) results.push({ source: "Regnskapsord", title: doc.term, score: s, snippet: extractSnippet(doc.description || "", lastMessage) });
     }
-
     // Document templates
-    for (const doc of docTemplatesRes.data || []) {
+    for (const doc of dataMap.templates || []) {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category, doc.content);
-      if (s > 0) results.push({
-        source: "Dokumentmal", title: doc.title, score: s,
-        snippet: doc.description || extractSnippet(doc.content || "", lastMessage, 200),
-      });
+      if (s > 0) results.push({ source: "Dokumentmal", title: doc.title, score: s, snippet: doc.description || extractSnippet(doc.content || "", lastMessage, 200) });
     }
-
-    // Account entries (Kontohjelp)
-    for (const doc of accountEntriesRes.data || []) {
+    // Account entries
+    for (const doc of dataMap.accounts || []) {
       const examplesStr = (doc.examples || []).join(", ");
       const tagsStr = (doc.tags || []).join(", ");
       const s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr, tagsStr);
-      if (s > 0) results.push({
-        source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s,
-        snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}`,
-      });
+      if (s > 0) results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: doc.description || `Konto ${doc.account_number}: ${doc.name}. MVA: ${doc.mva_status}. ${examplesStr ? "Eksempler: " + examplesStr : ""}` });
     }
 
-    // Sort by score
     results.sort((a, b) => b.score - a.score);
 
     if (results.length === 0) {
-      return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i oppslagsverket. Prøv å formulere spørsmålet annerledes, eller kontakt en kollega for hjelp.`);
+      return respondStream(`Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`);
     }
 
-    // Take only the single best result
     const best = results[0];
     let answer = `### 📄 ${best.title}\n`;
     answer += `*Kilde: ${best.source}*\n\n`;
-    answer += `${best.snippet}\n`;
+    answer += `${limitWords(best.snippet, 200)}\n`;
     if (best.downloadUrl) {
       answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
     }
