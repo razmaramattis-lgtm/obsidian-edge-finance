@@ -1868,6 +1868,72 @@ export type Database = {
         }
         Relationships: []
       }
+      open_applications: {
+        Row: {
+          address: string | null
+          admin_note: string | null
+          available_from: string | null
+          city: string | null
+          created_at: string
+          cv_file_name: string | null
+          cv_url: string | null
+          date_of_birth: string | null
+          email: string
+          full_name: string
+          id: string
+          linkedin_url: string | null
+          message: string | null
+          phone: string
+          portfolio_url: string | null
+          postal_code: string | null
+          preferred_category: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          admin_note?: string | null
+          available_from?: string | null
+          city?: string | null
+          created_at?: string
+          cv_file_name?: string | null
+          cv_url?: string | null
+          date_of_birth?: string | null
+          email: string
+          full_name: string
+          id?: string
+          linkedin_url?: string | null
+          message?: string | null
+          phone: string
+          portfolio_url?: string | null
+          postal_code?: string | null
+          preferred_category?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          admin_note?: string | null
+          available_from?: string | null
+          city?: string | null
+          created_at?: string
+          cv_file_name?: string | null
+          cv_url?: string | null
+          date_of_birth?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          linkedin_url?: string | null
+          message?: string | null
+          phone?: string
+          portfolio_url?: string | null
+          postal_code?: string | null
+          preferred_category?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partnership_requests: {
         Row: {
           admin_note: string | null

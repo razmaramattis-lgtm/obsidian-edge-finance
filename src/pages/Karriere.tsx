@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { Briefcase, MapPin, Clock, ArrowRight, Search, Building2 } from "lucide-react";
+import { Briefcase, MapPin, Clock, ArrowRight, Search, Building2, Send, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import OpenApplicationDialog from "@/components/OpenApplicationDialog";
 
 interface JobListing {
   id: string;
@@ -171,6 +172,29 @@ const Karriere = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Open application CTA */}
+      <section className="py-20 md:py-28">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-6">
+              <Sparkles size={13} /> Fant du ikke drømmejobben?
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Send en åpen søknad</h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
+              Vi er alltid på utkikk etter dyktige mennesker. Fortell oss om deg selv, så tar vi kontakt når vi har en passende stilling.
+            </p>
+            <OpenApplicationDialog
+              trigger={
+                <button className="h-13 px-8 bg-primary text-primary-foreground rounded-2xl text-base font-medium hover:opacity-90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 mx-auto">
+                  <Send size={16} /> Søk åpent hos Avargo
+                </button>
+              }
+            />
+          </motion.div>
         </div>
       </section>
     </>
