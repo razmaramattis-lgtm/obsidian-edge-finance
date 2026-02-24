@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { Briefcase, MapPin, Clock, ArrowRight, Search, Building2, Send, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
-import OpenApplicationDialog from "@/components/OpenApplicationDialog";
+import { Briefcase, MapPin, Clock, ArrowRight, Search, Building2, Send, Sparkles, User, Mail, Phone, Linkedin, Globe, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import CvUpload from "@/components/CvUpload";
+import openAppBg from "@/assets/karriere-open-application-bg.jpg";
 
 interface JobListing {
   id: string;
@@ -21,12 +22,25 @@ interface JobListing {
 }
 
 const CATEGORIES = ["Alle", "Regnskap", "Personal", "Marked", "IT"];
+const DEPT_OPTIONS = ["Regnskap", "Personal", "Marked", "IT"];
 
 const Karriere = () => {
   const [jobs, setJobs] = useState<JobListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCat, setActiveCat] = useState("Alle");
   const [search, setSearch] = useState("");
+
+  // Open application form state
+  const [openForm, setOpenForm] = useState({
+    full_name: "", email: "", phone: "",
+    linkedin_url: "", portfolio_url: "",
+    preferred_category: "",
+    message: "",
+  });
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [cvFileName, setCvFileName] = useState<string | null>(null);
+  const [openSubmitting, setOpenSubmitting] = useState(false);
+  const [openSubmitted, setOpenSubmitted] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -47,6 +61,35 @@ const Karriere = () => {
     const matchSearch = j.title.toLowerCase().includes(search.toLowerCase()) || j.location.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
+
+  const submitOpenApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!openForm.full_name.trim() || !openForm.email.trim() || !openForm.phone.trim()) {
+      return;
+    }
+    setOpenSubmitting(true);
+    const { error } = await supabase.from("open_applications").insert([{
+      full_name: openForm.full_name.trim(),
+      email: openForm.email.trim(),
+      phone: openForm.phone.trim(),
+      linkedin_url: openForm.linkedin_url.trim() || null,
+      portfolio_url: openForm.portfolio_url.trim() || null,
+      preferred_category: openForm.preferred_category || null,
+      message: openForm.message.trim() || null,
+      cv_url: cvUrl,
+      cv_file_name: cvFileName,
+    }]);
+    if (error) {
+      const { toast } = await import("sonner");
+      toast.error("Noe gikk galt. Prøv igjen.");
+    } else {
+      setOpenSubmitted(true);
+    }
+    setOpenSubmitting(false);
+  };
+
+  const setField = (key: string, val: string) => setOpenForm(prev => ({ ...prev, [key]: val }));
+  const inputClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all";
 
   return (
     <>
@@ -175,26 +218,140 @@ const Karriere = () => {
         </div>
       </section>
 
-      {/* Open application CTA */}
-      <section className="py-20 md:py-28">
-        <div className="container mx-auto px-4">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-6">
-              <Sparkles size={13} /> Fant du ikke drømmejobben?
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Send en åpen søknad</h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
-              Vi er alltid på utkikk etter dyktige mennesker. Fortell oss om deg selv, så tar vi kontakt når vi har en passende stilling.
-            </p>
-            <OpenApplicationDialog
-              trigger={
-                <button className="h-13 px-8 bg-primary text-primary-foreground rounded-2xl text-base font-medium hover:opacity-90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 mx-auto">
-                  <Send size={16} /> Søk åpent hos Avargo
-                </button>
-              }
-            />
-          </motion.div>
+      {/* Open Application — immersive section */}
+      <section className="relative min-h-[700px] overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img src={openAppBg} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10 py-20 md:py-28">
+          <div className="grid lg:grid-cols-[1fr_440px] gap-12 lg:gap-16 items-center">
+            {/* Left — copy */}
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-6 backdrop-blur-sm">
+                <Sparkles size={13} /> Åpen søknad
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 leading-tight">
+                Fant du ikke<br />drømmejobben?
+              </h2>
+              <p className="text-lg text-white/70 max-w-md leading-relaxed mb-8">
+                Vi er alltid på utkikk etter dyktige mennesker som vil være med å bygge fremtidens rådgivning. 
+                Fortell oss hvem du er — det tar under 2 minutter.
+              </p>
+              <div className="space-y-3">
+                {[
+                  "Superenkelt — bare fyll ut og send",
+                  "Legg ved CV eller LinkedIn-profil",
+                  "Vi matcher deg med riktig stilling",
+                ].map((text, i) => (
+                  <div key={i} className="flex items-center gap-3 text-white/80">
+                    <CheckCircle2 size={16} className="text-primary shrink-0" />
+                    <span className="text-sm">{text}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Right — form */}
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.7 }}>
+              <AnimatePresence mode="wait">
+                {openSubmitted ? (
+                  <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} 
+                    className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl p-8 text-center">
+                    <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-5">
+                      <Sparkles size={32} className="text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">Søknaden er sendt!</h3>
+                    <p className="text-sm text-white/60 max-w-xs mx-auto">Takk for interessen. Vi gjennomgår søknaden din og tar kontakt dersom vi har en passende stilling.</p>
+                  </motion.div>
+                ) : (
+                  <motion.form key="form" onSubmit={submitOpenApplication}
+                    className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl p-6 md:p-8 space-y-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-0.5">Søk åpent hos Avargo</h3>
+                      <p className="text-xs text-white/50">Fyll ut det du kan — resten ordner vi.</p>
+                    </div>
+
+                    {/* Name + Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative">
+                        <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        <input value={openForm.full_name} onChange={e => setField("full_name", e.target.value)} required
+                          placeholder="Fullt navn *" maxLength={100} className={inputClass} />
+                      </div>
+                      <div className="relative">
+                        <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        <input type="email" value={openForm.email} onChange={e => setField("email", e.target.value)} required
+                          placeholder="E-post *" maxLength={255} className={inputClass} />
+                      </div>
+                    </div>
+
+                    {/* Phone + LinkedIn */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative">
+                        <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        <input type="tel" value={openForm.phone} onChange={e => setField("phone", e.target.value)} required
+                          placeholder="Telefon *" maxLength={20} className={inputClass} />
+                      </div>
+                      <div className="relative">
+                        <Linkedin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        <input value={openForm.linkedin_url} onChange={e => setField("linkedin_url", e.target.value)}
+                          placeholder="LinkedIn-profil" maxLength={500} className={inputClass} />
+                      </div>
+                    </div>
+
+                    {/* Portfolio */}
+                    <div className="relative">
+                      <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                      <input value={openForm.portfolio_url} onChange={e => setField("portfolio_url", e.target.value)}
+                        placeholder="Portefølje / nettside (valgfritt)" maxLength={500} className={inputClass} />
+                    </div>
+
+                    {/* Department preference */}
+                    <div>
+                      <p className="text-xs text-white/50 mb-2">Hvilken avdeling interesserer deg?</p>
+                      <div className="flex flex-wrap gap-2">
+                        {DEPT_OPTIONS.map(cat => (
+                          <button key={cat} type="button" onClick={() => setField("preferred_category", openForm.preferred_category === cat ? "" : cat)}
+                            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                              openForm.preferred_category === cat
+                                ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
+                                : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white"
+                            }`}>{cat}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* CV Upload */}
+                    <div>
+                      <p className="text-xs text-white/50 mb-2">Last opp CV (PDF / Word)</p>
+                      <CvUpload
+                        cvUrl={cvUrl}
+                        cvFileName={cvFileName}
+                        onUploaded={(url, name) => { setCvUrl(url); setCvFileName(name); }}
+                        onRemove={() => { setCvUrl(null); setCvFileName(null); }}
+                      />
+                    </div>
+
+                    {/* Message */}
+                    <textarea value={openForm.message} onChange={e => setField("message", e.target.value)}
+                      placeholder="Kort om deg selv, din motivasjon og hva du kan bidra med…"
+                      rows={3} maxLength={3000}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" />
+
+                    {/* Submit */}
+                    <button type="submit" disabled={openSubmitting}
+                      className="w-full h-12 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+                      {openSubmitting ? "Sender…" : <><Send size={15} /> Send åpen søknad</>}
+                    </button>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </div>
       </section>
     </>
