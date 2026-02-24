@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Menu, X, ArrowLeft, ChevronRight, BookOpen, GraduationCap, Users, Briefcase, Sparkles } from "lucide-react";
+import { Menu, X, ArrowLeft, ChevronRight, BookOpen, GraduationCap, Users, Briefcase, Sparkles, Calculator } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import patternImg from "@/assets/kurs-pattern.jpg";
 
 const NAV_ITEMS = [
   { label: "Hjem", path: "/kurs", icon: Sparkles },
   { label: "Kurskatalog", path: "/kurs/katalog", icon: BookOpen },
+  { label: "Regnskapskurs", path: "/kurs/regnskap", icon: Calculator },
   { label: "Bedriftskurs", path: "/kurs/bedriftskurs", icon: Briefcase },
   { label: "HR-kurs", path: "/kurs/hr-kurs", icon: Users },
   { label: "Om kursene", path: "/kurs/om", icon: GraduationCap },
