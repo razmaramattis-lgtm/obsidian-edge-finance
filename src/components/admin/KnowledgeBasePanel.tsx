@@ -420,12 +420,29 @@ const KnowledgeBasePanel = () => {
                           const text = String(children);
                           const isDownload = text.includes("📥") || (href && href.includes("/storage/"));
                           if (isDownload && href) {
+                            const handleForceDownload = async (e: React.MouseEvent) => {
+                              e.preventDefault();
+                              try {
+                                const res = await fetch(href);
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = text.replace("📥 ", "").replace("Last ned ", "") || "fil";
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                              } catch {
+                                window.location.href = href;
+                              }
+                            };
                             return (
-                              <a href={href} target="_blank" rel="noreferrer"
-                                className="no-underline inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium mt-1 mb-1">
+                              <button onClick={handleForceDownload}
+                                className="no-underline inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-medium mt-1 mb-1 cursor-pointer border-0">
                                 <Download size={13} />
                                 {text.replace("📥 ", "")}
-                              </a>
+                              </button>
                             );
                           }
                           return <a href={href} target="_blank" rel="noreferrer" className="text-primary hover:underline">{children}</a>;
