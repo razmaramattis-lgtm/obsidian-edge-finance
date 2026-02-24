@@ -27,8 +27,8 @@ const TIMELINE = [
   },
   {
     icon: Monitor,
-    title: "Bli kjent med adminpanelet",
-    description: "Logg inn på adminpanelet ditt og utforsk verktøyene. Her finner du alt fra chat, dokumenter og ressurser til samarbeidsavtaler og fordeler.",
+    title: "Få tilgang til adminpanelet",
+    description: "Så fort arbeidsavtalen er signert, vil du motta innlogging til adminpanelet ditt. Der finner du alt fra chat, dokumenter og ressurser til samarbeidsavtaler og fordeler.",
     accent: "from-secondary to-secondary/60",
   },
   {
