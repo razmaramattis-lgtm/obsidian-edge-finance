@@ -151,6 +151,32 @@ const KarriereDetalj = () => {
       <Helmet>
         <title>{job.title} | Jobb hos Avargo</title>
         <meta name="description" content={job.intro || `Se stillingen ${job.title} hos Avargo`} />
+        <link rel="canonical" href={`https://avargo.no/karriere/${job.slug}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": job.title,
+          "description": job.intro || job.description || "",
+          "datePosted": new Date().toISOString().split("T")[0],
+          ...(job.deadline ? { "validThrough": job.deadline } : {}),
+          "employmentType": job.employment_type?.includes("heltid") ? "FULL_TIME" : "OTHER",
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": job.location?.includes("Skien") ? "Skien" : job.location,
+              "addressCountry": "NO"
+            }
+          },
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": "Avargo",
+            "sameAs": "https://avargo.no",
+            "logo": "https://avargo.no/logo.png"
+          },
+          "jobLocationType": job.work_location?.includes("Remote") ? "TELECOMMUTE" : undefined,
+          "applicantLocationRequirements": job.work_location?.includes("Remote") ? { "@type": "Country", "name": "Norway" } : undefined,
+        })}</script>
       </Helmet>
 
       {/* Fullwidth Hero */}
