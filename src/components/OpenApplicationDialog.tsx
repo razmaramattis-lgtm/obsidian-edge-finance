@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Send, User, Mail, Phone, MapPin, Linkedin, Globe, Calendar, Briefcase, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import CvUpload from "@/components/CvUpload";
 
 const CATEGORIES = ["Regnskap", "Personal", "Marked", "IT", "Annet"];
 
@@ -16,6 +17,8 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "",
     address: "", city: "", postal_code: "",
@@ -44,6 +47,8 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
       preferred_category: form.preferred_category || null,
       available_from: form.available_from.trim() || null,
       message: form.message.trim() || null,
+      cv_url: cvUrl,
+      cv_file_name: cvFileName,
     }]);
     if (error) {
       toast.error("Noe gikk galt. Prøv igjen.");
@@ -56,7 +61,7 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
 
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
-    if (!v) { setStep(0); setSubmitted(false); setForm({ full_name: "", email: "", phone: "", address: "", city: "", postal_code: "", linkedin_url: "", portfolio_url: "", preferred_category: "", available_from: "", message: "" }); }
+    if (!v) { setStep(0); setSubmitted(false); setCvUrl(null); setCvFileName(null); setForm({ full_name: "", email: "", phone: "", address: "", city: "", postal_code: "", linkedin_url: "", portfolio_url: "", preferred_category: "", available_from: "", message: "" }); }
   };
 
   const inputClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all";
@@ -167,12 +172,21 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
       title: "Hvorfor Avargo?",
       subtitle: "Fortell oss hva som driver deg",
       content: (
-        <div className="space-y-3">
+        <div className="space-y-4">
+          <div>
+            <label className={labelClass}>Last opp CV</label>
+            <CvUpload
+              cvUrl={cvUrl}
+              cvFileName={cvFileName}
+              onUploaded={(url, name) => { setCvUrl(url); setCvFileName(name); }}
+              onRemove={() => { setCvUrl(null); setCvFileName(null); }}
+            />
+          </div>
           <div>
             <label className={labelClass}>Fortell oss om deg selv og hvorfor du vil jobbe hos Avargo</label>
             <textarea value={form.message} onChange={e => set("message", e.target.value)}
               placeholder="Hva motiverer deg? Hvilken erfaring har du? Hva kan du bidra med?"
-              rows={6} maxLength={3000}
+              rows={5} maxLength={3000}
               className="w-full rounded-xl border border-border/20 bg-muted/20 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
           </div>
         </div>
