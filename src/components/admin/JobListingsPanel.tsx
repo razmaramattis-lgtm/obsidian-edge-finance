@@ -4,6 +4,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox, Mail, Phone, Calendar, MapPin, User, ExternalLink, MessageSquare, Clock, Download, CheckSquare, Square, Filter, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface JobListing {
   id: string; title: string; slug: string; category: string; location: string;
@@ -113,6 +123,13 @@ const JobListingsPanel = () => {
   const [jobStatusFilter, setJobStatusFilter] = useState<string>("alle");
   const [selectedOpenApps, setSelectedOpenApps] = useState<Set<string>>(new Set());
   const [selectedJobApps, setSelectedJobApps] = useState<Set<string>>(new Set());
+  const [interviewConfirm, setInterviewConfirm] = useState<{
+    appId: string;
+    name: string;
+    email: string;
+    table: "job_applications" | "open_applications";
+    positionTitle?: string;
+  } | null>(null);
 
   const fetchAll = async () => {
     const [{ data: jobs }, { data: apps }, { data: opens }] = await Promise.all([
@@ -208,6 +225,36 @@ const JobListingsPanel = () => {
     }
   };
 
+  const sendInterviewInvitation = async (name: string, email: string, positionTitle?: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("interview-invitation", {
+        body: {
+          applicant_name: name,
+          applicant_email: email,
+          position_title: positionTitle || null,
+          sender_name: profile?.name || "Rekruttering",
+          sender_email: profile?.email || "kontakt@avargo.no",
+          sender_phone: profile?.phone || null,
+          sender_title: profile?.title || null,
+        },
+      });
+      if (error) throw error;
+      toast.success("Intervjuinnkalling sendt til " + name);
+    } catch (err) {
+      console.error("Interview invitation failed:", err);
+      toast.error("Kunne ikke sende intervjuinnkalling");
+    }
+  };
+
+  const confirmInterviewInvitation = async () => {
+    if (!interviewConfirm) return;
+    const { appId, name, email, table, positionTitle } = interviewConfirm;
+    await supabase.from(table).update({ status: "innkalt_intervju" }).eq("id", appId);
+    await sendInterviewInvitation(name, email, positionTitle);
+    setInterviewConfirm(null);
+    fetchAll();
+  };
+
   const hireApplicant = async (name: string, email: string) => {
     const tempPassword = crypto.randomUUID().slice(0, 12);
     try {
@@ -231,8 +278,13 @@ const JobListingsPanel = () => {
   };
 
   const updateAppStatus = async (appId: string, status: string) => {
-    await supabase.from("job_applications").update({ status }).eq("id", appId);
     const app = applications.find(a => a.id === appId);
+    if (app && status === "innkalt_intervju") {
+      const job = listings.find(j => j.id === app.job_listing_id);
+      setInterviewConfirm({ appId, name: app.full_name, email: app.email, table: "job_applications", positionTitle: job?.title });
+      return;
+    }
+    await supabase.from("job_applications").update({ status }).eq("id", appId);
     if (app) {
       if (status === "avslått") {
         const job = listings.find(j => j.id === app.job_listing_id);
@@ -256,8 +308,12 @@ const JobListingsPanel = () => {
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
   const updateOpenAppStatus = async (appId: string, status: string) => {
-    await supabase.from("open_applications").update({ status }).eq("id", appId);
     const app = openApps.find(a => a.id === appId);
+    if (app && status === "innkalt_intervju") {
+      setInterviewConfirm({ appId, name: app.full_name, email: app.email, table: "open_applications" });
+      return;
+    }
+    await supabase.from("open_applications").update({ status }).eq("id", appId);
     if (app) {
       if (status === "avslått") {
         sendRejectionEmail(app.full_name, app.email);
@@ -342,7 +398,8 @@ const JobListingsPanel = () => {
 
   const STATUS_LABELS: Record<string, string> = {
     ny: "Ny", kontaktet: "Kontaktet", under_vurdering: "Under vurdering",
-    intervju: "Under intervju", tilbud: "Tilbud", ansatt: "Ansatt", avslått: "Avslått",
+    innkalt_intervju: "Innkalt til intervju", intervju: "Under intervju",
+    tilbud: "Tilbud", ansatt: "Ansatt", avslått: "Avslått",
   };
 
   // Separate Avargo Fri from regular open apps
@@ -406,6 +463,7 @@ const JobListingsPanel = () => {
                   )}
                   <span className={`text-[9px] px-2 py-0.5 rounded-full ${
                     app.status === "ny" ? "bg-primary/10 text-primary" :
+                    app.status === "innkalt_intervju" ? "bg-emerald-100 text-emerald-700" :
                     app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
                     app.status === "avslått" ? "bg-destructive/10 text-destructive" :
                     app.status === "ansatt" ? "bg-primary/20 text-primary" :
@@ -546,6 +604,7 @@ const JobListingsPanel = () => {
                   <option value="ny">Ny</option>
                   <option value="kontaktet">Kontaktet</option>
                   <option value="under_vurdering">Under vurdering</option>
+                  <option value="innkalt_intervju">Innkalt til intervju</option>
                   <option value="intervju">Under intervju</option>
                   <option value="tilbud">Tilbud</option>
                   <option value="ansatt">Ansatt</option>
@@ -606,6 +665,7 @@ const JobListingsPanel = () => {
                 className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
                 <option value="alle">Alle statuser</option>
                 <option value="ny">Ny</option>
+                <option value="innkalt_intervju">Innkalt til intervju</option>
                 <option value="intervju">Under intervju</option>
                 <option value="avslått">Avslått</option>
                 <option value="under_vurdering">Under vurdering</option>
@@ -658,6 +718,7 @@ const JobListingsPanel = () => {
                           <span className="text-[9px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{app.jobTitle}</span>
                           <span className={`text-[9px] px-2 py-0.5 rounded-full ${
                             app.status === "ny" ? "bg-primary/10 text-primary" :
+                            app.status === "innkalt_intervju" ? "bg-emerald-100 text-emerald-700" :
                             app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
                             app.status === "avslått" ? "bg-destructive/10 text-destructive" :
                             app.status === "ansatt" ? "bg-primary/20 text-primary" :
@@ -769,6 +830,7 @@ const JobListingsPanel = () => {
                           className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
                           <option value="ny">Ny</option>
                           <option value="under_vurdering">Under vurdering</option>
+                          <option value="innkalt_intervju">Innkalt til intervju</option>
                           <option value="intervju">Under intervju</option>
                           <option value="tilbud">Tilbud sendt</option>
                           <option value="ansatt">Ansatt</option>
@@ -809,6 +871,7 @@ const JobListingsPanel = () => {
                 className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
                 <option value="alle">Alle statuser</option>
                 <option value="ny">Ny</option>
+                <option value="innkalt_intervju">Innkalt til intervju</option>
                 <option value="intervju">Under intervju</option>
                 <option value="avslått">Avslått</option>
                 <option value="kontaktet">Kontaktet</option>
@@ -858,6 +921,7 @@ const JobListingsPanel = () => {
                 className="h-8 rounded-lg border border-border/30 bg-muted/30 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30">
                 <option value="alle">Alle statuser</option>
                 <option value="ny">Ny</option>
+                <option value="innkalt_intervju">Innkalt til intervju</option>
                 <option value="intervju">Under intervju</option>
                 <option value="avslått">Avslått</option>
                 <option value="kontaktet">Kontaktet</option>
@@ -1169,6 +1233,7 @@ const JobListingsPanel = () => {
                         className="h-7 rounded-lg border border-border/30 bg-muted/30 px-2 text-[10px] focus:outline-none focus:ring-2 focus:ring-primary/30">
                         <option value="alle">Alle statuser</option>
                         <option value="ny">Ny</option>
+                        <option value="innkalt_intervju">Innkalt til intervju</option>
                         <option value="intervju">Under intervju</option>
                         <option value="avslått">Avslått</option>
                         <option value="under_vurdering">Under vurdering</option>
@@ -1213,6 +1278,7 @@ const JobListingsPanel = () => {
                                   <p className="text-xs font-medium">{app.full_name}</p>
                                   <span className={`text-[8px] px-1.5 py-0.5 rounded-full ${
                                     app.status === "ny" ? "bg-primary/10 text-primary" :
+                                    app.status === "innkalt_intervju" ? "bg-emerald-100 text-emerald-700" :
                                     app.status === "intervju" ? "bg-accent/50 text-accent-foreground" :
                                     app.status === "avslått" ? "bg-destructive/10 text-destructive" :
                                     app.status === "ansatt" ? "bg-primary/20 text-primary" :
@@ -1311,6 +1377,7 @@ const JobListingsPanel = () => {
                                   className="h-7 rounded-lg border border-border/30 bg-muted/30 px-2 text-[10px] focus:outline-none focus:ring-2 focus:ring-primary/30">
                                   <option value="ny">Ny</option>
                                   <option value="under_vurdering">Under vurdering</option>
+                                  <option value="innkalt_intervju">Innkalt til intervju</option>
                                   <option value="intervju">Under intervju</option>
                                   <option value="tilbud">Tilbud sendt</option>
                                   <option value="ansatt">Ansatt</option>
@@ -1348,6 +1415,27 @@ const JobListingsPanel = () => {
       </div>
       </>
       )}
+
+      {/* Interview invitation confirmation dialog */}
+      <AlertDialog open={!!interviewConfirm} onOpenChange={(open) => { if (!open) setInterviewConfirm(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send intervjuinnkalling?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dette vil sende en e-post til <strong>{interviewConfirm?.name}</strong> ({interviewConfirm?.email}) med innkalling til intervju.
+              {interviewConfirm?.positionTitle && <> Stillingen: <strong>{interviewConfirm.positionTitle}</strong>.</>}
+              <br /><br />
+              E-posten inneholder ditt navn, e-post og telefonnummer som kontaktinformasjon, og ber kandidaten foreslå tidspunkter for intervjuet.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmInterviewInvitation}>
+              Send innkalling
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
