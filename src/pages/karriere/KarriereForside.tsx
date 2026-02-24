@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,8 +48,13 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: strin
 };
 
 /* ── Horizontal scrolling image strip ── */
-const ImageMarquee = ({ images, reverse = false }: { images: { src: string; alt: string }[]; reverse?: boolean }) => (
-  <div className="overflow-hidden py-4">
+type ImageMarqueeProps = {
+  images: { src: string; alt: string }[];
+  reverse?: boolean;
+};
+
+const ImageMarquee = forwardRef<HTMLDivElement, ImageMarqueeProps>(({ images, reverse = false }, ref) => (
+  <div ref={ref} className="overflow-hidden py-4">
     <motion.div
       className="flex gap-4"
       animate={{ x: reverse ? ["0%", "-50%"] : ["-50%", "0%"] }}
@@ -62,7 +67,9 @@ const ImageMarquee = ({ images, reverse = false }: { images: { src: string; alt:
       ))}
     </motion.div>
   </div>
-);
+));
+
+ImageMarquee.displayName = "ImageMarquee";
 
 const KarriereForside = () => {
   const [jobCount, setJobCount] = useState(0);
