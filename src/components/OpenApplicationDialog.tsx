@@ -21,6 +21,7 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
   const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "",
+    date_of_birth: "",
     address: "", city: "", postal_code: "",
     linkedin_url: "", portfolio_url: "",
     preferred_category: "", available_from: "",
@@ -30,8 +31,12 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
   const set = (key: string, val: string) => setForm(prev => ({ ...prev, [key]: val }));
 
   const submit = async () => {
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast.error("Fyll ut navn, e-post og telefon.");
+    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim() || !form.date_of_birth || !form.message.trim()) {
+      toast.error("Fyll ut alle obligatoriske felt (navn, e-post, telefon, fødselsdato og søknadstekst).");
+      return;
+    }
+    if (!cvUrl) {
+      toast.error("Last opp CV før du sender søknaden.");
       return;
     }
     setSubmitting(true);
@@ -39,6 +44,7 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
       full_name: form.full_name.trim(),
       email: form.email.trim(),
       phone: form.phone.trim(),
+      date_of_birth: form.date_of_birth || null,
       address: form.address.trim() || null,
       city: form.city.trim() || null,
       postal_code: form.postal_code.trim() || null,
@@ -61,7 +67,7 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
 
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
-    if (!v) { setStep(0); setSubmitted(false); setCvUrl(null); setCvFileName(null); setForm({ full_name: "", email: "", phone: "", address: "", city: "", postal_code: "", linkedin_url: "", portfolio_url: "", preferred_category: "", available_from: "", message: "" }); }
+    if (!v) { setStep(0); setSubmitted(false); setCvUrl(null); setCvFileName(null); setForm({ full_name: "", email: "", phone: "", date_of_birth: "", address: "", city: "", postal_code: "", linkedin_url: "", portfolio_url: "", preferred_category: "", available_from: "", message: "" }); }
   };
 
   const inputClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all";
@@ -94,13 +100,13 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
                 <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                 <input type="tel" value={form.phone} onChange={e => set("phone", e.target.value)} required placeholder="Telefonnummer" maxLength={20} className={inputClass} />
               </div>
-            </div>
+           </div>
           </div>
           <div>
-            <label className={labelClass}>Fødselsdato</label>
+            <label className={labelClass}>Fødselsdato *</label>
             <div className="relative">
               <Calendar size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
-              <input type="date" value={form.available_from} onChange={e => set("available_from", e.target.value)} className={inputClass} />
+              <input type="date" value={form.date_of_birth} onChange={e => set("date_of_birth", e.target.value)} required className={inputClass} />
             </div>
           </div>
         </div>
@@ -112,21 +118,21 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
       content: (
         <div className="space-y-3">
           <div>
-            <label className={labelClass}>Adresse</label>
+            <label className={labelClass}>Adresse *</label>
             <div className="relative">
               <MapPin size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
-              <input value={form.address} onChange={e => set("address", e.target.value)} placeholder="Gate og husnummer" maxLength={200} className={inputClass} />
+              <input value={form.address} onChange={e => set("address", e.target.value)} required placeholder="Gate og husnummer" maxLength={200} className={inputClass} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelClass}>Postnummer</label>
-              <input value={form.postal_code} onChange={e => set("postal_code", e.target.value)} placeholder="0000" maxLength={10}
+              <label className={labelClass}>Postnummer *</label>
+              <input value={form.postal_code} onChange={e => set("postal_code", e.target.value)} required placeholder="0000" maxLength={10}
                 className="w-full h-11 px-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
             </div>
             <div>
-              <label className={labelClass}>Sted</label>
-              <input value={form.city} onChange={e => set("city", e.target.value)} placeholder="By / sted" maxLength={100}
+              <label className={labelClass}>Sted *</label>
+              <input value={form.city} onChange={e => set("city", e.target.value)} required placeholder="By / sted" maxLength={100}
                 className="w-full h-11 px-3 rounded-xl border border-border/20 bg-muted/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
             </div>
           </div>
@@ -174,7 +180,7 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
       content: (
         <div className="space-y-4">
           <div>
-            <label className={labelClass}>Last opp CV</label>
+            <label className={labelClass}>Last opp CV *</label>
             <CvUpload
               cvUrl={cvUrl}
               cvFileName={cvFileName}
@@ -183,8 +189,16 @@ const OpenApplicationDialog = ({ trigger }: OpenApplicationDialogProps) => {
             />
           </div>
           <div>
-            <label className={labelClass}>Fortell oss om deg selv og hvorfor du vil jobbe hos Avargo</label>
+            <label className={labelClass}>Tilgjengelig fra</label>
+            <div className="relative">
+              <Calendar size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
+              <input type="date" value={form.available_from} onChange={e => set("available_from", e.target.value)} className={inputClass} />
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Søknadstekst - Fortell oss om deg selv og hvorfor du vil jobbe hos Avargo *</label>
             <textarea value={form.message} onChange={e => set("message", e.target.value)}
+              required
               placeholder="Hva motiverer deg? Hvilken erfaring har du? Hva kan du bidra med?"
               rows={5} maxLength={3000}
               className="w-full rounded-xl border border-border/20 bg-muted/20 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />

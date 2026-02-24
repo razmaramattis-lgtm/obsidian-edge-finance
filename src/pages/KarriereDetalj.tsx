@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Clock, Briefcase, Building2, Users, Globe, ArrowLeft, Send, Mail, Phone, User, X, ChevronRight, Monitor } from "lucide-react";
+import { MapPin, Clock, Briefcase, Building2, Users, Globe, ArrowLeft, Send, Mail, Phone, User, X, ChevronRight, Monitor, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
@@ -54,7 +54,7 @@ const KarriereDetalj = () => {
   const { slug } = useParams<{ slug: string }>();
   const [job, setJob] = useState<JobListing | null>(null);
   const [loading, setLoading] = useState(true);
-  const [appForm, setAppForm] = useState({ full_name: "", email: "", phone: "", message: "" });
+  const [appForm, setAppForm] = useState({ full_name: "", email: "", phone: "", date_of_birth: "", address: "", city: "", postal_code: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [cvUrl, setCvUrl] = useState<string | null>(null);
@@ -80,12 +80,18 @@ const KarriereDetalj = () => {
   const submitApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!job) return;
+    if (!cvUrl) { toast.error("Last opp CV før du sender søknaden."); return; }
+    if (!appForm.message.trim()) { toast.error("Skriv en søknadstekst."); return; }
     setSubmitting(true);
     const { error } = await supabase.from("job_applications").insert([{
       job_listing_id: job.id,
       full_name: appForm.full_name.trim(),
       email: appForm.email.trim(),
       phone: appForm.phone.trim(),
+      date_of_birth: appForm.date_of_birth || null,
+      address: appForm.address.trim() || null,
+      city: appForm.city.trim() || null,
+      postal_code: appForm.postal_code.trim() || null,
       message: appForm.message.trim() || null,
       cv_url: cvUrl,
       cv_file_name: cvFileName,
@@ -369,7 +375,41 @@ const KarriereDetalj = () => {
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Last opp CV (PDF / Word)</label>
+                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Fødselsdato *</label>
+                      <div className="relative">
+                        <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                        <input type="date" value={appForm.date_of_birth} onChange={e => setAppForm({ ...appForm, date_of_birth: e.target.value })} required
+                          className="w-full h-11 pl-9 pr-3 rounded-xl border border-border/20 bg-muted/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Adresse *</label>
+                      <div className="relative">
+                        <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                        <input value={appForm.address} onChange={e => setAppForm({ ...appForm, address: e.target.value })} required
+                          placeholder="Gate og husnummer" maxLength={200}
+                          className="w-full h-11 pl-9 pr-3 rounded-xl border border-border/20 bg-muted/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Postnummer *</label>
+                        <input value={appForm.postal_code} onChange={e => setAppForm({ ...appForm, postal_code: e.target.value })} required
+                          placeholder="0000" maxLength={10}
+                          className="w-full h-11 px-3 rounded-xl border border-border/20 bg-muted/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Sted *</label>
+                        <input value={appForm.city} onChange={e => setAppForm({ ...appForm, city: e.target.value })} required
+                          placeholder="By / sted" maxLength={100}
+                          className="w-full h-11 px-3 rounded-xl border border-border/20 bg-muted/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Last opp CV (PDF / Word) *</label>
                       <CvUpload
                         cvUrl={cvUrl}
                         cvFileName={cvFileName}
@@ -379,8 +419,8 @@ const KarriereDetalj = () => {
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Melding (valgfritt)</label>
-                      <textarea value={appForm.message} onChange={e => setAppForm({ ...appForm, message: e.target.value })}
+                      <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Søknadstekst *</label>
+                      <textarea value={appForm.message} onChange={e => setAppForm({ ...appForm, message: e.target.value })} required
                         placeholder="Fortell litt om deg selv og hvorfor du søker…" rows={5} maxLength={2000}
                         className="w-full rounded-xl border border-border/20 bg-muted/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-all" />
                     </div>

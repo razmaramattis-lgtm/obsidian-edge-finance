@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox, Mail, Phone, Calendar, MapPin, User, ExternalLink, MessageSquare, Clock, Download, CheckSquare, Square, Filter } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox, Mail, Phone, Calendar, MapPin, User, ExternalLink, MessageSquare, Clock, Download, CheckSquare, Square, Filter, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 
@@ -19,6 +20,8 @@ interface JobApplication {
   id: string; job_listing_id: string; full_name: string; email: string; phone: string;
   message: string | null; cv_file_name: string | null; cv_url: string | null;
   status: string; admin_note: string | null; created_at: string;
+  address: string | null; city: string | null; postal_code: string | null;
+  date_of_birth: string | null;
 }
 
 interface OpenApplication {
@@ -86,6 +89,7 @@ const emptyForm = {
 };
 
 const JobListingsPanel = () => {
+  const { profile } = useAuth();
   const [listings, setListings] = useState<JobListing[]>([]);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [openApps, setOpenApps] = useState<OpenApplication[]>([]);
@@ -204,13 +208,38 @@ const JobListingsPanel = () => {
     }
   };
 
+  const hireApplicant = async (name: string, email: string) => {
+    const tempPassword = crypto.randomUUID().slice(0, 12);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-employee", {
+        body: {
+          email,
+          password: tempPassword,
+          name,
+          role: "employee",
+          approver_name: profile?.name || "Avargo",
+          approver_title: profile?.title || "Rekruttering",
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${name} er opprettet som ansatt og har mottatt innloggingsdetaljer`);
+    } catch (err: any) {
+      console.error("Hire error:", err);
+      toast.error("Kunne ikke opprette ansatt: " + (err.message || "Ukjent feil"));
+    }
+  };
+
   const updateAppStatus = async (appId: string, status: string) => {
     await supabase.from("job_applications").update({ status }).eq("id", appId);
-    if (status === "avslått") {
-      const app = applications.find(a => a.id === appId);
-      if (app) {
+    const app = applications.find(a => a.id === appId);
+    if (app) {
+      if (status === "avslått") {
         const job = listings.find(j => j.id === app.job_listing_id);
         sendRejectionEmail(app.full_name, app.email, job?.title);
+      }
+      if (status === "ansatt") {
+        await hireApplicant(app.full_name, app.email);
       }
     }
     fetchAll();
@@ -228,10 +257,13 @@ const JobListingsPanel = () => {
 
   const updateOpenAppStatus = async (appId: string, status: string) => {
     await supabase.from("open_applications").update({ status }).eq("id", appId);
-    if (status === "avslått") {
-      const app = openApps.find(a => a.id === appId);
-      if (app) {
+    const app = openApps.find(a => a.id === appId);
+    if (app) {
+      if (status === "avslått") {
         sendRejectionEmail(app.full_name, app.email);
+      }
+      if (status === "ansatt") {
+        await hireApplicant(app.full_name, app.email);
       }
     }
     fetchAll();
@@ -676,6 +708,24 @@ const JobListingsPanel = () => {
                           <p className="text-xs">{app.jobTitle} ({app.jobCategory})</p>
                         </div>
                       </div>
+                      {app.date_of_birth && (
+                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                          <User size={14} className="text-primary shrink-0" />
+                          <div>
+                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Fødselsdato</p>
+                            <p className="text-xs">{new Date(app.date_of_birth).toLocaleDateString("nb-NO")}</p>
+                          </div>
+                        </div>
+                      )}
+                      {(app.address || app.city) && (
+                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-background/50 border border-border/10">
+                          <MapPin size={14} className="text-primary shrink-0" />
+                          <div>
+                            <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider">Adresse</p>
+                            <p className="text-xs">{[app.address, app.postal_code, app.city].filter(Boolean).join(", ")}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {app.cv_file_name && (

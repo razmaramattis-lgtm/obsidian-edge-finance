@@ -67,7 +67,7 @@ async function sendEmail(opts: {
   }
 }
 
-function buildWelcomeEmail(name: string, email: string, password: string, role: string) {
+function buildWelcomeEmail(name: string, email: string, password: string, role: string, approverName?: string, approverTitle?: string) {
   const isCustomer = role === "customer";
   const roleLabel = isCustomer ? "kunde" : role === "admin" ? "administrator" : "medarbeider";
   const loginUrl = isCustomer
@@ -75,69 +75,97 @@ function buildWelcomeEmail(name: string, email: string, password: string, role: 
     : "https://obsidian-edge-finance.lovable.app/admin/logg-inn";
   const portalName = isCustomer ? "kundeportalen" : "admin-portalen";
   const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" });
+  const firstName = name.split(" ")[0];
+  const sigName = approverName || "Teamet i Avargo";
+  const sigTitle = approverTitle ? `<br/>${approverTitle}` : "";
 
-  return `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#fff;">
-    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:36px 32px;border-radius:12px 12px 0 0;text-align:center;">
-      <h1 style="color:#fff;margin:0;font-size:26px;font-weight:700;">Velkommen til Avargo! 🎉</h1>
-      <p style="color:#94a3b8;margin:10px 0 0;font-size:14px;">Vi gleder oss over å ha deg med på laget</p>
-    </div>
-    <div style="padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
-      <p style="font-size:15px;color:#0f172a;line-height:1.7;margin:0 0 16px;">
-        Hei <strong>${name}</strong> 👋
-      </p>
-      <p style="font-size:14px;color:#475569;line-height:1.7;margin:0 0 20px;">
-        ${isCustomer
-          ? `Vi ønsker deg velkommen som kunde hos Avargo! Du har nå tilgang til kundeportalen der du kan følge økonomien din, laste ned dokumenter og kommunisere med din rådgiver. 📊`
-          : `Vi ønsker deg hjertelig velkommen som ${roleLabel} i Avargo-teamet! Vi gleder oss virkelig til å få deg med på laget, og ser frem til alt vi skal utrette sammen. 🚀`
-        }
-      </p>
+  return `<!DOCTYPE html>
+<html lang="no">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:Georgia,'Times New Roman',serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 20px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
 
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:24px;margin-bottom:24px;">
-        <h2 style="margin:0 0 16px;font-size:14px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">🔐 Din innloggingsinformasjon</h2>
-        <table style="border-collapse:collapse;width:100%;">
-          <tr>
-            <td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;white-space:nowrap;">Brukernavn (e-post)</td>
-            <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:600;">${email}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 12px 8px 0;color:#64748b;font-size:13px;font-weight:600;white-space:nowrap;">Midlertidig passord</td>
-            <td style="padding:8px 0;font-size:14px;color:#0f172a;font-family:monospace;background:#f1f5f9;padding:6px 10px;border-radius:6px;letter-spacing:1px;">${password}</td>
-          </tr>
-        </table>
-      </div>
+        <tr>
+          <td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;">
+            <img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" />
+          </td>
+        </tr>
 
-      <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:0 10px 10px 0;margin-bottom:24px;">
-        <p style="font-size:13px;color:#92400e;margin:0;line-height:1.6;">
-          ⚠️ <strong>Viktig:</strong> Vi anbefaler at du endrer passordet ditt etter første innlogging for din egen sikkerhet.
-        </p>
-      </div>
+        <tr>
+          <td style="padding:40px 40px 20px 40px;">
+            <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Velkommen til Avargo, ${firstName}</p>
 
-      <div style="text-align:center;margin-bottom:24px;">
-        <a href="${loginUrl}" 
-           style="display:inline-block;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
-          Logg inn på ${portalName} →
-        </a>
-      </div>
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi er veldig glade for at du blir en del av teamet v&#229;rt. Vi ser virkelig frem til &#229; f&#229; jobbe sammen med deg, og er overbevist om at du vil bli en verdifull del av Avargo.</p>
 
-      <p style="font-size:14px;color:#475569;line-height:1.7;margin:0 0 8px;">
-        Har du spørsmål eller trenger hjelp? Ikke nøl med å ta kontakt med oss – vi er her for deg! 😊
-      </p>
-      <p style="font-size:14px;color:#475569;line-height:1.7;margin:0;">
-        Vennlig hilsen,<br/><strong>Teamet i Avargo</strong>
-      </p>
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Du har f&#229;tt tilgang til ${portalName} der du kan kommunisere med teamet, f&#229; tilgang til viktige dokumenter og holde deg oppdatert.</p>
 
-      <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-        <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong> · ${now}</p>
-      </div>
-    </div>
-  </div>`;
+            <div style="background:#f8fafc;border:1px solid #e4e4e7;border-radius:10px;padding:24px;margin:24px 0;">
+              <p style="margin:0 0 16px;font-size:13px;color:#71717a;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Din innloggingsinformasjon</p>
+              <table style="border-collapse:collapse;width:100%;">
+                <tr>
+                  <td style="padding:8px 12px 8px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Brukernavn (e-post)</td>
+                  <td style="padding:8px 0;font-size:14px;color:#1a1a1a;font-weight:600;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 12px 8px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Midlertidig passord</td>
+                  <td style="padding:8px 0;font-size:14px;color:#1a1a1a;font-family:monospace;background:#f1f5f9;padding:6px 10px;border-radius:6px;letter-spacing:1px;">${password}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="background:#fef9c3;border-left:4px solid #eab308;padding:14px 18px;border-radius:0 10px 10px 0;margin-bottom:24px;">
+              <p style="font-size:13px;color:#854d0e;margin:0;line-height:1.6;">
+                <strong>Viktig:</strong> Vi anbefaler at du endrer passordet ditt etter f&#248;rste innlogging for din egen sikkerhet.
+              </p>
+            </div>
+
+            <div style="text-align:center;margin-bottom:24px;">
+              <a href="${loginUrl}" 
+                 style="display:inline-block;background-color:#1a1a1a;color:#ffffff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
+                Logg inn p&#229; ${portalName}
+              </a>
+            </div>
+
+            <p style="margin:0 0 8px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Har du sp&#248;rsm&#229;l eller trenger hjelp? Ikke n&#248;l med &#229; ta kontakt med oss.</p>
+
+            <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
+              Med vennlig hilsen<br/>
+              <strong>${sigName}</strong>${sigTitle}<br/>
+              Avargo
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:0 40px;">
+            <hr style="border:none;border-top:1px solid #e4e4e7;margin:20px 0;" />
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:10px 40px 36px 40px;text-align:center;">
+            <p style="margin:0 0 8px 0;font-size:13px;color:#71717a;">
+              <a href="https://www.avargo.no" style="color:#1a1a1a;text-decoration:none;font-weight:600;">www.avargo.no</a>
+            </p>
+            <p style="margin:0 0 6px 0;font-size:12px;color:#a1a1aa;">Oscars gate 2B, 3714 Skien</p>
+            <p style="margin:0;font-size:12px;color:#a1a1aa;">kontakt@avargo.no</p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
 }
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { email, password, name, role } = await req.json();
+    const { email, password, name, role, approver_name, approver_title } = await req.json();
 
     if (!email || !password || !name) {
       return new Response(JSON.stringify({ error: "E-post, passord og navn er påkrevd." }), {
@@ -216,8 +244,8 @@ Deno.serve(async (req) => {
           password: smtpPass,
           from: "kontakt@avargo.no",
           to: email,
-          subject: `Velkommen til Avargo, ${name}! 🎉`,
-          html: buildWelcomeEmail(name, email, password, role || "employee"),
+          subject: `Velkommen til Avargo, ${name}!`,
+          html: buildWelcomeEmail(name, email, password, role || "employee", approver_name, approver_title),
         });
       } catch (emailErr) {
         console.error("Failed to send welcome email:", emailErr);

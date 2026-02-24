@@ -1697,44 +1697,56 @@ export type Database = {
       }
       job_applications: {
         Row: {
+          address: string | null
           admin_note: string | null
+          city: string | null
           created_at: string
           cv_file_name: string | null
           cv_url: string | null
+          date_of_birth: string | null
           email: string
           full_name: string
           id: string
           job_listing_id: string
           message: string | null
           phone: string
+          postal_code: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          address?: string | null
           admin_note?: string | null
+          city?: string | null
           created_at?: string
           cv_file_name?: string | null
           cv_url?: string | null
+          date_of_birth?: string | null
           email: string
           full_name: string
           id?: string
           job_listing_id: string
           message?: string | null
           phone: string
+          postal_code?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          address?: string | null
           admin_note?: string | null
+          city?: string | null
           created_at?: string
           cv_file_name?: string | null
           cv_url?: string | null
+          date_of_birth?: string | null
           email?: string
           full_name?: string
           id?: string
           job_listing_id?: string
           message?: string | null
           phone?: string
+          postal_code?: string | null
           status?: string
           updated_at?: string
         }

@@ -91,7 +91,7 @@ serve(async (req) => {
     const smtpPort = 465;
     const smtpUser = Deno.env.get("SMTP_USER")!;
     const smtpPass = Deno.env.get("SMTP_PASS")!;
-    const fromEmail = smtpUser;
+    const fromEmail = "kontakt@avargo.no";
 
     const firstName = applicant_name.split(" ")[0];
     const positionLine = position_title
