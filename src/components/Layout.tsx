@@ -254,42 +254,58 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent 10%, ${sectionAccent} 50%, transparent 90%)` }} />
                 )}
                 <div className="container mx-auto px-6 py-8">
-                  {isInSection && section && (
-                    <>
-                      {/* Current section: show its services as direct links */}
-                      <div className="mb-6">
-                        <p className="text-[11px] tracking-[0.3em] uppercase font-medium mb-3 px-1" style={{ color: sectionAccent }}>{section.name} — Tjenester</p>
-                        <div className="flex flex-wrap gap-2">
-                          {(tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id)?.items || []).slice(0, 4).map(item => (
-                            <Link
-                              key={item.href}
-                              to={`${section.basePath}${item.href}`}
-                              onClick={() => setTjenesterOpen(false)}
-                              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border/15 hover:border-border/30 hover:bg-muted/40 transition-all duration-200 group/svc"
-                              style={{ backgroundColor: accentBg(section.id, 0.04) }}
-                            >
-                              <item.icon size={14} style={{ color: sectionAccent }} strokeWidth={1.5} />
-                              <span className="text-[13px] text-foreground/90 group-hover/svc:text-foreground font-medium">{item.title}</span>
-                            </Link>
-                          ))}
-                          <Link
-                            to={sp("/tjenester")}
-                            onClick={() => setTjenesterOpen(false)}
-                            className="flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium transition-colors"
-                            style={{ color: sectionAccent }}
-                          >
-                            Se alle <ArrowRight size={10} />
-                          </Link>
-                        </div>
+                  {isInSection && section ? (
+                    /* ── Section view: show current section's services as main cards + small dept links top-right ── */
+                    <div className="relative">
+                      {/* Small department links in top-right corner */}
+                      <div className="absolute top-0 right-0 flex items-center gap-3">
+                        {tjenesterGroups
+                          .filter(g => groupSectionIdMap[g.label] !== section.id)
+                          .map(g => {
+                            const sId = groupSectionIdMap[g.label];
+                            const accent = accentHsl(sId);
+                            const targetPath = groupSectionMap[g.label] || "";
+                            const sData = SECTIONS[sId as SectionId];
+                            return (
+                              <Link
+                                key={g.label}
+                                to={`${targetPath}/tjenester`}
+                                onClick={() => setTjenesterOpen(false)}
+                                className="flex items-center gap-1.5 text-[11px] tracking-wide font-medium opacity-60 hover:opacity-100 transition-opacity duration-200"
+                                style={{ color: accent }}
+                              >
+                                {sData?.shortName} <ArrowRight size={9} />
+                              </Link>
+                            );
+                          })}
                       </div>
-                      <div className="h-px w-full bg-border/15 mb-6" />
-                    </>
-                  )}
-                  {/* Department cards — hide current section when inside one */}
-                  <div className={`grid gap-5 ${isInSection ? "grid-cols-3" : "grid-cols-4"}`}>
-                    {tjenesterGroups
-                      .filter(group => !isInSection || !section || groupSectionIdMap[group.label] !== section.id)
-                      .map((group) => {
+
+                      {/* Current section services in card layout */}
+                      <div className="grid grid-cols-4 gap-5">
+                        {(tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id)?.items || []).map(item => (
+                          <Link
+                            key={item.href}
+                            to={`${section.basePath}${item.href}`}
+                            onClick={() => setTjenesterOpen(false)}
+                            className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
+                            style={{ backgroundColor: accentBg(section.id, 0.06) }}
+                          >
+                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: sectionAccent }} />
+                            <div className="relative">
+                              <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
+                                <item.icon size={15} style={{ color: sectionAccent }} strokeWidth={1.5} />
+                              </div>
+                              <h3 className="font-heading text-[15px] mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
+                              <p className="text-[12px] text-foreground/60 font-light leading-relaxed">{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                  /* ── Hub view: department cards grid ── */
+                  <div className="grid gap-5 grid-cols-4">
+                    {tjenesterGroups.map((group) => {
                         const sId = groupSectionIdMap[group.label];
                         const accent = accentHsl(sId);
                         const bg = accentBg(sId, 0.06);
@@ -331,6 +347,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         );
                       })}
                   </div>
+                  )}
                 </div>
               </DropdownPanel>
             </div>
