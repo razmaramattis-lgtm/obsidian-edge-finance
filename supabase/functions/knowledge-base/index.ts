@@ -282,9 +282,8 @@ serve(async (req) => {
     let answer = `### 📄 ${best.title}\n`;
     answer += `*Kilde: ${best.source}*\n\n`;
     answer += `${limitWords(best.snippet, isGlossaryResult ? 500 : 200)}\n`;
-    if (best.downloadUrl) {
-      const linkLabel = isGlossaryResult ? `🔗 ${best.fileName || "Les mer"}` : `📥 Last ned ${best.fileName || "fil"}`;
-      answer += `\n[${linkLabel}](${best.downloadUrl})\n`;
+    if (best.downloadUrl && !isGlossaryResult) {
+      answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
     }
 
     // For non-glossary results: show other matching results as tags
@@ -298,13 +297,15 @@ serve(async (req) => {
       }
     }
 
-    // If there are additional downloadable files, list them
-    const topResults = results.slice(0, 5);
-    const downloadable = topResults.filter(r => r.downloadUrl && r !== best);
-    if (downloadable.length > 0) {
-      answer += `\n---\n**Andre nedlastbare dokumenter:**\n`;
-      for (const r of downloadable) {
-        answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
+    // If there are additional downloadable files (skip for glossary results)
+    if (!isGlossaryResult) {
+      const topResults = results.slice(0, 5);
+      const downloadable = topResults.filter(r => r.downloadUrl && r !== best);
+      if (downloadable.length > 0) {
+        answer += `\n---\n**Andre nedlastbare dokumenter:**\n`;
+        for (const r of downloadable) {
+          answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
+        }
       }
     }
 
