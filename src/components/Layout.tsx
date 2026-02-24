@@ -305,41 +305,43 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownPanel>
             </div>
 
-            {/* Ressurser */}
-            <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
-              <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
-                Ressurser <ChevronDown size={12} className={`transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
-              </button>
-              <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-2">
-                {ressurserLinks.map((item) => (
-                  <Link
-                    key={item.title}
-                    to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
-                    onClick={() => setRessurserOpen(false)}
-                    className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl hover:bg-primary/10 group transition-all duration-200 ${item.featured ? "bg-primary/[0.06] mb-1" : ""}`}
-                  >
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-300"
-                      style={{ backgroundColor: item.accent ? `${item.accent.replace(")", " / 0.12)")}` : "hsl(var(--primary) / 0.08)" }}
+            {/* Ressurser — only on hub */}
+            {!isInSection && (
+              <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
+                <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
+                  Ressurser <ChevronDown size={12} className={`transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
+                </button>
+                <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-2">
+                  {ressurserLinks.map((item) => (
+                    <Link
+                      key={item.title}
+                      to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
+                      onClick={() => setRessurserOpen(false)}
+                      className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl hover:bg-primary/10 group transition-all duration-200 ${item.featured ? "bg-primary/[0.06] mb-1" : ""}`}
                     >
-                      <item.icon
-                        size={15}
-                        className={item.accent ? "" : "text-primary"}
-                        style={item.accent ? { color: item.accent } : undefined}
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className={`text-[13px] group-hover:text-foreground font-medium transition-colors duration-200 ${item.featured ? "text-foreground" : "text-foreground/90"}`}>
-                        {item.title}
-                        {item.featured && <span className="ml-2 text-[10px] tracking-wider uppercase text-primary font-semibold">Nytt</span>}
-                      </p>
-                      <p className="text-[11px] text-foreground/45 leading-tight">{item.desc}</p>
-                    </div>
-                  </Link>
-                ))}
-              </DropdownPanel>
-            </div>
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-300"
+                        style={{ backgroundColor: item.accent ? `${item.accent.replace(")", " / 0.12)")}` : "hsl(var(--primary) / 0.08)" }}
+                      >
+                        <item.icon
+                          size={15}
+                          className={item.accent ? "" : "text-primary"}
+                          style={item.accent ? { color: item.accent } : undefined}
+                          strokeWidth={1.5}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-[13px] group-hover:text-foreground font-medium transition-colors duration-200 ${item.featured ? "text-foreground" : "text-foreground/90"}`}>
+                          {item.title}
+                          {item.featured && <span className="ml-2 text-[10px] tracking-wider uppercase text-primary font-semibold">Nytt</span>}
+                        </p>
+                        <p className="text-[11px] text-foreground/45 leading-tight">{item.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </DropdownPanel>
+              </div>
+            )}
 
             <Link to={sp("/kontakt")} className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
               Få tilbud
@@ -418,10 +420,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
             <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
             <Link to={sp("/om-oss")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
-            <Link to={sp("/ressurser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
-            <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Avargo Kurs</Link>
-            <Link to={sp("/ressurser/kontohjelp")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
-            <Link to={sp("/ressurser?tab=arkiv")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
+            {!isInSection && (
+              <>
+                <Link to="/ressurser" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
+                <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Avargo Kurs</Link>
+                <Link to="/ressurser/kontohjelp" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
+                <Link to="/ressurser?tab=arkiv" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
+              </>
+            )}
 
             <div className="flex gap-3 mt-4">
               <Link to="/kunde/logg-inn" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-[13px] font-medium text-foreground/70 border border-border/20 rounded-xl text-center active:bg-muted/30 transition-colors">
