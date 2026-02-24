@@ -103,16 +103,14 @@ const Karriere = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-6">
-              <Briefcase size={13} /> Karriere hos Avargo
-            </div>
+            <p className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground/60 font-medium mb-4">Karriere</p>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6">
               Bli en del av<br />
               <span className="text-primary">fremtidens rådgivning</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-              Vi bygger Norges mest moderne rådgivningsmiljø. Hos oss får du jobbe med spennende kunder, 
-              moderne teknologi og et team som setter kvalitet og utvikling i sentrum.
+              Vi bygger Norges mest moderne rådgivningsmiljø — med spennende kunder, 
+              moderne teknologi og et team som setter kvalitet i sentrum.
             </p>
           </motion.div>
 
