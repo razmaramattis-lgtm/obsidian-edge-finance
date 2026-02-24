@@ -46,6 +46,7 @@ const KarriereAvargoFri = () => {
       <Helmet>
         <title>Avargo Fri | Frilans og fleksibelt samarbeid</title>
         <meta name="description" content="Bli en del av Avargo Fri — vår fleksible modell for frilansere og prosjektbaserte samarbeidspartnere innen regnskap, HR, marked og IT." />
+        <link rel="canonical" href="https://avargo.no/karriere/avargo-fri" />
       </Helmet>
 
       {/* Hero — cinematic with layered images */}

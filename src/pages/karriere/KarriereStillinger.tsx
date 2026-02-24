@@ -86,6 +86,7 @@ const KarriereStillinger = () => {
       <Helmet>
         <title>Ledige stillinger | Karriere hos Avargo</title>
         <meta name="description" content="Se alle ledige stillinger hos Avargo innen regnskap, personal, markedsføring og IT." />
+        <link rel="canonical" href="https://avargo.no/karriere/stillinger" />
       </Helmet>
 
       {/* Hero with cinematic image */}

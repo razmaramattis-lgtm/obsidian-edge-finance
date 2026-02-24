@@ -85,6 +85,16 @@ const KarriereForside = () => {
       <Helmet>
         <title>Karriere hos Avargo | Jobb innen regnskap, HR, marked og IT</title>
         <meta name="description" content="Utforsk karrieremuligheter hos Avargo. Vi søker dyktige folk innen regnskap, personal, markedsføring og IT. Se ledige stillinger og send åpen søknad." />
+        <link rel="canonical" href="https://avargo.no/karriere" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "EmployerAggregateRating",
+          "itemReviewed": {
+            "@type": "Organization",
+            "name": "Avargo",
+            "sameAs": "https://avargo.no"
+          }
+        })}</script>
       </Helmet>
 
       {/* ═══ HERO — Fullscreen video ═══ */}

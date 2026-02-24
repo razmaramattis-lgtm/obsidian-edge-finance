@@ -81,6 +81,7 @@ const KarriereFagomrader = () => {
       <Helmet>
         <title>Fagområder | Karriere hos Avargo</title>
         <meta name="description" content="Utforsk våre fire fagmiljøer: Regnskap, Personal, Marked og IT. Finn avdelingen som passer deg best." />
+        <link rel="canonical" href="https://avargo.no/karriere/fagomrader" />
       </Helmet>
 
       {/* Hero with network glow */}

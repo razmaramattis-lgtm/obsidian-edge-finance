@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText } from "lucide-react";
+import { Plus, Trash2, Edit2, Eye, EyeOff, Search, X, Briefcase, Users, ChevronDown, ChevronUp, ImagePlus, Loader2, FileText, Inbox } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "./RichTextEditor";
 
@@ -19,6 +19,14 @@ interface JobApplication {
   id: string; job_listing_id: string; full_name: string; email: string; phone: string;
   message: string | null; cv_file_name: string | null; cv_url: string | null;
   status: string; admin_note: string | null; created_at: string;
+}
+
+interface OpenApplication {
+  id: string; full_name: string; email: string; phone: string;
+  linkedin_url: string | null; portfolio_url: string | null;
+  preferred_category: string | null; message: string | null;
+  cv_file_name: string | null; cv_url: string | null;
+  status: string; created_at: string;
 }
 
 const CATEGORIES = ["Regnskap", "Personal", "Marked", "IT"];
@@ -78,6 +86,7 @@ const emptyForm = {
 const JobListingsPanel = () => {
   const [listings, setListings] = useState<JobListing[]>([]);
   const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [openApps, setOpenApps] = useState<OpenApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<JobListing | null>(null);
@@ -85,16 +94,20 @@ const JobListingsPanel = () => {
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [viewApps, setViewApps] = useState<string | null>(null);
+  const [showOpenApps, setShowOpenApps] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"listings" | "open">("listings");
   const imgInputRef = useRef<HTMLInputElement>(null);
 
   const fetchAll = async () => {
-    const [{ data: jobs }, { data: apps }] = await Promise.all([
+    const [{ data: jobs }, { data: apps }, { data: opens }] = await Promise.all([
       supabase.from("job_listings").select("*").order("created_at", { ascending: false }),
       supabase.from("job_applications").select("*").order("created_at", { ascending: false }),
+      supabase.from("open_applications").select("*").order("created_at", { ascending: false }),
     ]);
     setListings((jobs as JobListing[]) || []);
     setApplications((apps as JobApplication[]) || []);
+    setOpenApps((opens as OpenApplication[]) || []);
     setLoading(false);
   };
 
@@ -182,8 +195,71 @@ const JobListingsPanel = () => {
 
   if (loading) return <div className="text-muted-foreground text-sm">Laster…</div>;
 
+  const updateOpenAppStatus = async (appId: string, status: string) => {
+    await supabase.from("open_applications").update({ status }).eq("id", appId);
+    fetchAll();
+  };
+
   return (
     <div className="space-y-5">
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-border/10 pb-2">
+        <button onClick={() => setActiveTab("listings")}
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all ${activeTab === "listings" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Briefcase size={12} className="inline mr-1.5" />Stillingsannonser ({listings.length})
+        </button>
+        <button onClick={() => setActiveTab("open")}
+          className={`px-4 py-2 rounded-t-xl text-xs font-medium transition-all ${activeTab === "open" ? "bg-primary/10 text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          <Inbox size={12} className="inline mr-1.5" />Åpne søknader ({openApps.length})
+        </button>
+      </div>
+
+      {activeTab === "open" ? (
+        /* Open Applications Tab */
+        <div className="space-y-2">
+          {openApps.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">Ingen åpne søknader mottatt ennå</p>
+          ) : openApps.map(app => (
+            <div key={app.id} className="glass rounded-2xl border border-border/20 px-5 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{app.full_name}</p>
+                    {app.preferred_category && (
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">{app.preferred_category}</span>
+                    )}
+                    {app.message?.startsWith("[AVARGO FRI]") && (
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Avargo Fri</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{app.email} · {app.phone} · {new Date(app.created_at).toLocaleDateString("nb-NO")}</p>
+                  {app.linkedin_url && <a href={app.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">LinkedIn</a>}
+                  {app.portfolio_url && <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline ml-3">Portefølje</a>}
+                  {app.cv_file_name && (
+                    <a href={app.cv_url || "#"} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline ml-3">
+                      <FileText size={10} /> {app.cv_file_name}
+                    </a>
+                  )}
+                  {app.message && <p className="text-[10px] text-muted-foreground/80 mt-1 line-clamp-2">{app.message}</p>}
+                </div>
+                <select value={app.status} onChange={e => updateOpenAppStatus(app.id, e.target.value)}
+                  className="h-7 rounded-lg border border-border/30 bg-muted/30 px-2 text-[10px] focus:outline-none shrink-0">
+                  <option value="ny">Ny</option>
+                  <option value="kontaktet">Kontaktet</option>
+                  <option value="under_vurdering">Under vurdering</option>
+                  <option value="intervju">Til intervju</option>
+                  <option value="tilbud">Tilbud</option>
+                  <option value="ansatt">Ansatt</option>
+                  <option value="avslått">Avslått</option>
+                </select>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+      <>
+
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-xs">
@@ -483,6 +559,8 @@ const JobListingsPanel = () => {
           <p className="text-sm text-muted-foreground text-center py-8">Ingen stillingsannonser funnet</p>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 };
