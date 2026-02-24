@@ -1,55 +1,27 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Menu, X, ArrowLeft, ChevronRight, Zap, Briefcase, Users, Monitor, Sparkles } from "lucide-react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { ArrowLeft, Zap, Briefcase, Users, Sparkles, Home } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import networkImg from "@/assets/karriere-network-glow.jpg";
 
 const NAV_ITEMS = [
-  { label: "Hjem", path: "/karriere", icon: Sparkles },
+  { label: "Hjem", path: "/karriere", icon: Home },
   { label: "Fagområder", path: "/karriere/fagomrader", icon: Users },
   { label: "Stillinger", path: "/karriere/stillinger", icon: Briefcase },
   { label: "Avargo Fri", path: "/karriere/avargo-fri", icon: Zap },
 ];
 
-/* ── Futuristic Header ── */
+/* ── Header (desktop top bar + mobile minimal top bar) ── */
 const KarriereHeader = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
-
-  // Close menu on route change
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
 
   const isActive = (path: string) =>
     path === "/karriere" ? pathname === "/karriere" : pathname.startsWith(path);
 
   return (
     <>
-      <header
-        className={`fixed top-0 inset-x-0 z-[80] transition-all duration-700 ${
-          scrolled
-            ? "bg-background/80 backdrop-blur-3xl border-b border-border/10 shadow-2xl shadow-background/50"
-            : "bg-transparent"
-        }`}
-      >
+      {/* ── Desktop header ── */}
+      <header className="fixed top-0 inset-x-0 z-[80] hidden md:block bg-background/80 backdrop-blur-3xl border-b border-border/10 shadow-2xl shadow-background/50">
         {/* Animated accent line */}
         <div className="h-[2px] w-full relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30" />
@@ -62,17 +34,13 @@ const KarriereHeader = () => {
         </div>
 
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-14 md:h-20">
-            {/* Logo */}
-            <Link to="/karriere" className="flex items-center gap-2 md:gap-3 group relative z-[70]">
-              <img src="/logo.png" alt="Avargo" className="h-6 md:h-7 relative z-10" />
-              <div className="relative z-10 flex flex-col">
-                <span className="text-[9px] md:text-[10px] tracking-[0.25em] uppercase font-semibold text-primary leading-none">Karriere</span>
-              </div>
+          <div className="flex items-center justify-between h-20">
+            <Link to="/karriere" className="flex items-center gap-3 group">
+              <img src="/logo.png" alt="Avargo" className="h-7" />
+              <span className="text-[10px] tracking-[0.25em] uppercase font-semibold text-primary leading-none">Karriere</span>
             </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1 relative">
+            <nav className="flex items-center gap-1 relative">
               <div className="absolute inset-0 rounded-2xl bg-muted/15 backdrop-blur-md border border-border/5 -m-1.5" />
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
@@ -101,93 +69,80 @@ const KarriereHeader = () => {
               })}
             </nav>
 
-            {/* Desktop back link */}
             <Link
               to="/"
-              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground border border-border/10 hover:border-primary/20 hover:bg-primary/5 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground border border-border/10 hover:border-primary/20 hover:bg-primary/5 transition-all duration-300"
             >
               <ArrowLeft size={12} /> avargo.no
             </Link>
-
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative z-[70]"
-              aria-label={menuOpen ? "Lukk meny" : "Åpne meny"}
-              aria-expanded={menuOpen}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {menuOpen ? (
-                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.12 }}>
-                    <X size={20} />
-                  </motion.div>
-                ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.12 }}>
-                    <Menu size={20} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
           </div>
         </div>
       </header>
 
-      {/* Spacer */}
-      <div className="h-14 md:h-20" />
+      {/* Desktop spacer */}
+      <div className="hidden md:block h-20" />
 
-      {/* Mobile fullscreen menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.12 }}
-            className="fixed inset-0 z-[70] bg-background/98 backdrop-blur-3xl md:hidden flex flex-col pt-16"
-            onClick={() => setMenuOpen(false)}
+      {/* ── Mobile minimal top bar ── */}
+      <header className="fixed top-0 inset-x-0 z-[80] md:hidden bg-background/90 backdrop-blur-2xl border-b border-border/10">
+        <div className="flex items-center justify-between h-12 px-4">
+          <Link to="/karriere" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Avargo" className="h-5" />
+            <span className="text-[9px] tracking-[0.2em] uppercase font-semibold text-primary">Karriere</span>
+          </Link>
+          <Link
+            to="/"
+            className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
           >
-            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6" onClick={(e) => e.stopPropagation()}>
-              {NAV_ITEMS.map((item, i) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                return (
-                  <motion.div
-                    key={item.path}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.2 }}
-                  >
-                    <Link
-                      to={item.path}
-                      onClick={() => setMenuOpen(false)}
-                      className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-medium transition-all ${
-                        active
-                          ? "text-primary-foreground bg-primary shadow-lg shadow-primary/30"
-                          : "text-foreground hover:bg-muted/20 border border-border/10"
-                      }`}
-                    >
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                        active ? "bg-primary-foreground/20" : "bg-primary/10"
-                      }`}>
-                        <Icon size={16} className={active ? "text-primary-foreground" : "text-primary"} />
-                      </div>
-                      <span className="flex-1">{item.label}</span>
-                      <ChevronRight size={14} className="text-muted-foreground" />
-                    </Link>
-                  </motion.div>
-                );
-              })}
+            <ArrowLeft size={11} /> avargo.no
+          </Link>
+        </div>
+      </header>
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 text-center">
-                <Link to="/" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  <ArrowLeft size={14} /> Tilbake til avargo.no
-                </Link>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mobile spacer */}
+      <div className="md:hidden h-12" />
     </>
+  );
+};
+
+/* ── Mobile bottom tab bar (app-style) ── */
+const MobileTabBar = () => {
+  const { pathname } = useLocation();
+
+  const isActive = (path: string) =>
+    path === "/karriere" ? pathname === "/karriere" : pathname.startsWith(path);
+
+  return (
+    <nav className="fixed bottom-0 inset-x-0 z-[80] md:hidden bg-background/95 backdrop-blur-2xl border-t border-border/10 pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-around h-16">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors duration-200 ${
+                active ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <div className="relative">
+                <Icon size={20} strokeWidth={active ? 2.5 : 1.8} />
+                {active && (
+                  <motion.div
+                    layoutId="karriere-tab-indicator"
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
+                    transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+                  />
+                )}
+              </div>
+              <span className={`text-[10px] leading-none ${active ? "font-semibold" : "font-medium"}`}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 };
 
@@ -267,6 +222,9 @@ const KarriereFooter = () => {
           </Link>
         </div>
       </motion.div>
+
+      {/* Extra bottom padding on mobile for tab bar */}
+      <div className="md:hidden h-20" />
     </footer>
   );
 };
@@ -278,6 +236,7 @@ const KarriereLayout = () => (
       <Outlet />
     </main>
     <KarriereFooter />
+    <MobileTabBar />
   </div>
 );
 
