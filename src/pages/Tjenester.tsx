@@ -258,7 +258,7 @@ const Tjenester = () => {
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-5 md:mb-6">
               {copy?.sub || "Regnskap, CFO-rådgivning, HR og fullskala digital markedsføring — koordinert av ett team, levert under ett tak. Du fokuserer på å bygge. Vi tar resten."}
             </p>
-            <p className="text-sm text-primary/60 italic font-light mb-10 md:mb-14">
+            <p className="text-sm text-primary/80 italic font-light mb-10 md:mb-14">
               {copy?.cta || "Strukturen som gjør vekst mulig."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -311,7 +311,7 @@ const Tjenester = () => {
                 <div className="flex items-center gap-3 mb-5 md:mb-6">
                   <span className={`text-[10px] tracking-[0.4em] uppercase ${cat.tagColor}`}>{cat.tag}</span>
                   <span className="text-border/40">·</span>
-                  <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground/40">{cat.label}</span>
+                  <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground/70">{cat.label}</span>
                 </div>
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
                   {cat.headline}
@@ -335,13 +335,13 @@ const Tjenester = () => {
                     </p>
                     <ul className="space-y-2 mb-6 md:mb-8">
                       {service.sub.map((s) => (
-                        <li key={s} className="flex items-center gap-2.5 text-[13px] text-foreground/55 font-light">
+                        <li key={s} className="flex items-center gap-2.5 text-[13px] text-foreground/75 font-light">
                           <div className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
                           {s}
                         </li>
                       ))}
                     </ul>
-                    <div className="mt-auto flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/60 group-hover:text-primary transition-colors duration-300">
+                    <div className="mt-auto flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/80 group-hover:text-primary transition-colors duration-300">
                       Les mer <ChevronRight size={11} className="group-hover:translate-x-0.5 transition-transform duration-300" />
                     </div>
                   </Link>
