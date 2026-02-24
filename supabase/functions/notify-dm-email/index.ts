@@ -34,22 +34,17 @@ async function sendEmail(opts: {
   }
 
   try {
-    const greeting = await readResponse();
-    console.log("SMTP greeting:", greeting.trim());
-    const ehlo = await send("EHLO localhost");
-    console.log("SMTP EHLO:", ehlo.substring(0, 80));
+    await readResponse();
+    await send("EHLO localhost");
     const authResp = await send("AUTH LOGIN");
     if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed: " + authResp);
     const userResp = await send(btoa(opts.username));
     if (!userResp.startsWith("334")) throw new Error("AUTH user failed: " + userResp);
     const passResp = await send(btoa(opts.password));
     if (!passResp.startsWith("235")) throw new Error("AUTH pass failed: " + passResp);
-    const mailFrom = await send(`MAIL FROM:<${opts.from}>`);
-    console.log("SMTP MAIL FROM:", mailFrom.trim());
-    const rcptTo = await send(`RCPT TO:<${opts.to}>`);
-    console.log("SMTP RCPT TO:", rcptTo.trim());
-    const dataResp = await send("DATA");
-    console.log("SMTP DATA:", dataResp.trim());
+    await send(`MAIL FROM:<${opts.from}>`);
+    await send(`RCPT TO:<${opts.to}>`);
+    await send("DATA");
     const message = [
       `From: Avargo <${opts.from}>`,
       `Reply-To: kontakt@avargo.no`,
@@ -57,16 +52,13 @@ async function sendEmail(opts: {
       `Subject: ${opts.subject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=UTF-8`,
-      `List-Unsubscribe: <mailto:kontakt@avargo.no?subject=Unsubscribe>`,
-      `List-Unsubscribe-Post: List-Unsubscribe=One-Click`,
       ``,
       opts.html,
       `.`,
     ].join("\r\n");
     const sendResp = await send(message);
-    console.log("SMTP send result:", sendResp.trim());
-    const quitResp = await send("QUIT");
-    console.log("SMTP QUIT:", quitResp.trim());
+    if (sendResp.startsWith("5")) throw new Error("SMTP rejected: " + sendResp.trim());
+    await send("QUIT");
   } finally {
     try { conn.close(); } catch { /* ignore */ }
   }
@@ -85,45 +77,35 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Verify caller
     const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
     const { data: { user }, error: authError } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) throw new Error("Unauthorized");
 
     const { recipientId, senderName, messagePreview } = await req.json();
-    console.log("notify-dm-email called:", { recipientId, senderName, messagePreview: (messagePreview || "").substring(0, 30) });
     if (!recipientId) throw new Error("Missing recipientId");
 
-    // Get recipient profile
     const { data: recipient } = await supabase
       .from("profiles")
       .select("email, name, last_seen_at")
       .eq("id", recipientId)
       .single();
 
-    console.log("Recipient:", { email: recipient?.email, name: recipient?.name, last_seen_at: recipient?.last_seen_at });
-
     if (!recipient || !recipient.email) {
-      console.log("No email found for recipient");
       return new Response(JSON.stringify({ sent: false, reason: "no_email" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check if recipient is online (last_seen_at within 2 minutes)
     const TWO_MINUTES = 2 * 60 * 1000;
     const lastSeen = recipient.last_seen_at ? new Date(recipient.last_seen_at).getTime() : 0;
     const isOnline = (Date.now() - lastSeen) < TWO_MINUTES;
-    console.log("Online check:", { lastSeen: recipient.last_seen_at, isOnline, diff: Date.now() - lastSeen });
 
     if (isOnline) {
-      console.log("Recipient is online, skipping email");
       return new Response(JSON.stringify({ sent: false, reason: "online" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Send email
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
 

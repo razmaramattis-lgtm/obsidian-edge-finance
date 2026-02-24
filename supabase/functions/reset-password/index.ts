@@ -7,16 +7,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Minimal SMTP client using Deno TLS
 async function sendEmail(opts: {
-  hostname: string;
-  port: number;
-  username: string;
-  password: string;
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
+  hostname: string; port: number; username: string; password: string;
+  from: string; to: string; subject: string; html: string;
 }) {
   const conn = await Deno.connectTls({ hostname: opts.hostname, port: opts.port });
   const encoder = new TextEncoder();
@@ -38,12 +31,11 @@ async function sendEmail(opts: {
 
   async function send(cmd: string): Promise<string> {
     await conn.write(encoder.encode(cmd + "\r\n"));
-    const resp = await readResponse();
-    return resp;
+    return await readResponse();
   }
 
   try {
-    await readResponse(); // greeting
+    await readResponse();
     await send("EHLO localhost");
     const authResp = await send("AUTH LOGIN");
     if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed");
@@ -54,7 +46,6 @@ async function sendEmail(opts: {
     await send(`MAIL FROM:<${opts.from}>`);
     await send(`RCPT TO:<${opts.to}>`);
     await send("DATA");
-
     const message = [
       `From: Avargo <${opts.from}>`,
       `Reply-To: kontakt@avargo.no`,
@@ -62,14 +53,12 @@ async function sendEmail(opts: {
       `Subject: ${opts.subject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=UTF-8`,
-      `List-Unsubscribe: <mailto:kontakt@avargo.no?subject=Unsubscribe>`,
-      `List-Unsubscribe-Post: List-Unsubscribe=One-Click`,
       ``,
       opts.html,
       `.`,
     ].join("\r\n");
-
-    await send(message);
+    const sendResp = await send(message);
+    if (sendResp.startsWith("5")) throw new Error("SMTP rejected: " + sendResp.trim());
     await send("QUIT");
   } finally {
     try { conn.close(); } catch { /* ignore */ }
@@ -105,7 +94,6 @@ serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Find user by email
     const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
     if (userError) throw userError;
 
@@ -114,24 +102,20 @@ serve(async (req) => {
     );
 
     if (!user) {
-      // Don't reveal whether email exists - always return success
       return new Response(
         JSON.stringify({ success: true }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Generate temporary password
     const tempPassword = generateTempPassword();
 
-    // Update user password
     const { error: updateError } = await supabase.auth.admin.updateUserById(
       user.id,
       { password: tempPassword }
     );
     if (updateError) throw updateError;
 
-    // Send email with temporary password
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
 

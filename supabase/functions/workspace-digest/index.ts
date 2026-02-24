@@ -6,6 +6,59 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function sendEmail(opts: {
+  hostname: string; port: number; username: string; password: string;
+  from: string; to: string; subject: string; html: string;
+}) {
+  const conn = await Deno.connectTls({ hostname: opts.hostname, port: opts.port });
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  async function readResponse(): Promise<string> {
+    let result = "";
+    const buf = new Uint8Array(4096);
+    while (true) {
+      const n = await conn.read(buf);
+      if (!n) break;
+      result += decoder.decode(buf.subarray(0, n));
+      const lines = result.trim().split("\r\n");
+      const lastLine = lines[lines.length - 1];
+      if (/^\d{3} /.test(lastLine) || !/^\d{3}/.test(lastLine)) break;
+    }
+    return result;
+  }
+
+  async function send(cmd: string): Promise<string> {
+    await conn.write(encoder.encode(cmd + "\r\n"));
+    return await readResponse();
+  }
+
+  try {
+    await readResponse();
+    await send("EHLO localhost");
+    await send("AUTH LOGIN");
+    await send(btoa(opts.username));
+    await send(btoa(opts.password));
+    await send(`MAIL FROM:<${opts.from}>`);
+    await send(`RCPT TO:<${opts.to}>`);
+    await send("DATA");
+    const sendResp = await send([
+      `From: Avargo <${opts.from}>`,
+      `To: ${opts.to}`,
+      `Subject: ${opts.subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      opts.html,
+      `.`,
+    ].join("\r\n"));
+    if (sendResp.startsWith("5")) throw new Error("SMTP rejected: " + sendResp.trim());
+    await send("QUIT");
+  } finally {
+    try { conn.close(); } catch {}
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -16,7 +69,6 @@ serve(async (req) => {
 
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    // Get all profiles with unread notifications from last 24h
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: unreadNotifs } = await supabase
       .from("workspace_notifications")
@@ -28,19 +80,19 @@ serve(async (req) => {
       return new Response(JSON.stringify({ sent: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Group by recipient
     const byRecipient = new Map<string, typeof unreadNotifs>();
     for (const n of unreadNotifs) {
       if (!byRecipient.has(n.recipient_id)) byRecipient.set(n.recipient_id, []);
       byRecipient.get(n.recipient_id)!.push(n);
     }
 
-    // Get recipient emails
     const recipientIds = [...byRecipient.keys()];
     const { data: profiles } = await supabase.from("profiles").select("id, email, name").in("id", recipientIds);
     const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
 
+    const emailPromises: Promise<void>[] = [];
     let sent = 0;
+
     for (const [recipientId, notifs] of byRecipient) {
       const p = profileMap.get(recipientId);
       if (!p?.email) continue;
@@ -70,38 +122,16 @@ serve(async (req) => {
         </div>
       </div>`;
 
-      try {
-        const conn = await Deno.connectTls({ hostname: "smtp.domeneshop.no", port: 465 });
-        const enc = new TextEncoder();
-        const dec = new TextDecoder();
-        const read = async () => { const b = new Uint8Array(4096); const n = await conn.read(b); return n ? dec.decode(b.subarray(0, n)) : ""; };
-        const cmd = async (s: string) => { await conn.write(enc.encode(s + "\r\n")); return await read(); };
-        await read();
-        await cmd("EHLO localhost");
-        await cmd("AUTH LOGIN");
-        await cmd(btoa(smtpUser));
-        await cmd(btoa(smtpPass));
-        await cmd(`MAIL FROM:<kontakt@avargo.no>`);
-        await cmd(`RCPT TO:<${p.email}>`);
-        await cmd("DATA");
-        await cmd([
-          `From: Avargo <kontakt@avargo.no>`,
-          `To: ${p.email}`,
-          `Subject: 🔔 Daglig oppsummering — Avargo Workspace`,
-          `MIME-Version: 1.0`,
-          `Content-Type: text/html; charset=UTF-8`,
-          ``,
-          html,
-          `.`,
-        ].join("\r\n"));
-        await cmd("QUIT");
-        try { conn.close(); } catch {}
-        sent++;
-      } catch (e) {
-        console.error("Email failed for", p.email, e);
-      }
+      emailPromises.push(
+        sendEmail({
+          hostname: "smtp.domeneshop.no", port: 465, username: smtpUser, password: smtpPass,
+          from: "kontakt@avargo.no", to: p.email,
+          subject: `🔔 Daglig oppsummering — Avargo Workspace`, html,
+        }).then(() => { sent++; }).catch(e => console.error("Email failed for", p.email, e))
+      );
     }
 
+    await Promise.allSettled(emailPromises);
     return new Response(JSON.stringify({ sent }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
