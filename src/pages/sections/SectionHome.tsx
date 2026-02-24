@@ -495,17 +495,19 @@ const SectionHome = () => {
             ))}
           </div>
         </div>
-        <div className="relative flex overflow-hidden">
-          <div className="flex shrink-0 animate-marquee-reverse gap-10 md:gap-12 pr-10 md:pr-12">
-            {[...c.industries, ...c.industries].map((ind, i) => (
-              <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
-                <ind.icon size={12} className="text-secondary/60 shrink-0" strokeWidth={1.5} />
-                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{ind.name}</span>
-                <span className="text-secondary/30 mx-2 md:mx-3">·</span>
-              </div>
-            ))}
+        {section.id === "regnskap" && (
+          <div className="relative flex overflow-hidden">
+            <div className="flex shrink-0 animate-marquee-reverse gap-10 md:gap-12 pr-10 md:pr-12">
+              {[...c.industries, ...c.industries].map((ind, i) => (
+                <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
+                  <ind.icon size={12} className="text-secondary/60 shrink-0" strokeWidth={1.5} />
+                  <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{ind.name}</span>
+                  <span className="text-secondary/30 mx-2 md:mx-3">·</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* SOCIAL PROOF BAR */}
@@ -602,59 +604,102 @@ const SectionHome = () => {
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
-      {/* INDUSTRIES */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-40" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bransjer vi dekker</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
-              Vi kjenner bransjen din.{" "}<span className="italic text-gradient-rose">Ikke bare behovene.</span>
-            </h2>
-            <p className="text-foreground/70 text-base md:text-lg font-light mb-4 md:mb-6 max-w-2xl">
-              Uansett hva du driver med, møter du en rådgiver hos oss som forstår hverdagen din.
-            </p>
-            <p className="text-sm text-primary/80 italic font-light mb-14 md:mb-20">
-              Vi dekker over 25 bransjer. Her er noen av dem.
-            </p>
-          </AnimatedSection>
+      {/* INDUSTRIES — only regnskap */}
+      {section.id === "regnskap" ? (
+        <section className="py-24 md:py-40 relative">
+          <div className="absolute inset-0 ambient-glow opacity-40" />
+          <div className="container mx-auto px-4 md:px-6 relative">
+            <AnimatedSection>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Bransjer vi dekker</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
+                Vi kjenner bransjen din.{" "}<span className="italic text-gradient-rose">Ikke bare behovene.</span>
+              </h2>
+              <p className="text-foreground/70 text-base md:text-lg font-light mb-4 md:mb-6 max-w-2xl">
+                Uansett hva du driver med, møter du en rådgiver hos oss som forstår hverdagen din.
+              </p>
+              <p className="text-sm text-primary/80 italic font-light mb-14 md:mb-20">
+                Vi dekker over 25 bransjer. Her er noen av dem.
+              </p>
+            </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[320px]">
-            {visibleIndustries.map((ind) => (
-              <div key={ind.slug + industryPage} className="css-fade-in">
-                <Link to={sp(`/bransjer/${ind.slug}`)} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
-                  <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
-                    <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
-                  <p className="text-sm text-primary/80 italic mb-3">{ind.tagline}</p>
-                  <p className="text-sm text-foreground/60 leading-relaxed font-light">{ind.desc}</p>
-                  <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-4">
-                    Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[320px]">
+              {visibleIndustries.map((ind) => (
+                <div key={ind.slug + industryPage} className="css-fade-in">
+                  <Link to={sp(`/bransjer/${ind.slug}`)} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
+                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
+                    <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
+                      <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
+                    <p className="text-sm text-primary/80 italic mb-3">{ind.tagline}</p>
+                    <p className="text-sm text-foreground/60 leading-relaxed font-light">{ind.desc}</p>
+                    <div className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/70 group-hover:text-primary transition-colors duration-300 mt-4">
+                      Les mer <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-2 mt-8">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button key={i} aria-label={`Side ${i + 1}`} onClick={() => setIndustryPage(i)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`} />
+              ))}
+            </div>
+
+            <AnimatedSection delay={0.3}>
+              <div className="mt-8 text-center">
+                <Link to={sp("/bransjer")} className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
+                  Se alle bransjer vi dekker →
                 </Link>
               </div>
-            ))}
+            </AnimatedSection>
           </div>
+        </section>
+      ) : (
+        /* TRUST / PROCESS — for HR, Marked, IT */
+        <section className="py-24 md:py-40 relative">
+          <div className="absolute inset-0 ambient-glow opacity-40" />
+          <div className="container mx-auto px-4 md:px-6 relative">
+            <AnimatedSection>
+              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Slik jobber vi</p>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 max-w-4xl leading-snug">
+                Tre steg til en enklere hverdag.{" "}<span className="italic text-gradient-rose">Ingen kompleksitet.</span>
+              </h2>
+              <p className="text-foreground/70 text-base md:text-lg font-light mb-14 md:mb-20 max-w-2xl">
+                Vi gjør oppstarten enkel og smertefri — så du kan fokusere på det som betyr noe.
+              </p>
+            </AnimatedSection>
 
-          <div className="flex items-center justify-center gap-2 mt-8">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button key={i} aria-label={`Side ${i + 1}`} onClick={() => setIndustryPage(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === industryPage ? "bg-primary w-6" : "bg-foreground/20 hover:bg-foreground/40"}`} />
-            ))}
-          </div>
-
-          <AnimatedSection delay={0.3}>
-            <div className="mt-8 text-center">
-              <Link to={sp("/bransjer")} className="text-sm text-primary hover:text-primary/80 transition-colors font-light">
-                Se alle bransjer vi dekker →
-              </Link>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {[
+                { step: "01", title: "Vi snakker sammen", desc: "En uforpliktende prat der vi forstår behovene dine og forteller deg hva vi kan hjelpe med." },
+                { step: "02", title: "Vi setter opp alt", desc: "Vi tar oss av hele oppsettet — fra systemer til rutiner. Du trenger bare å godkjenne." },
+                { step: "03", title: "Du har en partner", desc: "Fra dag én har du en fast kontaktperson som kjenner deg, bransjen din og målene dine." },
+              ].map((item, i) => (
+                <AnimatedSection key={i} delay={i * 0.12}>
+                  <div className="group p-8 md:p-10 glass rounded-3xl card-lift relative overflow-hidden h-full">
+                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
+                    <span className="font-heading text-6xl md:text-7xl text-primary/10 select-none block mb-4">{item.step}</span>
+                    <h3 className="font-heading text-xl md:text-2xl mb-3">{item.title}</h3>
+                    <p className="text-sm text-foreground/60 leading-relaxed font-light">{item.desc}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
             </div>
-          </AnimatedSection>
-        </div>
-      </section>
+
+            <AnimatedSection delay={0.4}>
+              <div className="mt-12 text-center">
+                <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+                  Start samtalen <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </Link>
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
