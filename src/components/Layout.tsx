@@ -378,6 +378,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* ─── Bransjer dropdown (all sections + hub) ─── */}
             {isInSection && section ? (
+              section.id === "regnskap" ? (
               <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
                 <button className={dropBtnClass(bransjerOpen)}>
                   Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
@@ -400,6 +401,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </div>
                 </DropdownPanel>
               </div>
+              ) : (
+              /* IT, Marked, Personal — just a direct link to bransjer page */
+              <NavButton to={sp("/bransjer")} label="Bransjer" isActive={location.pathname.includes("/bransjer")} />
+              )
             ) : null}
 
             {/* Priser — only show in sections */}
