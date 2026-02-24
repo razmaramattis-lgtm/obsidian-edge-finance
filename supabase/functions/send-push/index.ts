@@ -55,27 +55,27 @@ function b64urlDecode(s: string): Uint8Array {
 }
 
 // --- VAPID JWT ---
+/** Build JWK from raw base64url public + private keys */
+function buildJwk(publicKeyB64: string, privateKeyB64: string): JsonWebKey {
+  const pubBytes = b64urlDecode(publicKeyB64);
+  // Uncompressed public key: 0x04 || x(32) || y(32)
+  const x = b64urlEncode(pubBytes.slice(1, 33).buffer as ArrayBuffer);
+  const y = b64urlEncode(pubBytes.slice(33, 65).buffer as ArrayBuffer);
+  return { kty: "EC", crv: "P-256", x, y, d: privateKeyB64 };
+}
+
 async function createVapidJwt(
-  privateJwk: JsonWebKey,
+  publicKey: string,
+  privateKey: string,
   audience: string,
   subject: string,
   expSeconds: number = 86400
 ): Promise<string> {
-  // Ensure privateJwk is a proper object
-  const jwk = typeof privateJwk === "string" ? JSON.parse(privateJwk) : privateJwk;
-  
-  // Ensure required fields for ECDSA import
-  const importJwk = {
-    kty: jwk.kty,
-    crv: jwk.crv,
-    x: jwk.x,
-    y: jwk.y,
-    d: jwk.d,
-  };
+  const jwk = buildJwk(publicKey, privateKey);
 
   const key = await crypto.subtle.importKey(
     "jwk",
-    importJwk,
+    jwk,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"]
@@ -237,9 +237,8 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rawJwk = Deno.env.get("VAPID_PRIVATE_JWK")!;
-    const vapidPrivateJwk = typeof rawJwk === "string" ? JSON.parse(rawJwk) : rawJwk;
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
+    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY")!;
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
@@ -284,7 +283,7 @@ Deno.serve(async (req) => {
         const audience = `${endpointUrl.protocol}//${endpointUrl.host}`;
 
         // Create VAPID JWT
-        const jwt = await createVapidJwt(vapidPrivateJwk, audience, "mailto:kontakt@avargo.no");
+        const jwt = await createVapidJwt(vapidPublicKey, vapidPrivateKey, audience, "mailto:kontakt@avargo.no");
 
         // Encrypt payload
         const encrypted = await encryptPayload(payloadStr, sub.p256dh, sub.auth);
