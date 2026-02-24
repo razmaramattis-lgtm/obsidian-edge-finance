@@ -117,15 +117,17 @@ serve(async (req) => {
 
     // Handle listing available documents for linking
     if (action === "list_documents") {
-      const [archRes, intRes, tmplRes] = await Promise.all([
+      const [archRes, intRes, tmplRes, glossRes] = await Promise.all([
         sb.from("archive_files").select("name, file_url, file_name, category").order("name"),
         sb.from("internal_resources").select("title, file_url, file_name, category").order("title"),
         sb.from("document_templates").select("title, category").eq("active", true).order("title"),
+        sb.from("glossary_terms").select("term, description, slug").eq("active", true).order("term"),
       ]);
-      const docs: { title: string; url?: string; file_name?: string; source: string; category?: string }[] = [];
+      const docs: { title: string; url?: string; file_name?: string; source: string; category?: string; description?: string }[] = [];
       for (const d of archRes.data || []) docs.push({ title: d.name, url: d.file_url, file_name: d.file_name, source: "archive_files", category: d.category });
       for (const d of intRes.data || []) docs.push({ title: d.title, url: d.file_url, file_name: d.file_name, source: "internal_resources", category: d.category });
       for (const d of tmplRes.data || []) docs.push({ title: d.title, source: "document_templates", category: d.category });
+      for (const d of glossRes.data || []) docs.push({ title: d.term, source: "glossary_terms", category: "Regnskapsord", description: (d.description || "").slice(0, 100) });
       return new Response(JSON.stringify({ documents: docs }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -239,22 +241,24 @@ serve(async (req) => {
       .eq("search_term", normalize(lastMessage))
       .maybeSingle();
 
-    if (docOverride && docOverride.document_url) {
-      // Inject override as top result
-      results.unshift({
-        source: "Koblet dokument",
+    if (docOverride) {
+      const overrideResult: ScoredResult = {
+        source: docOverride.source_table === "glossary_terms" ? "Regnskapsord (koblet)" : "Koblet dokument",
         title: docOverride.document_title,
         score: 99999,
-        snippet: `Dette dokumentet er koblet til søkeordet «${lastMessage}».`,
-        downloadUrl: docOverride.document_url,
-        fileName: docOverride.file_name || docOverride.document_title,
-      });
+        snippet: `Dette ${docOverride.source_table === "glossary_terms" ? "regnskapsordet" : "dokumentet"} er koblet til søkeordet «${lastMessage}».`,
+      };
+      if (docOverride.document_url) {
+        overrideResult.downloadUrl = docOverride.document_url;
+        overrideResult.fileName = docOverride.file_name || docOverride.document_title;
+      }
+      results.unshift(overrideResult);
     }
 
     results.sort((a, b) => b.score - a.score);
 
     if (results.length === 0) {
-      const isDocSearchEmpty = ["dokumentmaler", "arkiv", "datasenter", "alt"].includes(cat);
+      const isDocSearchEmpty = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(cat);
       let noHitMsg = `Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`;
       if (isDocSearchEmpty) {
         noHitMsg += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
@@ -307,7 +311,7 @@ serve(async (req) => {
       answer += `\n[AVA_SEARCH_TERM:${lastMessage}]`;
     }
     // Add doc search term marker for document categories
-    const isDocSearch = ["dokumentmaler", "arkiv", "datasenter", "alt"].includes(cat);
+    const isDocSearch = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(cat);
     if (isDocSearch && !isAccountSearch) {
       answer += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
     }
