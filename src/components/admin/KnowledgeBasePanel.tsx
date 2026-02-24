@@ -644,7 +644,7 @@ const KnowledgeBasePanel = () => {
                                   onClick={() => openDocPicker(i, docSearchTerm)}
                                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] text-muted-foreground hover:text-foreground border border-border/20 hover:border-primary/20 hover:bg-primary/5 transition-all"
                                 >
-                                  <Link2 size={11} /> Koble et dokument til dette søkeordet
+                                   <Link2 size={11} /> Koble en ressurs til dette søkeordet
                                 </button>
                               ) : (
                                 <motion.div
@@ -653,13 +653,13 @@ const KnowledgeBasePanel = () => {
                                   className="border border-border/30 rounded-xl p-3 bg-background/80 mt-1"
                                 >
                                   <div className="flex items-center justify-between mb-2">
-                                    <p className="text-[11px] font-medium text-foreground">Velg dokument fra organisasjonsressursene:</p>
+                                    <p className="text-[11px] font-medium text-foreground">Velg ressurs fra organisasjonsressursene:</p>
                                     <button onClick={() => setDocPicker(null)} className="text-muted-foreground hover:text-foreground"><X size={14} /></button>
                                   </div>
                                   <input
                                     value={docFilter}
                                     onChange={e => setDocFilter(e.target.value)}
-                                    placeholder="Filtrer dokumenter…"
+                                    placeholder="Filtrer ressurser…"
                                     className="w-full h-7 rounded-md border border-border/30 bg-muted/20 px-2 text-xs mb-2 focus:outline-none focus:ring-1 focus:ring-primary/40"
                                   />
                                   {docListLoading ? (
