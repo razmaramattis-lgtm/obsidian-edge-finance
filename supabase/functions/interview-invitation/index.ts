@@ -70,34 +70,110 @@ async function sendEmail(opts: {
   }
 }
 
-function buildInterviewEmail(
-  firstName: string,
-  positionTitle: string | null,
-  senderName: string,
-  senderEmail: string,
-  senderPhone: string | null,
-  senderTitle: string | null,
-) {
-  const positionText = positionTitle
-    ? `stillingen som <strong>${positionTitle}</strong>`
+function buildInterviewEmail(opts: {
+  firstName: string;
+  positionTitle: string | null;
+  senderName: string;
+  senderEmail: string;
+  senderPhone: string | null;
+  senderTitle: string | null;
+  interviewDate: string | null;
+  interviewTime: string | null;
+  interviewType: string | null;
+  teamsLink: string | null;
+  interviewLocation: string | null;
+}) {
+  const positionText = opts.positionTitle
+    ? `stillingen som <strong>${opts.positionTitle}</strong>`
     : "en stilling hos oss";
+
+  const hasSpecificTime = opts.interviewDate || opts.interviewTime;
+  const isDigital = opts.interviewType === "digital";
+  const isPhysical = opts.interviewType === "fysisk";
+
+  // Build interview details section
+  let detailsSection = "";
+  if (hasSpecificTime || opts.interviewType) {
+    const rows: string[] = [];
+    if (opts.interviewDate) {
+      rows.push(`<tr>
+        <td style="padding:6px 0;font-size:14px;color:#374151;font-weight:600;width:120px;">&#128197; Dato:</td>
+        <td style="padding:6px 0;font-size:14px;color:#374151;">${opts.interviewDate}</td>
+      </tr>`);
+    }
+    if (opts.interviewTime) {
+      rows.push(`<tr>
+        <td style="padding:6px 0;font-size:14px;color:#374151;font-weight:600;">&#128339; Klokkeslett:</td>
+        <td style="padding:6px 0;font-size:14px;color:#374151;">${opts.interviewTime}</td>
+      </tr>`);
+    }
+    if (opts.interviewType) {
+      const typeLabel = isDigital ? "Digitalt (Teams/Video)" : isPhysical ? "Fysisk m&#248;te" : opts.interviewType;
+      rows.push(`<tr>
+        <td style="padding:6px 0;font-size:14px;color:#374151;font-weight:600;">&#128188; Type:</td>
+        <td style="padding:6px 0;font-size:14px;color:#374151;">${typeLabel}</td>
+      </tr>`);
+    }
+    if (isPhysical && opts.interviewLocation) {
+      rows.push(`<tr>
+        <td style="padding:6px 0;font-size:14px;color:#374151;font-weight:600;">&#128205; Sted:</td>
+        <td style="padding:6px 0;font-size:14px;color:#374151;">${opts.interviewLocation}</td>
+      </tr>`);
+    }
+
+    detailsSection = `<div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:20px 24px;border-radius:0 12px 12px 0;margin:24px 0;">
+      <p style="font-size:13px;color:#1e40af;margin:0 0 14px 0;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Detaljer for intervjuet</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+        ${rows.join("")}
+      </table>
+    </div>`;
+  }
+
+  // Teams link button
+  let teamsSection = "";
+  if (isDigital && opts.teamsLink) {
+    teamsSection = `<div style="text-align:center;margin:24px 0;">
+      <a href="${opts.teamsLink}" style="display:inline-block;background-color:#5b5fc7;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+        &#128421; Koble til via Teams
+      </a>
+      <p style="margin:8px 0 0;font-size:12px;color:#a1a1aa;">Klikk p&#229; knappen for &#229; bli med i m&#248;tet</p>
+    </div>`;
+  }
+
+  // "Neste steg" section - only show if no specific time is set
+  let nextStepSection = "";
+  if (!hasSpecificTime) {
+    nextStepSection = `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;">
+      <p style="font-size:14px;color:#15803d;margin:0 0 4px 0;font-weight:600;">Neste steg</p>
+      <p style="font-size:14px;color:#166534;margin:0;line-height:1.6;">
+        Vi ber deg vennligst om &#229; svare p&#229; denne e-posten med noen datoer og tidspunkter som passer for deg de kommende ukene, s&#229; finner vi et tidspunkt som fungerer for begge parter.
+      </p>
+    </div>`;
+  } else {
+    nextStepSection = `<div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;">
+      <p style="font-size:14px;color:#15803d;margin:0 0 4px 0;font-weight:600;">Bekreft gjerne</p>
+      <p style="font-size:14px;color:#166534;margin:0;line-height:1.6;">
+        Vennligst bekreft at tidspunktet passer ved &#229; svare p&#229; denne e-posten. Skulle det ikke passe, er det bare &#229; gi beskjed s&#229; finner vi en alternativ l&#248;sning.
+      </p>
+    </div>`;
+  }
 
   const contactRows = [
     `<tr>
       <td style="padding:6px 12px 6px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Navn</td>
-      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;font-weight:600;">${senderName}</td>
+      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;font-weight:600;">${opts.senderName}</td>
     </tr>`,
-    senderTitle ? `<tr>
+    opts.senderTitle ? `<tr>
       <td style="padding:6px 12px 6px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Stilling</td>
-      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;">${senderTitle}</td>
+      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;">${opts.senderTitle}</td>
     </tr>` : "",
     `<tr>
       <td style="padding:6px 12px 6px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">E-post</td>
-      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;"><a href="mailto:${senderEmail}" style="color:#1a1a1a;text-decoration:underline;">${senderEmail}</a></td>
+      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;"><a href="mailto:${opts.senderEmail}" style="color:#1a1a1a;text-decoration:underline;">${opts.senderEmail}</a></td>
     </tr>`,
-    senderPhone ? `<tr>
+    opts.senderPhone ? `<tr>
       <td style="padding:6px 12px 6px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Telefon</td>
-      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;"><a href="tel:${senderPhone}" style="color:#1a1a1a;text-decoration:underline;">${senderPhone}</a></td>
+      <td style="padding:6px 0;font-size:14px;color:#1a1a1a;"><a href="tel:${opts.senderPhone}" style="color:#1a1a1a;text-decoration:underline;">${opts.senderPhone}</a></td>
     </tr>` : "",
   ].filter(Boolean).join("");
 
@@ -117,18 +193,17 @@ function buildInterviewEmail(
 
         <tr>
           <td style="padding:40px 40px 20px 40px;">
-            <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Hei, ${firstName}</p>
+            <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Hei, ${opts.firstName}</p>
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Tusen takk for din s&#248;knad til ${positionText}. Vi har g&#229;tt gjennom s&#248;knaden din med stor interesse, og vi vil gjerne invitere deg til et intervju.</p>
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi gleder oss til &#229; bli bedre kjent med deg og h&#248;re mer om din bakgrunn og dine ambisjoner. Intervjuet vil v&#230;re en uformell samtale der vi &#248;nsker &#229; l&#230;re mer om deg, samtidig som du f&#229;r muligheten til &#229; stille sp&#248;rsm&#229;l om Avargo og rollen.</p>
 
-            <div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;">
-              <p style="font-size:14px;color:#15803d;margin:0 0 4px 0;font-weight:600;">Neste steg</p>
-              <p style="font-size:14px;color:#166534;margin:0;line-height:1.6;">
-                Vi ber deg vennligst om &#229; svare p&#229; denne e-posten med noen datoer og tidspunkter som passer for deg de kommende ukene, s&#229; finner vi et tidspunkt som fungerer for begge parter.
-              </p>
-            </div>
+            ${detailsSection}
+
+            ${teamsSection}
+
+            ${nextStepSection}
 
             <div style="text-align:center;margin:28px 0;">
               <a href="https://www.avargo.no/karriere/intervjutips" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
@@ -148,7 +223,7 @@ function buildInterviewEmail(
 
             <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
               Med vennlig hilsen<br/>
-              <strong>${senderName}</strong>${senderTitle ? `<br/>${senderTitle}` : ""}<br/>
+              <strong>${opts.senderName}</strong>${opts.senderTitle ? `<br/>${opts.senderTitle}` : ""}<br/>
               Avargo
             </p>
           </td>
@@ -191,6 +266,11 @@ Deno.serve(async (req) => {
       sender_email,
       sender_phone,
       sender_title,
+      interview_date,
+      interview_time,
+      interview_type,
+      teams_link,
+      interview_location,
     } = await req.json();
 
     if (!applicant_email || !applicant_name) {
@@ -213,14 +293,19 @@ Deno.serve(async (req) => {
       from: fromEmail,
       to: applicant_email,
       subject: `Innkalling til intervju hos Avargo`,
-      html: buildInterviewEmail(
+      html: buildInterviewEmail({
         firstName,
-        position_title || null,
-        sender_name || "Rekruttering",
-        sender_email || fromEmail,
-        sender_phone || null,
-        sender_title || null,
-      ),
+        positionTitle: position_title || null,
+        senderName: sender_name || "Rekruttering",
+        senderEmail: sender_email || fromEmail,
+        senderPhone: sender_phone || null,
+        senderTitle: sender_title || null,
+        interviewDate: interview_date || null,
+        interviewTime: interview_time || null,
+        interviewType: interview_type || null,
+        teamsLink: teams_link || null,
+        interviewLocation: interview_location || null,
+      }),
     });
 
     return new Response(JSON.stringify({ success: true }), {
