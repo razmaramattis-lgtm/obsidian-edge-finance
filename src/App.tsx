@@ -78,6 +78,8 @@ const KarriereStillinger = lazy(() => import("./pages/karriere/KarriereStillinge
 const KarriereAvargoFri = lazy(() => import("./pages/karriere/KarriereAvargoFri"));
 const Intervjutips = lazy(() => import("./pages/karriere/Intervjutips"));
 const KarriereDetalj = lazy(() => import("./pages/KarriereDetalj"));
+const KarriereVelkommen = lazy(() => import("./pages/karriere/KarriereVelkommen"));
+const KarriereTilbakemelding = lazy(() => import("./pages/karriere/KarriereTilbakemelding"));
 
 // Kurs portal
 const KursLayout = lazy(() => import("./components/kurs/KursLayout"));
@@ -214,6 +216,8 @@ const App = () => (
                     <Route path="stillinger" element={<KarriereStillinger />} />
                     <Route path="avargo-fri" element={<KarriereAvargoFri />} />
                     <Route path="intervjutips" element={<Intervjutips />} />
+                    <Route path="velkommen" element={<KarriereVelkommen />} />
+                    <Route path="tilbakemelding" element={<KarriereTilbakemelding />} />
                     <Route path=":slug" element={<KarriereDetalj />} />
                   </Route>
 
