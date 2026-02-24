@@ -8,6 +8,7 @@ import {
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
   Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive, CalendarClock,
+  GraduationCap, Calculator, HelpCircle, Download, Flame,
 } from "lucide-react";
 
 /** Maps tjenester group label → section basePath for auto-routing */
@@ -89,16 +90,16 @@ const selskapetLinks = [
   { icon: Mail, title: "Kontakt", desc: "Ta kontakt med oss direkte", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om oss", desc: "Hvem vi er og hva vi tror på", href: "/om-oss", absolute: false },
   { icon: Briefcase, title: "Jobb hos oss", desc: "Se ledige stillinger", href: "/karriere", absolute: true },
-  { icon: BookOpen, title: "Avargo Kurs", desc: "130+ kurs for kompetanseheving", href: "/kurs", absolute: true },
 ];
 
-const ressurserLinks = [
-  { icon: BookOpen, title: "Kontohjelp", desc: "Finn riktig konto for regnskapet", href: "/ressurser/kontohjelp" },
+const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
+  { icon: GraduationCap, title: "Avargo Kurs", desc: "130+ kurs for kompetanseheving", href: "/kurs", accent: "hsl(var(--primary))", featured: true },
+  { icon: Calculator, title: "Kontohjelp", desc: "Finn riktig konto for regnskapet", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)" },
   { icon: Newspaper, title: "Nyheter", desc: "Siste nytt fra Avargo", href: "/ressurser?tab=nyheter" },
-  { icon: FileText, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
+  { icon: Flame, title: "Blogg", desc: "Artikler om regnskap og økonomi", href: "/ressurser?tab=blogg" },
   { icon: BookMarked, title: "Guider", desc: "Praktiske guider for bedriftseiere", href: "/ressurser?tab=guider" },
-  { icon: Archive, title: "Arkiv", desc: "Skjemaer og maler til nedlasting", href: "/ressurser?tab=arkiv" },
-  { icon: CalendarClock, title: "Skatteetatens kalender", desc: "Alle frister for næringsdrivende", href: "/ressurser/skattekalender" },
+  { icon: Download, title: "Arkiv & maler", desc: "Skjemaer og maler til nedlasting", href: "/ressurser?tab=arkiv" },
+  { icon: CalendarClock, title: "Skattekalender", desc: "Alle frister for næringsdrivende", href: "/ressurser/skattekalender" },
 ];
 
 const DropdownPanel = ({ open, children, className = "" }: { open: boolean; children: React.ReactNode; className?: string }) => (
@@ -309,24 +310,36 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <button className="flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">
                 Ressurser <ChevronDown size={12} className={`transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
               </button>
-              <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-64 bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-3">
+              <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-3 w-[340px] bg-card/95 backdrop-blur-2xl rounded-2xl border border-border/30 shadow-2xl p-2">
                 {ressurserLinks.map((item) => (
-                  <Link key={item.title} to={sp(item.href)} onClick={() => setRessurserOpen(false)}
-                    className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary/10 group transition-colors duration-200"
+                  <Link
+                    key={item.title}
+                    to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
+                    onClick={() => setRessurserOpen(false)}
+                    className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl hover:bg-primary/10 group transition-all duration-200 ${item.featured ? "bg-primary/[0.06] mb-1" : ""}`}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200 mt-0.5">
-                      <item.icon size={13} className="text-primary" strokeWidth={1.5} />
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-300"
+                      style={{ backgroundColor: item.accent ? `${item.accent.replace(")", " / 0.12)")}` : "hsl(var(--primary) / 0.08)" }}
+                    >
+                      <item.icon
+                        size={15}
+                        className={item.accent ? "" : "text-primary"}
+                        style={item.accent ? { color: item.accent } : undefined}
+                        strokeWidth={1.5}
+                      />
                     </div>
-                    <div>
-                      <p className="text-[13px] text-foreground/90 group-hover:text-foreground font-medium transition-colors duration-200">{item.title}</p>
-                      <p className="text-[11px] text-foreground/50 leading-tight">{item.desc}</p>
+                    <div className="min-w-0">
+                      <p className={`text-[13px] group-hover:text-foreground font-medium transition-colors duration-200 ${item.featured ? "text-foreground" : "text-foreground/90"}`}>
+                        {item.title}
+                        {item.featured && <span className="ml-2 text-[10px] tracking-wider uppercase text-primary font-semibold">Nytt</span>}
+                      </p>
+                      <p className="text-[11px] text-foreground/45 leading-tight">{item.desc}</p>
                     </div>
                   </Link>
                 ))}
               </DropdownPanel>
             </div>
-
-            <Link to="/kurs" className="text-[13px] text-foreground/80 hover:text-foreground transition-colors duration-300 tracking-wide font-light">Kurs</Link>
 
             <Link to={sp("/kontakt")} className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide">
               Få tilbud
@@ -403,10 +416,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {isInSection && section && (
               <Link to={sp("/priser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Priser</Link>
             )}
-            <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kurs</Link>
             <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontakt</Link>
             <Link to={sp("/om-oss")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Om oss</Link>
             <Link to={sp("/ressurser")} onClick={() => setMenuOpen(false)} className="py-3.5 text-[15px] text-foreground/80 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Ressurser</Link>
+            <Link to="/kurs" onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Avargo Kurs</Link>
             <Link to={sp("/ressurser/kontohjelp")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Kontohjelp</Link>
             <Link to={sp("/ressurser?tab=arkiv")} onClick={() => setMenuOpen(false)} className="py-2.5 pl-4 text-[13px] text-foreground/60 active:text-foreground transition-colors border-b border-border/10 tracking-wide">Arkiv & maler</Link>
 
