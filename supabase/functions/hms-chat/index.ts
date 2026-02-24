@@ -86,19 +86,10 @@ serve(async (req) => {
       return respondStream(`Jeg fant dessverre ingen relevante kapitler i HMS-håndboken for «${lastMessage}». Prøv å søke med andre ord, eller bla gjennom kapitlene direkte.`);
     }
 
-    // Take top results (max 3)
-    const topResults = scored.slice(0, 3);
-
-    let answer = `**Funn i HMS-håndboken for «${lastMessage}»:**\n\n`;
-    for (const doc of topResults) {
-      const snippet = extractSnippet(doc.content || "", lastMessage);
-      answer += `### 📄 ${doc.title}\n`;
-      answer += `${snippet}\n\n`;
-    }
-
-    if (scored.length > 3) {
-      answer += `\n*Ytterligere ${scored.length - 3} kapitler hadde treff. Prøv å presisere søket for mer spesifikke resultater.*`;
-    }
+    // Take only the single best result
+    const best = scored[0];
+    const snippet = extractSnippet(best.content || "", lastMessage);
+    let answer = `### 📄 ${best.title}\n\n${snippet}`;
 
     return respondStream(answer);
   } catch (e) {

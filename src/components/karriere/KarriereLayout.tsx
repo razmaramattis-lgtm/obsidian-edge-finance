@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Menu, X, ArrowLeft, ChevronRight, Zap, Briefcase, Users, Monitor, Sparkles } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import patternImg from "@/assets/karriere-pattern.jpg";
 import networkImg from "@/assets/karriere-network-glow.jpg";
 
 const NAV_ITEMS = [
@@ -24,6 +23,16 @@ const KarriereHeader = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   const isActive = (path: string) =>
     path === "/karriere" ? pathname === "/karriere" : pathname.startsWith(path);
 
@@ -36,7 +45,7 @@ const KarriereHeader = () => {
             : "bg-transparent"
         }`}
       >
-        {/* Animated dual-tone accent line */}
+        {/* Animated accent line */}
         <div className="h-[2px] w-full relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30" />
           <motion.div
@@ -48,14 +57,12 @@ const KarriereHeader = () => {
         </div>
 
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-14 md:h-20">
             {/* Logo */}
-            <Link to="/karriere" className="flex items-center gap-3 group relative">
-              <div className="absolute -inset-4 rounded-2xl bg-primary/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <img src="/logo.png" alt="Avargo" className="h-7 relative z-10" />
+            <Link to="/karriere" className="flex items-center gap-2 md:gap-3 group relative">
+              <img src="/logo.png" alt="Avargo" className="h-6 md:h-7 relative z-10" />
               <div className="relative z-10 flex flex-col">
-                <span className="text-[10px] tracking-[0.25em] uppercase font-semibold text-primary leading-none">Karriere</span>
-                <span className="text-[8px] tracking-[0.15em] uppercase text-muted-foreground/50 leading-none mt-0.5">Fremtidens team</span>
+                <span className="text-[9px] md:text-[10px] tracking-[0.25em] uppercase font-semibold text-primary leading-none">Karriere</span>
               </div>
             </Link>
 
@@ -100,15 +107,15 @@ const KarriereHeader = () => {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative"
+              className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30 transition-colors relative z-[60]"
             >
               <AnimatePresence mode="wait">
                 {menuOpen ? (
-                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
                     <X size={20} />
                   </motion.div>
                 ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
                     <Menu size={20} />
                   </motion.div>
                 )}
@@ -119,7 +126,7 @@ const KarriereHeader = () => {
       </header>
 
       {/* Spacer */}
-      <div className="h-16 md:h-20" />
+      <div className="h-14 md:h-20" />
 
       {/* Mobile fullscreen menu */}
       <AnimatePresence>
@@ -128,66 +135,50 @@ const KarriereHeader = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-3xl md:hidden flex flex-col"
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 bg-background/98 backdrop-blur-3xl md:hidden flex flex-col"
           >
-            <div className="absolute inset-0 opacity-[0.06]">
-              <img src={networkImg} alt="" className="w-full h-full object-cover" />
+            {/* Close button at top */}
+            <div className="flex justify-end p-4">
+              <button onClick={() => setMenuOpen(false)} className="w-10 h-10 rounded-xl flex items-center justify-center text-foreground hover:bg-muted/30">
+                <X size={20} />
+              </button>
             </div>
 
-            {/* Floating particles in mobile menu */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(10)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 rounded-full"
-                  style={{
-                    background: i % 2 === 0 ? "hsl(var(--primary) / 0.4)" : "hsl(var(--secondary) / 0.3)",
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                  }}
-                  animate={{ y: [0, -30, 0], opacity: [0, 0.8, 0] }}
-                  transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3 }}
-                />
-              ))}
-            </div>
-
-            <div className="flex-1 flex flex-col items-center justify-center gap-4 relative z-10 px-8">
+            <div className="flex-1 flex flex-col justify-center gap-3 relative z-10 px-6">
               {NAV_ITEMS.map((item, i) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (
                   <motion.div
                     key={item.path}
-                    initial={{ opacity: 0, x: -40 }}
+                    initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -40 }}
-                    transition={{ delay: i * 0.08, duration: 0.4 }}
-                    className="w-full max-w-sm"
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
                   >
                     <Link
                       to={item.path}
                       onClick={() => setMenuOpen(false)}
-                      className={`flex items-center gap-4 px-6 py-5 rounded-2xl text-lg font-medium transition-all ${
+                      className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-medium transition-all ${
                         active
-                          ? "text-primary-foreground bg-primary shadow-2xl shadow-primary/30"
+                          ? "text-primary-foreground bg-primary shadow-lg shadow-primary/30"
                           : "text-foreground hover:bg-muted/20 border border-border/10"
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                         active ? "bg-primary-foreground/20" : "bg-primary/10"
                       }`}>
-                        <Icon size={18} className={active ? "text-primary-foreground" : "text-primary"} />
+                        <Icon size={16} className={active ? "text-primary-foreground" : "text-primary"} />
                       </div>
                       <span className="flex-1">{item.label}</span>
-                      <ChevronRight size={16} className="text-muted-foreground" />
+                      <ChevronRight size={14} className="text-muted-foreground" />
                     </Link>
                   </motion.div>
                 );
               })}
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-6">
-                <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-4 text-center">
+                <Link to="/" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <ArrowLeft size={14} /> Tilbake til avargo.no
                 </Link>
               </motion.div>
@@ -213,15 +204,15 @@ const KarriereFooter = () => {
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-background/80" />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 container mx-auto px-4 py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12">
-          <div className="md:col-span-1">
-            <Link to="/karriere" className="flex items-center gap-2 mb-5">
-              <img src="/logo.png" alt="Avargo" className="h-6" />
+      <motion.div style={{ opacity, y }} className="relative z-10 container mx-auto px-4 py-12 md:py-24">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+          <div className="col-span-2 md:col-span-1">
+            <Link to="/karriere" className="flex items-center gap-2 mb-4">
+              <img src="/logo.png" alt="Avargo" className="h-5 md:h-6" />
               <span className="text-xs tracking-[0.15em] uppercase font-semibold text-primary">Karriere</span>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-              Bli en del av teamet som bygger fremtidens rådgivning med teknologi, innsikt og menneskelig nærhet.
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              Bli en del av teamet som bygger fremtidens rådgivning.
             </p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="relative flex h-2 w-2">
@@ -233,12 +224,11 @@ const KarriereFooter = () => {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-5">Karriere</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Karriere</h4>
+            <ul className="space-y-2.5">
               {NAV_ITEMS.map((item) => (
                 <li key={item.path}>
-                  <Link to={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
-                    <span className="w-0 group-hover:w-3 h-px bg-primary transition-all duration-300" />
+                  <Link to={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -247,12 +237,11 @@ const KarriereFooter = () => {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-5">Fagområder</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Fagområder</h4>
+            <ul className="space-y-2.5">
               {["Regnskap", "Personal", "Marked", "IT"].map((dept) => (
                 <li key={dept}>
-                  <Link to="/karriere/fagomrader" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
-                    <span className="w-0 group-hover:w-3 h-px bg-primary transition-all duration-300" />
+                  <Link to="/karriere/fagomrader" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {dept}
                   </Link>
                 </li>
@@ -261,24 +250,20 @@ const KarriereFooter = () => {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-5">Avargo</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Avargo</h4>
+            <ul className="space-y-2.5">
               <li><Link to="/om-oss" className="text-sm text-muted-foreground hover:text-primary transition-colors">Om oss</Link></li>
               <li><Link to="/kontakt" className="text-sm text-muted-foreground hover:text-primary transition-colors">Kontakt</Link></li>
-              <li><Link to="/personvern" className="text-sm text-muted-foreground hover:text-primary transition-colors">Personvern</Link></li>
               <li><Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">avargo.no</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Avargo AS. Alle rettigheter reservert.</p>
-          <div className="flex items-center gap-4">
-            <div className="h-px w-16 bg-gradient-to-r from-primary/30 to-secondary/30" />
-            <Link to="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
-              <ArrowLeft size={11} /> Gå til avargo.no
-            </Link>
-          </div>
+        <div className="mt-8 pt-6 border-t border-border/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Avargo AS</p>
+          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
+            <ArrowLeft size={11} /> Gå til avargo.no
+          </Link>
         </div>
       </motion.div>
     </footer>
