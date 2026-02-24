@@ -136,13 +136,15 @@ const KarriereForside = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-8 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-8 backdrop-blur-sm cursor-pointer"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-              </span>
-              {jobCount > 0 ? `${jobCount} ledige stillinger` : "Vi rekrutterer"}
+              <Link to="/karriere/stillinger" className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                </span>
+                {jobCount > 0 ? `${jobCount} ledige stillinger` : "Vi rekrutterer"}
+              </Link>
             </motion.div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6 leading-[1.05]">
@@ -211,24 +213,38 @@ const KarriereForside = () => {
               { icon: Users, label: "Kontorer", value: 5, suffix: "" },
               { icon: Heart, label: "Overtid", value: 0, suffix: " t" },
               { icon: Zap, label: "Ledige stillinger", value: jobCount, suffix: "" },
-            ].map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="glass rounded-2xl p-6 border border-border/10 text-center group hover:border-primary/20 transition-all duration-500"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
-                  <s.icon size={18} className="text-primary" />
-                </div>
-                <p className="text-3xl font-bold text-foreground">
-                  <AnimatedCounter value={s.value} suffix={s.suffix} />
-                </p>
-                <p className="text-[11px] text-muted-foreground mt-1 tracking-wide">{s.label}</p>
-              </motion.div>
-            ))}
+            ].map((s, i) => {
+              const inner = (
+                <>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
+                    <s.icon size={18} className="text-primary" />
+                  </div>
+                  <p className="text-3xl font-bold text-foreground">
+                    <AnimatedCounter value={s.value} suffix={s.suffix} />
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1 tracking-wide">{s.label}</p>
+                </>
+              );
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                >
+                  {s.label === "Ledige stillinger" ? (
+                    <Link to="/karriere/stillinger" className="glass rounded-2xl p-6 border border-border/10 text-center group hover:border-primary/20 transition-all duration-500 block cursor-pointer">
+                      {inner}
+                    </Link>
+                  ) : (
+                    <div className="glass rounded-2xl p-6 border border-border/10 text-center group hover:border-primary/20 transition-all duration-500">
+                      {inner}
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
