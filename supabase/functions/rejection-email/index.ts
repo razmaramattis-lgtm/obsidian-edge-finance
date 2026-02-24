@@ -1,5 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -72,33 +70,33 @@ async function sendEmail(opts: {
   }
 }
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+function buildRejectionEmail(
+  firstName: string,
+  positionTitle: string | null,
+  rejectionFeedback: string | null,
+  senderName: string,
+  senderTitle: string | null,
+) {
+  const positionLine = positionTitle
+    ? `<p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi har n&#229; gjennomg&#229;tt alle s&#248;knadene vi har mottatt til stillingen som <strong>${positionTitle}</strong>, og vi har dessverre valgt &#229; g&#229; videre med andre kandidater denne gangen.</p>`
+    : `<p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi har n&#229; gjennomg&#229;tt alle s&#248;knadene vi har mottatt, og vi har dessverre valgt &#229; g&#229; videre med andre kandidater denne gangen.</p>`;
 
-  try {
-    const { applicant_name, applicant_email, position_title } = await req.json();
+  // Build feedback section if provided
+  const feedbackLines = rejectionFeedback
+    ? rejectionFeedback.split("\n").filter(l => l.trim()).map(l => `<p style="margin:0 0 8px 0;font-size:14px;line-height:1.6;color:#374151;">${l}</p>`).join("")
+    : "";
 
-    if (!applicant_email || !applicant_name) {
-      return new Response(JSON.stringify({ error: "Mangler navn eller e-post" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+  const feedbackSection = feedbackLines
+    ? `<div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;">
+        <p style="font-size:13px;color:#92400e;margin:0 0 10px 0;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tilbakemelding fra oss</p>
+        ${feedbackLines}
+      </div>`
+    : "";
 
-    const smtpHost = "smtp.domeneshop.no";
-    const smtpPort = 465;
-    const smtpUser = Deno.env.get("SMTP_USER")!;
-    const smtpPass = Deno.env.get("SMTP_PASS")!;
-    const fromEmail = "kontakt@avargo.no";
+  const sigName = senderName || "Rekruttering";
+  const sigTitle = senderTitle ? `<br/>${senderTitle}` : "";
 
-    const firstName = applicant_name.split(" ")[0];
-    const positionLine = position_title
-      ? `<p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi har n&#229; gjennomg&#229;tt alle s&#248;knadene vi har mottatt til stillingen som <strong>${position_title}</strong>, og vi har dessverre valgt &#229; g&#229; videre med andre kandidater denne gangen.</p>`
-      : `<p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi har n&#229; gjennomg&#229;tt alle s&#248;knadene vi har mottatt, og vi har dessverre valgt &#229; g&#229; videre med andre kandidater denne gangen.</p>`;
-
-    const html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="no">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background-color:#f4f4f5;font-family:Georgia,'Times New Roman',serif;">
@@ -106,14 +104,12 @@ serve(async (req) => {
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
 
-        <!-- Header -->
         <tr>
           <td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;">
             <img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" />
           </td>
         </tr>
 
-        <!-- Body -->
         <tr>
           <td style="padding:40px 40px 20px 40px;">
             <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Hei, ${firstName}</p>
@@ -122,26 +118,26 @@ serve(async (req) => {
 
             ${positionLine}
 
+            ${feedbackSection}
+
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Dette betyr p&#229; ingen m&#229;te at kompetansen din ikke er verdifull. Konkurransen var sterk, og det var mange kvalifiserte s&#248;kere. Vi h&#229;per virkelig at du vil vurdere &#229; s&#248;ke hos oss igjen ved en senere anledning, enten p&#229; en konkret stilling eller som en &#229;pen s&#248;knad.</p>
 
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi &#248;nsker deg alt godt videre, og h&#229;per veiene v&#229;re krysses igjen.</p>
 
             <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
               Med vennlig hilsen<br/>
-              <strong>Rekruttering</strong><br/>
+              <strong>${sigName}</strong>${sigTitle}<br/>
               Avargo
             </p>
           </td>
         </tr>
 
-        <!-- Divider -->
         <tr>
           <td style="padding:0 40px;">
             <hr style="border:none;border-top:1px solid #e4e4e7;margin:20px 0;" />
           </td>
         </tr>
 
-        <!-- Footer -->
         <tr>
           <td style="padding:10px 40px 36px 40px;text-align:center;">
             <p style="margin:0 0 8px 0;font-size:13px;color:#71717a;">
@@ -157,16 +153,50 @@ serve(async (req) => {
   </table>
 </body>
 </html>`;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const {
+      applicant_name,
+      applicant_email,
+      position_title,
+      rejection_feedback,
+      sender_name,
+      sender_title,
+    } = await req.json();
+
+    if (!applicant_email || !applicant_name) {
+      return new Response(JSON.stringify({ error: "Mangler navn eller e-post" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const smtpUser = Deno.env.get("SMTP_USER")!;
+    const smtpPass = Deno.env.get("SMTP_PASS")!;
+    const fromEmail = "kontakt@avargo.no";
+    const firstName = applicant_name.split(" ")[0];
 
     await sendEmail({
-      hostname: smtpHost,
-      port: smtpPort,
+      hostname: "smtp.domeneshop.no",
+      port: 465,
       username: smtpUser,
       password: smtpPass,
       from: fromEmail,
       to: applicant_email,
       subject: "Tilbakemelding p\u00e5 din s\u00f8knad hos Avargo",
-      html,
+      html: buildRejectionEmail(
+        firstName,
+        position_title || null,
+        rejection_feedback || null,
+        sender_name || "Rekruttering",
+        sender_title || null,
+      ),
     });
 
     return new Response(JSON.stringify({ success: true }), {
