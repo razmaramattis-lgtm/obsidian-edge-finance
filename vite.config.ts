@@ -14,11 +14,16 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    sourcemap: true,
+    sourcemap: false,
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: {
           'framer-motion': ['framer-motion'],
+          'react-vendor': ['react', 'react-dom'],
+          'router': ['react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+          'ui-core': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs', '@radix-ui/react-tooltip', '@radix-ui/react-popover'],
         },
       },
     },
@@ -39,6 +44,24 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: "google-fonts-cache",
               expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts-webfonts",
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "images-cache",
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
