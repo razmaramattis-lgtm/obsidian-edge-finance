@@ -125,10 +125,12 @@ serve(async (req) => {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category);
       if (s > 0) results.push({ source: "Intern ressurs", title: doc.title, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || undefined });
     }
-    // Archive
+    // Archive — primary match on document name (the name set when saving)
     for (const doc of dataMap.archive || []) {
-      const s = scoreText(lastMessage, doc.name, doc.description, doc.category);
-      if (s > 0) results.push({ source: "Arkiv", title: doc.name, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || undefined });
+      const nameScore = scoreText(lastMessage, doc.name) * 3; // Triple weight on name
+      const otherScore = scoreText(lastMessage, doc.description, doc.category, doc.file_name);
+      const s = nameScore + otherScore;
+      if (s > 0) results.push({ source: "Arkiv & Skjemaer", title: doc.name, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || doc.name || undefined });
     }
     // Knowledge
     for (const doc of dataMap.knowledge || []) {
