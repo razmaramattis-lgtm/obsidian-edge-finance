@@ -10,6 +10,7 @@ interface Profile {
   email: string;
   title?: string | null;
   avatar_url?: string | null;
+  phone?: string | null;
 }
 
 interface AuthContextType {
