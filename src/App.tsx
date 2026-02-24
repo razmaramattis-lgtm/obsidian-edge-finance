@@ -85,6 +85,7 @@ const KursKatalog = lazy(() => import("./pages/kurs/KursKatalog"));
 const KursBedrift = lazy(() => import("./pages/kurs/KursBedrift"));
 const KursHrPage = lazy(() => import("./pages/kurs/KursHr"));
 const KursOm = lazy(() => import("./pages/kurs/KursOm"));
+const KursRegnskap = lazy(() => import("./pages/kurs/KursRegnskap"));
 
 // Bransje-undersider
 const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
@@ -218,6 +219,7 @@ const App = () => (
                   <Route path="/kurs" element={<KursLayout />}>
                     <Route index element={<KursForside />} />
                     <Route path="katalog" element={<KursKatalog />} />
+                    <Route path="regnskap" element={<KursRegnskap />} />
                     <Route path="bedriftskurs" element={<KursBedrift />} />
                     <Route path="hr-kurs" element={<KursHrPage />} />
                     <Route path="om" element={<KursOm />} />
