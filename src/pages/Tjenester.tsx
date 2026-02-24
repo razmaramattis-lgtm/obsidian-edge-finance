@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useSection } from "@/contexts/SectionContext";
-import { sectionCategoryIds, sectionKursHrefs, sectionPageCopy } from "@/config/sectionContent";
+import { sectionCategoryIds, sectionPageCopy } from "@/config/sectionContent";
 
 const categories = [
   {
@@ -214,38 +214,6 @@ const categories = [
       },
     ],
   },
-  {
-    id: "kurs",
-    label: "Kurs & Opplæring",
-    tag: "Avargo · Akademi",
-    tagColor: "text-muted-foreground",
-    headline: "Lær det du trenger — på en måte som gir mening.",
-    intro:
-      "Praktiske kurs holdt av folk som kan faget. Enten du vil lære grunnleggende regnskap, bli tryggere som arbeidsgiver, eller gi teamet ditt et kompetanseløft.",
-    services: [
-      {
-        icon: Lightbulb,
-        href: "/tjenester/kurs",
-        title: "Regnskapskurs",
-        desc: "Fra det helt grunnleggende til mer avanserte temaer. Kurs som gir deg bedre kontroll over egne tall — eller gjør samarbeidet med regnskapsføreren enda bedre.",
-        sub: ["Bokføring og kvitteringer", "Moms i praksis", "Skattemelding og årsregnskap", "Gode rutiner og kontroll"],
-      },
-      {
-        icon: Users,
-        href: "/tjenester/hr-kurs",
-        title: "Kurs for arbeidsgivere",
-        desc: "Lær hva du trenger å vite om arbeidsrett, lønn og personalledelse. For deg som vil forstå reglene og ta gode valg som arbeidsgiver.",
-        sub: ["Arbeidsmiljøloven forklart enkelt", "Lønn og feriepenger", "Starte og avslutte arbeidsforhold", "Personalhåndbok og regler"],
-      },
-      {
-        icon: TrendingUp,
-        href: "/tjenester/bedriftskurs",
-        title: "Kurs tilpasset ditt team",
-        desc: "Vi lager kurs skreddersydd for din bedrift — enten det handler om å forstå økonomi, følge regler eller bruke digitale verktøy. Holdt på kontoret eller digitalt.",
-        sub: ["Innhold tilpasset dere", "Workshop med øvelser", "Oppfølging etterpå", "Kursbevis til deltakerne"],
-      },
-    ],
-  },
 ];
 
 const Tjenester = () => {
@@ -256,20 +224,9 @@ const Tjenester = () => {
     if (!isInSection || !section) return categories;
 
     const allowedIds = sectionCategoryIds[section.id];
-    const kursHrefs = sectionKursHrefs[section.id];
 
     return categories
-      .filter((cat) => allowedIds.includes(cat.id) || cat.id === "kurs")
-      .map((cat) => {
-        if (cat.id === "kurs") {
-          return {
-            ...cat,
-            services: cat.services.filter((s) => kursHrefs.includes(s.href)),
-          };
-        }
-        return cat;
-      })
-      .filter((cat) => cat.services.length > 0);
+      .filter((cat) => allowedIds.includes(cat.id));
   })();
 
   const copy = isInSection && section ? sectionPageCopy[section.id].tjenester : null;

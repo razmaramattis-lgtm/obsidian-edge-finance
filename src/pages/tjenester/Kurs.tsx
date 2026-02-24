@@ -14,7 +14,6 @@ import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import ambientTexture1 from "@/assets/ambient-texture-1.jpg";
 import { useSection } from "@/contexts/SectionContext";
-import { sectionKursCategories } from "@/config/sectionContent";
 
 /* ───────── Kategori-ikoner ───────── */
 const categoryConfig: Record<string, { icon: React.ElementType; color: string }> = {
@@ -186,13 +185,8 @@ const Kurs = () => {
     fetchCourses();
   }, []);
 
-  // Filter courses by section categories
-  const sectionCourses = useMemo(() => {
-    if (!isInSection || !section) return courses;
-    const allowed = sectionKursCategories[section.id];
-    if (!allowed) return courses;
-    return courses.filter(c => allowed.includes(c.category));
-  }, [courses, isInSection, section]);
+  // All courses shown (section filtering removed — kurs is now a standalone portal)
+  const sectionCourses = courses;
 
   const allCategories = [...new Set(sectionCourses.map(c => c.category))];
   const categoryButtons = [

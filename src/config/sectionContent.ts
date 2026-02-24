@@ -11,27 +11,6 @@ export const sectionCategoryIds: Record<SectionId, string[]> = {
   it: ["it"],
 };
 
-/**
- * Kurs items that are relevant per section (by href).
- * Bedriftskurs is always included.
- */
-export const sectionKursHrefs: Record<SectionId, string[]> = {
-  regnskap: ["/tjenester/kurs", "/tjenester/bedriftskurs"],
-  hr: ["/tjenester/hr-kurs", "/tjenester/bedriftskurs"],
-  markedsforing: ["/tjenester/bedriftskurs"],
-  it: ["/tjenester/bedriftskurs"],
-};
-
-/**
- * Course categories visible per section on the Kurs page.
- * When inside a section, only these categories are shown.
- */
-export const sectionKursCategories: Record<SectionId, string[]> = {
-  regnskap: ["Bokføring", "MVA", "Skatt & Skattelov", "Årsregnskap", "Selskapsrett", "Analyse & Rapportering", "Lønn & Personal"],
-  hr: ["HR & Personal", "HMS", "Lønn & Personal", "Ledelse & Strategi"],
-  markedsforing: ["Markedsføring", "Nettbutikk & E-handel", "Ledelse & Strategi"],
-  it: ["AI & Automatisering", "Integrasjon & Teknologi", "Nettside & Web", "Nettbutikk & E-handel"],
-};
 
 /**
  * Header tjenester groups that should be visible per section.
