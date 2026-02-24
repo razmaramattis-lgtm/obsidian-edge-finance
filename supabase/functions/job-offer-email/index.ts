@@ -146,7 +146,7 @@ function buildOfferEmail(opts: {
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Har du sp&#248;rsm&#229;l om tilbudet eller noe annet, er det bare &#229; ta kontakt. Vi er her for deg!</p>
 
             <div style="text-align:center;margin:28px 0;">
-              <a href="https://www.avargo.no/karriere/velkommen" style="display:inline-block;background-color:#10b981;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+              <a href="https://obsidian-edge-finance.lovable.app/karriere/velkommen" style="display:inline-block;background-color:#10b981;color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
                 &#127881; Les mer om din oppstart hos Avargo
               </a>
               <p style="margin:10px 0 0;font-size:12px;color:#a1a1aa;">Alt du trenger &#229; vite f&#248;r din f&#248;rste dag</p>
