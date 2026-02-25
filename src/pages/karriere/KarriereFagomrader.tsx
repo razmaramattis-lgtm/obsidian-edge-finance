@@ -84,17 +84,16 @@ const KarriereFagomrader = () => {
         <link rel="canonical" href="https://avargo.no/karriere/fagomrader" />
       </Helmet>
 
-      {/* Hero with network glow */}
-      <section className="relative py-24 md:py-36 overflow-hidden">
-        <div className="absolute inset-0">
+      {/* Hero — compact on mobile */}
+      <section className="relative py-10 md:py-36 overflow-hidden">
+        <div className="absolute inset-0 hidden md:block">
           <img src={networkImg} alt="" className="w-full h-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-background/80" />
         </div>
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 font-medium mb-4">Fagområder</p>
-            <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-5">Fire spesialiseringer, ett team</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Hver avdeling har sin unike identitet, men vi deler alle den samme kulturen — nysgjerrighet, kvalitet og omsorg.</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <h1 className="text-2xl md:text-7xl font-bold text-foreground mb-2 md:mb-5">Fagområder</h1>
+            <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">Fire spesialiseringer, én kultur.</p>
           </motion.div>
         </div>
       </section>
@@ -107,15 +106,17 @@ const KarriereFagomrader = () => {
 
         return (
           <div key={dept.id}>
-            {/* Parallax divider between sections */}
+            {/* Parallax divider — desktop only */}
             {i > 0 && (
-              <ParallaxDivider
-                src={i === 1 ? cultureImg : i === 2 ? officeTechImg : networkImg}
-                alt="Visual break"
-              />
+              <div className="hidden md:block">
+                <ParallaxDivider
+                  src={i === 1 ? cultureImg : i === 2 ? officeTechImg : networkImg}
+                  alt="Visual break"
+                />
+              </div>
             )}
 
-            <section id={dept.id} className="py-20 md:py-32 relative">
+            <section id={dept.id} className="py-8 md:py-32 relative">
               <div className="container mx-auto px-4 relative z-10">
                 <div className={`grid lg:grid-cols-2 gap-10 lg:gap-20 items-center max-w-6xl mx-auto ${!isEven ? "lg:grid-flow-dense" : ""}`}>
                   <motion.div
