@@ -89,20 +89,17 @@ const KarriereStillinger = () => {
         <link rel="canonical" href="https://avargo.no/karriere/stillinger" />
       </Helmet>
 
-      {/* Hero with cinematic image */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0">
+      {/* Hero — minimal on mobile */}
+      <section className="relative py-8 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 hidden md:block">
           <img src={cultureImg} alt="" className="w-full h-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-background/80" />
         </div>
-        <div className="absolute inset-0 opacity-[0.06]">
-          <img src={networkImg} alt="" className="w-full h-full object-cover" />
-        </div>
         <div className="container mx-auto px-4 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-12">
-            <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-4">Ledige stillinger</h1>
-            <p className="text-lg text-muted-foreground">Finn din neste mulighet hos oss</p>
-          </motion.div>
+          <div className="text-center mb-6 md:mb-12">
+            <h1 className="text-2xl md:text-7xl font-bold text-foreground mb-1 md:mb-4">Ledige stillinger</h1>
+            <p className="text-sm md:text-lg text-muted-foreground">Finn din neste mulighet</p>
+          </div>
 
           {/* Filters */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10 max-w-4xl mx-auto">

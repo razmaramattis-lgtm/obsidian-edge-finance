@@ -59,62 +59,29 @@ const KarriereAvargoFri = () => {
         <link rel="canonical" href="https://avargo.no/karriere/avargo-fri" />
       </Helmet>
 
-      {/* Hero — cinematic with layered images */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
+      {/* Hero — compact on mobile, cinematic on desktop */}
+      <section className="relative min-h-[50vh] md:min-h-[80vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={freelancerImg} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
         </div>
 
-        {/* Animated grid */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: "linear-gradient(hsl(var(--secondary) / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--secondary) / 0.4) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-        }} />
-
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-          {particles.map((p) => (
-            <motion.div
-              key={p.id}
-              className="absolute rounded-full"
-              style={{
-                width: p.width,
-                height: p.height,
-                background: "hsl(var(--secondary) / 0.5)",
-                left: p.left,
-                top: p.top,
-              }}
-              animate={{ y: [0, -40, 0], opacity: [0, 1, 0] }}
-              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay }}
-            />
-          ))}
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10 py-20">
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="max-w-3xl">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 bg-secondary/10 text-secondary text-xs font-medium mb-8 backdrop-blur-sm"
-            >
-              <Zap size={13} /> Ny modell
-            </motion.div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6 leading-tight">
-              <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="block">Avargo</motion.span>
-              <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="block text-gradient-teal">Fri</motion.span>
+        <div className="container mx-auto px-4 relative z-10 py-10 md:py-20">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/30 bg-secondary/10 text-secondary text-xs font-medium mb-4 md:mb-8">
+              <Zap size={13} /> Frilansmodell
+            </div>
+            <h1 className="text-3xl md:text-7xl font-bold text-foreground mb-3 md:mb-6 leading-tight">
+              Avargo <span className="text-gradient-teal">Fri</span>
             </h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-10">
-              En fleksibel samarbeidsmodell for deg som vil jobbe på dine premisser — enten som frilanser eller med prosjektbasert tilknytning.
-            </motion.p>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-              <a href="#bli-med" className="group inline-flex items-center gap-2 h-14 px-8 bg-secondary text-secondary-foreground rounded-2xl text-sm font-semibold hover:shadow-2xl hover:shadow-secondary/30 transition-all duration-500">
-                Bli med <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </a>
-            </motion.div>
-          </motion.div>
+            <p className="text-sm md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-10">
+              Fleksibelt samarbeid — som frilanser eller prosjektbasert.
+            </p>
+            <a href="#bli-med" className="inline-flex items-center gap-2 h-11 md:h-14 px-6 md:px-8 bg-secondary text-secondary-foreground rounded-xl md:rounded-2xl text-sm font-semibold transition-all">
+              Bli med <ArrowRight size={14} />
+            </a>
+          </div>
         </div>
       </section>
 
@@ -174,8 +141,8 @@ const KarriereAvargoFri = () => {
         </div>
       </section>
 
-      {/* Full-width lounge image break */}
-      <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+      {/* Full-width lounge image break — desktop only */}
+      <section className="relative h-[50vh] overflow-hidden hidden md:block">
         <motion.img
           src={loungeImg}
           alt="Avargo lounge"
@@ -187,18 +154,18 @@ const KarriereAvargoFri = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/20" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center px-4">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">Frihet med <span className="text-gradient-teal">fellesskap</span></h2>
-          </motion.div>
+          <div className="text-center px-4">
+            <h2 className="text-5xl font-bold text-foreground">Frihet med <span className="text-gradient-teal">fellesskap</span></h2>
+          </div>
         </div>
       </section>
 
       {/* Benefits */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.08]">
+      <section className="py-8 md:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.08] hidden md:block">
           <img src={networkImg} alt="" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute inset-0 bg-background/85" />
+        <div className="absolute inset-0 bg-background/85 hidden md:block" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Hva du får</h2>
