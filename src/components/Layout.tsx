@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
+import SiteChatbot from "@/components/SiteChatbot";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
@@ -829,6 +830,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </footer>
       <AdminFloatingBar />
+      <SiteChatbot />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import SiteChatbot from "@/components/SiteChatbot";
 import { ArrowLeft, Zap, Briefcase, Users, Sparkles, Home } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import networkImg from "@/assets/karriere-network-glow.jpg";
@@ -237,6 +238,7 @@ const KarriereLayout = () => (
     </main>
     <KarriereFooter />
     <MobileTabBar />
+    <SiteChatbot />
   </div>
 );
 

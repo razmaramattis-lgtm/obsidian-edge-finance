@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import SiteChatbot from "@/components/SiteChatbot";
 import { ArrowLeft, BookOpen, GraduationCap, Users, Briefcase, Sparkles, Calculator } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import patternImg from "@/assets/kurs-pattern.jpg";
@@ -232,6 +233,7 @@ const KursLayout = () => (
     </main>
     <KursFooter />
     <MobileTabBar />
+    <SiteChatbot />
   </div>
 );
 
