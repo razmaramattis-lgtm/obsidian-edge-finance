@@ -162,6 +162,19 @@ const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AdminOnlyRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading, isAdmin } = useAuth();
+  if (loading) return <PageFallback />;
+  if (!user) return <Navigate to="/admin/logg-inn" replace />;
+  if (!isAdmin) return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4 text-center">
+      <p className="text-lg font-medium">Ingen tilgang</p>
+      <p className="text-sm text-muted-foreground">Denne siden er kun tilgjengelig for administratorer.</p>
+    </div>
+  );
+  return <>{children}</>;
+};
+
 const PrefetchTrigger = () => {
   useEffect(() => {
     if ('requestIdleCallback' in window) {
@@ -318,8 +331,8 @@ const App = () => (
                             <Route path="/:sectionId/nyheter" element={<BlogListing />} />
                             <Route path="/:sectionId/nyhet/:slug" element={<BlogPost />} />
                             <Route path="/:sectionId/faq" element={<FAQ />} />
-                            <Route path="/:sectionId/regnskapsord" element={<Regnskapsord />} />
-                            <Route path="/:sectionId/regnskapsord/:slug" element={<RegnskapsordDetalj />} />
+                            <Route path="/:sectionId/regnskapsord" element={<AdminOnlyRoute><Regnskapsord /></AdminOnlyRoute>} />
+                            <Route path="/:sectionId/regnskapsord/:slug" element={<AdminOnlyRoute><RegnskapsordDetalj /></AdminOnlyRoute>} />
 
                             {/* Legacy / shared routes */}
                             <Route path="/tjenester" element={<Tjenester />} />
