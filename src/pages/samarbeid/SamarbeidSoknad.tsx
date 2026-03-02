@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Building2, User, Mail, Phone, Globe, Hash, Users, TrendingUp, Send, Sparkles, CheckCircle2 } from "lucide-react";
+import { Building2, User, Mail, Phone, Globe, Hash, Users, TrendingUp, Send, Sparkles, CheckCircle2, Search, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/samarbeid-hero.jpg";
@@ -22,7 +22,81 @@ const SamarbeidSoknad = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // Brreg search state
+  const [brregQuery, setBrregQuery] = useState("");
+  const [brregResults, setBrregResults] = useState<any[]>([]);
+  const [brregLoading, setBrregLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const set = (key: string, val: string) => setForm(prev => ({ ...prev, [key]: val }));
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowDropdown(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Brreg search with debounce
+  useEffect(() => {
+    if (brregQuery.length < 2) { setBrregResults([]); return; }
+    const timeout = setTimeout(async () => {
+      setBrregLoading(true);
+      try {
+        const isOrgNr = /^\d{9}$/.test(brregQuery.trim());
+        const url = isOrgNr
+          ? `https://data.brreg.no/enhetsregisteret/api/enheter/${brregQuery.trim()}`
+          : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(brregQuery)}&size=8`;
+        const res = await fetch(url);
+        if (!res.ok) { setBrregResults([]); setBrregLoading(false); return; }
+        const data = await res.json();
+        if (isOrgNr) {
+          setBrregResults(data?.organisasjonsnummer ? [data] : []);
+        } else {
+          setBrregResults(data?._embedded?.enheter || []);
+        }
+        setShowDropdown(true);
+      } catch { setBrregResults([]); }
+      setBrregLoading(false);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [brregQuery]);
+
+  const selectCompany = async (enhet: any) => {
+    setShowDropdown(false);
+    setBrregQuery("");
+
+    // Fetch roller for daglig leder
+    let dagligLeder = "";
+    try {
+      const rolleRes = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`);
+      if (rolleRes.ok) {
+        const rolleData = await rolleRes.json();
+        const groups = rolleData?.rollegrupper || [];
+        for (const g of groups) {
+          if (g.type?.kode === "DAGL") {
+            const person = g.roller?.[0]?.person;
+            if (person) dagligLeder = `${person.navn?.fornavn || ""} ${person.navn?.etternavn || ""}`.trim();
+          }
+        }
+      }
+    } catch { /* ignore */ }
+
+    const addr = enhet.forretningsadresse || enhet.postadresse;
+    const webRaw = enhet.hjemmeside || "";
+
+    setForm(prev => ({
+      ...prev,
+      org_number: enhet.organisasjonsnummer || "",
+      company_name: enhet.navn || "",
+      contact_name: dagligLeder || prev.contact_name,
+      website: webRaw || prev.website,
+      num_employees: enhet.antallAnsatte?.toString() || prev.num_employees,
+    }));
+  };
 
   const inputClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all";
 
@@ -110,6 +184,36 @@ const SamarbeidSoknad = () => {
                     <div>
                       <h3 className="text-lg font-bold text-white mb-0.5">Samarbeidssøknad</h3>
                       <p className="text-xs text-white/50">Fyll ut informasjonen under — alt er konfidensielt.</p>
+                    </div>
+
+                    {/* Brreg search */}
+                    <div ref={dropdownRef} className="relative">
+                      <p className="text-xs text-white/50 mb-1.5">Søk i Brønnøysundregistrene</p>
+                      <div className="relative">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        <input
+                          value={brregQuery}
+                          onChange={e => setBrregQuery(e.target.value)}
+                          placeholder="Søk på firmanavn eller org.nr…"
+                          className={inputClass}
+                        />
+                        {brregLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 animate-spin" />}
+                      </div>
+                      {showDropdown && brregResults.length > 0 && (
+                        <div className="absolute z-50 left-0 right-0 mt-1 rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl max-h-60 overflow-y-auto shadow-2xl">
+                          {brregResults.map((enhet) => (
+                            <button
+                              key={enhet.organisasjonsnummer}
+                              type="button"
+                              onClick={() => selectCompany(enhet)}
+                              className="w-full text-left px-4 py-2.5 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0"
+                            >
+                              <span className="text-sm font-medium text-white">{enhet.navn}</span>
+                              <span className="block text-xs text-white/40">{enhet.organisasjonsnummer} · {enhet.organisasjonsform?.beskrivelse || ""}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
