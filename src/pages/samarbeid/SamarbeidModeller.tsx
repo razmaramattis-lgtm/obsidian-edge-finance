@@ -1,38 +1,37 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, CheckCircle2, Building2, Handshake, TrendingUp, Shield, Users, Monitor, Scale, Calculator } from "lucide-react";
+import { ArrowRight, CheckCircle2, Building2, Handshake, TrendingUp, Shield, Users, Monitor, Calculator, Megaphone } from "lucide-react";
 import { motion } from "framer-motion";
 import heroImg from "@/assets/samarbeid-hero.jpg";
-import teamImg from "@/assets/samarbeid-team.jpg";
 
 const MODELS = [
   {
     icon: Building2,
-    title: "Fullt oppkjøp",
-    subtitle: "Vi overtar — du leder videre",
+    title: "Fullt oppkjøp — du trer ut",
+    subtitle: "Vi overtar, du får en trygg exit",
     points: [
       "Avargo kjøper 100 % av selskapet ditt",
-      "Du kan fortsette som daglig leder i din avdeling",
-      "Mulighet for eierandel i avdelingen din",
+      "Du trer ut av daglig drift med en god avtale",
       "Alle ansatte beholder jobben — vi verdsetter kompetanse",
+      "Komplett integrasjon i Avargo-økosystemet",
+      "Konkurransedyktig pris basert på verdivurdering",
+      "Ryddig og profesjonell prosess hele veien",
+    ],
+    highlight: false,
+  },
+  {
+    icon: Handshake,
+    title: "Fullt oppkjøp — med eierskap",
+    subtitle: "Vi overtar, du leder videre og eier i avdelingen",
+    points: [
+      "Avargo kjøper 100 % av selskapet ditt",
+      "Du fortsetter som daglig leder i din avdeling",
+      "Du eier en andel i avdelingen din — deler av veksten",
+      "Alle ansatte beholder jobben og du beholder kulturen",
       "Komplett integrasjon i Avargo-økosystemet",
       "Konkurransedyktig pris basert på verdivurdering",
     ],
     highlight: true,
-  },
-  {
-    icon: Handshake,
-    title: "Samarbeidsavtale",
-    subtitle: "Behold selskapet — nyt fordelene",
-    points: [
-      "Du beholder fullt eierskap og selvstendighet",
-      "Tilgang til Avargos ressurser og støtteapparat",
-      "Felles innkjøpsavtaler og stordriftsfordeler",
-      "Delt merkevare eller egen profil — du velger",
-      "Faglig nettverk og kompetansedeling",
-      "Fleksible avtalevilkår tilpasset din virksomhet",
-    ],
-    highlight: false,
   },
   {
     icon: TrendingUp,
@@ -48,14 +47,28 @@ const MODELS = [
     ],
     highlight: false,
   },
+  {
+    icon: Handshake,
+    title: "Samarbeidsavtale",
+    subtitle: "Behold selskapet — nyt fordelene",
+    points: [
+      "Du beholder fullt eierskap og selvstendighet",
+      "Tilgang til Avargos ressurser og støtteapparat",
+      "Felles innkjøpsavtaler og stordriftsfordeler",
+      "Faglig nettverk og kompetansedeling",
+      "Fleksible avtalevilkår tilpasset din virksomhet",
+      "Vurderes individuelt basert på gjensidig nytte",
+    ],
+    highlight: false,
+  },
 ];
 
 const ADVANTAGES = [
-  { icon: Shield, title: "Hvitvasking & AML", desc: "Alle lovpålagte rutiner for anti-hvitvasking, risikovurdering og kundekontroll dekkes av sentralorganisasjonen. Du trenger aldri å tenke på dette igjen." },
-  { icon: Scale, title: "Internkontroll & Compliance", desc: "Vi har et dedikert team som holder alle rutiner oppdatert i henhold til gjeldende regelverk — inkludert GDPR, hvitvaskingsloven og bokføringsloven." },
-  { icon: Users, title: "HR & Personalstøtte", desc: "Komplett HR-avdeling med personalhåndbok, arbeidsrett, lønnskjøring, rekruttering og opplæring av nye ansatte." },
-  { icon: Monitor, title: "IT & Teknologi", desc: "Profesjonelle nettsider, interne systemer, AI-verktøy og teknisk support. Alt av IT-infrastruktur er på plass." },
+  { icon: Shield, title: "Hvitvasking & AML", desc: "Alle lovpålagte rutiner for anti-hvitvasking, risikovurdering og kundekontroll dekkes av sentralorganisasjonen." },
   { icon: Calculator, title: "Faglig kvalitetssikring", desc: "Tilgang til et sterkt fagmiljø med løpende oppdatering, kursing og sparring med erfarne rådgivere." },
+  { icon: Users, title: "HR & Personalstøtte", desc: "Komplett HR-avdeling med personalhåndbok, arbeidsrett, lønnskjøring, rekruttering og opplæring." },
+  { icon: Monitor, title: "IT & Teknologi", desc: "Profesjonelle nettsider, interne systemer, AI-verktøy og teknisk support. Alt av IT-infrastruktur." },
+  { icon: Megaphone, title: "Markedsføring & SEO", desc: "Profesjonell digital markedsføring, SEO-optimalisering, Google Ads og synlighet på nett." },
   { icon: TrendingUp, title: "Stordriftsfordeler", desc: "Felles lisenser, programvare, forsikringer og leverandøravtaler — vesentlig reduserte driftskostnader." },
 ];
 
@@ -63,21 +76,21 @@ const SamarbeidModeller = () => (
   <>
     <Helmet>
       <title>Samarbeidsmodeller | Avargo Samarbeid</title>
-      <meta name="description" content="Utforsk våre tre samarbeidsmodeller: fullt oppkjøp, samarbeidsavtale og delvis oppkjøp. Finn modellen som passer din situasjon." />
+      <meta name="description" content="Utforsk våre fire samarbeidsmodeller: fullt oppkjøp med exit, fullt oppkjøp med eierskap, delvis oppkjøp og samarbeidsavtale." />
     </Helmet>
 
     {/* Hero */}
     <section className="relative py-20 md:py-28 overflow-hidden">
       <div className="absolute inset-0">
-        <img src={teamImg} alt="" className="w-full h-full object-cover" />
+        <img src={heroImg} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
           <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 font-medium mb-3">Modeller</p>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">Tre veier til samarbeid</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">Fire veier til samarbeid</h1>
           <p className="text-lg text-white/60 max-w-xl leading-relaxed">
-            Uansett om du vil selge helt, samarbeide tett eller finne en mellomløsning — vi har en modell som passer akkurat din situasjon.
+            Uansett om du vil selge helt, beholde eierskap, finne en mellomløsning eller samarbeide — vi har en modell som passer.
           </p>
         </motion.div>
       </div>
