@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, Building2, ArrowRight, ArrowLeft, CheckCircle2, Sparkles, Send, BarChart3, User, Mail, Phone, Rocket, PartyPopper, Zap, Heart, Trophy } from "lucide-react";
+import { Search, Loader2, Building2, ArrowRight, ArrowLeft, CheckCircle2, User, Mail, Phone, Rocket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 /* ────────── types ────────── */
@@ -29,31 +29,31 @@ interface CompanyData {
   financials: FetchedFinancials | null;
 }
 
-/* ────────── Fun option data ────────── */
+/* ────────── Option data ────────── */
 const INTEREST_OPTIONS = [
   { value: "full_sale", label: "Selge hele byrået", emoji: "🏷️", sub: "Ny eier, ny start" },
   { value: "full_sale_stay", label: "Selge, men bli med videre", emoji: "🤝", sub: "Det beste fra to verdener" },
-  { value: "partial", label: "Selge en del", emoji: "📊", sub: "Beholde litt, tjene litt" },
-  { value: "partnership", label: "Samarbeid uten salg", emoji: "🔗", sub: "Sterkere sammen" },
-  { value: "open", label: "Åpen for alt!", emoji: "💡", sub: "La oss utforske mulighetene" },
+  { value: "partial", label: "Selge en andel", emoji: "📊", sub: "Beholde kontroll, hente kapital" },
+  { value: "partnership", label: "Strategisk samarbeid", emoji: "🔗", sub: "Sterkere sammen — uten salg" },
+  { value: "open", label: "Åpen for dialog", emoji: "💡", sub: "La oss utforske mulighetene" },
 ];
 
 const REASON_OPTIONS = [
-  { value: "retirement", label: "Tid for å nyte livet", emoji: "🌅", sub: "Pensjon eller nedtrapping" },
-  { value: "growth", label: "Trenger boost for å vokse", emoji: "🚀", sub: "Ressurser og nettverk" },
-  { value: "burnout", label: "Trenger avlastning", emoji: "⚡", sub: "Alt for mye på én skulder" },
-  { value: "value", label: "Vil realisere verdier", emoji: "💰", sub: "Kapitalisere på innsatsen" },
-  { value: "quality", label: "Gi kundene mer", emoji: "⭐", sub: "Bredere tilbud og bedre kvalitet" },
-  { value: "succession", label: "Mangler etterfølger", emoji: "🔄", sub: "Hvem tar over stafettpinnen?" },
-  { value: "other", label: "Noe helt annet", emoji: "💬", sub: "Vi er nysgjerrige!" },
+  { value: "retirement", label: "Planlegger nedtrapping", emoji: "🌅", sub: "Pensjon eller generasjonsskifte" },
+  { value: "growth", label: "Vil vokse raskere", emoji: "🚀", sub: "Trenger ressurser og nettverk" },
+  { value: "burnout", label: "Trenger avlastning", emoji: "⚡", sub: "For mye ansvar på få skuldre" },
+  { value: "value", label: "Realisere verdier", emoji: "💰", sub: "Kapitalisere på det dere har bygget" },
+  { value: "quality", label: "Løfte kvaliteten", emoji: "⭐", sub: "Bredere tilbud til kundene" },
+  { value: "succession", label: "Mangler etterfølger", emoji: "🔄", sub: "Hvem overtar stafettpinnen?" },
+  { value: "other", label: "Noe annet", emoji: "💬", sub: "Fortell oss gjerne mer" },
 ];
 
 const CUSTOMER_COUNT_OPTIONS = [
-  { value: "1-20", label: "1–20 kunder", emoji: "🌱", sub: "Oversiktlig og personlig" },
+  { value: "1-20", label: "1–20 kunder", emoji: "🌱", sub: "Kompakt og personlig" },
   { value: "21-50", label: "21–50 kunder", emoji: "🌿", sub: "Fin portefølje" },
   { value: "51-100", label: "51–100 kunder", emoji: "🌳", sub: "Solid kundebase" },
-  { value: "101-200", label: "101–200 kunder", emoji: "🏔️", sub: "Imponerende!" },
-  { value: "200+", label: "Over 200 kunder", emoji: "🏆", sub: "Heftig maskineri" },
+  { value: "101-200", label: "101–200 kunder", emoji: "🏔️", sub: "Imponerende volum" },
+  { value: "200+", label: "Over 200 kunder", emoji: "🏆", sub: "Stor operasjon" },
 ];
 
 const REVENUE_OPTIONS = [
@@ -66,22 +66,11 @@ const REVENUE_OPTIONS = [
 ];
 
 const EMPLOYEE_COUNT_OPTIONS = [
-  { value: "solo", label: "Bare meg — one-man-show", emoji: "🦸" },
+  { value: "solo", label: "Bare meg", emoji: "🦸" },
   { value: "2-5", label: "2–5 ansatte", emoji: "👥" },
   { value: "6-10", label: "6–10 ansatte", emoji: "🏢" },
   { value: "11-20", label: "11–20 ansatte", emoji: "🏗️" },
   { value: "20+", label: "Over 20 ansatte", emoji: "🏙️" },
-];
-
-const SERVICE_OPTIONS = [
-  { value: "bookkeeping", label: "Løpende bokføring", emoji: "📖" },
-  { value: "payroll", label: "Lønn & personal", emoji: "💵" },
-  { value: "annual_accounts", label: "Årsregnskap", emoji: "📋" },
-  { value: "tax", label: "Skatt & rådgivning", emoji: "🧾" },
-  { value: "advisory", label: "CFO / økonomisk rådgivning", emoji: "📊" },
-  { value: "invoicing", label: "Fakturering", emoji: "🧮" },
-  { value: "audit", label: "Revisjon", emoji: "🔍" },
-  { value: "other_services", label: "Andre ting", emoji: "✨" },
 ];
 
 const SYSTEM_OPTIONS = [
@@ -93,31 +82,25 @@ const SYSTEM_OPTIONS = [
   { value: "unimicro", label: "Uni Micro", emoji: "⚪" },
   { value: "duett", label: "Duett", emoji: "🔴" },
   { value: "maestro", label: "Maestro", emoji: "🟤" },
-  { value: "other_system", label: "Noe annet", emoji: "🔧" },
-];
-
-const AUTHORIZED_OPTIONS = [
-  { value: "yes", label: "Ja, vi er autorisert", emoji: "✅" },
-  { value: "no", label: "Nei, ikke ennå", emoji: "❌" },
-  { value: "unknown", label: "Vet ikke 🤷", emoji: "❓" },
+  { value: "other_system", label: "Annet system", emoji: "🔧" },
 ];
 
 const CHALLENGE_OPTIONS = [
-  { value: "compliance", label: "Hvitvasking & compliance", emoji: "📋" },
-  { value: "it", label: "Digitalisering & IT", emoji: "💻" },
-  { value: "recruitment", label: "Vanskelig å rekruttere", emoji: "🔍" },
-  { value: "profitability", label: "Lønnsomhet & prising", emoji: "📉" },
-  { value: "capacity", label: "For mye å gjøre!", emoji: "⏰" },
-  { value: "customer_churn", label: "Mister kunder", emoji: "📤" },
-  { value: "quality_control", label: "Kvalitetskontroll", emoji: "✅" },
-  { value: "none", label: "Alt er rosenrødt 👍", emoji: "🌹" },
+  { value: "compliance", label: "Regulatorisk kompleksitet", emoji: "📋" },
+  { value: "it", label: "Digitalisering", emoji: "💻" },
+  { value: "recruitment", label: "Rekruttering", emoji: "🔍" },
+  { value: "profitability", label: "Lønnsomhet", emoji: "📉" },
+  { value: "capacity", label: "Kapasitetsutfordringer", emoji: "⏰" },
+  { value: "customer_churn", label: "Kundefrafall", emoji: "📤" },
+  { value: "quality_control", label: "Kvalitetssikring", emoji: "✅" },
+  { value: "none", label: "Ingen vesentlige utfordringer", emoji: "🌹" },
 ];
 
 const TIMELINE_OPTIONS = [
-  { value: "asap", label: "Jo før jo heller!", emoji: "⚡", sub: "La oss kjøre på" },
-  { value: "6months", label: "Innen et halvt år", emoji: "📅", sub: "Litt tid å forberede" },
-  { value: "1year", label: "Innen et år", emoji: "🗓️", sub: "Planlegger fremover" },
-  { value: "exploring", label: "Bare sniffer litt", emoji: "🔭", sub: "Ingen hastverk" },
+  { value: "asap", label: "Så snart som mulig", emoji: "⚡", sub: "Klar for å ta neste steg" },
+  { value: "6months", label: "Innen 6 måneder", emoji: "📅", sub: "Tid til forberedelser" },
+  { value: "1year", label: "Innen 12 måneder", emoji: "🗓️", sub: "Langsiktig planlegging" },
+  { value: "exploring", label: "Utforsker mulighetene", emoji: "🔭", sub: "Ingen hastverk — bare nysgjerrig" },
 ];
 
 function formatNOK(val: number | null | undefined): string {
@@ -129,20 +112,19 @@ function formatNOK(val: number | null | undefined): string {
   return `${num} NOK`;
 }
 
-/* ────────── Step headlines — conversational & fun ────────── */
+/* ────────── Step headlines ────────── */
+// Steps: 0=company, 1=interest, 2=reason, 3=customers, 4=revenue, 5=employees, 6=systems, 7=challenges, 8=timeline, 9=contact
 const STEP_HEADLINES: { emoji: string; title: string; subtitle: string }[] = [
-  { emoji: "🔍", title: "La oss starte med å finne byrået ditt", subtitle: "Søk på navn eller org.nr — vi gjør resten" },
-  { emoji: "💭", title: "Hva drømmer du om?", subtitle: "Helt uforpliktende — vi bare utforsker" },
-  { emoji: "🤔", title: "Hva driver tankene?", subtitle: "Det finnes ingen feil svar" },
-  { emoji: "👥", title: "Hvor mange kunder har dere?", subtitle: "Omtrent er helt perfekt" },
-  { emoji: "💰", title: "Hva omsetter byrået for?", subtitle: "Tall fra siste år — ca. er helt ok" },
-  { emoji: "🦸", title: "Hvor mange er dere på laget?", subtitle: "Inkluder deg selv!" },
-  { emoji: "🧰", title: "Hva leverer dere til kundene?", subtitle: "Velg alt som passer — trykk løs!" },
-  { emoji: "💻", title: "Hvilket system er hjertet i driften?", subtitle: "Velg alle dere bruker" },
-  { emoji: "🏅", title: "Er byrået autorisert?", subtitle: "Autorisert regnskapsførerselskap" },
-  { emoji: "🎯", title: "Hva er den største utfordringen?", subtitle: "Velg det som treffer — eller alt er bra!" },
-  { emoji: "⏰", title: "Hva er tidshorisonten din?", subtitle: "Helt frivillig tempo" },
-  { emoji: "📬", title: "Nesten der! Hvem skal vi ringe?", subtitle: "100 % konfidensielt — vi lover" },
+  { emoji: "🔍", title: "La oss starte med å finne byrået ditt", subtitle: "Søk på navn eller organisasjonsnummer" },
+  { emoji: "💭", title: "Hva tenker du om veien videre?", subtitle: "Helt uforpliktende — vi utforsker sammen" },
+  { emoji: "🤔", title: "Hva motiverer deg?", subtitle: "Det finnes ingen feil svar her" },
+  { emoji: "👥", title: "Hvor mange kunder har dere?", subtitle: "Et omtrentlig tall holder fint" },
+  { emoji: "💰", title: "Hva omsetter byrået for?", subtitle: "Basert på siste regnskapsår" },
+  { emoji: "🦸", title: "Hvor mange er dere på laget?", subtitle: "Inkludert deg selv" },
+  { emoji: "💻", title: "Hvilke systemer bruker dere?", subtitle: "Velg alle som er relevante" },
+  { emoji: "🎯", title: "Hva er den største utfordringen?", subtitle: "Velg det som treffer best" },
+  { emoji: "⏰", title: "Hva er tidshorisonten?", subtitle: "Vi tilpasser oss ditt tempo" },
+  { emoji: "📬", title: "Hvem skal vi ta kontakt med?", subtitle: "Alt behandles konfidensielt" },
 ];
 
 /* ────────── Main ────────── */
@@ -152,10 +134,7 @@ interface Props {
 }
 
 const KartleggingDialog = ({ open, onOpenChange }: Props) => {
-  // Each step = one question
-  // 0: company, 1: interest, 2: reason, 3: customers, 4: revenue, 5: employees,
-  // 6: services, 7: systems, 8: authorized, 9: challenges, 10: timeline, 11: contact
-  const TOTAL = 12;
+  const TOTAL = 10;
   const [step, setStep] = useState(0);
   const [company, setCompany] = useState<CompanyData | null>(null);
   const [interest, setInterest] = useState("");
@@ -163,9 +142,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
   const [customerCount, setCustomerCount] = useState("");
   const [revenueRange, setRevenueRange] = useState("");
   const [employeeCount, setEmployeeCount] = useState("");
-  const [services, setServices] = useState<string[]>([]);
   const [systems, setSystems] = useState<string[]>([]);
-  const [authorized, setAuthorized] = useState("");
   const [challenges, setChallenges] = useState<string[]>([]);
   const [timeline, setTimeline] = useState("");
   const [contactName, setContactName] = useState("");
@@ -187,8 +164,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
       setTimeout(() => {
         setStep(0); setCompany(null); setInterest(""); setReason("");
         setCustomerCount(""); setRevenueRange(""); setEmployeeCount("");
-        setServices([]); setSystems([]); setAuthorized("");
-        setChallenges([]); setTimeline("");
+        setSystems([]); setChallenges([]); setTimeline("");
         setContactName(""); setContactEmail(""); setContactPhone("");
         setMessage(""); setSubmitted(false); setQuery(""); setResults([]);
       }, 300);
@@ -274,7 +250,6 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
     setState(prev => prev.includes(val) ? prev.filter(v => v !== val) : [...prev.filter(v => v !== exclusiveVal), val]);
   };
 
-  // Auto-advance on single-select
   const selectAndAdvance = (val: string, setter: (v: string) => void) => {
     setter(val);
     setTimeout(() => setStep(s => s + 1), 350);
@@ -291,7 +266,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
       ? `\n\nRegnskap ${company.financials.regnskapsaar}:\nDriftsinntekter: ${company.financials.sumDriftsinntekter}\nDriftsresultat: ${company.financials.driftsresultat}\nÅrsresultat: ${company.financials.aarsresultat}\nEiendeler: ${company.financials.sumEiendeler}\nEgenkapital: ${company.financials.sumEgenkapital}\nGjeld: ${company.financials.sumGjeld}`
       : "";
 
-    const fullMessage = `[Samarbeid — Kartlegging]\n\nInteresse: ${label(INTEREST_OPTIONS, interest)}\nBakgrunn: ${label(REASON_OPTIONS, reason)}\n\nPORTEFØLJE:\nAntall kunder: ${label(CUSTOMER_COUNT_OPTIONS, customerCount)}\nOmsetning: ${label(REVENUE_OPTIONS, revenueRange)}\nAnsatte: ${label(EMPLOYEE_COUNT_OPTIONS, employeeCount)}\n\nDRIFT:\nTjenester: ${labels(SERVICE_OPTIONS, services)}\nAutorisert: ${authorized === "yes" ? "Ja" : authorized === "no" ? "Nei" : "Vet ikke"}\n\nSYSTEMER: ${labels(SYSTEM_OPTIONS, systems)}\n\nUtfordringer: ${labels(CHALLENGE_OPTIONS, challenges)}\nTidshorisont: ${label(TIMELINE_OPTIONS, timeline)}${company.daglig_leder ? `\nDaglig leder: ${company.daglig_leder}` : ""}${company.styreleder ? `\nStyreleder: ${company.styreleder}` : ""}${company.address ? `\nAdresse: ${company.address}` : ""}${company.num_employees ? `\nAnsatte (Brreg): ${company.num_employees}` : ""}${finSummary}${message ? `\n\nMelding:\n${message}` : ""}`;
+    const fullMessage = `[Samarbeid — Kartlegging]\n\nInteresse: ${label(INTEREST_OPTIONS, interest)}\nBakgrunn: ${label(REASON_OPTIONS, reason)}\n\nPORTEFØLJE:\nAntall kunder: ${label(CUSTOMER_COUNT_OPTIONS, customerCount)}\nOmsetning: ${label(REVENUE_OPTIONS, revenueRange)}\nAnsatte: ${label(EMPLOYEE_COUNT_OPTIONS, employeeCount)}\n\nSYSTEMER: ${labels(SYSTEM_OPTIONS, systems)}\n\nUtfordringer: ${labels(CHALLENGE_OPTIONS, challenges)}\nTidshorisont: ${label(TIMELINE_OPTIONS, timeline)}${company.daglig_leder ? `\nDaglig leder: ${company.daglig_leder}` : ""}${company.styreleder ? `\nStyreleder: ${company.styreleder}` : ""}${company.address ? `\nAdresse: ${company.address}` : ""}${company.num_employees ? `\nAnsatte (Brreg): ${company.num_employees}` : ""}${finSummary}${message ? `\n\nMelding:\n${message}` : ""}`;
 
     try {
       await supabase.from("contact_submissions").insert([{
@@ -323,12 +298,10 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
       case 3: return !!customerCount;
       case 4: return !!revenueRange;
       case 5: return !!employeeCount;
-      case 6: return services.length > 0;
-      case 7: return systems.length > 0;
-      case 8: return !!authorized;
-      case 9: return challenges.length > 0;
-      case 10: return !!timeline;
-      case 11: return !!contactName.trim() && !!contactEmail.trim();
+      case 6: return systems.length > 0;
+      case 7: return challenges.length > 0;
+      case 8: return !!timeline;
+      case 9: return !!contactName.trim() && !!contactEmail.trim();
       default: return false;
     }
   };
@@ -386,10 +359,9 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
 
   const headline = STEP_HEADLINES[step] || STEP_HEADLINES[0];
 
-  // Fun encouragement messages
   const encouragement = [
-    "", "", "", "Bra jobba! 💪", "Du er på god vei! 🎯", "Halvveis — nice! 🎉",
-    "Snart i mål! 🏁", "Nesten ferdig! 🔥", "Siste stretch! 💫", "Awesome! 🚀", "Siste spørsmål nesten! ✨", "Siste steg! 🎊"
+    "", "", "", "", "Du er på god vei 🎯", "",
+    "Nesten i mål 🏁", "", "Siste spørsmål! ✨", ""
   ];
 
   return (
@@ -407,12 +379,12 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                 >
                   🎉
                 </motion.div>
-                <h3 className="text-2xl font-bold mb-2">Du er gull verdt!</h3>
+                <h3 className="text-2xl font-bold mb-2">Tusen takk!</h3>
                 <p className="text-muted-foreground max-w-xs mx-auto mb-8">
-                  Vi har fått alt vi trenger. Forvent en hyggelig telefon innen 48 timer — helt uforpliktende.
+                  Vi har mottatt kartleggingen din og tar kontakt innen 48 timer for en uforpliktende samtale.
                 </p>
                 <button onClick={() => onOpenChange(false)} className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity">
-                  Supert, lukk 🙌
+                  Lukk
                 </button>
               </motion.div>
             ) : (
@@ -444,7 +416,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                       <div className="relative">
                         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                         <input value={query} onChange={e => setQuery(e.target.value)}
-                          placeholder="Skriv firmanavn eller org.nr…" className={inputCls} autoFocus />
+                          placeholder="Firmanavn eller org.nr…" className={inputCls} autoFocus />
                         {(loading || fetchingDetails) && <Loader2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin" />}
                       </div>
                       {results.length > 0 && (
@@ -489,14 +461,12 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                 {step === 3 && renderSingle(CUSTOMER_COUNT_OPTIONS, customerCount, setCustomerCount)}
                 {step === 4 && renderSingle(REVENUE_OPTIONS, revenueRange, setRevenueRange)}
                 {step === 5 && renderSingle(EMPLOYEE_COUNT_OPTIONS, employeeCount, setEmployeeCount)}
-                {step === 6 && renderMulti(SERVICE_OPTIONS, services, v => toggleMulti(v, services, setServices))}
-                {step === 7 && renderMulti(SYSTEM_OPTIONS, systems, v => toggleMulti(v, systems, setSystems))}
-                {step === 8 && renderSingle(AUTHORIZED_OPTIONS, authorized, setAuthorized)}
-                {step === 9 && renderMulti(CHALLENGE_OPTIONS, challenges, v => toggleMulti(v, challenges, setChallenges, "none"))}
-                {step === 10 && renderSingle(TIMELINE_OPTIONS, timeline, setTimeline)}
+                {step === 6 && renderMulti(SYSTEM_OPTIONS, systems, v => toggleMulti(v, systems, setSystems))}
+                {step === 7 && renderMulti(CHALLENGE_OPTIONS, challenges, v => toggleMulti(v, challenges, setChallenges, "none"))}
+                {step === 8 && renderSingle(TIMELINE_OPTIONS, timeline, setTimeline)}
 
-                {/* Step 11: Contact */}
-                {step === 11 && (
+                {/* Step 9: Contact */}
+                {step === 9 && (
                   <div className="space-y-3">
                     <div className="relative">
                       <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -520,7 +490,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
             )}
           </AnimatePresence>
 
-          {/* Navigation — minimal */}
+          {/* Navigation */}
           {!submitted && (
             <div className="flex items-center justify-between mt-6">
               {step > 0 ? (
@@ -528,8 +498,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                   <ArrowLeft size={14} /> Tilbake
                 </button>
               ) : <div />}
-              {/* Only show Next for multi-select steps and contact step */}
-              {([6, 7, 9].includes(step) || step === 0 || step === 11) && (
+              {([6, 7].includes(step) || step === 0 || step === 9) && (
                 step === TOTAL - 1 ? (
                   <motion.button
                     whileHover={{ scale: 1.03 }}
@@ -538,7 +507,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                     disabled={!canNext() || submitting}
                     className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-all shadow-lg shadow-primary/20"
                   >
-                    {submitting ? "Sender… ✨" : <>Send inn <Rocket size={15} /></>}
+                    {submitting ? "Sender…" : <>Send inn <Rocket size={15} /></>}
                   </motion.button>
                 ) : (
                   <motion.button
