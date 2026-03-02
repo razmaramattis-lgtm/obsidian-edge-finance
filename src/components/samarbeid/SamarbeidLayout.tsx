@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ArrowLeft, Home, FileText, Handshake, TrendingUp, Building2 } from "lucide-react";
+import { ArrowLeft, Home, FileText, Handshake, TrendingUp, Building2, Shield } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import networkImg from "@/assets/samarbeid-network.jpg";
 
@@ -8,7 +8,8 @@ const NAV_ITEMS = [
   { label: "Hjem", path: "/samarbeid", icon: Home },
   { label: "Modeller", path: "/samarbeid/modeller", icon: TrendingUp },
   { label: "Avdelinger", path: "/samarbeid/avdelinger", icon: Building2 },
-  { label: "Søknad", path: "/samarbeid/soknad", icon: FileText },
+  { label: "Due Diligence", path: "/samarbeid/due-diligence", icon: Shield },
+  { label: "Kartlegging", path: "/samarbeid/soknad", icon: FileText },
 ];
 
 const SamarbeidHeader = () => {
@@ -124,7 +125,7 @@ const SamarbeidFooter = () => {
             <p className="text-sm text-muted-foreground font-light">Send en uforpliktende søknad — vi behandler alt konfidensielt.</p>
           </div>
           <Link to="/samarbeid/soknad" className="shrink-0 px-8 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded-full hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-primary/25">
-            Send søknad →
+            Start kartlegging →
           </Link>
         </div>
       </div>
