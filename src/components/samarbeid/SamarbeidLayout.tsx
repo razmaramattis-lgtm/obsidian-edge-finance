@@ -1,12 +1,13 @@
 import { useRef } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ArrowLeft, Home, FileText, Handshake, TrendingUp } from "lucide-react";
+import { ArrowLeft, Home, FileText, Handshake, TrendingUp, Building2 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import networkImg from "@/assets/samarbeid-network.jpg";
 
 const NAV_ITEMS = [
   { label: "Hjem", path: "/samarbeid", icon: Home },
   { label: "Modeller", path: "/samarbeid/modeller", icon: TrendingUp },
+  { label: "Avdelinger", path: "/samarbeid/avdelinger", icon: Building2 },
   { label: "Søknad", path: "/samarbeid/soknad", icon: FileText },
 ];
 

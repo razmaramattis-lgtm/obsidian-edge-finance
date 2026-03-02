@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Shield, Users, Monitor, Calculator, Scale, TrendingUp, Handshake, CheckCircle2, Building2 } from "lucide-react";
+import { ArrowRight, Shield, Users, Monitor, Calculator, TrendingUp, Handshake, CheckCircle2, Building2, Megaphone } from "lucide-react";
 import { motion } from "framer-motion";
 
 import heroImg from "@/assets/samarbeid-hero.jpg";
@@ -12,14 +12,15 @@ const BENEFITS = [
   { icon: Users, title: "HR & Personal", desc: "Komplett HR-støtte — personalhåndbok, arbeidsrett, lønnsadministrasjon og rekruttering." },
   { icon: Monitor, title: "IT & Utvikling", desc: "Nettsider, interne systemer, chatboter og AI-automatisering for smartere drift." },
   { icon: Shield, title: "Hvitvasking & Internkontroll", desc: "Alt av AML-rutiner, risikovurdering og compliance dekkes av hovedorganisasjonen." },
-  { icon: Scale, title: "Juridisk & Compliance", desc: "Løpende oppdatering på regelverk, GDPR og bransjekrav — du slipper å holde styr selv." },
+  { icon: Megaphone, title: "Markedsføring & SEO", desc: "Profesjonell markedsføring, SEO-optimalisering og digital synlighet for din avdeling." },
   { icon: TrendingUp, title: "Stordriftsfordeler", desc: "Felles innkjøp, lisenser og forhandlede avtaler gir lavere kostnader og bedre marginer." },
 ];
 
 const MODELS = [
-  { title: "Fullt oppkjøp", desc: "Vi overtar hele selskapet. Du kan fortsette som leder av din avdeling med eierskap, eller trekke deg ut med en god avtale.", badge: "Populært" },
-  { title: "Samarbeidsavtale", desc: "Behold eierskap og selvstendighet, men nyt godt av Avargos ressurser, nettverk og støtteapparat.", badge: null },
+  { title: "Fullt oppkjøp — du trer ut", desc: "Vi overtar hele selskapet. Du får en god avtale og trer ut av den daglige driften med trygghet.", badge: null },
+  { title: "Fullt oppkjøp — med eierskap", desc: "Vi overtar selskapet, men du fortsetter som leder og eier en andel i din egen avdeling. Vekst sammen.", badge: "Populært" },
   { title: "Delvis oppkjøp", desc: "Vi kjøper en andel og du beholder resten. Du eier en del i din egen avdeling og vi vokser sammen.", badge: null },
+  { title: "Samarbeidsavtale", desc: "Behold eierskap og selvstendighet, men nyt godt av Avargos ressurser og nettverk. Kan vurderes individuelt.", badge: null },
 ];
 
 const SamarbeidForside = () => (
@@ -58,26 +59,6 @@ const SamarbeidForside = () => (
             </Link>
           </div>
         </motion.div>
-      </div>
-    </section>
-
-    {/* Stats */}
-    <section className="py-10 md:py-14 border-b border-border/5">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
-          {[
-            { label: "Avdelinger", value: "5+" },
-            { label: "Ansatte", value: "30+" },
-            { label: "Fagområder", value: "4" },
-            { label: "Kunder", value: "200+" },
-          ].map((s, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-              className="glass rounded-2xl p-5 border border-border/10 text-center">
-              <p className="text-2xl font-bold text-primary">{s.value}</p>
-              <p className="text-[11px] text-muted-foreground mt-1">{s.label}</p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
 
@@ -135,7 +116,7 @@ const SamarbeidForside = () => (
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
             className="rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src={teamImg} alt="Avargo team" className="w-full h-full object-cover" />
+            <img src={teamImg} alt="Avargo samarbeid" className="w-full h-full object-cover" />
           </motion.div>
         </div>
       </div>
@@ -146,10 +127,10 @@ const SamarbeidForside = () => (
       <div className="container mx-auto px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
           <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 font-medium mb-3">Samarbeidsmodeller</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Tre veier inn</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">Vi tilpasser oss din situasjon. Uansett om du ønsker å selge helt, samarbeide eller finne en mellomløsning.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Fire veier inn</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">Vi tilpasser oss din situasjon. Uansett om du ønsker å selge helt, beholde eierskap eller finne en mellomløsning.</p>
         </motion.div>
-        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
           {MODELS.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
               className="glass rounded-2xl p-6 border border-border/10 hover:border-primary/20 transition-all relative">

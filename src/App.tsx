@@ -86,6 +86,7 @@ const SamarbeidLayout = lazy(() => import("./components/samarbeid/SamarbeidLayou
 const SamarbeidForside = lazy(() => import("./pages/samarbeid/SamarbeidForside"));
 const SamarbeidModeller = lazy(() => import("./pages/samarbeid/SamarbeidModeller"));
 const SamarbeidSoknad = lazy(() => import("./pages/samarbeid/SamarbeidSoknad"));
+const SamarbeidAvdelinger = lazy(() => import("./pages/samarbeid/SamarbeidAvdelinger"));
 
 // Kurs portal
 const KursLayout = lazy(() => import("./components/kurs/KursLayout"));
@@ -244,6 +245,7 @@ const App = () => (
                   <Route path="/samarbeid" element={<SamarbeidLayout />}>
                     <Route index element={<SamarbeidForside />} />
                     <Route path="modeller" element={<SamarbeidModeller />} />
+                    <Route path="avdelinger" element={<SamarbeidAvdelinger />} />
                     <Route path="soknad" element={<SamarbeidSoknad />} />
                   </Route>
 
