@@ -1,30 +1,57 @@
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSearchParams } from "react-router-dom";
-import { ArrowRight, Check, Shield, Search, Building2, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Shield, Search, Building2, Loader2, BarChart3, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPageCopy } from "@/config/sectionContent";
 
 const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
 const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
+const readonlyClass = "w-full bg-card/40 border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground/50 cursor-default font-light";
 
 type BrregEnhet = {
   organisasjonsnummer: string;
   navn: string;
   naeringskode1?: { kode: string; beskrivelse: string };
-  forretningsadresse?: { poststed?: string };
+  forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
+  postadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
   epostadresse?: string;
   telefon?: string;
   mobil?: string;
+  hjemmeside?: string;
+  antallAnsatte?: number;
+  stiftelsesdato?: string;
+  registreringsdatoEnhetsregisteret?: string;
+  organisasjonsform?: { beskrivelse?: string };
 };
 
 type RolleGruppe = {
   type: { kode: string; beskrivelse: string };
   roller: { type: { beskrivelse: string }; person?: { navn: { fornavn?: string; mellomnavn?: string; etternavn?: string } } }[];
 };
+
+function formatNOK(val: number | null | undefined): string {
+  if (val == null) return "";
+  const num = Math.round(Number(val));
+  if (isNaN(num)) return "";
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(".", ",")} MNOK`;
+  if (num >= 1_000) return `${Math.round(num / 1_000)} TNOK`;
+  return `${num} NOK`;
+}
+
+interface FetchedFinancials {
+  regnskapsaar: string;
+  sumDriftsinntekter: string;
+  sumDriftskostnader: string;
+  driftsresultat: string;
+  aarsresultat: string;
+  sumEiendeler: string;
+  sumEgenkapital: string;
+  sumGjeld: string;
+}
 
 const Contact = () => {
   const [searchParams] = useSearchParams();
@@ -36,6 +63,7 @@ const Contact = () => {
   const [searching, setSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loadingRoles, setLoadingRoles] = useState(false);
+  const [fetched, setFetched] = useState(false);
 
   const [selskapsnavn, setSelskapsnavn] = useState("");
   const [orgnummer, setOrgnummer] = useState("");
@@ -47,6 +75,16 @@ const Contact = () => {
   const [omsetning, setOmsetning] = useState("");
   const [frustrasjon, setFrustrasjon] = useState("");
   const [valgtPakke, setValgtPakke] = useState("");
+
+  // Extra fetched fields
+  const [orgForm, setOrgForm] = useState("");
+  const [address, setAddress] = useState("");
+  const [stiftelsesdato, setStiftelsesdato] = useState("");
+  const [dagligLeder, setDagligLeder] = useState("");
+  const [styreleder, setStyreleder] = useState("");
+  const [numEmployees, setNumEmployees] = useState("");
+  const [financials, setFinancials] = useState<FetchedFinancials | null>(null);
+  const [showFinancials, setShowFinancials] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -67,12 +105,20 @@ const Contact = () => {
     searchTimeout.current = setTimeout(async () => {
       setSearching(true);
       try {
-        const res = await fetch(
-          `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(companySearch)}&size=8&fraAntallAnsatte=0`
-        );
+        const isOrgNr = /^\d{9}$/.test(companySearch.trim());
+        const url = isOrgNr
+          ? `https://data.brreg.no/enhetsregisteret/api/enheter/${companySearch.trim()}`
+          : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(companySearch)}&size=8&fraAntallAnsatte=0`;
+        const res = await fetch(url);
+        if (!res.ok) { setSearchResults([]); setSearching(false); return; }
         const data = await res.json();
-        setSearchResults(data._embedded?.enheter || []);
-        setShowDropdown((data._embedded?.enheter || []).length > 0);
+        if (isOrgNr) {
+          setSearchResults(data?.organisasjonsnummer ? [data] : []);
+          setShowDropdown(!!data?.organisasjonsnummer);
+        } else {
+          setSearchResults(data._embedded?.enheter || []);
+          setShowDropdown((data._embedded?.enheter || []).length > 0);
+        }
       } catch {
         setSearchResults([]);
       } finally {
@@ -89,21 +135,6 @@ const Contact = () => {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
-  const fetchRoles = async (orgnr: string) => {
-    setLoadingRoles(true);
-    try {
-      const res = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgnr}/roller`);
-      const data = await res.json();
-      const rollegrupper: RolleGruppe[] = data?.rollegrupper || [];
-      const dagl = rollegrupper.find((rg) => rg.type?.kode === "DAGL");
-      if (dagl?.roller?.[0]?.person?.navn) {
-        const n = dagl.roller[0].person.navn;
-        setKontaktperson([n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean).join(" "));
-      }
-    } catch { /* ignore */ }
-    finally { setLoadingRoles(false); }
-  };
 
   const mapBransje = (desc: string): string => {
     const d = desc.toLowerCase();
@@ -135,7 +166,7 @@ const Contact = () => {
     return "Annet";
   };
 
-  const selectCompany = (enhet: BrregEnhet) => {
+  const selectCompany = async (enhet: BrregEnhet) => {
     setCompanySearch(enhet.navn);
     setSelskapsnavn(enhet.navn);
     setOrgnummer(enhet.organisasjonsnummer);
@@ -145,7 +176,91 @@ const Contact = () => {
     else if (enhet.mobil) setTelefon(enhet.mobil);
     if (enhet.naeringskode1?.beskrivelse) setBransje(mapBransje(enhet.naeringskode1.beskrivelse));
     setShowDropdown(false);
-    fetchRoles(enhet.organisasjonsnummer);
+
+    // Set extra fields from enhet
+    setOrgForm(enhet.organisasjonsform?.beskrivelse || "");
+    setNumEmployees(enhet.antallAnsatte?.toString() || "");
+    setStiftelsesdato(enhet.stiftelsesdato || enhet.registreringsdatoEnhetsregisteret || "");
+    const addr = enhet.forretningsadresse || enhet.postadresse;
+    setAddress(addr ? `${(addr.adresse || []).join(", ")}, ${addr.postnummer || ""} ${addr.poststed || ""}`.trim() : "");
+
+    setLoadingRoles(true);
+
+    // Fetch roller + regnskap in parallel
+    const [rolleResult, regnskapResult] = await Promise.allSettled([
+      fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`).then(r => r.ok ? r.json() : null),
+      fetch(`https://data.brreg.no/regnskapsregisteret/regnskap/${enhet.organisasjonsnummer}`, {
+        headers: { Accept: "application/json" },
+      }).then(r => r.ok ? r.json() : null),
+    ]);
+
+    // Extract daglig leder + styreleder
+    let dl = "";
+    let sl = "";
+    try {
+      const rolleData = rolleResult.status === "fulfilled" ? rolleResult.value : null;
+      const groups: RolleGruppe[] = rolleData?.rollegrupper || [];
+      for (const g of groups) {
+        if (g.type?.kode === "DAGL") {
+          const n = g.roller?.[0]?.person?.navn;
+          if (n) dl = [n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean).join(" ");
+        }
+        if (g.type?.kode === "LEDE") {
+          const n = g.roller?.[0]?.person?.navn;
+          if (n) sl = [n.fornavn, n.mellomnavn, n.etternavn].filter(Boolean).join(" ");
+        }
+      }
+    } catch { /* ignore */ }
+
+    if (dl) setKontaktperson(dl);
+    setDagligLeder(dl);
+    setStyreleder(sl);
+
+    // Extract financial data
+    let fin: FetchedFinancials | null = null;
+    try {
+      const regnskapData = regnskapResult.status === "fulfilled" ? regnskapResult.value : null;
+      const entries = Array.isArray(regnskapData) ? regnskapData : [];
+      const selskap = entries.find((r: any) => r.regnskapstype === "SELSKAP") || entries[0];
+      if (selskap) {
+        const dr = selskap?.resultatregnskapResultat?.driftsresultat;
+        const ek = selskap?.egenkapitalGjeld;
+        const bal = selskap?.eiendeler;
+
+        const sumDriftsinntekter = dr?.driftsinntekter?.sumDriftsinntekter;
+        const sumDriftskostnader = dr?.driftskostnad?.sumDriftskostnad;
+        const driftsresultat = dr?.driftsresultat;
+        const aarsresultat = selskap?.resultatregnskapResultat?.totalresultat
+          ?? selskap?.resultatregnskapResultat?.aarsresultat;
+        const sumEiendeler = bal?.sumEiendeler;
+        const sumEK = ek?.egenkapital?.sumEgenkapital;
+        const sumGjeld = ek?.gjeldOversikt?.sumGjeld ?? ek?.gjeld?.sumGjeld;
+
+        const regnskapsaar = selskap?.regnskapsperiode?.tilDato?.substring(0, 4)
+          || selskap?.regnskapsperiode?.fraDato?.substring(0, 4)
+          || "";
+
+        fin = {
+          regnskapsaar,
+          sumDriftsinntekter: formatNOK(sumDriftsinntekter),
+          sumDriftskostnader: formatNOK(sumDriftskostnader),
+          driftsresultat: formatNOK(driftsresultat),
+          aarsresultat: formatNOK(aarsresultat),
+          sumEiendeler: formatNOK(sumEiendeler),
+          sumEgenkapital: formatNOK(sumEK),
+          sumGjeld: formatNOK(sumGjeld),
+        };
+
+        // Update employees from regnskap if enhetsreg didn't have it
+        if (!enhet.antallAnsatte && selskap?.virksomhet?.antallAnsatte) {
+          setNumEmployees(selskap.virksomhet.antallAnsatte.toString());
+        }
+      }
+    } catch { /* ignore */ }
+
+    setFinancials(fin);
+    setFetched(true);
+    setLoadingRoles(false);
   };
 
   const [submitting, setSubmitting] = useState(false);
@@ -178,6 +293,16 @@ const Contact = () => {
       setSubmitting(false);
     }
   };
+
+  const finRows = financials ? [
+    { label: "Driftsinntekter", value: financials.sumDriftsinntekter },
+    { label: "Driftskostnader", value: financials.sumDriftskostnader },
+    { label: "Driftsresultat", value: financials.driftsresultat },
+    { label: "Årsresultat", value: financials.aarsresultat },
+    { label: "Sum eiendeler", value: financials.sumEiendeler },
+    { label: "Egenkapital", value: financials.sumEgenkapital },
+    { label: "Gjeld", value: financials.sumGjeld },
+  ].filter(r => r.value) : [];
 
   return (
     <>
@@ -251,9 +376,9 @@ const Contact = () => {
                       value={companySearch}
                       onChange={(e) => setCompanySearch(e.target.value)}
                       className={`${inputClass} pl-11`}
-                      placeholder="Skriv selskapets navn..."
+                      placeholder="Skriv selskapets navn eller org.nr…"
                     />
-                    {searching && <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 animate-spin" />}
+                    {(searching || loadingRoles) && <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 animate-spin" />}
                   </div>
                   {showDropdown && (
                     <div className="absolute z-50 w-full mt-2 bg-card/98 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
@@ -286,10 +411,114 @@ const Contact = () => {
                   </div>
                 </div>
 
+                {/* Fetched company details — hidden until Brreg lookup */}
+                <AnimatePresence>
+                  {fetched && (orgForm || address || stiftelsesdato || styreleder || numEmployees) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="rounded-2xl border border-border/20 bg-card/30 p-4 space-y-3">
+                        <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/30 font-medium">Hentet fra Brønnøysund</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {orgForm && (
+                            <div>
+                              <label className={labelClass}>Organisasjonsform</label>
+                              <input value={orgForm} readOnly tabIndex={-1} className={readonlyClass} />
+                            </div>
+                          )}
+                          {stiftelsesdato && (
+                            <div>
+                              <label className={labelClass}>Stiftelsesdato</label>
+                              <input value={stiftelsesdato} readOnly tabIndex={-1} className={readonlyClass} />
+                            </div>
+                          )}
+                        </div>
+                        {address && (
+                          <div>
+                            <label className={labelClass}>Adresse</label>
+                            <input value={address} readOnly tabIndex={-1} className={readonlyClass} />
+                          </div>
+                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {dagligLeder && (
+                            <div>
+                              <label className={labelClass}>Daglig leder</label>
+                              <input value={dagligLeder} readOnly tabIndex={-1} className={readonlyClass} />
+                            </div>
+                          )}
+                          {styreleder && (
+                            <div>
+                              <label className={labelClass}>Styreleder</label>
+                              <input value={styreleder} readOnly tabIndex={-1} className={readonlyClass} />
+                            </div>
+                          )}
+                        </div>
+                        {numEmployees && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className={labelClass}>Antall ansatte</label>
+                              <input value={numEmployees} readOnly tabIndex={-1} className={readonlyClass} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Financials panel — hidden until Brreg lookup */}
+                <AnimatePresence>
+                  {fetched && finRows.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="rounded-2xl border border-border/20 bg-card/30 overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => setShowFinancials(v => !v)}
+                          className="w-full flex items-center justify-between px-4 py-3 text-xs text-foreground/50 hover:text-foreground/70 transition-colors"
+                        >
+                          <span className="flex items-center gap-2">
+                            <BarChart3 size={13} className="text-primary/60" />
+                            <span className="uppercase tracking-[0.3em] font-medium text-[10px]">
+                              Regnskap {financials?.regnskapsaar || "siste år"}
+                            </span>
+                          </span>
+                          {showFinancials ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                        <AnimatePresence>
+                          {showFinancials && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-4 space-y-1">
+                                {finRows.map(r => (
+                                  <div key={r.label} className="flex items-center justify-between text-sm py-1.5 border-b border-border/10 last:border-0">
+                                    <span className="text-foreground/40 font-light">{r.label}</span>
+                                    <span className="text-foreground/70 font-medium">{r.value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <div>
                   <label className={labelClass}>
                     Kontaktperson
-                    {loadingRoles && <Loader2 size={10} className="inline ml-2 animate-spin" />}
                   </label>
                   <input required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt fulle navn" />
                 </div>

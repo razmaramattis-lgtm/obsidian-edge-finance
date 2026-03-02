@@ -158,8 +158,12 @@ const SamarbeidSoknad = () => {
           annualRevenue = formatNOK(sumDriftsinntekter);
         }
 
+        const regnskapsaar = selskap?.regnskapsperiode?.tilDato?.substring(0, 4)
+          || selskap?.regnskapsperiode?.fraDato?.substring(0, 4)
+          || "";
+
         fin = {
-          regnskapsaar: selskap?.regnskapsperiode?.fraDato?.substring(0, 4) || selskap?.avviklingsregnskap ? "" : (selskap?.regnskapsperiode?.tilDato?.substring(0, 4) || ""),
+          regnskapsaar,
           sumDriftsinntekter: formatNOK(sumDriftsinntekter),
           sumDriftskostnader: formatNOK(sumDriftskostnader),
           driftsresultat: formatNOK(driftsresultat),
