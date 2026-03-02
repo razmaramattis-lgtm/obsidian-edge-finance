@@ -18,9 +18,9 @@ const BENEFITS = [
 
 const MODELS = [
   { title: "Fullt oppkjøp — du trer ut", desc: "Vi overtar hele selskapet. Du får en god avtale og trer ut av den daglige driften med trygghet.", badge: null },
-  { title: "Fullt oppkjøp — med eierskap", desc: "Vi overtar selskapet, men du fortsetter som leder og eier en andel i din egen avdeling. Vekst sammen.", badge: "Populært" },
+  { title: "Fullt oppkjøp — med videre ansettelse", desc: "Vi overtar selskapet, men du fortsetter som ansatt leder i din avdeling. Trygg overgang.", badge: "Populært" },
   { title: "Delvis oppkjøp", desc: "Vi kjøper en andel og du beholder resten. Du eier en del i din egen avdeling og vi vokser sammen.", badge: null },
-  { title: "Samarbeidsavtale", desc: "Behold eierskap og selvstendighet, men nyt godt av Avargos ressurser og nettverk. Kan vurderes individuelt.", badge: null },
+  { title: "Samarbeidsavtale", desc: "Behold eierskap og selvstendighet, men nyt godt av Avargos ressurser og nettverk. Forutsetter at alle våre kriterier er oppfylt.", badge: null },
 ];
 
 const SamarbeidForside = () => (
