@@ -12,6 +12,7 @@ const SECTION_LABELS: Record<string, string> = {
   hr: "Personal (HR)",
   markedsforing: "Markedsføring",
   it: "IT & Utvikling",
+  samarbeid: "Samarbeid",
 };
 
 async function sendEmail(opts: {
