@@ -186,11 +186,12 @@ const SamarbeidDueDiligence = () => {
                   </p>
                 </div>
               </div>
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { step: "01", title: "Samle dokumenter", desc: "Bruk sjekklisten til å samle all relevant dokumentasjon." },
-                  { step: "02", title: "Start kartlegging", desc: "Send oss en kartlegging — vi tar kontakt for en konfidensiell samtale." },
+                  { step: "01", title: "Send oss kartlegging", desc: "Fyll ut kartleggingsskjemaet med grunnleggende info om byrået ditt." },
+                  { step: "02", title: "Samle dokumenter", desc: "Bruk sjekklisten under til å samle all relevant dokumentasjon." },
                   { step: "03", title: "Avargo vurderer", desc: "Vi gjennomgår alt og presenterer et tilbud med tydelige vilkår." },
+                  { step: "04", title: "Vi går videre", desc: "Enighet om vilkår og vi starter prosessen med overgang sammen." },
                 ].map(s => (
                   <div key={s.step} className="rounded-xl bg-background border border-border/30 p-4">
                     <span className="text-xs font-bold text-primary mb-1 block">{s.step}</span>
