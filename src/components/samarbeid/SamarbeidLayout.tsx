@@ -146,20 +146,22 @@ const SamarbeidFooter = () => {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Ressurser</h4>
+            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Avdelinger</h4>
             <ul className="space-y-2.5">
-              {["Regnskap", "HR & Personal", "IT & Utvikling", "Markedsføring"].map((r) => (
-                <li key={r}><span className="text-sm text-muted-foreground">{r}</span></li>
-              ))}
+              <li><Link to="/samarbeid/avdelinger" className="text-sm text-muted-foreground hover:text-primary transition-colors">Alle avdelinger</Link></li>
+              <li><span className="text-sm text-muted-foreground">Regnskap</span></li>
+              <li><span className="text-sm text-muted-foreground">HR & Personal</span></li>
+              <li><span className="text-sm text-muted-foreground">Marked & SEO</span></li>
+              <li><span className="text-sm text-muted-foreground">IT & Utvikling</span></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Avargo</h4>
+            <h4 className="text-xs tracking-[0.2em] uppercase text-foreground font-semibold mb-4">Modeller</h4>
             <ul className="space-y-2.5">
-              <li><Link to="/regnskap/om-oss" className="text-sm text-muted-foreground hover:text-primary transition-colors">Om oss</Link></li>
-              <li><Link to="/regnskap/kontakt" className="text-sm text-muted-foreground hover:text-primary transition-colors">Kontakt</Link></li>
-              <li><Link to="/karriere" className="text-sm text-muted-foreground hover:text-primary transition-colors">Karriere</Link></li>
-              <li><Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">avargo.no</Link></li>
+              <li><Link to="/samarbeid/modeller" className="text-sm text-muted-foreground hover:text-primary transition-colors">Fullt oppkjøp</Link></li>
+              <li><Link to="/samarbeid/modeller" className="text-sm text-muted-foreground hover:text-primary transition-colors">Delvis oppkjøp</Link></li>
+              <li><Link to="/samarbeid/modeller" className="text-sm text-muted-foreground hover:text-primary transition-colors">Samarbeidsavtale</Link></li>
+              <li><Link to="/samarbeid/soknad" className="text-sm text-muted-foreground hover:text-primary transition-colors">Send søknad</Link></li>
             </ul>
           </div>
         </div>
