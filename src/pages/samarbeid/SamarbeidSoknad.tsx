@@ -69,32 +69,66 @@ const SamarbeidSoknad = () => {
     setShowDropdown(false);
     setBrregQuery("");
 
-    // Fetch roller for daglig leder
+    const orgNr = enhet.organisasjonsnummer;
+
+    // Fetch roller + regnskap in parallel
+    const [rolleResult, regnskapResult] = await Promise.allSettled([
+      fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${orgNr}/roller`).then(r => r.ok ? r.json() : null),
+      fetch(`https://data.brreg.no/regnskapsregisteret/regnskap/${orgNr}`, {
+        headers: { Accept: "application/json" },
+      }).then(r => r.ok ? r.json() : null),
+    ]);
+
+    // Extract daglig leder
     let dagligLeder = "";
     try {
-      const rolleRes = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`);
-      if (rolleRes.ok) {
-        const rolleData = await rolleRes.json();
-        const groups = rolleData?.rollegrupper || [];
-        for (const g of groups) {
-          if (g.type?.kode === "DAGL") {
-            const person = g.roller?.[0]?.person;
-            if (person) dagligLeder = `${person.navn?.fornavn || ""} ${person.navn?.etternavn || ""}`.trim();
-          }
+      const rolleData = rolleResult.status === "fulfilled" ? rolleResult.value : null;
+      const groups = rolleData?.rollegrupper || [];
+      for (const g of groups) {
+        if (g.type?.kode === "DAGL") {
+          const person = g.roller?.[0]?.person;
+          if (person) dagligLeder = `${person.navn?.fornavn || ""} ${person.navn?.etternavn || ""}`.trim();
         }
       }
     } catch { /* ignore */ }
 
-    const addr = enhet.forretningsadresse || enhet.postadresse;
+    // Extract financial data (latest SELSKAP regnskap)
+    let annualRevenue = "";
+    let numEmployees = enhet.antallAnsatte?.toString() || "";
+    try {
+      const regnskapData = regnskapResult.status === "fulfilled" ? regnskapResult.value : null;
+      // Response is an array — find latest SELSKAP entry
+      const entries = Array.isArray(regnskapData) ? regnskapData : [];
+      const selskap = entries.find((r: any) => r.regnskapstype === "SELSKAP") || entries[0];
+      if (selskap) {
+        const driftsinntekter = selskap?.resultatregnskapResultat?.driftsresultat?.driftsinntekter?.sumDriftsinntekter;
+        if (driftsinntekter != null) {
+          const num = Math.round(Number(driftsinntekter));
+          if (num >= 1_000_000) {
+            annualRevenue = `${(num / 1_000_000).toFixed(1).replace(".", ",")} MNOK`;
+          } else if (num >= 1_000) {
+            annualRevenue = `${Math.round(num / 1_000)} TNOK`;
+          } else {
+            annualRevenue = `${num} NOK`;
+          }
+        }
+        // Also grab employees from regnskap if enhetsreg didn't have it
+        if (!numEmployees && selskap?.virksomhet?.antallAnsatte) {
+          numEmployees = selskap.virksomhet.antallAnsatte.toString();
+        }
+      }
+    } catch { /* ignore */ }
+
     const webRaw = enhet.hjemmeside || "";
 
     setForm(prev => ({
       ...prev,
-      org_number: enhet.organisasjonsnummer || "",
+      org_number: orgNr || "",
       company_name: enhet.navn || "",
       contact_name: dagligLeder || prev.contact_name,
       website: webRaw || prev.website,
-      num_employees: enhet.antallAnsatte?.toString() || prev.num_employees,
+      num_employees: numEmployees || prev.num_employees,
+      annual_revenue: annualRevenue || prev.annual_revenue,
     }));
   };
 
