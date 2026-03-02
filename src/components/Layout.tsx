@@ -692,139 +692,148 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main>{children}</main>
 
       {/* ── Footer ─────────────────────────────────── */}
-      <footer className="border-t border-border/15 py-12 md:py-24 relative">
-        <div className="absolute inset-0 ambient-glow opacity-20" />
-        <div className="container mx-auto px-5 md:px-6 relative">
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-6">
-            {/* Brand */}
-            <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
-              <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-2xl text-primary">
-                Avargo{isInSection && section ? <span className="text-lg ml-1" style={{ color: sectionAccent }}>· {section.shortName}</span> : null}
-              </Link>
-              <p className="mt-3 text-sm text-foreground/70 leading-relaxed font-light">
-                {isInSection && section
-                  ? section.description
-                  : <>Regnskapsbyrået for små og mellomstore bedrifter.<br />Trygghet. Oversikt. Vekst.</>
-                }
-              </p>
-              <p className="mt-2 text-xs text-foreground/50 font-light leading-relaxed">
-                Oscars gate 2B, 3714 Skien
-              </p>
-              <Link to={sp("/kontakt")} className="inline-block mt-4 px-5 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 tracking-wide">
-                Få tilbud
-              </Link>
-            </div>
-
-            {/* Tjenester */}
+      <footer className="relative overflow-hidden">
+        {/* CTA band */}
+        <div className="relative border-t border-border/10">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5" />
+          <div className="container mx-auto px-5 md:px-6 relative py-10 md:py-16 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-5 font-medium">Tjenester</p>
-              <div className="flex flex-col gap-2.5 text-sm font-light">
-                {!isInSection || !section ? (
-                  <>
-                    <Link to="/hr/tjenester" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Personal</Link>
-                    <Link to="/markedsforing/tjenester" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Marked</Link>
-                    <Link to="/it/tjenester" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">IT</Link>
-                    <Link to="/regnskap/tjenester" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Regnskap</Link>
-                  </>
-                ) : section.id === "regnskap" ? (
-                  <>
-                    <Link to={sp("/tjenester/regnskapsforer")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Dedikert regnskapsfører</Link>
-                    <Link to={sp("/tjenester/cfo")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">CFO-as-a-Service</Link>
-                    <Link to={sp("/tjenester/lonn")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Lønn & lønnskjøring</Link>
-                    <Link to={sp("/tjenester/skatteplanlegging")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Skatteplanlegging</Link>
-                  </>
-                ) : section.id === "hr" ? (
-                  <>
-                    <Link to={sp("/tjenester/hr-og-lonn")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Lønn & HR</Link>
-                    <Link to={sp("/tjenester/ansettelse")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Ansettelse & rekruttering</Link>
-                    <Link to={sp("/tjenester/personalhandbok")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Personalhåndbok</Link>
-                    <Link to={sp("/tjenester/arbeidsrett")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Arbeidsrett & HMS</Link>
-                  </>
-                ) : section.id === "markedsforing" ? (
-                  <>
-                    <Link to={sp("/tjenester/seo")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">SEO & søkbarhet</Link>
-                    <Link to={sp("/tjenester/meta-annonser")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Meta-annonser</Link>
-                    <Link to={sp("/tjenester/google-ads")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Google Ads</Link>
-                    <Link to={sp("/tjenester/nettbutikk")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Nettbutikk & e-handel</Link>
-                  </>
-                ) : (
-                  <>
-                    <Link to={sp("/tjenester/nettsider")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Skreddersydde nettsider</Link>
-                    <Link to={sp("/tjenester/chatbot")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">AI-chatbot</Link>
-                    <Link to={sp("/tjenester/internsystemer")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Interne systemer</Link>
-                    <Link to={sp("/tjenester/ai-automatisering")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">AI & automatisering</Link>
-                  </>
-                )}
-                <Link to={sp("/tjenester")} className="text-primary hover:text-primary/80 transition-colors text-[13px] mt-1 py-0.5">Se alle tjenester →</Link>
-              </div>
+              <h3 className="font-heading text-xl md:text-2xl text-foreground mb-1">Klar for en enklere hverdag?</h3>
+              <p className="text-sm text-foreground/60 font-light">La oss ta en uforpliktende prat om hvordan vi kan hjelpe din bedrift.</p>
             </div>
-
-            {/* Bransjer */}
-            <div>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-5 font-medium">Bransjer</p>
-              <div className="flex flex-col gap-2.5 text-sm font-light">
-                {isInSection && section ? (
-                  <>
-                    <Link to={sp("/bransjer/tech-saas")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Tech & SaaS</Link>
-                    <Link to={sp("/bransjer/eiendom")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Eiendom</Link>
-                    <Link to={sp("/bransjer/bygg-anlegg")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Bygg & Anlegg</Link>
-                    <Link to={sp("/bransjer/restaurant")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Restaurant & Uteliv</Link>
-                    <Link to={sp("/bransjer")} className="text-primary hover:text-primary/80 transition-colors text-[13px] mt-1 py-0.5">Se alle bransjer →</Link>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-foreground/60 text-[13px] leading-relaxed">Vi tilpasser oss din bransje — uansett hva du driver med.</p>
-                    <Link to={sp("/bransjer")} className="text-primary hover:text-primary/80 transition-colors text-[13px] mt-1 py-0.5">Les mer →</Link>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Ressurser */}
-            <div>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-5 font-medium">Ressurser</p>
-              <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to="/ressurser?tab=arkiv" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Arkiv & maler</Link>
-                <Link to="/ressurser/kontohjelp" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Kontohjelp</Link>
-                <Link to="/ressurser?tab=guider" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Guider</Link>
-                <Link to="/ressurser?tab=blogg" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Blogg</Link>
-              </div>
-            </div>
-
-            {/* Selskapet */}
-            <div>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-5 font-medium">Selskapet</p>
-              <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to={sp("/kontakt")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Kontakt oss</Link>
-                <Link to="/faq" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Vanlige spørsmål</Link>
-                <Link to="/kunde/logg-inn" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Kundeportal</Link>
-                <Link to={sp("/om-oss")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Om Avargo</Link>
-                <Link to="/karriere" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Jobb hos oss</Link>
-                <Link to="/kurs" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Avargo Kurs</Link>
-                <Link to="/samarbeid" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Avargo Samarbeid</Link>
-              </div>
-            </div>
-
-            {/* Avdelinger */}
-            <div>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-5 font-medium">Avdelinger</p>
-              <div className="flex flex-col gap-2.5 text-sm font-light">
-                <Link to="/" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Avargo</Link>
-                {SECTION_LIST.map((s) => (
-                  <Link key={s.id} to={s.basePath} className="text-foreground/75 hover:text-foreground transition-colors py-0.5" style={{ color: isInSection && section?.id === s.id ? accentHsl(s.id) : undefined }}>
-                    {s.shortName}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <Link to={sp("/kontakt")} className="shrink-0 px-8 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded-full hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-primary/25">
+              Få tilbud →
+            </Link>
           </div>
+        </div>
 
-          <div className="line-accent mt-12 mb-6" />
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-foreground/50">
-            <span>© 2026 Avargo. Alle rettigheter reservert.</span>
-            <div className="flex gap-8">
-              <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
-              <Link to="/vilkar" className="hover:text-foreground transition-colors">Vilkår</Link>
+        {/* Main footer */}
+        <div className="border-t border-border/10">
+          <div className="absolute inset-0 ambient-glow opacity-10" />
+          <div className="container mx-auto px-5 md:px-6 relative pt-12 md:pt-20 pb-8">
+            <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
+              {/* Brand */}
+              <div className="col-span-2 md:col-span-3 mb-2 md:mb-0">
+                <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-2xl text-primary inline-block mb-4">
+                  Avargo{isInSection && section ? <span className="text-lg ml-1" style={{ color: sectionAccent }}>· {section.shortName}</span> : null}
+                </Link>
+                <p className="text-sm text-foreground/60 leading-relaxed font-light max-w-[260px]">
+                  {isInSection && section
+                    ? section.description
+                    : <>Regnskapsbyrået for små og mellomstore bedrifter. Trygghet. Oversikt. Vekst.</>
+                  }
+                </p>
+                <p className="mt-3 text-xs text-foreground/40 font-light">Oscars gate 2B, 3714 Skien</p>
+              </div>
+
+              {/* Tjenester */}
+              <div className="col-span-1 md:col-span-2">
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Tjenester</p>
+                <div className="flex flex-col gap-2 text-[13px] font-light">
+                  {!isInSection || !section ? (
+                    <>
+                      <Link to="/regnskap/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Regnskap</Link>
+                      <Link to="/hr/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Personal</Link>
+                      <Link to="/markedsforing/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Marked</Link>
+                      <Link to="/it/tjenester" className="text-foreground/60 hover:text-primary transition-colors">IT</Link>
+                    </>
+                  ) : section.id === "regnskap" ? (
+                    <>
+                      <Link to={sp("/tjenester/regnskapsforer")} className="text-foreground/60 hover:text-primary transition-colors">Regnskapsfører</Link>
+                      <Link to={sp("/tjenester/cfo")} className="text-foreground/60 hover:text-primary transition-colors">CFO-as-a-Service</Link>
+                      <Link to={sp("/tjenester/lonn")} className="text-foreground/60 hover:text-primary transition-colors">Lønn</Link>
+                      <Link to={sp("/tjenester/skatteplanlegging")} className="text-foreground/60 hover:text-primary transition-colors">Skatteplanlegging</Link>
+                    </>
+                  ) : section.id === "hr" ? (
+                    <>
+                      <Link to={sp("/tjenester/hr-og-lonn")} className="text-foreground/60 hover:text-primary transition-colors">Lønn & HR</Link>
+                      <Link to={sp("/tjenester/ansettelse")} className="text-foreground/60 hover:text-primary transition-colors">Ansettelse</Link>
+                      <Link to={sp("/tjenester/personalhandbok")} className="text-foreground/60 hover:text-primary transition-colors">Personalhåndbok</Link>
+                      <Link to={sp("/tjenester/arbeidsrett")} className="text-foreground/60 hover:text-primary transition-colors">Arbeidsrett</Link>
+                    </>
+                  ) : section.id === "markedsforing" ? (
+                    <>
+                      <Link to={sp("/tjenester/seo")} className="text-foreground/60 hover:text-primary transition-colors">SEO</Link>
+                      <Link to={sp("/tjenester/meta-annonser")} className="text-foreground/60 hover:text-primary transition-colors">Meta-annonser</Link>
+                      <Link to={sp("/tjenester/google-ads")} className="text-foreground/60 hover:text-primary transition-colors">Google Ads</Link>
+                      <Link to={sp("/tjenester/nettbutikk")} className="text-foreground/60 hover:text-primary transition-colors">Nettbutikk</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to={sp("/tjenester/nettsider")} className="text-foreground/60 hover:text-primary transition-colors">Nettsider</Link>
+                      <Link to={sp("/tjenester/chatbot")} className="text-foreground/60 hover:text-primary transition-colors">AI-chatbot</Link>
+                      <Link to={sp("/tjenester/internsystemer")} className="text-foreground/60 hover:text-primary transition-colors">Interne systemer</Link>
+                      <Link to={sp("/tjenester/ai-automatisering")} className="text-foreground/60 hover:text-primary transition-colors">AI & automatisering</Link>
+                    </>
+                  )}
+                  <Link to={sp("/tjenester")} className="text-primary/80 hover:text-primary transition-colors text-[12px] mt-1">Alle tjenester →</Link>
+                </div>
+              </div>
+
+              {/* Bransjer */}
+              <div className="col-span-1 md:col-span-2">
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Bransjer</p>
+                <div className="flex flex-col gap-2 text-[13px] font-light">
+                  <Link to={sp("/bransjer/tech-saas")} className="text-foreground/60 hover:text-primary transition-colors">Tech & SaaS</Link>
+                  <Link to={sp("/bransjer/eiendom")} className="text-foreground/60 hover:text-primary transition-colors">Eiendom</Link>
+                  <Link to={sp("/bransjer/bygg-anlegg")} className="text-foreground/60 hover:text-primary transition-colors">Bygg & Anlegg</Link>
+                  <Link to={sp("/bransjer/restaurant")} className="text-foreground/60 hover:text-primary transition-colors">Restaurant</Link>
+                  <Link to={sp("/bransjer")} className="text-primary/80 hover:text-primary transition-colors text-[12px] mt-1">Alle bransjer →</Link>
+                </div>
+              </div>
+
+              {/* Ressurser */}
+              <div className="col-span-1 md:col-span-2">
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Ressurser</p>
+                <div className="flex flex-col gap-2 text-[13px] font-light">
+                  <Link to="/kurs" className="text-foreground/60 hover:text-primary transition-colors">Avargo Kurs</Link>
+                  <Link to="/ressurser/kontohjelp" className="text-foreground/60 hover:text-primary transition-colors">Kontohjelp</Link>
+                  <Link to="/ressurser?tab=blogg" className="text-foreground/60 hover:text-primary transition-colors">Blogg</Link>
+                  <Link to="/ressurser?tab=guider" className="text-foreground/60 hover:text-primary transition-colors">Guider</Link>
+                  <Link to="/ressurser?tab=arkiv" className="text-foreground/60 hover:text-primary transition-colors">Arkiv & maler</Link>
+                  <Link to="/ressurser/skattekalender" className="text-foreground/60 hover:text-primary transition-colors">Skattekalender</Link>
+                </div>
+              </div>
+
+              {/* Selskapet */}
+              <div className="col-span-1 md:col-span-3">
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Selskapet</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-[13px] font-light">
+                  <Link to={sp("/kontakt")} className="text-foreground/60 hover:text-primary transition-colors">Kontakt oss</Link>
+                  <Link to={sp("/om-oss")} className="text-foreground/60 hover:text-primary transition-colors">Om Avargo</Link>
+                  <Link to="/faq" className="text-foreground/60 hover:text-primary transition-colors">Vanlige spørsmål</Link>
+                  <Link to="/karriere" className="text-foreground/60 hover:text-primary transition-colors">Jobb hos oss</Link>
+                  <Link to="/kunde/logg-inn" className="text-foreground/60 hover:text-primary transition-colors">Kundeportal</Link>
+                  <Link to="/samarbeid" className="text-foreground/60 hover:text-primary transition-colors">Samarbeid</Link>
+                </div>
+
+                {/* Avdelinger pills */}
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mt-6 mb-3 font-semibold">Avdelinger</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <Link to="/" className="px-3 py-1.5 rounded-full text-[11px] font-medium border border-primary/20 text-primary/80 hover:bg-primary/10 hover:text-primary transition-all">Avargo</Link>
+                  {SECTION_LIST.map((s) => (
+                    <Link key={s.id} to={s.basePath}
+                      className="px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all hover:scale-[1.02]"
+                      style={{
+                        color: accentHsl(s.id),
+                        borderColor: accentBg(s.id, 0.2),
+                        ...(isInSection && section?.id === s.id ? { backgroundColor: accentBg(s.id, 0.1) } : {}),
+                      }}
+                    >
+                      {s.shortName}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom bar */}
+            <div className="mt-12 pt-6 border-t border-border/10 flex flex-col md:flex-row justify-between items-center gap-4">
+              <span className="text-[11px] text-foreground/40">© 2026 Avargo. Alle rettigheter reservert.</span>
+              <div className="flex gap-6 text-[11px] text-foreground/40">
+                <Link to="/personvern" className="hover:text-foreground/70 transition-colors">Personvern</Link>
+                <Link to="/vilkar" className="hover:text-foreground/70 transition-colors">Vilkår</Link>
+              </div>
             </div>
           </div>
         </div>
