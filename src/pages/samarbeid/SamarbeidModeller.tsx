@@ -153,9 +153,9 @@ const SamarbeidModeller = () => (
     <section className="py-16 md:py-24">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-4">Interessert?</h2>
-        <p className="text-muted-foreground max-w-md mx-auto mb-8">Send inn en uforpliktende søknad så tar vi kontakt for en konfidensiell samtale om mulighetene.</p>
+        <p className="text-muted-foreground max-w-md mx-auto mb-8">Start en uforpliktende kartlegging så tar vi kontakt for en konfidensiell samtale om mulighetene.</p>
         <Link to="/samarbeid/soknad" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/30">
-          Send søknad <ArrowRight size={15} />
+          Start kartlegging <ArrowRight size={15} />
         </Link>
       </div>
     </section>
