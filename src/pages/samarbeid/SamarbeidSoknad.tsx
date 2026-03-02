@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Building2, User, Mail, Phone, Globe, Hash, Users, TrendingUp, Send, Sparkles, CheckCircle2, Search, Loader2 } from "lucide-react";
+import { Building2, User, Mail, Phone, Globe, Hash, Users, TrendingUp, Send, Sparkles, CheckCircle2, Search, Loader2, MapPin, Landmark, BarChart3, Wallet, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/samarbeid-hero.jpg";
@@ -12,13 +12,41 @@ const INTEREST_TYPES = [
   { value: "both", label: "Åpen for alt" },
 ];
 
+function formatNOK(val: number | null | undefined): string {
+  if (val == null) return "";
+  const num = Math.round(Number(val));
+  if (isNaN(num)) return "";
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(".", ",")} MNOK`;
+  if (num >= 1_000) return `${Math.round(num / 1_000)} TNOK`;
+  return `${num} NOK`;
+}
+
+interface FetchedFinancials {
+  regnskapsaar: string;
+  sumDriftsinntekter: string;
+  sumDriftskostnader: string;
+  driftsresultat: string;
+  aarsresultat: string;
+  sumEiendeler: string;
+  sumEgenkapital: string;
+  sumGjeld: string;
+  sumInnskuttEgenkapital: string;
+  sumOpptjentEgenkapital: string;
+}
+
 const SamarbeidSoknad = () => {
   const [form, setForm] = useState({
     org_number: "", company_name: "", contact_name: "",
     contact_email: "", contact_phone: "", website: "",
     num_employees: "", annual_revenue: "", interest_type: "",
     message: "",
+    // Extra fetched fields
+    org_form: "", address: "", stiftelsesdato: "",
+    daglig_leder: "", styreleder: "",
   });
+  const [financials, setFinancials] = useState<FetchedFinancials | null>(null);
+  const [showFinancials, setShowFinancials] = useState(false);
+  const [fetched, setFetched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -26,6 +54,7 @@ const SamarbeidSoknad = () => {
   const [brregQuery, setBrregQuery] = useState("");
   const [brregResults, setBrregResults] = useState<any[]>([]);
   const [brregLoading, setBrregLoading] = useState(false);
+  const [fetchingDetails, setFetchingDetails] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +97,7 @@ const SamarbeidSoknad = () => {
   const selectCompany = async (enhet: any) => {
     setShowDropdown(false);
     setBrregQuery("");
+    setFetchingDetails(true);
 
     const orgNr = enhet.organisasjonsnummer;
 
@@ -79,8 +109,9 @@ const SamarbeidSoknad = () => {
       }).then(r => r.ok ? r.json() : null),
     ]);
 
-    // Extract daglig leder
+    // Extract daglig leder + styreleder
     let dagligLeder = "";
+    let styreleder = "";
     try {
       const rolleData = rolleResult.status === "fulfilled" ? rolleResult.value : null;
       const groups = rolleData?.rollegrupper || [];
@@ -89,50 +120,91 @@ const SamarbeidSoknad = () => {
           const person = g.roller?.[0]?.person;
           if (person) dagligLeder = `${person.navn?.fornavn || ""} ${person.navn?.etternavn || ""}`.trim();
         }
+        if (g.type?.kode === "LEDE") {
+          const person = g.roller?.[0]?.person;
+          if (person) styreleder = `${person.navn?.fornavn || ""} ${person.navn?.etternavn || ""}`.trim();
+        }
       }
     } catch { /* ignore */ }
 
     // Extract financial data (latest SELSKAP regnskap)
     let annualRevenue = "";
     let numEmployees = enhet.antallAnsatte?.toString() || "";
+    let fin: FetchedFinancials | null = null;
     try {
       const regnskapData = regnskapResult.status === "fulfilled" ? regnskapResult.value : null;
-      // Response is an array — find latest SELSKAP entry
       const entries = Array.isArray(regnskapData) ? regnskapData : [];
       const selskap = entries.find((r: any) => r.regnskapstype === "SELSKAP") || entries[0];
       if (selskap) {
-        const driftsinntekter = selskap?.resultatregnskapResultat?.driftsresultat?.driftsinntekter?.sumDriftsinntekter;
-        if (driftsinntekter != null) {
-          const num = Math.round(Number(driftsinntekter));
-          if (num >= 1_000_000) {
-            annualRevenue = `${(num / 1_000_000).toFixed(1).replace(".", ",")} MNOK`;
-          } else if (num >= 1_000) {
-            annualRevenue = `${Math.round(num / 1_000)} TNOK`;
-          } else {
-            annualRevenue = `${num} NOK`;
-          }
+        const dr = selskap?.resultatregnskapResultat?.driftsresultat;
+        const fr = selskap?.resultatregnskapResultat?.finansresultat;
+        const bal = selskap?.eiendeler;
+        const ek = selskap?.egenkapitalGjeld;
+
+        const sumDriftsinntekter = dr?.driftsinntekter?.sumDriftsinntekter;
+        const sumDriftskostnader = dr?.driftskostnad?.sumDriftskostnad;
+        const driftsresultat = dr?.driftsresultat;
+        const aarsresultat = selskap?.resultatregnskapResultat?.totalresultat
+          ?? selskap?.resultatregnskapResultat?.aarsresultat;
+        const sumEiendeler = bal?.sumEiendeler;
+        const sumEgenkapital = ek?.sumEgenkapitalGjeld != null
+          ? undefined : ek?.egenkapital?.sumEgenkapital;
+        const sumEK = ek?.egenkapital?.sumEgenkapital;
+        const sumGjeld = ek?.gjeldOversikt?.sumGjeld ?? ek?.gjeld?.sumGjeld;
+        const sumInnskutt = ek?.egenkapital?.innskuttEgenkapital?.sumInnskuttEgenkapital;
+        const sumOpptjent = ek?.egenkapital?.opptjentEgenkapital?.sumOpptjentEgenkapital;
+
+        if (sumDriftsinntekter != null) {
+          annualRevenue = formatNOK(sumDriftsinntekter);
         }
-        // Also grab employees from regnskap if enhetsreg didn't have it
+
+        fin = {
+          regnskapsaar: selskap?.regnskapsperiode?.fraDato?.substring(0, 4) || selskap?.avviklingsregnskap ? "" : (selskap?.regnskapsperiode?.tilDato?.substring(0, 4) || ""),
+          sumDriftsinntekter: formatNOK(sumDriftsinntekter),
+          sumDriftskostnader: formatNOK(sumDriftskostnader),
+          driftsresultat: formatNOK(driftsresultat),
+          aarsresultat: formatNOK(aarsresultat),
+          sumEiendeler: formatNOK(sumEiendeler),
+          sumEgenkapital: formatNOK(sumEK),
+          sumGjeld: formatNOK(sumGjeld),
+          sumInnskuttEgenkapital: formatNOK(sumInnskutt),
+          sumOpptjentEgenkapital: formatNOK(sumOpptjent),
+        };
+
         if (!numEmployees && selskap?.virksomhet?.antallAnsatte) {
           numEmployees = selskap.virksomhet.antallAnsatte.toString();
         }
       }
     } catch { /* ignore */ }
 
-    const webRaw = enhet.hjemmeside || "";
+    // Build address
+    const addr = enhet.forretningsadresse || enhet.postadresse;
+    const addressStr = addr
+      ? `${(addr.adresse || []).join(", ")}, ${addr.postnummer || ""} ${addr.poststed || ""}`.trim()
+      : "";
+
+    setFinancials(fin);
+    setFetched(true);
+    setFetchingDetails(false);
 
     setForm(prev => ({
       ...prev,
       org_number: orgNr || "",
       company_name: enhet.navn || "",
       contact_name: dagligLeder || prev.contact_name,
-      website: webRaw || prev.website,
+      website: enhet.hjemmeside || prev.website,
       num_employees: numEmployees || prev.num_employees,
       annual_revenue: annualRevenue || prev.annual_revenue,
+      org_form: enhet.organisasjonsform?.beskrivelse || "",
+      address: addressStr,
+      stiftelsesdato: enhet.stiftelsesdato || enhet.registreringsdatoEnhetsregisteret || "",
+      daglig_leder: dagligLeder,
+      styreleder: styreleder,
     }));
   };
 
   const inputClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all";
+  const readonlyClass = "w-full h-11 pl-10 pr-3 rounded-xl border border-white/5 bg-white/[0.03] text-sm text-white/60 cursor-default focus:outline-none";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,6 +233,16 @@ const SamarbeidSoknad = () => {
     setSubmitting(false);
   };
 
+  const finRows = financials ? [
+    { label: "Driftsinntekter", value: financials.sumDriftsinntekter },
+    { label: "Driftskostnader", value: financials.sumDriftskostnader },
+    { label: "Driftsresultat", value: financials.driftsresultat },
+    { label: "Årsresultat", value: financials.aarsresultat },
+    { label: "Sum eiendeler", value: financials.sumEiendeler },
+    { label: "Egenkapital", value: financials.sumEgenkapital },
+    { label: "Gjeld", value: financials.sumGjeld },
+  ].filter(r => r.value) : [];
+
   return (
     <>
       <Helmet>
@@ -176,8 +258,8 @@ const SamarbeidSoknad = () => {
         </div>
 
         <div className="container mx-auto px-4 relative z-10 py-20 md:py-28">
-          <div className="grid lg:grid-cols-[1fr_480px] gap-12 lg:gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
+          <div className="grid lg:grid-cols-[1fr_520px] gap-12 lg:gap-16 items-start">
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="lg:sticky lg:top-28">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-6 backdrop-blur-sm">
                 <Sparkles size={13} /> Uforpliktende søknad
               </div>
@@ -231,7 +313,7 @@ const SamarbeidSoknad = () => {
                           placeholder="Søk på firmanavn eller org.nr…"
                           className={inputClass}
                         />
-                        {brregLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 animate-spin" />}
+                        {(brregLoading || fetchingDetails) && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 animate-spin" />}
                       </div>
                       {showDropdown && brregResults.length > 0 && (
                         <div className="absolute z-50 left-0 right-0 mt-1 rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl max-h-60 overflow-y-auto shadow-2xl">
@@ -263,6 +345,103 @@ const SamarbeidSoknad = () => {
                       </div>
                     </div>
 
+                    {/* Fetched company details — shown only after Brreg lookup */}
+                    <AnimatePresence>
+                      {fetched && (form.org_form || form.address || form.stiftelsesdato || form.styreleder) && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 space-y-2">
+                            <p className="text-[10px] uppercase tracking-widest text-white/30 font-medium">Hentet fra Brønnøysund</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {form.org_form && (
+                                <div className="relative">
+                                  <Landmark size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                                  <input value={form.org_form} readOnly tabIndex={-1} className={readonlyClass} title="Organisasjonsform" />
+                                </div>
+                              )}
+                              {form.stiftelsesdato && (
+                                <div className="relative">
+                                  <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                                  <input value={`Stiftet ${form.stiftelsesdato}`} readOnly tabIndex={-1} className={readonlyClass} title="Stiftelsesdato" />
+                                </div>
+                              )}
+                            </div>
+                            {form.address && (
+                              <div className="relative">
+                                <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                                <input value={form.address} readOnly tabIndex={-1} className={readonlyClass} title="Adresse" />
+                              </div>
+                            )}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {form.daglig_leder && (
+                                <div className="relative">
+                                  <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                                  <input value={`Daglig leder: ${form.daglig_leder}`} readOnly tabIndex={-1} className={readonlyClass} />
+                                </div>
+                              )}
+                              {form.styreleder && (
+                                <div className="relative">
+                                  <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                                  <input value={`Styreleder: ${form.styreleder}`} readOnly tabIndex={-1} className={readonlyClass} />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Financials panel — shown only after Brreg lookup */}
+                    <AnimatePresence>
+                      {fetched && finRows.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="rounded-xl border border-white/5 bg-white/[0.02] overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => setShowFinancials(v => !v)}
+                              className="w-full flex items-center justify-between px-3 py-2.5 text-xs text-white/50 hover:text-white/70 transition-colors"
+                            >
+                              <span className="flex items-center gap-2">
+                                <BarChart3 size={13} className="text-primary/60" />
+                                <span className="uppercase tracking-widest font-medium text-[10px]">
+                                  Regnskap {financials?.regnskapsaar || "siste år"}
+                                </span>
+                              </span>
+                              {showFinancials ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </button>
+                            <AnimatePresence>
+                              {showFinancials && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-3 pb-3 space-y-1">
+                                    {finRows.map(r => (
+                                      <div key={r.label} className="flex items-center justify-between text-xs py-1 border-b border-white/5 last:border-0">
+                                        <span className="text-white/40">{r.label}</span>
+                                        <span className="text-white/70 font-medium">{r.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative">
                         <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -293,7 +472,7 @@ const SamarbeidSoknad = () => {
                       <div className="relative">
                         <Users size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                         <input type="number" value={form.num_employees} onChange={e => set("num_employees", e.target.value)}
-                          placeholder="Antall ansatte" min={1} className={inputClass} />
+                          placeholder="Antall ansatte" min={0} className={inputClass} />
                       </div>
                       <div className="relative">
                         <TrendingUp size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
