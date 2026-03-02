@@ -61,7 +61,7 @@ export function useSubdomainRedirect() {
 
     // On a non-section path like /tjenester → prepend section
     // But skip admin/kunde/shared routes
-    const skipPrefixes = ["/admin", "/kunde", "/personvern", "/vilkar", "/karriere", "/kurs"];
+    const skipPrefixes = ["/admin", "/kunde", "/personvern", "/vilkar", "/karriere", "/kurs", "/samarbeid"];
     if (skipPrefixes.some((p) => path.startsWith(p))) {
       return;
     }

@@ -2299,6 +2299,60 @@ export type Database = {
         }
         Relationships: []
       }
+      samarbeid_applications: {
+        Row: {
+          admin_note: string | null
+          annual_revenue: string | null
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          id: string
+          interest_type: string
+          message: string | null
+          num_employees: number | null
+          org_number: string
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          annual_revenue?: string | null
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          id?: string
+          interest_type?: string
+          message?: string | null
+          num_employees?: number | null
+          org_number: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          annual_revenue?: string | null
+          company_name?: string
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          interest_type?: string
+          message?: string | null
+          num_employees?: number | null
+          org_number?: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           active: boolean | null

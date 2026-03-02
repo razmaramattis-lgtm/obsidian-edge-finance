@@ -81,6 +81,12 @@ const KarriereDetalj = lazy(() => import("./pages/KarriereDetalj"));
 const KarriereVelkommen = lazy(() => import("./pages/karriere/KarriereVelkommen"));
 const KarriereTilbakemelding = lazy(() => import("./pages/karriere/KarriereTilbakemelding"));
 
+// Samarbeid portal
+const SamarbeidLayout = lazy(() => import("./components/samarbeid/SamarbeidLayout"));
+const SamarbeidForside = lazy(() => import("./pages/samarbeid/SamarbeidForside"));
+const SamarbeidModeller = lazy(() => import("./pages/samarbeid/SamarbeidModeller"));
+const SamarbeidSoknad = lazy(() => import("./pages/samarbeid/SamarbeidSoknad"));
+
 // Kurs portal
 const KursLayout = lazy(() => import("./components/kurs/KursLayout"));
 const KursForside = lazy(() => import("./pages/kurs/KursForside"));
@@ -232,6 +238,13 @@ const App = () => (
                     <Route path="velkommen" element={<KarriereVelkommen />} />
                     <Route path="tilbakemelding" element={<KarriereTilbakemelding />} />
                     <Route path=":slug" element={<KarriereDetalj />} />
+                  </Route>
+
+                  {/* Samarbeid portal (own layout) */}
+                  <Route path="/samarbeid" element={<SamarbeidLayout />}>
+                    <Route index element={<SamarbeidForside />} />
+                    <Route path="modeller" element={<SamarbeidModeller />} />
+                    <Route path="soknad" element={<SamarbeidSoknad />} />
                   </Route>
 
                   {/* Kurs portal (own layout) */}

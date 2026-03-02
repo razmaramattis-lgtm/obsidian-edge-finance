@@ -801,6 +801,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to={sp("/om-oss")} className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Om Avargo</Link>
                 <Link to="/karriere" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Jobb hos oss</Link>
                 <Link to="/kurs" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Avargo Kurs</Link>
+                <Link to="/samarbeid" className="text-foreground/75 hover:text-foreground transition-colors py-0.5">Avargo Samarbeid</Link>
               </div>
             </div>
 
