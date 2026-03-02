@@ -215,7 +215,8 @@ const SamarbeidSoknad = () => {
     if (!form.org_number.trim() || !form.company_name.trim() || !form.contact_name.trim() || !form.contact_email.trim() || !form.contact_phone.trim()) return;
     setSubmitting(true);
 
-    const { error } = await supabase.from("samarbeid_applications").insert([{
+    // Save to DB
+    const { error: dbError } = await supabase.from("samarbeid_applications").insert([{
       org_number: form.org_number.trim(),
       company_name: form.company_name.trim(),
       contact_name: form.contact_name.trim(),
@@ -228,12 +229,39 @@ const SamarbeidSoknad = () => {
       message: form.message.trim() || null,
     }]);
 
-    if (error) {
+    if (dbError) {
       const { toast } = await import("sonner");
       toast.error("Noe gikk galt. Prøv igjen.");
-    } else {
-      setSubmitted(true);
+      setSubmitting(false);
+      return;
     }
+
+    // Send email via contact-submit edge function
+    const interestLabel = INTEREST_TYPES.find(i => i.value === (form.interest_type || "partnership"))?.label || form.interest_type;
+    const finSummary = financials
+      ? `\n\nRegnskap ${financials.regnskapsaar}:\nDriftsinntekter: ${financials.sumDriftsinntekter}\nDriftskostnader: ${financials.sumDriftskostnader}\nDriftsresultat: ${financials.driftsresultat}\nÅrsresultat: ${financials.aarsresultat}\nEiendeler: ${financials.sumEiendeler}\nEgenkapital: ${financials.sumEgenkapital}\nGjeld: ${financials.sumGjeld}`
+      : "";
+
+    const fullMessage = `[Samarbeid — ${interestLabel}]${form.daglig_leder ? `\nDaglig leder: ${form.daglig_leder}` : ""}${form.styreleder ? `\nStyreleder: ${form.styreleder}` : ""}${form.address ? `\nAdresse: ${form.address}` : ""}${form.num_employees ? `\nAnsatte: ${form.num_employees}` : ""}${form.website ? `\nNettside: ${form.website}` : ""}${finSummary}${form.message ? `\n\nMelding:\n${form.message}` : ""}`;
+
+    try {
+      await supabase.functions.invoke("contact-submit", {
+        body: {
+          company_name: form.company_name.trim(),
+          org_number: form.org_number.trim(),
+          contact_person: form.contact_name.trim(),
+          email: form.contact_email.trim(),
+          phone: form.contact_phone.trim(),
+          industry: form.org_form || null,
+          message: fullMessage,
+          section: "samarbeid",
+        },
+      });
+    } catch (emailErr) {
+      console.error("Email sending failed:", emailErr);
+    }
+
+    setSubmitted(true);
     setSubmitting(false);
   };
 
