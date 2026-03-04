@@ -12,43 +12,44 @@ function normalize(str: string): string {
 
 function scoreMatch(query: string, title: string, content: string): number {
   const q = normalize(query);
-  const words = q.split(/\s+/).filter(w => w.length > 1);
+  const words = q.split(/\s+/).filter((w) => w.length > 1);
   const t = normalize(title);
   const c = normalize(content);
   let score = 0;
 
-  // Exact phrase match in title = highest
   if (t.includes(q)) score += 100;
-  // Exact phrase match in content
   if (c.includes(q)) score += 50;
 
   for (const word of words) {
     if (t.includes(word)) score += 20;
     if (c.includes(word)) score += 5;
   }
+
   return score;
 }
 
 function extractSnippet(content: string, query: string, maxLen = 600): string {
   const q = normalize(query);
-  const words = q.split(/\s+/).filter(w => w.length > 1);
-  // Strip HTML
+  const words = q.split(/\s+/).filter((w) => w.length > 1);
   const plain = content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const lower = plain.toLowerCase();
 
-  // Find best position
   let bestIdx = 0;
   let bestScore = 0;
   for (const word of words) {
     const idx = lower.indexOf(word);
     if (idx >= 0 && idx < lower.length) {
-      // Count surrounding word matches
       const start = Math.max(0, idx - 200);
       const end = Math.min(plain.length, idx + 400);
       const region = lower.slice(start, end);
-      let s = 0;
-      for (const w of words) if (region.includes(w)) s++;
-      if (s > bestScore) { bestScore = s; bestIdx = Math.max(0, idx - 100); }
+      let score = 0;
+      for (const w of words) {
+        if (region.includes(w)) score++;
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = Math.max(0, idx - 100);
+      }
     }
   }
 
@@ -56,58 +57,14 @@ function extractSnippet(content: string, query: string, maxLen = 600): string {
   return snippet + (bestIdx + maxLen < plain.length ? "…" : "");
 }
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  try {
-    const { messages } = await req.json();
-    const lastMessage = messages?.filter((m: any) => m.role === "user").pop()?.content || "";
-
-    if (!lastMessage.trim()) {
-      return respondJson({ answer: "Vennligst skriv et spørsmål om HMS-håndboken." });
-    }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const sb = createClient(supabaseUrl, supabaseKey);
-    const { data: hmsDocs } = await sb.from("hms_documents").select("title, content, sort_order").order("sort_order");
-
-    if (!hmsDocs || hmsDocs.length === 0) {
-      return respondStream("Jeg finner ingen HMS-dokumenter i databasen akkurat nå. Kontakt administrator.");
-    }
-
-    // Score and rank
-    const scored = hmsDocs.map(doc => ({
-      ...doc,
-      score: scoreMatch(lastMessage, doc.title, doc.content || ""),
-    })).filter(d => d.score > 0).sort((a, b) => b.score - a.score);
-
-    if (scored.length === 0) {
-      return respondStream(`Jeg fant dessverre ingen relevante kapitler i HMS-håndboken for «${lastMessage}». Prøv å søke med andre ord, eller bla gjennom kapitlene direkte.`);
-    }
-
-    // Take only the single best result
-    const best = scored[0];
-    const snippet = extractSnippet(best.content || "", lastMessage);
-    let answer = `### 📄 ${best.title}\n\n${snippet}`;
-
-    return respondStream(answer);
-  } catch (e) {
-    console.error("hms-chat error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Ukjent feil" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-});
-
-function respondJson(data: any) {
+function respondJson(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
+    status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
 
 function respondStream(text: string) {
-  // Simulate SSE stream format for compatibility with frontend
   const chunks = text.match(/.{1,20}/gs) || [text];
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -125,3 +82,89 @@ function respondStream(text: string) {
     headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
   });
 }
+
+async function requireEmployeeOrAdmin(req: Request) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return { error: respondJson({ error: "Unauthorized" }, 401) };
+  }
+
+  const jwt = authHeader.replace("Bearer ", "").trim();
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+
+  if (!publishableKey) {
+    return { error: respondJson({ error: "Server misconfiguration" }, 500) };
+  }
+
+  const authClient = createClient(supabaseUrl, publishableKey, {
+    global: {
+      headers: {
+        Authorization: authHeader,
+      },
+    },
+  });
+
+  const { data: userData, error: userError } = await authClient.auth.getUser(jwt);
+  if (userError || !userData.user) {
+    return { error: respondJson({ error: "Unauthorized" }, 401) };
+  }
+
+  const { data: allowed, error: roleError } = await authClient.rpc("is_employee_or_admin");
+  if (roleError || !allowed) {
+    return { error: respondJson({ error: "Forbidden" }, 403) };
+  }
+
+  return { authClient };
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  try {
+    const auth = await requireEmployeeOrAdmin(req);
+    if (auth.error) return auth.error;
+
+    const { messages } = await req.json();
+    const lastMessage = messages?.filter((m: { role?: string; content?: string }) => m.role === "user").pop()?.content || "";
+
+    if (!lastMessage.trim()) {
+      return respondJson({ answer: "Vennligst skriv et spørsmål om HMS-håndboken." });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(supabaseUrl, serviceKey);
+    const { data: hmsDocs, error } = await sb
+      .from("hms_documents")
+      .select("title, content, sort_order")
+      .order("sort_order");
+
+    if (error) {
+      throw error;
+    }
+
+    if (!hmsDocs || hmsDocs.length === 0) {
+      return respondStream("Jeg finner ingen HMS-dokumenter i databasen akkurat nå. Kontakt administrator.");
+    }
+
+    const scored = hmsDocs
+      .map((doc) => ({
+        ...doc,
+        score: scoreMatch(lastMessage, doc.title, doc.content || ""),
+      }))
+      .filter((doc) => doc.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    if (scored.length === 0) {
+      return respondStream(`Jeg fant dessverre ingen relevante kapitler i HMS-håndboken for «${lastMessage}». Prøv å søke med andre ord, eller bla gjennom kapitlene direkte.`);
+    }
+
+    const best = scored[0];
+    const snippet = extractSnippet(best.content || "", lastMessage);
+    return respondStream(`### 📄 ${best.title}\n\n${snippet}`);
+  } catch (error) {
+    console.error("hms-chat error:", error);
+    return respondJson({ error: error instanceof Error ? error.message : "Ukjent feil" }, 500);
+  }
+});

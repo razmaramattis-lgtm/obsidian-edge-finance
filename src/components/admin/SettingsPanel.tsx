@@ -38,7 +38,7 @@ interface Booking {
 }
 
 const AvailabilityTab = () => {
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
   const [bookingActive, setBookingActive] = useState(false);
   const [teamsLink, setTeamsLink] = useState("");
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
@@ -53,6 +53,7 @@ const AvailabilityTab = () => {
   const [newBlockReason, setNewBlockReason] = useState("");
   const [showReasonFor, setShowReasonFor] = useState<string | null>(null);
   const [showTeamsGuide, setShowTeamsGuide] = useState(false);
+  const [calendarFeedUrl, setCalendarFeedUrl] = useState("");
   // Outlook sync
   const [outlookCalUrl, setOutlookCalUrl] = useState("");
   const [syncingOutlook, setSyncingOutlook] = useState(false);
@@ -60,7 +61,21 @@ const AvailabilityTab = () => {
   const [syncError, setSyncError] = useState("");
   const [showOutlookWizard, setShowOutlookWizard] = useState(false);
 
-  useEffect(() => { if (profile) loadData(); }, [profile]);
+  useEffect(() => {
+    if (!profile) {
+      setCalendarFeedUrl("");
+      return;
+    }
+    loadData();
+  }, [profile]);
+
+  useEffect(() => {
+    if (!profile || !session?.access_token) {
+      setCalendarFeedUrl("");
+      return;
+    }
+    loadCalendarFeedUrl();
+  }, [profile?.id, session?.access_token]);
 
   const loadData = async () => {
     if (!profile) return;
@@ -80,6 +95,30 @@ const AvailabilityTab = () => {
 
     const { data: bk } = await supabase.from("bookings").select("id, booking_date, booking_time, customer_name, company_name, status").eq("advisor_id", profile.id).order("booking_date");
     setBookings((bk as Booking[]) || []);
+  };
+
+  const loadCalendarFeedUrl = async () => {
+    if (!profile || !session?.access_token) return;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=get_token&profile_id=${profile.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Kunne ikke generere sikker kalenderlenke");
+      }
+
+      const data = await response.json();
+      setCalendarFeedUrl(data.feedUrl ?? "");
+    } catch {
+      setCalendarFeedUrl("");
+    }
   };
 
   const saveAll = async () => {
@@ -184,10 +223,10 @@ const AvailabilityTab = () => {
     }));
   };
 
-  const calendarFeedUrl = profile ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=feed&profile_id=${profile.id}` : "";
-  const outlookSubscribeUrl = profile ? `webcal://${calendarFeedUrl.replace(/^https?:\/\//, "")}` : "";
+  const outlookSubscribeUrl = calendarFeedUrl ? `webcal://${calendarFeedUrl.replace(/^https?:\/\//, "")}` : "";
 
   const copyFeedLink = () => {
+    if (!calendarFeedUrl) return;
     navigator.clipboard.writeText(calendarFeedUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
@@ -225,7 +264,11 @@ const AvailabilityTab = () => {
   };
 
   const downloadBookingIcs = (bookingId: string) => {
-    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=download_booking&booking_id=${bookingId}`;
+    if (!calendarFeedUrl) return;
+    const token = new URL(calendarFeedUrl).searchParams.get("token");
+    if (!token) return;
+
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calendar-feed?action=download_booking&booking_id=${bookingId}&token=${encodeURIComponent(token)}`;
     window.open(url, "_blank");
   };
 

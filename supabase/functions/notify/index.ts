@@ -178,6 +178,37 @@ function wrapHtml(title: string, body: string, section?: string) {
   </div>`;
 }
 
+async function getRequester(req: Request) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+
+  const jwt = authHeader.replace("Bearer ", "").trim();
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+  if (!publishableKey) return null;
+
+  const client = createClient(supabaseUrl, publishableKey, {
+    global: {
+      headers: {
+        Authorization: authHeader,
+      },
+    },
+  });
+
+  const { data: userData, error: userError } = await client.auth.getUser(jwt);
+  if (userError || !userData.user) return null;
+
+  const { data: profile } = await client
+    .from("profiles")
+    .select("id, user_id, role, email, name")
+    .eq("user_id", userData.user.id)
+    .single();
+
+  if (!profile) return null;
+
+  return { user: userData.user, profile };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -188,6 +219,37 @@ serve(async (req) => {
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
     if (!smtpUser || !smtpPass) throw new Error("SMTP not configured");
+
+    const requester = await getRequester(req);
+    const employeeOnlyTypes = new Set(["booking_confirmed", "admin_update"]);
+    const authenticatedTypes = new Set(["send_document", "employee_invitation"]);
+
+    if (employeeOnlyTypes.has(type)) {
+      if (!requester || !["admin", "employee"].includes(requester.profile.role)) {
+        return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    if (authenticatedTypes.has(type)) {
+      if (!requester || !["admin", "employee", "customer"].includes(requester.profile.role)) {
+        return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    if (type === "send_document" && requester?.profile.role === "customer") {
+      if (!requester.profile.email || requester.profile.email !== data?.recipient_email) {
+        return new Response(JSON.stringify({ success: false, error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 

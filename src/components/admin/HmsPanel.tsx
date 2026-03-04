@@ -18,7 +18,7 @@ interface HmsDoc {
 }
 
 const HmsPanel = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, session } = useAuth();
   const [docs, setDocs] = useState<HmsDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeDoc, setActiveDoc] = useState<string | null>(null);
@@ -97,28 +97,38 @@ const HmsPanel = () => {
 
   const sendChat = async () => {
     if (!chatInput.trim() || chatLoading) return;
+
+    const accessToken = session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
+    if (!accessToken) {
+      setChatMessages(prev => [...prev, { role: "assistant", content: "Du må være logget inn for å bruke HMS-assistenten." }]);
+      return;
+    }
+
     const userMsg = { role: "user" as const, content: chatInput };
     const newMessages = [...chatMessages, userMsg];
     setChatMessages(newMessages);
     setChatInput("");
     setChatLoading(true);
+
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hms-chat`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ messages: newMessages }),
-        }
-      );
-      if (!resp.ok || !resp.body) throw new Error("Feil ved chat");
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hms-chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (!resp.ok || !resp.body) {
+        throw new Error(resp.status === 401 || resp.status === 403 ? "Du har ikke tilgang til HMS-assistenten." : "Feil ved chat");
+      }
+
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let assistantContent = "";
       let buffer = "";
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -144,12 +154,16 @@ const HmsPanel = () => {
                 return [...prev, { role: "assistant", content: assistantContent }];
               });
             }
-          } catch { /* partial json */ }
+          } catch {
+            // ignore partial json chunks
+          }
         }
       }
-    } catch {
-      setChatMessages(prev => [...prev, { role: "assistant", content: "Beklager, noe gikk galt. Prøv igjen." }]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Beklager, noe gikk galt. Prøv igjen.";
+      setChatMessages(prev => [...prev, { role: "assistant", content: message }]);
     }
+
     setChatLoading(false);
   };
 
