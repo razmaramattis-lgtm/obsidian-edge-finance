@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { asHtml2PdfOptions } from "@/lib/html2pdf";
 import {
   Building2, Clock, Home, Sparkles, Wallet, LayoutGrid, FileCheck,
   ChevronRight, ChevronLeft, Check, Loader2, ShieldAlert, Users, Download
@@ -457,14 +458,14 @@ const HrGenerator = ({ onComplete }: HrGeneratorProps) => {
           </div>
         `;
 
-        await html2pdf().set({
+        await html2pdf().set(asHtml2PdfOptions({
           margin: 0,
           filename: `${dg.label.replace(/\s+/g, "-")}-${form.companyName.replace(/\s+/g, "-") || "bedrift"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"], before: ".page-break" },
-        }).from(container).save();
+        })).from(container).save();
       }
 
       toast.success("PDF-er lastet ned!");

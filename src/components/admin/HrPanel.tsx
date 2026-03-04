@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { asHtml2PdfOptions } from "@/lib/html2pdf";
 import {
   Plus, Trash2, Download, Upload, FileText, Edit2, Search,
   X, Shield, Scale, AlertTriangle, ShieldCheck, Lock, Heart, Calculator, BookOpen, Briefcase
@@ -301,14 +302,14 @@ const DocumentsTab = ({ isAdmin }: { isAdmin: boolean }) => {
                           container.style.cssText += "position:absolute;left:-9999px;top:0;width:794px;background:#fff;z-index:-1;padding:20px;";
                           document.body.appendChild(container);
                           
-                          await html2pdf().set({
+                          await html2pdf().set(asHtml2PdfOptions({
                             margin: [15, 18, 15, 18],
                             filename: `${item.title}.pdf`,
                             image: { type: "jpeg", quality: 0.98 },
                             html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, windowWidth: 794 },
                             jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
                             pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-                          }).from(container).save();
+                          })).from(container).save();
                           
                           document.body.removeChild(container);
                         } catch {
