@@ -10,6 +10,7 @@ import {
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { asHtml2PdfOptions } from "@/lib/html2pdf";
 import DOMPurify from "dompurify";
 import type { GeneratorConfig } from "./generators/types";
 
@@ -239,14 +240,14 @@ const DocumentGenerator = ({ config }: Props) => {
         await new Promise(r => setTimeout(r, 500));
 
         const pdfBlob: Blob = await html2pdf()
-          .set({
+          .set(asHtml2PdfOptions({
             margin: [15, 18, 15, 18],
             filename: `${hrDocTitle}.pdf`,
             image: { type: "jpeg", quality: 0.98 },
             html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, windowWidth: 794 },
             jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
             pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-          })
+          }))
           .from(container)
           .output("blob");
 
@@ -318,7 +319,7 @@ const DocumentGenerator = ({ config }: Props) => {
       await new Promise(r => setTimeout(r, 500));
 
       await html2pdf()
-        .set({
+        .set(asHtml2PdfOptions({
           margin: [15, 18, 15, 18],
           filename,
           image: { type: "jpeg", quality: 0.98 },
@@ -331,7 +332,7 @@ const DocumentGenerator = ({ config }: Props) => {
           },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-        })
+        }))
         .from(container)
         .save();
 

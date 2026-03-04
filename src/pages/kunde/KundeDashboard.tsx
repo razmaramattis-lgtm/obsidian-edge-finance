@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Calendar } from "@/components/ui/calendar";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { asHtml2PdfOptions } from "@/lib/html2pdf";
 import {
   LayoutDashboard, FileText, BookOpen, CalendarDays,
   Handshake, LogOut, Menu, ChevronRight, TrendingUp,
@@ -533,14 +534,14 @@ const DocumentsPanel = () => {
       container.style.cssText = "width:210mm;padding:20mm;font-family:'Georgia','Times New Roman',serif;font-size:13px;line-height:1.7;color:#1a1a1a;";
       container.innerHTML = chapter.content;
 
-      await html2pdf().set({
+      await html2pdf().set(asHtml2PdfOptions({
         margin: [15, 18, 15, 18],
         filename: `${doc.title.replace(/\s+/g, "-")}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         pagebreak: { mode: ["css", "legacy"] },
-      }).from(container).save();
+      })).from(container).save();
       toast.success("PDF lastet ned!");
     } catch { toast.error("Kunne ikke generere PDF"); }
     setOpenMenu(null);

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { asHtml2PdfOptions } from "@/lib/html2pdf";
 import {
   Plus, Trash2, Edit2, Upload, FileText, Shield, ChevronRight,
   Search, Send, Bot, User, Loader2, BookOpen, Download
@@ -82,14 +83,14 @@ const HmsPanel = () => {
       const clone = docRef.current.cloneNode(true) as HTMLElement;
       clone.style.cssText = "position:absolute;left:-9999px;top:0;width:794px;background:#fff;color:#000;z-index:-1;padding:20px;";
       document.body.appendChild(clone);
-      await html2pdf().set({
+      await html2pdf().set(asHtml2PdfOptions({
         margin: [15, 18, 15, 18],
         filename,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, windowWidth: 794 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-      }).from(clone).save();
+      })).from(clone).save();
       document.body.removeChild(clone);
     } catch { /* ignore */ }
   };
