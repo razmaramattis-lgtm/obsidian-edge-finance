@@ -65,7 +65,6 @@ function limitWords(text: string, max = 200): string {
   return words.slice(0, max).join(" ") + "…";
 }
 
-// Category keys map to database sources
 const CATEGORY_SOURCES: Record<string, string[]> = {
   kontoplan: ["account_entries"],
   regnskapsord: ["glossary_terms"],
@@ -78,6 +77,8 @@ const CATEGORY_SOURCES: Record<string, string[]> = {
   alt: ["account_entries", "glossary_terms", "document_templates", "archive_files", "internal_resources", "knowledge_materials", "hms_documents", "hr_handbook", "collaboration_agreements"],
 };
 
+const INTERNAL_ONLY_CATEGORIES = new Set(["arkiv", "datasenter", "hms", "personalhandbok", "samarbeidsavtaler", "alt"]);
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -86,21 +87,59 @@ serve(async (req) => {
     const { messages, category, action, search_term, preferred_account, document_override } = body;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const sb = createClient(supabaseUrl, supabaseKey);
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const authHeader = req.headers.get("Authorization");
 
-    // Handle account override action
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const authClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const sb = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    const userId = claimsData?.claims?.sub;
+    if (claimsError || !userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const selectedCategory = category || "alt";
+    const requiresEmployee = INTERNAL_ONLY_CATEGORIES.has(selectedCategory) || !!action;
+    if (requiresEmployee) {
+      const { data: isEmployee, error: roleError } = await sb.rpc("is_employee_or_admin", { uid: userId });
+      if (roleError || !isEmployee) {
+        return new Response(JSON.stringify({ error: "Employee access required" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     if (action === "set_override" && search_term && preferred_account) {
+      const { data: profileId } = await sb.rpc("current_profile_id", { uid: userId });
       const { error } = await sb.from("ava_account_overrides").upsert(
-        { search_term: normalize(search_term), preferred_account_number: preferred_account },
+        { search_term: normalize(search_term), preferred_account_number: preferred_account, created_by: profileId || null },
         { onConflict: "search_term" }
       );
       if (error) throw error;
       return respondStream(`✅ Lagret! Neste gang du søker på «${search_term}» viser jeg konto **${preferred_account}** først.`);
     }
 
-    // Handle document override action
     if (action === "set_document_override" && search_term && document_override) {
+      const { data: profileId } = await sb.rpc("current_profile_id", { uid: userId });
       const { error } = await sb.from("ava_document_overrides").upsert(
         {
           search_term: normalize(search_term),
@@ -108,6 +147,7 @@ serve(async (req) => {
           document_url: document_override.url || null,
           file_name: document_override.file_name || null,
           source_table: document_override.source || null,
+          created_by: profileId || null,
         },
         { onConflict: "search_term" }
       );
@@ -115,7 +155,6 @@ serve(async (req) => {
       return respondStream(`✅ Lagret! Neste gang noen søker på «${search_term}» viser jeg dokumentet **${document_override.title}** med nedlasting.`);
     }
 
-    // Handle listing available documents for linking
     if (action === "list_documents") {
       const [archRes, intRes, tmplRes, glossRes] = await Promise.all([
         sb.from("archive_files").select("name, file_url, file_name, category").order("name"),
@@ -139,10 +178,7 @@ serve(async (req) => {
       return respondStream("Hei! Jeg er Ava. Velg en kategori og still meg et spørsmål — jeg finner frem det du trenger. 📚");
     }
 
-    const cat = category || "alt";
-    const sources = CATEGORY_SOURCES[cat] || CATEGORY_SOURCES["alt"];
-
-    // Build parallel queries based on selected sources
+    const sources = CATEGORY_SOURCES[selectedCategory] || CATEGORY_SOURCES["alt"];
     const queries: Record<string, Promise<any>> = {};
     if (sources.includes("hms_documents")) queries.hms = sb.from("hms_documents").select("title, content");
     if (sources.includes("internal_resources")) queries.internal = sb.from("internal_resources").select("title, description, category, file_name, file_url");
@@ -160,69 +196,48 @@ serve(async (req) => {
     keys.forEach((k, i) => { dataMap[k] = responses[i].data || []; });
 
     const results: ScoredResult[] = [];
-
-    // HMS
     for (const doc of dataMap.hms || []) {
       const s = scoreText(lastMessage, doc.title, doc.content);
       if (s > 0) results.push({ source: "HMS-håndbok", title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-    // Internal resources
     for (const doc of dataMap.internal || []) {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category);
       if (s > 0) results.push({ source: "Intern ressurs", title: doc.title, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || undefined });
     }
-    // Archive — primary match on document name (the name set when saving)
     for (const doc of dataMap.archive || []) {
-      const nameScore = scoreText(lastMessage, doc.name) * 3; // Triple weight on name
+      const nameScore = scoreText(lastMessage, doc.name) * 3;
       const otherScore = scoreText(lastMessage, doc.description, doc.category, doc.file_name);
       const s = nameScore + otherScore;
       if (s > 0) results.push({ source: "Arkiv & Skjemaer", title: doc.name, score: s, snippet: doc.description || doc.category || "", downloadUrl: doc.file_url || undefined, fileName: doc.file_name || doc.name || undefined });
     }
-    // Knowledge
     for (const doc of dataMap.knowledge || []) {
       const s = scoreText(lastMessage, doc.title, doc.content, doc.category);
       if (s > 0) results.push({ source: `Datasenter (${doc.category || "Generelt"})`, title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-    // HR handbook
     for (const doc of dataMap.hr || []) {
       const s = scoreText(lastMessage, doc.title, doc.content);
       if (s > 0) results.push({ source: "Personalhåndbok", title: doc.title, score: s, snippet: extractSnippet(doc.content || "", lastMessage) });
     }
-    // Collaboration
     for (const doc of dataMap.collab || []) {
       const s = scoreText(lastMessage, doc.title, doc.company, doc.offering, doc.description);
       if (s > 0) results.push({ source: "Samarbeidsavtale", title: doc.title, score: s, snippet: [doc.company, doc.offering, doc.description].filter(Boolean).join(" — ") });
     }
-    // Glossary — show full description for richer results
     for (const doc of dataMap.glossary || []) {
       const s = scoreText(lastMessage, doc.term, doc.description);
       if (s > 0) {
         const fullDesc = (doc.description || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-        results.push({
-          source: "Regnskapsord",
-          title: doc.term,
-          score: s,
-          snippet: fullDesc || "(Ingen beskrivelse)",
-          downloadUrl: doc.slug ? `/regnskapsord/${doc.slug}` : undefined,
-          fileName: doc.slug ? `Les mer om ${doc.term}` : undefined,
-        });
+        results.push({ source: "Regnskapsord", title: doc.term, score: s, snippet: fullDesc || "(Ingen beskrivelse)", downloadUrl: doc.slug ? `/regnskapsord/${doc.slug}` : undefined, fileName: doc.slug ? `Les mer om ${doc.term}` : undefined });
       }
     }
-    // Document templates
     for (const doc of dataMap.templates || []) {
       const s = scoreText(lastMessage, doc.title, doc.description, doc.category, doc.content);
       if (s > 0) results.push({ source: "Dokumentmal", title: doc.title, score: s, snippet: doc.description || extractSnippet(doc.content || "", lastMessage, 200) });
     }
-    // Account entries — check for override first
-    const getAccountNum = (title: string) => parseInt(title.split("–")[0]?.trim() || "0", 10);
 
-    // Fetch any saved override for this search term
+    const getAccountNum = (title: string) => parseInt(title.split("–")[0]?.trim() || "0", 10);
     let overrideAccount: string | null = null;
     if (sources.includes("account_entries")) {
-      const { data: ov } = await sb.from("ava_account_overrides")
-        .select("preferred_account_number")
-        .eq("search_term", normalize(lastMessage))
-        .maybeSingle();
+      const { data: ov } = await sb.from("ava_account_overrides").select("preferred_account_number").eq("search_term", normalize(lastMessage)).maybeSingle();
       if (ov) overrideAccount = ov.preferred_account_number;
     }
 
@@ -231,45 +246,26 @@ serve(async (req) => {
       const tagsArr: string[] = doc.tags || [];
       const tagsStr = tagsArr.join(", ");
       let s = scoreText(lastMessage, doc.name, doc.account_number, doc.description, doc.category_group, examplesStr);
-
-      // Boost score heavily for tag matches (tags are curated keywords)
       const qNorm = normalize(lastMessage);
       const qWords = qNorm.split(/\s+/).filter(w => w.length > 1);
       for (const tag of tagsArr) {
         const tNorm = normalize(tag);
-        if (tNorm === qNorm) { s += 80; }
-        else if (tNorm.includes(qNorm) || qNorm.includes(tNorm)) { s += 40; }
-        else {
-          for (const w of qWords) {
-            if (tNorm.includes(w)) s += 15;
-          }
-        }
+        if (tNorm === qNorm) s += 80;
+        else if (tNorm.includes(qNorm) || qNorm.includes(tNorm)) s += 40;
+        else for (const w of qWords) if (tNorm.includes(w)) s += 15;
       }
-
       if (s <= 0) continue;
-
-      // If this account matches the override, boost it massively
-      if (overrideAccount && doc.account_number === overrideAccount) {
-        s += 10000;
-      }
-
-      // Prioritize 3000-9999 over 1000-2999
+      if (overrideAccount && doc.account_number === overrideAccount) s += 10000;
       const num = parseInt(doc.account_number, 10);
       if (num >= 3000 && num <= 9999) s += 20;
       if (num >= 1000 && num <= 2999) s -= 10;
-
       const snippetParts = [doc.description || `Konto ${doc.account_number}: ${doc.name}`, `MVA: ${doc.mva_status}`];
       if (examplesStr) snippetParts.push(`Eksempler: ${examplesStr}`);
       if (tagsStr) snippetParts.push(`Stikkord: ${tagsStr}`);
       results.push({ source: "Kontohjelp", title: `${doc.account_number} – ${doc.name}`, score: s, snippet: snippetParts.join(". ") });
     }
 
-    // Check for document override
-    const { data: docOverride } = await sb.from("ava_document_overrides")
-      .select("document_title, document_url, file_name, source_table")
-      .eq("search_term", normalize(lastMessage))
-      .maybeSingle();
-
+    const { data: docOverride } = await sb.from("ava_document_overrides").select("document_title, document_url, file_name, source_table").eq("search_term", normalize(lastMessage)).maybeSingle();
     if (docOverride) {
       const overrideResult: ScoredResult = {
         source: docOverride.source_table === "glossary_terms" ? "Regnskapsord (koblet)" : "Koblet dokument",
@@ -285,51 +281,37 @@ serve(async (req) => {
     }
 
     results.sort((a, b) => b.score - a.score);
-
     if (results.length === 0) {
-      const isDocSearchEmpty = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(cat);
-      let noHitMsg = `Jeg fant dessverre ingen treff for «${lastMessage}» i ${cat === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`;
-      if (isDocSearchEmpty) {
-        noHitMsg += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
-      }
+      const isDocSearchEmpty = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(selectedCategory);
+      let noHitMsg = `Jeg fant dessverre ingen treff for «${lastMessage}» i ${selectedCategory === "alt" ? "oppslagsverket" : "denne kategorien"}. Prøv å formulere spørsmålet annerledes.`;
+      if (isDocSearchEmpty) noHitMsg += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
       return respondStream(noHitMsg);
     }
 
-    // Always show best result explanation
     const best = results[0];
     const isGlossaryResult = best.source === "Regnskapsord";
     let answer = `### 📄 ${best.title}\n`;
     answer += `*Kilde: ${best.source}*\n\n`;
     answer += `${limitWords(best.snippet, isGlossaryResult ? 500 : 200)}\n`;
-    if (best.downloadUrl && !isGlossaryResult) {
-      answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
-    }
+    if (best.downloadUrl && !isGlossaryResult) answer += `\n[📥 Last ned ${best.fileName || "fil"}](${best.downloadUrl})\n`;
 
-    // For non-glossary, non-account results: show other matching results as tags
-    const isAccountSearch = cat === "kontoplan" || (cat === "alt" && best.source === "Kontohjelp");
+    const isAccountSearch = selectedCategory === "kontoplan" || (selectedCategory === "alt" && best.source === "Kontohjelp");
     if (!isGlossaryResult && !isAccountSearch) {
       const otherResults = results.filter(r => r !== best).slice(0, 5);
       if (otherResults.length > 0) {
         answer += `\n---\n**Se også:**\n\n`;
-        for (const r of otherResults) {
-          answer += `- **${r.title}** *(${r.source})* — ${limitWords(r.snippet, 30)}\n`;
-        }
+        for (const r of otherResults) answer += `- **${r.title}** *(${r.source})* — ${limitWords(r.snippet, 30)}\n`;
       }
     }
 
-    // If there are additional downloadable files (skip for glossary results)
     if (!isGlossaryResult) {
-      const topResults = results.slice(0, 5);
-      const downloadable = topResults.filter(r => r.downloadUrl && r !== best);
+      const downloadable = results.slice(0, 5).filter(r => r.downloadUrl && r !== best);
       if (downloadable.length > 0) {
         answer += `\n---\n**Andre nedlastbare dokumenter:**\n`;
-        for (const r of downloadable) {
-          answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
-        }
+        for (const r of downloadable) answer += `\n[📥 Last ned ${r.fileName || r.title}](${r.downloadUrl})\n`;
       }
     }
 
-    // For account searches: only best shown above, rest behind toggle
     const accountResults = results.filter(r => r.source === "Kontohjelp" && r !== best);
     if (isAccountSearch && accountResults.length > 0) {
       accountResults.sort((a, b) => {
@@ -341,23 +323,13 @@ serve(async (req) => {
         if (!aIsBalance && bIsBalance) return -1;
         return b.score - a.score;
       });
-      const alts = accountResults.slice(0, 5);
-      answer += `\n[FLERE_KONTOER]\n`;
-      answer += `**Andre kontoalternativer:**\n\n`;
-      for (const r of alts) {
-        answer += `- **${r.title}** — ${limitWords(r.snippet, 30)}\n`;
-      }
+      answer += `\n[FLERE_KONTOER]\n**Andre kontoalternativer:**\n\n`;
+      for (const r of accountResults.slice(0, 5)) answer += `- **${r.title}** — ${limitWords(r.snippet, 30)}\n`;
     }
 
-    // Add search term marker for override features
-    if (isAccountSearch) {
-      answer += `\n[AVA_SEARCH_TERM:${lastMessage}]`;
-    }
-    // Add doc search term marker for document categories
-    const isDocSearch = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(cat);
-    if (isDocSearch && !isAccountSearch) {
-      answer += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
-    }
+    if (isAccountSearch) answer += `\n[AVA_SEARCH_TERM:${lastMessage}]`;
+    const isDocSearch = ["dokumentmaler", "arkiv", "datasenter", "regnskapsord", "alt"].includes(selectedCategory);
+    if (isDocSearch && !isAccountSearch) answer += `\n[AVA_DOC_SEARCH:${lastMessage}]`;
 
     return respondStream(answer);
   } catch (e) {

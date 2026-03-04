@@ -1,7 +1,23 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
 
 async function sendEmail(opts: {
   hostname: string;
@@ -42,9 +58,9 @@ async function sendEmail(opts: {
     const authResp = await send("AUTH LOGIN");
     if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed");
     const userResp = await send(btoa(opts.username));
-    if (!userResp.startsWith("334")) throw new Error("AUTH username failed");
+    if (!userResp.startsWith("334")) throw new Error("AUTH user failed");
     const passResp = await send(btoa(opts.password));
-    if (!passResp.startsWith("235")) throw new Error("AUTH password failed");
+    if (!passResp.startsWith("235")) throw new Error("AUTH pass failed");
     await send(`MAIL FROM:<${opts.from}>`);
     await send(`RCPT TO:<${opts.to}>`);
     await send("DATA");
@@ -67,17 +83,12 @@ async function sendEmail(opts: {
   }
 }
 
-function buildWelcomeEmail(name: string, email: string, password: string, role: string, approverName?: string, approverTitle?: string) {
+function buildSetPasswordEmail(name: string, email: string, actionLink: string, role: string, approverName?: string, approverTitle?: string) {
   const isCustomer = role === "customer";
-  const roleLabel = isCustomer ? "kunde" : role === "admin" ? "administrator" : "medarbeider";
-  const loginUrl = isCustomer
-    ? "https://obsidian-edge-finance.lovable.app/kunde/logg-inn"
-    : "https://obsidian-edge-finance.lovable.app/admin/logg-inn";
   const portalName = isCustomer ? "kundeportalen" : "admin-portalen";
-  const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" });
   const firstName = name.split(" ")[0];
   const sigName = approverName || "Teamet i Avargo";
-  const sigTitle = approverTitle ? `<br/>${approverTitle}` : "";
+  const sigTitle = approverTitle ? `<br/>${escapeHtml(approverTitle)}` : "";
 
   return `<!DOCTYPE html>
 <html lang="no">
@@ -86,74 +97,30 @@ function buildWelcomeEmail(name: string, email: string, password: string, role: 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 20px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-
-        <tr>
-          <td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;">
-            <img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" />
-          </td>
-        </tr>
-
+        <tr><td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;"><img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" /></td></tr>
         <tr>
           <td style="padding:40px 40px 20px 40px;">
-            <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Velkommen til Avargo, ${firstName}</p>
-
-            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Vi er veldig glade for at du blir en del av teamet v&#229;rt. Vi ser virkelig frem til &#229; f&#229; jobbe sammen med deg, og er overbevist om at du vil bli en verdifull del av Avargo.</p>
-
-            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Du har f&#229;tt tilgang til ${portalName} der du kan kommunisere med teamet, f&#229; tilgang til viktige dokumenter og holde deg oppdatert.</p>
-
+            <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Velkommen til Avargo, ${escapeHtml(firstName)}</p>
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Kontoen din er klar. Av sikkerhetsgrunner sender vi ikke passord på e-post.</p>
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Bruk knappen under for å åpne ${portalName} og velge ditt eget passord via en sikker lenke.</p>
             <div style="background:#f8fafc;border:1px solid #e4e4e7;border-radius:10px;padding:24px;margin:24px 0;">
-              <p style="margin:0 0 16px;font-size:13px;color:#71717a;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Din innloggingsinformasjon</p>
+              <p style="margin:0 0 16px;font-size:13px;color:#71717a;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Din konto</p>
               <table style="border-collapse:collapse;width:100%;">
                 <tr>
                   <td style="padding:8px 12px 8px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Brukernavn (e-post)</td>
-                  <td style="padding:8px 0;font-size:14px;color:#1a1a1a;font-weight:600;">${email}</td>
-                </tr>
-                <tr>
-                  <td style="padding:8px 12px 8px 0;color:#71717a;font-size:13px;font-weight:600;white-space:nowrap;">Midlertidig passord</td>
-                  <td style="padding:8px 0;font-size:14px;color:#1a1a1a;font-family:monospace;background:#f1f5f9;padding:6px 10px;border-radius:6px;letter-spacing:1px;">${password}</td>
+                  <td style="padding:8px 0;font-size:14px;color:#1a1a1a;font-weight:600;">${escapeHtml(email)}</td>
                 </tr>
               </table>
             </div>
-
             <div style="background:#fef9c3;border-left:4px solid #eab308;padding:14px 18px;border-radius:0 10px 10px 0;margin-bottom:24px;">
-              <p style="font-size:13px;color:#854d0e;margin:0;line-height:1.6;">
-                <strong>Viktig:</strong> Vi anbefaler at du endrer passordet ditt etter f&#248;rste innlogging for din egen sikkerhet.
-              </p>
+              <p style="font-size:13px;color:#854d0e;margin:0;line-height:1.6;"><strong>Viktig:</strong> Lenken bør brukes med én gang og passordet velges av deg personlig.</p>
             </div>
-
             <div style="text-align:center;margin-bottom:24px;">
-              <a href="${loginUrl}" 
-                 style="display:inline-block;background-color:#1a1a1a;color:#ffffff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">
-                Logg inn p&#229; ${portalName}
-              </a>
+              <a href="${actionLink}" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">Åpne sikker innlogging</a>
             </div>
-
-            <p style="margin:0 0 8px 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Har du sp&#248;rsm&#229;l eller trenger hjelp? Ikke n&#248;l med &#229; ta kontakt med oss.</p>
-
-            <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
-              Med vennlig hilsen<br/>
-              <strong>${sigName}</strong>${sigTitle}<br/>
-              Avargo
-            </p>
+            <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Med vennlig hilsen<br/><strong>${escapeHtml(sigName)}</strong>${sigTitle}<br/>Avargo</p>
           </td>
         </tr>
-
-        <tr>
-          <td style="padding:0 40px;">
-            <hr style="border:none;border-top:1px solid #e4e4e7;margin:20px 0;" />
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding:10px 40px 36px 40px;text-align:center;">
-            <p style="margin:0 0 8px 0;font-size:13px;color:#71717a;">
-              <a href="https://www.avargo.no" style="color:#1a1a1a;text-decoration:none;font-weight:600;">www.avargo.no</a>
-            </p>
-            <p style="margin:0 0 6px 0;font-size:12px;color:#a1a1aa;">Oscars gate 2B, 3714 Skien</p>
-            <p style="margin:0;font-size:12px;color:#a1a1aa;">kontakt@avargo.no</p>
-          </td>
-        </tr>
-
       </table>
     </td></tr>
   </table>
@@ -161,78 +128,93 @@ function buildWelcomeEmail(name: string, email: string, password: string, role: 
 </html>`;
 }
 
+function generateRandomPassword(): string {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => (b % 36).toString(36)).join("") + "A9!";
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { email, password, name, role, approver_name, approver_title } = await req.json();
+    const { email, name, role, approver_name, approver_title } = await req.json();
 
-    if (!email || !password || !name) {
-      return new Response(JSON.stringify({ error: "E-post, passord og navn er påkrevd." }), {
+    if (!email || !name) {
+      return new Response(JSON.stringify({ error: "E-post og navn er påkrevd." }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
+    const normalizedEmail = normalizeEmail(email);
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: "Ikke autorisert." }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const callerToken = authHeader.replace('Bearer ', '');
-    const callerRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
-      headers: { Authorization: `Bearer ${callerToken}`, apikey: serviceKey }
+    const adminClient = createClient(supabaseUrl, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    const authClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { autoRefreshToken: false, persistSession: false },
     });
-    const callerUser = await callerRes.json();
-    if (!callerUser?.id) {
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    const callerUserId = claimsData?.claims?.sub;
+
+    if (claimsError || !callerUserId) {
       return new Response(JSON.stringify({ error: "Ugyldig token." }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const profileRes = await fetch(`${supabaseUrl}/rest/v1/profiles?user_id=eq.${callerUser.id}&select=role`, {
-      headers: { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey }
-    });
-    const profiles = await profileRes.json();
-    if (!profiles?.[0] || profiles[0].role !== 'admin') {
+    const { data: isAdmin, error: adminCheckError } = await adminClient.rpc('is_admin', { uid: callerUserId });
+    if (adminCheckError || !isAdmin) {
       return new Response(JSON.stringify({ error: "Kun administrator kan opprette brukere." }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const createRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${serviceKey}`,
-        apikey: serviceKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password, email_confirm: true }),
+    const { data: createdUser, error: createError } = await adminClient.auth.admin.createUser({
+      email: normalizedEmail,
+      password: generateRandomPassword(),
+      email_confirm: true,
     });
 
-    const newUser = await createRes.json();
-    if (newUser.error || !newUser.id) {
-      return new Response(JSON.stringify({ error: newUser.error?.message || newUser.msg || "Kunne ikke opprette bruker." }), {
+    if (createError || !createdUser.user?.id) {
+      return new Response(JSON.stringify({ error: createError?.message || "Kunne ikke opprette bruker." }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    await fetch(`${supabaseUrl}/rest/v1/profiles`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${serviceKey}`,
-        apikey: serviceKey,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({ user_id: newUser.id, name, email, role: role || 'employee' }),
+    const newUserId = createdUser.user.id;
+    const { error: profileError } = await adminClient.from('profiles').insert({
+      user_id: newUserId,
+      name,
+      email: normalizedEmail,
+      role: role || 'employee',
     });
 
-    // Send welcome email with credentials
+    if (profileError) {
+      await adminClient.auth.admin.deleteUser(newUserId);
+      throw profileError;
+    }
+
+    const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+      type: 'recovery',
+      email: normalizedEmail,
+    });
+
+    if (linkError || !linkData.properties?.action_link) {
+      throw new Error(linkError?.message || 'Kunne ikke generere sikker innloggingslenke.');
+    }
+
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPass = Deno.env.get("SMTP_PASS");
     if (smtpUser && smtpPass) {
@@ -243,17 +225,16 @@ Deno.serve(async (req) => {
           username: smtpUser,
           password: smtpPass,
           from: "kontakt@avargo.no",
-          to: email,
+          to: normalizedEmail,
           subject: `Velkommen til Avargo, ${name}!`,
-          html: buildWelcomeEmail(name, email, password, role || "employee", approver_name, approver_title),
+          html: buildSetPasswordEmail(name, normalizedEmail, linkData.properties.action_link, role || "employee", approver_name, approver_title),
         });
       } catch (emailErr) {
         console.error("Failed to send welcome email:", emailErr);
-        // Don't fail the whole request if email fails
       }
     }
 
-    return new Response(JSON.stringify({ success: true, userId: newUser.id }), {
+    return new Response(JSON.stringify({ success: true, userId: newUserId }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (err) {

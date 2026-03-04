@@ -2881,9 +2881,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_profile_id: { Args: { uid?: string }; Returns: string }
+      customer_can_read_advisor: {
+        Args: { _advisor_profile_id: string; uid?: string }
+        Returns: boolean
+      }
+      get_advisor_unavailability: {
+        Args: { _advisor_ids: string[] }
+        Returns: {
+          blocked_date: string
+          booking_date: string
+          booking_time: string
+          profile_id: string
+        }[]
+      }
       is_admin: { Args: { uid?: string }; Returns: boolean }
       is_customer: { Args: { uid?: string }; Returns: boolean }
+      is_dm_participant: {
+        Args: { _conversation_id: string; uid?: string }
+        Returns: boolean
+      }
       is_employee_or_admin: { Args: { uid?: string }; Returns: boolean }
+      list_public_advisors: {
+        Args: never
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
       own_company_id: { Args: { uid?: string }; Returns: string }
     }
     Enums: {
