@@ -273,12 +273,22 @@ const AiMarketingBrainTab = () => {
       {/* Executing all weeks progress */}
       {executingAll && (
         <Card className="p-5 border-primary/20 bg-primary/5 space-y-3">
-          <div className="flex items-center gap-2">
-            <RefreshCw size={16} className="text-primary animate-spin" />
-            <h3 className="font-heading text-base">Genererer alle innlegg fra strategi...</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <RefreshCw size={16} className="text-primary animate-spin" />
+              <h3 className="font-heading text-base">Genererer alle innlegg fra strategi...</h3>
+            </div>
+            <span className="text-sm font-mono text-primary font-semibold flex items-center gap-1.5">
+              <Clock size={14} /> {formatTimer(executeElapsed)}
+            </span>
           </div>
           <p className="text-xs text-muted-foreground">
             Uke {executeProgress.current} av {executeProgress.total} – Innleggene sendes til godkjenningskøen med planlagte datoer.
+            {executeProgress.total > 0 && executeProgress.current > 0 && (
+              <span className="ml-2 text-primary">
+                · Estimert: ~{formatTimer(Math.round((executeElapsed / executeProgress.current) * (executeProgress.total - executeProgress.current)))} igjen
+              </span>
+            )}
           </p>
           <Progress value={(executeProgress.current / executeProgress.total) * 100} className="h-2" />
         </Card>
