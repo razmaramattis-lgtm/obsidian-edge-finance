@@ -52,8 +52,8 @@ Deno.serve(async (req) => {
     const ids = emails.map(e => e.id);
     await adminSb.from("email_messages").update({ status: "sending" }).in("id", ids);
 
-    // Send in parallel batches of 5 (respect SMTP limits)
-    const CONCURRENCY = 5;
+    // Send sequentially to avoid SMTP connection issues
+    const CONCURRENCY = 1;
     let sent = 0;
     let failed = 0;
 
