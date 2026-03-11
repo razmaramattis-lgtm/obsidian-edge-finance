@@ -12,6 +12,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
   Sparkles, Send, Clapperboard, AlertCircle, RefreshCw, Play, Download, Image as ImageIcon, Maximize2,
+  Upload, FileVideo,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
