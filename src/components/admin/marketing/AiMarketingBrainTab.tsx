@@ -242,17 +242,32 @@ const AiMarketingBrainTab = () => {
               Skanner avargo.no, genererer innhold og bilder, og planlegger strategier med faktisk innleggsgenerering for alle ukene.
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap items-center">
             <Button onClick={handleFullScan} disabled={scanning} variant="outline" className="gap-2">
               {scanning ? <RefreshCw size={14} className="animate-spin" /> : <Rocket size={14} />}
               {scanning ? "Skanner..." : "Skann avargo.no"}
             </Button>
+            {scanning && (
+              <span className="text-xs font-mono text-primary font-medium flex items-center gap-1.5">
+                <Clock size={12} /> {formatTimer(scanElapsed)}
+                <span className="text-muted-foreground font-sans">· ~{Math.max(1, Math.ceil((90 - scanElapsed) / 60))} min igjen</span>
+              </span>
+            )}
             <Button onClick={() => setShowPlanner(!showPlanner)} className="gap-2">
               <Target size={14} /> Lag strategi
             </Button>
           </div>
         </div>
-        {scanProgress && <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>}
+        {scanProgress && !scanning && <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>}
+        {scanning && (
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-primary font-medium">Analyserer innhold med AI...</p>
+              <span className="text-[10px] text-muted-foreground">Estimert: ~90 sek</span>
+            </div>
+            <Progress value={Math.min(95, (scanElapsed / 90) * 100)} className="h-1.5" />
+          </div>
+        )}
       </Card>
 
       {/* Executing all weeks progress */}
