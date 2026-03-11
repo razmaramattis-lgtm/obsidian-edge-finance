@@ -297,7 +297,7 @@ const AdminDashboard = () => {
       case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "sms_center": return <SmsCenterPanel />;
-      case "marketing": return <MarketingPanel />;
+      case "marketing": return <MarketingPanel isFullscreen={marketingFullscreen} onToggleFullscreen={() => setMarketingFullscreen(f => !f)} />;
       case "audit_log": return <AuditLogPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
