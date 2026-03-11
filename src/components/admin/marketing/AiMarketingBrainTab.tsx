@@ -53,6 +53,8 @@ const AiMarketingBrainTab = () => {
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState("");
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
+  const [executingAll, setExecutingAll] = useState(false);
+  const [executeProgress, setExecuteProgress] = useState({ current: 0, total: 0 });
 
   const [planForm, setPlanForm] = useState({
     duration: "3",
@@ -78,15 +80,13 @@ const AiMarketingBrainTab = () => {
   const handleFullScan = async () => {
     setScanning(true);
     setScanProgress("Skanner alle Avargo-sider i bakgrunnen...");
-    toast.info("🚀 Full skanning startet i bakgrunnen. Du kan bytte fane – du får varsel når det er ferdig.", { duration: 5000 });
+    toast.info("🚀 Full skanning startet. Du kan bytte fane.", { duration: 5000 });
     try {
-      const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
-        body: {},
-      });
+      const { data, error } = await supabase.functions.invoke("marketing-scan-site", { body: {} });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setScanProgress(`✅ ${data.scanned} av ${data.total} sider skannet!`);
-      toast.success(`✅ Fullstendig skanning ferdig: ${data.scanned} sider analysert`, { duration: 8000 });
+      toast.success(`✅ Skanning ferdig: ${data.scanned} sider analysert`, { duration: 8000 });
     } catch (e: any) {
       toast.error(e.message || "Feil ved skanning");
       setScanProgress("");
@@ -97,7 +97,7 @@ const AiMarketingBrainTab = () => {
 
   const handleGenerateStrategy = async () => {
     setGenerating(true);
-    toast.info("🧠 Strategigenerering startet i bakgrunnen...", { duration: 3000 });
+    toast.info("🧠 Genererer strategi...", { duration: 3000 });
     try {
       const platforms = Object.entries(planForm)
         .filter(([k, v]) => v === true && k !== "duration")
@@ -143,8 +143,60 @@ const AiMarketingBrainTab = () => {
         if (!error && !data?.error) success++;
       } catch { /* continue */ }
     }
-    toast.success(`${success} av ${week.posts.length} innlegg generert fra strategi!`);
+    toast.success(`${success} av ${week.posts.length} innlegg generert!`);
     setGenerating(false);
+  };
+
+  // Execute ALL weeks from the strategy plan
+  const handleExecuteAllWeeks = async (plan: StrategyPlan) => {
+    if (!plan.weekly_posts?.length) { toast.error("Ingen uker i planen"); return; }
+    setExecutingAll(true);
+    const totalWeeks = plan.weekly_posts.length;
+    let totalSuccess = 0;
+    let totalPosts = 0;
+
+    for (let wi = 0; wi < totalWeeks; wi++) {
+      const week = plan.weekly_posts[wi];
+      const posts = week?.posts || [];
+      totalPosts += posts.length;
+      setExecuteProgress({ current: wi + 1, total: totalWeeks });
+
+      for (const post of posts) {
+        try {
+          // Calculate scheduled date based on week number and day
+          const startDate = new Date(plan.start_date);
+          const dayOffset = (wi * 7) + dayNameToOffset(post.day);
+          const scheduledDate = new Date(startDate);
+          scheduledDate.setDate(scheduledDate.getDate() + dayOffset);
+          scheduledDate.setHours(10, 0, 0, 0);
+
+          const { data, error } = await supabase.functions.invoke("marketing-generate-content", {
+            body: {
+              platform: post.platform,
+              topic: post.topic || post.brief,
+              tone: post.tone || "Profesjonell",
+              include_image: post.content_type !== "text",
+              strategy_plan_id: plan.id,
+              scheduled_at: scheduledDate.toISOString(),
+            },
+          });
+          if (!error && !data?.error) totalSuccess++;
+        } catch { /* continue */ }
+      }
+
+      // Small delay between weeks to avoid rate limits
+      if (wi < totalWeeks - 1) {
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+
+    toast.success(`🎉 Ferdig! ${totalSuccess} av ${totalPosts} innlegg generert for ${totalWeeks} uker. Alle ligger i godkjenningskøen.`, { duration: 10000 });
+    setExecutingAll(false);
+    setExecuteProgress({ current: 0, total: 0 });
+
+    // Activate the plan
+    await supabase.from("marketing_strategy_plans").update({ status: "active" }).eq("id", plan.id);
+    fetchData();
   };
 
   const handleActivatePlan = async (id: string) => {
@@ -155,7 +207,7 @@ const AiMarketingBrainTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero section */}
+      {/* Hero */}
       <Card className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
@@ -165,24 +217,35 @@ const AiMarketingBrainTab = () => {
               <Badge className="bg-primary/10 text-primary text-[10px]">Super AI</Badge>
             </div>
             <p className="text-xs text-muted-foreground max-w-lg">
-              Skanner hele avargo.no, analyserer markedet, genererer innhold og bilder, og planlegger 3-måneders strategier for total markedsdominans.
+              Skanner avargo.no, genererer innhold og bilder, og planlegger strategier med faktisk innleggsgenerering for alle ukene.
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
             <Button onClick={handleFullScan} disabled={scanning} variant="outline" className="gap-2">
               {scanning ? <RefreshCw size={14} className="animate-spin" /> : <Rocket size={14} />}
-              {scanning ? "Skanner..." : "Skann hele avargo.no"}
+              {scanning ? "Skanner..." : "Skann avargo.no"}
             </Button>
             <Button onClick={() => setShowPlanner(!showPlanner)} className="gap-2">
-              <Target size={14} />
-              Lag strategi
+              <Target size={14} /> Lag strategi
             </Button>
           </div>
         </div>
-        {scanProgress && (
-          <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>
-        )}
+        {scanProgress && <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>}
       </Card>
+
+      {/* Executing all weeks progress */}
+      {executingAll && (
+        <Card className="p-5 border-primary/20 bg-primary/5 space-y-3">
+          <div className="flex items-center gap-2">
+            <RefreshCw size={16} className="text-primary animate-spin" />
+            <h3 className="font-heading text-base">Genererer alle innlegg fra strategi...</h3>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Uke {executeProgress.current} av {executeProgress.total} – Innleggene sendes til godkjenningskøen med planlagte datoer.
+          </p>
+          <Progress value={(executeProgress.current / executeProgress.total) * 100} className="h-2" />
+        </Card>
+      )}
 
       {/* Strategy Planner Form */}
       {showPlanner && (
@@ -190,7 +253,6 @@ const AiMarketingBrainTab = () => {
           <h3 className="font-heading text-base flex items-center gap-2">
             <Calendar size={16} className="text-primary" /> Strategiplanlegger
           </h3>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium mb-1 block">Varighet</label>
@@ -206,47 +268,29 @@ const AiMarketingBrainTab = () => {
             </div>
             <div>
               <label className="text-xs font-medium mb-1 block">Mål</label>
-              <Input
-                placeholder="F.eks. Generere 100 leads, øke følgere med 500"
-                value={planForm.goals}
-                onChange={(e) => setPlanForm(f => ({ ...f, goals: e.target.value }))}
-              />
+              <Input placeholder="F.eks. Generere 100 leads" value={planForm.goals} onChange={(e) => setPlanForm(f => ({ ...f, goals: e.target.value }))} />
             </div>
           </div>
-
           <div>
             <label className="text-xs font-medium mb-2 block">Plattformer</label>
             <div className="flex flex-wrap gap-3">
               {[
-                { id: "linkedin", label: "LinkedIn" },
-                { id: "facebook", label: "Facebook" },
-                { id: "instagram", label: "Instagram" },
-                { id: "google_ads", label: "Google Ads" },
-                { id: "meta_ads", label: "Meta Ads" },
-                { id: "tiktok", label: "TikTok" },
+                { id: "linkedin", label: "LinkedIn" }, { id: "facebook", label: "Facebook" },
+                { id: "instagram", label: "Instagram" }, { id: "google_ads", label: "Google Ads" },
+                { id: "meta_ads", label: "Meta Ads" }, { id: "tiktok", label: "TikTok" },
               ].map(p => (
                 <label key={p.id} className="flex items-center gap-2 text-xs">
-                  <Switch
-                    checked={(planForm as any)[p.id]}
-                    onCheckedChange={(v) => setPlanForm(f => ({ ...f, [p.id]: v }))}
-                  />
+                  <Switch checked={(planForm as any)[p.id]} onCheckedChange={(v) => setPlanForm(f => ({ ...f, [p.id]: v }))} />
                   {p.label}
                 </label>
               ))}
             </div>
           </div>
-
-          <Textarea
-            placeholder="Ekstra instrukser til AI-strategen (valgfritt)..."
-            rows={2}
-            value={planForm.instructions}
-            onChange={(e) => setPlanForm(f => ({ ...f, instructions: e.target.value }))}
-          />
-
+          <Textarea placeholder="Ekstra instrukser (valgfritt)..." rows={2} value={planForm.instructions} onChange={(e) => setPlanForm(f => ({ ...f, instructions: e.target.value }))} />
           <div className="flex gap-2">
             <Button onClick={handleGenerateStrategy} disabled={generating} className="gap-2">
               {generating ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
-              {generating ? "Genererer strategi..." : "Generer AI-strategi"}
+              {generating ? "Genererer..." : "Generer AI-strategi"}
             </Button>
             <Button onClick={() => setShowPlanner(false)} variant="ghost">Avbryt</Button>
           </div>
@@ -265,10 +309,7 @@ const AiMarketingBrainTab = () => {
               const goals = plan.goals as any;
               return (
                 <Card key={plan.id} className={`overflow-hidden transition-all ${isExpanded ? "ring-1 ring-primary/20" : ""}`}>
-                  <div
-                    className="p-4 cursor-pointer hover:bg-muted/30 transition-colors"
-                    onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}
-                  >
+                  <div className="p-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}>
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -291,11 +332,8 @@ const AiMarketingBrainTab = () => {
 
                   {isExpanded && (
                     <div className="border-t p-4 space-y-4 bg-muted/5">
-                      {plan.description && (
-                        <p className="text-sm text-muted-foreground">{plan.description}</p>
-                      )}
+                      {plan.description && <p className="text-sm text-muted-foreground">{plan.description}</p>}
 
-                      {/* KPI targets */}
                       {goals?.kpi_targets && (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           {Object.entries(goals.kpi_targets).map(([k, v]) => (
@@ -307,7 +345,6 @@ const AiMarketingBrainTab = () => {
                         </div>
                       )}
 
-                      {/* Content pillars */}
                       {goals?.content_pillars && (
                         <div>
                           <h4 className="text-xs font-medium mb-2">Innholdspilarer</h4>
@@ -319,10 +356,20 @@ const AiMarketingBrainTab = () => {
                         </div>
                       )}
 
-                      {/* Weekly plan */}
                       {plan.weekly_posts?.length > 0 && (
                         <div>
-                          <h4 className="text-xs font-medium mb-2">Ukeplan ({plan.weekly_posts.length} uker)</h4>
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-xs font-medium">Ukeplan ({plan.weekly_posts.length} uker)</h4>
+                            <Button
+                              size="sm"
+                              onClick={(e) => { e.stopPropagation(); handleExecuteAllWeeks(plan); }}
+                              disabled={generating || executingAll}
+                              className="gap-1.5"
+                            >
+                              <Rocket size={12} />
+                              Generer alle {plan.weekly_posts.reduce((s: number, w: any) => s + (w.posts?.length || 0), 0)} innlegg
+                            </Button>
+                          </div>
                           <div className="space-y-2 max-h-60 overflow-y-auto">
                             {plan.weekly_posts.slice(0, 12).map((week: any, i: number) => (
                               <Card key={i} className="p-3">
@@ -332,16 +379,15 @@ const AiMarketingBrainTab = () => {
                                     <div className="flex gap-1 mt-1 flex-wrap">
                                       {(week.posts || []).slice(0, 4).map((post: any, j: number) => (
                                         <Badge key={j} variant="secondary" className="text-[10px]">
-                                          {post.platform} · {post.content_type || "innlegg"}
+                                          {post.platform} · {post.day || post.content_type || "innlegg"}
                                         </Badge>
                                       ))}
                                     </div>
                                   </div>
                                   <Button
-                                    size="sm"
-                                    variant="outline"
+                                    size="sm" variant="outline"
                                     onClick={(e) => { e.stopPropagation(); handleExecuteWeek(plan, i); }}
-                                    disabled={generating}
+                                    disabled={generating || executingAll}
                                     className="text-xs gap-1 shrink-0"
                                   >
                                     <Zap size={12} /> Generer
@@ -353,7 +399,6 @@ const AiMarketingBrainTab = () => {
                         </div>
                       )}
 
-                      {/* Campaigns */}
                       {plan.weekly_campaigns?.length > 0 && (
                         <div>
                           <h4 className="text-xs font-medium mb-2">Kampanjer</h4>
@@ -376,9 +421,14 @@ const AiMarketingBrainTab = () => {
                       )}
 
                       {plan.status === "draft" && (
-                        <Button onClick={() => handleActivatePlan(plan.id)} className="gap-2">
-                          <Rocket size={14} /> Aktiver strategi
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button onClick={() => handleExecuteAllWeeks(plan)} disabled={executingAll} className="gap-2">
+                            <Rocket size={14} /> Aktiver & generer alt
+                          </Button>
+                          <Button onClick={() => handleActivatePlan(plan.id)} variant="outline" className="gap-2">
+                            <Zap size={14} /> Bare aktiver
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}
@@ -389,7 +439,7 @@ const AiMarketingBrainTab = () => {
         </div>
       )}
 
-      {/* Capabilities & Insights */}
+      {/* Capabilities & Status */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card className="p-4">
           <h3 className="font-heading text-lg mb-2 flex items-center gap-2">
@@ -399,12 +449,11 @@ const AiMarketingBrainTab = () => {
             <li className="flex items-center gap-2"><Rocket size={12} className="text-green-500" /> Skanner alle 40+ sider på avargo.no</li>
             <li className="flex items-center gap-2"><FileText size={12} className="text-blue-500" /> Genererer skreddersydde innlegg per plattform</li>
             <li className="flex items-center gap-2"><Sparkles size={12} className="text-violet-500" /> AI-genererte bilder med Nano Banana 2</li>
-            <li className="flex items-center gap-2"><Target size={12} className="text-amber-500" /> 3-måneders strategiplanlegging</li>
+            <li className="flex items-center gap-2"><Target size={12} className="text-amber-500" /> 3-mnd strategiplanlegging med full innholdsgenering</li>
             <li className="flex items-center gap-2"><BarChart3 size={12} className="text-emerald-500" /> Kampanjeoptimalisering for Google/Meta</li>
             <li className="flex items-center gap-2"><Brain size={12} className="text-primary" /> Lærer og optimaliserer over tid</li>
           </ul>
         </Card>
-
         <Card className="p-4">
           <h3 className="font-heading text-lg mb-2 flex items-center gap-2">
             <Lightbulb size={16} className="text-amber-500" /> Status
@@ -451,5 +500,13 @@ const AiMarketingBrainTab = () => {
     </div>
   );
 };
+
+function dayNameToOffset(day: string): number {
+  const map: Record<string, number> = {
+    mandag: 0, tirsdag: 1, onsdag: 2, torsdag: 3, fredag: 4, lørdag: 5, søndag: 6,
+    monday: 0, tuesday: 1, wednesday: 2, thursday: 3, friday: 4, saturday: 5, sunday: 6,
+  };
+  return map[(day || "").toLowerCase()] ?? 0;
+}
 
 export default AiMarketingBrainTab;

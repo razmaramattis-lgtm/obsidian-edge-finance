@@ -1,9 +1,10 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Search, PenTool, CheckSquare, Calendar, BarChart3,
-  Megaphone, Brain, Plug, FolderOpen, Video, Sparkles,
+  Megaphone, Brain, Plug, FolderOpen, Video, Sparkles, Maximize2, Minimize2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import MarketingDashboardTab from "./marketing/MarketingDashboardTab";
 import ContentAnalyzerTab from "./marketing/ContentAnalyzerTab";
 import PostGeneratorTab from "./marketing/PostGeneratorTab";
@@ -55,9 +56,12 @@ const SECTIONS = [
   },
 ] as const;
 
-type TabId = (typeof SECTIONS)[number]["tabs"][number]["id"];
+interface MarketingPanelProps {
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
+}
 
-const MarketingPanel = () => {
+const MarketingPanel = ({ isFullscreen, onToggleFullscreen }: MarketingPanelProps) => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
 
   const renderTab = () => {
@@ -84,7 +88,12 @@ const MarketingPanel = () => {
         <div className="sticky top-4 space-y-4">
           <div className="flex items-center gap-2 mb-2 px-1">
             <Sparkles size={16} className="text-primary" />
-            <span className="font-heading text-sm">Markedsføring</span>
+            <span className="font-heading text-sm flex-1">Markedsføring</span>
+            {onToggleFullscreen && (
+              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onToggleFullscreen} title={isFullscreen ? "Vis sidebar" : "Fullskjerm"}>
+                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              </Button>
+            )}
           </div>
           {SECTIONS.map((section) => (
             <div key={section.label}>
@@ -119,7 +128,12 @@ const MarketingPanel = () => {
       <div className="lg:hidden w-full">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles size={16} className="text-primary" />
-          <span className="font-heading text-sm">Markedsføring</span>
+          <span className="font-heading text-sm flex-1">Markedsføring</span>
+          {onToggleFullscreen && (
+            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onToggleFullscreen}>
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            </Button>
+          )}
         </div>
         <div className="flex gap-1 overflow-x-auto pb-3 mb-4 scrollbar-none">
           {SECTIONS.flatMap(s => [...s.tabs]).map((tab) => {

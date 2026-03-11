@@ -130,6 +130,7 @@ const AdminDashboard = () => {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingSidebar, setEditingSidebar] = useState(false);
+  const [marketingFullscreen, setMarketingFullscreen] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
@@ -296,7 +297,7 @@ const AdminDashboard = () => {
       case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "sms_center": return <SmsCenterPanel />;
-      case "marketing": return <MarketingPanel />;
+      case "marketing": return <MarketingPanel isFullscreen={marketingFullscreen} onToggleFullscreen={() => setMarketingFullscreen(f => !f)} />;
       case "audit_log": return <AuditLogPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
@@ -449,7 +450,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <aside className="hidden md:flex flex-col w-60 border-r border-border/10 bg-background/60 backdrop-blur shrink-0">
+      <aside className={`hidden md:flex flex-col w-60 border-r border-border/10 bg-background/60 backdrop-blur shrink-0 transition-all duration-300 ${marketingFullscreen && activePanel === "marketing" ? "!hidden" : ""}`}>
         <SidebarContent />
       </aside>
 
