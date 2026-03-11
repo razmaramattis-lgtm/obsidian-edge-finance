@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail, Smartphone
 } from "lucide-react";
 
 // Sub-panels
@@ -46,9 +46,10 @@ import AccountFeedbackPanel from "@/components/admin/AccountFeedbackPanel";
 import PendingTasksPanel from "@/components/admin/PendingTasksPanel";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 import JobListingsPanel from "@/components/admin/JobListingsPanel";
+import SmsCenterPanel from "@/components/admin/SmsCenterPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center";
 
 interface NavItem {
   id: Panel;
@@ -87,6 +88,9 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "hr", label: "HR & Personal", icon: Shield, adminOnly: true, employeeHidden: true, group: "Internt" },
   { id: "job_listings", label: "Stillinger", icon: Briefcase, adminOnly: true, employeeHidden: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
+
+  // SMS
+  { id: "sms_center", label: "SMS Center", icon: Smartphone, adminOnly: true, employeeHidden: true, group: "SMS" },
 
   // Admin
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
@@ -287,6 +291,7 @@ const AdminDashboard = () => {
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
       case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
+      case "sms_center": return <SmsCenterPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
