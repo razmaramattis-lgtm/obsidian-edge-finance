@@ -12,6 +12,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
   Sparkles, Send, Clapperboard, AlertCircle, RefreshCw, Play, Download, Image as ImageIcon, Maximize2,
+  Upload, FileVideo,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -54,6 +55,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Ele
   pending: { label: "Venter på behandling", color: "bg-amber-500/10 text-amber-600", icon: Clock },
   approved: { label: "Godkjent – genereres", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
   completed: { label: "Ferdig", color: "bg-green-500/10 text-green-600", icon: Film },
+  uploaded: { label: "Opplastet", color: "bg-emerald-500/10 text-emerald-600", icon: Upload },
   rejected: { label: "Avslått", color: "bg-red-500/10 text-red-600", icon: XCircle },
 };
 
@@ -96,6 +98,10 @@ const VideoStudioTab = () => {
   const [showForm, setShowForm] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [previewRequest, setPreviewRequest] = useState<VideoRequest | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadForm, setUploadForm] = useState({ title: "", platform: "linkedin", admin_note: "" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoElapsed = useElapsedTimer(!!generatingId);
   const [form, setForm] = useState({
     title: "",
@@ -192,6 +198,49 @@ const VideoStudioTab = () => {
     fetchRequests();
   };
 
+  const handleUploadVideo = async (file: File) => {
+    if (!uploadForm.title.trim()) { toast.error("Tittel er påkrevd"); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const fileName = `uploaded-${Date.now()}.${ext}`;
+      const path = `marketing/videos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("workspace-uploads")
+        .upload(path, file, { contentType: file.type, upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("workspace-uploads")
+        .getPublicUrl(path);
+
+      // Create a video_request entry with status "uploaded"
+      const { error: insertError } = await supabase.from("marketing_video_requests").insert({
+        title: uploadForm.title.trim(),
+        prompt: `Opplastet video: ${file.name}`,
+        platform: uploadForm.platform,
+        aspect_ratio: "16:9",
+        duration: 0,
+        status: "uploaded",
+        requested_by: profile?.id,
+        admin_note: uploadForm.admin_note || null,
+        video_url: urlData.publicUrl,
+      });
+      if (insertError) throw insertError;
+
+      toast.success("Video lastet opp!");
+      setShowUpload(false);
+      setUploadForm({ title: "", platform: "linkedin", admin_note: "" });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      fetchRequests();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved opplasting");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Info card */}
@@ -216,12 +265,76 @@ const VideoStudioTab = () => {
         </Card>
       )}
 
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">Send inn videoforespørsler for markedsføring.</p>
-        <Button onClick={() => setShowForm(!showForm)} size="sm">
-          <Plus size={14} className="mr-2" /> Ny videoforespørsel
-        </Button>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">Send inn videoforespørsler eller last opp egne videoer.</p>
+        <div className="flex gap-2">
+          <Button onClick={() => { setShowUpload(!showUpload); setShowForm(false); }} size="sm" variant="outline" className="gap-1.5">
+            <Upload size={14} /> Last opp video
+          </Button>
+          <Button onClick={() => { setShowForm(!showForm); setShowUpload(false); }} size="sm">
+            <Plus size={14} className="mr-2" /> Ny videoforespørsel
+          </Button>
+        </div>
       </div>
+
+      {/* Upload form */}
+      {showUpload && (
+        <Card className="p-5 space-y-4 border-primary/20">
+          <div className="flex items-center gap-2 mb-1">
+            <FileVideo size={16} className="text-primary" />
+            <span className="text-sm font-medium">Last opp egen video</span>
+          </div>
+
+          <Input
+            placeholder="Video-tittel"
+            value={uploadForm.title}
+            onChange={(e) => setUploadForm(f => ({ ...f, title: e.target.value }))}
+          />
+
+          <Select value={uploadForm.platform} onValueChange={(v) => setUploadForm(f => ({ ...f, platform: v }))}>
+            <SelectTrigger className="text-xs"><SelectValue placeholder="Plattform" /></SelectTrigger>
+            <SelectContent>
+              {Object.entries(PLATFORM_LABELS).map(([k, v]) => (
+                <SelectItem key={k} value={k}>{v}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Input
+            placeholder="Intern merknad (valgfritt)"
+            value={uploadForm.admin_note}
+            onChange={(e) => setUploadForm(f => ({ ...f, admin_note: e.target.value }))}
+          />
+
+          <div className="border-2 border-dashed border-border/60 rounded-lg p-6 text-center hover:border-primary/40 transition-colors">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleUploadVideo(file);
+              }}
+            />
+            <FileVideo size={28} className="mx-auto mb-2 text-muted-foreground/40" />
+            <p className="text-xs text-muted-foreground mb-2">Dra og slipp, eller klikk for å velge videofil</p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading || !uploadForm.title.trim()}
+              className="gap-1.5"
+            >
+              {uploading ? <RefreshCw size={12} className="animate-spin" /> : <Upload size={12} />}
+              {uploading ? "Laster opp..." : "Velg videofil"}
+            </Button>
+            <p className="text-[10px] text-muted-foreground mt-2">MP4, MOV, WebM – maks 50 MB</p>
+          </div>
+
+          <Button onClick={() => setShowUpload(false)} variant="ghost" size="sm">Avbryt</Button>
+        </Card>
+      )}
 
       {showForm && (
         <Card className="p-5 space-y-4">
