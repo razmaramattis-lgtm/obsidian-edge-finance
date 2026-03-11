@@ -302,7 +302,7 @@ const AiMarketingBrainTab = () => {
           <h3 className="font-heading text-base flex items-center gap-2">
             <Calendar size={16} className="text-primary" /> Strategiplanlegger
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="text-xs font-medium mb-1 block">Varighet</label>
               <Select value={planForm.duration} onValueChange={(v) => setPlanForm(f => ({ ...f, duration: v }))}>
@@ -318,6 +318,10 @@ const AiMarketingBrainTab = () => {
             <div>
               <label className="text-xs font-medium mb-1 block">Mål</label>
               <Input placeholder="F.eks. Generere 100 leads" value={planForm.goals} onChange={(e) => setPlanForm(f => ({ ...f, goals: e.target.value }))} />
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Totalbudsjett (NOK)</label>
+              <Input type="number" placeholder="F.eks. 50000" value={planForm.budget} onChange={(e) => setPlanForm(f => ({ ...f, budget: e.target.value }))} />
             </div>
           </div>
           <div>
