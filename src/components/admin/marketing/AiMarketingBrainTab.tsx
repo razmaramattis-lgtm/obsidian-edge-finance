@@ -427,20 +427,40 @@ const AiMarketingBrainTab = () => {
                         </div>
                       )}
 
-                      {plan.weekly_posts?.length > 0 && (
+                       {plan.weekly_posts?.length > 0 && (
                         <div>
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                             <h4 className="text-xs font-medium">Ukeplan ({plan.weekly_posts.length} uker)</h4>
-                            <Button
-                              size="sm"
-                              onClick={(e) => { e.stopPropagation(); handleExecuteAllWeeks(plan); }}
-                              disabled={generating || executingAll}
-                              className="gap-1.5"
-                            >
-                              <Rocket size={12} />
-                              Generer alle {plan.weekly_posts.reduce((s: number, w: any) => s + (w.posts?.length || 0), 0)} innlegg
-                            </Button>
+                            <div className="flex items-center gap-3">
+                              {connectedPlatforms.length > 0 && (
+                                <label className="flex items-center gap-2 text-xs">
+                                  <Switch checked={autoSchedule} onCheckedChange={setAutoSchedule} />
+                                  <span className="flex items-center gap-1">
+                                    <Rocket size={12} className="text-primary" />
+                                    Auto-publiser ({connectedPlatforms.length} plattformer)
+                                  </span>
+                                </label>
+                              )}
+                              <Button
+                                size="sm"
+                                onClick={(e) => { e.stopPropagation(); handleExecuteAllWeeks(plan); }}
+                                disabled={generating || executingAll}
+                                className="gap-1.5"
+                              >
+                                <Rocket size={12} />
+                                Generer alle {plan.weekly_posts.reduce((s: number, w: any) => s + (w.posts?.length || 0), 0)} innlegg
+                              </Button>
+                            </div>
                           </div>
+                          {autoSchedule && connectedPlatforms.length > 0 && (
+                            <Card className="p-3 mb-3 bg-green-500/5 border-green-500/20">
+                              <p className="text-xs text-green-700 dark:text-green-400 flex items-center gap-2">
+                                <CheckCircle2 size={12} />
+                                Innlegg for tilkoblede plattformer ({connectedPlatforms.join(", ")}) vil bli automatisk godkjent og planlagt for publisering.
+                                Andre innlegg sendes til godkjenningskøen.
+                              </p>
+                            </Card>
+                          )}
                           <div className="space-y-2 max-h-60 overflow-y-auto">
                             {plan.weekly_posts.slice(0, 12).map((week: any, i: number) => (
                               <Card key={i} className="p-3">
