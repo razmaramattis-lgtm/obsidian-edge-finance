@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { platform, topic, tone, include_image, custom_instructions, strategy_plan_id } = await req.json();
+    const { platform, topic, tone, include_image, custom_instructions, strategy_plan_id, scheduled_at, auto_schedule } = await req.json();
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -189,6 +189,27 @@ Returner KUN gyldig JSON.`,
       }
     }
 
+    // Check if platform integration is active for auto-scheduling
+    let finalStatus = "pending_approval";
+    let finalScheduledAt = null;
+
+    if (auto_schedule && scheduled_at) {
+      const { data: integration } = await supabase
+        .from("marketing_integrations")
+        .select("connected")
+        .eq("platform", platform)
+        .eq("connected", true)
+        .maybeSingle();
+
+      if (integration) {
+        finalStatus = "scheduled";
+        finalScheduledAt = scheduled_at;
+      }
+    } else if (scheduled_at && !auto_schedule) {
+      // Manual schedule request (from approval queue)
+      finalScheduledAt = scheduled_at;
+    }
+
     const { data: post, error: insertError } = await supabase
       .from("marketing_posts")
       .insert({
@@ -196,7 +217,8 @@ Returner KUN gyldig JSON.`,
         platform,
         content: generated.content,
         hashtags: generated.hashtags || [],
-        status: "pending_approval",
+        status: finalStatus,
+        scheduled_at: finalScheduledAt,
         ai_generated: true,
         image_url: imageUrl,
         image_prompt: generated.image_prompt,

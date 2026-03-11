@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   Brain, Lightbulb, TrendingUp, Sparkles, Calendar, Target, Rocket,
   RefreshCw, ChevronRight, FileText, Megaphone, Clock, Zap, BarChart3,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -73,6 +74,8 @@ const AiMarketingBrainTab = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   const [executingAll, setExecutingAll] = useState(false);
   const [executeProgress, setExecuteProgress] = useState({ current: 0, total: 0 });
+  const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
+  const [autoSchedule, setAutoSchedule] = useState(true);
 
   const scanElapsed = useElapsedTimer(scanning);
   const strategyElapsed = useElapsedTimer(generating);
@@ -89,12 +92,14 @@ const AiMarketingBrainTab = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [insightsRes, plansRes] = await Promise.all([
+    const [insightsRes, plansRes, integrationsRes] = await Promise.all([
       supabase.from("marketing_ai_insights").select("*").eq("active", true).order("confidence", { ascending: false }).limit(50),
       supabase.from("marketing_strategy_plans").select("*").order("created_at", { ascending: false }).limit(10),
+      supabase.from("marketing_integrations").select("platform").eq("connected", true),
     ]);
     setInsights((insightsRes.data as Insight[]) || []);
     setPlans((plansRes.data as StrategyPlan[]) || []);
+    setConnectedPlatforms((integrationsRes.data || []).map((i: any) => i.platform));
     setLoading(false);
   };
 
@@ -178,6 +183,7 @@ const AiMarketingBrainTab = () => {
     const totalWeeks = plan.weekly_posts.length;
     let totalSuccess = 0;
     let totalPosts = 0;
+    let autoScheduledCount = 0;
 
     for (let wi = 0; wi < totalWeeks; wi++) {
       const week = plan.weekly_posts[wi];
@@ -187,12 +193,14 @@ const AiMarketingBrainTab = () => {
 
       for (const post of posts) {
         try {
-          // Calculate scheduled date based on week number and day
           const startDate = new Date(plan.start_date);
           const dayOffset = (wi * 7) + dayNameToOffset(post.day);
           const scheduledDate = new Date(startDate);
           scheduledDate.setDate(scheduledDate.getDate() + dayOffset);
           scheduledDate.setHours(10, 0, 0, 0);
+
+          const isIntegrationActive = connectedPlatforms.includes(post.platform);
+          const shouldAutoSchedule = autoSchedule && isIntegrationActive;
 
           const { data, error } = await supabase.functions.invoke("marketing-generate-content", {
             body: {
@@ -202,23 +210,28 @@ const AiMarketingBrainTab = () => {
               include_image: post.content_type !== "text",
               strategy_plan_id: plan.id,
               scheduled_at: scheduledDate.toISOString(),
+              auto_schedule: shouldAutoSchedule,
             },
           });
-          if (!error && !data?.error) totalSuccess++;
+          if (!error && !data?.error) {
+            totalSuccess++;
+            if (shouldAutoSchedule) autoScheduledCount++;
+          }
         } catch { /* continue */ }
       }
 
-      // Small delay between weeks to avoid rate limits
       if (wi < totalWeeks - 1) {
         await new Promise(r => setTimeout(r, 2000));
       }
     }
 
-    toast.success(`🎉 Ferdig! ${totalSuccess} av ${totalPosts} innlegg generert for ${totalWeeks} uker. Alle ligger i godkjenningskøen.`, { duration: 10000 });
+    const scheduleMsg = autoScheduledCount > 0
+      ? ` ${autoScheduledCount} innlegg ble auto-planlagt for publisering.`
+      : " Alle ligger i godkjenningskøen.";
+    toast.success(`🎉 Ferdig! ${totalSuccess} av ${totalPosts} innlegg generert for ${totalWeeks} uker.${scheduleMsg}`, { duration: 10000 });
     setExecutingAll(false);
     setExecuteProgress({ current: 0, total: 0 });
 
-    // Activate the plan
     await supabase.from("marketing_strategy_plans").update({ status: "active" }).eq("id", plan.id);
     fetchData();
   };
@@ -415,20 +428,40 @@ const AiMarketingBrainTab = () => {
                         </div>
                       )}
 
-                      {plan.weekly_posts?.length > 0 && (
+                       {plan.weekly_posts?.length > 0 && (
                         <div>
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                             <h4 className="text-xs font-medium">Ukeplan ({plan.weekly_posts.length} uker)</h4>
-                            <Button
-                              size="sm"
-                              onClick={(e) => { e.stopPropagation(); handleExecuteAllWeeks(plan); }}
-                              disabled={generating || executingAll}
-                              className="gap-1.5"
-                            >
-                              <Rocket size={12} />
-                              Generer alle {plan.weekly_posts.reduce((s: number, w: any) => s + (w.posts?.length || 0), 0)} innlegg
-                            </Button>
+                            <div className="flex items-center gap-3">
+                              {connectedPlatforms.length > 0 && (
+                                <label className="flex items-center gap-2 text-xs">
+                                  <Switch checked={autoSchedule} onCheckedChange={setAutoSchedule} />
+                                  <span className="flex items-center gap-1">
+                                    <Rocket size={12} className="text-primary" />
+                                    Auto-publiser ({connectedPlatforms.length} plattformer)
+                                  </span>
+                                </label>
+                              )}
+                              <Button
+                                size="sm"
+                                onClick={(e) => { e.stopPropagation(); handleExecuteAllWeeks(plan); }}
+                                disabled={generating || executingAll}
+                                className="gap-1.5"
+                              >
+                                <Rocket size={12} />
+                                Generer alle {plan.weekly_posts.reduce((s: number, w: any) => s + (w.posts?.length || 0), 0)} innlegg
+                              </Button>
+                            </div>
                           </div>
+                          {autoSchedule && connectedPlatforms.length > 0 && (
+                            <Card className="p-3 mb-3 bg-green-500/5 border-green-500/20">
+                              <p className="text-xs text-green-700 dark:text-green-400 flex items-center gap-2">
+                                <CheckCircle2 size={12} />
+                                Innlegg for tilkoblede plattformer ({connectedPlatforms.join(", ")}) vil bli automatisk godkjent og planlagt for publisering.
+                                Andre innlegg sendes til godkjenningskøen.
+                              </p>
+                            </Card>
+                          )}
                           <div className="space-y-2 max-h-60 overflow-y-auto">
                             {plan.weekly_posts.slice(0, 12).map((week: any, i: number) => (
                               <Card key={i} className="p-3">
