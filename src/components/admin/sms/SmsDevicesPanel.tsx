@@ -60,6 +60,25 @@ const SmsDevicesPanel = () => {
     toast.success("API-nøkkel kopiert");
   };
 
+  const getSetupUrl = (device: any) => {
+    const params = new URLSearchParams({
+      key: device.api_key,
+      url: GATEWAY_URL,
+      name: device.device_name,
+    });
+    return `${APP_URL}/gateway?${params.toString()}`;
+  };
+
+  const copySetupLink = (device: any) => {
+    navigator.clipboard.writeText(getSetupUrl(device));
+    toast.success("Oppsettslenke kopiert – åpne denne på telefonen");
+  };
+
+  const getQrUrl = (device: any) => {
+    const setupUrl = getSetupUrl(device);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(setupUrl)}`;
+  };
+
   return (
     <div className="space-y-4">
       <Card className="border-border/20 bg-muted/30">
