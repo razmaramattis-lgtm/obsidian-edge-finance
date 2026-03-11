@@ -88,6 +88,9 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "job_listings", label: "Stillinger", icon: Briefcase, adminOnly: true, employeeHidden: true, group: "Internt" },
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
+  // SMS
+  { id: "sms_center", label: "SMS Center", icon: Smartphone, adminOnly: true, employeeHidden: true, group: "SMS" },
+
   // Admin
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
