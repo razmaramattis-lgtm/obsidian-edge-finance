@@ -37,21 +37,42 @@ const ContentAnalyzerTab = () => {
 
   useEffect(() => { fetchAnalyses(); }, []);
 
+  // Background crawl - runs in background, notifies via toast when done
   const handleCrawl = async () => {
     if (!crawlUrl.trim()) return;
     setCrawling(true);
+    toast.info("Crawling startet i bakgrunnen...", { duration: 3000 });
     try {
       const { data, error } = await supabase.functions.invoke("content-analyzer", {
         body: { url: crawlUrl.trim() },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("Analyse fullført!");
+      toast.success("✅ Analyse fullført!", { duration: 5000 });
       fetchAnalyses();
     } catch (e: any) {
       toast.error(e.message || "Feil ved crawling");
     } finally {
       setCrawling(false);
+    }
+  };
+
+  // Background full scan - runs in background, can switch tabs
+  const handleCrawlMultiple = async () => {
+    setCrawling(true);
+    toast.info("🚀 Full skanning av avargo.no startet i bakgrunnen. Du kan bytte fane – du får varsel når det er ferdig.", { duration: 5000 });
+    try {
+      const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
+        body: {},
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`✅ Fullstendig skanning ferdig! ${data.scanned} av ${data.total} sider analysert med AI.`, { duration: 8000 });
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved fullstendig skanning");
+    } finally {
+      setCrawling(false);
+      fetchAnalyses();
     }
   };
 
@@ -61,23 +82,6 @@ const ContentAnalyzerTab = () => {
     fetchAnalyses();
   };
 
-  const handleCrawlMultiple = async () => {
-    setCrawling(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
-        body: {},
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      toast.success(`${data.scanned} av ${data.total} sider analysert med AI!`);
-    } catch (e: any) {
-      toast.error(e.message || "Feil ved fullstendig skanning");
-    } finally {
-      setCrawling(false);
-      fetchAnalyses();
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* crawl controls */}
@@ -85,9 +89,10 @@ const ContentAnalyzerTab = () => {
         <div className="flex items-center gap-2 mb-1">
           <Sparkles size={16} className="text-primary" />
           <h3 className="font-heading text-sm">AI-drevet innholdsanalyse</h3>
+          {crawling && <Badge className="bg-primary/10 text-primary text-[10px] animate-pulse">Kjører i bakgrunnen...</Badge>}
         </div>
         <p className="text-xs text-muted-foreground">
-          Analyserer nettsiden din med AI for å identifisere tone, nøkkelord og temaer. Dataen brukes av Post Generator og AI Brain.
+          Analyserer nettsiden din med AI for å identifisere tone, nøkkelord og temaer. Skanningen kjører i bakgrunnen – du kan fortsette å jobbe med andre ting.
         </p>
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex-1 min-w-[200px]">

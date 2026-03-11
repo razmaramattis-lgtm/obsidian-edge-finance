@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Search, PenTool, CheckSquare, Calendar, BarChart3,
-  Megaphone, Brain, Smartphone, Mail, Plug, FolderOpen, Video,
+  Megaphone, Brain, Plug, FolderOpen, Video, Sparkles,
 } from "lucide-react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import MarketingDashboardTab from "./marketing/MarketingDashboardTab";
 import ContentAnalyzerTab from "./marketing/ContentAnalyzerTab";
 import PostGeneratorTab from "./marketing/PostGeneratorTab";
@@ -16,28 +16,53 @@ import AiMarketingBrainTab from "./marketing/AiMarketingBrainTab";
 import IntegrationsTab from "./marketing/IntegrationsTab";
 import VideoStudioTab from "./marketing/VideoStudioTab";
 
-const TABS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "integrations", label: "Integrasjoner", icon: Plug },
-  { id: "analyzer", label: "Content Analyzer", icon: Search },
-  { id: "generator", label: "Post Generator", icon: PenTool },
-  { id: "archive", label: "Innleggsarkiv", icon: FolderOpen },
-  { id: "approval", label: "Godkjenning", icon: CheckSquare },
-  { id: "scheduler", label: "SoMe Scheduler", icon: Calendar },
-  { id: "performance", label: "Performance", icon: BarChart3 },
-  { id: "ads", label: "Ad Manager", icon: Megaphone },
-  { id: "video", label: "Video Studio", icon: Video },
-  { id: "brain", label: "AI Brain", icon: Brain },
+const SECTIONS = [
+  {
+    label: "Oversikt",
+    tabs: [
+      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "Innhold",
+    tabs: [
+      { id: "analyzer", label: "Analyse & Skanning", icon: Search },
+      { id: "generator", label: "Innleggsgenerator", icon: PenTool },
+      { id: "archive", label: "Arkiv", icon: FolderOpen },
+      { id: "video", label: "Video Studio", icon: Video },
+    ],
+  },
+  {
+    label: "Flyt & Publisering",
+    tabs: [
+      { id: "approval", label: "Godkjenning", icon: CheckSquare },
+      { id: "scheduler", label: "Planlegging", icon: Calendar },
+    ],
+  },
+  {
+    label: "Annonser & Ytelse",
+    tabs: [
+      { id: "ads", label: "Ad Manager", icon: Megaphone },
+      { id: "performance", label: "Resultater", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "AI & System",
+    tabs: [
+      { id: "brain", label: "AI Brain", icon: Brain },
+      { id: "integrations", label: "Integrasjoner", icon: Plug },
+    ],
+  },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+type TabId = (typeof SECTIONS)[number]["tabs"][number]["id"];
 
 const MarketingPanel = () => {
-  const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+  const [activeTab, setActiveTab] = useState<string>("dashboard");
 
   const renderTab = () => {
     switch (activeTab) {
-      case "dashboard": return <MarketingDashboardTab onNavigate={(t) => setActiveTab(t as TabId)} />;
+      case "dashboard": return <MarketingDashboardTab onNavigate={(t) => setActiveTab(t)} />;
       case "integrations": return <IntegrationsTab />;
       case "analyzer": return <ContentAnalyzerTab />;
       case "generator": return <PostGeneratorTab />;
@@ -53,33 +78,76 @@ const MarketingPanel = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-6">
-        <Megaphone size={20} className="text-primary" />
-        <h2 className="font-heading text-2xl">Markedsføring & SoMe</h2>
-      </div>
-
-      <ScrollArea className="w-full mb-6">
-        <div className="flex gap-1 pb-2">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all ${
-                activeTab === tab.id
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              }`}
-            >
-              <tab.icon size={14} />
-              {tab.label}
-            </button>
+    <div className="flex gap-6">
+      {/* Sidebar navigation */}
+      <nav className="w-52 shrink-0 hidden lg:block">
+        <div className="sticky top-4 space-y-4">
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <Sparkles size={16} className="text-primary" />
+            <span className="font-heading text-sm">Markedsføring</span>
+          </div>
+          {SECTIONS.map((section) => (
+            <div key={section.label}>
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-medium px-2 mb-1.5">
+                {section.label}
+              </p>
+              <div className="space-y-0.5">
+                {section.tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-all ${
+                        isActive
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                      }`}
+                    >
+                      <tab.icon size={14} />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </nav>
 
-      {renderTab()}
+      {/* Mobile navigation */}
+      <div className="lg:hidden w-full">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles size={16} className="text-primary" />
+          <span className="font-heading text-sm">Markedsføring</span>
+        </div>
+        <div className="flex gap-1 overflow-x-auto pb-3 mb-4 scrollbar-none">
+          {SECTIONS.flatMap(s => [...s.tabs]).map((tab) => {
+            const isActive = activeTab === tab.id;
+            const TabIcon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all shrink-0 ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted/50"
+                }`}
+              >
+                <TabIcon size={12} />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+        {renderTab()}
+      </div>
+
+      {/* Desktop content */}
+      <div className="flex-1 min-w-0 hidden lg:block">
+        {renderTab()}
+      </div>
     </div>
   );
 };

@@ -8,9 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Megaphone, Plus, Trash2, TrendingUp, MousePointer, DollarSign,
   AlertTriangle, Sparkles, Wand2, Image, RefreshCw, Eye,
+  FileText, Phone, Mail, MapPin, Users, Globe, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import PostPreviewDialog from "./PostPreviewDialog";
@@ -41,6 +43,16 @@ const STATUS_COLORS: Record<string, string> = {
   completed: "bg-blue-500/10 text-blue-600",
 };
 
+const AD_EXTENSIONS = [
+  { id: "contact_form", label: "Kontaktskjema", icon: FileText, desc: "Lead-innsamling med navn, e-post, telefon" },
+  { id: "call_button", label: "Ring-knapp", icon: Phone, desc: "Direkte anrop fra annonsen" },
+  { id: "email_link", label: "E-post-lenke", icon: Mail, desc: "Åpne e-postklient med forhåndsfylt emne" },
+  { id: "location", label: "Stedsinformasjon", icon: MapPin, desc: "Vis kontoradresse og kart" },
+  { id: "audience_targeting", label: "Målgruppestyring", icon: Users, desc: "Definer demografi og interesser" },
+  { id: "landing_page", label: "Landingsside", icon: Globe, desc: "Link til dedikert landingsside" },
+  { id: "site_links", label: "Nettstedlenker", icon: ExternalLink, desc: "Ekstra lenker under annonsen" },
+];
+
 const AdManagerTab = () => {
   const { profile } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -51,6 +63,8 @@ const AdManagerTab = () => {
   const [includeImage, setIncludeImage] = useState(true);
   const [form, setForm] = useState({ name: "", platform: "google_ads", headline: "", description: "", cta: "", budget: "" });
   const [aiForm, setAiForm] = useState({ platform: "google_ads", topic: "", tone: "Konverteringsoptimalisert", instructions: "" });
+  const [selectedExtensions, setSelectedExtensions] = useState<string[]>(["contact_form"]);
+  const [contactFormFields, setContactFormFields] = useState({ name: true, email: true, phone: true, company: true, message: false });
   const [previewPost, setPreviewPost] = useState<any>(null);
 
   const fetchCampaigns = async () => {
@@ -65,6 +79,12 @@ const AdManagerTab = () => {
   };
 
   useEffect(() => { fetchCampaigns(); }, []);
+
+  const toggleExtension = (id: string) => {
+    setSelectedExtensions(prev =>
+      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
+    );
+  };
 
   const handleCreate = async () => {
     if (!form.name.trim()) { toast.error("Navn er påkrevd"); return; }
@@ -87,6 +107,16 @@ const AdManagerTab = () => {
   const handleAiGenerate = async () => {
     if (!aiForm.topic.trim()) { toast.error("Skriv inn et emne"); return; }
     setGenerating(true);
+    toast.info("🚀 AI-kampanje genereres i bakgrunnen...", { duration: 3000 });
+
+    const extensionPrompt = selectedExtensions.length > 0
+      ? `\n\nInkluder disse annonse-elementene: ${selectedExtensions.map(id => AD_EXTENSIONS.find(e => e.id === id)?.label).join(", ")}.${
+        selectedExtensions.includes("contact_form")
+          ? ` Kontaktskjemaet skal inneholde: ${Object.entries(contactFormFields).filter(([,v]) => v).map(([k]) => k === "name" ? "Navn" : k === "email" ? "E-post" : k === "phone" ? "Telefon" : k === "company" ? "Bedrift" : "Melding").join(", ")}.`
+          : ""
+      }`
+      : "";
+
     try {
       const { data, error } = await supabase.functions.invoke("marketing-generate-content", {
         body: {
@@ -94,13 +124,12 @@ const AdManagerTab = () => {
           topic: aiForm.topic,
           tone: aiForm.tone,
           include_image: includeImage,
-          custom_instructions: aiForm.instructions + "\nDette er en betalt annonse-kampanje. Fokuser på konvertering, kort og slagkraftig copy.",
+          custom_instructions: (aiForm.instructions || "") + "\nDette er en betalt annonse-kampanje. Fokuser på konvertering, kort og slagkraftig copy." + extensionPrompt,
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      // Also create a campaign entry linked to the generated post
       const postData = data?.post;
       if (postData) {
         await supabase.from("marketing_campaigns").insert({
@@ -113,7 +142,7 @@ const AdManagerTab = () => {
         });
       }
 
-      toast.success("AI-kampanje generert!");
+      toast.success("✅ AI-kampanje generert!");
       if (data?.meta?.engagement_prediction) toast.info(`Forventet engasjement: ${data.meta.engagement_prediction}`);
       setAiForm({ platform: "google_ads", topic: "", tone: "Konverteringsoptimalisert", instructions: "" });
       setShowForm(false);
@@ -128,6 +157,7 @@ const AdManagerTab = () => {
   const handleBulkGenerate = async () => {
     if (!aiForm.topic.trim()) { toast.error("Skriv inn et emne"); return; }
     setGenerating(true);
+    toast.info("🚀 Genererer kampanjer for Google + Meta i bakgrunnen...", { duration: 3000 });
     let success = 0;
     for (const platform of ["google_ads", "meta_ads"]) {
       try {
@@ -137,7 +167,7 @@ const AdManagerTab = () => {
             topic: aiForm.topic,
             tone: aiForm.tone,
             include_image: includeImage,
-            custom_instructions: aiForm.instructions + "\nDette er en betalt annonse. Fokuser på konvertering.",
+            custom_instructions: (aiForm.instructions || "") + "\nDette er en betalt annonse. Fokuser på konvertering.",
           },
         });
         if (!error && !data?.error) {
@@ -156,7 +186,7 @@ const AdManagerTab = () => {
         }
       } catch { /* continue */ }
     }
-    toast.success(`${success} av 2 annonsekampanjer generert!`);
+    toast.success(`✅ ${success} av 2 annonsekampanjer generert!`);
     setGenerating(false);
     fetchCampaigns();
   };
@@ -182,9 +212,10 @@ const AdManagerTab = () => {
           <Sparkles size={16} className="text-primary" />
           <h3 className="font-heading text-sm">AI Ad Engine</h3>
           <Badge className="bg-primary/10 text-primary text-[10px]">Nano Banana 2</Badge>
+          {generating && <Badge className="bg-primary/10 text-primary text-[10px] animate-pulse">Genererer...</Badge>}
         </div>
         <p className="text-xs text-muted-foreground">
-          Generer konverteringsoptimaliserte annonser med AI-tekst og bilder for Google Ads og Meta Ads.
+          Generer konverteringsoptimaliserte annonser med kontaktskjemaer, call-to-action og AI-bilder.
         </p>
       </Card>
 
@@ -231,6 +262,58 @@ const AdManagerTab = () => {
                   <SelectItem value="Lead-generering">Lead-generering</SelectItem>
                 </SelectContent>
               </Select>
+
+              {/* Ad Extensions */}
+              <div>
+                <label className="text-xs font-medium mb-2 block">Annonse-elementer</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {AD_EXTENSIONS.map((ext) => {
+                    const isSelected = selectedExtensions.includes(ext.id);
+                    return (
+                      <button
+                        key={ext.id}
+                        onClick={() => toggleExtension(ext.id)}
+                        className={`text-left p-3 rounded-lg border transition-all ${
+                          isSelected ? "border-primary/40 bg-primary/5" : "border-border/50 hover:border-muted-foreground/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <ext.icon size={12} className={isSelected ? "text-primary" : "text-muted-foreground"} />
+                          <span className="text-xs font-medium">{ext.label}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">{ext.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Contact form config */}
+              {selectedExtensions.includes("contact_form") && (
+                <Card className="p-3 bg-muted/30">
+                  <p className="text-xs font-medium mb-2 flex items-center gap-1.5">
+                    <FileText size={12} className="text-primary" /> Kontaktskjema-felter
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {[
+                      { id: "name", label: "Navn" },
+                      { id: "email", label: "E-post" },
+                      { id: "phone", label: "Telefon" },
+                      { id: "company", label: "Bedrift" },
+                      { id: "message", label: "Melding" },
+                    ].map(f => (
+                      <label key={f.id} className="flex items-center gap-2 text-xs">
+                        <Checkbox
+                          checked={(contactFormFields as any)[f.id]}
+                          onCheckedChange={(v) => setContactFormFields(prev => ({ ...prev, [f.id]: !!v }))}
+                        />
+                        {f.label}
+                      </label>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
               <Textarea
                 placeholder="Ekstra instrukser (valgfritt)..."
                 rows={2}
