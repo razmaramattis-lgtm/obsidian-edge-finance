@@ -130,6 +130,7 @@ const AdminDashboard = () => {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingSidebar, setEditingSidebar] = useState(false);
+  const [marketingFullscreen, setMarketingFullscreen] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);

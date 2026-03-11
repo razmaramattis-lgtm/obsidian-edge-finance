@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   CheckSquare, Check, X, Eye, Sparkles, Image as ImageIcon,
   Pencil, Linkedin, Facebook, Instagram, Megaphone, RefreshCw,
-  ArrowUp, ArrowDown, GripVertical, Type, Hash, MessageSquare,
+  Type, Hash, MessageSquare, CalendarIcon, Rocket, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import PostPreviewDialog from "./PostPreviewDialog";
 
 interface Post {
@@ -50,6 +53,10 @@ const ApprovalQueueTab = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ title: "", content: "", hashtags: "" });
   const [regeneratingImage, setRegeneratingImage] = useState<string | null>(null);
+  // Schedule after approval
+  const [schedulingId, setSchedulingId] = useState<string | null>(null);
+  const [scheduleDate, setScheduleDate] = useState<Date | undefined>(undefined);
+  const [scheduleTime, setScheduleTime] = useState("10:00");
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -70,6 +77,24 @@ const ApprovalQueueTab = () => {
       approved_by: profile?.id,
     }).eq("id", id);
     toast.success("Godkjent!");
+    // Show schedule option
+    setSchedulingId(id);
+    setScheduleDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    fetchPosts();
+  };
+
+  const handleLaunch = async () => {
+    if (!schedulingId || !scheduleDate) return;
+    const dt = new Date(scheduleDate);
+    const [h, m] = scheduleTime.split(":").map(Number);
+    dt.setHours(h, m, 0, 0);
+    await supabase.from("marketing_posts").update({
+      status: "scheduled",
+      scheduled_at: dt.toISOString(),
+    }).eq("id", schedulingId);
+    toast.success(`Planlagt for ${format(dt, "d. MMM yyyy HH:mm", { locale: nb })}`);
+    setSchedulingId(null);
+    setScheduleDate(undefined);
     fetchPosts();
   };
 
@@ -123,7 +148,7 @@ const ApprovalQueueTab = () => {
         toast.success("Nytt bilde generert!");
         fetchPosts();
       }
-    } catch (e: any) {
+    } catch {
       toast.error("Feil ved bildegenerering");
     } finally {
       setRegeneratingImage(null);
@@ -133,13 +158,57 @@ const ApprovalQueueTab = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs text-muted-foreground">
-            Gjennomgå, rediger og godkjenn innlegg før publisering. Forhåndsvis hvordan de vil se ut på hver plattform.
-          </p>
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Gjennomgå, rediger og godkjenn innlegg før publisering.
+        </p>
         <Badge variant="outline" className="text-xs">{posts.length} venter</Badge>
       </div>
+
+      {/* Schedule after approval dialog */}
+      {schedulingId && (
+        <Card className="p-5 border-primary/20 bg-primary/5 space-y-4">
+          <div className="flex items-center gap-2">
+            <Rocket size={16} className="text-primary" />
+            <h3 className="font-heading text-base">Innlegget er godkjent! Vil du lansere det?</h3>
+          </div>
+          <p className="text-xs text-muted-foreground">Velg dato og tidspunkt for publisering, eller hopp over for å planlegge senere.</p>
+          <div className="flex flex-wrap gap-4 items-start">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-[200px] justify-start text-left text-sm", !scheduleDate && "text-muted-foreground")}>
+                  <CalendarIcon size={14} className="mr-2" />
+                  {scheduleDate ? format(scheduleDate, "d. MMM yyyy", { locale: nb }) : "Velg dato"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={scheduleDate}
+                  onSelect={setScheduleDate}
+                  disabled={(d) => d < new Date()}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+            <div className="flex items-center gap-2">
+              <Clock size={14} className="text-muted-foreground" />
+              <Input
+                type="time"
+                value={scheduleTime}
+                onChange={(e) => setScheduleTime(e.target.value)}
+                className="w-28 text-sm"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={handleLaunch} disabled={!scheduleDate} className="gap-2">
+              <Rocket size={14} /> Lanser innlegg
+            </Button>
+            <Button variant="ghost" onClick={() => setSchedulingId(null)}>Planlegg senere</Button>
+          </div>
+        </Card>
+      )}
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Laster...</p>
@@ -156,7 +225,6 @@ const ApprovalQueueTab = () => {
 
             return (
               <Card key={p.id} className="overflow-hidden">
-                {/* Header */}
                 <div className="p-4 border-b bg-muted/20">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
@@ -175,24 +243,16 @@ const ApprovalQueueTab = () => {
                   </div>
                 </div>
 
-                {/* Content area */}
                 <div className="p-4">
                   <div className="flex gap-4">
-                    {/* Image section */}
                     <div className="shrink-0">
                       {p.image_url ? (
                         <div className="relative group">
                           <div className="w-32 h-32 rounded-xl overflow-hidden bg-muted">
                             <img src={p.image_url} alt="" className="w-full h-full object-cover" />
                           </div>
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity flex items-center justify-center gap-1">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-white hover:text-white hover:bg-white/20"
-                              onClick={() => handleRegenerateImage(p)}
-                              disabled={regeneratingImage === p.id}
-                            >
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity flex items-center justify-center">
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-white hover:text-white hover:bg-white/20" onClick={() => handleRegenerateImage(p)} disabled={regeneratingImage === p.id}>
                               {regeneratingImage === p.id ? <RefreshCw size={14} className="animate-spin" /> : <ImageIcon size={14} />}
                             </Button>
                           </div>
@@ -202,50 +262,25 @@ const ApprovalQueueTab = () => {
                           <ImageIcon size={20} className="text-muted-foreground/30" />
                         </div>
                       )}
-                      {p.image_prompt && (
-                        <p className="text-[9px] text-muted-foreground/50 mt-1 w-32 line-clamp-2">{p.image_prompt}</p>
-                      )}
                     </div>
 
-                    {/* Text section */}
                     <div className="flex-1 min-w-0">
                       {isEditing ? (
                         <div className="space-y-3">
                           <div>
-                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1">
-                              <Type size={10} /> Tittel
-                            </label>
-                            <Input
-                              value={editForm.title}
-                              onChange={(e) => setEditForm(f => ({ ...f, title: e.target.value }))}
-                              className="text-sm"
-                            />
+                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1"><Type size={10} /> Tittel</label>
+                            <Input value={editForm.title} onChange={(e) => setEditForm(f => ({ ...f, title: e.target.value }))} className="text-sm" />
                           </div>
                           <div>
-                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1">
-                              <MessageSquare size={10} /> Innhold
-                            </label>
-                            <Textarea
-                              value={editForm.content}
-                              onChange={(e) => setEditForm(f => ({ ...f, content: e.target.value }))}
-                              rows={6}
-                              className="text-sm"
-                            />
+                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1"><MessageSquare size={10} /> Innhold</label>
+                            <Textarea value={editForm.content} onChange={(e) => setEditForm(f => ({ ...f, content: e.target.value }))} rows={6} className="text-sm" />
                           </div>
                           <div>
-                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1">
-                              <Hash size={10} /> Hashtags (kommaseparert)
-                            </label>
-                            <Input
-                              value={editForm.hashtags}
-                              onChange={(e) => setEditForm(f => ({ ...f, hashtags: e.target.value }))}
-                              className="text-sm"
-                            />
+                            <label className="text-[10px] text-muted-foreground mb-1 block flex items-center gap-1"><Hash size={10} /> Hashtags</label>
+                            <Input value={editForm.hashtags} onChange={(e) => setEditForm(f => ({ ...f, hashtags: e.target.value }))} className="text-sm" />
                           </div>
                           <div className="flex gap-2">
-                            <Button size="sm" onClick={() => handleSaveEdit(p.id)} className="gap-1">
-                              <Check size={12} /> Lagre endringer
-                            </Button>
+                            <Button size="sm" onClick={() => handleSaveEdit(p.id)} className="gap-1"><Check size={12} /> Lagre</Button>
                             <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>Avbryt</Button>
                           </div>
                         </div>
@@ -265,17 +300,11 @@ const ApprovalQueueTab = () => {
                   </div>
                 </div>
 
-                {/* Actions */}
                 {!isEditing && (
                   <div className="p-4 pt-0">
                     {rejectingId === p.id ? (
-                      <div className="space-y-2 p-3 bg-red-500/5 rounded-lg border border-red-500/20">
-                        <Textarea
-                          placeholder="Begrunnelse for avslag (valgfritt)"
-                          value={rejectReason}
-                          onChange={(e) => setRejectReason(e.target.value)}
-                          rows={2}
-                        />
+                      <div className="space-y-2 p-3 bg-destructive/5 rounded-lg border border-destructive/20">
+                        <Textarea placeholder="Begrunnelse (valgfritt)" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={2} />
                         <div className="flex gap-2">
                           <Button size="sm" variant="destructive" onClick={() => handleReject(p.id)}>Bekreft avslag</Button>
                           <Button size="sm" variant="ghost" onClick={() => { setRejectingId(null); setRejectReason(""); }}>Avbryt</Button>
