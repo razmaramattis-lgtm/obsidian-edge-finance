@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
@@ -14,6 +15,24 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+
+const useElapsedTimer = (active: boolean) => {
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef<number>(0);
+  useEffect(() => {
+    if (!active) { setElapsed(0); return; }
+    startRef.current = Date.now();
+    const iv = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
+    return () => clearInterval(iv);
+  }, [active]);
+  return elapsed;
+};
+
+const formatTimer = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}m ${s.toString().padStart(2, "0")}s` : `${s}s`;
+};
 
 interface VideoRequest {
   id: string;

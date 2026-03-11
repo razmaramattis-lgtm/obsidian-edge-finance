@@ -334,11 +334,17 @@ const AiMarketingBrainTab = () => {
             </div>
           </div>
           <Textarea placeholder="Ekstra instrukser (valgfritt)..." rows={2} value={planForm.instructions} onChange={(e) => setPlanForm(f => ({ ...f, instructions: e.target.value }))} />
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center flex-wrap">
             <Button onClick={handleGenerateStrategy} disabled={generating} className="gap-2">
               {generating ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
               {generating ? "Genererer..." : "Generer AI-strategi"}
             </Button>
+            {generating && (
+              <span className="text-xs font-mono text-primary font-medium flex items-center gap-1.5">
+                <Clock size={12} /> {formatTimer(strategyElapsed)}
+                <span className="text-muted-foreground font-sans">· ~{Math.max(1, Math.ceil((30 - strategyElapsed) / 60))} min igjen</span>
+              </span>
+            )}
             <Button onClick={() => setShowPlanner(false)} variant="ghost">Avbryt</Button>
           </div>
         </Card>
