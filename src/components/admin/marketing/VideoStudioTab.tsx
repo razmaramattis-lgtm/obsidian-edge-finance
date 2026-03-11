@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
   Sparkles, Send, Clapperboard, AlertCircle, RefreshCw, Play, Download, Image as ImageIcon, Maximize2,
