@@ -71,3 +71,6 @@ verify_jwt = false
 
 [functions.content-analyzer]
 verify_jwt = false
+
+[functions.generate-marketing-video]
+verify_jwt = false

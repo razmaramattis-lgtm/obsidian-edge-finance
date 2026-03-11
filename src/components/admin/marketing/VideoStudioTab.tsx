@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
-  Sparkles, Send, Clapperboard, AlertCircle,
+  Sparkles, Send, Clapperboard, AlertCircle, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -70,10 +70,11 @@ const PROMPT_TEMPLATES = [
 ];
 
 const VideoStudioTab = () => {
-  const { profile } = useAuth();
+  const { profile, isAdmin } = useAuth();
   const [requests, setRequests] = useState<VideoRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     platform: "linkedin",
@@ -101,26 +102,66 @@ const VideoStudioTab = () => {
     toast.info(`Mal «${template.label}» lastet inn`);
   };
 
+  const generateVideo = async (requestId: string, prompt: string, aspectRatio: string, duration: number) => {
+    setGeneratingId(requestId);
+    toast.info("🎬 Genererer video... Dette kan ta opptil 2 minutter.", { duration: 10000 });
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-marketing-video", {
+        body: { request_id: requestId, prompt, aspect_ratio: aspectRatio, duration },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("✅ Video generert!");
+      fetchRequests();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved videogenerering");
+    } finally {
+      setGeneratingId(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!form.title.trim()) { toast.error("Tittel er påkrevd"); return; }
     if (!form.prompt.trim()) { toast.error("Velg en mal eller skriv en beskrivelse"); return; }
 
-    const { error } = await supabase.from("marketing_video_requests").insert({
+    // Admin → auto-approve and generate immediately
+    const status = isAdmin ? "approved" : "pending";
+
+    const { data: inserted, error } = await supabase.from("marketing_video_requests").insert({
       title: form.title.trim(),
       prompt: form.prompt.trim(),
       platform: form.platform,
       aspect_ratio: form.aspect_ratio,
       duration: parseInt(form.duration),
-      status: "pending",
+      status,
       requested_by: profile?.id,
       admin_note: form.admin_note || null,
-    });
+    }).select().single();
 
     if (error) { toast.error(error.message); return; }
-    toast.success("Videoforespørsel sendt inn! Den vil bli behandlet og generert.");
-    setForm({ title: "", platform: "linkedin", aspect_ratio: "16:9", duration: "5", prompt: "", admin_note: "" });
-    setShowForm(false);
+
+    const resetForm = () => {
+      setForm({ title: "", platform: "linkedin", aspect_ratio: "16:9", duration: "5", prompt: "", admin_note: "" });
+      setShowForm(false);
+    };
+
+    if (isAdmin && inserted) {
+      toast.success("Godkjent! Videogenerering starter...");
+      resetForm();
+      fetchRequests();
+      // Start generation in background
+      generateVideo(inserted.id, inserted.prompt, inserted.aspect_ratio, inserted.duration);
+    } else {
+      toast.success("Videoforespørsel sendt inn!");
+      resetForm();
+      fetchRequests();
+    }
+  };
+
+  const handleApproveAndGenerate = async (r: VideoRequest) => {
+    await supabase.from("marketing_video_requests").update({ status: "approved" }).eq("id", r.id);
     fetchRequests();
+    generateVideo(r.id, r.prompt, r.aspect_ratio, r.duration);
   };
 
   const handleDelete = async (id: string) => {
@@ -144,12 +185,14 @@ const VideoStudioTab = () => {
         </p>
       </Card>
 
-      <Card className="p-4 bg-amber-500/5 border-amber-500/20">
-        <div className="flex items-center gap-2 text-amber-600 text-sm">
-          <AlertCircle size={14} />
-          <span>Videoer genereres av AI og krever godkjenning. Forespørsler behandles normalt innen kort tid.</span>
-        </div>
-      </Card>
+      {!isAdmin && (
+        <Card className="p-4 bg-amber-500/5 border-amber-500/20">
+          <div className="flex items-center gap-2 text-amber-600 text-sm">
+            <AlertCircle size={14} />
+            <span>Videoforespørsler må godkjennes av en administrator før generering.</span>
+          </div>
+        </Card>
+      )}
 
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground">Send inn videoforespørsler for markedsføring.</p>
@@ -236,7 +279,7 @@ const VideoStudioTab = () => {
 
           <div className="flex gap-2">
             <Button onClick={handleSubmit} className="gap-2">
-              <Send size={14} /> Send inn forespørsel
+              <Send size={14} /> {isAdmin ? "Generer video" : "Send inn forespørsel"}
             </Button>
             <Button onClick={() => setShowForm(false)} variant="ghost" size="sm">Avbryt</Button>
           </div>
@@ -287,6 +330,15 @@ const VideoStudioTab = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    {r.status === "pending" && isAdmin && (
+                      <Button variant="default" size="sm" className="text-xs gap-1" onClick={() => handleApproveAndGenerate(r)} disabled={generatingId === r.id}>
+                        {generatingId === r.id ? <RefreshCw size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                        Generer
+                      </Button>
+                    )}
+                    {generatingId === r.id && (
+                      <Badge className="bg-blue-500/10 text-blue-600 text-[10px] animate-pulse">Genererer...</Badge>
+                    )}
                     {r.video_url && (
                       <Button variant="outline" size="sm" className="text-xs gap-1" asChild>
                         <a href={r.video_url} target="_blank" rel="noopener noreferrer">
