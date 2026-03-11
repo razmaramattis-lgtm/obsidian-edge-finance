@@ -77,7 +77,8 @@ const AiMarketingBrainTab = () => {
 
   const handleFullScan = async () => {
     setScanning(true);
-    setScanProgress("Skanner alle Avargo-sider...");
+    setScanProgress("Skanner alle Avargo-sider i bakgrunnen...");
+    toast.info("🚀 Full skanning startet i bakgrunnen. Du kan bytte fane – du får varsel når det er ferdig.", { duration: 5000 });
     try {
       const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
         body: {},
@@ -85,7 +86,7 @@ const AiMarketingBrainTab = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setScanProgress(`✅ ${data.scanned} av ${data.total} sider skannet!`);
-      toast.success(`Fullstendig skanning ferdig: ${data.scanned} sider analysert`);
+      toast.success(`✅ Fullstendig skanning ferdig: ${data.scanned} sider analysert`, { duration: 8000 });
     } catch (e: any) {
       toast.error(e.message || "Feil ved skanning");
       setScanProgress("");
