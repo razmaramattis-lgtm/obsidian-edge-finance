@@ -56,3 +56,6 @@ verify_jwt = false
 
 [functions.job-offer-email]
 verify_jwt = false
+
+[functions.sms-device-api]
+verify_jwt = false
