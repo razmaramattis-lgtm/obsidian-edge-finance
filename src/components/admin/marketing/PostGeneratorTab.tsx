@@ -13,6 +13,7 @@ import {
   Sparkles, Wand2, Image, RefreshCw, Eye, CheckCircle2, Clock, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
+import PostPreviewDialog from "./PostPreviewDialog";
 
 interface Post {
   id: string;
@@ -60,6 +61,7 @@ const PostGeneratorTab = () => {
   const [form, setForm] = useState({ title: "", platform: "linkedin", content: "", hashtags: "" });
   // AI form
   const [aiForm, setAiForm] = useState({ platform: "linkedin", topic: "", tone: "Profesjonell og engasjerende", instructions: "" });
+  const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -321,6 +323,9 @@ const PostGeneratorTab = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="outline" size="icon" onClick={() => setPreviewPost(p)} className="text-muted-foreground hover:text-primary" title="Forhåndsvis">
+                      <Eye size={14} />
+                    </Button>
                     {p.status === "draft" && (
                       <Button variant="outline" size="sm" onClick={() => handleSubmitForApproval(p.id)} className="text-xs gap-1">
                         <CheckCircle2 size={12} /> Godkjenn
@@ -336,6 +341,7 @@ const PostGeneratorTab = () => {
           })}
         </div>
       )}
+      <PostPreviewDialog post={previewPost} open={!!previewPost} onOpenChange={(o) => !o && setPreviewPost(null)} />
     </div>
   );
 };
