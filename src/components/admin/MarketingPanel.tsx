@@ -39,6 +39,7 @@ const MarketingPanel = () => {
       case "integrations": return <IntegrationsTab />;
       case "analyzer": return <ContentAnalyzerTab />;
       case "generator": return <PostGeneratorTab />;
+      case "archive": return <PostArchiveTab />;
       case "approval": return <ApprovalQueueTab />;
       case "scheduler": return <SomeSchedulerTab />;
       case "performance": return <PerformanceTrackerTab />;
