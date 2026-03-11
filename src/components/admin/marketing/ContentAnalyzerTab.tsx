@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Globe, Clock, RefreshCw, Trash2 } from "lucide-react";
+import { Search, Globe, Clock, RefreshCw, Trash2, Sparkles, FileText, Tag, Palette } from "lucide-react";
 import { toast } from "sonner";
 
 interface Analysis {
@@ -41,17 +41,12 @@ const ContentAnalyzerTab = () => {
     if (!crawlUrl.trim()) return;
     setCrawling(true);
     try {
-      // For now, create a placeholder entry — real crawling will use Firecrawl + AI later
-      const { error } = await supabase.from("marketing_content_analyses").insert({
-        url: crawlUrl.trim(),
-        title: "Venter på analyse...",
-        content_summary: "Crawling er planlagt. Koble til Content Analyzer-backend for automatisk analyse.",
-        keywords: [],
-        themes: [],
-        tone: "Ikke analysert enda",
+      const { data, error } = await supabase.functions.invoke("content-analyzer", {
+        body: { url: crawlUrl.trim() },
       });
       if (error) throw error;
-      toast.success("Oppføring opprettet — klar for crawling");
+      if (data?.error) throw new Error(data.error);
+      toast.success("Analyse fullført!");
       fetchAnalyses();
     } catch (e: any) {
       toast.error(e.message || "Feil ved crawling");
@@ -66,26 +61,72 @@ const ContentAnalyzerTab = () => {
     fetchAnalyses();
   };
 
+  const handleCrawlMultiple = async () => {
+    const urls = [
+      "https://avargo.no",
+      "https://avargo.no/tjenester",
+      "https://avargo.no/om-oss",
+      "https://avargo.no/kontakt",
+      "https://avargo.no/bransjer",
+    ];
+    setCrawling(true);
+    let success = 0;
+    for (const url of urls) {
+      try {
+        const { data, error } = await supabase.functions.invoke("content-analyzer", {
+          body: { url },
+        });
+        if (!error && !data?.error) success++;
+      } catch {
+        // continue
+      }
+    }
+    toast.success(`${success} av ${urls.length} sider analysert`);
+    setCrawling(false);
+    fetchAnalyses();
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex-1 min-w-[200px]">
-          <Input
-            value={crawlUrl}
-            onChange={(e) => setCrawlUrl(e.target.value)}
-            placeholder="https://avargo.no"
-          />
+      {/* crawl controls */}
+      <Card className="p-5 space-y-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles size={16} className="text-primary" />
+          <h3 className="font-heading text-sm">AI-drevet innholdsanalyse</h3>
         </div>
-        <Button onClick={handleCrawl} disabled={crawling}>
-          {crawling ? <RefreshCw size={14} className="animate-spin mr-2" /> : <Search size={14} className="mr-2" />}
-          Crawl & Analyser
-        </Button>
-      </div>
+        <p className="text-xs text-muted-foreground">
+          Analyserer nettsiden din med AI for å identifisere tone, nøkkelord og temaer. Dataen brukes av Post Generator og AI Brain.
+        </p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex-1 min-w-[200px]">
+            <Input
+              value={crawlUrl}
+              onChange={(e) => setCrawlUrl(e.target.value)}
+              placeholder="https://avargo.no"
+            />
+          </div>
+          <Button onClick={handleCrawl} disabled={crawling}>
+            {crawling ? <RefreshCw size={14} className="animate-spin mr-2" /> : <Search size={14} className="mr-2" />}
+            Crawl & Analyser
+          </Button>
+          <Button onClick={handleCrawlMultiple} disabled={crawling} variant="outline">
+            <Globe size={14} className="mr-2" />
+            Crawl hele avargo.no
+          </Button>
+        </div>
+      </Card>
 
-      <p className="text-xs text-muted-foreground">
-        Content Analyzer crawler nettsiden din, analyserer tone, nøkkelbudskap og temaer. Dataen brukes av Post Generator og AI Brain.
-      </p>
+      {/* stats row */}
+      {analyses.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <MiniStat icon={<Globe size={14} className="text-primary" />} label="Sider crawlet" value={analyses.length} />
+          <MiniStat icon={<Tag size={14} className="text-primary" />} label="Nøkkelord funnet" value={analyses.reduce((s, a) => s + (a.keywords?.length || 0), 0)} />
+          <MiniStat icon={<FileText size={14} className="text-primary" />} label="Temaer" value={new Set(analyses.flatMap((a) => a.themes || [])).size} />
+          <MiniStat icon={<Palette size={14} className="text-primary" />} label="Tonefall" value={new Set(analyses.map((a) => a.tone).filter(Boolean)).size} />
+        </div>
+      )}
 
+      {/* results */}
       {loading ? (
         <p className="text-sm text-muted-foreground">Laster...</p>
       ) : analyses.length === 0 ? (
@@ -96,18 +137,27 @@ const ContentAnalyzerTab = () => {
       ) : (
         <div className="space-y-3">
           {analyses.map((a) => (
-            <Card key={a.id} className="p-4">
+            <Card key={a.id} className="p-4 hover:border-primary/20 transition-colors">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <Globe size={12} className="text-primary shrink-0" />
                     <a href={a.url} target="_blank" rel="noopener" className="text-sm font-medium truncate hover:text-primary transition-colors">{a.url}</a>
                   </div>
-                  {a.title && <p className="text-sm font-medium mb-1">{a.title}</p>}
-                  {a.content_summary && <p className="text-xs text-muted-foreground line-clamp-2">{a.content_summary}</p>}
-                  <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    {a.tone && <Badge variant="outline" className="text-[10px]">{a.tone}</Badge>}
-                    {a.keywords?.slice(0, 5).map((k) => (
+                  {a.title && <p className="text-sm font-heading mb-1">{a.title}</p>}
+                  {a.content_summary && (
+                    <p className="text-xs text-muted-foreground line-clamp-3 mb-2">{a.content_summary}</p>
+                  )}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {a.tone && (
+                      <Badge className="text-[10px] bg-primary/10 text-primary border-primary/20">
+                        <Palette size={8} className="mr-1" /> {a.tone}
+                      </Badge>
+                    )}
+                    {a.themes?.slice(0, 3).map((t) => (
+                      <Badge key={t} variant="outline" className="text-[10px]">{t}</Badge>
+                    ))}
+                    {a.keywords?.slice(0, 4).map((k) => (
                       <Badge key={k} variant="secondary" className="text-[10px]">{k}</Badge>
                     ))}
                   </div>
@@ -126,5 +176,13 @@ const ContentAnalyzerTab = () => {
     </div>
   );
 };
+
+const MiniStat = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) => (
+  <Card className="p-3 text-center">
+    <div className="flex justify-center mb-1">{icon}</div>
+    <p className="font-heading text-xl">{value}</p>
+    <p className="text-[10px] text-muted-foreground">{label}</p>
+  </Card>
+);
 
 export default ContentAnalyzerTab;
