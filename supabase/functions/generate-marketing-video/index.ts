@@ -56,17 +56,23 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting. 
     }
 
     const aiData = await aiRes.json();
-    console.log("AI response structure keys:", JSON.stringify(Object.keys(aiData)));
     const message = aiData.choices?.[0]?.message;
-    console.log("Message keys:", message ? JSON.stringify(Object.keys(message)) : "null");
-    console.log("Content type:", typeof message?.content);
-    if (Array.isArray(message?.content)) {
-      console.log("Content array length:", message.content.length);
-      for (let i = 0; i < Math.min(message.content.length, 3); i++) {
-        const part = message.content[i];
-        console.log(`Content[${i}] type:`, part?.type, "keys:", JSON.stringify(Object.keys(part || {})));
-      }
-    }
+    
+    // Debug: log full response structure
+    const debugInfo = {
+      topKeys: Object.keys(aiData),
+      messageKeys: message ? Object.keys(message) : null,
+      contentType: typeof message?.content,
+      contentIsArray: Array.isArray(message?.content),
+      contentLength: typeof message?.content === "string" ? message.content.length : Array.isArray(message?.content) ? message.content.length : 0,
+      hasParts: !!message?.parts,
+      contentPreview: typeof message?.content === "string" 
+        ? message.content.substring(0, 200) 
+        : Array.isArray(message?.content) 
+          ? JSON.stringify(message.content.map((p: any) => ({ type: p?.type, hasData: !!p?.data, hasInlineData: !!p?.inline_data, hasImageUrl: !!p?.image_url, keys: Object.keys(p || {}) }))).substring(0, 500)
+          : "unknown",
+    };
+    console.log("AI DEBUG:", JSON.stringify(debugInfo));
 
     let thumbnailUrl: string | null = null;
 
