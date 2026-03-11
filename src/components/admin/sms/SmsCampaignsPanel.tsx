@@ -147,7 +147,19 @@ const SmsCampaignsPanel = () => {
                 <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>Kontaktgruppe</Label>
+                <Label>Telefonnumre (valgfri, ett per linje)</Label>
+                <Textarea rows={3} placeholder={"+4712345678\n+4798765432"} value={form.phones} onChange={e => setForm(f => ({ ...f, phones: e.target.value }))} />
+                <div className="flex items-center gap-3">
+                  <p className="text-xs text-muted-foreground">{parsePhones(form.phones).length} numre</p>
+                </div>
+                <label className="flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-border/60 bg-muted/30 p-4 cursor-pointer hover:bg-muted/50 transition-colors">
+                  <Upload size={16} className="text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Last opp CSV / TXT</span>
+                  <input type="file" accept=".csv,.txt" className="hidden" onChange={handleFileUpload} />
+                </label>
+              </div>
+              <div className="space-y-2">
+                <Label>Kontaktgruppe (valgfri)</Label>
                 <Select value={form.groupId} onValueChange={v => setForm(f => ({ ...f, groupId: v }))}>
                   <SelectTrigger><SelectValue placeholder="Velg gruppe..." /></SelectTrigger>
                   <SelectContent>

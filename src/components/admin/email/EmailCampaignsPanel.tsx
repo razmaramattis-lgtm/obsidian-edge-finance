@@ -120,7 +120,16 @@ const EmailCampaignsPanel = () => {
             <div className="space-y-4">
               <div><Label>Kampanjenavn</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
               <div><Label>Emne</Label><Input value={form.subject} onChange={e => setForm(f => ({ ...f, subject: e.target.value }))} /></div>
-              <div><Label>Mottakere (én e-post per linje)</Label><Textarea rows={4} value={form.emails} onChange={e => setForm(f => ({ ...f, emails: e.target.value }))} placeholder={"ola@eksempel.no\nkari@firma.no"} /><p className="text-xs text-muted-foreground mt-1">{parseEmails(form.emails).length} mottakere</p></div>
+              <div className="space-y-2">
+                <Label>Mottakere (én e-post per linje)</Label>
+                <Textarea rows={4} value={form.emails} onChange={e => setForm(f => ({ ...f, emails: e.target.value }))} placeholder={"ola@eksempel.no\nkari@firma.no"} />
+                <p className="text-xs text-muted-foreground">{parseEmails(form.emails).length} mottakere</p>
+                <label className="flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-border/60 bg-muted/30 p-4 cursor-pointer hover:bg-muted/50 transition-colors">
+                  <Upload size={16} className="text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Last opp CSV / TXT</span>
+                  <input type="file" accept=".csv,.txt" className="hidden" onChange={handleFileUpload} />
+                </label>
+              </div>
               <div><Label>Melding</Label><Textarea rows={4} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} /></div>
               <div><Label>Planlegg sending (valgfri)</Label><Input type="datetime-local" value={form.scheduledAt} onChange={e => setForm(f => ({ ...f, scheduledAt: e.target.value }))} /></div>
               <Button onClick={handleCreate} className="w-full">Opprett kampanje</Button>
