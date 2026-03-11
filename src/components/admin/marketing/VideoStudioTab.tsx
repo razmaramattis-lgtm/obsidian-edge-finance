@@ -53,7 +53,8 @@ interface VideoRequest {
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Venter på behandling", color: "bg-amber-500/10 text-amber-600", icon: Clock },
-  approved: { label: "Godkjent – genereres", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
+  approved: { label: "Godkjent", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
+  processing: { label: "Genererer...", color: "bg-blue-500/10 text-blue-600", icon: RefreshCw },
   completed: { label: "Ferdig", color: "bg-green-500/10 text-green-600", icon: Film },
   uploaded: { label: "Opplastet", color: "bg-emerald-500/10 text-emerald-600", icon: Upload },
   rejected: { label: "Avslått", color: "bg-red-500/10 text-red-600", icon: XCircle },
