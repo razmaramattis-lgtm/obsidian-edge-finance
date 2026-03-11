@@ -83,11 +83,12 @@ const SmsSendPanel = () => {
 
   const openPhoneLinkSms = (phoneNumber: string, msg: string) => {
     const encoded = encodeURIComponent(msg);
-    window.open(`sms:${phoneNumber}?body=${encoded}`, "_blank");
+    const separator = /iphone|ipad|ipod/i.test(navigator.userAgent) ? "&" : "?";
+    window.location.href = `sms:${phoneNumber}${separator}body=${encoded}`;
   };
 
   const openPhoneLinkCall = (phoneNumber: string) => {
-    window.open(`tel:${phoneNumber}`, "_blank");
+    window.location.href = `tel:${phoneNumber}`;
   };
 
   const handleSend = async () => {
