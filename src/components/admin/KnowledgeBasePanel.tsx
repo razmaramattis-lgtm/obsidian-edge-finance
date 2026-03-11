@@ -425,11 +425,12 @@ const KnowledgeBasePanel = () => {
     setDocFilter("");
     setDocListLoading(true);
     try {
+      const headers = await getAuthHeaders();
       const resp = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          headers,
           body: JSON.stringify({ action: "list_documents" }),
         }
       );
