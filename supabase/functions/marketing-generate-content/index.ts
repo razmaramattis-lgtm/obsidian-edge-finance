@@ -189,6 +189,27 @@ Returner KUN gyldig JSON.`,
       }
     }
 
+    // Check if platform integration is active for auto-scheduling
+    let finalStatus = "pending_approval";
+    let finalScheduledAt = null;
+
+    if (auto_schedule && scheduled_at) {
+      const { data: integration } = await supabase
+        .from("marketing_integrations")
+        .select("connected")
+        .eq("platform", platform)
+        .eq("connected", true)
+        .maybeSingle();
+
+      if (integration) {
+        finalStatus = "scheduled";
+        finalScheduledAt = scheduled_at;
+      }
+    } else if (scheduled_at && !auto_schedule) {
+      // Manual schedule request (from approval queue)
+      finalScheduledAt = scheduled_at;
+    }
+
     const { data: post, error: insertError } = await supabase
       .from("marketing_posts")
       .insert({
@@ -196,7 +217,8 @@ Returner KUN gyldig JSON.`,
         platform,
         content: generated.content,
         hashtags: generated.hashtags || [],
-        status: "pending_approval",
+        status: finalStatus,
+        scheduled_at: finalScheduledAt,
         ai_generated: true,
         image_url: imageUrl,
         image_prompt: generated.image_prompt,
