@@ -421,8 +421,9 @@ const Gateway = () => {
       <div className="p-4 mt-4 text-center space-y-3">
         <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-xl p-3 text-left">
           <p className="text-[10px] text-zinc-500 leading-relaxed">
-            💡 <strong className="text-zinc-400">Tips:</strong> SMS-intensjonen åpner meldingsappen med forhåndsutfylt innhold. 
-            På de fleste Android-enheter vil meldingen fylles inn automatisk. Aktiver «Auto-bekreft» i innstillinger for å automatisk markere meldinger som sendt.
+            💡 <strong className="text-zinc-400">Tips:</strong> {isNativePlatform() 
+              ? "Appen kjører i native-modus og sender SMS direkte via Android SmsManager — ingen brukerinteraksjon nødvendig."
+              : "SMS-intensjonen åpner meldingsappen med forhåndsutfylt innhold. For automatisk sending uten brukerinteraksjon, installer appen via Android Studio."}
           </p>
         </div>
         <button onClick={handleDisconnect} className="text-[10px] text-zinc-600 hover:text-zinc-400 underline">
