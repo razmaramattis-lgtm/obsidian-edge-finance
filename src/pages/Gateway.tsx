@@ -34,6 +34,7 @@ const Gateway = () => {
   const pendingRef = useRef<PendingMessage[]>([]);
 
   useEffect(() => { activeRef.current = active; }, [active]);
+  useEffect(() => { pendingRef.current = pending; }, [pending]);
 
   const addLog = useCallback((msg: string) => {
     setLog(prev => [`${new Date().toLocaleTimeString("nb-NO")} — ${msg}`, ...prev.slice(0, 99)]);
