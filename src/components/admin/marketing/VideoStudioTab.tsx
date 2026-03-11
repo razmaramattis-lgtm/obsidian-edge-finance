@@ -94,6 +94,7 @@ const VideoStudioTab = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const videoElapsed = useElapsedTimer(!!generatingId);
   const [form, setForm] = useState({
     title: "",
     platform: "linkedin",
