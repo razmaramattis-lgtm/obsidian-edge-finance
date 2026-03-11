@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Search, PenTool, CheckSquare, Calendar, BarChart3,
-  Megaphone, Brain, Smartphone, Mail,
+  Megaphone, Brain, Smartphone, Mail, Plug,
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MarketingDashboardTab from "./marketing/MarketingDashboardTab";
@@ -12,9 +12,11 @@ import SomeSchedulerTab from "./marketing/SomeSchedulerTab";
 import PerformanceTrackerTab from "./marketing/PerformanceTrackerTab";
 import AdManagerTab from "./marketing/AdManagerTab";
 import AiMarketingBrainTab from "./marketing/AiMarketingBrainTab";
+import IntegrationsTab from "./marketing/IntegrationsTab";
 
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "integrations", label: "Integrasjoner", icon: Plug },
   { id: "analyzer", label: "Content Analyzer", icon: Search },
   { id: "generator", label: "Post Generator", icon: PenTool },
   { id: "approval", label: "Godkjenning", icon: CheckSquare },
@@ -32,6 +34,7 @@ const MarketingPanel = () => {
   const renderTab = () => {
     switch (activeTab) {
       case "dashboard": return <MarketingDashboardTab onNavigate={(t) => setActiveTab(t as TabId)} />;
+      case "integrations": return <IntegrationsTab />;
       case "analyzer": return <ContentAnalyzerTab />;
       case "generator": return <PostGeneratorTab />;
       case "approval": return <ApprovalQueueTab />;
