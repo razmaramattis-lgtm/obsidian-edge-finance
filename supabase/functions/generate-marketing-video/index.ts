@@ -19,7 +19,13 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Generate thumbnail image using Lovable AI image model
+    // Mark as processing
+    await supabase
+      .from("marketing_video_requests")
+      .update({ status: "processing", admin_note: "Video genereres..." })
+      .eq("id", request_id);
+
+    // Generate a professional thumbnail/cover image using AI
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -32,114 +38,95 @@ Deno.serve(async (req) => {
           {
             role: "user",
             content: `Generate a professional, cinematic thumbnail image for a marketing video with this concept: ${prompt}. 
-The image should be photorealistic, high quality, suitable as a video thumbnail. Aspect ratio: ${aspect_ratio}. 
+The image should be photorealistic, high quality, suitable as a video cover image. Aspect ratio: ${aspect_ratio}. 
 Style: Premium corporate, dark teal and gold color palette, cinematic lighting. Only output the image, no text.`,
           },
         ],
       }),
     });
 
-    if (!aiRes.ok) {
+    let thumbnailUrl: string | null = null;
+
+    if (aiRes.ok) {
+      const aiData = await aiRes.json();
+      const message = aiData.choices?.[0]?.message;
+
+      // Extract image from response
+      if (message?.images && Array.isArray(message.images) && message.images.length > 0) {
+        for (const img of message.images) {
+          const imgUrl = img?.image_url?.url || img?.url;
+          if (imgUrl) {
+            if (imgUrl.startsWith("data:")) {
+              const commaIdx = imgUrl.indexOf(",");
+              const headerPart = imgUrl.substring(0, commaIdx);
+              const base64Part = imgUrl.substring(commaIdx + 1);
+              const mimeMatch = headerPart.match(/data:(image\/\w+)/);
+              const mime = mimeMatch ? mimeMatch[1] : "image/png";
+              thumbnailUrl = await uploadBase64Image(supabase, request_id, base64Part, mime);
+              if (thumbnailUrl) break;
+            } else if (imgUrl.startsWith("http")) {
+              thumbnailUrl = imgUrl;
+              break;
+            }
+          } else if (img?.b64_json || img?.data) {
+            const b64 = img.b64_json || img.data;
+            const mime = img.content_type || img.mime_type || "image/png";
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, b64, mime);
+            if (thumbnailUrl) break;
+          }
+        }
+      }
+
+      // Fallback: content array
+      if (!thumbnailUrl && Array.isArray(message?.content)) {
+        for (const part of message.content) {
+          if (part?.inline_data?.mime_type?.startsWith("image/")) {
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
+            if (thumbnailUrl) break;
+          }
+          if (part?.type === "image_url" && part?.image_url?.url) {
+            const dataMatch = part.image_url.url.match(/^data:(image\/\w+);base64,(.+)$/s);
+            if (dataMatch) {
+              thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
+              if (thumbnailUrl) break;
+            }
+          }
+        }
+      }
+
+      // Fallback: content string
+      if (!thumbnailUrl && typeof message?.content === "string") {
+        const dataUriMatch = message.content.match(/data:(image\/\w+);base64,([A-Za-z0-9+/=]+)/);
+        if (dataUriMatch) {
+          thumbnailUrl = await uploadBase64Image(supabase, request_id, dataUriMatch[2], dataUriMatch[1]);
+        }
+      }
+    } else {
       const errText = await aiRes.text();
-      console.error("AI response error:", aiRes.status, errText);
+      console.error("AI thumbnail error:", aiRes.status, errText);
       if (aiRes.status === 429) {
+        await supabase.from("marketing_video_requests").update({ status: "approved", admin_note: "Rate limit – prøv igjen senere." }).eq("id", request_id);
         return new Response(JSON.stringify({ error: "For mange forespørsler, prøv igjen senere." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiRes.status === 402) {
+        await supabase.from("marketing_video_requests").update({ status: "approved", admin_note: "Kreditter oppbrukt." }).eq("id", request_id);
         return new Response(JSON.stringify({ error: "Kreditter oppbrukt." }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error("AI-feil: " + aiRes.status + " " + errText);
     }
 
-    const aiData = await aiRes.json();
-    const message = aiData.choices?.[0]?.message;
-    
-    console.log("Message keys:", message ? JSON.stringify(Object.keys(message)) : "null");
-    console.log("Images field:", JSON.stringify(message?.images)?.substring(0, 500));
-    console.log("Content value:", JSON.stringify(message?.content)?.substring(0, 300));
-
-    let thumbnailUrl: string | null = null;
-
-    // Primary: extract from 'images' field on the message
-    if (message?.images && Array.isArray(message.images) && message.images.length > 0) {
-      for (const img of message.images) {
-        // Format: {type: "image_url", image_url: {url: "data:image/png;base64,..."}}
-        const imgUrl = img?.image_url?.url || img?.url;
-        if (imgUrl) {
-          if (imgUrl.startsWith("data:")) {
-            // Extract base64 from data URI - use indexOf instead of regex for large strings
-            const commaIdx = imgUrl.indexOf(",");
-            const headerPart = imgUrl.substring(0, commaIdx); // "data:image/png;base64"
-            const base64Part = imgUrl.substring(commaIdx + 1);
-            const mimeMatch = headerPart.match(/data:(image\/\w+)/);
-            const mime = mimeMatch ? mimeMatch[1] : "image/png";
-            console.log(`Extracting data URI: mime=${mime}, base64 length=${base64Part.length}`);
-            thumbnailUrl = await uploadBase64Image(supabase, request_id, base64Part, mime);
-            if (thumbnailUrl) break;
-          } else if (imgUrl.startsWith("http")) {
-            thumbnailUrl = imgUrl;
-            break;
-          }
-        } else if (img?.b64_json || img?.data) {
-          const b64 = img.b64_json || img.data;
-          const mime = img.content_type || img.mime_type || "image/png";
-          thumbnailUrl = await uploadBase64Image(supabase, request_id, b64, mime);
-          if (thumbnailUrl) break;
-        } else if (typeof img === "string") {
-          if (img.startsWith("http")) {
-            thumbnailUrl = img;
-            break;
-          } else if (img.startsWith("data:")) {
-            const commaIdx = img.indexOf(",");
-            const base64Part = img.substring(commaIdx + 1);
-            const mimeMatch = img.match(/data:(image\/\w+)/);
-            thumbnailUrl = await uploadBase64Image(supabase, request_id, base64Part, mimeMatch ? mimeMatch[1] : "image/png");
-            if (thumbnailUrl) break;
-          }
-        }
-      }
-    }
-
-    // Fallback: content array parts
-    if (!thumbnailUrl && Array.isArray(message?.content)) {
-      for (const part of message.content) {
-        if (part?.inline_data?.mime_type?.startsWith("image/")) {
-          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
-          if (thumbnailUrl) break;
-        }
-        if (part?.type === "image_url" && part?.image_url?.url) {
-          const dataMatch = part.image_url.url.match(/^data:(image\/\w+);base64,(.+)$/s);
-          if (dataMatch) {
-            thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
-            if (thumbnailUrl) break;
-          }
-        }
-      }
-    }
-
-    // Fallback: content string with data URI
-    if (!thumbnailUrl && typeof message?.content === "string") {
-      const dataUriMatch = message.content.match(/data:(image\/\w+);base64,([A-Za-z0-9+/=]+)/);
-      if (dataUriMatch) {
-        thumbnailUrl = await uploadBase64Image(supabase, request_id, dataUriMatch[2], dataUriMatch[1]);
-      }
-    }
-
-    console.log("Final thumbnail URL:", thumbnailUrl);
-
-    // Update the request with thumbnail
+    // Update with thumbnail and mark as ready for video upload
     await supabase
       .from("marketing_video_requests")
       .update({
         status: "completed",
         thumbnail_url: thumbnailUrl,
         admin_note: thumbnailUrl
-          ? "AI-generert thumbnail klar."
-          : "Thumbnail kunne ikke genereres. Prøv igjen eller last opp egen video.",
+          ? "Coverbilde generert. Last opp video for å fullføre."
+          : "Kunne ikke generere coverbilde. Last opp video manuelt.",
       })
       .eq("id", request_id);
 
@@ -166,8 +153,6 @@ async function uploadBase64Image(
     const ext = mimeType.includes("png") ? "png" : "jpg";
     const fileName = `video-thumb-${requestId}-${Date.now()}.${ext}`;
     const bytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
-    
-    console.log(`Uploading image: ${fileName}, size: ${bytes.length} bytes, mime: ${mimeType}`);
 
     const { error: uploadError } = await supabase.storage
       .from("workspace-uploads")
@@ -185,7 +170,6 @@ async function uploadBase64Image(
       .from("workspace-uploads")
       .getPublicUrl(`marketing/video-thumbnails/${fileName}`);
 
-    console.log("Uploaded successfully, URL:", urlData.publicUrl);
     return urlData.publicUrl;
   } catch (e) {
     console.error("Upload failed:", e);
