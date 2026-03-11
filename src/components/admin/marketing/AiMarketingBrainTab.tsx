@@ -97,6 +97,7 @@ const AiMarketingBrainTab = () => {
 
   const handleGenerateStrategy = async () => {
     setGenerating(true);
+    toast.info("🧠 Strategigenerering startet i bakgrunnen...", { duration: 3000 });
     try {
       const platforms = Object.entries(planForm)
         .filter(([k, v]) => v === true && k !== "duration")
@@ -112,7 +113,7 @@ const AiMarketingBrainTab = () => {
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("Strategi generert!");
+      toast.success("✅ Strategi generert!", { duration: 5000 });
       setShowPlanner(false);
       fetchData();
     } catch (e: any) {
