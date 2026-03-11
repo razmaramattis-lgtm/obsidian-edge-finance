@@ -177,16 +177,19 @@ const Gateway = () => {
     if (!active || pending.length === 0 || processingRef.current) return;
     const processQueue = async () => {
       processingRef.current = true;
-      while (activeRef.current && pending.length > 0) {
-        const msg = pending[0];
+      while (activeRef.current) {
+        const currentPending = pendingRef.current;
+        if (currentPending.length === 0) break;
+        const msg = currentPending[0];
         if (!msg) break;
         await sendSms(msg);
+        // Wait a bit for state to update
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       processingRef.current = false;
     };
     processQueue();
-  }, [active, pending, sendSms]);
+  }, [active, pending.length, sendSms]);
 
   const handleDeactivate = () => { setActive(false); processingRef.current = false; addLog("⏸ Gateway deaktivert"); };
   const handleActivate = () => { setActive(true); addLog("▶ Gateway aktivert — sender automatisk"); };
