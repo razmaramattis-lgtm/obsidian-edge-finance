@@ -569,6 +569,10 @@ const VideoStudioTab = () => {
       {/* Video/Media Preview Dialog */}
       <Dialog open={!!previewRequest} onOpenChange={(o) => !o && setPreviewRequest(null)}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          <DialogTitle className="sr-only">{previewRequest?.title || "Forhåndsvisning av video"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Forhåndsvisning av generert medieinnhold i Video Studio.
+          </DialogDescription>
           {previewRequest && (
             <div className="flex flex-col">
               {/* Media player area */}
