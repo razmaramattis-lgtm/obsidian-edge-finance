@@ -268,7 +268,7 @@ const SmsBulkPanel = () => {
                   {c.name}
                   {usePhoneLink && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); window.open(`tel:${c.phone}`, "_blank"); }}
+                      onClick={(e) => { e.stopPropagation(); window.location.href = `tel:${c.phone}`; }}
                       className="ml-0.5 text-primary hover:text-primary/80"
                       title="Ring"
                     >
