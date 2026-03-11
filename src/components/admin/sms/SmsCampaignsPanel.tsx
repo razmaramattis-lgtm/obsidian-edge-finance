@@ -96,7 +96,7 @@ const SmsCampaignsPanel = () => {
     }
 
     toast.success("Kampanje opprettet");
-    setForm({ name: "", message: "", groupId: "", scheduledAt: "" });
+    setForm({ name: "", message: "", groupId: "", scheduledAt: "", phones: "" });
     setOpen(false);
     fetchAll();
   };
