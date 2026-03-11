@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Send, Users, Search, X, UserPlus } from "lucide-react";
+import { Send, Users, Search, X, UserPlus, Phone, Monitor, MessageSquare } from "lucide-react";
 
 const SmsSendPanel = () => {
   const [phone, setPhone] = useState("");
@@ -19,6 +21,7 @@ const SmsSendPanel = () => {
   const [templates, setTemplates] = useState<any[]>([]);
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [usePhoneLink, setUsePhoneLink] = useState(false);
 
   const [contacts, setContacts] = useState<any[]>([]);
   const [contactSearch, setContactSearch] = useState("");
@@ -33,6 +36,10 @@ const SmsSendPanel = () => {
       setTemplates(tRes.data || []);
       setContacts(cRes.data || []);
     });
+
+    // Check saved preference
+    const saved = localStorage.getItem("sms_use_phone_link");
+    if (saved === "true") setUsePhoneLink(true);
   }, []);
 
   const handleTemplateSelect = (id: string) => {
@@ -69,10 +76,50 @@ const SmsSendPanel = () => {
     return [...new Set([...fromContacts, ...manual])];
   }, [selectedContacts, phone]);
 
+  const togglePhoneLink = (checked: boolean) => {
+    setUsePhoneLink(checked);
+    localStorage.setItem("sms_use_phone_link", String(checked));
+  };
+
+  const openPhoneLinkSms = (phoneNumber: string, msg: string) => {
+    const encoded = encodeURIComponent(msg);
+    window.open(`sms:${phoneNumber}?body=${encoded}`, "_blank");
+  };
+
+  const openPhoneLinkCall = (phoneNumber: string) => {
+    window.open(`tel:${phoneNumber}`, "_blank");
+  };
+
   const handleSend = async () => {
     if (!message.trim()) { toast.error("Melding er påkrevd"); return; }
     if (allPhones.length === 0) { toast.error("Ingen mottakere valgt"); return; }
 
+    if (usePhoneLink) {
+      // Phone Link mode: open sms: URI for each recipient
+      setSending(true);
+      setProgress(0);
+      for (let i = 0; i < allPhones.length; i++) {
+        openPhoneLinkSms(allPhones[i], message.trim());
+        setProgress(Math.round(((i + 1) / allPhones.length) * 100));
+        // Small delay between opens to avoid browser blocking
+        if (allPhones.length > 1) {
+          await new Promise(r => setTimeout(r, 800));
+        }
+      }
+
+      // Log to history
+      const rows = allPhones.map(p => ({ phone: p, message: message.trim(), status: "sent" as const }));
+      await supabase.from("sms_messages").insert(rows);
+
+      toast.success(`${allPhones.length} SMS åpnet i Telefonkobling`);
+      setSending(false);
+      setPhone(""); setMessage(""); setTemplateId("");
+      clearSelection();
+      setProgress(0);
+      return;
+    }
+
+    // Gateway mode (existing behavior)
     setSending(true);
     setProgress(0);
 
@@ -85,7 +132,6 @@ const SmsSendPanel = () => {
       setProgress(Math.round((done / rows.length) * 100));
     }
 
-    // Check device gateway status
     try {
       const { data } = await supabase.functions.invoke("send-sms");
       if (data?.online_devices > 0) {
@@ -105,14 +151,46 @@ const SmsSendPanel = () => {
 
   return (
     <div className="max-w-lg space-y-5">
+      {/* Send mode toggle */}
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Monitor size={16} className="text-primary" />
+            <div>
+              <p className="text-sm font-medium">Windows Telefonkobling</p>
+              <p className="text-[10px] text-muted-foreground">
+                {usePhoneLink
+                  ? "SMS sendes via Telefonkobling på din PC"
+                  : "SMS sendes via Android gateway-enhet"}
+              </p>
+            </div>
+          </div>
+          <Switch checked={usePhoneLink} onCheckedChange={togglePhoneLink} />
+        </div>
+      </Card>
+
       {/* Recipients */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Mottakere</Label>
-          <Button type="button" variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-primary" onClick={() => setShowContacts(!showContacts)}>
-            <UserPlus size={13} />
-            {showContacts ? "Skjul kontakter" : "Velg kontakter"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {usePhoneLink && allPhones.length === 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 gap-1.5 text-xs"
+                onClick={() => allPhones[0] && openPhoneLinkCall(allPhones[0])}
+              >
+                <Phone size={13} />
+                Ring
+              </Button>
+            )}
+            <Button type="button" variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-primary" onClick={() => setShowContacts(!showContacts)}>
+              <UserPlus size={13} />
+              {showContacts ? "Skjul kontakter" : "Velg kontakter"}
+            </Button>
+          </div>
         </div>
 
         {/* Selected chips */}
@@ -120,7 +198,17 @@ const SmsSendPanel = () => {
           <div className="flex flex-wrap gap-1.5">
             {selectedContacts.slice(0, 15).map(c => (
               <Badge key={c.id} variant="outline" className="gap-1 text-xs pr-1 cursor-pointer hover:bg-destructive/10" onClick={() => toggleContact(c.id)}>
-                {c.name} <X size={10} />
+                {c.name}
+                {usePhoneLink && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); openPhoneLinkCall(c.phone); }}
+                    className="ml-1 text-primary hover:text-primary/80"
+                    title="Ring"
+                  >
+                    <Phone size={9} />
+                  </button>
+                )}
+                <X size={10} />
               </Badge>
             ))}
             {selectedContacts.length > 15 && (
@@ -152,6 +240,24 @@ const SmsSendPanel = () => {
                         <p className="text-sm font-medium truncate">{c.name}</p>
                         <p className="text-xs font-mono text-muted-foreground">{c.phone}</p>
                       </div>
+                      {usePhoneLink && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); openPhoneLinkCall(c.phone); }}
+                            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-primary"
+                            title="Ring"
+                          >
+                            <Phone size={12} />
+                          </button>
+                          <button
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); openPhoneLinkSms(c.phone, ""); }}
+                            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-primary"
+                            title="SMS"
+                          >
+                            <MessageSquare size={12} />
+                          </button>
+                        </div>
+                      )}
                       {c.tags?.length > 0 && (
                         <div className="hidden sm:flex gap-1">
                           {c.tags.slice(0, 2).map((t: string) => (
@@ -168,8 +274,18 @@ const SmsSendPanel = () => {
         )}
 
         {/* Manual phone */}
-        <Input placeholder="Eller skriv nummer manuelt: +47 XXX XX XXX" value={phone} onChange={e => setPhone(e.target.value)} className="text-sm" />
-        <p className="text-xs text-muted-foreground">{allPhones.length} mottaker{allPhones.length !== 1 ? "e" : ""} totalt</p>
+        <div className="flex gap-2">
+          <Input placeholder="Eller skriv nummer manuelt: +47 XXX XX XXX" value={phone} onChange={e => setPhone(e.target.value)} className="text-sm flex-1" />
+          {usePhoneLink && phone.trim() && (
+            <Button variant="outline" size="icon" className="shrink-0" onClick={() => openPhoneLinkCall(phone.trim())} title="Ring nummeret">
+              <Phone size={14} />
+            </Button>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {allPhones.length} mottaker{allPhones.length !== 1 ? "e" : ""} totalt
+          {usePhoneLink && " · Via Telefonkobling"}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -192,8 +308,10 @@ const SmsSendPanel = () => {
       {sending && <Progress value={progress} className="h-2" />}
 
       <Button onClick={handleSend} disabled={sending || allPhones.length === 0} className="gap-2">
-        <Send size={14} />
-        {sending ? `Legger i kø (${progress}%)...` : `Send til ${allPhones.length} mottaker${allPhones.length !== 1 ? "e" : ""}`}
+        {usePhoneLink ? <Monitor size={14} /> : <Send size={14} />}
+        {sending
+          ? `${usePhoneLink ? "Åpner" : "Legger i kø"} (${progress}%)...`
+          : `${usePhoneLink ? "Åpne i Telefonkobling" : "Send"} til ${allPhones.length} mottaker${allPhones.length !== 1 ? "e" : ""}`}
       </Button>
     </div>
   );
