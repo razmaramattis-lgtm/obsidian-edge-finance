@@ -7,8 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy } from "lucide-react";
+import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy, Server } from "lucide-react";
 import { timeAgo } from "@/components/workspace/helpers";
+
+const GATEWAY_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/sms-device-api`;
 
 const SmsDevicesPanel = () => {
   const [devices, setDevices] = useState<any[]>([]);
