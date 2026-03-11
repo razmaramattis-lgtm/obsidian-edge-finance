@@ -59,6 +59,8 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting. 
     const message = aiData.choices?.[0]?.message;
     
     console.log("Message keys:", message ? JSON.stringify(Object.keys(message)) : "null");
+    console.log("Images field:", JSON.stringify(message?.images)?.substring(0, 500));
+    console.log("Content value:", JSON.stringify(message?.content)?.substring(0, 300));
 
     let thumbnailUrl: string | null = null;
 
