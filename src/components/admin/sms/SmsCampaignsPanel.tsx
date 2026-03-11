@@ -63,14 +63,15 @@ const SmsCampaignsPanel = () => {
       return;
     }
 
-    // Get contacts from group
-    let phones: string[] = [];
+    // Get contacts from group + manual/CSV phones
+    let phones: string[] = parsePhones(form.phones);
     if (form.groupId && form.groupId !== "none") {
       const { data } = await supabase
         .from("sms_contact_group_members")
         .select("contact_id, sms_contacts(phone)")
         .eq("group_id", form.groupId);
-      phones = data?.map((d: any) => d.sms_contacts?.phone).filter(Boolean) || [];
+      const groupPhones = data?.map((d: any) => d.sms_contacts?.phone).filter(Boolean) || [];
+      phones = [...new Set([...phones, ...groupPhones])];
     }
 
     const { data: campaign, error } = await supabase.from("sms_campaigns").insert({
