@@ -148,6 +148,8 @@ const SmsDevicesPanel = () => {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
+                  <Button size="icon" variant="ghost" onClick={() => setQrDevice(d)} title="QR-kode oppsett"><QrCode size={14} /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => copySetupLink(d)} title="Kopier oppsettslenke"><ExternalLink size={14} /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleRegenKey(d.id)} title="Regenerer nøkkel"><RefreshCw size={14} /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleDelete(d.id)} className="text-destructive"><Trash2 size={14} /></Button>
                 </div>
@@ -156,6 +158,31 @@ const SmsDevicesPanel = () => {
           ))}
         </TableBody>
       </Table>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!qrDevice} onOpenChange={(o) => !o && setQrDevice(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Koble {qrDevice?.device_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-center">
+            <p className="text-xs text-muted-foreground">Skann QR-koden med telefonen for å sette opp gateway-appen automatisk.</p>
+            {qrDevice && (
+              <img
+                src={getQrUrl(qrDevice)}
+                alt="QR-kode for oppsett"
+                className="w-48 h-48 mx-auto rounded-lg border border-border/20"
+              />
+            )}
+            <div className="space-y-2">
+              <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => qrDevice && copySetupLink(qrDevice)}>
+                <Copy size={12} /> Kopier oppsettslenke
+              </Button>
+              <p className="text-[10px] text-muted-foreground">Eller send lenken direkte til telefonen via SMS/chat</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
