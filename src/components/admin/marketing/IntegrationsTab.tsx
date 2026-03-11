@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
@@ -13,12 +12,19 @@ import {
   Video, Image, FileText, BarChart3, ExternalLink, Settings2, Key,
 } from "lucide-react";
 
+import linkedinLogo from "@/assets/platforms/linkedin.png";
+import facebookLogo from "@/assets/platforms/facebook.png";
+import instagramLogo from "@/assets/platforms/instagram.png";
+import googleAdsLogo from "@/assets/platforms/google-ads.png";
+import metaAdsLogo from "@/assets/platforms/meta-ads.png";
+import tiktokLogo from "@/assets/platforms/tiktok.png";
+
 /* ─── platform registry ─── */
 interface PlatformDef {
   id: string;
   label: string;
-  icon: string;
-  color: string;
+  logo: string;
+  brandColor: string;
   description: string;
   scopes: string[];
   supportsVideo: boolean;
@@ -29,8 +35,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    icon: "🔗",
-    color: "bg-[#0A66C2]/10 border-[#0A66C2]/30 text-[#0A66C2]",
+    logo: linkedinLogo,
+    brandColor: "#0A66C2",
     description: "Del innlegg, artikler og video. Hent engasjement og følgerdata.",
     scopes: ["r_liteprofile", "w_member_social", "r_organization_social", "w_organization_social", "rw_organization_admin"],
     supportsVideo: true,
@@ -42,8 +48,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "facebook",
     label: "Facebook",
-    icon: "📘",
-    color: "bg-[#1877F2]/10 border-[#1877F2]/30 text-[#1877F2]",
+    logo: facebookLogo,
+    brandColor: "#1877F2",
     description: "Publiser innlegg, stories og video til Pages. Hent innsikt og kommentarer.",
     scopes: ["pages_manage_posts", "pages_read_engagement", "pages_show_list", "publish_video"],
     supportsVideo: true,
@@ -55,8 +61,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "instagram",
     label: "Instagram",
-    icon: "📸",
-    color: "bg-[#E4405F]/10 border-[#E4405F]/30 text-[#E4405F]",
+    logo: instagramLogo,
+    brandColor: "#E4405F",
     description: "Del bilder, Reels og Stories. Hent likes, kommentarer og reach.",
     scopes: ["instagram_basic", "instagram_content_publish", "instagram_manage_insights"],
     supportsVideo: true,
@@ -68,8 +74,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "google_ads",
     label: "Google Ads",
-    icon: "📊",
-    color: "bg-[#4285F4]/10 border-[#4285F4]/30 text-[#4285F4]",
+    logo: googleAdsLogo,
+    brandColor: "#4285F4",
     description: "Opprett og optimaliser kampanjer. Hent CTR, CPC og konverteringsdata.",
     scopes: ["adwords"],
     supportsVideo: true,
@@ -84,8 +90,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "meta_ads",
     label: "Meta Ads",
-    icon: "🎯",
-    color: "bg-[#0668E1]/10 border-[#0668E1]/30 text-[#0668E1]",
+    logo: metaAdsLogo,
+    brandColor: "#0668E1",
     description: "Administrer Facebook & Instagram-annonser. Hent ROAS, CPM og konverteringer.",
     scopes: ["ads_management", "ads_read", "business_management"],
     supportsVideo: true,
@@ -97,8 +103,8 @@ const PLATFORMS: PlatformDef[] = [
   {
     id: "tiktok",
     label: "TikTok",
-    icon: "🎵",
-    color: "bg-[#010101]/10 border-[#010101]/30 text-foreground",
+    logo: tiktokLogo,
+    brandColor: "#010101",
     description: "Publiser video, hent visninger, likes og følgerstatistikk.",
     scopes: ["video.upload", "video.list", "user.info.basic"],
     supportsVideo: true,
@@ -153,10 +159,8 @@ const IntegrationsTab = () => {
       toast.error(`Fyll ut: ${missing.map((f) => f.label).join(", ")}`);
       return;
     }
-
     setSaving(platform.id);
     const existing = getIntegration(platform.id);
-
     const payload = {
       platform: platform.id,
       platform_label: platform.label,
@@ -171,53 +175,27 @@ const IntegrationsTab = () => {
       connected_at: new Date().toISOString(),
       disconnected_at: null as string | null,
     };
-
     let error;
     if (existing) {
-      ({ error } = await supabase
-        .from("marketing_integrations")
-        .update(payload)
-        .eq("id", existing.id));
+      ({ error } = await supabase.from("marketing_integrations").update(payload).eq("id", existing.id));
     } else {
-      ({ error } = await supabase
-        .from("marketing_integrations")
-        .insert(payload));
+      ({ error } = await supabase.from("marketing_integrations").insert(payload));
     }
-
-    if (error) {
-      toast.error("Kunne ikke koble til: " + error.message);
-    } else {
-      toast.success(`${platform.label} er nå tilkoblet!`);
-      setExpandedPlatform(null);
-      await fetchIntegrations();
-    }
+    if (error) toast.error("Kunne ikke koble til: " + error.message);
+    else { toast.success(`${platform.label} er nå tilkoblet!`); setExpandedPlatform(null); await fetchIntegrations(); }
     setSaving(null);
   };
 
   const handleDisconnect = async (platform: PlatformDef) => {
     const existing = getIntegration(platform.id);
     if (!existing) return;
-
     setSaving(platform.id);
-    const { error } = await supabase
-      .from("marketing_integrations")
-      .update({
-        connected: false,
-        access_token: null,
-        refresh_token: null,
-        token_expires_at: null,
-        disconnected_at: new Date().toISOString(),
-        metadata: {},
-      })
-      .eq("id", existing.id);
-
-    if (error) {
-      toast.error("Feil ved frakobling: " + error.message);
-    } else {
-      toast.success(`${platform.label} er frakoblet.`);
-      setFieldValues((prev) => ({ ...prev, [platform.id]: {} }));
-      await fetchIntegrations();
-    }
+    const { error } = await supabase.from("marketing_integrations").update({
+      connected: false, access_token: null, refresh_token: null, token_expires_at: null,
+      disconnected_at: new Date().toISOString(), metadata: {},
+    }).eq("id", existing.id);
+    if (error) toast.error("Feil ved frakobling: " + error.message);
+    else { toast.success(`${platform.label} er frakoblet.`); setFieldValues((prev) => ({ ...prev, [platform.id]: {} })); await fetchIntegrations(); }
     setSaving(null);
   };
 
@@ -263,14 +241,16 @@ const IntegrationsTab = () => {
             const isExpanded = expandedPlatform === platform.id;
 
             return (
-              <Card key={platform.id} className="overflow-hidden">
+              <Card key={platform.id} className={`overflow-hidden transition-all ${isExpanded ? "ring-1 ring-primary/20" : ""}`}>
                 {/* header row */}
                 <div
                   className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors"
                   onClick={() => setExpandedPlatform(isExpanded ? null : platform.id)}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{platform.icon}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-muted/50 shrink-0">
+                      <img src={platform.logo} alt={platform.label} className="w-8 h-8 object-contain" />
+                    </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-heading text-base">{platform.label}</h3>
@@ -279,14 +259,10 @@ const IntegrationsTab = () => {
                             <CheckCircle2 size={10} className="mr-1" /> Tilkoblet
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                            Ikke tilkoblet
-                          </Badge>
+                          <Badge variant="outline" className="text-[10px] text-muted-foreground">Ikke tilkoblet</Badge>
                         )}
                         {platform.supportsVideo && (
-                          <Badge variant="secondary" className="text-[10px]">
-                            <Video size={10} className="mr-1" /> Video
-                          </Badge>
+                          <Badge variant="secondary" className="text-[10px]"><Video size={10} className="mr-1" /> Video</Badge>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">{platform.description}</p>
@@ -308,27 +284,19 @@ const IntegrationsTab = () => {
                     <Tabs defaultValue={isConnected ? "dashboard" : "credentials"}>
                       <TabsList className="mb-3">
                         {isConnected && <TabsTrigger value="dashboard">Dashboard</TabsTrigger>}
-                        <TabsTrigger value="credentials">
-                          <Key size={12} className="mr-1" /> API-nøkler
-                        </TabsTrigger>
-                        <TabsTrigger value="permissions">
-                          <Shield size={12} className="mr-1" /> Tilganger
-                        </TabsTrigger>
+                        <TabsTrigger value="credentials"><Key size={12} className="mr-1" /> API-nøkler</TabsTrigger>
+                        <TabsTrigger value="permissions"><Shield size={12} className="mr-1" /> Tilganger</TabsTrigger>
                         {platform.supportsVideo && (
-                          <TabsTrigger value="media">
-                            <Video size={12} className="mr-1" /> Media
-                          </TabsTrigger>
+                          <TabsTrigger value="media"><Video size={12} className="mr-1" /> Media</TabsTrigger>
                         )}
                       </TabsList>
 
-                      {/* Dashboard */}
                       {isConnected && (
                         <TabsContent value="dashboard">
                           <PlatformDashboard platform={platform} integration={integration!} />
                         </TabsContent>
                       )}
 
-                      {/* Credentials */}
                       <TabsContent value="credentials">
                         <div className="space-y-3 max-w-lg">
                           {platform.fields.map((field) => {
@@ -336,7 +304,6 @@ const IntegrationsTab = () => {
                             const currentVal =
                               fieldValues[platform.id]?.[field.key] ??
                               (isConnected ? (integration?.metadata as Record<string, string>)?.[field.key] ?? "" : "");
-
                             return (
                               <div key={field.key}>
                                 <label className="text-xs font-medium mb-1 block">{field.label}</label>
@@ -345,20 +312,14 @@ const IntegrationsTab = () => {
                                     type={field.secret && !visibleSecrets[fieldKey] ? "password" : "text"}
                                     placeholder={field.placeholder}
                                     value={currentVal}
-                                    onChange={(e) =>
-                                      setFieldValues((prev) => ({
-                                        ...prev,
-                                        [platform.id]: { ...(prev[platform.id] || {}), [field.key]: e.target.value },
-                                      }))
-                                    }
+                                    onChange={(e) => setFieldValues((prev) => ({
+                                      ...prev, [platform.id]: { ...(prev[platform.id] || {}), [field.key]: e.target.value },
+                                    }))}
                                     className="pr-10"
                                   />
                                   {field.secret && (
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleSecret(fieldKey)}
-                                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                    >
+                                    <button type="button" onClick={() => toggleSecret(fieldKey)}
+                                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                                       {visibleSecrets[fieldKey] ? <EyeOff size={14} /> : <Eye size={14} />}
                                     </button>
                                   )}
@@ -366,36 +327,18 @@ const IntegrationsTab = () => {
                               </div>
                             );
                           })}
-
                           <div className="flex gap-2 pt-2">
                             {!isConnected ? (
-                              <Button
-                                onClick={() => handleConnect(platform)}
-                                disabled={saving === platform.id}
-                                className="gap-2"
-                              >
-                                <Plug size={14} />
-                                {saving === platform.id ? "Kobler til…" : "Koble til"}
+                              <Button onClick={() => handleConnect(platform)} disabled={saving === platform.id} className="gap-2">
+                                <Plug size={14} /> {saving === platform.id ? "Kobler til…" : "Koble til"}
                               </Button>
                             ) : (
                               <>
-                                <Button
-                                  onClick={() => handleConnect(platform)}
-                                  disabled={saving === platform.id}
-                                  variant="outline"
-                                  className="gap-2"
-                                >
-                                  <RefreshCw size={14} />
-                                  Oppdater nøkler
+                                <Button onClick={() => handleConnect(platform)} disabled={saving === platform.id} variant="outline" className="gap-2">
+                                  <RefreshCw size={14} /> Oppdater nøkler
                                 </Button>
-                                <Button
-                                  onClick={() => handleDisconnect(platform)}
-                                  disabled={saving === platform.id}
-                                  variant="destructive"
-                                  className="gap-2"
-                                >
-                                  <Unplug size={14} />
-                                  Koble fra
+                                <Button onClick={() => handleDisconnect(platform)} disabled={saving === platform.id} variant="destructive" className="gap-2">
+                                  <Unplug size={14} /> Koble fra
                                 </Button>
                               </>
                             )}
@@ -403,21 +346,13 @@ const IntegrationsTab = () => {
                         </div>
                       </TabsContent>
 
-                      {/* Permissions */}
                       <TabsContent value="permissions">
                         <div className="space-y-2">
-                          <p className="text-xs text-muted-foreground mb-2">
-                            Nødvendige API-tilganger for {platform.label}:
-                          </p>
+                          <p className="text-xs text-muted-foreground mb-2">Nødvendige API-tilganger for {platform.label}:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {platform.scopes.map((scope) => (
-                              <Badge
-                                key={scope}
-                                variant={isConnected ? "default" : "outline"}
-                                className="text-[10px] font-mono"
-                              >
-                                <Shield size={8} className="mr-1" />
-                                {scope}
+                              <Badge key={scope} variant={isConnected ? "default" : "outline"} className="text-[10px] font-mono">
+                                <Shield size={8} className="mr-1" />{scope}
                               </Badge>
                             ))}
                           </div>
@@ -429,7 +364,6 @@ const IntegrationsTab = () => {
                         </div>
                       </TabsContent>
 
-                      {/* Media */}
                       {platform.supportsVideo && (
                         <TabsContent value="media">
                           <MediaCapabilities platform={platform} isConnected={isConnected} />
@@ -449,60 +383,27 @@ const IntegrationsTab = () => {
 
 /* ─── sub-components ─── */
 
-const PlatformDashboard = ({
-  platform,
-  integration,
-}: {
-  platform: PlatformDef;
-  integration: Integration;
-}) => {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MiniStat label="Status" value="Aktiv" icon={<CheckCircle2 size={14} className="text-green-500" />} />
-        <MiniStat
-          label="Konto"
-          value={integration.account_id || "—"}
-          icon={<ExternalLink size={14} className="text-primary" />}
-        />
-        <MiniStat
-          label="Tilkoblet"
-          value={integration.connected_at ? new Date(integration.connected_at).toLocaleDateString("nb-NO") : "—"}
-          icon={<Plug size={14} className="text-primary" />}
-        />
-        <MiniStat
-          label="Scopes"
-          value={`${integration.scopes?.length ?? 0} aktive`}
-          icon={<Shield size={14} className="text-primary" />}
-        />
-      </div>
-
-      <Card className="p-4 bg-muted/30">
-        <p className="text-xs text-muted-foreground">
-          📡 Sanntidsdata vil vises her når API-integrasjonen er fullstendig aktivert.
-          Data som rekkevidde, engasjement, klikkrate og konverteringer hentes automatisk.
-        </p>
-      </Card>
-
-      <div className="flex flex-wrap gap-2">
-        <Badge variant="secondary" className="text-[10px]">
-          <BarChart3 size={10} className="mr-1" /> Performance
-        </Badge>
-        <Badge variant="secondary" className="text-[10px]">
-          <FileText size={10} className="mr-1" /> Innlegg
-        </Badge>
-        {platform.supportsVideo && (
-          <Badge variant="secondary" className="text-[10px]">
-            <Video size={10} className="mr-1" /> Video
-          </Badge>
-        )}
-        <Badge variant="secondary" className="text-[10px]">
-          <Image size={10} className="mr-1" /> Bilder
-        </Badge>
-      </div>
+const PlatformDashboard = ({ platform, integration }: { platform: PlatformDef; integration: Integration }) => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <MiniStat label="Status" value="Aktiv" icon={<CheckCircle2 size={14} className="text-green-500" />} />
+      <MiniStat label="Konto" value={integration.account_id || "—"} icon={<ExternalLink size={14} className="text-primary" />} />
+      <MiniStat label="Tilkoblet" value={integration.connected_at ? new Date(integration.connected_at).toLocaleDateString("nb-NO") : "—"} icon={<Plug size={14} className="text-primary" />} />
+      <MiniStat label="Scopes" value={`${integration.scopes?.length ?? 0} aktive`} icon={<Shield size={14} className="text-primary" />} />
     </div>
-  );
-};
+    <Card className="p-4 bg-muted/30">
+      <p className="text-xs text-muted-foreground">
+        📡 Sanntidsdata vil vises her når API-integrasjonen er fullstendig aktivert. Data som rekkevidde, engasjement, klikkrate og konverteringer hentes automatisk.
+      </p>
+    </Card>
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="secondary" className="text-[10px]"><BarChart3 size={10} className="mr-1" /> Performance</Badge>
+      <Badge variant="secondary" className="text-[10px]"><FileText size={10} className="mr-1" /> Innlegg</Badge>
+      {platform.supportsVideo && <Badge variant="secondary" className="text-[10px]"><Video size={10} className="mr-1" /> Video</Badge>}
+      <Badge variant="secondary" className="text-[10px]"><Image size={10} className="mr-1" /> Bilder</Badge>
+    </div>
+  </div>
+);
 
 const MiniStat = ({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) => (
   <Card className="p-3">
@@ -527,9 +428,7 @@ const MediaCapabilities = ({ platform, isConnected }: { platform: PlatformDef; i
       ))}
     </div>
     {!isConnected && (
-      <p className="text-[10px] text-amber-600 flex items-center gap-1">
-        ⚠️ Koble til {platform.label} for å laste opp og dele media direkte.
-      </p>
+      <p className="text-[10px] text-amber-600 flex items-center gap-1">⚠️ Koble til {platform.label} for å laste opp og dele media direkte.</p>
     )}
   </div>
 );
