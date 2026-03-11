@@ -544,7 +544,7 @@ const VideoStudioTab = () => {
                         <span className="text-[9px] text-muted-foreground">~{Math.max(1, Math.ceil((120 - videoElapsed) / 60))} min igjen</span>
                       </div>
                     )}
-                    {(r.video_url || r.thumbnail_url) && r.status === "completed" && (
+                    {(r.video_url || r.thumbnail_url) && (r.status === "completed" || r.status === "uploaded") && (
                       <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => setPreviewRequest(r)}>
                         <Play size={12} /> Åpne
                       </Button>
