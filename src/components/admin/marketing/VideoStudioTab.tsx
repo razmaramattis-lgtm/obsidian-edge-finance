@@ -53,7 +53,8 @@ interface VideoRequest {
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Venter på behandling", color: "bg-amber-500/10 text-amber-600", icon: Clock },
-  approved: { label: "Godkjent – genereres", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
+  approved: { label: "Godkjent", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
+  processing: { label: "Genererer...", color: "bg-blue-500/10 text-blue-600", icon: RefreshCw },
   completed: { label: "Ferdig", color: "bg-green-500/10 text-green-600", icon: Film },
   uploaded: { label: "Opplastet", color: "bg-emerald-500/10 text-emerald-600", icon: Upload },
   rejected: { label: "Avslått", color: "bg-red-500/10 text-red-600", icon: XCircle },
@@ -198,6 +199,34 @@ const VideoStudioTab = () => {
     fetchRequests();
   };
 
+  const handleAttachVideo = async (requestId: string, file: File) => {
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const fileName = `video-${requestId}-${Date.now()}.${ext}`;
+      const path = `marketing/videos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("workspace-uploads")
+        .upload(path, file, { contentType: file.type, upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("workspace-uploads")
+        .getPublicUrl(path);
+
+      await supabase.from("marketing_video_requests").update({
+        video_url: urlData.publicUrl,
+        status: "completed",
+        admin_note: "Video lastet opp og klar.",
+      }).eq("id", requestId);
+
+      toast.success("Video lagt til!");
+      fetchRequests();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved opplasting");
+    }
+  };
+
   const handleUploadVideo = async (file: File) => {
     if (!uploadForm.title.trim()) { toast.error("Tittel er påkrevd"); return; }
     setUploading(true);
@@ -215,7 +244,6 @@ const VideoStudioTab = () => {
         .from("workspace-uploads")
         .getPublicUrl(path);
 
-      // Create a video_request entry with status "uploaded"
       const { error: insertError } = await supabase.from("marketing_video_requests").insert({
         title: uploadForm.title.trim(),
         prompt: `Opplastet video: ${file.name}`,
@@ -482,6 +510,29 @@ const VideoStudioTab = () => {
                         Generer
                       </Button>
                     )}
+                    {/* Upload video to existing request */}
+                    {!r.video_url && (r.status === "completed" || r.status === "approved") && isAdmin && (
+                      <>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          id={`attach-video-${r.id}`}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleAttachVideo(r.id, file);
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs gap-1"
+                          onClick={() => document.getElementById(`attach-video-${r.id}`)?.click()}
+                        >
+                          <Upload size={12} /> Last opp video
+                        </Button>
+                      </>
+                    )}
                     {generatingId === r.id && (
                       <div className="flex flex-col items-end gap-1">
                         <Badge className="bg-primary/10 text-primary text-[10px] animate-pulse flex items-center gap-1">
@@ -493,7 +544,7 @@ const VideoStudioTab = () => {
                         <span className="text-[9px] text-muted-foreground">~{Math.max(1, Math.ceil((120 - videoElapsed) / 60))} min igjen</span>
                       </div>
                     )}
-                    {(r.video_url || r.thumbnail_url) && r.status === "completed" && (
+                    {(r.video_url || r.thumbnail_url) && (r.status === "completed" || r.status === "uploaded") && (
                       <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => setPreviewRequest(r)}>
                         <Play size={12} /> Åpne
                       </Button>
