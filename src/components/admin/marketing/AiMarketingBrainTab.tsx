@@ -182,6 +182,7 @@ const AiMarketingBrainTab = () => {
     const totalWeeks = plan.weekly_posts.length;
     let totalSuccess = 0;
     let totalPosts = 0;
+    let autoScheduledCount = 0;
 
     for (let wi = 0; wi < totalWeeks; wi++) {
       const week = plan.weekly_posts[wi];
@@ -191,12 +192,14 @@ const AiMarketingBrainTab = () => {
 
       for (const post of posts) {
         try {
-          // Calculate scheduled date based on week number and day
           const startDate = new Date(plan.start_date);
           const dayOffset = (wi * 7) + dayNameToOffset(post.day);
           const scheduledDate = new Date(startDate);
           scheduledDate.setDate(scheduledDate.getDate() + dayOffset);
           scheduledDate.setHours(10, 0, 0, 0);
+
+          const isIntegrationActive = connectedPlatforms.includes(post.platform);
+          const shouldAutoSchedule = autoSchedule && isIntegrationActive;
 
           const { data, error } = await supabase.functions.invoke("marketing-generate-content", {
             body: {
@@ -206,23 +209,28 @@ const AiMarketingBrainTab = () => {
               include_image: post.content_type !== "text",
               strategy_plan_id: plan.id,
               scheduled_at: scheduledDate.toISOString(),
+              auto_schedule: shouldAutoSchedule,
             },
           });
-          if (!error && !data?.error) totalSuccess++;
+          if (!error && !data?.error) {
+            totalSuccess++;
+            if (shouldAutoSchedule) autoScheduledCount++;
+          }
         } catch { /* continue */ }
       }
 
-      // Small delay between weeks to avoid rate limits
       if (wi < totalWeeks - 1) {
         await new Promise(r => setTimeout(r, 2000));
       }
     }
 
-    toast.success(`🎉 Ferdig! ${totalSuccess} av ${totalPosts} innlegg generert for ${totalWeeks} uker. Alle ligger i godkjenningskøen.`, { duration: 10000 });
+    const scheduleMsg = autoScheduledCount > 0
+      ? ` ${autoScheduledCount} innlegg ble auto-planlagt for publisering.`
+      : " Alle ligger i godkjenningskøen.";
+    toast.success(`🎉 Ferdig! ${totalSuccess} av ${totalPosts} innlegg generert for ${totalWeeks} uker.${scheduleMsg}`, { duration: 10000 });
     setExecutingAll(false);
     setExecuteProgress({ current: 0, total: 0 });
 
-    // Activate the plan
     await supabase.from("marketing_strategy_plans").update({ status: "active" }).eq("id", plan.id);
     fetchData();
   };
