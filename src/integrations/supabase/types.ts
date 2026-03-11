@@ -2434,6 +2434,317 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_campaign_contacts: {
+        Row: {
+          campaign_id: string
+          contact_id: string | null
+          id: string
+          phone: string
+        }
+        Insert: {
+          campaign_id: string
+          contact_id?: string | null
+          id?: string
+          phone: string
+        }
+        Update: {
+          campaign_id?: string
+          contact_id?: string | null
+          id?: string
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_campaign_contacts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "sms_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_campaign_contacts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "sms_contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_campaigns: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          failed_count: number
+          id: string
+          message: string
+          name: string
+          scheduled_at: string | null
+          sent_count: number
+          status: string
+          total_recipients: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          id?: string
+          message: string
+          name: string
+          scheduled_at?: string | null
+          sent_count?: number
+          status?: string
+          total_recipients?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          id?: string
+          message?: string
+          name?: string
+          scheduled_at?: string | null
+          sent_count?: number
+          status?: string
+          total_recipients?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_contact_group_members: {
+        Row: {
+          contact_id: string
+          group_id: string
+          id: string
+        }
+        Insert: {
+          contact_id: string
+          group_id: string
+          id?: string
+        }
+        Update: {
+          contact_id?: string
+          group_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_contact_group_members_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "sms_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_contact_group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "sms_contact_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_contact_groups: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      sms_contacts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sms_devices: {
+        Row: {
+          api_key: string
+          created_at: string
+          device_name: string
+          id: string
+          last_seen: string | null
+          messages_sent_today: number
+          phone_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          api_key?: string
+          created_at?: string
+          device_name: string
+          id?: string
+          last_seen?: string | null
+          messages_sent_today?: number
+          phone_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          device_name?: string
+          id?: string
+          last_seen?: string | null
+          messages_sent_today?: number
+          phone_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sms_messages: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          delivered_at: string | null
+          device_id: string | null
+          error_message: string | null
+          id: string
+          message: string
+          phone: string
+          queued_at: string
+          retry_count: number
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          message: string
+          phone: string
+          queued_at?: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          message?: string
+          phone?: string
+          queued_at?: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_messages_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "sms_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_messages_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "sms_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      sms_templates: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       workspace_comment_likes: {
         Row: {
           comment_id: string
