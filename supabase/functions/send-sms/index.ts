@@ -6,6 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// This function is a queue status reporter for the device-gateway SMS system.
+// Messages are sent by Android phones running the /gateway page.
+// No external SMS API is needed.
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -15,107 +19,35 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const SMS_USER = Deno.env.get("SMS_API_USER");
-    const SMS_PASS = Deno.env.get("SMS_API_PASS");
-    const SMS_FROM = Deno.env.get("SMS_FROM") || "Avargo";
-
-    if (!SMS_USER || !SMS_PASS) {
-      return new Response(
-        JSON.stringify({ error: "SMS API credentials not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Get queued messages (limit 50 per invocation)
-    const { data: messages, error: fetchErr } = await sb
+    // Count queued messages
+    const { count: queuedCount } = await sb
       .from("sms_messages")
-      .select("id, phone, message, campaign_id")
-      .eq("status", "queued")
-      .order("queued_at", { ascending: true })
-      .limit(50);
+      .select("id", { count: "exact", head: true })
+      .eq("status", "queued");
 
-    if (fetchErr) throw fetchErr;
-    if (!messages || messages.length === 0) {
-      return new Response(
-        JSON.stringify({ sent: 0, message: "No queued messages" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    const { count: sendingCount } = await sb
+      .from("sms_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "sending");
 
-    // Mark as sending
-    const ids = messages.map(m => m.id);
-    await sb.from("sms_messages").update({ status: "sending" }).in("id", ids);
+    // Check online devices
+    const { data: devices } = await sb
+      .from("sms_devices")
+      .select("id, device_name, status, last_seen")
+      .eq("status", "online");
 
-    // Send all in parallel (batches of 10)
-    const BATCH = 10;
-    let sentCount = 0;
-    let failedCount = 0;
-
-    for (let i = 0; i < messages.length; i += BATCH) {
-      const batch = messages.slice(i, i + BATCH);
-      const results = await Promise.allSettled(
-        batch.map(async (msg) => {
-          const formData = new URLSearchParams();
-          formData.append("from", SMS_FROM);
-          formData.append("to", msg.phone);
-          formData.append("message", msg.message);
-
-          const res = await fetch("https://api.46elks.com/a1/sms", {
-            method: "POST",
-            headers: {
-              "Authorization": "Basic " + btoa(`${SMS_USER}:${SMS_PASS}`),
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: formData.toString(),
-          });
-
-          const body = await res.text();
-
-          if (res.ok) {
-            await sb.from("sms_messages").update({
-              status: "sent",
-              sent_at: new Date().toISOString(),
-              error_message: null,
-            }).eq("id", msg.id);
-
-            // Update campaign
-            if (msg.campaign_id) {
-              const { data: camp } = await sb.from("sms_campaigns").select("sent_count").eq("id", msg.campaign_id).single();
-              if (camp) {
-                await sb.from("sms_campaigns").update({ sent_count: camp.sent_count + 1 }).eq("id", msg.campaign_id);
-              }
-            }
-            return { id: msg.id, success: true };
-          } else {
-            // Check retry
-            const { data: msgData } = await sb.from("sms_messages").select("retry_count").eq("id", msg.id).single();
-            const retries = msgData?.retry_count || 0;
-            if (retries < 3) {
-              await sb.from("sms_messages").update({
-                status: "queued",
-                retry_count: retries + 1,
-                device_id: null,
-                error_message: body,
-              }).eq("id", msg.id);
-            } else {
-              await sb.from("sms_messages").update({
-                status: "failed",
-                error_message: body,
-              }).eq("id", msg.id);
-            }
-            throw new Error(body);
-          }
-        })
-      );
-
-      for (const r of results) {
-        if (r.status === "fulfilled") sentCount++;
-        else failedCount++;
-      }
-    }
+    const onlineDevices = devices?.length || 0;
 
     return new Response(
-      JSON.stringify({ sent: sentCount, failed: failedCount, total: messages.length }),
+      JSON.stringify({
+        queued: queuedCount || 0,
+        sending: sendingCount || 0,
+        online_devices: onlineDevices,
+        devices: devices || [],
+        message: onlineDevices > 0
+          ? `${queuedCount || 0} meldinger i kø, ${onlineDevices} enhet(er) online — sendes automatisk`
+          : "Ingen gateway-enheter online. Åpne /gateway på en Android-telefon for å begynne sending.",
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
