@@ -450,7 +450,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <aside className="hidden md:flex flex-col w-60 border-r border-border/10 bg-background/60 backdrop-blur shrink-0">
+      <aside className={`hidden md:flex flex-col w-60 border-r border-border/10 bg-background/60 backdrop-blur shrink-0 transition-all duration-300 ${marketingFullscreen && activePanel === "marketing" ? "!hidden" : ""}`}>
         <SidebarContent />
       </aside>
 
