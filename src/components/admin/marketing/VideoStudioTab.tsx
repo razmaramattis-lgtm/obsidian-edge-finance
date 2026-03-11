@@ -70,10 +70,11 @@ const PROMPT_TEMPLATES = [
 ];
 
 const VideoStudioTab = () => {
-  const { profile } = useAuth();
+  const { profile, isAdmin } = useAuth();
   const [requests, setRequests] = useState<VideoRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     platform: "linkedin",
@@ -101,26 +102,66 @@ const VideoStudioTab = () => {
     toast.info(`Mal «${template.label}» lastet inn`);
   };
 
+  const generateVideo = async (requestId: string, prompt: string, aspectRatio: string, duration: number) => {
+    setGeneratingId(requestId);
+    toast.info("🎬 Genererer video... Dette kan ta opptil 2 minutter.", { duration: 10000 });
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-marketing-video", {
+        body: { request_id: requestId, prompt, aspect_ratio: aspectRatio, duration },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("✅ Video generert!");
+      fetchRequests();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved videogenerering");
+    } finally {
+      setGeneratingId(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!form.title.trim()) { toast.error("Tittel er påkrevd"); return; }
     if (!form.prompt.trim()) { toast.error("Velg en mal eller skriv en beskrivelse"); return; }
 
-    const { error } = await supabase.from("marketing_video_requests").insert({
+    // Admin → auto-approve and generate immediately
+    const status = isAdmin ? "approved" : "pending";
+
+    const { data: inserted, error } = await supabase.from("marketing_video_requests").insert({
       title: form.title.trim(),
       prompt: form.prompt.trim(),
       platform: form.platform,
       aspect_ratio: form.aspect_ratio,
       duration: parseInt(form.duration),
-      status: "pending",
+      status,
       requested_by: profile?.id,
       admin_note: form.admin_note || null,
-    });
+    }).select().single();
 
     if (error) { toast.error(error.message); return; }
-    toast.success("Videoforespørsel sendt inn! Den vil bli behandlet og generert.");
-    setForm({ title: "", platform: "linkedin", aspect_ratio: "16:9", duration: "5", prompt: "", admin_note: "" });
-    setShowForm(false);
+
+    const resetForm = () => {
+      setForm({ title: "", platform: "linkedin", aspect_ratio: "16:9", duration: "5", prompt: "", admin_note: "" });
+      setShowForm(false);
+    };
+
+    if (isAdmin && inserted) {
+      toast.success("Godkjent! Videogenerering starter...");
+      resetForm();
+      fetchRequests();
+      // Start generation in background
+      generateVideo(inserted.id, inserted.prompt, inserted.aspect_ratio, inserted.duration);
+    } else {
+      toast.success("Videoforespørsel sendt inn!");
+      resetForm();
+      fetchRequests();
+    }
+  };
+
+  const handleApproveAndGenerate = async (r: VideoRequest) => {
+    await supabase.from("marketing_video_requests").update({ status: "approved" }).eq("id", r.id);
     fetchRequests();
+    generateVideo(r.id, r.prompt, r.aspect_ratio, r.duration);
   };
 
   const handleDelete = async (id: string) => {
