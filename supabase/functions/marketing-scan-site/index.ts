@@ -59,19 +59,100 @@ Deno.serve(async (req) => {
       contentPages.push({
         url: `/kurs/${c.slug}`,
         title: c.name,
-        content: `${c.description || ""} Kategori: ${c.category} Målgruppe: ${c.target_audience || ""}`,
+        content: `${c.description || ""} Kategori: ${c.category} Målgruppe: ${c.target_audience || ""} Varighet: ${c.duration || ""} Høydepunkter: ${JSON.stringify(c.highlights || [])}`,
         category: "kurs",
       });
     }
 
-    // Static pages context
+    // Glossary terms (batch them together)
+    const glossaryContent = (glossaryRes.data || []).map((g: any) => `${g.term}: ${(g.description || "").slice(0, 100)}`).join("\n");
+    if (glossaryContent) {
+      contentPages.push({
+        url: "/regnskapsord",
+        title: "Regnskapsordbok – Avargo",
+        content: `Avargos komplette regnskapsordbok med ${(glossaryRes.data || []).length} fagbegreper:\n${glossaryContent}`,
+        category: "ordbok",
+      });
+    }
+
+    // Collaboration agreements / partnerships
+    for (const c of collabRes.data || []) {
+      contentPages.push({
+        url: `/samarbeid/${c.title.toLowerCase().replace(/\s+/g, "-")}`,
+        title: `Samarbeid: ${c.title}`,
+        content: `Partner: ${c.partner || ""} ${c.description || ""} Tilbud: ${c.offering || ""} Målgruppe: ${c.target_audience || ""}`,
+        category: "samarbeid",
+      });
+    }
+
+    // Job listings
+    for (const j of jobsRes.data || []) {
+      contentPages.push({
+        url: `/karriere/${j.slug}`,
+        title: `Stilling: ${j.title}`,
+        content: `${j.title} (${j.category}, ${j.location}) ${(j.description || "").replace(/<[^>]+>/g, " ").slice(0, 800)} Kvalifikasjoner: ${(j.qualifications || "").replace(/<[^>]+>/g, " ").slice(0, 400)} Vi tilbyr: ${(j.we_offer || "").replace(/<[^>]+>/g, " ").slice(0, 400)}`,
+        category: "karriere",
+      });
+    }
+
+    // HMS documents
+    for (const h of hmsRes.data || []) {
+      contentPages.push({
+        url: `/hms/${h.title.toLowerCase().replace(/\s+/g, "-")}`,
+        title: `HMS: ${h.title}`,
+        content: (h.content || "").replace(/<[^>]+>/g, " ").slice(0, 1500),
+        category: "hms",
+      });
+    }
+
+    // HR Handbook chapters
+    for (const h of hrRes.data || []) {
+      contentPages.push({
+        url: `/hr/${h.title.toLowerCase().replace(/\s+/g, "-")}`,
+        title: `Personalhåndbok: ${h.title}`,
+        content: (h.content || "").replace(/<[^>]+>/g, " ").slice(0, 1500),
+        category: "hr",
+      });
+    }
+
+    // Popular inquiry analysis
+    const sectionCounts: Record<string, number> = {};
+    for (const s of pricingRes.data || []) {
+      const key = s.section || s.package || "generell";
+      sectionCounts[key] = (sectionCounts[key] || 0) + 1;
+    }
+    const topInquiries = Object.entries(sectionCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    if (topInquiries.length > 0) {
+      contentPages.push({
+        url: "/innsikt/henvendelser",
+        title: "Populære henvendelser",
+        content: `Analyse av ${(pricingRes.data || []).length} kundehenvendelser. Mest populære: ${topInquiries.map(([k, v]) => `${k} (${v} stk)`).join(", ")}. Bransjer som tar kontakt: ${[...new Set((pricingRes.data || []).map((s: any) => s.industry).filter(Boolean))].join(", ")}`,
+        category: "innsikt",
+      });
+    }
+
+    // Account entries (accounting knowledge)
+    if ((accountRes.data || []).length > 0) {
+      const accountContent = (accountRes.data || []).map((a: any) => `Konto ${a.account_number} ${a.name}: ${(a.description || "").slice(0, 80)} [${a.category_group || ""}, MVA: ${a.mva_status}]`).join("\n");
+      contentPages.push({
+        url: "/kontohjelp",
+        title: "Kontoplan og kontohjelp",
+        content: `Avargos kontoplanveiledning med ${(accountRes.data || []).length} kontoer:\n${accountContent}`,
+        category: "kontohjelp",
+      });
+    }
+
+    // Static pages context - expanded with detailed service descriptions
     const staticPages = [
-      { url: "/", title: "Avargo – Forsiden", content: "Avargo er Norges ledende AI-drevne regnskapsbyrå. Vi tilbyr regnskap, lønn, HR, CFO-tjenester, AI-automatisering, nettsider, SEO, Google Ads, Meta-annonser, nettbutikk, fakturering, skatteplanlegging, arbeidsrett og personalhåndbok. Alt samlet i én plattform med personlig rådgiver.", category: "hovedside" },
-      { url: "/tjenester", title: "Tjenester", content: "Regnskapsførertjenester, AI-innsikt og automatisering, CFO-tjenester, HR og lønn, nettsider, SEO, Google Ads, Meta-annonser, nettbutikk, fakturering, skatteplanlegging, ansettelse, personalhåndbok, arbeidsrett, chatbot, internsystemer, dashboard. Avargo leverer helhetlige tjenester for norske bedrifter.", category: "tjenester" },
-      { url: "/priser", title: "Priser", content: "Transparente priser tilpasset bedriftens størrelse. Fra enkeltpersonforetak til større selskaper. Inkluderer regnskapsfører, lønn, HR og digitale tjenester.", category: "priser" },
-      { url: "/metoden", title: "Avargo-metoden", content: "Vår metode kombinerer AI-teknologi med personlig rådgivning. Tre faser: Kartlegging, implementering og løpende optimalisering. Skreddersydde løsninger for hver kunde.", category: "metoden" },
-      { url: "/om-oss", title: "Om Avargo", content: "Norges mest innovative regnskapsbyrå. Grunnlagt for å revolusjonere regnskapsbransjen med AI og teknologi. Team av autoriserte regnskapsførere, HR-rådgivere og teknologieksperter.", category: "om-oss" },
-      { url: "/karriere", title: "Karriere hos Avargo", content: "Jobb hos Norges mest innovative regnskapsbyrå. Stillinger innen regnskap, HR, IT, marked og kundeservice. Moderne arbeidsmiljø med fokus på innovasjon og faglig utvikling.", category: "karriere" },
+      { url: "/", title: "Avargo – Forsiden", content: "Avargo er Norges ledende AI-drevne regnskapsbyrå. Vi tilbyr regnskap, lønn, HR, CFO-tjenester, AI-automatisering, nettsider, SEO, Google Ads, Meta-annonser, nettbutikk, fakturering, skatteplanlegging, arbeidsrett og personalhåndbok. Alt samlet i én plattform med personlig rådgiver. Grunnlagt for å revolusjonere regnskapsbransjen.", category: "hovedside" },
+      { url: "/tjenester", title: "Tjenester", content: "Regnskapsførertjenester med autoriserte regnskapsførere. AI-innsikt og automatisering for smartere drift. CFO-tjenester og strategisk rådgivning. HR og lønn med komplett personaladministrasjon. Nettsider med konverteringsoptimalisering. SEO for synlighet i søkemotorer. Google Ads og Meta-annonser for målrettet annonsering. Nettbutikk-løsninger. Fakturering og betalingsoppfølging. Skatteplanlegging og -optimalisering. Ansettelse og arbeidsrett. Personalhåndbok og HMS. AI-chatbot for kundeservice. Internsystemer og dashboard.", category: "tjenester" },
+      { url: "/priser", title: "Priser", content: "Transparente priser tilpasset bedriftens størrelse. Pakker fra enkeltpersonforetak til større selskaper. Inkluderer regnskapsfører, lønn, HR og digitale tjenester. Ingen skjulte kostnader. Skalerbare løsninger som vokser med bedriften.", category: "priser" },
+      { url: "/metoden", title: "Avargo-metoden", content: "Avargo-metoden kombinerer AI-teknologi med personlig rådgivning i tre faser: 1) Kartlegging – grundig analyse av bedriftens behov og systemer. 2) Implementering – skreddersydde løsninger med dedikert rådgiver. 3) Løpende optimalisering – kontinuerlig forbedring med AI-drevet innsikt.", category: "metoden" },
+      { url: "/om-oss", title: "Om Avargo", content: "Norges mest innovative regnskapsbyrå. Et team av autoriserte regnskapsførere, HR-rådgivere, teknologieksperter og markedsførere. Vi tror på at teknologi og menneskelig ekspertise sammen skaper de beste resultatene for norske bedrifter.", category: "om-oss" },
+      { url: "/karriere", title: "Karriere hos Avargo", content: "Jobb hos Norges mest innovative regnskapsbyrå. Stillinger innen regnskap, HR, IT, marked og kundeservice. Moderne arbeidsmiljø med fokus på innovasjon, faglig utvikling og work-life balance. Konkurransedyktige betingelser.", category: "karriere" },
+      { url: "/ressurser", title: "Ressurser", content: "Gratis maler, sjekklister og verktøy for norske bedrifter. Sjekkliste for årsoppgjøret, mal for balanseavstemming, skattekalender og mer.", category: "ressurser" },
+      { url: "/faq", title: "FAQ", content: "Vanlige spørsmål om regnskap, MVA, lønn, skatteplanlegging og Avargos tjenester. Svar på alt fra 'Hva koster en regnskapsfører?' til 'Hvordan fungerer AI-automatisering?'", category: "faq" },
+      { url: "/skattekalender", title: "Skattekalender", content: "Oversikt over alle viktige frister for norske bedrifter: MVA-terminforfall, A-melding, skattemelding, årsregnskap, generalforsamling og mer.", category: "verktøy" },
     ];
     contentPages.push(...staticPages);
 
