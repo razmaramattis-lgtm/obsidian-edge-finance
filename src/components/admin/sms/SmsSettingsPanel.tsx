@@ -3,9 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Save } from "lucide-react";
+import { Save, Copy, Server, CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+const GATEWAY_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/sms-device-api`;
 
 const SmsSettingsPanel = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -22,6 +25,7 @@ const SmsSettingsPanel = () => {
   const handleSave = async () => {
     setSaving(true);
     for (const [key, value] of Object.entries(settings)) {
+      if (key === "gateway_server_url") continue;
       await supabase.from("sms_settings").update({ value, updated_at: new Date().toISOString() }).eq("key", key);
     }
     setSaving(false);
@@ -30,19 +34,58 @@ const SmsSettingsPanel = () => {
 
   const update = (key: string, value: string) => setSettings(prev => ({ ...prev, [key]: value }));
 
+  const copyUrl = () => {
+    navigator.clipboard.writeText(GATEWAY_URL);
+    toast.success("Gateway-URL kopiert");
+  };
+
   return (
-    <div className="max-w-lg space-y-6">
-      <Card className="border-border/20">
+    <div className="max-w-2xl space-y-6">
+      <Card className="border-border/20 bg-emerald-500/5">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">SMS Gateway-innstillinger</CardTitle>
+          <div className="flex items-center gap-2">
+            <Server size={16} className="text-emerald-500" />
+            <CardTitle className="text-sm font-medium">Innebygd Gateway-server</CardTitle>
+            <Badge variant="secondary" className="text-emerald-600 gap-1 text-[10px]">
+              <CheckCircle size={10} /> Aktiv
+            </Badge>
+          </div>
+          <CardDescription className="text-xs">
+            Plattformen har en innebygd SMS gateway-server. Android-enhetene kobler seg direkte til denne – ingen ekstern server nødvendig.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Gateway Server URL</Label>
-            <Input value={settings.gateway_server_url || ""} onChange={e => update("gateway_server_url", e.target.value)} placeholder="https://..." />
-            <p className="text-xs text-muted-foreground">URL til SMS-gateway-tjeneren (brukes av Android-apper)</p>
+            <Label className="text-xs text-muted-foreground">Gateway-URL (bruk denne i Android-appen)</Label>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 text-xs bg-muted px-3 py-2 rounded-md font-mono break-all select-all">
+                {GATEWAY_URL}
+              </code>
+              <Button size="icon" variant="outline" className="shrink-0" onClick={copyUrl}>
+                <Copy size={14} />
+              </Button>
+            </div>
           </div>
 
+          <div className="rounded-md bg-muted/50 p-3 space-y-2">
+            <p className="text-xs font-medium">API-endepunkter for Android-app:</p>
+            <div className="grid gap-1.5 text-[11px] font-mono text-muted-foreground">
+              <div><Badge variant="outline" className="text-[10px] mr-2">GET</Badge>/pending — Hent ventende meldinger</div>
+              <div><Badge variant="outline" className="text-[10px] mr-2">POST</Badge>/sent — Rapporter sendt/feilet</div>
+              <div><Badge variant="outline" className="text-[10px] mr-2">POST</Badge>/heartbeat — Enhetsstatus</div>
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Autentiser med headeren <code className="bg-background px-1 py-0.5 rounded">x-api-key: DIN_ENHET_API_NØKKEL</code>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/20">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium">Sendeinnstillinger</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Meldingsforsinkelse (ms)</Label>
             <Input type="number" value={settings.message_delay_ms || "2500"} onChange={e => update("message_delay_ms", e.target.value)} />
