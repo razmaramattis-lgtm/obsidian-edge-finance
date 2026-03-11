@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
-  Sparkles, Send, Clapperboard, AlertCircle,
+  Sparkles, Send, Clapperboard, AlertCircle, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
