@@ -167,6 +167,13 @@ const Hub = () => {
         </div>
       </section>
 
+      {/* APP DOWNLOAD PUSHER */}
+      <section className="py-12 md:py-16 relative">
+        <div className="container mx-auto px-4 md:px-6">
+          <AppDownloadPusher />
+        </div>
+      </section>
+
       {/* BOTTOM CTA */}
       <section className="py-24 md:py-32 border-t border-border/10 text-center relative">
         <div className="absolute inset-0 ambient-glow opacity-25" />
