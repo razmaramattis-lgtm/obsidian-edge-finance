@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
   Sparkles, Send, Clapperboard, AlertCircle, RefreshCw, Play, Download, Image as ImageIcon, Maximize2,
@@ -133,14 +133,20 @@ const VideoStudioTab = () => {
 
   const generateVideo = async (requestId: string, prompt: string, aspectRatio: string, duration: number) => {
     setGeneratingId(requestId);
-    toast.info("🎬 Genererer video... Dette kan ta opptil 2 minutter.", { duration: 10000 });
+    toast.info("🎬 Klargjør video...", { duration: 6000 });
     try {
       const { data, error } = await supabase.functions.invoke("generate-marketing-video", {
         body: { request_id: requestId, prompt, aspect_ratio: aspectRatio, duration },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("✅ Video generert!");
+
+      if (data?.video_url) {
+        toast.success("✅ Video klar!");
+      } else {
+        toast.warning("Videoklipp ble ikke laget automatisk. Last opp video manuelt.");
+      }
+
       fetchRequests();
     } catch (e: any) {
       toast.error(e.message || "Feil ved videogenerering");
@@ -563,6 +569,10 @@ const VideoStudioTab = () => {
       {/* Video/Media Preview Dialog */}
       <Dialog open={!!previewRequest} onOpenChange={(o) => !o && setPreviewRequest(null)}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          <DialogTitle className="sr-only">{previewRequest?.title || "Forhåndsvisning av video"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Forhåndsvisning av generert medieinnhold i Video Studio.
+          </DialogDescription>
           {previewRequest && (
             <div className="flex flex-col">
               {/* Media player area */}
