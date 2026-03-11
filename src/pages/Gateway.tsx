@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Smartphone, Wifi, WifiOff, Send, CheckCircle, XCircle, Loader2, Signal, RefreshCw, Power, PowerOff, Zap, Settings } from "lucide-react";
+import { isNativePlatform, sendNativeSms } from "@/lib/native-sms";
 
 const POLL_INTERVAL = 3000;
 const HEARTBEAT_INTERVAL = 25000;
