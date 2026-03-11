@@ -199,6 +199,34 @@ const VideoStudioTab = () => {
     fetchRequests();
   };
 
+  const handleAttachVideo = async (requestId: string, file: File) => {
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const fileName = `video-${requestId}-${Date.now()}.${ext}`;
+      const path = `marketing/videos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("workspace-uploads")
+        .upload(path, file, { contentType: file.type, upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("workspace-uploads")
+        .getPublicUrl(path);
+
+      await supabase.from("marketing_video_requests").update({
+        video_url: urlData.publicUrl,
+        status: "completed",
+        admin_note: "Video lastet opp og klar.",
+      }).eq("id", requestId);
+
+      toast.success("Video lagt til!");
+      fetchRequests();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved opplasting");
+    }
+  };
+
   const handleUploadVideo = async (file: File) => {
     if (!uploadForm.title.trim()) { toast.error("Tittel er påkrevd"); return; }
     setUploading(true);
@@ -216,7 +244,6 @@ const VideoStudioTab = () => {
         .from("workspace-uploads")
         .getPublicUrl(path);
 
-      // Create a video_request entry with status "uploaded"
       const { error: insertError } = await supabase.from("marketing_video_requests").insert({
         title: uploadForm.title.trim(),
         prompt: `Opplastet video: ${file.name}`,
