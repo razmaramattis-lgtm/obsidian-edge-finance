@@ -17,13 +17,18 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Pull all real content from the database instead of crawling SPA pages
-    const [blogRes, industriesRes, coursesRes, glossaryRes, servicesRes] = await Promise.all([
+    // Pull ALL real content from the database - complete Avargo knowledge
+    const [blogRes, industriesRes, coursesRes, glossaryRes, collabRes, jobsRes, hmsRes, hrRes, pricingRes, accountRes] = await Promise.all([
       supabase.from("blog_posts").select("title, excerpt, content, category, tags, slug").eq("published", true).limit(50),
       supabase.from("industries").select("title, description, tagline, intro, body, deliverables, slug").eq("active", true).limit(50),
-      supabase.from("courses").select("name, description, category, target_audience, slug").eq("active", true).limit(50),
-      supabase.from("glossary_terms").select("term, description").eq("active", true).limit(100),
-      supabase.from("collaboration_agreements").select("title, description, offering, target_audience").limit(20),
+      supabase.from("courses").select("name, description, category, target_audience, slug, duration, highlights").eq("active", true).limit(50),
+      supabase.from("glossary_terms").select("term, description, slug").eq("active", true).limit(200),
+      supabase.from("collaboration_agreements").select("title, description, offering, target_audience, partner").limit(30),
+      supabase.from("job_listings").select("title, category, location, description, qualifications, we_offer, slug").eq("active", true).limit(20),
+      supabase.from("hms_documents").select("title, content").limit(10),
+      supabase.from("hr_handbook").select("title, content").limit(20),
+      supabase.from("contact_submissions").select("section, package, industry, message").limit(100),
+      supabase.from("account_entries").select("account_number, name, description, category_group, mva_status").eq("active", true).limit(50),
     ]);
 
     // Build content pages from database content
