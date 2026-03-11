@@ -143,23 +143,16 @@ const SmsBulkPanel = () => {
       setProgress(Math.round((inserted / allRecipientPhones.length) * 100));
     }
 
-    // Trigger cloud SMS sending immediately
-    toast.info("Sender SMS-er via sky-tjeneste...");
+    // Check device gateway status
     try {
-      // Keep invoking until all are sent
-      let totalSent = 0;
-      let totalFailed = 0;
-      let hasMore = true;
-      while (hasMore) {
-        const { data, error } = await supabase.functions.invoke("send-sms");
-        if (error) throw error;
-        totalSent += data?.sent || 0;
-        totalFailed += data?.failed || 0;
-        hasMore = (data?.sent || 0) > 0 && (data?.total || 0) >= 50;
+      const { data } = await supabase.functions.invoke("send-sms");
+      if (data?.online_devices > 0) {
+        toast.success(`${allRecipientPhones.length} SMS lagt i kø — ${data.online_devices} gateway-enhet(er) sender automatisk`);
+      } else {
+        toast.warning(`${allRecipientPhones.length} SMS lagt i kø. Åpne /gateway på en Android-telefon for å sende.`);
       }
-      toast.success(`${totalSent} SMS sendt, ${totalFailed} feilet`);
-    } catch (e: any) {
-      toast.error("Feil ved sending: " + (e.message || "Ukjent feil"));
+    } catch {
+      toast.success(`${allRecipientPhones.length} SMS lagt i kø — venter på gateway-enhet`);
     }
 
     setSending(false);
