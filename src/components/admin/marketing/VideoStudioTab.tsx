@@ -185,12 +185,14 @@ const VideoStudioTab = () => {
         </p>
       </Card>
 
-      <Card className="p-4 bg-amber-500/5 border-amber-500/20">
-        <div className="flex items-center gap-2 text-amber-600 text-sm">
-          <AlertCircle size={14} />
-          <span>Videoer genereres av AI og krever godkjenning. Forespørsler behandles normalt innen kort tid.</span>
-        </div>
-      </Card>
+      {!isAdmin && (
+        <Card className="p-4 bg-amber-500/5 border-amber-500/20">
+          <div className="flex items-center gap-2 text-amber-600 text-sm">
+            <AlertCircle size={14} />
+            <span>Videoforespørsler må godkjennes av en administrator før generering.</span>
+          </div>
+        </Card>
+      )}
 
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground">Send inn videoforespørsler for markedsføring.</p>
