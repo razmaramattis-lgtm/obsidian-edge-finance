@@ -357,7 +357,15 @@ const VideoStudioTab = () => {
                       </Button>
                     )}
                     {generatingId === r.id && (
-                      <Badge className="bg-blue-500/10 text-blue-600 text-[10px] animate-pulse">Genererer...</Badge>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge className="bg-primary/10 text-primary text-[10px] animate-pulse flex items-center gap-1">
+                          <Clock size={10} /> {formatTimer(videoElapsed)}
+                        </Badge>
+                        <div className="w-24">
+                          <Progress value={Math.min(95, (videoElapsed / 120) * 100)} className="h-1" />
+                        </div>
+                        <span className="text-[9px] text-muted-foreground">~{Math.max(1, Math.ceil((120 - videoElapsed) / 60))} min igjen</span>
+                      </div>
                     )}
                     {r.video_url && (
                       <Button variant="outline" size="sm" className="text-xs gap-1" asChild>
