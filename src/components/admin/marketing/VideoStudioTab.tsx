@@ -98,6 +98,10 @@ const VideoStudioTab = () => {
   const [showForm, setShowForm] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [previewRequest, setPreviewRequest] = useState<VideoRequest | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadForm, setUploadForm] = useState({ title: "", platform: "linkedin", admin_note: "" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoElapsed = useElapsedTimer(!!generatingId);
   const [form, setForm] = useState({
     title: "",
