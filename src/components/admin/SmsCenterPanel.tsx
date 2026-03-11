@@ -19,6 +19,7 @@ import EmailBulkPanel from "./email/EmailBulkPanel";
 import EmailCampaignsPanel from "./email/EmailCampaignsPanel";
 import EmailTemplatesPanel from "./email/EmailTemplatesPanel";
 import EmailHistoryPanel from "./email/EmailHistoryPanel";
+import EmailContactsPanel from "./email/EmailContactsPanel";
 
 import {
   LayoutDashboard, Send, Users as UsersIcon, FileText, Clock, Settings, Layers,
@@ -44,6 +45,7 @@ const EMAIL_TABS = [
   { id: "send", label: "Send e-post", icon: Send },
   { id: "bulk", label: "Masseutsendelse", icon: Layers },
   { id: "campaigns", label: "Kampanjer", icon: Megaphone },
+  { id: "contacts", label: "Kontakter", icon: UsersIcon },
   { id: "templates", label: "Maler", icon: FileText },
   { id: "history", label: "Historikk", icon: Clock },
 ] as const;
@@ -143,6 +145,7 @@ const SmsCenterPanel = () => {
           {emailTab === "send" && <EmailSendPanel />}
           {emailTab === "bulk" && <EmailBulkPanel />}
           {emailTab === "campaigns" && <EmailCampaignsPanel />}
+          {emailTab === "contacts" && <EmailContactsPanel />}
           {emailTab === "templates" && <EmailTemplatesPanel />}
           {emailTab === "history" && <EmailHistoryPanel />}
         </>
