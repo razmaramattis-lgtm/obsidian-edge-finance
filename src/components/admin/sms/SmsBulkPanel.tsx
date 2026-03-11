@@ -344,7 +344,7 @@ const SmsBulkPanel = () => {
                     {usePhoneLink && (
                       <div className="flex items-center gap-1">
                         <button
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`tel:${c.phone}`, "_blank"); }}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `tel:${c.phone}`; }}
                           className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-primary"
                           title="Ring"
                         >
