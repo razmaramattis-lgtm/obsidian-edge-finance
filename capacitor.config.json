@@ -1,0 +1,18 @@
+{
+  "appId": "com.razmaramattis.obsidianedgefinance",
+  "appName": "Obsidian Edge Finance",
+  "webDir": "build",
+  "bundledWebRuntime": false,
+  "servers": {
+    "url": "http://localhost:3000",
+    "cleartext": true
+  },
+  "android": {
+    "path": "android",
+    "allowMixedContent": true
+  },
+  "ios": {
+    "path": "ios",
+    "allowMixedContent": true
+  }
+}
