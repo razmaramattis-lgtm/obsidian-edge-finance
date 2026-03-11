@@ -510,6 +510,29 @@ const VideoStudioTab = () => {
                         Generer
                       </Button>
                     )}
+                    {/* Upload video to existing request */}
+                    {!r.video_url && (r.status === "completed" || r.status === "approved") && isAdmin && (
+                      <>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          id={`attach-video-${r.id}`}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleAttachVideo(r.id, file);
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs gap-1"
+                          onClick={() => document.getElementById(`attach-video-${r.id}`)?.click()}
+                        >
+                          <Upload size={12} /> Last opp video
+                        </Button>
+                      </>
+                    )}
                     {generatingId === r.id && (
                       <div className="flex flex-col items-end gap-1">
                         <Badge className="bg-primary/10 text-primary text-[10px] animate-pulse flex items-center gap-1">
