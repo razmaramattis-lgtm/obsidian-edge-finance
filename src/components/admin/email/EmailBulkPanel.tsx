@@ -93,11 +93,17 @@ const EmailBulkPanel = () => {
         <Textarea rows={6} placeholder={"ola@eksempel.no\nkari@firma.no\n..."} value={emails} onChange={e => setEmails(e.target.value)} />
         <div className="flex items-center gap-3">
           <p className="text-xs text-muted-foreground">{parseEmails(emails).length} adresser</p>
-          <label className="cursor-pointer text-xs text-primary hover:underline flex items-center gap-1">
-            <Upload size={12} /> Last opp CSV
-            <input type="file" accept=".csv,.txt" className="hidden" onChange={handleFileUpload} />
-          </label>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Importer fra CSV-fil</Label>
+        <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border/60 bg-muted/30 p-6 cursor-pointer hover:bg-muted/50 transition-colors">
+          <Upload size={20} className="text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Klikk for å laste opp CSV / TXT</span>
+          <span className="text-[10px] text-muted-foreground">E-postadresser hentes automatisk fra filen</span>
+          <input type="file" accept=".csv,.txt,.xlsx" className="hidden" onChange={handleFileUpload} />
+        </label>
       </div>
 
       <div className="space-y-2">
