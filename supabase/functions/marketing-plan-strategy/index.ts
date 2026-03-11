@@ -19,31 +19,41 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Gather all context
-    const [analysesRes, insightsRes, postsRes] = await Promise.all([
-      supabase.from("marketing_content_analyses").select("title, content_summary, keywords, themes").limit(30),
-      supabase.from("marketing_ai_insights").select("*").eq("active", true).limit(20),
-      supabase.from("marketing_posts").select("platform, status, content, hashtags").eq("status", "published").limit(20),
+    // Gather all context from the database
+    const [analysesRes, insightsRes, postsRes, industriesRes, blogRes] = await Promise.all([
+      supabase.from("marketing_content_analyses").select("title, content_summary, keywords, themes, tone").limit(40),
+      supabase.from("marketing_ai_insights").select("insight_type, platform, recommendation, confidence").eq("active", true).limit(20),
+      supabase.from("marketing_posts").select("platform, status, content, hashtags, engagement_score").order("created_at", { ascending: false }).limit(30),
+      supabase.from("industries").select("title, tagline, slug").eq("active", true).limit(30),
+      supabase.from("blog_posts").select("title, category, tags").eq("published", true).limit(20),
     ]);
 
     const brandContext = (analysesRes.data || [])
-      .map((a: any) => `${a.title}: ${a.content_summary} [${(a.keywords || []).join(", ")}]`)
+      .map((a: any) => `• ${a.title}: ${a.content_summary} [Nøkkelord: ${(a.keywords || []).join(", ")}] [Tone: ${a.tone}]`)
       .join("\n")
-      .slice(0, 6000);
+      .slice(0, 5000);
 
-    const pastPerformance = (postsRes.data || [])
-      .map((p: any) => `[${p.platform}] ${p.content?.slice(0, 100)}`)
+    const existingInsights = (insightsRes.data || [])
+      .map((i: any) => `[${i.insight_type}/${i.platform || "alle"}] ${i.recommendation} (${Math.round((i.confidence || 0) * 100)}%)`)
       .join("\n")
-      .slice(0, 3000);
+      .slice(0, 2000);
+
+    const pastPosts = (postsRes.data || [])
+      .map((p: any) => `[${p.platform}/${p.status}] ${(p.content || "").slice(0, 80)}`)
+      .join("\n")
+      .slice(0, 2000);
+
+    const industriesList = (industriesRes.data || []).map((i: any) => i.title).join(", ");
+    const blogTopics = (blogRes.data || []).map((b: any) => `${b.title} [${b.category}]`).join(", ").slice(0, 1000);
 
     const months = duration_months || 3;
     const selectedPlatforms = platforms || ["linkedin", "facebook", "instagram", "google_ads", "meta_ads"];
     const today = new Date();
     const endDate = new Date(today);
     endDate.setMonth(endDate.getMonth() + months);
-
     const totalWeeks = Math.ceil(months * 4.3);
 
+    // Use tool calling for structured output
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -51,100 +61,169 @@ Deno.serve(async (req) => {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3-flash-preview",
         messages: [
           {
             role: "system",
-            content: `Du er en strategisk markedsføringsplanlegger for Avargo, Norges ledende regnskapsbyrå med AI-drevne tjenester. 
+            content: `Du er en ekspert strategisk markedsføringsplanlegger for Avargo – Norges ledende AI-drevne regnskapsbyrå.
 
-Lag en detaljert ${months}-måneders markedsføringsstrategi.
-
-AVARGO KONTEKST:
+AVARGO MERKEVARE-KONTEKST (fra faktisk innholdsanalyse):
 ${brandContext}
 
-TIDLIGERE INNLEGG:
-${pastPerformance}
+AI MARKETING INNSIKTER:
+${existingInsights}
 
-PLATTFORMER: ${selectedPlatforms.join(", ")}
-MÅL: ${goals || "Øke synlighet, generere leads, etablere Avargo som markedsleder"}
+TIDLIGERE PUBLISERTE INNLEGG:
+${pastPosts}
 
-${custom_instructions ? `TILLEGG: ${custom_instructions}` : ""}
+BRANSJER AVARGO DEKKER: ${industriesList}
+BLOGG-EMNER: ${blogTopics}
 
-Returner JSON:
-{
-  "title": "Strateginavn",
-  "description": "Overordnet strategibeskrivelse (200 ord)",
-  "key_themes": ["tema1", "tema2", ...],
-  "content_pillars": [
-    { "pillar": "navn", "description": "beskrivelse", "platforms": ["linkedin", ...], "frequency": "2x per uke" }
-  ],
-  "weekly_plan": [
-    {
-      "week": 1,
-      "theme": "uketema",
-      "posts": [
-        {
-          "day": "mandag",
-          "platform": "linkedin",
-          "topic": "emne",
-          "content_type": "artikkel/bilde/video/reel",
-          "tone": "profesjonell/inspirerende/edukativ",
-          "brief": "kort brief for innholdet"
-        }
-      ],
-      "campaign": null
-    }
-  ],
-  "campaigns": [
-    {
-      "name": "kampanjenavn",
-      "platform": "google_ads",
-      "week_start": 2,
-      "week_end": 6,
-      "budget_suggestion": "5000 NOK/mnd",
-      "objective": "leads/awareness/traffic",
-      "target_audience": "målgruppe"
-    }
-  ],
-  "kpi_targets": {
-    "monthly_posts": 20,
-    "engagement_rate_target": "3%",
-    "lead_target": 50,
-    "follower_growth": "10%"
-  }
-}
-Returner KUN gyldig JSON. Lag plan for ${totalWeeks} uker.`,
+VIKTIGE RETNINGSLINJER:
+- Avargo er Norges mest innovative regnskapsbyrå
+- Tjenester: Regnskap, AI, HR, lønn, CFO, nettsider, SEO, SoMe, kurs
+- Tone: Profesjonell men moderne og tilgjengelig
+- Merkefarge: Mørk teal/grønn med gull-aksenter
+- Lag innlegg som er SPESIFIKKE og HANDLINGSORIENTERTE, ikke generiske
+- Bruk norske helligdager og skatte/regnskapsfrister som strategiske tidspunkter
+- Varier mellom edukativt, inspirerende, case-basert og salgsfremmende innhold`,
           },
           {
             role: "user",
-            content: `Lag en ${months}-måneders markedsføringsstrategi for Avargo som dominerer markedet for regnskapstjenester i Norge. Fokus: ${goals || "Totalmarkedsdominans"}`,
+            content: `Lag en komplett ${months}-måneders markedsføringsstrategi for Avargo.
+Plattformer: ${selectedPlatforms.join(", ")}
+Mål: ${goals || "Øke synlighet, generere leads, etablere Avargo som markedsleder innen AI-drevet regnskap"}
+${custom_instructions ? `Spesielle instrukser: ${custom_instructions}` : ""}
+Lag plan for NØYAKTIG ${totalWeeks} uker med konkrete, detaljerte innlegg.`,
           },
         ],
-        temperature: 0.6,
-        max_tokens: 8000,
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "create_strategy",
+              description: "Opprett en komplett markedsføringsstrategi med ukeplaner og kampanjer.",
+              parameters: {
+                type: "object",
+                properties: {
+                  title: { type: "string", description: "Strateginavn" },
+                  description: { type: "string", description: "Overordnet strategibeskrivelse, 100-200 ord" },
+                  key_themes: { type: "array", items: { type: "string" }, description: "3-6 overordnede temaer" },
+                  content_pillars: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        pillar: { type: "string" },
+                        description: { type: "string" },
+                        platforms: { type: "array", items: { type: "string" } },
+                        frequency: { type: "string" },
+                      },
+                      required: ["pillar", "description", "platforms", "frequency"],
+                      additionalProperties: false,
+                    },
+                  },
+                  kpi_targets: {
+                    type: "object",
+                    properties: {
+                      monthly_posts: { type: "number" },
+                      engagement_rate_target: { type: "string" },
+                      lead_target: { type: "number" },
+                      follower_growth: { type: "string" },
+                    },
+                    required: ["monthly_posts", "engagement_rate_target", "lead_target", "follower_growth"],
+                    additionalProperties: false,
+                  },
+                  weekly_plan: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        week: { type: "number" },
+                        theme: { type: "string" },
+                        posts: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              day: { type: "string", description: "mandag/tirsdag/onsdag/torsdag/fredag" },
+                              platform: { type: "string" },
+                              topic: { type: "string", description: "Spesifikt emne for innlegget" },
+                              content_type: { type: "string", description: "artikkel/bilde/video/reel/karusell" },
+                              tone: { type: "string", description: "profesjonell/inspirerende/edukativ/salgsorientert" },
+                              brief: { type: "string", description: "Kort brief 1-2 setninger med nøyaktig hva innlegget skal handle om" },
+                            },
+                            required: ["day", "platform", "topic", "content_type", "tone", "brief"],
+                            additionalProperties: false,
+                          },
+                        },
+                      },
+                      required: ["week", "theme", "posts"],
+                      additionalProperties: false,
+                    },
+                  },
+                  campaigns: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string" },
+                        platform: { type: "string" },
+                        week_start: { type: "number" },
+                        week_end: { type: "number" },
+                        budget_suggestion: { type: "string" },
+                        objective: { type: "string" },
+                        target_audience: { type: "string" },
+                      },
+                      required: ["name", "platform", "week_start", "week_end", "budget_suggestion", "objective", "target_audience"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["title", "description", "key_themes", "content_pillars", "kpi_targets", "weekly_plan", "campaigns"],
+                additionalProperties: false,
+              },
+            },
+          },
+        ],
+        tool_choice: { type: "function", function: { name: "create_strategy" } },
+        temperature: 0.5,
+        max_tokens: 12000,
       }),
     });
 
     if (!aiRes.ok) {
       if (aiRes.status === 429) {
-        return new Response(JSON.stringify({ error: "For mange forespørsler." }), {
+        return new Response(JSON.stringify({ error: "For mange forespørsler, prøv igjen om litt." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiRes.status === 402) {
-        return new Response(JSON.stringify({ error: "Kreditter oppbrukt." }), {
+        return new Response(JSON.stringify({ error: "AI-kreditter oppbrukt." }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      const errText = await aiRes.text();
+      console.error("AI error:", aiRes.status, errText);
       throw new Error("AI-feil: " + aiRes.status);
     }
 
     const aiData = await aiRes.json();
-    const raw = aiData.choices?.[0]?.message?.content || "";
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Klarte ikke parse AI-svar");
 
-    const strategy = JSON.parse(jsonMatch[0]);
+    // Extract from tool call response
+    let strategy: any;
+    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+    if (toolCall?.function?.arguments) {
+      strategy = typeof toolCall.function.arguments === "string"
+        ? JSON.parse(toolCall.function.arguments)
+        : toolCall.function.arguments;
+    } else {
+      // Fallback: try to parse from content
+      const raw = aiData.choices?.[0]?.message?.content || "";
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("Klarte ikke parse AI-svar. Prøv igjen.");
+      strategy = JSON.parse(jsonMatch[0]);
+    }
 
     // Save to database
     const { data: plan, error: insertError } = await supabase
@@ -171,7 +250,7 @@ Returner KUN gyldig JSON. Lag plan for ${totalWeeks} uker.`,
     if (insertError) throw insertError;
 
     return new Response(
-      JSON.stringify({ success: true, plan, strategy }),
+      JSON.stringify({ success: true, plan, weeks: strategy.weekly_plan?.length || 0 }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
