@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, BookOpen, Users, Megaphone, Code2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { AppDownloadPusher } from "@/components/AppDownloadPusher";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
