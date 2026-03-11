@@ -323,6 +323,9 @@ const PostGeneratorTab = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="outline" size="icon" onClick={() => setPreviewPost(p)} className="text-muted-foreground hover:text-primary" title="Forhåndsvis">
+                      <Eye size={14} />
+                    </Button>
                     {p.status === "draft" && (
                       <Button variant="outline" size="sm" onClick={() => handleSubmitForApproval(p.id)} className="text-xs gap-1">
                         <CheckCircle2 size={12} /> Godkjenn
