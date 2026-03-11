@@ -19,8 +19,7 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Use Lovable AI to generate a detailed video script/storyboard
-    // Then use image generation as video thumbnail
+    // Generate thumbnail image using Lovable AI image model
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -32,15 +31,17 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "user",
-            content: `Create a professional, cinematic thumbnail image for a marketing video with this concept: ${prompt}. 
+            content: `Generate a professional, cinematic thumbnail image for a marketing video with this concept: ${prompt}. 
 The image should be photorealistic, high quality, suitable as a video thumbnail. Aspect ratio: ${aspect_ratio}. 
-Style: Premium corporate, dark teal and gold color palette, cinematic lighting.`,
+Style: Premium corporate, dark teal and gold color palette, cinematic lighting. Only output the image, no text.`,
           },
         ],
       }),
     });
 
     if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error("AI response error:", aiRes.status, errText);
       if (aiRes.status === 429) {
         return new Response(JSON.stringify({ error: "For mange forespørsler, prøv igjen senere." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -51,47 +52,78 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting.`
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error("AI-feil: " + aiRes.status);
+      throw new Error("AI-feil: " + aiRes.status + " " + errText);
     }
 
     const aiData = await aiRes.json();
-    const content = aiData.choices?.[0]?.message?.content || "";
+    console.log("AI response structure keys:", JSON.stringify(Object.keys(aiData)));
+    const message = aiData.choices?.[0]?.message;
+    console.log("Message keys:", message ? JSON.stringify(Object.keys(message)) : "null");
+    console.log("Content type:", typeof message?.content);
+    if (Array.isArray(message?.content)) {
+      console.log("Content array length:", message.content.length);
+      for (let i = 0; i < Math.min(message.content.length, 3); i++) {
+        const part = message.content[i];
+        console.log(`Content[${i}] type:`, part?.type, "keys:", JSON.stringify(Object.keys(part || {})));
+      }
+    }
 
-    // Extract image URL if present (inline_data or URL)
     let thumbnailUrl: string | null = null;
-    const parts = aiData.choices?.[0]?.message?.parts || [];
-    for (const part of parts) {
-      if (part?.inline_data?.mime_type?.startsWith("image/")) {
-        // Base64 image - store it
-        const base64 = part.inline_data.data;
-        const mimeType = part.inline_data.mime_type;
-        const ext = mimeType.includes("png") ? "png" : "jpg";
-        const fileName = `video-thumb-${request_id}.${ext}`;
 
-        const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-        const { error: uploadError } = await supabase.storage
-          .from("workspace-uploads")
-          .upload(`marketing/video-thumbnails/${fileName}`, bytes, {
-            contentType: mimeType,
-            upsert: true,
-          });
-
-        if (!uploadError) {
-          const { data: urlData } = supabase.storage
-            .from("workspace-uploads")
-            .getPublicUrl(`marketing/video-thumbnails/${fileName}`);
-          thumbnailUrl = urlData.publicUrl;
+    // Strategy 1: content is array of parts (OpenAI multimodal format)
+    if (Array.isArray(message?.content)) {
+      for (const part of message.content) {
+        // Check for inline_data (Google native format passed through)
+        if (part?.inline_data?.mime_type?.startsWith("image/")) {
+          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
+          if (thumbnailUrl) break;
+        }
+        // Check for image_url with data URI
+        if (part?.type === "image_url" && part?.image_url?.url) {
+          const dataMatch = part.image_url.url.match(/^data:(image\/\w+);base64,(.+)$/);
+          if (dataMatch) {
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
+            if (thumbnailUrl) break;
+          }
+        }
+        // Check for image type with data
+        if (part?.type === "image" && part?.data) {
+          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.data, part.mime_type || "image/png");
+          if (thumbnailUrl) break;
         }
       }
     }
 
-    // Update the request with thumbnail and mark as completed
+    // Strategy 2: content is a string - check for embedded base64 data URI
+    if (!thumbnailUrl && typeof message?.content === "string") {
+      const dataUriMatch = message.content.match(/data:(image\/\w+);base64,([A-Za-z0-9+/=]+)/);
+      if (dataUriMatch) {
+        thumbnailUrl = await uploadBase64Image(supabase, request_id, dataUriMatch[2], dataUriMatch[1]);
+      }
+    }
+
+    // Strategy 3: Check 'parts' field (Google native format)
+    if (!thumbnailUrl) {
+      const parts = message?.parts || aiData.choices?.[0]?.message?.parts || [];
+      for (const part of parts) {
+        if (part?.inline_data?.mime_type?.startsWith("image/")) {
+          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
+          if (thumbnailUrl) break;
+        }
+      }
+    }
+
+    console.log("Final thumbnail URL:", thumbnailUrl);
+
+    // Update the request with thumbnail
     await supabase
       .from("marketing_video_requests")
       .update({
         status: "completed",
         thumbnail_url: thumbnailUrl,
-        admin_note: `AI-generert thumbnail klar. Full videoproduksjon krever ekstern videotjeneste.`,
+        admin_note: thumbnailUrl
+          ? "AI-generert thumbnail klar."
+          : "Thumbnail kunne ikke genereres. Prøv igjen eller last opp egen video.",
       })
       .eq("id", request_id);
 
@@ -107,3 +139,40 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting.`
     );
   }
 });
+
+async function uploadBase64Image(
+  supabase: any,
+  requestId: string,
+  base64Data: string,
+  mimeType: string
+): Promise<string | null> {
+  try {
+    const ext = mimeType.includes("png") ? "png" : "jpg";
+    const fileName = `video-thumb-${requestId}-${Date.now()}.${ext}`;
+    const bytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+    
+    console.log(`Uploading image: ${fileName}, size: ${bytes.length} bytes, mime: ${mimeType}`);
+
+    const { error: uploadError } = await supabase.storage
+      .from("workspace-uploads")
+      .upload(`marketing/video-thumbnails/${fileName}`, bytes, {
+        contentType: mimeType,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("workspace-uploads")
+      .getPublicUrl(`marketing/video-thumbnails/${fileName}`);
+
+    console.log("Uploaded successfully, URL:", urlData.publicUrl);
+    return urlData.publicUrl;
+  } catch (e) {
+    console.error("Upload failed:", e);
+    return null;
+  }
+}
