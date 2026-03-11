@@ -36,6 +36,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Personvern = lazy(() => import("./pages/Personvern"));
 const Vilkar = lazy(() => import("./pages/Vilkar"));
+const Gateway = lazy(() => import("./pages/Gateway"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeLogin = lazy(() => import("./pages/kunde/KundeLogin"));
