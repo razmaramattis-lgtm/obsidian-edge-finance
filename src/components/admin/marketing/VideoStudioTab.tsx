@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Video, Plus, Trash2, Clock, CheckCircle2, XCircle, Film,
-  Sparkles, Send, Clapperboard, AlertCircle, RefreshCw,
+  Sparkles, Send, Clapperboard, AlertCircle, RefreshCw, Play, Download, Image as ImageIcon, Maximize2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -94,6 +95,7 @@ const VideoStudioTab = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [previewRequest, setPreviewRequest] = useState<VideoRequest | null>(null);
   const videoElapsed = useElapsedTimer(!!generatingId);
   const [form, setForm] = useState({
     title: "",
@@ -322,10 +324,21 @@ const VideoStudioTab = () => {
             return (
               <Card key={r.id} className="p-4">
                 <div className="flex items-start gap-3">
-                  {r.video_url ? (
-                    <div className="w-24 h-14 rounded-lg overflow-hidden shrink-0 bg-muted">
-                      <video src={r.video_url} className="w-full h-full object-cover" muted />
-                    </div>
+                  {/* Clickable thumbnail/video preview */}
+                  {r.video_url || r.thumbnail_url ? (
+                    <button
+                      onClick={() => setPreviewRequest(r)}
+                      className="w-24 h-14 rounded-lg overflow-hidden shrink-0 bg-muted relative group cursor-pointer"
+                    >
+                      {r.video_url ? (
+                        <video src={r.video_url} className="w-full h-full object-cover" muted />
+                      ) : (
+                        <img src={r.thumbnail_url!} alt={r.title} className="w-full h-full object-cover" />
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Play size={20} className="text-white" />
+                      </div>
+                    </button>
                   ) : (
                     <div className="w-24 h-14 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
                       <Film size={20} className="text-muted-foreground/30" />
@@ -367,11 +380,9 @@ const VideoStudioTab = () => {
                         <span className="text-[9px] text-muted-foreground">~{Math.max(1, Math.ceil((120 - videoElapsed) / 60))} min igjen</span>
                       </div>
                     )}
-                    {r.video_url && (
-                      <Button variant="outline" size="sm" className="text-xs gap-1" asChild>
-                        <a href={r.video_url} target="_blank" rel="noopener noreferrer">
-                          <Film size={12} /> Se video
-                        </a>
+                    {(r.video_url || r.thumbnail_url) && r.status === "completed" && (
+                      <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => setPreviewRequest(r)}>
+                        <Play size={12} /> Åpne
                       </Button>
                     )}
                     <Button variant="ghost" size="icon" onClick={() => handleDelete(r.id)} className="text-muted-foreground hover:text-destructive">
@@ -384,6 +395,71 @@ const VideoStudioTab = () => {
           })}
         </div>
       )}
+
+      {/* Video/Media Preview Dialog */}
+      <Dialog open={!!previewRequest} onOpenChange={(o) => !o && setPreviewRequest(null)}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          {previewRequest && (
+            <div className="flex flex-col">
+              {/* Media player area */}
+              <div className="bg-black flex items-center justify-center min-h-[300px] max-h-[70vh]">
+                {previewRequest.video_url ? (
+                  <video
+                    src={previewRequest.video_url}
+                    controls
+                    autoPlay
+                    className="w-full h-full max-h-[70vh] object-contain"
+                  />
+                ) : previewRequest.thumbnail_url ? (
+                  <img
+                    src={previewRequest.thumbnail_url}
+                    alt={previewRequest.title}
+                    className="w-full h-full max-h-[70vh] object-contain"
+                  />
+                ) : (
+                  <div className="text-muted-foreground flex flex-col items-center gap-2 p-12">
+                    <Film size={48} className="opacity-30" />
+                    <p className="text-sm">Ingen media tilgjengelig</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Info bar */}
+              <div className="p-4 space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-heading text-sm">{previewRequest.title}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-[10px]">{PLATFORM_LABELS[previewRequest.platform]}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{previewRequest.aspect_ratio} · {previewRequest.duration}s</Badge>
+                      <span className="text-[10px] text-muted-foreground">
+                        {format(new Date(previewRequest.created_at), "d. MMM yyyy HH:mm", { locale: nb })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {previewRequest.video_url && (
+                      <Button size="sm" variant="outline" className="gap-1.5" asChild>
+                        <a href={previewRequest.video_url} download target="_blank" rel="noopener noreferrer">
+                          <Download size={12} /> Last ned video
+                        </a>
+                      </Button>
+                    )}
+                    {previewRequest.thumbnail_url && !previewRequest.video_url && (
+                      <Button size="sm" variant="outline" className="gap-1.5" asChild>
+                        <a href={previewRequest.thumbnail_url} download target="_blank" rel="noopener noreferrer">
+                          <Download size={12} /> Last ned bilde
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground line-clamp-3">{previewRequest.prompt}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
