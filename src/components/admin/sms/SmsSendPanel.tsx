@@ -307,12 +307,29 @@ const SmsSendPanel = () => {
 
       {sending && <Progress value={progress} className="h-2" />}
 
-      <Button onClick={handleSend} disabled={sending || allPhones.length === 0} className="gap-2">
-        {usePhoneLink ? <Monitor size={14} /> : <Send size={14} />}
-        {sending
-          ? `${usePhoneLink ? "Åpner" : "Legger i kø"} (${progress}%)...`
-          : `${usePhoneLink ? "Åpne i Telefonkobling" : "Send"} til ${allPhones.length} mottaker${allPhones.length !== 1 ? "e" : ""}`}
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={handleSend} disabled={sending || allPhones.length === 0} className="gap-2">
+          {usePhoneLink ? <Monitor size={14} /> : <Send size={14} />}
+          {sending
+            ? `${usePhoneLink ? "Åpner" : "Legger i kø"} (${progress}%)...`
+            : `${usePhoneLink ? "Åpne i Telefonkobling" : "Send"} til ${allPhones.length} mottaker${allPhones.length !== 1 ? "e" : ""}`}
+        </Button>
+        {allPhones.length > 0 && (
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={sending}
+            onClick={() => {
+              allPhones.forEach((p, i) => {
+                setTimeout(() => openPhoneLinkCall(p), i * 500);
+              });
+            }}
+          >
+            <Phone size={14} />
+            Ring {allPhones.length > 1 ? `${allPhones.length} numre` : ""}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
