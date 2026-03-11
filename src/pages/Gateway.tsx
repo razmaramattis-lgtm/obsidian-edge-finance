@@ -31,6 +31,7 @@ const Gateway = () => {
   const processingRef = useRef(false);
   const activeRef = useRef(active);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const pendingRef = useRef<PendingMessage[]>([]);
 
   useEffect(() => { activeRef.current = active; }, [active]);
 
