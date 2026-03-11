@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Play, Trash2 } from "lucide-react";
+import { Plus, Play, Trash2, Upload } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const statusColors: Record<string, string> = {
