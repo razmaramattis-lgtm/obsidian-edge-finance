@@ -36,6 +36,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Personvern = lazy(() => import("./pages/Personvern"));
 const Vilkar = lazy(() => import("./pages/Vilkar"));
+const Gateway = lazy(() => import("./pages/Gateway"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeLogin = lazy(() => import("./pages/kunde/KundeLogin"));
@@ -229,6 +230,9 @@ const App = () => (
                   <Route path="/admin/logg-inn" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
+
+                  {/* Gateway app (no layout, standalone) */}
+                  <Route path="/gateway" element={<Gateway />} />
 
                   {/* Workspace route (authenticated, no Layout) */}
                   <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />

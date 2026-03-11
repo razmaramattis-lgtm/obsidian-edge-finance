@@ -8,14 +8,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy, Server } from "lucide-react";
+import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy, Server, QrCode, ExternalLink } from "lucide-react";
 import { timeAgo } from "@/components/workspace/helpers";
 
 const GATEWAY_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/sms-device-api`;
+const APP_URL = typeof window !== "undefined" ? window.location.origin : "";
 
 const SmsDevicesPanel = () => {
   const [devices, setDevices] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [qrDevice, setQrDevice] = useState<any>(null);
   const [form, setForm] = useState({ device_name: "", phone_number: "" });
 
   useEffect(() => { fetchDevices(); }, []);
@@ -56,6 +58,25 @@ const SmsDevicesPanel = () => {
   const copyKey = (key: string) => {
     navigator.clipboard.writeText(key);
     toast.success("API-nøkkel kopiert");
+  };
+
+  const getSetupUrl = (device: any) => {
+    const params = new URLSearchParams({
+      key: device.api_key,
+      url: GATEWAY_URL,
+      name: device.device_name,
+    });
+    return `${APP_URL}/gateway?${params.toString()}`;
+  };
+
+  const copySetupLink = (device: any) => {
+    navigator.clipboard.writeText(getSetupUrl(device));
+    toast.success("Oppsettslenke kopiert – åpne denne på telefonen");
+  };
+
+  const getQrUrl = (device: any) => {
+    const setupUrl = getSetupUrl(device);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(setupUrl)}`;
   };
 
   return (
@@ -127,6 +148,8 @@ const SmsDevicesPanel = () => {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
+                  <Button size="icon" variant="ghost" onClick={() => setQrDevice(d)} title="QR-kode oppsett"><QrCode size={14} /></Button>
+                  <Button size="icon" variant="ghost" onClick={() => copySetupLink(d)} title="Kopier oppsettslenke"><ExternalLink size={14} /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleRegenKey(d.id)} title="Regenerer nøkkel"><RefreshCw size={14} /></Button>
                   <Button size="icon" variant="ghost" onClick={() => handleDelete(d.id)} className="text-destructive"><Trash2 size={14} /></Button>
                 </div>
@@ -135,6 +158,31 @@ const SmsDevicesPanel = () => {
           ))}
         </TableBody>
       </Table>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!qrDevice} onOpenChange={(o) => !o && setQrDevice(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Koble {qrDevice?.device_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-center">
+            <p className="text-xs text-muted-foreground">Skann QR-koden med telefonen for å sette opp gateway-appen automatisk.</p>
+            {qrDevice && (
+              <img
+                src={getQrUrl(qrDevice)}
+                alt="QR-kode for oppsett"
+                className="w-48 h-48 mx-auto rounded-lg border border-border/20"
+              />
+            )}
+            <div className="space-y-2">
+              <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => qrDevice && copySetupLink(qrDevice)}>
+                <Copy size={12} /> Kopier oppsettslenke
+              </Button>
+              <p className="text-[10px] text-muted-foreground">Eller send lenken direkte til telefonen via SMS/chat</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
