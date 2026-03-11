@@ -6,80 +6,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// All important Avargo pages to scan
-const AVARGO_PAGES = [
-  "https://avargo.no/",
-  "https://avargo.no/tjenester",
-  "https://avargo.no/bransjer",
-  "https://avargo.no/priser",
-  "https://avargo.no/metoden",
-  "https://avargo.no/om-oss",
-  "https://avargo.no/kontakt",
-  "https://avargo.no/faq",
-  "https://avargo.no/nyheter",
-  "https://avargo.no/ressurser",
-  "https://avargo.no/tjenester/regnskapsforer",
-  "https://avargo.no/tjenester/ai-innsikt",
-  "https://avargo.no/tjenester/cfo",
-  "https://avargo.no/tjenester/hr-og-lonn",
-  "https://avargo.no/tjenester/nettsider",
-  "https://avargo.no/tjenester/seo",
-  "https://avargo.no/tjenester/meta-annonser",
-  "https://avargo.no/tjenester/google-ads",
-  "https://avargo.no/tjenester/nettbutikk",
-  "https://avargo.no/tjenester/ai-automatisering",
-  "https://avargo.no/tjenester/1-1-regnskap",
-  "https://avargo.no/tjenester/lonn",
-  "https://avargo.no/tjenester/arsregnskap",
-  "https://avargo.no/tjenester/fakturering",
-  "https://avargo.no/tjenester/skatteplanlegging",
-  "https://avargo.no/tjenester/ansettelse",
-  "https://avargo.no/tjenester/personalhandbok",
-  "https://avargo.no/tjenester/arbeidsrett",
-  "https://avargo.no/tjenester/chatbot",
-  "https://avargo.no/tjenester/internsystemer",
-  "https://avargo.no/tjenester/dashboard",
-  "https://avargo.no/bransjer/tech-saas",
-  "https://avargo.no/bransjer/eiendom",
-  "https://avargo.no/bransjer/holding",
-  "https://avargo.no/bransjer/consulting",
-  "https://avargo.no/bransjer/restaurant",
-  "https://avargo.no/bransjer/bygg-anlegg",
-  "https://avargo.no/bransjer/nettbutikk",
-  "https://avargo.no/bransjer/helse",
-  "https://avargo.no/bransjer/transport-logistikk",
-  "https://avargo.no/bransjer/handverkere",
-  "https://avargo.no/karriere",
-];
-
-async function fetchPageContent(url: string): Promise<{ title: string; content: string } | null> {
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Avargo-MarketingAI/2.0" },
-    });
-    if (!res.ok) return null;
-    const html = await res.text();
-
-    const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/is);
-    const title = titleMatch ? titleMatch[1].trim() : url;
-
-    const content = html
-      .replace(/<script[\s\S]*?<\/script>/gi, "")
-      .replace(/<style[\s\S]*?<\/style>/gi, "")
-      .replace(/<nav[\s\S]*?<\/nav>/gi, "")
-      .replace(/<footer[\s\S]*?<\/footer>/gi, "")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 6000);
-
-    if (content.length < 50) return null;
-    return { title, content };
-  } catch {
-    return null;
-  }
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -87,126 +13,221 @@ Deno.serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY ikke konfigurert");
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const body = await req.json().catch(() => ({}));
-    const urls: string[] = body.urls || AVARGO_PAGES;
-    const results: any[] = [];
+    // Pull all real content from the database instead of crawling SPA pages
+    const [blogRes, industriesRes, coursesRes, glossaryRes, servicesRes] = await Promise.all([
+      supabase.from("blog_posts").select("title, excerpt, content, category, tags, slug").eq("published", true).limit(50),
+      supabase.from("industries").select("title, description, tagline, intro, body, deliverables, slug").eq("active", true).limit(50),
+      supabase.from("courses").select("name, description, category, target_audience, slug").eq("active", true).limit(50),
+      supabase.from("glossary_terms").select("term, description").eq("active", true).limit(100),
+      supabase.from("collaboration_agreements").select("title, description, offering, target_audience").limit(20),
+    ]);
+
+    // Build content pages from database content
+    const contentPages: { url: string; title: string; content: string; category: string }[] = [];
+
+    // Blog posts
+    for (const post of blogRes.data || []) {
+      contentPages.push({
+        url: `/nyheter/${post.slug}`,
+        title: post.title,
+        content: `${post.excerpt || ""} ${(post.content || "").replace(/<[^>]+>/g, " ").slice(0, 2000)}`,
+        category: "blogg",
+      });
+    }
+
+    // Industries
+    for (const ind of industriesRes.data || []) {
+      contentPages.push({
+        url: `/bransjer/${ind.slug}`,
+        title: ind.title,
+        content: `${ind.tagline || ""} ${ind.description || ""} ${ind.intro || ""} ${(ind.body || "").replace(/<[^>]+>/g, " ").slice(0, 1500)} Leveranser: ${(ind.deliverables || []).join(", ")}`,
+        category: "bransje",
+      });
+    }
+
+    // Courses
+    for (const c of coursesRes.data || []) {
+      contentPages.push({
+        url: `/kurs/${c.slug}`,
+        title: c.name,
+        content: `${c.description || ""} Kategori: ${c.category} Målgruppe: ${c.target_audience || ""}`,
+        category: "kurs",
+      });
+    }
+
+    // Static pages context
+    const staticPages = [
+      { url: "/", title: "Avargo – Forsiden", content: "Avargo er Norges ledende AI-drevne regnskapsbyrå. Vi tilbyr regnskap, lønn, HR, CFO-tjenester, AI-automatisering, nettsider, SEO, Google Ads, Meta-annonser, nettbutikk, fakturering, skatteplanlegging, arbeidsrett og personalhåndbok. Alt samlet i én plattform med personlig rådgiver.", category: "hovedside" },
+      { url: "/tjenester", title: "Tjenester", content: "Regnskapsførertjenester, AI-innsikt og automatisering, CFO-tjenester, HR og lønn, nettsider, SEO, Google Ads, Meta-annonser, nettbutikk, fakturering, skatteplanlegging, ansettelse, personalhåndbok, arbeidsrett, chatbot, internsystemer, dashboard. Avargo leverer helhetlige tjenester for norske bedrifter.", category: "tjenester" },
+      { url: "/priser", title: "Priser", content: "Transparente priser tilpasset bedriftens størrelse. Fra enkeltpersonforetak til større selskaper. Inkluderer regnskapsfører, lønn, HR og digitale tjenester.", category: "priser" },
+      { url: "/metoden", title: "Avargo-metoden", content: "Vår metode kombinerer AI-teknologi med personlig rådgivning. Tre faser: Kartlegging, implementering og løpende optimalisering. Skreddersydde løsninger for hver kunde.", category: "metoden" },
+      { url: "/om-oss", title: "Om Avargo", content: "Norges mest innovative regnskapsbyrå. Grunnlagt for å revolusjonere regnskapsbransjen med AI og teknologi. Team av autoriserte regnskapsførere, HR-rådgivere og teknologieksperter.", category: "om-oss" },
+      { url: "/karriere", title: "Karriere hos Avargo", content: "Jobb hos Norges mest innovative regnskapsbyrå. Stillinger innen regnskap, HR, IT, marked og kundeservice. Moderne arbeidsmiljø med fokus på innovasjon og faglig utvikling.", category: "karriere" },
+    ];
+    contentPages.push(...staticPages);
+
+    // Now analyze all content with AI in batches
     let scanned = 0;
-    let failed = 0;
+    const totalPages = contentPages.length;
 
-    // Scan pages in batches of 5
-    for (let i = 0; i < urls.length; i += 5) {
-      const batch = urls.slice(i, i + 5);
-      const pageResults = await Promise.all(batch.map(fetchPageContent));
+    // Process in batches of 5 pages per AI call to reduce requests
+    for (let i = 0; i < contentPages.length; i += 5) {
+      const batch = contentPages.slice(i, i + 5);
+      const batchContent = batch.map((p, idx) => `--- SIDE ${idx + 1}: ${p.title} (${p.url}) ---\n${p.content}`).join("\n\n");
 
-      for (let j = 0; j < batch.length; j++) {
-        const page = pageResults[j];
-        if (!page) { failed++; continue; }
-
-        let analysis = {
-          title: page.title,
-          content_summary: page.content.slice(0, 300),
-          keywords: [] as string[],
-          themes: [] as string[],
-          tone: "Profesjonell",
-        };
-
-        // AI Analysis
-        if (LOVABLE_API_KEY) {
-          try {
-            const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      try {
+        const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-flash-preview",
+            messages: [
+              {
+                role: "system",
+                content: `Du er en markedsføringsanalytiker for Avargo, et norsk AI-drevet regnskapsbyrå. 
+Analyser sidene og returner et JSON-array med ett objekt per side:
+[
+  {
+    "index": 0,
+    "title": "sidetittel",
+    "content_summary": "sammendrag maks 80 ord med fokus på unike salgsargumenter og verdiforslag",
+    "keywords": ["nøkkelord1", "nøkkelord2", ...],
+    "themes": ["tema1", "tema2", ...],
+    "tone": "tonefallbeskrivelse",
+    "target_audience": "hvem er målgruppen"
+  }
+]
+Returner KUN gyldig JSON-array.`,
               },
-              body: JSON.stringify({
-                model: "google/gemini-2.5-flash-lite",
-                messages: [
-                  {
-                    role: "system",
-                    content: `Du er en markedsføringsanalytiker for Avargo, et norsk regnskapsbyrå. Analyser og returner JSON:
-{
-  "title": "sidetittel",
-  "content_summary": "sammendrag maks 150 ord, fokuser på unike salgsargumenter",
-  "keywords": ["nøkkelord1", ...],
-  "themes": ["tema1", ...],
-  "tone": "tonefallbeskrivelse",
-  "unique_selling_points": ["usp1", ...],
-  "target_audience": "hvem er målgruppen",
-  "emotional_hooks": ["emosjonell krok1", ...]
-}
-Returner KUN gyldig JSON.`,
-                  },
-                  { role: "user", content: `Analyser: ${batch[j]}\n\n${page.content}` },
-                ],
-                temperature: 0.2,
-                max_tokens: 800,
-              }),
-            });
+              { role: "user", content: `Analyser disse ${batch.length} sider:\n\n${batchContent}` },
+            ],
+            temperature: 0.2,
+            max_tokens: 2000,
+          }),
+        });
 
-            if (aiRes.ok) {
-              const aiData = await aiRes.json();
-              const raw = aiData.choices?.[0]?.message?.content || "";
-              const jsonMatch = raw.match(/\{[\s\S]*\}/);
-              if (jsonMatch) {
-                const parsed = JSON.parse(jsonMatch[0]);
-                analysis = {
-                  title: parsed.title || page.title,
-                  content_summary: parsed.content_summary || analysis.content_summary,
-                  keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
-                  themes: Array.isArray(parsed.themes) ? parsed.themes : [],
-                  tone: parsed.tone || "Profesjonell",
-                };
-              }
+        if (aiRes.ok) {
+          const aiData = await aiRes.json();
+          const raw = aiData.choices?.[0]?.message?.content || "";
+          const jsonMatch = raw.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            const analyses = JSON.parse(jsonMatch[0]);
+            for (const analysis of analyses) {
+              const page = batch[analysis.index ?? analyses.indexOf(analysis)];
+              if (!page) continue;
+
+              await supabase.from("marketing_content_analyses").upsert({
+                url: page.url,
+                title: analysis.title || page.title,
+                content_summary: analysis.content_summary || page.content.slice(0, 300),
+                keywords: Array.isArray(analysis.keywords) ? analysis.keywords : [],
+                themes: Array.isArray(analysis.themes) ? analysis.themes : [],
+                tone: analysis.tone || "Profesjonell",
+                raw_content: page.content.slice(0, 5000),
+                crawled_at: new Date().toISOString(),
+              }, { onConflict: "url" }).then(({ error }) => {
+                if (error) {
+                  // Fallback: insert without upsert
+                  supabase.from("marketing_content_analyses").insert({
+                    url: page.url,
+                    title: analysis.title || page.title,
+                    content_summary: analysis.content_summary || page.content.slice(0, 300),
+                    keywords: Array.isArray(analysis.keywords) ? analysis.keywords : [],
+                    themes: Array.isArray(analysis.themes) ? analysis.themes : [],
+                    tone: analysis.tone || "Profesjonell",
+                    raw_content: page.content.slice(0, 5000),
+                  });
+                }
+              });
+              scanned++;
             }
-          } catch (aiErr) {
-            console.error("AI error for", batch[j], aiErr);
           }
+        } else if (aiRes.status === 429) {
+          // Rate limited - wait and retry
+          await new Promise(r => setTimeout(r, 5000));
+          i -= 5; // retry this batch
+          continue;
+        } else if (aiRes.status === 402) {
+          return new Response(JSON.stringify({ error: "AI-kreditter oppbrukt. Legg til flere kreditter." }), {
+            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
-
-        // Upsert into DB
-        const { error } = await supabase
-          .from("marketing_content_analyses")
-          .upsert({
-            url: batch[j],
-            title: analysis.title,
-            content_summary: analysis.content_summary,
-            keywords: analysis.keywords,
-            themes: analysis.themes,
-            tone: analysis.tone,
+      } catch (aiErr) {
+        console.error("AI batch error:", aiErr);
+        // Still save raw content without AI analysis
+        for (const page of batch) {
+          await supabase.from("marketing_content_analyses").upsert({
+            url: page.url,
+            title: page.title,
+            content_summary: page.content.slice(0, 300),
+            keywords: [],
+            themes: [page.category],
+            tone: "Profesjonell",
             raw_content: page.content.slice(0, 5000),
             crawled_at: new Date().toISOString(),
           }, { onConflict: "url" });
-
-        if (!error) {
           scanned++;
-          results.push({ url: batch[j], title: analysis.title, keywords: analysis.keywords });
-        } else {
-          // If upsert fails (no unique constraint), try insert
-          const { error: insertError } = await supabase
-            .from("marketing_content_analyses")
-            .insert({
-              url: batch[j],
-              title: analysis.title,
-              content_summary: analysis.content_summary,
-              keywords: analysis.keywords,
-              themes: analysis.themes,
-              tone: analysis.tone,
-              raw_content: page.content.slice(0, 5000),
-            });
-          if (!insertError) scanned++;
-          else failed++;
         }
       }
 
-      // Small delay between batches to avoid rate limiting
-      if (i + 5 < urls.length) await new Promise(r => setTimeout(r, 500));
+      // Delay between batches
+      if (i + 5 < contentPages.length) await new Promise(r => setTimeout(r, 1500));
+    }
+
+    // Also generate AI insights from the combined data
+    const allKeywords = contentPages.flatMap(p => []).join(", "); // will be populated from DB
+    const insightPrompt = `Basert på Avargo sine ${totalPages} sider med innhold om regnskap, AI, HR, kurs og bransjeløsninger, gi 5 strategiske markedsføringsinnsikter som JSON-array:
+[{"insight_type": "tone|cta|hashtag|timing|budget|audience", "platform": "linkedin|facebook|instagram|tiktok|null", "recommendation": "konkret anbefaling", "confidence": 0.85, "based_on_posts": ${totalPages}}]`;
+
+    try {
+      const insightRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: "Du er en strategisk markedsføringsrådgiver for Avargo. Returner KUN gyldig JSON-array." },
+            { role: "user", content: insightPrompt },
+          ],
+          temperature: 0.4,
+          max_tokens: 1500,
+        }),
+      });
+
+      if (insightRes.ok) {
+        const insightData = await insightRes.json();
+        const raw = insightData.choices?.[0]?.message?.content || "";
+        const jsonMatch = raw.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          const newInsights = JSON.parse(jsonMatch[0]);
+          for (const insight of newInsights) {
+            await supabase.from("marketing_ai_insights").insert({
+              insight_type: insight.insight_type || "tone",
+              platform: insight.platform || null,
+              recommendation: insight.recommendation,
+              confidence: insight.confidence || 0.7,
+              based_on_posts: insight.based_on_posts || totalPages,
+              active: true,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Insight generation error:", e);
     }
 
     return new Response(
-      JSON.stringify({ success: true, scanned, failed, total: urls.length, results }),
+      JSON.stringify({ success: true, scanned, total: totalPages }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
