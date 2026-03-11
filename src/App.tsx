@@ -35,6 +35,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Personvern = lazy(() => import("./pages/Personvern"));
+const Sikkerhet = lazy(() => import("./pages/Sikkerhet"));
 const Vilkar = lazy(() => import("./pages/Vilkar"));
 const Gateway = lazy(() => import("./pages/Gateway"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -423,6 +424,7 @@ const App = () => (
                             <Route path="/om-oss" element={<About />} />
                             <Route path="/kontakt" element={<Contact />} />
                             <Route path="/personvern" element={<Personvern />} />
+                            <Route path="/sikkerhet" element={<Sikkerhet />} />
                             <Route path="/vilkar" element={<Vilkar />} />
                             <Route path="/karriere" element={<Navigate to="/karriere" replace />} />
                             <Route path="/karriere/:slug" element={<Navigate to="/karriere" replace />} />
