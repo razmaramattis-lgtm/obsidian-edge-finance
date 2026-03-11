@@ -91,12 +91,14 @@ const AiMarketingBrainTab = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [insightsRes, plansRes] = await Promise.all([
+    const [insightsRes, plansRes, integrationsRes] = await Promise.all([
       supabase.from("marketing_ai_insights").select("*").eq("active", true).order("confidence", { ascending: false }).limit(50),
       supabase.from("marketing_strategy_plans").select("*").order("created_at", { ascending: false }).limit(10),
+      supabase.from("marketing_integrations").select("platform").eq("connected", true),
     ]);
     setInsights((insightsRes.data as Insight[]) || []);
     setPlans((plansRes.data as StrategyPlan[]) || []);
+    setConnectedPlatforms((integrationsRes.data || []).map((i: any) => i.platform));
     setLoading(false);
   };
 
