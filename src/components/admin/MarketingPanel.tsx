@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Search, PenTool, CheckSquare, Calendar, BarChart3,
-  Megaphone, Brain, Smartphone, Mail, Plug, FolderOpen,
+  Megaphone, Brain, Smartphone, Mail, Plug, FolderOpen, Video,
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MarketingDashboardTab from "./marketing/MarketingDashboardTab";
@@ -14,6 +14,7 @@ import PerformanceTrackerTab from "./marketing/PerformanceTrackerTab";
 import AdManagerTab from "./marketing/AdManagerTab";
 import AiMarketingBrainTab from "./marketing/AiMarketingBrainTab";
 import IntegrationsTab from "./marketing/IntegrationsTab";
+import VideoStudioTab from "./marketing/VideoStudioTab";
 
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,6 +26,7 @@ const TABS = [
   { id: "scheduler", label: "SoMe Scheduler", icon: Calendar },
   { id: "performance", label: "Performance", icon: BarChart3 },
   { id: "ads", label: "Ad Manager", icon: Megaphone },
+  { id: "video", label: "Video Studio", icon: Video },
   { id: "brain", label: "AI Brain", icon: Brain },
 ] as const;
 
