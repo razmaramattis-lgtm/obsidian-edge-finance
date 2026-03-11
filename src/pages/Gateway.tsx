@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Smartphone, Wifi, WifiOff, Send, CheckCircle, XCircle, Loader2, Signal, RefreshCw, Power, PowerOff, Zap, Settings } from "lucide-react";
+import { isNativePlatform, sendNativeSms } from "@/lib/native-sms";
 
 const POLL_INTERVAL = 3000;
 const HEARTBEAT_INTERVAL = 25000;
@@ -126,19 +127,23 @@ const Gateway = () => {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [apiKey, gatewayUrl, pollMessages]);
 
-  // Fire SMS intent via hidden iframe (avoids navigating away from page)
-  const fireSmsIntent = useCallback((phone: string, message: string) => {
-    const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
+  // Send SMS — native plugin on Android, fallback to intent on web
+  const fireSms = useCallback(async (phone: string, message: string): Promise<{ success: boolean; error?: string }> => {
+    // If running as native Android app, use SmsManager directly
+    if (isNativePlatform()) {
+      return await sendNativeSms(phone, message);
+    }
     
-    // Try iframe approach first (keeps gateway page in foreground)
+    // Fallback: SMS intent (opens messaging app)
+    const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
     if (iframeRef.current) {
       iframeRef.current.src = smsUrl;
     } else {
-      // Fallback: use link click
       const link = document.createElement("a");
       link.href = smsUrl;
       link.click();
     }
+    return { success: true }; // Can't verify on web
   }, []);
 
   // Send a single SMS
@@ -146,31 +151,36 @@ const Gateway = () => {
     setSending(msg.id);
     addLog(`📤 Sender til ${msg.phone}...`);
 
-    // Fire the SMS intent
-    fireSmsIntent(msg.phone, msg.message);
+    const result = await fireSms(msg.phone, msg.message);
 
-    // Wait for the SMS app to process
-    await new Promise(resolve => setTimeout(resolve, sendDelay));
+    // On native: we know if it succeeded. On web: assume success after delay.
+    if (!isNativePlatform()) {
+      await new Promise(resolve => setTimeout(resolve, sendDelay));
+    }
 
-    if (autoMarkSent) {
-      // Auto-report as sent to backend
-      const result = await apiCall("sent", "POST", { message_id: msg.id, success: true });
-      if (result?.ok) {
-        setStats(s => ({ ...s, sent: s.sent + 1 }));
-        setPending(p => p.filter(m => m.id !== msg.id));
-        addLog(`✅ Sendt til ${msg.phone}`);
+    if (result.success) {
+      if (autoMarkSent) {
+        const reportResult = await apiCall("sent", "POST", { message_id: msg.id, success: true });
+        if (reportResult?.ok) {
+          setStats(s => ({ ...s, sent: s.sent + 1 }));
+          setPending(p => p.filter(m => m.id !== msg.id));
+          addLog(`✅ Sendt til ${msg.phone}${isNativePlatform() ? " (native)" : ""}`);
+        } else {
+          addLog(`⚠️ Rapporteringsfeil for ${msg.phone}`);
+        }
       } else {
-        addLog(`⚠️ Rapporteringsfeil for ${msg.phone}`);
+        setPending(p => p.filter(m => m.id !== msg.id));
+        addLog(`📨 Sendt til ${msg.phone} (manuell bekreftelse)`);
       }
     } else {
-      // Remove from local queue but don't report
-      setPending(p => p.filter(m => m.id !== msg.id));
-      addLog(`📨 Intent sendt til ${msg.phone} (manuell bekreftelse)`);
+      setStats(s => ({ ...s, failed: s.failed + 1 }));
+      addLog(`❌ Feil for ${msg.phone}: ${result.error}`);
+      await apiCall("sent", "POST", { message_id: msg.id, success: false, error: result.error });
     }
 
     setSending(null);
-    return true;
-  }, [apiCall, addLog, sendDelay, autoMarkSent, fireSmsIntent]);
+    return result.success;
+  }, [apiCall, addLog, sendDelay, autoMarkSent, fireSms]);
 
   // Auto-process queue
   useEffect(() => {
@@ -411,8 +421,9 @@ const Gateway = () => {
       <div className="p-4 mt-4 text-center space-y-3">
         <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-xl p-3 text-left">
           <p className="text-[10px] text-zinc-500 leading-relaxed">
-            💡 <strong className="text-zinc-400">Tips:</strong> SMS-intensjonen åpner meldingsappen med forhåndsutfylt innhold. 
-            På de fleste Android-enheter vil meldingen fylles inn automatisk. Aktiver «Auto-bekreft» i innstillinger for å automatisk markere meldinger som sendt.
+            💡 <strong className="text-zinc-400">Tips:</strong> {isNativePlatform() 
+              ? "Appen kjører i native-modus og sender SMS direkte via Android SmsManager — ingen brukerinteraksjon nødvendig."
+              : "SMS-intensjonen åpner meldingsappen med forhåndsutfylt innhold. For automatisk sending uten brukerinteraksjon, installer appen via Android Studio."}
           </p>
         </div>
         <button onClick={handleDisconnect} className="text-[10px] text-zinc-600 hover:text-zinc-400 underline">
