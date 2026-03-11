@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Smartphone, Wifi, WifiOff, Send, CheckCircle, XCircle, Loader2, Signal, RefreshCw } from "lucide-react";
+import { Smartphone, Wifi, WifiOff, Send, CheckCircle, XCircle, Loader2, Signal, RefreshCw, Power, PowerOff } from "lucide-react";
 
-const POLL_INTERVAL = 5000;
+const POLL_INTERVAL = 4000;
 const HEARTBEAT_INTERVAL = 30000;
+const SEND_DELAY = 3000; // delay between each SMS send
 
 interface PendingMessage {
   id: string;
@@ -13,16 +14,29 @@ interface PendingMessage {
 const Gateway = () => {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [gatewayUrl, setGatewayUrl] = useState<string>("");
-  const [deviceName, setDeviceName] = useState<string>("Ukjent enhet");
+  const [deviceName, setDeviceName] = useState<string>("SMS Gateway");
   const [connected, setConnected] = useState(false);
   const [pending, setPending] = useState<PendingMessage[]>([]);
   const [sending, setSending] = useState<string | null>(null);
-  const [stats, setStats] = useState({ sent: 0, failed: 0, total: 0 });
+  const [stats, setStats] = useState({ sent: 0, failed: 0 });
   const [lastPoll, setLastPoll] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [autoMode, setAutoMode] = useState(false);
+  const [active, setActive] = useState(() => localStorage.getItem("gateway_active") === "true");
+  const [log, setLog] = useState<string[]>([]);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wakeLockRef = useRef<any>(null);
+  const processingRef = useRef(false);
+  const activeRef = useRef(active);
+
+  // Keep activeRef in sync
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  const addLog = useCallback((msg: string) => {
+    setLog(prev => [`${new Date().toLocaleTimeString("nb-NO")} — ${msg}`, ...prev.slice(0, 49)]);
+  }, []);
 
   // Read config from URL params or localStorage
   useEffect(() => {
@@ -39,12 +53,46 @@ const Gateway = () => {
       if (url) localStorage.setItem("gateway_url", url);
       if (name) localStorage.setItem("gateway_device_name", name);
 
-      // Clean URL
       if (params.has("key")) {
         window.history.replaceState({}, "", "/gateway");
       }
     }
   }, []);
+
+  // Wake Lock to keep screen active
+  useEffect(() => {
+    const requestWakeLock = async () => {
+      if (active && "wakeLock" in navigator) {
+        try {
+          wakeLockRef.current = await (navigator as any).wakeLock.request("screen");
+          addLog("Skjerm holdes aktiv (Wake Lock)");
+        } catch {
+          // Wake lock can fail silently
+        }
+      }
+    };
+    requestWakeLock();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && active) {
+        requestWakeLock();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    };
+  }, [active, addLog]);
+
+  // Persist active state
+  useEffect(() => {
+    localStorage.setItem("gateway_active", active ? "true" : "false");
+  }, [active]);
 
   const apiCall = useCallback(async (endpoint: string, method: string = "GET", body?: any) => {
     if (!apiKey || !gatewayUrl) return null;
@@ -88,9 +136,13 @@ const Gateway = () => {
   const pollMessages = useCallback(async () => {
     const result = await apiCall("pending");
     if (result?.messages) {
-      setPending(result.messages);
+      setPending(prev => {
+        // Merge new messages (avoid duplicates)
+        const existingIds = new Set(prev.map(m => m.id));
+        const newMsgs = result.messages.filter((m: PendingMessage) => !existingIds.has(m.id));
+        return [...prev, ...newMsgs];
+      });
       setLastPoll(new Date());
-      setStats(s => ({ ...s, total: s.total + result.messages.length }));
     }
   }, [apiCall]);
 
@@ -101,44 +153,81 @@ const Gateway = () => {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [apiKey, gatewayUrl, pollMessages]);
 
-  // Send a single SMS via sms: intent
-  const sendSms = useCallback(async (msg: PendingMessage) => {
+  // Send a single SMS via sms: intent — auto-mark as sent
+  const sendSms = useCallback(async (msg: PendingMessage): Promise<boolean> => {
     setSending(msg.id);
+    addLog(`Sender til ${msg.phone}...`);
 
-    // Try to open SMS app with pre-filled content
+    // Open SMS app with pre-filled content
     const smsUrl = `sms:${msg.phone}?body=${encodeURIComponent(msg.message)}`;
-    window.open(smsUrl, "_self");
+    
+    // Use window.location for more reliable intent triggering on Android
+    const link = document.createElement("a");
+    link.href = smsUrl;
+    link.click();
 
-    // After a delay, ask user if it was sent
-    setTimeout(() => {
-      const success = window.confirm(`Ble SMS til ${msg.phone} sendt?`);
-      apiCall("sent", "POST", {
-        message_id: msg.id,
-        success,
-        error_message: success ? undefined : "Bruker avbrøt",
-      });
-      setStats(s => success
-        ? { ...s, sent: s.sent + 1 }
-        : { ...s, failed: s.failed + 1 }
-      );
+    // Wait for SMS app to open and user to (auto-)send
+    await new Promise(resolve => setTimeout(resolve, SEND_DELAY));
+
+    // Report success to backend
+    const result = await apiCall("sent", "POST", {
+      message_id: msg.id,
+      success: true,
+    });
+
+    if (result?.ok) {
+      setStats(s => ({ ...s, sent: s.sent + 1 }));
       setPending(p => p.filter(m => m.id !== msg.id));
-      setSending(null);
-    }, 2000);
-  }, [apiCall]);
+      addLog(`✓ Sendt til ${msg.phone}`);
+    } else {
+      addLog(`✗ Feil ved rapportering for ${msg.phone}`);
+    }
 
-  // Auto-send mode
+    setSending(null);
+    return true;
+  }, [apiCall, addLog]);
+
+  // Auto-process queue when active
   useEffect(() => {
-    if (!autoMode || pending.length === 0 || sending) return;
-    sendSms(pending[0]);
-  }, [autoMode, pending, sending, sendSms]);
+    if (!active || pending.length === 0 || processingRef.current) return;
+
+    const processQueue = async () => {
+      processingRef.current = true;
+      
+      while (activeRef.current && pending.length > 0) {
+        const msg = pending[0];
+        if (!msg) break;
+        await sendSms(msg);
+        // Small extra pause between messages
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      processingRef.current = false;
+    };
+
+    processQueue();
+  }, [active, pending, sendSms]);
+
+  const handleDeactivate = () => {
+    setActive(false);
+    processingRef.current = false;
+    addLog("Gateway deaktivert");
+  };
+
+  const handleActivate = () => {
+    setActive(true);
+    addLog("Gateway aktivert — sender automatisk");
+  };
 
   const handleDisconnect = () => {
     localStorage.removeItem("gateway_api_key");
     localStorage.removeItem("gateway_url");
     localStorage.removeItem("gateway_device_name");
+    localStorage.removeItem("gateway_active");
     setApiKey(null);
     setConnected(false);
     setPending([]);
+    setActive(false);
   };
 
   // Not configured yet
@@ -190,11 +279,37 @@ const Gateway = () => {
               <p className="text-[10px] text-zinc-500">{connected ? "Tilkoblet" : "Frakoblet"}</p>
             </div>
           </div>
-          <button onClick={handleDisconnect} className="text-[10px] text-zinc-500 border border-zinc-800 rounded-lg px-2.5 py-1.5 hover:bg-zinc-900">
-            Koble fra
-          </button>
+          <div className="flex items-center gap-2">
+            {active ? (
+              <button
+                onClick={handleDeactivate}
+                className="flex items-center gap-1.5 text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg px-3 py-2 hover:bg-red-500/20"
+              >
+                <PowerOff size={14} />
+                Deaktiver
+              </button>
+            ) : (
+              <button
+                onClick={handleActivate}
+                className="flex items-center gap-1.5 text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg px-3 py-2 hover:bg-emerald-500/20"
+              >
+                <Power size={14} />
+                Aktiver
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Status banner */}
+      {active && (
+        <div className="mx-4 mt-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-2">
+          <Loader2 size={14} className="text-emerald-400 animate-spin shrink-0" />
+          <p className="text-xs text-emerald-300">
+            Gateway er aktiv — sender SMS automatisk. {sending && "Sender nå..."}
+          </p>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2 p-4">
@@ -210,21 +325,6 @@ const Gateway = () => {
         ))}
       </div>
 
-      {/* Auto-mode toggle */}
-      <div className="px-4 mb-3">
-        <button
-          onClick={() => setAutoMode(!autoMode)}
-          className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
-            autoMode
-              ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
-              : "bg-zinc-900 border border-zinc-800 text-zinc-300"
-          }`}
-        >
-          {autoMode ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-          {autoMode ? "Sender automatisk..." : "Start automatisk sending"}
-        </button>
-      </div>
-
       {/* Error */}
       {error && (
         <div className="mx-4 mb-3 bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-center gap-2">
@@ -236,7 +336,7 @@ const Gateway = () => {
       {/* Pending messages */}
       <div className="px-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-medium text-zinc-400">Meldingskø</p>
+          <p className="text-xs font-medium text-zinc-400">Meldingskø ({pending.length})</p>
           <button onClick={pollMessages} className="text-zinc-500 hover:text-zinc-300">
             <RefreshCw size={12} />
           </button>
@@ -253,30 +353,43 @@ const Gateway = () => {
             )}
           </div>
         ) : (
-          <div className="space-y-2">
-            {pending.map(msg => (
-              <div key={msg.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-1.5">
+          <div className="space-y-2 max-h-48 overflow-y-auto">
+            {pending.slice(0, 5).map(msg => (
+              <div key={msg.id} className={`bg-zinc-900 border rounded-xl p-3 ${sending === msg.id ? "border-emerald-500/40" : "border-zinc-800"}`}>
+                <div className="flex items-center justify-between mb-1">
                   <p className="text-xs font-mono text-zinc-300">{msg.phone}</p>
-                  <button
-                    onClick={() => sendSms(msg)}
-                    disabled={!!sending}
-                    className="flex items-center gap-1 text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg px-2.5 py-1 hover:bg-emerald-500/20 disabled:opacity-50"
-                  >
-                    {sending === msg.id ? <Loader2 size={10} className="animate-spin" /> : <Send size={10} />}
-                    Send
-                  </button>
+                  {sending === msg.id && <Loader2 size={12} className="text-emerald-400 animate-spin" />}
                 </div>
-                <p className="text-[11px] text-zinc-400 line-clamp-2">{msg.message}</p>
+                <p className="text-[11px] text-zinc-400 line-clamp-1">{msg.message}</p>
               </div>
             ))}
+            {pending.length > 5 && (
+              <p className="text-[10px] text-zinc-600 text-center">+{pending.length - 5} til i kø</p>
+            )}
           </div>
         )}
       </div>
 
-      {/* Footer info */}
-      <div className="p-4 mt-6 text-center">
-        <p className="text-[10px] text-zinc-600">
+      {/* Activity Log */}
+      <div className="px-4 mt-4">
+        <p className="text-xs font-medium text-zinc-400 mb-2">Aktivitetslogg</p>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 max-h-40 overflow-y-auto">
+          {log.length === 0 ? (
+            <p className="text-[10px] text-zinc-600">Ingen aktivitet ennå</p>
+          ) : (
+            log.map((entry, i) => (
+              <p key={i} className="text-[10px] text-zinc-500 leading-relaxed">{entry}</p>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Disconnect */}
+      <div className="p-4 mt-4 text-center">
+        <button onClick={handleDisconnect} className="text-[10px] text-zinc-600 hover:text-zinc-400 underline">
+          Koble fra enhet
+        </button>
+        <p className="text-[10px] text-zinc-700 mt-2">
           Poller hvert {POLL_INTERVAL / 1000}s • Heartbeat hvert {HEARTBEAT_INTERVAL / 1000}s
         </p>
       </div>
