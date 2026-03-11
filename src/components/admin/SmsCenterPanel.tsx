@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { LayoutDashboard, Send, Users as UsersIcon, Smartphone, FileText, Clock, Settings, Megaphone, Layers } from "lucide-react";
+import { Smartphone, Mail, Megaphone } from "lucide-react";
+
+// SMS sub-panels
 import SmsDashboardPanel from "./sms/SmsDashboardPanel";
 import SmsSendPanel from "./sms/SmsSendPanel";
 import SmsBulkPanel from "./sms/SmsBulkPanel";
@@ -10,7 +12,21 @@ import SmsTemplatesPanel from "./sms/SmsTemplatesPanel";
 import SmsHistoryPanel from "./sms/SmsHistoryPanel";
 import SmsSettingsPanel from "./sms/SmsSettingsPanel";
 
-const TABS = [
+// Email sub-panels
+import EmailDashboardPanel from "./email/EmailDashboardPanel";
+import EmailSendPanel from "./email/EmailSendPanel";
+import EmailBulkPanel from "./email/EmailBulkPanel";
+import EmailCampaignsPanel from "./email/EmailCampaignsPanel";
+import EmailTemplatesPanel from "./email/EmailTemplatesPanel";
+import EmailHistoryPanel from "./email/EmailHistoryPanel";
+
+import {
+  LayoutDashboard, Send, Users as UsersIcon, FileText, Clock, Settings, Layers,
+} from "lucide-react";
+
+type Channel = "sms" | "email";
+
+const SMS_TABS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "send", label: "Send SMS", icon: Send },
   { id: "bulk", label: "Bulk SMS", icon: Layers },
@@ -22,31 +38,73 @@ const TABS = [
   { id: "settings", label: "Innstillinger", icon: Settings },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+const EMAIL_TABS = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "send", label: "Send e-post", icon: Send },
+  { id: "bulk", label: "Masseutsendelse", icon: Layers },
+  { id: "campaigns", label: "Kampanjer", icon: Megaphone },
+  { id: "templates", label: "Maler", icon: FileText },
+  { id: "history", label: "Historikk", icon: Clock },
+] as const;
+
+type SmsTab = (typeof SMS_TABS)[number]["id"];
+type EmailTab = (typeof EMAIL_TABS)[number]["id"];
 
 const SmsCenterPanel = () => {
-  const [tab, setTab] = useState<TabId>("dashboard");
+  const [channel, setChannel] = useState<Channel>("sms");
+  const [smsTab, setSmsTab] = useState<SmsTab>("dashboard");
+  const [emailTab, setEmailTab] = useState<EmailTab>("dashboard");
+
+  const tabs = channel === "sms" ? SMS_TABS : EMAIL_TABS;
+  const activeTab = channel === "sms" ? smsTab : emailTab;
+  const setActiveTab = channel === "sms"
+    ? (id: string) => setSmsTab(id as SmsTab)
+    : (id: string) => setEmailTab(id as EmailTab);
 
   return (
     <div className="space-y-6">
+      {/* Header with channel switcher */}
       <div className="flex items-center gap-3 mb-2">
         <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-          <Send size={18} className="text-primary" strokeWidth={1.5} />
+          <Megaphone size={18} className="text-primary" strokeWidth={1.5} />
         </div>
-        <div>
-          <p className="text-sm font-medium">SMS Center</p>
-          <p className="text-[10px] text-muted-foreground">Send og administrer SMS via Android gateway-enheter</p>
+        <div className="flex-1">
+          <p className="text-sm font-medium">Markedsføring</p>
+          <p className="text-[10px] text-muted-foreground">SMS og e-postutsendelse fra plattformen</p>
         </div>
       </div>
 
+      {/* Channel tabs */}
+      <div className="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border/20 w-fit">
+        <button
+          onClick={() => setChannel("sms")}
+          className={`flex items-center gap-1.5 h-9 px-4 rounded-lg text-xs font-medium transition-all ${
+            channel === "sms" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Smartphone size={13} />
+          SMS
+        </button>
+        <button
+          onClick={() => setChannel("email")}
+          className={`flex items-center gap-1.5 h-9 px-4 rounded-lg text-xs font-medium transition-all ${
+            channel === "email" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Mail size={13} />
+          E-post
+        </button>
+      </div>
+
+      {/* Sub-tabs */}
       <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-muted/40 border border-border/20">
-        {TABS.map(t => {
+        {tabs.map(t => {
           const Icon = t.icon;
-          const active = tab === t.id;
+          const active = activeTab === t.id;
           return (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => setActiveTab(t.id)}
               className={`flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium transition-all ${
                 active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
@@ -58,15 +116,32 @@ const SmsCenterPanel = () => {
         })}
       </div>
 
-      {tab === "dashboard" && <SmsDashboardPanel />}
-      {tab === "send" && <SmsSendPanel />}
-      {tab === "bulk" && <SmsBulkPanel />}
-      {tab === "campaigns" && <SmsCampaignsPanel />}
-      {tab === "contacts" && <SmsContactsPanel />}
-      {tab === "devices" && <SmsDevicesPanel />}
-      {tab === "templates" && <SmsTemplatesPanel />}
-      {tab === "history" && <SmsHistoryPanel />}
-      {tab === "settings" && <SmsSettingsPanel />}
+      {/* SMS panels */}
+      {channel === "sms" && (
+        <>
+          {smsTab === "dashboard" && <SmsDashboardPanel />}
+          {smsTab === "send" && <SmsSendPanel />}
+          {smsTab === "bulk" && <SmsBulkPanel />}
+          {smsTab === "campaigns" && <SmsCampaignsPanel />}
+          {smsTab === "contacts" && <SmsContactsPanel />}
+          {smsTab === "devices" && <SmsDevicesPanel />}
+          {smsTab === "templates" && <SmsTemplatesPanel />}
+          {smsTab === "history" && <SmsHistoryPanel />}
+          {smsTab === "settings" && <SmsSettingsPanel />}
+        </>
+      )}
+
+      {/* Email panels */}
+      {channel === "email" && (
+        <>
+          {emailTab === "dashboard" && <EmailDashboardPanel />}
+          {emailTab === "send" && <EmailSendPanel />}
+          {emailTab === "bulk" && <EmailBulkPanel />}
+          {emailTab === "campaigns" && <EmailCampaignsPanel />}
+          {emailTab === "templates" && <EmailTemplatesPanel />}
+          {emailTab === "history" && <EmailHistoryPanel />}
+        </>
+      )}
     </div>
   );
 };
