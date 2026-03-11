@@ -8,14 +8,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy, Server } from "lucide-react";
+import { Plus, Trash2, RefreshCw, Smartphone, Wifi, WifiOff, Copy, Server, QrCode, ExternalLink } from "lucide-react";
 import { timeAgo } from "@/components/workspace/helpers";
 
 const GATEWAY_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/sms-device-api`;
+const APP_URL = typeof window !== "undefined" ? window.location.origin : "";
 
 const SmsDevicesPanel = () => {
   const [devices, setDevices] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [qrDevice, setQrDevice] = useState<any>(null);
   const [form, setForm] = useState({ device_name: "", phone_number: "" });
 
   useEffect(() => { fetchDevices(); }, []);
