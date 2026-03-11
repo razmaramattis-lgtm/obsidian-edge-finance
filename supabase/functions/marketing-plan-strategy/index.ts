@@ -19,13 +19,18 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Gather all context from the database
-    const [analysesRes, insightsRes, postsRes, industriesRes, blogRes] = await Promise.all([
-      supabase.from("marketing_content_analyses").select("title, content_summary, keywords, themes, tone").limit(40),
+    // Gather ALL context from the database - deep knowledge of Avargo
+    const [analysesRes, insightsRes, postsRes, industriesRes, blogRes, coursesRes, glossaryRes, collabRes, pricingRes, jobsRes] = await Promise.all([
+      supabase.from("marketing_content_analyses").select("title, content_summary, keywords, themes, tone").limit(50),
       supabase.from("marketing_ai_insights").select("insight_type, platform, recommendation, confidence").eq("active", true).limit(20),
       supabase.from("marketing_posts").select("platform, status, content, hashtags, engagement_score").order("created_at", { ascending: false }).limit(30),
-      supabase.from("industries").select("title, tagline, slug").eq("active", true).limit(30),
-      supabase.from("blog_posts").select("title, category, tags").eq("published", true).limit(20),
+      supabase.from("industries").select("title, tagline, description, slug, deliverables").eq("active", true).limit(50),
+      supabase.from("blog_posts").select("title, category, tags, excerpt").eq("published", true).limit(30),
+      supabase.from("courses").select("name, description, category, target_audience").eq("active", true).limit(20),
+      supabase.from("glossary_terms").select("term").eq("active", true).limit(50),
+      supabase.from("collaboration_agreements").select("title, description, offering, target_audience").limit(20),
+      supabase.from("contact_submissions").select("section, package, industry").limit(50),
+      supabase.from("job_listings").select("title, category, location").eq("active", true).limit(10),
     ]);
 
     const brandContext = (analysesRes.data || [])
