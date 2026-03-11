@@ -424,6 +424,7 @@ const App = () => (
                             <Route path="/om-oss" element={<About />} />
                             <Route path="/kontakt" element={<Contact />} />
                             <Route path="/personvern" element={<Personvern />} />
+                            <Route path="/sikkerhet" element={<Sikkerhet />} />
                             <Route path="/vilkar" element={<Vilkar />} />
                             <Route path="/karriere" element={<Navigate to="/karriere" replace />} />
                             <Route path="/karriere/:slug" element={<Navigate to="/karriere" replace />} />
