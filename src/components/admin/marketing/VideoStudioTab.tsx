@@ -95,15 +95,8 @@ const VideoStudioTab = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [previewRequest, setPreviewRequest] = useState<VideoRequest | null>(null);
   const videoElapsed = useElapsedTimer(!!generatingId);
-  const [form, setForm] = useState({
-    title: "",
-    platform: "linkedin",
-    aspect_ratio: "16:9",
-    duration: "5",
-    prompt: "",
-    admin_note: "",
-  });
 
   const fetchRequests = async () => {
     setLoading(true);
