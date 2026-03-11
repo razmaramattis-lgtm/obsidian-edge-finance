@@ -61,6 +61,7 @@ const PostGeneratorTab = () => {
   const [form, setForm] = useState({ title: "", platform: "linkedin", content: "", hashtags: "" });
   // AI form
   const [aiForm, setAiForm] = useState({ platform: "linkedin", topic: "", tone: "Profesjonell og engasjerende", instructions: "" });
+  const [previewPost, setPreviewPost] = useState<Post | null>(null);
 
   const fetchPosts = async () => {
     setLoading(true);
