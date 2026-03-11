@@ -59,3 +59,15 @@ verify_jwt = false
 
 [functions.sms-device-api]
 verify_jwt = false
+
+[functions.marketing-scan-site]
+verify_jwt = false
+
+[functions.marketing-generate-content]
+verify_jwt = false
+
+[functions.marketing-plan-strategy]
+verify_jwt = false
+
+[functions.content-analyzer]
+verify_jwt = false
