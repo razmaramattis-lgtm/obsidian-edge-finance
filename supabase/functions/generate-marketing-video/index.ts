@@ -67,33 +67,21 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting. 
     // Primary: extract from 'images' field on the message
     if (message?.images && Array.isArray(message.images) && message.images.length > 0) {
       for (const img of message.images) {
-        console.log("Image entry keys:", JSON.stringify(Object.keys(img || {})));
-        // Could be { url: "..." } or { data: "base64...", mime_type: "..." } or base64 string
-        if (typeof img === "string") {
-          // Direct base64 string or URL
-          if (img.startsWith("http")) {
-            thumbnailUrl = img;
-            break;
-          } else if (img.startsWith("data:")) {
-            const dataMatch = img.match(/^data:(image\/\w+);base64,(.+)$/);
-            if (dataMatch) {
-              thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
-              if (thumbnailUrl) break;
-            }
-          } else {
-            // Assume raw base64
-            thumbnailUrl = await uploadBase64Image(supabase, request_id, img, "image/png");
+        // Format: {type: "image_url", image_url: {url: "data:image/png;base64,..."}}
+        const imgUrl = img?.image_url?.url || img?.url;
+        if (imgUrl) {
+          if (imgUrl.startsWith("data:")) {
+            // Extract base64 from data URI - use indexOf instead of regex for large strings
+            const commaIdx = imgUrl.indexOf(",");
+            const headerPart = imgUrl.substring(0, commaIdx); // "data:image/png;base64"
+            const base64Part = imgUrl.substring(commaIdx + 1);
+            const mimeMatch = headerPart.match(/data:(image\/\w+)/);
+            const mime = mimeMatch ? mimeMatch[1] : "image/png";
+            console.log(`Extracting data URI: mime=${mime}, base64 length=${base64Part.length}`);
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, base64Part, mime);
             if (thumbnailUrl) break;
-          }
-        } else if (img?.url) {
-          if (img.url.startsWith("data:")) {
-            const dataMatch = img.url.match(/^data:(image\/\w+);base64,(.+)$/);
-            if (dataMatch) {
-              thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
-              if (thumbnailUrl) break;
-            }
-          } else {
-            thumbnailUrl = img.url;
+          } else if (imgUrl.startsWith("http")) {
+            thumbnailUrl = imgUrl;
             break;
           }
         } else if (img?.b64_json || img?.data) {
@@ -101,6 +89,17 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting. 
           const mime = img.content_type || img.mime_type || "image/png";
           thumbnailUrl = await uploadBase64Image(supabase, request_id, b64, mime);
           if (thumbnailUrl) break;
+        } else if (typeof img === "string") {
+          if (img.startsWith("http")) {
+            thumbnailUrl = img;
+            break;
+          } else if (img.startsWith("data:")) {
+            const commaIdx = img.indexOf(",");
+            const base64Part = img.substring(commaIdx + 1);
+            const mimeMatch = img.match(/data:(image\/\w+)/);
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, base64Part, mimeMatch ? mimeMatch[1] : "image/png");
+            if (thumbnailUrl) break;
+          }
         }
       }
     }
