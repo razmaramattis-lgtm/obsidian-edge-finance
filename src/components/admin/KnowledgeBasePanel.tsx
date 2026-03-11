@@ -445,11 +445,12 @@ const KnowledgeBasePanel = () => {
   const linkDocument = async (searchTerm: string, doc: OrgDoc) => {
     setOverrideSaving(true);
     try {
+      const headers = await getAuthHeaders();
       await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          headers,
           body: JSON.stringify({
             action: "set_document_override",
             search_term: searchTerm,
