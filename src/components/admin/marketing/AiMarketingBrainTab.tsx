@@ -82,6 +82,7 @@ const AiMarketingBrainTab = () => {
     duration: "3",
     goals: "",
     instructions: "",
+    budget: "",
     linkedin: true, facebook: true, instagram: true,
     google_ads: true, meta_ads: true, tiktok: false,
   });
