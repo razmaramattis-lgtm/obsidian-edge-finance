@@ -73,6 +73,8 @@ const AiMarketingBrainTab = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   const [executingAll, setExecutingAll] = useState(false);
   const [executeProgress, setExecuteProgress] = useState({ current: 0, total: 0 });
+  const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
+  const [autoSchedule, setAutoSchedule] = useState(true);
 
   const scanElapsed = useElapsedTimer(scanning);
   const strategyElapsed = useElapsedTimer(generating);
