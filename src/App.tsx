@@ -8,6 +8,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SectionProvider } from "@/contexts/SectionContext";
 import Layout from "./components/Layout";
+import { SplashScreen } from "./components/SplashScreen";
+import { InstallPromptBanner } from "./components/InstallPromptBanner";
 import SectionTheme from "./components/SectionTheme";
 import ScrollToTop from "./components/ScrollToTop";
 import { useSubdomainRedirect } from "./hooks/useSubdomainRedirect";
