@@ -341,6 +341,7 @@ const PostGeneratorTab = () => {
           })}
         </div>
       )}
+      <PostPreviewDialog post={previewPost} open={!!previewPost} onOpenChange={(o) => !o && setPreviewPost(null)} />
     </div>
   );
 };
