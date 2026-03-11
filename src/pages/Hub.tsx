@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, BookOpen, Users, Megaphone, Code2 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { AppDownloadPusher } from "@/components/AppDownloadPusher";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -163,6 +164,13 @@ const Hub = () => {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* APP DOWNLOAD PUSHER */}
+      <section className="py-12 md:py-16 relative">
+        <div className="container mx-auto px-4 md:px-6">
+          <AppDownloadPusher />
         </div>
       </section>
 
