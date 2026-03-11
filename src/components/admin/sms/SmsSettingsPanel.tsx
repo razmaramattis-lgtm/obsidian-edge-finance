@@ -43,7 +43,7 @@ const SmsSettingsPanel = () => {
     <div className="max-w-2xl space-y-6">
       <Card className="border-border/20 bg-emerald-500/5">
         <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Server size={16} className="text-emerald-500" />
             <CardTitle className="text-sm font-medium">Innebygd Gateway-server</CardTitle>
             <Badge variant="secondary" className="text-emerald-600 gap-1 text-[10px]">
@@ -58,7 +58,7 @@ const SmsSettingsPanel = () => {
           <div className="space-y-2">
             <Label className="text-xs text-muted-foreground">Gateway-URL (bruk denne i Android-appen)</Label>
             <div className="flex items-center gap-2">
-              <code className="flex-1 text-xs bg-muted px-3 py-2 rounded-md font-mono break-all select-all">
+              <code className="flex-1 text-xs bg-muted px-3 py-2 rounded-md font-mono break-all select-all min-w-0">
                 {GATEWAY_URL}
               </code>
               <Button size="icon" variant="outline" className="shrink-0" onClick={copyUrl}>
@@ -70,11 +70,20 @@ const SmsSettingsPanel = () => {
           <div className="rounded-md bg-muted/50 p-3 space-y-2">
             <p className="text-xs font-medium">API-endepunkter for Android-app:</p>
             <div className="grid gap-1.5 text-[11px] font-mono text-muted-foreground">
-              <div><Badge variant="outline" className="text-[10px] mr-2">GET</Badge>/pending — Hent ventende meldinger</div>
-              <div><Badge variant="outline" className="text-[10px] mr-2">POST</Badge>/sent — Rapporter sendt/feilet</div>
-              <div><Badge variant="outline" className="text-[10px] mr-2">POST</Badge>/heartbeat — Enhetsstatus</div>
+              <div className="flex items-start gap-2">
+                <Badge variant="outline" className="text-[10px] shrink-0">GET</Badge>
+                <span className="break-all">/pending — Hent ventende meldinger</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Badge variant="outline" className="text-[10px] shrink-0">POST</Badge>
+                <span className="break-all">/sent — Rapporter sendt/feilet</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Badge variant="outline" className="text-[10px] shrink-0">POST</Badge>
+                <span className="break-all">/heartbeat — Enhetsstatus</span>
+              </div>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">
+            <p className="text-[11px] text-muted-foreground mt-2 break-all">
               Autentiser med headeren <code className="bg-background px-1 py-0.5 rounded">x-api-key: DIN_ENHET_API_NØKKEL</code>
             </p>
           </div>
@@ -102,7 +111,7 @@ const SmsSettingsPanel = () => {
             <Input type="number" value={settings.retry_attempts || "3"} onChange={e => update("retry_attempts", e.target.value)} />
           </div>
 
-          <Button onClick={handleSave} disabled={saving} className="gap-2">
+          <Button onClick={handleSave} disabled={saving} className="gap-2 w-full sm:w-auto">
             <Save size={14} />
             {saving ? "Lagrer..." : "Lagre innstillinger"}
           </Button>

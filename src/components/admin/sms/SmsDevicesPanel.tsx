@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -47,7 +46,6 @@ const SmsDevicesPanel = () => {
   };
 
   const handleRegenKey = async (id: string) => {
-    // Generate new key
     const newKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
       .map(b => b.toString(16).padStart(2, "0")).join("");
     await supabase.from("sms_devices").update({ api_key: newKey }).eq("id", id);
@@ -61,11 +59,7 @@ const SmsDevicesPanel = () => {
   };
 
   const getSetupUrl = (device: any) => {
-    const params = new URLSearchParams({
-      key: device.api_key,
-      url: GATEWAY_URL,
-      name: device.device_name,
-    });
+    const params = new URLSearchParams({ key: device.api_key, url: GATEWAY_URL, name: device.device_name });
     return `${APP_URL}/gateway?${params.toString()}`;
   };
 
@@ -75,8 +69,7 @@ const SmsDevicesPanel = () => {
   };
 
   const getQrUrl = (device: any) => {
-    const setupUrl = getSetupUrl(device);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(setupUrl)}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(getSetupUrl(device))}`;
   };
 
   return (
@@ -84,9 +77,9 @@ const SmsDevicesPanel = () => {
       <Card className="border-border/20 bg-muted/30">
         <CardContent className="p-3 flex items-start gap-3">
           <Server size={16} className="text-primary mt-0.5 shrink-0" />
-          <div className="text-xs space-y-1">
+          <div className="text-xs space-y-1 min-w-0">
             <p className="font-medium">Innebygd gateway-server aktiv</p>
-            <p className="text-muted-foreground">Android-enheter kobler til: <code className="bg-background px-1 py-0.5 rounded text-[10px] break-all">{GATEWAY_URL}</code></p>
+            <p className="text-muted-foreground break-all">Android-enheter kobler til: <code className="bg-background px-1 py-0.5 rounded text-[10px] break-all">{GATEWAY_URL}</code></p>
           </div>
         </CardContent>
       </Card>
@@ -108,56 +101,59 @@ const SmsDevicesPanel = () => {
         </Dialog>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Enhet</TableHead>
-            <TableHead>Nummer</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Sendt i dag</TableHead>
-            <TableHead>Sist sett</TableHead>
-            <TableHead>API-nøkkel</TableHead>
-            <TableHead></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {devices.length === 0 ? (
-            <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Ingen enheter</TableCell></TableRow>
-          ) : devices.map(d => (
-            <TableRow key={d.id}>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Smartphone size={14} className="text-muted-foreground" />
-                  <span className="font-medium">{d.device_name}</span>
+      {/* Mobile: card layout, Desktop: keep cards too for consistency */}
+      {devices.length === 0 ? (
+        <Card className="border-border/20">
+          <CardContent className="py-8 text-center text-muted-foreground text-sm">Ingen enheter</CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-3">
+          {devices.map(d => (
+            <Card key={d.id} className="border-border/20">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Smartphone size={16} className="text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{d.device_name}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{d.phone_number}</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className={`gap-1 shrink-0 ${d.status === "online" ? "text-emerald-600" : "text-muted-foreground"}`}>
+                    {d.status === "online" ? <Wifi size={10} /> : <WifiOff size={10} />}
+                    {d.status}
+                  </Badge>
                 </div>
-              </TableCell>
-              <TableCell className="font-mono text-xs">{d.phone_number}</TableCell>
-              <TableCell>
-                <Badge variant="secondary" className={`gap-1 ${d.status === "online" ? "text-emerald-600" : "text-muted-foreground"}`}>
-                  {d.status === "online" ? <Wifi size={10} /> : <WifiOff size={10} />}
-                  {d.status}
-                </Badge>
-              </TableCell>
-              <TableCell>{d.messages_sent_today}</TableCell>
-              <TableCell className="text-xs text-muted-foreground">{d.last_seen ? timeAgo(d.last_seen) : "Aldri"}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded max-w-[100px] truncate">{d.api_key}</code>
-                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => copyKey(d.api_key)}><Copy size={10} /></Button>
+
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span>Sendt i dag: <strong className="text-foreground">{d.messages_sent_today}</strong></span>
+                  <span>Sist sett: {d.last_seen ? timeAgo(d.last_seen) : "Aldri"}</span>
                 </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" onClick={() => setQrDevice(d)} title="QR-kode oppsett"><QrCode size={14} /></Button>
-                  <Button size="icon" variant="ghost" onClick={() => copySetupLink(d)} title="Kopier oppsettslenke"><ExternalLink size={14} /></Button>
-                  <Button size="icon" variant="ghost" onClick={() => handleRegenKey(d.id)} title="Regenerer nøkkel"><RefreshCw size={14} /></Button>
-                  <Button size="icon" variant="ghost" onClick={() => handleDelete(d.id)} className="text-destructive"><Trash2 size={14} /></Button>
+
+                <div className="flex items-center gap-1.5">
+                  <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded flex-1 min-w-0 truncate">{d.api_key}</code>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => copyKey(d.api_key)}><Copy size={12} /></Button>
                 </div>
-              </TableCell>
-            </TableRow>
+
+                <div className="flex flex-wrap gap-1.5 pt-1 border-t border-border/20">
+                  <Button size="sm" variant="outline" className="gap-1.5 h-8 text-xs" onClick={() => setQrDevice(d)}>
+                    <QrCode size={12} /> QR-oppsett
+                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1.5 h-8 text-xs" onClick={() => copySetupLink(d)}>
+                    <ExternalLink size={12} /> Kopier lenke
+                  </Button>
+                  <Button size="sm" variant="ghost" className="gap-1.5 h-8 text-xs" onClick={() => handleRegenKey(d.id)}>
+                    <RefreshCw size={12} /> Ny nøkkel
+                  </Button>
+                  <Button size="sm" variant="ghost" className="gap-1.5 h-8 text-xs text-destructive" onClick={() => handleDelete(d.id)}>
+                    <Trash2 size={12} /> Slett
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
-        </TableBody>
-      </Table>
+        </div>
+      )}
 
       {/* QR Code Dialog */}
       <Dialog open={!!qrDevice} onOpenChange={(o) => !o && setQrDevice(null)}>
@@ -168,11 +164,7 @@ const SmsDevicesPanel = () => {
           <div className="space-y-4 text-center">
             <p className="text-xs text-muted-foreground">Skann QR-koden med telefonen for å sette opp gateway-appen automatisk.</p>
             {qrDevice && (
-              <img
-                src={getQrUrl(qrDevice)}
-                alt="QR-kode for oppsett"
-                className="w-48 h-48 mx-auto rounded-lg border border-border/20"
-              />
+              <img src={getQrUrl(qrDevice)} alt="QR-kode for oppsett" className="w-48 h-48 mx-auto rounded-lg border border-border/20" />
             )}
             <div className="space-y-2">
               <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => qrDevice && copySetupLink(qrDevice)}>
