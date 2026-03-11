@@ -231,6 +231,9 @@ const App = () => (
                   <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
 
+                  {/* Gateway app (no layout, standalone) */}
+                  <Route path="/gateway" element={<Gateway />} />
+
                   {/* Workspace route (authenticated, no Layout) */}
                   <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />
 
