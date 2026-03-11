@@ -33,6 +33,23 @@ const EmailCampaignsPanel = () => {
 
   const parseEmails = (text: string) => text.split(/[\n,;]+/).map(e => e.trim()).filter(e => e.includes("@"));
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const csv = ev.target?.result as string;
+      const lines = csv.split("\n").slice(1);
+      const addrs = lines.map(line => {
+        const cols = line.split(/[,;\t]/);
+        return cols.find(c => c.trim().includes("@"))?.trim() || "";
+      }).filter(Boolean);
+      setForm(f => ({ ...f, emails: f.emails ? f.emails + "\n" + addrs.join("\n") : addrs.join("\n") }));
+      toast.success(`${addrs.length} e-poster importert fra CSV`);
+    };
+    reader.readAsText(file);
+  };
+
   const handleCreate = async () => {
     if (!form.name.trim() || !form.subject.trim() || !form.message.trim()) {
       toast.error("Navn, emne og melding er påkrevd"); return;
