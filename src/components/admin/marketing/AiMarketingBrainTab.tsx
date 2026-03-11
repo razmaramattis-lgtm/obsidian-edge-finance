@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   Brain, Lightbulb, TrendingUp, Sparkles, Calendar, Target, Rocket,
   RefreshCw, ChevronRight, FileText, Megaphone, Clock, Zap, BarChart3,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
