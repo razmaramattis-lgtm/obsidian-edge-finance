@@ -44,6 +44,24 @@ const TYPE_LABELS: Record<string, string> = {
   timing: "Timing", budget: "Budsjett", audience: "Målgruppe",
 };
 
+const useElapsedTimer = (active: boolean) => {
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef<number>(0);
+  useEffect(() => {
+    if (!active) { setElapsed(0); return; }
+    startRef.current = Date.now();
+    const iv = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
+    return () => clearInterval(iv);
+  }, [active]);
+  return elapsed;
+};
+
+const formatTimer = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}m ${s.toString().padStart(2, "0")}s` : `${s}s`;
+};
+
 const AiMarketingBrainTab = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [plans, setPlans] = useState<StrategyPlan[]>([]);
@@ -55,6 +73,10 @@ const AiMarketingBrainTab = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   const [executingAll, setExecutingAll] = useState(false);
   const [executeProgress, setExecuteProgress] = useState({ current: 0, total: 0 });
+
+  const scanElapsed = useElapsedTimer(scanning);
+  const strategyElapsed = useElapsedTimer(generating);
+  const executeElapsed = useElapsedTimer(executingAll);
 
   const [planForm, setPlanForm] = useState({
     duration: "3",
