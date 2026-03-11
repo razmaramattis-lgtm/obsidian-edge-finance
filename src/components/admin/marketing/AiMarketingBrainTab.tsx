@@ -132,6 +132,7 @@ const AiMarketingBrainTab = () => {
           platforms,
           goals: planForm.goals,
           custom_instructions: planForm.instructions,
+          budget: planForm.budget || null,
         },
       });
       if (error) throw error;
