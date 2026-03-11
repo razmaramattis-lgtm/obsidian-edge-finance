@@ -46,6 +46,7 @@ const MarketingPanel = () => {
       case "scheduler": return <SomeSchedulerTab />;
       case "performance": return <PerformanceTrackerTab />;
       case "ads": return <AdManagerTab />;
+      case "video": return <VideoStudioTab />;
       case "brain": return <AiMarketingBrainTab />;
       default: return null;
     }
