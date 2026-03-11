@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,24 @@ const TYPE_LABELS: Record<string, string> = {
   timing: "Timing", budget: "Budsjett", audience: "Målgruppe",
 };
 
+const useElapsedTimer = (active: boolean) => {
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef<number>(0);
+  useEffect(() => {
+    if (!active) { setElapsed(0); return; }
+    startRef.current = Date.now();
+    const iv = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
+    return () => clearInterval(iv);
+  }, [active]);
+  return elapsed;
+};
+
+const formatTimer = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}m ${s.toString().padStart(2, "0")}s` : `${s}s`;
+};
+
 const AiMarketingBrainTab = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [plans, setPlans] = useState<StrategyPlan[]>([]);
@@ -55,6 +73,10 @@ const AiMarketingBrainTab = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   const [executingAll, setExecutingAll] = useState(false);
   const [executeProgress, setExecuteProgress] = useState({ current: 0, total: 0 });
+
+  const scanElapsed = useElapsedTimer(scanning);
+  const strategyElapsed = useElapsedTimer(generating);
+  const executeElapsed = useElapsedTimer(executingAll);
 
   const [planForm, setPlanForm] = useState({
     duration: "3",
@@ -220,28 +242,53 @@ const AiMarketingBrainTab = () => {
               Skanner avargo.no, genererer innhold og bilder, og planlegger strategier med faktisk innleggsgenerering for alle ukene.
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap items-center">
             <Button onClick={handleFullScan} disabled={scanning} variant="outline" className="gap-2">
               {scanning ? <RefreshCw size={14} className="animate-spin" /> : <Rocket size={14} />}
               {scanning ? "Skanner..." : "Skann avargo.no"}
             </Button>
+            {scanning && (
+              <span className="text-xs font-mono text-primary font-medium flex items-center gap-1.5">
+                <Clock size={12} /> {formatTimer(scanElapsed)}
+                <span className="text-muted-foreground font-sans">· ~{Math.max(1, Math.ceil((90 - scanElapsed) / 60))} min igjen</span>
+              </span>
+            )}
             <Button onClick={() => setShowPlanner(!showPlanner)} className="gap-2">
               <Target size={14} /> Lag strategi
             </Button>
           </div>
         </div>
-        {scanProgress && <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>}
+        {scanProgress && !scanning && <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>}
+        {scanning && (
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-primary font-medium">Analyserer innhold med AI...</p>
+              <span className="text-[10px] text-muted-foreground">Estimert: ~90 sek</span>
+            </div>
+            <Progress value={Math.min(95, (scanElapsed / 90) * 100)} className="h-1.5" />
+          </div>
+        )}
       </Card>
 
       {/* Executing all weeks progress */}
       {executingAll && (
         <Card className="p-5 border-primary/20 bg-primary/5 space-y-3">
-          <div className="flex items-center gap-2">
-            <RefreshCw size={16} className="text-primary animate-spin" />
-            <h3 className="font-heading text-base">Genererer alle innlegg fra strategi...</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <RefreshCw size={16} className="text-primary animate-spin" />
+              <h3 className="font-heading text-base">Genererer alle innlegg fra strategi...</h3>
+            </div>
+            <span className="text-sm font-mono text-primary font-semibold flex items-center gap-1.5">
+              <Clock size={14} /> {formatTimer(executeElapsed)}
+            </span>
           </div>
           <p className="text-xs text-muted-foreground">
             Uke {executeProgress.current} av {executeProgress.total} – Innleggene sendes til godkjenningskøen med planlagte datoer.
+            {executeProgress.total > 0 && executeProgress.current > 0 && (
+              <span className="ml-2 text-primary">
+                · Estimert: ~{formatTimer(Math.round((executeElapsed / executeProgress.current) * (executeProgress.total - executeProgress.current)))} igjen
+              </span>
+            )}
           </p>
           <Progress value={(executeProgress.current / executeProgress.total) * 100} className="h-2" />
         </Card>
@@ -287,11 +334,17 @@ const AiMarketingBrainTab = () => {
             </div>
           </div>
           <Textarea placeholder="Ekstra instrukser (valgfritt)..." rows={2} value={planForm.instructions} onChange={(e) => setPlanForm(f => ({ ...f, instructions: e.target.value }))} />
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center flex-wrap">
             <Button onClick={handleGenerateStrategy} disabled={generating} className="gap-2">
               {generating ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
               {generating ? "Genererer..." : "Generer AI-strategi"}
             </Button>
+            {generating && (
+              <span className="text-xs font-mono text-primary font-medium flex items-center gap-1.5">
+                <Clock size={12} /> {formatTimer(strategyElapsed)}
+                <span className="text-muted-foreground font-sans">· ~{Math.max(1, Math.ceil((30 - strategyElapsed) / 60))} min igjen</span>
+              </span>
+            )}
             <Button onClick={() => setShowPlanner(false)} variant="ghost">Avbryt</Button>
           </div>
         </Card>
