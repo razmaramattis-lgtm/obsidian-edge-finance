@@ -92,7 +92,8 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
   // Markedsføring
-  { id: "sms_center", label: "Markedsføring", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "marketing", label: "SoMe & Kampanjer", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
 
   // Admin
   { id: "audit_log", label: "Revisjonslogg", icon: Shield, adminOnly: true, employeeHidden: true, group: "Admin" },
