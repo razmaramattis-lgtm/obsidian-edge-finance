@@ -42,18 +42,22 @@ const EmailBulkPanel = () => {
     reader.readAsText(file);
   };
 
+  const triggerSend = async () => {
+    try {
+      await supabase.functions.invoke("send-bulk-email");
+    } catch { /* silent */ }
+  };
+
   const handleSend = async () => {
     if (!subject.trim() || !body.trim()) { toast.error("Emne og innhold er påkrevd"); return; }
 
     let emailList = parseEmails(emails);
 
-    // Fetch group contacts with email (from sms_contacts which may have email-like phone or we use contacts)
     if (groupId && groupId !== "none") {
       const { data } = await supabase
         .from("sms_contact_group_members")
         .select("contact_id, sms_contacts(phone, name)")
         .eq("group_id", groupId);
-      // Use phone field if it's an email, otherwise skip
       const groupEmails = data?.map((d: any) => d.sms_contacts?.phone).filter((p: string) => p?.includes("@")) || [];
       emailList = [...new Set([...emailList, ...groupEmails])];
     }
@@ -76,8 +80,11 @@ const EmailBulkPanel = () => {
       setProgress(Math.round((inserted / emailList.length) * 100));
     }
 
+    // Trigger immediate sending
+    triggerSend();
+
     setSending(false);
-    toast.success(`${emailList.length} e-poster lagt i kø`);
+    toast.success(`${emailList.length} e-poster sendes nå`);
     setEmails(""); setSubject(""); setBody(""); setGroupId(""); setProgress(0);
   };
 
