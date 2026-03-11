@@ -13,6 +13,7 @@ import {
   Sparkles, Wand2, Image, RefreshCw, Eye, CheckCircle2, Clock, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
+import PostPreviewDialog from "./PostPreviewDialog";
 
 interface Post {
   id: string;
