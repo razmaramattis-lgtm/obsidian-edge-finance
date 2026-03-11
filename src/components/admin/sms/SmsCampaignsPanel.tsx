@@ -24,7 +24,27 @@ const SmsCampaignsPanel = () => {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", message: "", groupId: "", scheduledAt: "" });
+  const [form, setForm] = useState({ name: "", message: "", groupId: "", scheduledAt: "", phones: "" });
+
+  const parsePhones = (text: string): string[] =>
+    text.split(/[\n,;]+/).map(p => p.trim()).filter(p => p.length >= 8);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const csv = ev.target?.result as string;
+      const lines = csv.split("\n").slice(1);
+      const numbers = lines.map(line => {
+        const cols = line.split(/[,;\t]/);
+        return cols.find(c => /^\+?\d[\d\s-]{7,}$/.test(c.trim()))?.trim() || "";
+      }).filter(Boolean);
+      setForm(f => ({ ...f, phones: f.phones ? f.phones + "\n" + numbers.join("\n") : numbers.join("\n") }));
+      toast.success(`${numbers.length} numre importert fra CSV`);
+    };
+    reader.readAsText(file);
+  };
 
   useEffect(() => { fetchAll(); }, []);
 
