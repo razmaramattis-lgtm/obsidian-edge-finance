@@ -151,31 +151,36 @@ const Gateway = () => {
     setSending(msg.id);
     addLog(`📤 Sender til ${msg.phone}...`);
 
-    // Fire the SMS intent
-    fireSmsIntent(msg.phone, msg.message);
+    const result = await fireSms(msg.phone, msg.message);
 
-    // Wait for the SMS app to process
-    await new Promise(resolve => setTimeout(resolve, sendDelay));
+    // On native: we know if it succeeded. On web: assume success after delay.
+    if (!isNativePlatform()) {
+      await new Promise(resolve => setTimeout(resolve, sendDelay));
+    }
 
-    if (autoMarkSent) {
-      // Auto-report as sent to backend
-      const result = await apiCall("sent", "POST", { message_id: msg.id, success: true });
-      if (result?.ok) {
-        setStats(s => ({ ...s, sent: s.sent + 1 }));
-        setPending(p => p.filter(m => m.id !== msg.id));
-        addLog(`✅ Sendt til ${msg.phone}`);
+    if (result.success) {
+      if (autoMarkSent) {
+        const reportResult = await apiCall("sent", "POST", { message_id: msg.id, success: true });
+        if (reportResult?.ok) {
+          setStats(s => ({ ...s, sent: s.sent + 1 }));
+          setPending(p => p.filter(m => m.id !== msg.id));
+          addLog(`✅ Sendt til ${msg.phone}${isNativePlatform() ? " (native)" : ""}`);
+        } else {
+          addLog(`⚠️ Rapporteringsfeil for ${msg.phone}`);
+        }
       } else {
-        addLog(`⚠️ Rapporteringsfeil for ${msg.phone}`);
+        setPending(p => p.filter(m => m.id !== msg.id));
+        addLog(`📨 Sendt til ${msg.phone} (manuell bekreftelse)`);
       }
     } else {
-      // Remove from local queue but don't report
-      setPending(p => p.filter(m => m.id !== msg.id));
-      addLog(`📨 Intent sendt til ${msg.phone} (manuell bekreftelse)`);
+      setStats(s => ({ ...s, failed: s.failed + 1 }));
+      addLog(`❌ Feil for ${msg.phone}: ${result.error}`);
+      await apiCall("sent", "POST", { message_id: msg.id, success: false, error: result.error });
     }
 
     setSending(null);
-    return true;
-  }, [apiCall, addLog, sendDelay, autoMarkSent, fireSmsIntent]);
+    return result.success;
+  }, [apiCall, addLog, sendDelay, autoMarkSent, fireSms]);
 
   // Auto-process queue
   useEffect(() => {
