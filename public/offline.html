@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avargo — Frakoblet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      background: hsl(20 10% 5%);
+      color: hsl(30 15% 85%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container { max-width: 360px; }
+    .icon {
+      width: 64px; height: 64px; margin: 0 auto 1.5rem;
+      border-radius: 16px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      color: hsl(15 55% 65%);
+      margin-bottom: 0.75rem;
+    }
+    p {
+      font-size: 0.875rem;
+      color: hsl(20 8% 55%);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    button {
+      background: hsl(15 55% 65%);
+      color: hsl(20 10% 5%);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="/logo.png" alt="Avargo" class="icon" />
+    <h1>Du er frakoblet</h1>
+    <p>Ingen internettforbindelse. Sjekk nettverket ditt og prøv igjen.</p>
+    <button onclick="location.reload()">Prøv igjen</button>
+  </div>
+</body>
+</html>
