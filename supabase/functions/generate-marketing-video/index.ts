@@ -58,64 +58,73 @@ Style: Premium corporate, dark teal and gold color palette, cinematic lighting. 
     const aiData = await aiRes.json();
     const message = aiData.choices?.[0]?.message;
     
-    // Debug: log full response structure
-    const debugInfo = {
-      topKeys: Object.keys(aiData),
-      messageKeys: message ? Object.keys(message) : null,
-      contentType: typeof message?.content,
-      contentIsArray: Array.isArray(message?.content),
-      contentLength: typeof message?.content === "string" ? message.content.length : Array.isArray(message?.content) ? message.content.length : 0,
-      hasParts: !!message?.parts,
-      contentPreview: typeof message?.content === "string" 
-        ? message.content.substring(0, 200) 
-        : Array.isArray(message?.content) 
-          ? JSON.stringify(message.content.map((p: any) => ({ type: p?.type, hasData: !!p?.data, hasInlineData: !!p?.inline_data, hasImageUrl: !!p?.image_url, keys: Object.keys(p || {}) }))).substring(0, 500)
-          : "unknown",
-    };
-    console.log("AI DEBUG:", JSON.stringify(debugInfo));
+    console.log("Message keys:", message ? JSON.stringify(Object.keys(message)) : "null");
 
     let thumbnailUrl: string | null = null;
 
-    // Strategy 1: content is array of parts (OpenAI multimodal format)
-    if (Array.isArray(message?.content)) {
+    // Primary: extract from 'images' field on the message
+    if (message?.images && Array.isArray(message.images) && message.images.length > 0) {
+      for (const img of message.images) {
+        console.log("Image entry keys:", JSON.stringify(Object.keys(img || {})));
+        // Could be { url: "..." } or { data: "base64...", mime_type: "..." } or base64 string
+        if (typeof img === "string") {
+          // Direct base64 string or URL
+          if (img.startsWith("http")) {
+            thumbnailUrl = img;
+            break;
+          } else if (img.startsWith("data:")) {
+            const dataMatch = img.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (dataMatch) {
+              thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
+              if (thumbnailUrl) break;
+            }
+          } else {
+            // Assume raw base64
+            thumbnailUrl = await uploadBase64Image(supabase, request_id, img, "image/png");
+            if (thumbnailUrl) break;
+          }
+        } else if (img?.url) {
+          if (img.url.startsWith("data:")) {
+            const dataMatch = img.url.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (dataMatch) {
+              thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
+              if (thumbnailUrl) break;
+            }
+          } else {
+            thumbnailUrl = img.url;
+            break;
+          }
+        } else if (img?.b64_json || img?.data) {
+          const b64 = img.b64_json || img.data;
+          const mime = img.content_type || img.mime_type || "image/png";
+          thumbnailUrl = await uploadBase64Image(supabase, request_id, b64, mime);
+          if (thumbnailUrl) break;
+        }
+      }
+    }
+
+    // Fallback: content array parts
+    if (!thumbnailUrl && Array.isArray(message?.content)) {
       for (const part of message.content) {
-        // Check for inline_data (Google native format passed through)
         if (part?.inline_data?.mime_type?.startsWith("image/")) {
           thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
           if (thumbnailUrl) break;
         }
-        // Check for image_url with data URI
         if (part?.type === "image_url" && part?.image_url?.url) {
-          const dataMatch = part.image_url.url.match(/^data:(image\/\w+);base64,(.+)$/);
+          const dataMatch = part.image_url.url.match(/^data:(image\/\w+);base64,(.+)$/s);
           if (dataMatch) {
             thumbnailUrl = await uploadBase64Image(supabase, request_id, dataMatch[2], dataMatch[1]);
             if (thumbnailUrl) break;
           }
         }
-        // Check for image type with data
-        if (part?.type === "image" && part?.data) {
-          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.data, part.mime_type || "image/png");
-          if (thumbnailUrl) break;
-        }
       }
     }
 
-    // Strategy 2: content is a string - check for embedded base64 data URI
+    // Fallback: content string with data URI
     if (!thumbnailUrl && typeof message?.content === "string") {
       const dataUriMatch = message.content.match(/data:(image\/\w+);base64,([A-Za-z0-9+/=]+)/);
       if (dataUriMatch) {
         thumbnailUrl = await uploadBase64Image(supabase, request_id, dataUriMatch[2], dataUriMatch[1]);
-      }
-    }
-
-    // Strategy 3: Check 'parts' field (Google native format)
-    if (!thumbnailUrl) {
-      const parts = message?.parts || aiData.choices?.[0]?.message?.parts || [];
-      for (const part of parts) {
-        if (part?.inline_data?.mime_type?.startsWith("image/")) {
-          thumbnailUrl = await uploadBase64Image(supabase, request_id, part.inline_data.data, part.inline_data.mime_type);
-          if (thumbnailUrl) break;
-        }
       }
     }
 
