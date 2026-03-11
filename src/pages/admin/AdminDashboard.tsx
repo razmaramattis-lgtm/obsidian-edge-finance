@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail, Smartphone
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail, Smartphone, Megaphone
 } from "lucide-react";
 
 // Sub-panels
