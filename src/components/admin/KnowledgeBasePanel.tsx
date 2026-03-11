@@ -321,6 +321,16 @@ const KnowledgeBasePanel = () => {
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
 
+  const getAuthHeaders = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) throw new Error("Ikke innlogget");
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
   const send = async () => {
     if (!input.trim() || loading) return;
     const userMsg = { role: "user" as const, content: input };
@@ -330,14 +340,12 @@ const KnowledgeBasePanel = () => {
     setLoading(true);
 
     try {
+      const headers = await getAuthHeaders();
       const resp = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/knowledge-base`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
+          headers,
           body: JSON.stringify({ messages: newMsgs, category: selectedCategory || "alt" }),
         }
       );
