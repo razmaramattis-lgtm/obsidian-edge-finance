@@ -127,19 +127,23 @@ const Gateway = () => {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [apiKey, gatewayUrl, pollMessages]);
 
-  // Fire SMS intent via hidden iframe (avoids navigating away from page)
-  const fireSmsIntent = useCallback((phone: string, message: string) => {
-    const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
+  // Send SMS — native plugin on Android, fallback to intent on web
+  const fireSms = useCallback(async (phone: string, message: string): Promise<{ success: boolean; error?: string }> => {
+    // If running as native Android app, use SmsManager directly
+    if (isNativePlatform()) {
+      return await sendNativeSms(phone, message);
+    }
     
-    // Try iframe approach first (keeps gateway page in foreground)
+    // Fallback: SMS intent (opens messaging app)
+    const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
     if (iframeRef.current) {
       iframeRef.current.src = smsUrl;
     } else {
-      // Fallback: use link click
       const link = document.createElement("a");
       link.href = smsUrl;
       link.click();
     }
+    return { success: true }; // Can't verify on web
   }, []);
 
   // Send a single SMS
