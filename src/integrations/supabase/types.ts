@@ -2543,12 +2543,14 @@ export type Database = {
       }
       marketing_posts: {
         Row: {
+          ai_generated: boolean | null
           approved_by: string | null
           content: string
           created_at: string
           created_by: string | null
           hashtags: string[] | null
           id: string
+          image_prompt: string | null
           image_url: string | null
           platform: string
           published_at: string | null
@@ -2556,16 +2558,19 @@ export type Database = {
           scheduled_at: string | null
           source_analysis_id: string | null
           status: string
+          strategy_plan_id: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          ai_generated?: boolean | null
           approved_by?: string | null
           content: string
           created_at?: string
           created_by?: string | null
           hashtags?: string[] | null
           id?: string
+          image_prompt?: string | null
           image_url?: string | null
           platform?: string
           published_at?: string | null
@@ -2573,16 +2578,19 @@ export type Database = {
           scheduled_at?: string | null
           source_analysis_id?: string | null
           status?: string
+          strategy_plan_id?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          ai_generated?: boolean | null
           approved_by?: string | null
           content?: string
           created_at?: string
           created_by?: string | null
           hashtags?: string[] | null
           id?: string
+          image_prompt?: string | null
           image_url?: string | null
           platform?: string
           published_at?: string | null
@@ -2590,6 +2598,7 @@ export type Database = {
           scheduled_at?: string | null
           source_analysis_id?: string | null
           status?: string
+          strategy_plan_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -2613,6 +2622,69 @@ export type Database = {
             columns: ["source_analysis_id"]
             isOneToOne: false
             referencedRelation: "marketing_content_analyses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_posts_strategy_plan_id_fkey"
+            columns: ["strategy_plan_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_strategy_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketing_strategy_plans: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string
+          goals: Json | null
+          id: string
+          platforms: string[]
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+          weekly_campaigns: Json | null
+          weekly_posts: Json | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date: string
+          goals?: Json | null
+          id?: string
+          platforms?: string[]
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+          weekly_campaigns?: Json | null
+          weekly_posts?: Json | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string
+          goals?: Json | null
+          id?: string
+          platforms?: string[]
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          weekly_campaigns?: Json | null
+          weekly_posts?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_strategy_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

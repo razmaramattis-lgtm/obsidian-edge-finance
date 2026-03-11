@@ -62,28 +62,20 @@ const ContentAnalyzerTab = () => {
   };
 
   const handleCrawlMultiple = async () => {
-    const urls = [
-      "https://avargo.no",
-      "https://avargo.no/tjenester",
-      "https://avargo.no/om-oss",
-      "https://avargo.no/kontakt",
-      "https://avargo.no/bransjer",
-    ];
     setCrawling(true);
-    let success = 0;
-    for (const url of urls) {
-      try {
-        const { data, error } = await supabase.functions.invoke("content-analyzer", {
-          body: { url },
-        });
-        if (!error && !data?.error) success++;
-      } catch {
-        // continue
-      }
+    try {
+      const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
+        body: {},
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${data.scanned} av ${data.total} sider analysert med AI!`);
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved fullstendig skanning");
+    } finally {
+      setCrawling(false);
+      fetchAnalyses();
     }
-    toast.success(`${success} av ${urls.length} sider analysert`);
-    setCrawling(false);
-    fetchAnalyses();
   };
 
   return (

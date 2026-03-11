@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Lightbulb, TrendingUp, AlertTriangle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
+import {
+  Brain, Lightbulb, TrendingUp, Sparkles, Calendar, Target, Rocket,
+  RefreshCw, ChevronRight, FileText, Megaphone, Clock, Zap, BarChart3,
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface Insight {
   id: string;
@@ -15,55 +25,381 @@ interface Insight {
   created_at: string;
 }
 
+interface StrategyPlan {
+  id: string;
+  title: string;
+  description: string | null;
+  start_date: string;
+  end_date: string;
+  platforms: string[];
+  goals: any;
+  weekly_posts: any[];
+  weekly_campaigns: any[];
+  status: string;
+  created_at: string;
+}
+
 const TYPE_LABELS: Record<string, string> = {
-  tone: "Tonalitet",
-  cta: "CTA",
-  hashtag: "Hashtags",
-  timing: "Timing",
-  budget: "Budsjett",
-  audience: "Målgruppe",
+  tone: "Tonalitet", cta: "CTA", hashtag: "Hashtags",
+  timing: "Timing", budget: "Budsjett", audience: "Målgruppe",
 };
 
 const AiMarketingBrainTab = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
+  const [plans, setPlans] = useState<StrategyPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPlanner, setShowPlanner] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState("");
+  const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetch = async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from("marketing_ai_insights")
-        .select("*")
-        .eq("active", true)
-        .order("confidence", { ascending: false })
-        .limit(50);
-      setInsights((data as Insight[]) || []);
-      setLoading(false);
-    };
-    fetch();
-  }, []);
+  const [planForm, setPlanForm] = useState({
+    duration: "3",
+    goals: "",
+    instructions: "",
+    linkedin: true, facebook: true, instagram: true,
+    google_ads: true, meta_ads: true, tiktok: false,
+  });
+
+  const fetchData = async () => {
+    setLoading(true);
+    const [insightsRes, plansRes] = await Promise.all([
+      supabase.from("marketing_ai_insights").select("*").eq("active", true).order("confidence", { ascending: false }).limit(50),
+      supabase.from("marketing_strategy_plans").select("*").order("created_at", { ascending: false }).limit(10),
+    ]);
+    setInsights((insightsRes.data as Insight[]) || []);
+    setPlans((plansRes.data as StrategyPlan[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const handleFullScan = async () => {
+    setScanning(true);
+    setScanProgress("Skanner alle Avargo-sider...");
+    try {
+      const { data, error } = await supabase.functions.invoke("marketing-scan-site", {
+        body: {},
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setScanProgress(`✅ ${data.scanned} av ${data.total} sider skannet!`);
+      toast.success(`Fullstendig skanning ferdig: ${data.scanned} sider analysert`);
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved skanning");
+      setScanProgress("");
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  const handleGenerateStrategy = async () => {
+    setGenerating(true);
+    try {
+      const platforms = Object.entries(planForm)
+        .filter(([k, v]) => v === true && k !== "duration")
+        .map(([k]) => k);
+
+      const { data, error } = await supabase.functions.invoke("marketing-plan-strategy", {
+        body: {
+          duration_months: parseInt(planForm.duration),
+          platforms,
+          goals: planForm.goals,
+          custom_instructions: planForm.instructions,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Strategi generert!");
+      setShowPlanner(false);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Feil ved strategigenerering");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleExecuteWeek = async (plan: StrategyPlan, weekIndex: number) => {
+    const week = plan.weekly_posts[weekIndex];
+    if (!week?.posts?.length) { toast.error("Ingen innlegg i denne uken"); return; }
+
+    setGenerating(true);
+    let success = 0;
+    for (const post of week.posts) {
+      try {
+        const { data, error } = await supabase.functions.invoke("marketing-generate-content", {
+          body: {
+            platform: post.platform,
+            topic: post.topic || post.brief,
+            tone: post.tone || "Profesjonell",
+            include_image: post.content_type !== "text",
+            strategy_plan_id: plan.id,
+          },
+        });
+        if (!error && !data?.error) success++;
+      } catch { /* continue */ }
+    }
+    toast.success(`${success} av ${week.posts.length} innlegg generert fra strategi!`);
+    setGenerating(false);
+  };
+
+  const handleActivatePlan = async (id: string) => {
+    await supabase.from("marketing_strategy_plans").update({ status: "active" }).eq("id", id);
+    toast.success("Strategi aktivert!");
+    fetchData();
+  };
 
   return (
     <div className="space-y-6">
-      <Card className="p-4 bg-primary/5 border-primary/20">
-        <div className="flex items-center gap-2 text-sm">
-          <Brain size={14} className="text-primary" />
-          <span>AI Marketing Brain lærer fra alle publiserte innlegg og kampanjer. Jo mer data, jo bedre anbefalinger.</span>
+      {/* Hero section */}
+      <Card className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Brain size={18} className="text-primary" />
+              <h3 className="font-heading text-lg">AI Marketing Brain</h3>
+              <Badge className="bg-primary/10 text-primary text-[10px]">Super AI</Badge>
+            </div>
+            <p className="text-xs text-muted-foreground max-w-lg">
+              Skanner hele avargo.no, analyserer markedet, genererer innhold og bilder, og planlegger 3-måneders strategier for total markedsdominans.
+            </p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button onClick={handleFullScan} disabled={scanning} variant="outline" className="gap-2">
+              {scanning ? <RefreshCw size={14} className="animate-spin" /> : <Rocket size={14} />}
+              {scanning ? "Skanner..." : "Skann hele avargo.no"}
+            </Button>
+            <Button onClick={() => setShowPlanner(!showPlanner)} className="gap-2">
+              <Target size={14} />
+              Lag strategi
+            </Button>
+          </div>
         </div>
+        {scanProgress && (
+          <p className="text-xs text-primary mt-3 font-medium">{scanProgress}</p>
+        )}
       </Card>
 
+      {/* Strategy Planner Form */}
+      {showPlanner && (
+        <Card className="p-5 space-y-4 border-primary/20">
+          <h3 className="font-heading text-base flex items-center gap-2">
+            <Calendar size={16} className="text-primary" /> Strategiplanlegger
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium mb-1 block">Varighet</label>
+              <Select value={planForm.duration} onValueChange={(v) => setPlanForm(f => ({ ...f, duration: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 måned</SelectItem>
+                  <SelectItem value="2">2 måneder</SelectItem>
+                  <SelectItem value="3">3 måneder</SelectItem>
+                  <SelectItem value="6">6 måneder</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Mål</label>
+              <Input
+                placeholder="F.eks. Generere 100 leads, øke følgere med 500"
+                value={planForm.goals}
+                onChange={(e) => setPlanForm(f => ({ ...f, goals: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium mb-2 block">Plattformer</label>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { id: "linkedin", label: "LinkedIn" },
+                { id: "facebook", label: "Facebook" },
+                { id: "instagram", label: "Instagram" },
+                { id: "google_ads", label: "Google Ads" },
+                { id: "meta_ads", label: "Meta Ads" },
+                { id: "tiktok", label: "TikTok" },
+              ].map(p => (
+                <label key={p.id} className="flex items-center gap-2 text-xs">
+                  <Switch
+                    checked={(planForm as any)[p.id]}
+                    onCheckedChange={(v) => setPlanForm(f => ({ ...f, [p.id]: v }))}
+                  />
+                  {p.label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <Textarea
+            placeholder="Ekstra instrukser til AI-strategen (valgfritt)..."
+            rows={2}
+            value={planForm.instructions}
+            onChange={(e) => setPlanForm(f => ({ ...f, instructions: e.target.value }))}
+          />
+
+          <div className="flex gap-2">
+            <Button onClick={handleGenerateStrategy} disabled={generating} className="gap-2">
+              {generating ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
+              {generating ? "Genererer strategi..." : "Generer AI-strategi"}
+            </Button>
+            <Button onClick={() => setShowPlanner(false)} variant="ghost">Avbryt</Button>
+          </div>
+        </Card>
+      )}
+
+      {/* Strategy Plans */}
+      {plans.length > 0 && (
+        <div>
+          <h3 className="font-heading text-lg mb-3 flex items-center gap-2">
+            <Target size={16} className="text-primary" /> Strategiplaner
+          </h3>
+          <div className="space-y-3">
+            {plans.map((plan) => {
+              const isExpanded = expandedPlan === plan.id;
+              const goals = plan.goals as any;
+              return (
+                <Card key={plan.id} className={`overflow-hidden transition-all ${isExpanded ? "ring-1 ring-primary/20" : ""}`}>
+                  <div
+                    className="p-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                    onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-heading">{plan.title}</span>
+                          <Badge className={plan.status === "active" ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"} variant="outline">
+                            {plan.status === "active" ? "Aktiv" : plan.status === "draft" ? "Utkast" : plan.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Calendar size={10} /> {new Date(plan.start_date).toLocaleDateString("nb-NO")} – {new Date(plan.end_date).toLocaleDateString("nb-NO")}
+                          </span>
+                          <span>{plan.platforms.length} plattformer</span>
+                          <span>{plan.weekly_posts?.length || 0} uker</span>
+                        </div>
+                      </div>
+                      <ChevronRight size={16} className={`text-muted-foreground transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                    </div>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="border-t p-4 space-y-4 bg-muted/5">
+                      {plan.description && (
+                        <p className="text-sm text-muted-foreground">{plan.description}</p>
+                      )}
+
+                      {/* KPI targets */}
+                      {goals?.kpi_targets && (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Object.entries(goals.kpi_targets).map(([k, v]) => (
+                            <Card key={k} className="p-3 text-center">
+                              <p className="font-heading text-lg">{String(v)}</p>
+                              <p className="text-[10px] text-muted-foreground">{k.replace(/_/g, " ")}</p>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Content pillars */}
+                      {goals?.content_pillars && (
+                        <div>
+                          <h4 className="text-xs font-medium mb-2">Innholdspilarer</h4>
+                          <div className="flex gap-2 flex-wrap">
+                            {goals.content_pillars.map((p: any, i: number) => (
+                              <Badge key={i} variant="outline" className="text-xs">{p.pillar}: {p.frequency}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Weekly plan */}
+                      {plan.weekly_posts?.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-medium mb-2">Ukeplan ({plan.weekly_posts.length} uker)</h4>
+                          <div className="space-y-2 max-h-60 overflow-y-auto">
+                            {plan.weekly_posts.slice(0, 12).map((week: any, i: number) => (
+                              <Card key={i} className="p-3">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div>
+                                    <span className="text-xs font-medium">Uke {week.week || i + 1}: {week.theme}</span>
+                                    <div className="flex gap-1 mt-1 flex-wrap">
+                                      {(week.posts || []).slice(0, 4).map((post: any, j: number) => (
+                                        <Badge key={j} variant="secondary" className="text-[10px]">
+                                          {post.platform} · {post.content_type || "innlegg"}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => { e.stopPropagation(); handleExecuteWeek(plan, i); }}
+                                    disabled={generating}
+                                    className="text-xs gap-1 shrink-0"
+                                  >
+                                    <Zap size={12} /> Generer
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Campaigns */}
+                      {plan.weekly_campaigns?.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-medium mb-2">Kampanjer</h4>
+                          <div className="space-y-2">
+                            {plan.weekly_campaigns.map((c: any, i: number) => (
+                              <Card key={i} className="p-3 flex items-center gap-3">
+                                <Megaphone size={14} className="text-primary shrink-0" />
+                                <div className="flex-1">
+                                  <span className="text-xs font-medium">{c.name}</span>
+                                  <div className="flex gap-2 text-[10px] text-muted-foreground mt-0.5">
+                                    <span>{c.platform}</span>
+                                    <span>Uke {c.week_start}–{c.week_end}</span>
+                                    <span>{c.budget_suggestion}</span>
+                                  </div>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {plan.status === "draft" && (
+                        <Button onClick={() => handleActivatePlan(plan.id)} className="gap-2">
+                          <Rocket size={14} /> Aktiver strategi
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Capabilities & Insights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card className="p-4">
           <h3 className="font-heading text-lg mb-2 flex items-center gap-2">
-            <TrendingUp size={16} className="text-primary" /> Kapabiliteter
+            <Zap size={16} className="text-primary" /> Kapabiliteter
           </h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>• Analyserer hva som gir best engasjement per kanal</li>
-            <li>• Foreslår optimal posting-tid</li>
-            <li>• Optimaliserer tonalitet og CTA</li>
-            <li>• Identifiserer beste hashtags</li>
-            <li>• Foreslår budsjett-allokering for annonser</li>
-            <li>• Genererer 30-60 dagers innholdsplan</li>
+            <li className="flex items-center gap-2"><Rocket size={12} className="text-green-500" /> Skanner alle 40+ sider på avargo.no</li>
+            <li className="flex items-center gap-2"><FileText size={12} className="text-blue-500" /> Genererer skreddersydde innlegg per plattform</li>
+            <li className="flex items-center gap-2"><Sparkles size={12} className="text-violet-500" /> AI-genererte bilder med Nano Banana 2</li>
+            <li className="flex items-center gap-2"><Target size={12} className="text-amber-500" /> 3-måneders strategiplanlegging</li>
+            <li className="flex items-center gap-2"><BarChart3 size={12} className="text-emerald-500" /> Kampanjeoptimalisering for Google/Meta</li>
+            <li className="flex items-center gap-2"><Brain size={12} className="text-primary" /> Lærer og optimaliserer over tid</li>
           </ul>
         </Card>
 
@@ -73,20 +409,19 @@ const AiMarketingBrainTab = () => {
           </h3>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p><strong>Aktive innsikter:</strong> {insights.length}</p>
-            <p><strong>Data-kilder:</strong> Innlegg, kampanjer, performance-data</p>
-            <p className="text-xs mt-3 text-amber-600">
-              AI Brain aktiveres automatisk når det finnes nok data fra publiserte innlegg og kampanjer.
-            </p>
+            <p><strong>Strategiplaner:</strong> {plans.length}</p>
+            <p><strong>Data-kilder:</strong> Crawlet innhold, innlegg, kampanjer</p>
           </div>
         </Card>
       </div>
 
+      {/* Active Insights */}
       {loading ? (
         <p className="text-sm text-muted-foreground">Laster...</p>
       ) : insights.length === 0 ? (
         <Card className="p-8 text-center">
           <Brain size={32} className="mx-auto mb-3 text-muted-foreground/30" />
-          <p className="text-muted-foreground">Ingen AI-innsikter enda. Publiser innlegg og kjør kampanjer for å bygge opp data.</p>
+          <p className="text-muted-foreground">Skann avargo.no og generer innlegg for å bygge AI-innsikter.</p>
         </Card>
       ) : (
         <div>
