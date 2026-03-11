@@ -48,8 +48,33 @@ Deno.serve(async (req) => {
       .join("\n")
       .slice(0, 2000);
 
-    const industriesList = (industriesRes.data || []).map((i: any) => i.title).join(", ");
-    const blogTopics = (blogRes.data || []).map((b: any) => `${b.title} [${b.category}]`).join(", ").slice(0, 1000);
+    const industriesList = (industriesRes.data || [])
+      .map((i: any) => `${i.title}: ${i.tagline || ""} – ${(i.deliverables || []).slice(0, 3).join(", ")}`)
+      .join("\n").slice(0, 2000);
+
+    const blogTopics = (blogRes.data || [])
+      .map((b: any) => `${b.title} [${b.category}] – ${b.excerpt?.slice(0, 60) || ""}`)
+      .join("\n").slice(0, 1500);
+
+    const coursesList = (coursesRes.data || [])
+      .map((c: any) => `${c.name} (${c.category}) – ${c.target_audience || ""}`)
+      .join(", ").slice(0, 800);
+
+    const glossaryTerms = (glossaryRes.data || []).map((g: any) => g.term).join(", ").slice(0, 500);
+
+    const partnerships = (collabRes.data || [])
+      .map((c: any) => `${c.title}: ${c.offering || ""} [${c.target_audience}]`)
+      .join("\n").slice(0, 800);
+
+    const popularSections = (pricingRes.data || [])
+      .reduce((acc: Record<string, number>, s: any) => {
+        const key = s.section || s.package || "ukjent";
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+    const topSections = Object.entries(popularSections).sort((a, b) => (b[1] as number) - (a[1] as number)).slice(0, 5).map(([k, v]) => `${k} (${v} henvendelser)`).join(", ");
+
+    const activeJobs = (jobsRes.data || []).map((j: any) => `${j.title} (${j.location})`).join(", ");
 
     const months = duration_months || 3;
     const selectedPlatforms = platforms || ["linkedin", "facebook", "instagram", "google_ads", "meta_ads"];
@@ -57,6 +82,8 @@ Deno.serve(async (req) => {
     const endDate = new Date(today);
     endDate.setMonth(endDate.getMonth() + months);
     const totalWeeks = Math.ceil(months * 4.3);
+
+    const budgetInfo = budget ? `\nTOTALBUDSJETT: ${budget} NOK for hele perioden (${months} mnd). Fordel budsjettet strategisk mellom organisk innhold og betalte annonser. Angi budsjettforslag per kampanje i NOK.` : "";
 
     // Use tool calling for structured output
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -72,7 +99,9 @@ Deno.serve(async (req) => {
             role: "system",
             content: `Du er en ekspert strategisk markedsføringsplanlegger for Avargo – Norges ledende AI-drevne regnskapsbyrå.
 
-AVARGO MERKEVARE-KONTEKST (fra faktisk innholdsanalyse):
+Du har FULL tilgang til alt innhold og alle detaljer om Avargo:
+
+MERKEVARE-KONTEKST (${(analysesRes.data || []).length} analyserte sider):
 ${brandContext}
 
 AI MARKETING INNSIKTER:
@@ -81,25 +110,42 @@ ${existingInsights}
 TIDLIGERE PUBLISERTE INNLEGG:
 ${pastPosts}
 
-BRANSJER AVARGO DEKKER: ${industriesList}
-BLOGG-EMNER: ${blogTopics}
+BRANSJER AVARGO BETJENER (${(industriesRes.data || []).length} bransjer):
+${industriesList}
+
+BLOGG & FAGARTIKLER (${(blogRes.data || []).length} artikler):
+${blogTopics}
+
+KURS & OPPLÆRING: ${coursesList}
+
+FAGORDBOK: ${glossaryTerms}
+
+SAMARBEIDSAVTALER & PARTNERE:
+${partnerships}
+
+POPULÆRE HENVENDELSER: ${topSections}
+
+AKTIVE STILLINGER: ${activeJobs || "Ingen aktive stillinger"}
+${budgetInfo}
 
 VIKTIGE RETNINGSLINJER:
-- Avargo er Norges mest innovative regnskapsbyrå
-- Tjenester: Regnskap, AI, HR, lønn, CFO, nettsider, SEO, SoMe, kurs
-- Tone: Profesjonell men moderne og tilgjengelig
+- Avargo er Norges mest innovative regnskapsbyrå – alt-i-ett partner
+- Tjenester: Regnskap, AI-automatisering, HR, lønn, CFO, nettsider, SEO, SoMe, kurs, arbeidsrett, personalhåndbok, chatbot
+- Tone: Selvsikker, kunnskapsrik, fremtidsrettet – aldri arrogant
 - Merkefarge: Mørk teal/grønn med gull-aksenter
-- Lag innlegg som er SPESIFIKKE og HANDLINGSORIENTERTE, ikke generiske
-- Bruk norske helligdager og skatte/regnskapsfrister som strategiske tidspunkter
-- Varier mellom edukativt, inspirerende, case-basert og salgsfremmende innhold`,
+- Bruk SPESIFIKKE eksempler fra Avargos faktiske tjenester og bransjeløsninger
+- Bruk norske helligdager, skattefrister (terminforfall, A-melding, MVA) som strategiske tidspunkter
+- Varier mellom edukativt, inspirerende, case-basert og salgsfremmende innhold
+- Referer til faktiske blogginnlegg, kurs og bransjesider for å drive trafikk`,
           },
           {
             role: "user",
             content: `Lag en komplett ${months}-måneders markedsføringsstrategi for Avargo.
 Plattformer: ${selectedPlatforms.join(", ")}
 Mål: ${goals || "Øke synlighet, generere leads, etablere Avargo som markedsleder innen AI-drevet regnskap"}
+${budget ? `Totalbudsjett: ${budget} NOK – fordel dette smart mellom organisk og betalt innhold` : ""}
 ${custom_instructions ? `Spesielle instrukser: ${custom_instructions}` : ""}
-Lag plan for NØYAKTIG ${totalWeeks} uker med konkrete, detaljerte innlegg.`,
+Lag plan for NØYAKTIG ${totalWeeks} uker med konkrete, detaljerte innlegg. Hvert innlegg SKAL referere til faktisk Avargo-innhold.`,
           },
         ],
         tools: [
