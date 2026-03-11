@@ -94,6 +94,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "sms_center", label: "Markedsføring", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
 
   // Admin
+  { id: "audit_log", label: "Revisjonslogg", icon: Shield, adminOnly: true, employeeHidden: true, group: "Admin" },
   { id: "settings", label: "Innstillinger", icon: Settings, group: "Admin" },
 ];
 
