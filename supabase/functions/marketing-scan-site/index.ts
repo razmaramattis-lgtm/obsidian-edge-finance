@@ -178,7 +178,7 @@ Returner KUN gyldig JSON-array.`,
       }
 
       // Delay between batches
-      if (i + 5 < contentPages.length) await new Promise(r => setTimeout(r, 1500));
+      if (i + 5 < contentPages.length) await new Promise(r => setTimeout(r, 800));
     }
 
     // Also generate AI insights from the combined data
