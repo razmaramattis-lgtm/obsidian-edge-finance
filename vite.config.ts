@@ -35,8 +35,10 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "logo.png"],
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,webp,woff,woff2}"],
+      globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,webp,woff,woff2}"],
+        navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/],
+        offlineGoogleAnalytics: false,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
