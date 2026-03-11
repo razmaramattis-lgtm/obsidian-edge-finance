@@ -85,8 +85,17 @@ const SmsSendPanel = () => {
       setProgress(Math.round((done / rows.length) * 100));
     }
 
+    // Trigger cloud SMS sending immediately
+    toast.info("Sender SMS-er...");
+    try {
+      const { data, error } = await supabase.functions.invoke("send-sms");
+      if (error) throw error;
+      toast.success(`${data?.sent || 0} SMS sendt, ${data?.failed || 0} feilet`);
+    } catch (e: any) {
+      toast.error("Feil ved sending: " + (e.message || "Ukjent feil"));
+    }
+
     setSending(false);
-    toast.success(`${allPhones.length} SMS lagt i kø`);
     setPhone(""); setMessage(""); setTemplateId("");
     clearSelection();
     setProgress(0);
