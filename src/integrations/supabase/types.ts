@@ -2255,6 +2255,303 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_ai_insights: {
+        Row: {
+          active: boolean | null
+          based_on_posts: number | null
+          confidence: number | null
+          created_at: string
+          id: string
+          insight_type: string
+          platform: string | null
+          recommendation: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          based_on_posts?: number | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          insight_type: string
+          platform?: string | null
+          recommendation: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          based_on_posts?: number | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          insight_type?: string
+          platform?: string | null
+          recommendation?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marketing_campaigns: {
+        Row: {
+          budget: number | null
+          budget_currency: string | null
+          clicks: number | null
+          conversions: number | null
+          cpc: number | null
+          created_at: string
+          created_by: string | null
+          cta: string | null
+          ctr: number | null
+          description: string | null
+          end_date: string | null
+          headline: string | null
+          id: string
+          impressions: number | null
+          name: string
+          platform: string
+          spend: number | null
+          start_date: string | null
+          status: string
+          target_audience: string | null
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          budget_currency?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          cpc?: number | null
+          created_at?: string
+          created_by?: string | null
+          cta?: string | null
+          ctr?: number | null
+          description?: string | null
+          end_date?: string | null
+          headline?: string | null
+          id?: string
+          impressions?: number | null
+          name: string
+          platform?: string
+          spend?: number | null
+          start_date?: string | null
+          status?: string
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          budget_currency?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          cpc?: number | null
+          created_at?: string
+          created_by?: string | null
+          cta?: string | null
+          ctr?: number | null
+          description?: string | null
+          end_date?: string | null
+          headline?: string | null
+          id?: string
+          impressions?: number | null
+          name?: string
+          platform?: string
+          spend?: number | null
+          start_date?: string | null
+          status?: string
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketing_content_analyses: {
+        Row: {
+          content_summary: string | null
+          crawled_at: string
+          created_at: string
+          id: string
+          keywords: string[] | null
+          raw_content: string | null
+          themes: string[] | null
+          title: string | null
+          tone: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          content_summary?: string | null
+          crawled_at?: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          raw_content?: string | null
+          themes?: string[] | null
+          title?: string | null
+          tone?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          content_summary?: string | null
+          crawled_at?: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          raw_content?: string | null
+          themes?: string[] | null
+          title?: string | null
+          tone?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      marketing_performance: {
+        Row: {
+          clicks: number | null
+          comments: number | null
+          conversions: number | null
+          created_at: string
+          date: string
+          engagement_rate: number | null
+          id: string
+          impressions: number | null
+          leads: number | null
+          likes: number | null
+          reach: number | null
+          reference_id: string | null
+          reference_type: string | null
+          shares: number | null
+          source: string
+          source_type: string
+          spend: number | null
+          video_views: number | null
+        }
+        Insert: {
+          clicks?: number | null
+          comments?: number | null
+          conversions?: number | null
+          created_at?: string
+          date?: string
+          engagement_rate?: number | null
+          id?: string
+          impressions?: number | null
+          leads?: number | null
+          likes?: number | null
+          reach?: number | null
+          reference_id?: string | null
+          reference_type?: string | null
+          shares?: number | null
+          source: string
+          source_type?: string
+          spend?: number | null
+          video_views?: number | null
+        }
+        Update: {
+          clicks?: number | null
+          comments?: number | null
+          conversions?: number | null
+          created_at?: string
+          date?: string
+          engagement_rate?: number | null
+          id?: string
+          impressions?: number | null
+          leads?: number | null
+          likes?: number | null
+          reach?: number | null
+          reference_id?: string | null
+          reference_type?: string | null
+          shares?: number | null
+          source?: string
+          source_type?: string
+          spend?: number | null
+          video_views?: number | null
+        }
+        Relationships: []
+      }
+      marketing_posts: {
+        Row: {
+          approved_by: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          hashtags: string[] | null
+          id: string
+          image_url: string | null
+          platform: string
+          published_at: string | null
+          rejected_reason: string | null
+          scheduled_at: string | null
+          source_analysis_id: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_by?: string | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          platform?: string
+          published_at?: string | null
+          rejected_reason?: string | null
+          scheduled_at?: string | null
+          source_analysis_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_by?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          platform?: string
+          published_at?: string | null
+          rejected_reason?: string | null
+          scheduled_at?: string | null
+          source_analysis_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_posts_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_posts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_posts_source_analysis_id_fkey"
+            columns: ["source_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_content_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       open_applications: {
         Row: {
           address: string | null

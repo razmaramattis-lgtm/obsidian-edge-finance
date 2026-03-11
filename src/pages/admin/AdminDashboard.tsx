@@ -48,9 +48,10 @@ import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel"
 import JobListingsPanel from "@/components/admin/JobListingsPanel";
 import SmsCenterPanel from "@/components/admin/SmsCenterPanel";
 import AuditLogPanel from "@/components/admin/AuditLogPanel";
+import MarketingPanel from "@/components/admin/MarketingPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing";
 
 interface NavItem {
   id: Panel;
@@ -91,7 +92,8 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
   // Markedsføring
-  { id: "sms_center", label: "Markedsføring", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "marketing", label: "SoMe & Kampanjer", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
 
   // Admin
   { id: "audit_log", label: "Revisjonslogg", icon: Shield, adminOnly: true, employeeHidden: true, group: "Admin" },
@@ -294,6 +296,7 @@ const AdminDashboard = () => {
       case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "sms_center": return <SmsCenterPanel />;
+      case "marketing": return <MarketingPanel />;
       case "audit_log": return <AuditLogPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
