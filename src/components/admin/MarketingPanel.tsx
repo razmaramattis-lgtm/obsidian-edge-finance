@@ -122,8 +122,9 @@ const MarketingPanel = () => {
           <span className="font-heading text-sm">Markedsføring</span>
         </div>
         <div className="flex gap-1 overflow-x-auto pb-3 mb-4 scrollbar-none">
-          {SECTIONS.flatMap(s => s.tabs).map((tab) => {
+          {SECTIONS.flatMap(s => [...s.tabs]).map((tab) => {
             const isActive = activeTab === tab.id;
+            const TabIcon = tab.icon;
             return (
               <button
                 key={tab.id}
@@ -134,7 +135,7 @@ const MarketingPanel = () => {
                     : "text-muted-foreground hover:bg-muted/50"
                 }`}
               >
-                <tab.icon size={12} />
+                <TabIcon size={12} />
                 {tab.label}
               </button>
             );
