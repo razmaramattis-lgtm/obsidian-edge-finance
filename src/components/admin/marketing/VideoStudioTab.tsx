@@ -279,7 +279,7 @@ const VideoStudioTab = () => {
 
           <div className="flex gap-2">
             <Button onClick={handleSubmit} className="gap-2">
-              <Send size={14} /> Send inn forespørsel
+              <Send size={14} /> {isAdmin ? "Generer video" : "Send inn forespørsel"}
             </Button>
             <Button onClick={() => setShowForm(false)} variant="ghost" size="sm">Avbryt</Button>
           </div>
