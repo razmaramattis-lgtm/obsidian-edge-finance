@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 Deno.serve(async (req) => {
@@ -23,135 +23,49 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  // Verify admin
   const adminSb = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: profile } = await adminSb.from("profiles").select("role").eq("user_id", claimsData.claims.sub).single();
-  if (profile?.role !== "admin") {
+  if (!profile || !["admin", "employee"].includes(profile.role)) {
     return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
   try {
-    // Process queued emails (batch of 10)
+    // Fetch up to 50 queued emails
     const { data: emails } = await adminSb
       .from("email_messages")
       .select("*")
       .eq("status", "queued")
       .order("created_at", { ascending: true })
-      .limit(10);
+      .limit(50);
 
     if (!emails || emails.length === 0) {
-      return new Response(JSON.stringify({ processed: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ processed: 0, sent: 0, failed: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const smtpUser = Deno.env.get("SMTP_USER") || "kontakt@avargo.no";
     const smtpPass = Deno.env.get("SMTP_PASS");
-
     if (!smtpPass) {
       return new Response(JSON.stringify({ error: "SMTP not configured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // Mark all as sending immediately
+    const ids = emails.map(e => e.id);
+    await adminSb.from("email_messages").update({ status: "sending" }).in("id", ids);
+
+    // Send in parallel batches of 5 (respect SMTP limits)
+    const CONCURRENCY = 5;
     let sent = 0;
     let failed = 0;
 
-    for (const email of emails) {
-      // Mark as sending
-      await adminSb.from("email_messages").update({ status: "sending" }).eq("id", email.id);
-
-      try {
-        // Build raw MIME message
-        const boundary = "----=_Part_" + crypto.randomUUID().replace(/-/g, "");
-        const mimeMessage = [
-          `From: Avargo <${smtpUser}>`,
-          `To: ${email.recipient_name ? `${email.recipient_name} <${email.recipient_email}>` : email.recipient_email}`,
-          `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(email.subject)))}?=`,
-          `MIME-Version: 1.0`,
-          `Content-Type: multipart/alternative; boundary="${boundary}"`,
-          ``,
-          `--${boundary}`,
-          `Content-Type: text/plain; charset=UTF-8`,
-          `Content-Transfer-Encoding: quoted-printable`,
-          ``,
-          email.body.replace(/<[^>]*>/g, ""),
-          ``,
-          `--${boundary}`,
-          `Content-Type: text/html; charset=UTF-8`,
-          `Content-Transfer-Encoding: quoted-printable`,
-          ``,
-          wrapInTemplate(email.body, email.subject),
-          ``,
-          `--${boundary}--`,
-        ].join("\r\n");
-
-        // Connect to SMTP
-        const conn = await Deno.connectTls({ hostname: "smtp.domeneshop.no", port: 465 });
-        const encoder = new TextEncoder();
-        const decoder = new TextDecoder();
-
-        const read = async () => {
-          const buf = new Uint8Array(4096);
-          const n = await conn.read(buf);
-          return n ? decoder.decode(buf.subarray(0, n)) : "";
-        };
-
-        const write = async (cmd: string) => {
-          await conn.write(encoder.encode(cmd + "\r\n"));
-          return await read();
-        };
-
-        await read(); // greeting
-        await write("EHLO avargo.no");
-        await write(`AUTH LOGIN`);
-        await write(btoa(smtpUser));
-        await write(btoa(smtpPass));
-        await write(`MAIL FROM:<${smtpUser}>`);
-        await write(`RCPT TO:<${email.recipient_email}>`);
-        await write("DATA");
-        await conn.write(encoder.encode(mimeMessage + "\r\n.\r\n"));
-        await read();
-        await write("QUIT");
-
-        try { conn.close(); } catch {}
-
-        await adminSb.from("email_messages").update({
-          status: "sent",
-          sent_at: new Date().toISOString(),
-        }).eq("id", email.id);
-
-        // Update campaign counts
-        if (email.campaign_id) {
-          const { data: camp } = await adminSb.from("email_campaigns").select("sent_count").eq("id", email.campaign_id).single();
-          if (camp) {
-            await adminSb.from("email_campaigns").update({ sent_count: camp.sent_count + 1 }).eq("id", email.campaign_id);
-          }
-        }
-
-        sent++;
-      } catch (err) {
-        const maxRetries = 3;
-        if (email.retry_count < maxRetries) {
-          await adminSb.from("email_messages").update({
-            status: "queued",
-            retry_count: email.retry_count + 1,
-            error_message: String(err),
-          }).eq("id", email.id);
-        } else {
-          await adminSb.from("email_messages").update({
-            status: "failed",
-            error_message: String(err),
-          }).eq("id", email.id);
-
-          if (email.campaign_id) {
-            const { data: camp } = await adminSb.from("email_campaigns").select("failed_count").eq("id", email.campaign_id).single();
-            if (camp) {
-              await adminSb.from("email_campaigns").update({ failed_count: camp.failed_count + 1 }).eq("id", email.campaign_id);
-            }
-          }
-        }
-        failed++;
+    for (let i = 0; i < emails.length; i += CONCURRENCY) {
+      const batch = emails.slice(i, i + CONCURRENCY);
+      const results = await Promise.allSettled(
+        batch.map(email => sendOneEmail(adminSb, email, smtpUser, smtpPass))
+      );
+      for (const r of results) {
+        if (r.status === "fulfilled" && r.value) sent++;
+        else failed++;
       }
-
-      // Delay between emails
-      await new Promise(r => setTimeout(r, 1500));
     }
 
     return new Response(JSON.stringify({ processed: emails.length, sent, failed }), {
@@ -161,6 +75,92 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+async function sendOneEmail(adminSb: any, email: any, smtpUser: string, smtpPass: string): Promise<boolean> {
+  try {
+    const boundary = "----=_Part_" + crypto.randomUUID().replace(/-/g, "");
+    const mimeMessage = [
+      `From: Avargo <${smtpUser}>`,
+      `To: ${email.recipient_name ? `${email.recipient_name} <${email.recipient_email}>` : email.recipient_email}`,
+      `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(email.subject)))}?=`,
+      `MIME-Version: 1.0`,
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/plain; charset=UTF-8`,
+      `Content-Transfer-Encoding: quoted-printable`,
+      ``,
+      email.body.replace(/<[^>]*>/g, ""),
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/html; charset=UTF-8`,
+      `Content-Transfer-Encoding: quoted-printable`,
+      ``,
+      wrapInTemplate(email.body, email.subject),
+      ``,
+      `--${boundary}--`,
+    ].join("\r\n");
+
+    const conn = await Deno.connectTls({ hostname: "smtp.domeneshop.no", port: 465 });
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    const read = async () => {
+      const buf = new Uint8Array(4096);
+      const n = await conn.read(buf);
+      return n ? decoder.decode(buf.subarray(0, n)) : "";
+    };
+    const write = async (cmd: string) => {
+      await conn.write(encoder.encode(cmd + "\r\n"));
+      return await read();
+    };
+
+    await read();
+    await write("EHLO avargo.no");
+    await write("AUTH LOGIN");
+    await write(btoa(smtpUser));
+    await write(btoa(smtpPass));
+    await write(`MAIL FROM:<${smtpUser}>`);
+    await write(`RCPT TO:<${email.recipient_email}>`);
+    await write("DATA");
+    await conn.write(encoder.encode(mimeMessage + "\r\n.\r\n"));
+    await read();
+    await write("QUIT");
+    try { conn.close(); } catch {}
+
+    await adminSb.from("email_messages").update({
+      status: "sent",
+      sent_at: new Date().toISOString(),
+    }).eq("id", email.id);
+
+    if (email.campaign_id) {
+      const { data: camp } = await adminSb.from("email_campaigns").select("sent_count").eq("id", email.campaign_id).single();
+      if (camp) await adminSb.from("email_campaigns").update({ sent_count: camp.sent_count + 1 }).eq("id", email.campaign_id);
+    }
+
+    return true;
+  } catch (err) {
+    const maxRetries = 3;
+    if ((email.retry_count || 0) < maxRetries) {
+      await adminSb.from("email_messages").update({
+        status: "queued",
+        retry_count: (email.retry_count || 0) + 1,
+        error_message: String(err),
+      }).eq("id", email.id);
+    } else {
+      await adminSb.from("email_messages").update({
+        status: "failed",
+        error_message: String(err),
+      }).eq("id", email.id);
+
+      if (email.campaign_id) {
+        const { data: camp } = await adminSb.from("email_campaigns").select("failed_count").eq("id", email.campaign_id).single();
+        if (camp) await adminSb.from("email_campaigns").update({ failed_count: camp.failed_count + 1 }).eq("id", email.campaign_id);
+      }
+    }
+    return false;
+  }
+}
 
 function wrapInTemplate(body: string, subject: string): string {
   return `<!DOCTYPE html>
