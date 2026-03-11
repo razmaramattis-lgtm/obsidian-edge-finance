@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -68,46 +69,86 @@ const SmsTemplatesPanel = () => {
         </Dialog>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Navn</TableHead>
-            <TableHead>Innhold</TableHead>
-            <TableHead></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {templates.length === 0 ? (
-            <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">Ingen maler</TableCell></TableRow>
-          ) : templates.map(t => (
-            <TableRow key={t.id}>
+      {/* Mobile: card layout */}
+      <div className="md:hidden space-y-2">
+        {templates.length === 0 ? (
+          <Card className="border-border/20">
+            <CardContent className="py-8 text-center text-muted-foreground text-sm">Ingen maler</CardContent>
+          </Card>
+        ) : templates.map(t => (
+          <Card key={t.id} className="border-border/20">
+            <CardContent className="p-3">
               {editId === t.id ? (
-                <>
-                  <TableCell><Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="h-8" /></TableCell>
-                  <TableCell><Input value={editForm.content} onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))} className="h-8" /></TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => handleSaveEdit(t.id)}><Save size={14} /></Button>
-                      <Button size="icon" variant="ghost" onClick={() => setEditId(null)}><X size={14} /></Button>
-                    </div>
-                  </TableCell>
-                </>
+                <div className="space-y-2">
+                  <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="h-8" placeholder="Navn" />
+                  <Textarea value={editForm.content} onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))} rows={3} />
+                  <div className="flex gap-1.5">
+                    <Button size="sm" className="gap-1 h-7 text-xs" onClick={() => handleSaveEdit(t.id)}><Save size={12} /> Lagre</Button>
+                    <Button size="sm" variant="ghost" className="gap-1 h-7 text-xs" onClick={() => setEditId(null)}><X size={12} /> Avbryt</Button>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <TableCell className="font-medium">{t.name}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground max-w-md truncate">{t.content}</TableCell>
-                  <TableCell>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">{t.name}</p>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => { setEditId(t.id); setEditForm({ name: t.name, content: t.content }); }}><Edit2 size={14} /></Button>
-                      <Button size="icon" variant="ghost" onClick={() => handleDelete(t.id)} className="text-destructive"><Trash2 size={14} /></Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditId(t.id); setEditForm({ name: t.name, content: t.content }); }}>
+                        <Edit2 size={12} />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => handleDelete(t.id)}><Trash2 size={12} /></Button>
                     </div>
-                  </TableCell>
-                </>
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{t.content}</p>
+                </div>
               )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Navn</TableHead>
+              <TableHead>Innhold</TableHead>
+              <TableHead></TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {templates.length === 0 ? (
+              <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">Ingen maler</TableCell></TableRow>
+            ) : templates.map(t => (
+              <TableRow key={t.id}>
+                {editId === t.id ? (
+                  <>
+                    <TableCell><Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="h-8" /></TableCell>
+                    <TableCell><Input value={editForm.content} onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))} className="h-8" /></TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => handleSaveEdit(t.id)}><Save size={14} /></Button>
+                        <Button size="icon" variant="ghost" onClick={() => setEditId(null)}><X size={14} /></Button>
+                      </div>
+                    </TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell className="font-medium">{t.name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground max-w-md truncate">{t.content}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => { setEditId(t.id); setEditForm({ name: t.name, content: t.content }); }}><Edit2 size={14} /></Button>
+                        <Button size="icon" variant="ghost" onClick={() => handleDelete(t.id)} className="text-destructive"><Trash2 size={14} /></Button>
+                      </div>
+                    </TableCell>
+                  </>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

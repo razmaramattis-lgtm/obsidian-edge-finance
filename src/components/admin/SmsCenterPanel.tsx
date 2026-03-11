@@ -23,6 +23,7 @@ import EmailHistoryPanel from "./email/EmailHistoryPanel";
 import {
   LayoutDashboard, Send, Users as UsersIcon, FileText, Clock, Settings, Layers,
 } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type Channel = "sms" | "email";
 
@@ -62,15 +63,15 @@ const SmsCenterPanel = () => {
     : (id: string) => setEmailTab(id as EmailTab);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header with channel switcher */}
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
           <Megaphone size={18} className="text-primary" strokeWidth={1.5} />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <p className="text-sm font-medium">Markedsføring</p>
-          <p className="text-[10px] text-muted-foreground">SMS og e-postutsendelse fra plattformen</p>
+          <p className="text-[10px] text-muted-foreground truncate">SMS og e-postutsendelse fra plattformen</p>
         </div>
       </div>
 
@@ -96,25 +97,29 @@ const SmsCenterPanel = () => {
         </button>
       </div>
 
-      {/* Sub-tabs */}
-      <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-muted/40 border border-border/20">
-        {tabs.map(t => {
-          const Icon = t.icon;
-          const active = activeTab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              className={`flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium transition-all ${
-                active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={13} />
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* Sub-tabs - horizontal scroll on mobile */}
+      <ScrollArea className="w-full">
+        <div className="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border/20 w-max min-w-full">
+          {tabs.map(t => {
+            const Icon = t.icon;
+            const active = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0 ${
+                  active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={13} />
+                <span className="hidden sm:inline">{t.label}</span>
+                <span className="sm:hidden">{t.label.split(" ")[0]}</span>
+              </button>
+            );
+          })}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {/* SMS panels */}
       {channel === "sms" && (
