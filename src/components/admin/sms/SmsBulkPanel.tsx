@@ -143,8 +143,26 @@ const SmsBulkPanel = () => {
       setProgress(Math.round((inserted / allRecipientPhones.length) * 100));
     }
 
+    // Trigger cloud SMS sending immediately
+    toast.info("Sender SMS-er via sky-tjeneste...");
+    try {
+      // Keep invoking until all are sent
+      let totalSent = 0;
+      let totalFailed = 0;
+      let hasMore = true;
+      while (hasMore) {
+        const { data, error } = await supabase.functions.invoke("send-sms");
+        if (error) throw error;
+        totalSent += data?.sent || 0;
+        totalFailed += data?.failed || 0;
+        hasMore = (data?.sent || 0) > 0 && (data?.total || 0) >= 50;
+      }
+      toast.success(`${totalSent} SMS sendt, ${totalFailed} feilet`);
+    } catch (e: any) {
+      toast.error("Feil ved sending: " + (e.message || "Ukjent feil"));
+    }
+
     setSending(false);
-    toast.success(`${allRecipientPhones.length} SMS-er lagt i kø`);
     setPhones("");
     setMessage("");
     clearSelection();
