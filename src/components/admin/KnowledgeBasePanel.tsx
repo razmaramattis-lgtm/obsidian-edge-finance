@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Send, BookOpen, Sparkles, Download, Calculator, FileText, Archive, Database, Shield, Users, Handshake, RotateCcw, Search, ChevronDown, ChevronUp, Link2, X } from "lucide-react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
+import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 
 const thinkingPhrases = [
