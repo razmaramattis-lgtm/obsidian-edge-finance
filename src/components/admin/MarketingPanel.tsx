@@ -1,12 +1,13 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Search, PenTool, CheckSquare, Calendar, BarChart3,
-  Megaphone, Brain, Smartphone, Mail, Plug,
+  Megaphone, Brain, Smartphone, Mail, Plug, FolderOpen,
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MarketingDashboardTab from "./marketing/MarketingDashboardTab";
 import ContentAnalyzerTab from "./marketing/ContentAnalyzerTab";
 import PostGeneratorTab from "./marketing/PostGeneratorTab";
+import PostArchiveTab from "./marketing/PostArchiveTab";
 import ApprovalQueueTab from "./marketing/ApprovalQueueTab";
 import SomeSchedulerTab from "./marketing/SomeSchedulerTab";
 import PerformanceTrackerTab from "./marketing/PerformanceTrackerTab";
@@ -19,6 +20,7 @@ const TABS = [
   { id: "integrations", label: "Integrasjoner", icon: Plug },
   { id: "analyzer", label: "Content Analyzer", icon: Search },
   { id: "generator", label: "Post Generator", icon: PenTool },
+  { id: "archive", label: "Innleggsarkiv", icon: FolderOpen },
   { id: "approval", label: "Godkjenning", icon: CheckSquare },
   { id: "scheduler", label: "SoMe Scheduler", icon: Calendar },
   { id: "performance", label: "Performance", icon: BarChart3 },
@@ -37,6 +39,7 @@ const MarketingPanel = () => {
       case "integrations": return <IntegrationsTab />;
       case "analyzer": return <ContentAnalyzerTab />;
       case "generator": return <PostGeneratorTab />;
+      case "archive": return <PostArchiveTab />;
       case "approval": return <ApprovalQueueTab />;
       case "scheduler": return <SomeSchedulerTab />;
       case "performance": return <PerformanceTrackerTab />;

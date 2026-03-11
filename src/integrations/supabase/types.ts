@@ -2552,9 +2552,13 @@ export type Database = {
           id: string
           image_prompt: string | null
           image_url: string | null
+          last_reposted_at: string | null
           platform: string
           published_at: string | null
           rejected_reason: string | null
+          repost_at: string | null
+          repost_count: number | null
+          repost_interval_days: number | null
           scheduled_at: string | null
           source_analysis_id: string | null
           status: string
@@ -2572,9 +2576,13 @@ export type Database = {
           id?: string
           image_prompt?: string | null
           image_url?: string | null
+          last_reposted_at?: string | null
           platform?: string
           published_at?: string | null
           rejected_reason?: string | null
+          repost_at?: string | null
+          repost_count?: number | null
+          repost_interval_days?: number | null
           scheduled_at?: string | null
           source_analysis_id?: string | null
           status?: string
@@ -2592,9 +2600,13 @@ export type Database = {
           id?: string
           image_prompt?: string | null
           image_url?: string | null
+          last_reposted_at?: string | null
           platform?: string
           published_at?: string | null
           rejected_reason?: string | null
+          repost_at?: string | null
+          repost_count?: number | null
+          repost_interval_days?: number | null
           scheduled_at?: string | null
           source_analysis_id?: string | null
           status?: string
