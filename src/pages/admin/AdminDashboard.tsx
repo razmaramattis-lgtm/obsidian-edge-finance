@@ -48,7 +48,7 @@ import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel"
 import JobListingsPanel from "@/components/admin/JobListingsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center";
 
 interface NavItem {
   id: Panel;
