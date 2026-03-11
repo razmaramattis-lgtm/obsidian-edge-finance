@@ -34,7 +34,7 @@ const MarketingPanel = () => {
   const renderTab = () => {
     switch (activeTab) {
       case "dashboard": return <MarketingDashboardTab onNavigate={(t) => setActiveTab(t as TabId)} />;
-      case "analyzer": return <ContentAnalyzerTab />;
+      case "integrations": return <IntegrationsTab />;
       case "generator": return <PostGeneratorTab />;
       case "approval": return <ApprovalQueueTab />;
       case "scheduler": return <SomeSchedulerTab />;
