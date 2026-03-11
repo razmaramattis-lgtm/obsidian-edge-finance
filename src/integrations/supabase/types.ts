@@ -2701,6 +2701,62 @@ export type Database = {
           },
         ]
       }
+      marketing_video_requests: {
+        Row: {
+          admin_note: string | null
+          aspect_ratio: string
+          created_at: string
+          duration: number
+          id: string
+          platform: string
+          prompt: string
+          requested_by: string | null
+          status: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          aspect_ratio?: string
+          created_at?: string
+          duration?: number
+          id?: string
+          platform?: string
+          prompt: string
+          requested_by?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          aspect_ratio?: string
+          created_at?: string
+          duration?: number
+          id?: string
+          platform?: string
+          prompt?: string
+          requested_by?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_video_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       open_applications: {
         Row: {
           address: string | null
