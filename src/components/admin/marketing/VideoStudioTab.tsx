@@ -330,6 +330,15 @@ const VideoStudioTab = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    {r.status === "pending" && isAdmin && (
+                      <Button variant="default" size="sm" className="text-xs gap-1" onClick={() => handleApproveAndGenerate(r)} disabled={generatingId === r.id}>
+                        {generatingId === r.id ? <RefreshCw size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                        Generer
+                      </Button>
+                    )}
+                    {generatingId === r.id && (
+                      <Badge className="bg-blue-500/10 text-blue-600 text-[10px] animate-pulse">Genererer...</Badge>
+                    )}
                     {r.video_url && (
                       <Button variant="outline" size="sm" className="text-xs gap-1" asChild>
                         <a href={r.video_url} target="_blank" rel="noopener noreferrer">
