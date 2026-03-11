@@ -76,6 +76,12 @@ const EmailSendPanel = () => {
     });
   }, [selectedContacts, email, name]);
 
+  const triggerSend = async () => {
+    try {
+      await supabase.functions.invoke("send-bulk-email");
+    } catch { /* silent – emails stay queued for next trigger */ }
+  };
+
   const handleSend = async () => {
     if (!subject.trim() || !body.trim()) { toast.error("Emne og innhold er påkrevd"); return; }
     if (allRecipients.length === 0) { toast.error("Ingen mottakere valgt"); return; }
@@ -99,8 +105,11 @@ const EmailSendPanel = () => {
       setProgress(Math.round((done / rows.length) * 100));
     }
 
+    // Trigger immediate sending
+    triggerSend();
+
     setSending(false);
-    toast.success(`${allRecipients.length} e-post(er) lagt i kø`);
+    toast.success(`${allRecipients.length} e-post(er) sendes nå`);
     setEmail(""); setName(""); setSubject(""); setBody(""); setTemplateId("");
     clearSelection();
     setProgress(0);
