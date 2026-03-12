@@ -593,23 +593,61 @@ const Index = () => {
                 <div className="glass rounded-3xl p-8 md:p-10 relative overflow-hidden">
                   <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
                   <div className="space-y-4 relative">
-                    {[
-                      { area: "Regnskap", price: "fra 25 kr/min", online: true },
-                      { area: "Skatt", price: "fra 30 kr/min", online: true },
-                      { area: "HR & Personal", price: "fra 20 kr/min", online: false },
-                    ].map((item) => (
-                      <div key={item.area} className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/20">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2.5 h-2.5 rounded-full ${item.online ? "bg-green-500 animate-pulse" : "bg-muted-foreground/30"}`} />
-                          <span className="text-sm font-heading">{item.area}</span>
+                    {advisoryCategories.length > 0 ? advisoryCategories.map((cat) => {
+                      const onlineInCat = advisorStatuses.filter((a) => a.category_id === cat.id && a.is_online);
+                      const isOnline = onlineInCat.length > 0;
+                      const minPrice = onlineInCat.length > 0 ? Math.min(...onlineInCat.map((a) => a.price_per_minute)) : null;
+                      const allPrices = advisorStatuses.filter((a) => a.category_id === cat.id);
+                      const lowestAny = allPrices.length > 0 ? Math.min(...allPrices.map((a) => a.price_per_minute)) : null;
+                      return (
+                        <div key={cat.id} className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/20">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-muted-foreground/30"}`} />
+                            <div>
+                              <span className="text-sm font-heading">{cat.name}</span>
+                              {isOnline && (
+                                <p className="text-[10px] text-green-600">{onlineInCat.length} rådgiver{onlineInCat.length > 1 ? "e" : ""} ledig</p>
+                              )}
+                              {!isOnline && <p className="text-[10px] text-muted-foreground">Ingen tilgjengelig nå</p>}
+                            </div>
+                          </div>
+                          <span className="text-xs text-foreground/50">
+                            {minPrice ? `fra ${minPrice} kr/min` : lowestAny ? `fra ${lowestAny} kr/min` : "—"}
+                          </span>
                         </div>
-                        <span className="text-xs text-foreground/50">{item.price}</span>
+                      );
+                    }) : (
+                      <>
+                        {[
+                          { area: "Regnskap", price: "fra 25 kr/min" },
+                          { area: "Skatt", price: "fra 30 kr/min" },
+                          { area: "HR & Personal", price: "fra 20 kr/min" },
+                        ].map((item) => (
+                          <div key={item.area} className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/20">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+                              <span className="text-sm font-heading">{item.area}</span>
+                            </div>
+                            <span className="text-xs text-foreground/50">{item.price}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                  {(() => {
+                    const uniqueOnline = new Set(advisorStatuses.filter((a) => a.is_online).map((a) => a.profile_id)).size;
+                    return (
+                      <div className="mt-6 flex items-center justify-between">
+                        <p className="text-[10px] text-muted-foreground">Priser varierer per rådgiver og fagområde</p>
+                        {uniqueOnline > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <Wifi size={10} className="text-green-500" />
+                            <span className="text-[10px] text-green-600 font-medium">{uniqueOnline} rådgiver{uniqueOnline > 1 ? "e" : ""} online</span>
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                  <div className="mt-6 text-center">
-                    <p className="text-[10px] text-muted-foreground">Priser varierer per rådgiver og fagområde</p>
-                  </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
