@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   Plug, Unplug, Shield, CheckCircle2, XCircle, RefreshCw, Eye, EyeOff,
-  Video, Image, FileText, BarChart3, ExternalLink, Settings2, Key,
+  Video, Image, FileText, BarChart3, ExternalLink, Settings2, Key, BookOpen, Link2,
 } from "lucide-react";
 
 import linkedinLogo from "@/assets/platforms/linkedin.png";
