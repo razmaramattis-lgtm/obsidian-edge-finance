@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import {
   Video, Clock, DollarSign, Users, Wifi, WifiOff,
-  Loader2, Check, X, TrendingUp, BarChart3, Plus,
+  Loader2, Check, X, TrendingUp, BarChart3, Plus, Settings, Key, Eye, EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
