@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import {
   Video, Clock, DollarSign, Users, Wifi, WifiOff,
-  Loader2, Check, X, Eye, TrendingUp, BarChart3, Calendar,
+  Loader2, Check, X, TrendingUp, BarChart3, Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -43,11 +47,15 @@ interface Category {
 }
 
 const DigitalJobPanel = () => {
+  const { profile } = useAuth();
   const [tab, setTab] = useState<Tab>("overview");
   const [sessions, setSessions] = useState<Session[]>([]);
   const [onlineStatuses, setOnlineStatuses] = useState<OnlineStatus[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [selectedCatId, setSelectedCatId] = useState("");
+  const [newPrice, setNewPrice] = useState("30");
 
   useEffect(() => {
     loadAll();
@@ -84,15 +92,60 @@ const DigitalJobPanel = () => {
     toast.success(`Sesjon ${status === "active" ? "startet" : status === "completed" ? "fullført" : "avbrutt"}`);
   };
 
+  const toggleOnline = async (statusId: string, currentlyOnline: boolean) => {
+    const { error } = await supabase
+      .from("advisor_online_status")
+      .update({ is_online: !currentlyOnline, updated_at: new Date().toISOString() } as any)
+      .eq("id", statusId);
+    if (error) {
+      toast.error("Kunne ikke oppdatere status");
+    } else {
+      toast.success(!currentlyOnline ? "Du er nå online" : "Du er nå offline");
+    }
+  };
+
+  const registerForCategory = async () => {
+    if (!profile?.id || !selectedCatId) return;
+    const price = parseFloat(newPrice);
+    if (isNaN(price) || price <= 0) { toast.error("Ugyldig pris"); return; }
+
+    const { error } = await supabase.from("advisor_online_status").insert({
+      profile_id: profile.id,
+      category_id: selectedCatId,
+      is_online: false,
+      price_per_minute: price,
+    } as any);
+
+    if (error) {
+      if (error.code === "23505") toast.error("Du er allerede registrert for denne kategorien");
+      else toast.error("Kunne ikke registrere");
+    } else {
+      toast.success("Registrert for kategori");
+      setAddingCategory(false);
+      setSelectedCatId("");
+      setNewPrice("30");
+    }
+  };
+
+  const updatePrice = async (statusId: string, price: string) => {
+    const p = parseFloat(price);
+    if (isNaN(p) || p <= 0) return;
+    await supabase.from("advisor_online_status").update({ price_per_minute: p } as any).eq("id", statusId);
+    toast.success("Pris oppdatert");
+  };
+
   const catName = (id: string) => categories.find((c) => c.id === id)?.name || "Ukjent";
 
-  // Stats
+  const myStatuses = onlineStatuses.filter((o) => o.profile_id === profile?.id);
   const pendingSessions = sessions.filter((s) => s.status === "pending");
   const activeSessions = sessions.filter((s) => s.status === "active");
   const completedSessions = sessions.filter((s) => s.status === "completed");
   const totalRevenue = completedSessions.reduce((sum, s) => sum + (s.total_amount || 0), 0);
   const totalMinutes = completedSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
   const onlineCount = onlineStatuses.filter((o) => o.is_online).length;
+
+  const myCatsIds = new Set(myStatuses.map((s) => s.category_id));
+  const availableCategories = categories.filter((c) => !myCatsIds.has(c.id));
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "overview", label: "Oversikt", icon: BarChart3 },
@@ -123,6 +176,87 @@ const DigitalJobPanel = () => {
           )}
         </div>
       </div>
+
+      {/* My status card */}
+      <Card className="p-4 border-primary/20 bg-primary/5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-heading flex items-center gap-2">
+            <Wifi size={14} className="text-primary" /> Min tilgjengelighet
+          </h3>
+          {availableCategories.length > 0 && (
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setAddingCategory(!addingCategory)}>
+              <Plus size={12} className="mr-1" /> Legg til kategori
+            </Button>
+          )}
+        </div>
+
+        {myStatuses.length === 0 && !addingCategory ? (
+          <div className="text-center py-6">
+            <p className="text-xs text-muted-foreground mb-2">Du er ikke registrert for noen kategorier ennå</p>
+            {availableCategories.length > 0 && (
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => setAddingCategory(true)}>
+                <Plus size={12} className="mr-1" /> Registrer deg
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {myStatuses.map((s) => (
+              <div key={s.id} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-background">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Switch checked={s.is_online} onCheckedChange={() => toggleOnline(s.id, s.is_online)} />
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium">{catName(s.category_id)}</p>
+                    <p className={`text-[10px] font-medium ${s.is_online ? "text-green-600" : "text-muted-foreground"}`}>
+                      {s.is_online ? "Online — mottar kunder" : "Offline"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Input
+                    type="number"
+                    defaultValue={s.price_per_minute}
+                    className="w-20 h-7 text-xs text-right"
+                    min={1}
+                    onBlur={(e) => updatePrice(s.id, e.target.value)}
+                  />
+                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">kr/min</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {addingCategory && (
+          <div className="mt-3 p-3 rounded-xl bg-background border border-border space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Kategori</label>
+              <select
+                value={selectedCatId}
+                onChange={(e) => setSelectedCatId(e.target.value)}
+                className="w-full h-8 text-xs rounded-lg border border-input bg-background px-3"
+              >
+                <option value="">Velg kategori...</option>
+                {availableCategories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Pris per minutt (kr)</label>
+              <Input type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-8 text-xs" min={1} />
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" className="h-7 text-xs flex-1" onClick={registerForCategory} disabled={!selectedCatId}>
+                Registrer
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setAddingCategory(false)}>
+                Avbryt
+              </Button>
+            </div>
+          </div>
+        )}
+      </Card>
 
       {/* Tabs */}
       <div className="flex gap-1 bg-muted/30 rounded-xl p-1">
@@ -175,7 +309,6 @@ const DigitalJobPanel = () => {
             </Card>
           </div>
 
-          {/* Pending sessions quick view */}
           {pendingSessions.length > 0 && (
             <Card className="p-4 border-amber-500/20">
               <h3 className="text-sm font-heading mb-3 flex items-center gap-2">
@@ -258,12 +391,15 @@ const DigitalJobPanel = () => {
             <Card key={o.id} className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-2.5 h-2.5 rounded-full ${o.is_online ? "bg-green-500" : "bg-muted-foreground/30"}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full ${o.is_online ? "bg-green-500 animate-pulse" : "bg-muted-foreground/30"}`} />
                   <div>
                     <p className="text-xs font-medium">{catName(o.category_id)}</p>
                     <p className="text-[10px] text-muted-foreground">{o.price_per_minute} kr/min · {o.is_online ? "Online" : "Offline"}</p>
                   </div>
                 </div>
+                {o.profile_id === profile?.id && (
+                  <Switch checked={o.is_online} onCheckedChange={() => toggleOnline(o.id, o.is_online)} />
+                )}
               </div>
             </Card>
           ))}
