@@ -696,9 +696,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* CTA */}
-            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
-              Få tilbud
-            </Link>
+            <button onClick={() => { setMenuOpen(false); setContactOpen(true); }} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20 w-full">
+              Kontakt oss
+            </button>
           </div>
         </div>
 
