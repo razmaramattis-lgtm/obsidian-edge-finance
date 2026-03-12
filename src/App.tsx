@@ -101,6 +101,7 @@ const KursBedrift = lazy(() => import("./pages/kurs/KursBedrift"));
 const KursHrPage = lazy(() => import("./pages/kurs/KursHr"));
 const KursOm = lazy(() => import("./pages/kurs/KursOm"));
 const KursRegnskap = lazy(() => import("./pages/kurs/KursRegnskap"));
+const HurtigRadgivning = lazy(() => import("./pages/HurtigRadgivning"));
 
 // Bransje-undersider
 const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
