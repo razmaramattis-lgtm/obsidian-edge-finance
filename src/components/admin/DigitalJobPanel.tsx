@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
-type Tab = "overview" | "sessions" | "advisors";
+type Tab = "overview" | "sessions" | "advisors" | "settings";
 
 interface Session {
   id: string;
