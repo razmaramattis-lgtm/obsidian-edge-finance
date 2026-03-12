@@ -140,8 +140,8 @@ const Sikkerhet = () => (
               <p className="text-sm text-muted-foreground mb-3">
                 For spørsmål om informasjonssikkerhet eller rapportering av sårbarheter:
               </p>
-              <a href="mailto:sikkerhet@avargo.no" className="text-primary text-sm hover:underline">
-                sikkerhet@avargo.no
+              <a href="mailto:kontakt@avargo.no" className="text-primary text-sm hover:underline">
+                kontakt@avargo.no
               </a>
             </div>
           </div>

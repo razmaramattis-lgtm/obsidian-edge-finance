@@ -340,7 +340,7 @@ const Contact = () => {
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Oscars gate 2B, 3714 Skien</span></div>
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Åpent man–fre 08:00–16:00</span></div>
               
-              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><a href="mailto:firmapost@avargo.no" className="hover:text-foreground transition-colors">firmapost@avargo.no</a></div>
+              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><a href="mailto:kontakt@avargo.no" className="hover:text-foreground transition-colors">kontakt@avargo.no</a></div>
             </div>
           </AnimatedSection>
 
