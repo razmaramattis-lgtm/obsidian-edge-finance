@@ -11,6 +11,7 @@ import {
   Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive, CalendarClock,
   GraduationCap, Calculator, HelpCircle, Download, Flame, ArrowRight, Layers,
   Monitor, Code, Cpu, Receipt, PieChart, BarChart3, UserPlus, Scale,
+  Video,
 } from "lucide-react";
 
 /** Maps tjenester group label → section basePath for auto-routing */
