@@ -414,6 +414,7 @@ const App = () => (
                             <Route path="/bransjer/bil" element={<BilVerksted />} />
                             <Route path="/bransjer/energi" element={<EnergiMiljo />} />
                             <Route path="/metoden" element={<Metoden />} />
+                            <Route path="/hurtig-radgivning" element={<HurtigRadgivning />} />
                             <Route path="/priser" element={<Pricing />} />
                             <Route path="/ressurser" element={<Ressurser />} />
                             <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
