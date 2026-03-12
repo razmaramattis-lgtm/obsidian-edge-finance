@@ -21,7 +21,7 @@ const Personvern = () => (
               <section>
                 <h2 className="font-heading text-xl md:text-2xl text-foreground mb-3">1. Behandlingsansvarlig</h2>
                 <p>Avargo AS (org.nr. under registrering) er behandlingsansvarlig for personopplysninger som samles inn via denne nettsiden og våre tjenester.</p>
-                <p>Kontakt: firmapost@avargo.no | Oscars gate 2B, 3714 Skien</p>
+                <p>Kontakt: kontakt@avargo.no | Oscars gate 2B, 3714 Skien</p>
               </section>
 
               <section>
@@ -84,7 +84,7 @@ const Personvern = () => (
                   <li>Protestere mot behandling basert på berettiget interesse</li>
                   <li>Be om dataportabilitet</li>
                 </ul>
-                <p>Kontakt oss på firmapost@avargo.no for å utøve dine rettigheter.</p>
+                <p>Kontakt oss på kontakt@avargo.no for å utøve dine rettigheter.</p>
               </section>
 
               <section>
