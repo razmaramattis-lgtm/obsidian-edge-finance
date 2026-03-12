@@ -367,6 +367,7 @@ const IntegrationsTab = () => {
                       <TabsList className="mb-3">
                         {isConnected && <TabsTrigger value="dashboard">Dashboard</TabsTrigger>}
                         <TabsTrigger value="credentials"><Key size={12} className="mr-1" /> API-nøkler</TabsTrigger>
+                        <TabsTrigger value="guide"><BookOpen size={12} className="mr-1" /> Veiledning</TabsTrigger>
                         <TabsTrigger value="permissions"><Shield size={12} className="mr-1" /> Tilganger</TabsTrigger>
                         {platform.supportsVideo && (
                           <TabsTrigger value="media"><Video size={12} className="mr-1" /> Media</TabsTrigger>
