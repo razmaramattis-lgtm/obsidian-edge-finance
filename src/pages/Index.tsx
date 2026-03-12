@@ -276,7 +276,7 @@ const Index = () => {
           "url": "https://avargo.no",
           "logo": "https://avargo.no/logo.png",
           "image": "https://avargo.no/og-image.jpg",
-          "email": "firmapost@avargo.no",
+          "email": "kontakt@avargo.no",
           "telephone": "+4798642391",
           "address": { "@type": "PostalAddress", "streetAddress": "Oscars gate 2B", "addressLocality": "Skien", "postalCode": "3714", "addressRegion": "Vestfold og Telemark", "addressCountry": "NO" },
           "geo": { "@type": "GeoCoordinates", "latitude": 59.2084, "longitude": 9.6069 },

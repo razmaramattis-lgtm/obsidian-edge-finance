@@ -84,7 +84,7 @@ const Personvern = () => (
                   <li>Protestere mot behandling basert på berettiget interesse</li>
                   <li>Be om dataportabilitet</li>
                 </ul>
-                <p>Kontakt oss på firmapost@avargo.no for å utøve dine rettigheter.</p>
+                <p>Kontakt oss på kontakt@avargo.no for å utøve dine rettigheter.</p>
               </section>
 
               <section>
