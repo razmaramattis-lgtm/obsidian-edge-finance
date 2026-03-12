@@ -69,7 +69,7 @@ const DigitalJobPanel = () => {
   }, []);
 
   const loadAll = async () => {
-    await Promise.all([loadSessions(), loadOnline(), loadCategories()]);
+    await Promise.all([loadSessions(), loadOnline(), loadCategories(), loadStripeKey()]);
     setLoading(false);
   };
 
