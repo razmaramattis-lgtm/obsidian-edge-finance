@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import HeaderContactDialog from "@/components/HeaderContactDialog";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
 import {
