@@ -437,6 +437,76 @@ const DigitalJobPanel = () => {
           ))}
         </div>
       )}
+
+      {/* Settings */}
+      {tab === "settings" && (
+        <div className="space-y-4">
+          <Card className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-xl bg-primary/10">
+                <Key size={16} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-heading">Stripe-integrasjon</h3>
+                <p className="text-[10px] text-muted-foreground">Koble til Stripe for automatisk fakturering av rådgivningssesjoner</p>
+              </div>
+              {stripeKeySaved && (
+                <Badge variant="outline" className="ml-auto text-[10px] border-primary/30 text-primary bg-primary/5">
+                  <Check size={10} className="mr-1" /> Aktiv
+                </Badge>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stripe Secret Key</label>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      type={showStripeKey ? "text" : "password"}
+                      value={stripeKey}
+                      onChange={(e) => { setStripeKey(e.target.value); setStripeKeySaved(false); }}
+                      placeholder="sk_live_..."
+                      className="h-9 text-xs pr-10 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowStripeKey(!showStripeKey)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showStripeKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="h-9 text-xs"
+                    onClick={saveStripeKey}
+                    disabled={!stripeKey || savingStripeKey || stripeKeySaved}
+                  >
+                    {savingStripeKey ? <Loader2 size={12} className="animate-spin mr-1" /> : null}
+                    {stripeKeySaved ? "Lagret" : "Lagre"}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-muted/30 space-y-2">
+                <p className="text-[10px] font-medium text-foreground/70">Slik finner du nøkkelen:</p>
+                <ol className="text-[10px] text-muted-foreground space-y-1 list-decimal pl-4">
+                  <li>Logg inn på <span className="font-medium text-foreground/70">dashboard.stripe.com</span></li>
+                  <li>Gå til <span className="font-medium text-foreground/70">Developers → API keys</span></li>
+                  <li>Kopier <span className="font-medium text-foreground/70">Secret key</span> (starter med sk_live_ eller sk_test_)</li>
+                </ol>
+              </div>
+
+              {stripeKeySaved && (
+                <p className="text-[10px] text-muted-foreground">
+                  Kunder vil automatisk bli bedt om kortinformasjon ved bestilling, og trekkes per minutt etter avsluttet sesjon.
+                </p>
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
