@@ -142,7 +142,7 @@ const DigitalJobPanel = () => {
   const completedSessions = sessions.filter((s) => s.status === "completed");
   const totalRevenue = completedSessions.reduce((sum, s) => sum + (s.total_amount || 0), 0);
   const totalMinutes = completedSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
-  const onlineCount = onlineStatuses.filter((o) => o.is_online).length;
+  const onlineCount = new Set(onlineStatuses.filter((o) => o.is_online).map((o) => o.profile_id)).size;
 
   const myCatsIds = new Set(myStatuses.map((s) => s.category_id));
   const availableCategories = categories.filter((c) => !myCatsIds.has(c.id));
