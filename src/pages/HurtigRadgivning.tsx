@@ -151,8 +151,26 @@ const HurtigRadgivning = () => {
     }, 15 * 60 * 1000);
   };
 
+  const handleVideoCallEnd = () => {
+    setShowVideoCall(false);
+    setActiveSessionId(null);
+    setStep("category");
+    setRequesting(false);
+    toast("Samtalen er avsluttet");
+  };
+
   return (
     <>
+      {/* Video Call Overlay */}
+      {showVideoCall && activeSessionId && (
+        <AdvisoryVideoCall
+          sessionId={activeSessionId}
+          categoryName={selectedCatName}
+          pricePerMinute={minPriceForSelected || 30}
+          onEnd={handleVideoCallEnd}
+        />
+      )}
+
       <Helmet>
         <title>Hurtig rådgivning | Avargo</title>
         <meta name="description" content="Få profesjonell rådgivning via video med en av våre eksperter. Betal kun for minuttene du bruker." />
