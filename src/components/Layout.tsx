@@ -566,6 +566,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <MobileNavLink to="/" label="Hjem" onClick={() => setMenuOpen(false)} />
             <MobileNavLink to={sp("/metoden")} label="Metoden" onClick={() => setMenuOpen(false)} />
 
+            {/* Digital rådgivning — mobile */}
+            <Link
+              to="/hurtigradgivning"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2.5 py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide"
+            >
+              <Video size={15} className="text-primary" />
+              Digital rådgivning
+            </Link>
+
             {/* Mobile Tjenester */}
             <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
               Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
