@@ -568,7 +568,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Digital rådgivning — mobile */}
             <Link
-              to="/hurtigradgivning"
+              to="/hurtig-radgivning"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2.5 py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide"
             >
