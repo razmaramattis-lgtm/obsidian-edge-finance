@@ -39,13 +39,14 @@ const HeaderContactDialog = ({ open, onOpenChange }: HeaderContactDialogProps) =
     }
     setSending(true);
 
-    const { error } = await supabase.from("contact_submissions").insert({
-      contact_person: name.trim().slice(0, 100),
-      email: email.trim().slice(0, 255),
-      phone: phone.trim().slice(0, 20) || null,
-      message: message.trim().slice(0, 1000) || null,
-      section: "header",
-      status: "new",
+    const { error } = await supabase.functions.invoke("contact-submit", {
+      body: {
+        contact_person: name.trim().slice(0, 100),
+        email: email.trim().slice(0, 255),
+        phone: phone.trim().slice(0, 20) || null,
+        message: message.trim().slice(0, 1000) || null,
+        section: "header",
+      },
     });
 
     if (error) {
