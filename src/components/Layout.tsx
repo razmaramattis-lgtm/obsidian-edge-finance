@@ -519,7 +519,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Digital rådgivning */}
             <Link
-              to="/hurtigradgivning"
+              to="/hurtig-radgivning"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] tracking-wide font-light text-foreground/80 hover:text-foreground hover:bg-muted/40 transition-all duration-200"
             >
               <Video size={13} className="text-primary" />
