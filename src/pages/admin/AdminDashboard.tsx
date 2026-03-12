@@ -303,6 +303,7 @@ const AdminDashboard = () => {
       case "sms_center": return <SmsCenterPanel />;
       case "marketing": return <MarketingPanel isFullscreen={marketingFullscreen} onToggleFullscreen={() => setMarketingFullscreen(f => !f)} />;
       case "audit_log": return <AuditLogPanel />;
+      case "digital_job": return <DigitalJobPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }
