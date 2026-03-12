@@ -170,6 +170,7 @@ const DropdownItem = ({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { section, isInSection } = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
   const [selskapetOpen, setSelskapetOpen] = useState(false);
