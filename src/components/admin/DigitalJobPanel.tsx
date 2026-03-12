@@ -182,6 +182,7 @@ const DigitalJobPanel = () => {
     { id: "overview", label: "Oversikt", icon: BarChart3 },
     { id: "sessions", label: "Sesjoner", icon: Video },
     { id: "advisors", label: "Rådgivere", icon: Users },
+    { id: "settings", label: "Innstillinger", icon: Settings },
   ];
 
   if (loading) {
