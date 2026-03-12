@@ -81,7 +81,7 @@ const Vilkar = () => (
 
               <section>
                 <h2 className="font-heading text-xl md:text-2xl text-foreground mb-3">11. Kontakt</h2>
-                <p>For spørsmål om disse vilkårene, kontakt oss på kontakt@avargo.no.</p>
+                <p>For spørsmål om disse vilkårene, kontakt oss på firmapost@avargo.no.</p>
               </section>
             </div>
           </div>

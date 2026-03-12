@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import HeaderContactDialog from "@/components/HeaderContactDialog";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
 import {
@@ -170,7 +169,6 @@ const DropdownItem = ({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { section, isInSection } = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
   const [selskapetOpen, setSelskapetOpen] = useState(false);
@@ -218,7 +216,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      <HeaderContactDialog open={contactOpen} onOpenChange={setContactOpen} />
       {/* ── NAV BAR ────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-background/80">
         {isInSection && section && (
@@ -530,12 +527,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </Link>
 
             {/* CTA button */}
-            <button
-              onClick={() => setContactOpen(true)}
+            <Link
+              to={sp("/kontakt")}
               className="ml-2 px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide shadow-lg shadow-primary/20"
             >
-              Kontakt oss
-            </button>
+              Få tilbud
+            </Link>
           </div>
 
           {/* Mobile: login buttons + hamburger */}
@@ -697,9 +694,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* CTA */}
-            <button onClick={() => { setMenuOpen(false); setContactOpen(true); }} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20 w-full">
-              Kontakt oss
-            </button>
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+              Få tilbud
+            </Link>
           </div>
         </div>
 
