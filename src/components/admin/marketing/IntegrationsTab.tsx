@@ -29,6 +29,8 @@ interface PlatformDef {
   scopes: string[];
   supportsVideo: boolean;
   fields: { key: string; label: string; placeholder: string; secret?: boolean }[];
+  links: { label: string; url: string }[];
+  guide: string[];
 }
 
 const PLATFORMS: PlatformDef[] = [
