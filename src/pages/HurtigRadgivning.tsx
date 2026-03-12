@@ -39,6 +39,8 @@ const HurtigRadgivning = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [step, setStep] = useState<"category" | "info" | "waiting">("category");
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [showVideoCall, setShowVideoCall] = useState(false);
 
   // Form
   const [name, setName] = useState("");
