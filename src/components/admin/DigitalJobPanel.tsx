@@ -56,6 +56,10 @@ const DigitalJobPanel = () => {
   const [addingCategory, setAddingCategory] = useState(false);
   const [selectedCatId, setSelectedCatId] = useState("");
   const [newPrice, setNewPrice] = useState("30");
+  const [stripeKey, setStripeKey] = useState("");
+  const [stripeKeySaved, setStripeKeySaved] = useState(false);
+  const [showStripeKey, setShowStripeKey] = useState(false);
+  const [savingStripeKey, setSavingStripeKey] = useState(false);
 
   useEffect(() => {
     loadAll();
