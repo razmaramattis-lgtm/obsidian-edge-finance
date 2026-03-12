@@ -134,8 +134,24 @@ const StickyMobileCta = () => {
   );
 };
 
+interface AdvisoryCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+}
+
+interface AdvisorOnlineStatus {
+  profile_id: string;
+  category_id: string;
+  is_online: boolean;
+  price_per_minute: number;
+}
+
 const Index = () => {
   const [lowestPrice, setLowestPrice] = useState<string | null>(null);
+  const [advisoryCategories, setAdvisoryCategories] = useState<AdvisoryCategory[]>([]);
+  const [advisorStatuses, setAdvisorStatuses] = useState<AdvisorOnlineStatus[]>([]);
 
   useEffect(() => {
     const fetchLowest = async () => {
@@ -149,7 +165,25 @@ const Index = () => {
         setLowestPrice(data[0].price.toLocaleString("nb-NO"));
       }
     };
+    const fetchAdvisory = async () => {
+      const [{ data: cats }, { data: statuses }] = await Promise.all([
+        supabase.from("advisory_categories").select("id, name, description, icon").eq("active", true).order("sort_order"),
+        supabase.from("advisor_online_status").select("profile_id, category_id, is_online, price_per_minute"),
+      ]);
+      if (cats) setAdvisoryCategories(cats);
+      if (statuses) setAdvisorStatuses(statuses as any);
+    };
     fetchLowest();
+    fetchAdvisory();
+
+    const channel = supabase
+      .channel("index-advisory-status")
+      .on("postgres_changes", { event: "*", schema: "public", table: "advisor_online_status" }, async () => {
+        const { data } = await supabase.from("advisor_online_status").select("profile_id, category_id, is_online, price_per_minute");
+        if (data) setAdvisorStatuses(data as any);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const industries = [
