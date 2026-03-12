@@ -117,6 +117,7 @@ const HurtigRadgivning = () => {
     }
 
     setStep("waiting");
+    setActiveSessionId(data.id);
 
     // Listen for acceptance
     const channel = supabase
@@ -126,12 +127,14 @@ const HurtigRadgivning = () => {
       }, (payload: any) => {
         const updated = payload.new;
         if (updated.status === "active") {
-          toast.success("En rådgiver er klar! Du vil bli kontaktet.");
+          toast.success("En rådgiver er klar! Videosamtalen starter nå.");
+          setShowVideoCall(true);
           channel.unsubscribe();
         } else if (updated.status === "cancelled") {
           toast.error("Ingen tilgjengelige rådgivere akkurat nå. Prøv igjen senere.");
           setStep("category");
           setRequesting(false);
+          setActiveSessionId(null);
           channel.unsubscribe();
         }
       })
@@ -143,6 +146,7 @@ const HurtigRadgivning = () => {
       toast.error("Forespørselen ble tidsavbrutt");
       setStep("category");
       setRequesting(false);
+      setActiveSessionId(null);
       channel.unsubscribe();
     }, 15 * 60 * 1000);
   };
