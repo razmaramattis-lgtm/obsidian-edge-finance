@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
+import AdvisoryVideoCall from "@/components/AdvisoryVideoCall";
 import {
   Video, Wifi, WifiOff, Loader2, ArrowRight, Zap, ChevronRight,
   Clock, Shield, Users, Calculator, PiggyBank, Landmark, Megaphone, Code,
@@ -38,6 +39,8 @@ const HurtigRadgivning = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [step, setStep] = useState<"category" | "info" | "waiting">("category");
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [showVideoCall, setShowVideoCall] = useState(false);
 
   // Form
   const [name, setName] = useState("");
@@ -114,6 +117,7 @@ const HurtigRadgivning = () => {
     }
 
     setStep("waiting");
+    setActiveSessionId(data.id);
 
     // Listen for acceptance
     const channel = supabase
@@ -123,12 +127,14 @@ const HurtigRadgivning = () => {
       }, (payload: any) => {
         const updated = payload.new;
         if (updated.status === "active") {
-          toast.success("En rådgiver er klar! Du vil bli kontaktet.");
+          toast.success("En rådgiver er klar! Videosamtalen starter nå.");
+          setShowVideoCall(true);
           channel.unsubscribe();
         } else if (updated.status === "cancelled") {
           toast.error("Ingen tilgjengelige rådgivere akkurat nå. Prøv igjen senere.");
           setStep("category");
           setRequesting(false);
+          setActiveSessionId(null);
           channel.unsubscribe();
         }
       })
@@ -140,12 +146,31 @@ const HurtigRadgivning = () => {
       toast.error("Forespørselen ble tidsavbrutt");
       setStep("category");
       setRequesting(false);
+      setActiveSessionId(null);
       channel.unsubscribe();
     }, 15 * 60 * 1000);
   };
 
+  const handleVideoCallEnd = () => {
+    setShowVideoCall(false);
+    setActiveSessionId(null);
+    setStep("category");
+    setRequesting(false);
+    toast("Samtalen er avsluttet");
+  };
+
   return (
     <>
+      {/* Video Call Overlay */}
+      {showVideoCall && activeSessionId && (
+        <AdvisoryVideoCall
+          sessionId={activeSessionId}
+          categoryName={selectedCatName}
+          pricePerMinute={minPriceForSelected || 30}
+          onEnd={handleVideoCallEnd}
+        />
+      )}
+
       <Helmet>
         <title>Hurtig rådgivning | Avargo</title>
         <meta name="description" content="Få profesjonell rådgivning via video med en av våre eksperter. Betal kun for minuttene du bruker." />
