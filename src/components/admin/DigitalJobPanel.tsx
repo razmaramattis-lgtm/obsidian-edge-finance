@@ -8,13 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import {
   Video, Clock, DollarSign, Users, Wifi, WifiOff,
-  Loader2, Check, X, TrendingUp, BarChart3, Plus,
+  Loader2, Check, X, TrendingUp, BarChart3, Plus, Settings, Key, Eye, EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
-type Tab = "overview" | "sessions" | "advisors";
+type Tab = "overview" | "sessions" | "advisors" | "settings";
 
 interface Session {
   id: string;
@@ -56,6 +56,10 @@ const DigitalJobPanel = () => {
   const [addingCategory, setAddingCategory] = useState(false);
   const [selectedCatId, setSelectedCatId] = useState("");
   const [newPrice, setNewPrice] = useState("30");
+  const [stripeKey, setStripeKey] = useState("");
+  const [stripeKeySaved, setStripeKeySaved] = useState(false);
+  const [showStripeKey, setShowStripeKey] = useState(false);
+  const [savingStripeKey, setSavingStripeKey] = useState(false);
 
   useEffect(() => {
     loadAll();
@@ -65,7 +69,7 @@ const DigitalJobPanel = () => {
   }, []);
 
   const loadAll = async () => {
-    await Promise.all([loadSessions(), loadOnline(), loadCategories()]);
+    await Promise.all([loadSessions(), loadOnline(), loadCategories(), loadStripeKey()]);
     setLoading(false);
   };
 
@@ -82,6 +86,33 @@ const DigitalJobPanel = () => {
   const loadCategories = async () => {
     const { data } = await supabase.from("advisory_categories").select("id, name").order("sort_order");
     if (data) setCategories(data);
+  };
+
+  const loadStripeKey = async () => {
+    const { data } = await supabase.from("app_settings" as any).select("value").eq("key", "stripe_secret_key").maybeSingle();
+    if (data && (data as any).value) {
+      setStripeKey((data as any).value);
+      setStripeKeySaved(true);
+    }
+  };
+
+  const saveStripeKey = async () => {
+    if (!stripeKey.startsWith("sk_")) {
+      toast.error("Ugyldig Stripe-nøkkel. Må starte med sk_");
+      return;
+    }
+    setSavingStripeKey(true);
+    const { error } = await supabase.from("app_settings" as any).upsert(
+      { key: "stripe_secret_key", value: stripeKey, updated_at: new Date().toISOString() } as any,
+      { onConflict: "key" }
+    );
+    setSavingStripeKey(false);
+    if (error) {
+      toast.error("Kunne ikke lagre nøkkelen");
+    } else {
+      setStripeKeySaved(true);
+      toast.success("Stripe API-nøkkel lagret");
+    }
   };
 
   const updateSessionStatus = async (id: string, status: string) => {
@@ -151,6 +182,7 @@ const DigitalJobPanel = () => {
     { id: "overview", label: "Oversikt", icon: BarChart3 },
     { id: "sessions", label: "Sesjoner", icon: Video },
     { id: "advisors", label: "Rådgivere", icon: Users },
+    { id: "settings", label: "Innstillinger", icon: Settings },
   ];
 
   if (loading) {
@@ -403,6 +435,76 @@ const DigitalJobPanel = () => {
               </div>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Settings */}
+      {tab === "settings" && (
+        <div className="space-y-4">
+          <Card className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-xl bg-primary/10">
+                <Key size={16} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-heading">Stripe-integrasjon</h3>
+                <p className="text-[10px] text-muted-foreground">Koble til Stripe for automatisk fakturering av rådgivningssesjoner</p>
+              </div>
+              {stripeKeySaved && (
+                <Badge variant="outline" className="ml-auto text-[10px] border-primary/30 text-primary bg-primary/5">
+                  <Check size={10} className="mr-1" /> Aktiv
+                </Badge>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stripe Secret Key</label>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      type={showStripeKey ? "text" : "password"}
+                      value={stripeKey}
+                      onChange={(e) => { setStripeKey(e.target.value); setStripeKeySaved(false); }}
+                      placeholder="sk_live_..."
+                      className="h-9 text-xs pr-10 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowStripeKey(!showStripeKey)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showStripeKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="h-9 text-xs"
+                    onClick={saveStripeKey}
+                    disabled={!stripeKey || savingStripeKey || stripeKeySaved}
+                  >
+                    {savingStripeKey ? <Loader2 size={12} className="animate-spin mr-1" /> : null}
+                    {stripeKeySaved ? "Lagret" : "Lagre"}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-muted/30 space-y-2">
+                <p className="text-[10px] font-medium text-foreground/70">Slik finner du nøkkelen:</p>
+                <ol className="text-[10px] text-muted-foreground space-y-1 list-decimal pl-4">
+                  <li>Logg inn på <span className="font-medium text-foreground/70">dashboard.stripe.com</span></li>
+                  <li>Gå til <span className="font-medium text-foreground/70">Developers → API keys</span></li>
+                  <li>Kopier <span className="font-medium text-foreground/70">Secret key</span> (starter med sk_live_ eller sk_test_)</li>
+                </ol>
+              </div>
+
+              {stripeKeySaved && (
+                <p className="text-[10px] text-muted-foreground">
+                  Kunder vil automatisk bli bedt om kortinformasjon ved bestilling, og trekkes per minutt etter avsluttet sesjon.
+                </p>
+              )}
+            </div>
+          </Card>
         </div>
       )}
     </div>
