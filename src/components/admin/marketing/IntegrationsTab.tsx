@@ -429,6 +429,39 @@ const IntegrationsTab = () => {
                         </div>
                       </TabsContent>
 
+                      <TabsContent value="guide">
+                        <div className="space-y-4 max-w-2xl">
+                          <div>
+                            <h4 className="text-sm font-heading mb-2 flex items-center gap-2"><BookOpen size={14} className="text-primary" /> Slik kobler du til {platform.label}</h4>
+                            <ol className="space-y-2">
+                              {platform.guide.map((step, i) => (
+                                <li key={i} className="flex gap-3 text-xs">
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">{i + 1}</span>
+                                  <span className="text-muted-foreground pt-0.5">{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-heading mb-2 flex items-center gap-2"><Link2 size={14} className="text-primary" /> Nyttige lenker</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {platform.links.map((link) => (
+                                <a
+                                  key={link.url}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted transition-colors"
+                                >
+                                  <ExternalLink size={10} className="text-primary" />
+                                  {link.label}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
                       <TabsContent value="permissions">
                         <div className="space-y-2">
                           <p className="text-xs text-muted-foreground mb-2">Nødvendige API-tilganger for {platform.label}:</p>
