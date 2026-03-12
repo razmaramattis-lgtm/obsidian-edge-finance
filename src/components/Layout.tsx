@@ -529,12 +529,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </Link>
 
             {/* CTA button */}
-            <Link
-              to={sp("/kontakt")}
+            <button
+              onClick={() => setContactOpen(true)}
               className="ml-2 px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide shadow-lg shadow-primary/20"
             >
-              Få tilbud
-            </Link>
+              Kontakt oss
+            </button>
           </div>
 
           {/* Mobile: login buttons + hamburger */}
