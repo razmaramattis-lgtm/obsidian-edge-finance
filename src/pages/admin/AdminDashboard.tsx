@@ -49,9 +49,10 @@ import JobListingsPanel from "@/components/admin/JobListingsPanel";
 import SmsCenterPanel from "@/components/admin/SmsCenterPanel";
 import AuditLogPanel from "@/components/admin/AuditLogPanel";
 import MarketingPanel from "@/components/admin/MarketingPanel";
+import DigitalJobPanel from "@/components/admin/DigitalJobPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing" | "digital_job";
 
 interface NavItem {
   id: Panel;
@@ -94,6 +95,9 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   // Markedsføring
   { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   { id: "marketing", label: "SoMe & Kampanjer", icon: Megaphone, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+
+  // Digital jobb
+  { id: "digital_job", label: "Digital jobb", icon: Briefcase, adminOnly: true, employeeHidden: true, group: "Digital jobb" },
 
   // Admin
   { id: "audit_log", label: "Revisjonslogg", icon: Shield, adminOnly: true, employeeHidden: true, group: "Admin" },
@@ -299,6 +303,7 @@ const AdminDashboard = () => {
       case "sms_center": return <SmsCenterPanel />;
       case "marketing": return <MarketingPanel isFullscreen={marketingFullscreen} onToggleFullscreen={() => setMarketingFullscreen(f => !f)} />;
       case "audit_log": return <AuditLogPanel />;
+      case "digital_job": return <DigitalJobPanel />;
       case "settings": return <SettingsPanel />;
       default: return <OverviewPanel isAdmin={isAdmin} onNavigate={setActivePanel} notifications={notifications} />;
     }

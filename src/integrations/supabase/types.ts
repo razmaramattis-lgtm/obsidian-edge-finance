@@ -177,6 +177,48 @@ export type Database = {
           },
         ]
       }
+      advisor_online_status: {
+        Row: {
+          category_id: string
+          id: string
+          is_online: boolean | null
+          price_per_minute: number | null
+          profile_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_id: string
+          id?: string
+          is_online?: boolean | null
+          price_per_minute?: number | null
+          profile_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string
+          id?: string
+          is_online?: boolean | null
+          price_per_minute?: number | null
+          profile_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_online_status_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "advisory_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_online_status_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advisor_requests: {
         Row: {
           admin_note: string | null
@@ -211,6 +253,114 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "customer_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisory_categories: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      advisory_sessions: {
+        Row: {
+          admin_note: string | null
+          advisor_id: string | null
+          category_id: string
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          description: string | null
+          duration_minutes: number | null
+          ended_at: string | null
+          id: string
+          payment_status: string | null
+          price_per_minute: number | null
+          started_at: string | null
+          status: string
+          stripe_payment_id: string | null
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          advisor_id?: string | null
+          category_id: string
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          id?: string
+          payment_status?: string | null
+          price_per_minute?: number | null
+          started_at?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          advisor_id?: string | null
+          category_id?: string
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          id?: string
+          payment_status?: string | null
+          price_per_minute?: number | null
+          started_at?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisory_sessions_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisory_sessions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "advisory_categories"
             referencedColumns: ["id"]
           },
         ]

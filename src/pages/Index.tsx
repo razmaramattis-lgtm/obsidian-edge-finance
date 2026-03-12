@@ -5,7 +5,7 @@ import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users,
   Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target,
-  ChevronDown, Award, Clock, CheckCircle2
+  ChevronDown, Award, Clock, CheckCircle2, Video, Wifi
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
@@ -523,6 +523,65 @@ const Index = () => {
       </section>
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
+
+      {/* HURTIG RÅDGIVNING MODULE */}
+      <section className="py-24 md:py-40 relative">
+        <div className="absolute inset-0 ambient-glow opacity-40" />
+        <div className="container mx-auto px-4 md:px-6 relative">
+          <AnimatedSection>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Nyhet</p>
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 leading-snug">
+                  Trenger du svar <span className="italic text-gradient-rose">akkurat nå?</span>
+                </h2>
+                <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed mb-6 max-w-lg">
+                  Med hurtig rådgivning snakker du med en ekspert via video — og betaler kun for minuttene du bruker. Ingen booking, ingen ventetid, ingen binding.
+                </p>
+                <div className="flex flex-wrap gap-4 mb-8">
+                  {[
+                    { icon: Video, label: "Live videosamtale" },
+                    { icon: Clock, label: "Betal per minutt" },
+                    { icon: Wifi, label: "Kun online rådgivere" },
+                  ].map((f) => (
+                    <div key={f.label} className="flex items-center gap-2 text-sm text-foreground/60 font-light">
+                      <div className="p-1.5 bg-primary/10 rounded-lg"><f.icon size={14} className="text-primary" /></div>
+                      {f.label}
+                    </div>
+                  ))}
+                </div>
+                <Link to="/hurtig-radgivning" className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+                  Prøv hurtig rådgivning
+                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </Link>
+              </div>
+              <div className="relative">
+                <div className="glass rounded-3xl p-8 md:p-10 relative overflow-hidden">
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
+                  <div className="space-y-4 relative">
+                    {[
+                      { area: "Regnskap", price: "fra 25 kr/min", online: true },
+                      { area: "Skatt", price: "fra 30 kr/min", online: true },
+                      { area: "HR & Personal", price: "fra 20 kr/min", online: false },
+                    ].map((item) => (
+                      <div key={item.area} className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/20">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2.5 h-2.5 rounded-full ${item.online ? "bg-green-500 animate-pulse" : "bg-muted-foreground/30"}`} />
+                          <span className="text-sm font-heading">{item.area}</span>
+                        </div>
+                        <span className="text-xs text-foreground/50">{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 text-center">
+                    <p className="text-[10px] text-muted-foreground">Priser varierer per rådgiver og fagområde</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
 
       {/* CONVICTION SECTION */}
       <section className="py-24 md:py-40 border-y border-border/15">
