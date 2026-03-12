@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
+import AdvisoryVideoCall from "@/components/AdvisoryVideoCall";
 import {
   Video, Wifi, WifiOff, Loader2, ArrowRight, Zap, ChevronRight,
   Clock, Shield, Users, Calculator, PiggyBank, Landmark, Megaphone, Code,
