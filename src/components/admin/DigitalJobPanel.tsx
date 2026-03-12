@@ -88,6 +88,33 @@ const DigitalJobPanel = () => {
     if (data) setCategories(data);
   };
 
+  const loadStripeKey = async () => {
+    const { data } = await supabase.from("app_settings" as any).select("value").eq("key", "stripe_secret_key").maybeSingle();
+    if (data && (data as any).value) {
+      setStripeKey((data as any).value);
+      setStripeKeySaved(true);
+    }
+  };
+
+  const saveStripeKey = async () => {
+    if (!stripeKey.startsWith("sk_")) {
+      toast.error("Ugyldig Stripe-nøkkel. Må starte med sk_");
+      return;
+    }
+    setSavingStripeKey(true);
+    const { error } = await supabase.from("app_settings" as any).upsert(
+      { key: "stripe_secret_key", value: stripeKey, updated_at: new Date().toISOString() } as any,
+      { onConflict: "key" }
+    );
+    setSavingStripeKey(false);
+    if (error) {
+      toast.error("Kunne ikke lagre nøkkelen");
+    } else {
+      setStripeKeySaved(true);
+      toast.success("Stripe API-nøkkel lagret");
+    }
+  };
+
   const updateSessionStatus = async (id: string, status: string) => {
     const updates: any = { status };
     if (status === "active") updates.started_at = new Date().toISOString();
