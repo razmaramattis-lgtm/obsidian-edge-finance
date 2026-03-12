@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   Plug, Unplug, Shield, CheckCircle2, XCircle, RefreshCw, Eye, EyeOff,
-  Video, Image, FileText, BarChart3, ExternalLink, Settings2, Key,
+  Video, Image, FileText, BarChart3, ExternalLink, Settings2, Key, BookOpen, Link2,
 } from "lucide-react";
 
 import linkedinLogo from "@/assets/platforms/linkedin.png";
@@ -29,6 +29,8 @@ interface PlatformDef {
   scopes: string[];
   supportsVideo: boolean;
   fields: { key: string; label: string; placeholder: string; secret?: boolean }[];
+  links: { label: string; url: string }[];
+  guide: string[];
 }
 
 const PLATFORMS: PlatformDef[] = [
@@ -44,6 +46,20 @@ const PLATFORMS: PlatformDef[] = [
       { key: "access_token", label: "Access Token", placeholder: "Lim inn LinkedIn Access Token", secret: true },
       { key: "org_id", label: "Organization ID", placeholder: "f.eks. 12345678" },
     ],
+    links: [
+      { label: "Developer Portal", url: "https://developer.linkedin.com/" },
+      { label: "Opprett App", url: "https://www.linkedin.com/developers/apps/new" },
+      { label: "API-dokumentasjon", url: "https://learn.microsoft.com/en-us/linkedin/" },
+      { label: "Token-verktøy", url: "https://www.linkedin.com/developers/tools/oauth" },
+    ],
+    guide: [
+      "Gå til LinkedIn Developer Portal og logg inn med din LinkedIn-konto.",
+      "Klikk «Create App» og fyll inn firmanavn, logo og app-navn.",
+      "Under «Products», legg til «Share on LinkedIn» og «Marketing Developer Platform».",
+      "Gå til «Auth»-fanen → kopier Client ID og Client Secret.",
+      "Bruk OAuth 2.0-flyten for å generere en Access Token med de nødvendige scopes.",
+      "Finn Organization ID under firmasiden din → Admin → URL-en inneholder org-ID.",
+    ],
   },
   {
     id: "facebook",
@@ -57,6 +73,20 @@ const PLATFORMS: PlatformDef[] = [
       { key: "access_token", label: "Page Access Token", placeholder: "Lim inn Facebook Page Token", secret: true },
       { key: "page_id", label: "Page ID", placeholder: "f.eks. 123456789" },
     ],
+    links: [
+      { label: "Meta for Developers", url: "https://developers.facebook.com/" },
+      { label: "Opprett App", url: "https://developers.facebook.com/apps/create/" },
+      { label: "Graph API Explorer", url: "https://developers.facebook.com/tools/explorer/" },
+      { label: "Tilgangstoken-feilsøking", url: "https://developers.facebook.com/tools/debug/accesstoken/" },
+    ],
+    guide: [
+      "Gå til Meta for Developers og opprett en ny app (type: Business).",
+      "Legg til produktet «Facebook Login» og konfigurer OAuth-innstillingene.",
+      "Under «Permissions», aktiver pages_manage_posts, pages_read_engagement og publish_video.",
+      "Bruk Graph API Explorer til å generere en Page Access Token.",
+      "Velg riktig Page → klikk «Generate Access Token» → kopier tokenet.",
+      "Page ID finnes under Sideinnstillinger → Om → helt nederst på siden.",
+    ],
   },
   {
     id: "instagram",
@@ -69,6 +99,18 @@ const PLATFORMS: PlatformDef[] = [
     fields: [
       { key: "access_token", label: "Access Token", placeholder: "Lim inn Instagram Access Token", secret: true },
       { key: "business_id", label: "Business Account ID", placeholder: "f.eks. 17841400..." },
+    ],
+    links: [
+      { label: "Instagram Graph API", url: "https://developers.facebook.com/docs/instagram-api/" },
+      { label: "Graph API Explorer", url: "https://developers.facebook.com/tools/explorer/" },
+      { label: "Koble Instagram til Facebook", url: "https://help.instagram.com/176235449218188" },
+    ],
+    guide: [
+      "Instagram API krever en Facebook-app og en koblet Instagram Business/Creator-konto.",
+      "Koble Instagram-kontoen til en Facebook-side via Instagram-innstillinger → Konto → Delte kontoer.",
+      "I Meta for Developers-appen, legg til «Instagram Graph API» som produkt.",
+      "Bruk Graph API Explorer: velg appen → generer token med instagram_basic og instagram_content_publish.",
+      "Business Account ID: Kall GET /me/accounts → velg page → GET /{page-id}?fields=instagram_business_account.",
     ],
   },
   {
@@ -86,6 +128,19 @@ const PLATFORMS: PlatformDef[] = [
       { key: "refresh_token", label: "Refresh Token", placeholder: "Lim inn Refresh Token", secret: true },
       { key: "customer_id", label: "Customer ID", placeholder: "f.eks. 123-456-7890" },
     ],
+    links: [
+      { label: "Google Ads API", url: "https://developers.google.com/google-ads/api/docs/start" },
+      { label: "Google Cloud Console", url: "https://console.cloud.google.com/" },
+      { label: "OAuth Playground", url: "https://developers.google.com/oauthplayground/" },
+      { label: "Google Ads Dashboard", url: "https://ads.google.com/" },
+    ],
+    guide: [
+      "Logg inn på Google Ads → Verktøy → API Center → søk om Developer Token.",
+      "Opprett et prosjekt i Google Cloud Console og aktiver Google Ads API.",
+      "Under «Credentials», opprett OAuth 2.0 Client ID (Web Application).",
+      "Bruk OAuth Playground til å generere Refresh Token med scope «adwords».",
+      "Customer ID finner du øverst i Google Ads-dashbordet (format: 123-456-7890).",
+    ],
   },
   {
     id: "meta_ads",
@@ -99,6 +154,19 @@ const PLATFORMS: PlatformDef[] = [
       { key: "access_token", label: "Access Token", placeholder: "Lim inn Meta Ads Token", secret: true },
       { key: "ad_account_id", label: "Ad Account ID", placeholder: "f.eks. act_123456789" },
     ],
+    links: [
+      { label: "Meta Business Suite", url: "https://business.facebook.com/" },
+      { label: "Meta Ads Manager", url: "https://adsmanager.facebook.com/" },
+      { label: "Marketing API Docs", url: "https://developers.facebook.com/docs/marketing-apis/" },
+      { label: "Graph API Explorer", url: "https://developers.facebook.com/tools/explorer/" },
+    ],
+    guide: [
+      "Opprett eller bruk en eksisterende Meta for Developers-app.",
+      "Legg til «Marketing API» som produkt i app-innstillingene.",
+      "Bruk Graph API Explorer → generer token med ads_management og business_management.",
+      "Ad Account ID: Gå til Meta Ads Manager → Innstillinger → Konto-ID (starter med act_).",
+      "For produksjon: send appen til gjennomgang hos Meta for utvidet tilgang.",
+    ],
   },
   {
     id: "tiktok",
@@ -111,6 +179,20 @@ const PLATFORMS: PlatformDef[] = [
     fields: [
       { key: "access_token", label: "Access Token", placeholder: "Lim inn TikTok Access Token", secret: true },
       { key: "open_id", label: "Open ID", placeholder: "Din TikTok Open ID" },
+    ],
+    links: [
+      { label: "TikTok for Developers", url: "https://developers.tiktok.com/" },
+      { label: "Opprett App", url: "https://developers.tiktok.com/apps/" },
+      { label: "Content Posting API", url: "https://developers.tiktok.com/doc/content-posting-api-get-started/" },
+      { label: "TikTok Business Center", url: "https://business.tiktok.com/" },
+    ],
+    guide: [
+      "Gå til TikTok for Developers og opprett en utviklerkonto.",
+      "Klikk «Manage Apps» → «Create App» → velg app-type (f.eks. Content Posting).",
+      "Legg til scopes: video.upload, video.list og user.info.basic.",
+      "Konfigurer redirect URL og fullfør OAuth-flyten for å få Access Token.",
+      "Open ID returneres i OAuth-responsen og identifiserer din TikTok-bruker.",
+      "Merk: Appen må godkjennes av TikTok før den kan brukes i produksjon.",
     ],
   },
 ];
@@ -285,6 +367,7 @@ const IntegrationsTab = () => {
                       <TabsList className="mb-3">
                         {isConnected && <TabsTrigger value="dashboard">Dashboard</TabsTrigger>}
                         <TabsTrigger value="credentials"><Key size={12} className="mr-1" /> API-nøkler</TabsTrigger>
+                        <TabsTrigger value="guide"><BookOpen size={12} className="mr-1" /> Veiledning</TabsTrigger>
                         <TabsTrigger value="permissions"><Shield size={12} className="mr-1" /> Tilganger</TabsTrigger>
                         {platform.supportsVideo && (
                           <TabsTrigger value="media"><Video size={12} className="mr-1" /> Media</TabsTrigger>
@@ -342,6 +425,39 @@ const IntegrationsTab = () => {
                                 </Button>
                               </>
                             )}
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="guide">
+                        <div className="space-y-4 max-w-2xl">
+                          <div>
+                            <h4 className="text-sm font-heading mb-2 flex items-center gap-2"><BookOpen size={14} className="text-primary" /> Slik kobler du til {platform.label}</h4>
+                            <ol className="space-y-2">
+                              {platform.guide.map((step, i) => (
+                                <li key={i} className="flex gap-3 text-xs">
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">{i + 1}</span>
+                                  <span className="text-muted-foreground pt-0.5">{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-heading mb-2 flex items-center gap-2"><Link2 size={14} className="text-primary" /> Nyttige lenker</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {platform.links.map((link) => (
+                                <a
+                                  key={link.url}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted transition-colors"
+                                >
+                                  <ExternalLink size={10} className="text-primary" />
+                                  {link.label}
+                                </a>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </TabsContent>
