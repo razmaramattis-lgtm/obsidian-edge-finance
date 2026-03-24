@@ -101,7 +101,7 @@ const KursBedrift = lazy(() => import("./pages/kurs/KursBedrift"));
 const KursHrPage = lazy(() => import("./pages/kurs/KursHr"));
 const KursOm = lazy(() => import("./pages/kurs/KursOm"));
 const KursRegnskap = lazy(() => import("./pages/kurs/KursRegnskap"));
-const HurtigRadgivning = lazy(() => import("./pages/HurtigRadgivning"));
+
 
 // Bransje-undersider
 const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
@@ -414,7 +414,7 @@ const App = () => (
                             <Route path="/bransjer/bil" element={<BilVerksted />} />
                             <Route path="/bransjer/energi" element={<EnergiMiljo />} />
                             <Route path="/metoden" element={<Metoden />} />
-                            <Route path="/hurtig-radgivning" element={<HurtigRadgivning />} />
+                            
                             <Route path="/priser" element={<Pricing />} />
                             <Route path="/ressurser" element={<Ressurser />} />
                             <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
