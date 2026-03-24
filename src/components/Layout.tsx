@@ -517,14 +517,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             )}
 
-            {/* Digital rådgivning */}
-            <Link
-              to="/hurtig-radgivning"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] tracking-wide font-light text-foreground/80 hover:text-foreground hover:bg-muted/40 transition-all duration-200"
-            >
-              <Video size={13} className="text-primary" />
-              Rådgivning
-            </Link>
 
             {/* CTA button */}
             <Link
@@ -566,15 +558,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <MobileNavLink to="/" label="Hjem" onClick={() => setMenuOpen(false)} />
             <MobileNavLink to={sp("/metoden")} label="Metoden" onClick={() => setMenuOpen(false)} />
 
-            {/* Digital rådgivning — mobile */}
-            <Link
-              to="/hurtig-radgivning"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2.5 py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide"
-            >
-              <Video size={15} className="text-primary" />
-              Digital rådgivning
-            </Link>
 
             {/* Mobile Tjenester */}
             <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
