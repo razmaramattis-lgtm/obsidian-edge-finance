@@ -5,7 +5,7 @@ import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
   Tractor, ShoppingCart, HardHat, Heart, Store, Users,
   Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target,
-  ChevronDown, Award, Clock, CheckCircle2, Video, Wifi
+  ChevronDown, Award, Clock, CheckCircle2
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
