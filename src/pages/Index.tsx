@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
+import MetodenSection from "@/components/MetodenSection";
 import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -308,9 +309,9 @@ const Index = () => {
                 Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link to="/metoden" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+              <a href="#metoden" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
                 Slik jobber vi
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -373,6 +374,11 @@ const Index = () => {
 
       {/* THE HOOK — rotating */}
       <RotatingHook />
+
+      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
+
+      {/* METODEN — embedded */}
+      <MetodenSection />
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
