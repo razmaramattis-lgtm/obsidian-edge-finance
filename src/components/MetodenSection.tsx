@@ -3,12 +3,35 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Users,
-  Headphones, Code2, Megaphone, Shield, Phone
+  Headphones, Code2, Megaphone, Shield, Phone, type LucideIcon
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import metodenTeam from "@/assets/metoden-team.jpg";
 
-const team = [
+export interface MetodenTeamMember {
+  icon: LucideIcon;
+  role: string;
+  desc: string;
+}
+
+export interface MetodenStep {
+  num: string;
+  phase: string;
+  duration: string;
+  title: string;
+  desc: string;
+  note: string;
+}
+
+export interface MetodenOverrides {
+  teamIntro?: { tag?: string; headline?: React.ReactNode; sub?: string; footnote?: string };
+  team?: MetodenTeamMember[];
+  journeyIntro?: { tag?: string; headline?: React.ReactNode; sub?: string };
+  steps?: MetodenStep[];
+  ctaBox?: { title?: string; desc?: string };
+}
+
+const defaultTeam: MetodenTeamMember[] = [
   { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med svar innen 24 timer." },
   { icon: Users, role: "HR-spesialister", desc: "Lønnskjøring, arbeidsrett, HMS og personaladministrasjon. Vi tar hele HR-byrden slik at du kan fokusere på menneskene, ikke papirene." },
   { icon: Megaphone, role: "Markedsførere", desc: "Vekststrategi, merkevarebygging og digital tilstedeværelse. Vi ser helhetsbilde — fra årsresultat til markedsposisjon." },
@@ -16,7 +39,7 @@ const team = [
   { icon: Shield, role: "Strategiske rådgivere", desc: "Exit, fusjon, kapitalstruktur og vekstplan. Senioreksperter som har sett alt — og vet nøyaktig hva som skal til." },
 ];
 
-const steps = [
+const defaultSteps: MetodenStep[] = [
   { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene.", note: "45 minutter som kan forandre alt." },
   { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt trenger — ikke hva vi tilbyr som standard. Regnskapsfører, HR, markedsfører, utvikler. Eksakt det du trenger.", note: "Én kontaktperson. Hele teamet bak." },
   { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din tilgang aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid.", note: "Full oversikt. Null innsats fra din side." },
