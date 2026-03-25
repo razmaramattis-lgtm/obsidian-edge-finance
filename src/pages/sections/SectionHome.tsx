@@ -11,6 +11,7 @@ import {
   Search, Share2, Palette, Video, Mail,
   Code, Bot, Cpu, Database, Layers, Monitor, type LucideIcon,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import MetodenSection, { type MetodenOverrides } from "@/components/MetodenSection";
@@ -534,176 +535,103 @@ const SectionHome = () => {
   return (
     <>
       <Helmet>
-        <title>{section.name} | Avargo</title>
+        <title>{section.name} | Avargo — {section.tagline}</title>
         <meta name="description" content={section.description} />
         <link rel="canonical" href={`https://avargo.no${section.basePath}`} />
       </Helmet>
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* ═══ HERO — left-aligned, cinematic ═══ */}
+      <section className="relative min-h-[70vh] md:min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-50" width={1920} height={1080} fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
-          <div className="absolute inset-0 ambient-glow" />
+          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-40" width={1920} height={1080} fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
         </div>
-        <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
-          <div className="max-w-4xl mx-auto">
-            <p className="hero-fade hero-delay-1 text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12">
+        <div className="relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24">
+          <div className="max-w-3xl">
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+              className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-5 md:mb-8 font-medium">
               {c.hero.tagline}
-            </p>
-            <h1 className="hero-fade hero-delay-2 font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.05] mb-6 md:mb-8">
+            </motion.p>
+            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }}
+              className="text-3xl sm:text-5xl md:text-7xl font-bold leading-[1.05] mb-5 md:mb-8">
               {c.hero.h1}
-            </h1>
-            <p className="hero-fade hero-delay-3 text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-5 md:mb-6 leading-relaxed font-light">
+            </motion.h1>
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.25 }}
+              className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-12">
               {c.hero.sub}
-            </p>
-            <div className="hero-fade hero-delay-4 mb-10 md:mb-14" />
-            <div className="hero-fade hero-delay-5 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-12 md:mb-16">
-              <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-                {c.hero.ctaPrimary} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            </motion.p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-3">
+              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300">
+                {c.hero.ctaPrimary} <ArrowRight size={14} />
               </Link>
               {c.hero.ctaSecondaryHref.startsWith("#") ? (
-                <a href={c.hero.ctaSecondaryHref} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+                <a href={c.hero.ctaSecondaryHref} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
                   {c.hero.ctaSecondary}
                 </a>
               ) : (
-                <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+                <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
                   {c.hero.ctaSecondary}
                 </Link>
               )}
-            </div>
+            </motion.div>
           </div>
-        </div>
-        <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow">
-          <div className="w-px h-10 md:h-12 bg-gradient-to-b from-primary/40 to-transparent" />
         </div>
       </section>
 
-      {/* MARQUEE BANDS */}
-      <div className="relative py-8 md:py-10 border-y border-border/15 overflow-hidden select-none">
-        <div className="absolute inset-0 ambient-glow opacity-30" />
-        <div className="relative flex overflow-hidden mb-4 md:mb-5">
-          <div className="flex shrink-0 animate-marquee gap-10 md:gap-12 pr-10 md:pr-12">
-            {[...c.services, ...c.services].map((s, i) => (
-              <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
-                <s.icon size={12} className="text-primary/60 shrink-0" strokeWidth={1.5} />
-                <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{s.title}</span>
-                <span className="text-primary/30 mx-2 md:mx-3">·</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        {section.id === "regnskap" && (
-          <div className="relative flex overflow-hidden">
-            <div className="flex shrink-0 animate-marquee-reverse gap-10 md:gap-12 pr-10 md:pr-12">
-              {[...c.industries, ...c.industries].map((ind, i) => (
-                <div key={i} className="flex items-center gap-2 md:gap-3 whitespace-nowrap">
-                  <ind.icon size={12} className="text-secondary/60 shrink-0" strokeWidth={1.5} />
-                  <span className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-foreground/60 font-light">{ind.name}</span>
-                  <span className="text-secondary/30 mx-2 md:mx-3">·</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* SOCIAL PROOF BAR */}
-      <section className="py-12 md:py-16 border-b border-border/15 relative">
-        <div className="absolute inset-0 ambient-glow opacity-20" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      {/* ═══ TRUST BAR ═══ */}
+      <section className="py-8 md:py-12 border-y border-border/10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {c.socialProof.map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="inline-flex p-2.5 bg-primary/10 rounded-xl mb-3">
-                  <item.icon size={18} className="text-primary" strokeWidth={1.5} />
+              <div key={i} className="flex items-center gap-3 py-2">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-primary" strokeWidth={1.5} />
                 </div>
-                <p className="font-heading text-2xl md:text-3xl text-gradient-rose">{item.value}</p>
-                <p className="text-xs text-foreground/70 font-light mt-1">{item.label}</p>
-                <p className="text-[10px] text-foreground/40 font-light">{item.sub}</p>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{item.value}</p>
+                  <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ROTATING HOOK */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-60" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div key={fadeKey} className="css-fade-in">
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">{slide.heading}</h2>
-              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">{slide.body}</p>
-              <p className="text-primary text-lg font-heading italic">{slide.tagline}</p>
-            </div>
+      {/* ═══ SERVICES GRID ═══ */}
+      <section className="py-16 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+            className="mb-10 md:mb-16">
+            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-3 font-medium">Alt inkludert</p>
+            <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3">
+              Én fast pris. <span className="text-gradient-rose">Alt du trenger.</span>
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-xl">{c.hero.priceLine}</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            {c.services.map((service, i) => {
+              const SIcon = service.icon;
+              return (
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05, duration: 0.5 }}>
+                  <Link to={service.href} className="group block p-5 md:p-6 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-300 h-full">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
+                      <SIcon size={16} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-sm font-semibold mb-1.5 group-hover:text-primary transition-colors">{service.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{service.desc}</p>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
-
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* METODEN — embedded */}
       <MetodenSection overrides={c.metodenOverrides} />
-
-      {/* SERVICES CAROUSEL */}
-      <section className="relative overflow-hidden">
-        {serviceBgSrc && (
-          <div key={`bg-${activeService}`} className="absolute inset-0 css-fade-in">
-            <img src={serviceBgSrc} alt="" className="w-full h-full object-cover" loading="lazy" width={1920} height={1080} />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
-
-        <button aria-label="Forrige" className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize bg-transparent border-0" onClick={prevService} />
-        <button aria-label="Neste" className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize bg-transparent border-0" onClick={nextService} />
-
-        <div className="relative z-30 py-24 md:py-40 pointer-events-none">
-          <div className="container mx-auto px-4 md:px-6">
-            <AnimatedSection>
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
-                Én fast pris.{" "}<span className="italic text-gradient-rose">Alt du trenger.</span>
-              </h2>
-            </AnimatedSection>
-
-            <div className="max-w-2xl relative z-30 pointer-events-none">
-              <div key={serviceKey} className="css-slide-in">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm rounded-2xl border border-primary/10 shadow-lg shadow-primary/5">
-                    <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
-                  </div>
-                  <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
-                    {String(activeService + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <h3 className="font-heading text-3xl md:text-5xl mb-4 md:mb-6">{current.title}</h3>
-                <p className="text-foreground/80 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10 max-w-lg">{current.desc}</p>
-                <Link to={current.href} className="pointer-events-auto group inline-flex items-center gap-3 px-8 py-3.5 bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm tracking-wider rounded-full hover:bg-primary/20 transition-all duration-500">
-                  Les mer <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 mt-16 md:mt-20">
-              {c.services.map((_, i) => (
-                <div key={i} className={`rounded-full transition-all duration-500 ${i === activeService ? "w-8 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-foreground/20"}`} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/10 z-30">
-          <div
-            key={`progress-${activeService}-${serviceAutoplay}`}
-            className="h-full bg-gradient-to-r from-primary to-rose-glow"
-            style={{ animation: serviceAutoplay ? "progressBar 5s linear forwards" : "none", width: serviceAutoplay ? undefined : "0%" }}
-          />
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* INDUSTRIES — only regnskap */}
       {section.id === "regnskap" ? (

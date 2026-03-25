@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2 } from "lucide-react";
-import AnimatedSection from "@/components/AnimatedSection";
-import { AppDownloadPusher } from "@/components/AppDownloadPusher";
+import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -13,29 +12,14 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
   it: Code2,
 };
 
-const sectionExtras: Record<SectionId, { bullets: string[] }> = {
-  regnskap: {
-    bullets: ["Dedikert regnskapsfører", "Skatteoptimalisering", "Årsregnskap & MVA", "CFO-rådgivning"],
-  },
-  hr: {
-    bullets: ["Lønnskjøring", "Personalhåndbok", "Arbeidsrett & HMS", "Rekruttering"],
-  },
-  markedsforing: {
-    bullets: ["SEO & Google Ads", "Sosiale medier-annonser", "Nettbutikk", "Innholdsstrategi"],
-  },
-  it: {
-    bullets: ["Skreddersydde nettsider", "AI & automatisering", "Chatboter", "Interne systemer"],
-  },
-};
-
 const Hub = () => {
   const sections = Object.values(SECTIONS);
 
   return (
     <>
       <Helmet>
-        <title>Avargo | Regnskap, HR, markedsføring og IT for bedrifter</title>
-        <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Velg det du trenger — vi tar resten." />
+        <title>Avargo | Regnskap, HR, markedsføring og IT for norske bedrifter</title>
+        <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -63,92 +47,170 @@ const Hub = () => {
         })}</script>
       </Helmet>
 
-      {/* HERO */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-40" width={1920} height={1080} fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background" />
-          <div className="absolute inset-0 ambient-glow" />
+          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-35" width={1920} height={1080} fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
-          <div className="max-w-4xl mx-auto">
-            <p className="hero-fade hero-delay-1 text-[11px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-foreground/60 mb-8 md:mb-12">
-              Alt din bedrift trenger — på ett sted
-            </p>
-            <h1 className="hero-fade hero-delay-2 font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-              Fire avdelinger.{" "}
-              <span className="italic text-gradient-rose">Ett team.</span>
-            </h1>
-            <p className="hero-fade hero-delay-3 text-base md:text-xl text-foreground/70 font-light leading-relaxed max-w-2xl mx-auto mb-4">
-              Regnskap, HR, markedsføring og IT — koordinert av ett team som kjenner bedriften din. Velg det du trenger, eller ta alt.
-            </p>
-            <p className="hero-fade hero-delay-4 text-sm text-primary/50 italic font-light mb-12 md:mb-16">
-              Bygget for små og mellomstore bedrifter som fortjener mer.
-            </p>
+        <div className="relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24">
+          <div className="max-w-3xl">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
+              <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-medium">
+                Regnskap · HR · Markedsføring · IT
+              </p>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] mb-6 md:mb-8"
+            >
+              Alt din bedrift trenger.
+              <br />
+              <span className="text-gradient-rose">Under ett tak.</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-12"
+            >
+              Fire spesialiserte avdelinger. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col sm:flex-row gap-3"
+            >
+              <Link
+                to="/kontakt"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300"
+              >
+                Få et uforpliktende tilbud <ArrowRight size={14} />
+              </Link>
+              <Link
+                to="/regnskap"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+              >
+                Se våre tjenester
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* SECTION CARDS */}
-      <section className="py-20 md:py-32 relative">
-        <div className="absolute inset-0 ambient-glow opacity-20" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <div className="text-center mb-16 md:mb-24">
-              <p className="text-[10px] tracking-[0.45em] uppercase text-foreground/50 mb-5">Velg ditt område</p>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug max-w-3xl mx-auto">
-                Hva trenger bedriften din <span className="italic text-gradient-rose">akkurat nå</span>?
-              </h2>
-            </div>
-          </AnimatedSection>
+      {/* ═══ TRUST BAR ═══ */}
+      <section className="py-8 md:py-12 border-y border-border/10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
+              { icon: Clock, label: "Svar innen 24 timer", sub: "Garantert responstid" },
+              { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
+              { icon: Sparkles, label: "AI-drevet innsikt", sub: "Moderne verktøy" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 py-2">
+                <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-foreground/80 leading-tight">{item.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{item.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+      {/* ═══ DEPARTMENTS ═══ */}
+      <section className="py-16 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-10 md:mb-20"
+          >
+            <h2 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3 md:mb-4">
+              Velg det du trenger
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
+              Fire avdelinger, spesialisert på hvert sitt felt — eller kombiner dem til én sømløs løsning.
+            </p>
+          </motion.div>
+
+          {/* Mobile: compact list */}
+          <div className="md:hidden space-y-2 max-w-lg mx-auto">
+            {sections.map((s) => {
+              const Icon = sectionIcons[s.id];
+              const accentHsl = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)`;
+              return (
+                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 p-4 rounded-2xl border border-border/10 bg-muted/5 active:bg-muted/20 transition-colors group">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)` }}>
+                    <Icon size={18} style={{ color: accentHsl }} strokeWidth={1.5} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{s.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{s.tagline}</p>
+                  </div>
+                  <ArrowRight size={14} className="text-muted-foreground shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Desktop: 2x2 grid with hover reveal */}
+          <div className="hidden md:grid grid-cols-2 gap-5 max-w-5xl mx-auto">
             {sections.map((s, i) => {
               const Icon = sectionIcons[s.id];
-              const extras = sectionExtras[s.id];
               const accentHsl = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)`;
-              const accentBg = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.08)`;
-              const accentBorder = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)`;
-              const glowShadow = `0 8px 60px -12px hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)`;
 
               return (
-                <AnimatedSection key={s.id} delay={i * 0.1}>
+                <motion.div
+                  key={s.id}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.6 }}
+                >
                   <Link
                     to={s.basePath}
-                    className="block p-8 md:p-10 glass rounded-3xl card-lift h-full group relative overflow-hidden"
+                    className="group relative block rounded-3xl overflow-hidden border border-border/10 hover:border-border/25 transition-all duration-500"
                   >
-                    {/* Ambient glow */}
+                    {/* Hover glow */}
                     <div
-                      className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-700 blur-3xl"
+                      className="absolute -top-20 -right-20 w-48 h-48 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-700 blur-3xl"
                       style={{ backgroundColor: accentHsl }}
                     />
 
-                    <div className="relative">
+                    <div className="relative p-8 lg:p-10">
                       <div
                         className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border transition-all duration-500"
-                        style={{ backgroundColor: accentBg, borderColor: accentBorder }}
+                        style={{
+                          backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.08)`,
+                          borderColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)`,
+                        }}
                       >
                         <Icon size={20} style={{ color: accentHsl }} strokeWidth={1.5} />
                       </div>
 
-                      <h3 className="font-heading text-2xl md:text-3xl mb-2">{s.name}</h3>
+                      <h3 className="text-2xl lg:text-3xl font-bold mb-2">{s.name}</h3>
                       <p className="text-sm italic mb-4" style={{ color: accentHsl }}>{s.tagline}</p>
-                      <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-sm">
                         {s.description}
                       </p>
 
-                      <ul className="space-y-2 mb-8">
-                        {extras.bullets.map((b) => (
-                          <li key={b} className="flex items-center gap-2.5 text-sm text-foreground/60 font-light">
-                            <div className="w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: accentHsl }} />
-                            {b}
-                          </li>
-                        ))}
-                      </ul>
-
                       <span
-                        className="inline-flex items-center gap-2 text-[12px] font-medium tracking-wider transition-all duration-500 group-hover:gap-3"
+                        className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider group-hover:gap-3 transition-all duration-300"
                         style={{ color: accentHsl }}
                       >
                         Gå til {s.shortName}
@@ -156,39 +218,89 @@ const Hub = () => {
                       </span>
                     </div>
                   </Link>
-                </AnimatedSection>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* APP DOWNLOAD PUSHER */}
-      <section className="py-12 md:py-16 relative">
+      {/* ═══ VALUE PROPOSITION ═══ */}
+      <section className="py-16 md:py-32 border-t border-border/10">
         <div className="container mx-auto px-4 md:px-6">
-          <AppDownloadPusher />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="max-w-3xl mx-auto text-center mb-10 md:mb-16"
+          >
+            <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3 md:mb-4">
+              Hvorfor velge <span className="text-gradient-rose">Avargo</span>?
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Vi gjør det enkelt å drive bedrift i Norge.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                title: "Én partner for alt",
+                desc: "Slutt med å koordinere mellom regnskapsfører, markedsbyrå og IT-konsulent. Hos oss får du alt samlet.",
+              },
+              {
+                title: "Fast pris, ingen overraskelser",
+                desc: "Du vet nøyaktig hva du betaler. Rådgivning, rapportering og support er alltid inkludert.",
+              },
+              {
+                title: "Dedikert team som kjenner deg",
+                desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny person hver gang.",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="p-6 md:p-8 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-500"
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                </div>
+                <h3 className="text-base font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* BOTTOM CTA */}
-      <section className="py-24 md:py-32 border-t border-border/10 text-center relative">
-        <div className="absolute inset-0 ambient-glow opacity-25" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-              Usikker på hva du trenger?
+      {/* ═══ CTA ═══ */}
+      <section className="py-16 md:py-32 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/3 via-primary/5 to-transparent" />
+        <div className="container mx-auto px-4 md:px-6 text-center relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <h2 className="text-2xl md:text-5xl font-bold mb-3 md:mb-5 leading-tight max-w-2xl mx-auto">
+              Klar for en enklere hverdag?
             </h2>
-            <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
+            <p className="text-sm md:text-base text-muted-foreground mb-8 md:mb-12 max-w-md mx-auto">
               Ta en uforpliktende prat — vi hjelper deg å finne riktig løsning.
             </p>
             <Link
               to="/kontakt"
-              className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+              className="group inline-flex items-center gap-3 h-12 md:h-14 px-8 md:px-10 bg-primary text-primary-foreground text-sm font-semibold rounded-2xl glow-rose hover:scale-[1.02] transition-all duration-300"
             >
               Snakk med oss
-              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
-          </AnimatedSection>
+          </motion.div>
         </div>
       </section>
     </>
