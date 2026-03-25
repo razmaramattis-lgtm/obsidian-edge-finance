@@ -442,7 +442,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <NavButton to={sp("/priser")} label="Priser" isActive={location.pathname.includes("/priser")} />
             )}
 
-            {/* ─── Selskapet dropdown ─── */}
+            {/* ─── Selskapet dropdown — only on hub ─── */}
+            {!isInSection && (
             <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
               <button className={dropBtnClass(selskapetOpen)}>
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
@@ -475,6 +476,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </div>
               </DropdownPanel>
             </div>
+            )}
 
             {/* ─── Ressurser dropdown — only on hub ─── */}
             {!isInSection && (
@@ -631,21 +633,25 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <MobileNavLink to="/karriere" label="Karriere" onClick={() => setMenuOpen(false)} />
             <MobileNavLink to="/kurs" label="Akademi" onClick={() => setMenuOpen(false)} />
 
-            {/* Mobile Selskapet */}
-            <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
-              Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
-            </button>
-            <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
-              <div className="py-2 pl-1 flex flex-col gap-0.5">
-                {selskapetLinks.filter(item => item.href !== "/om-oss" && item.href !== "/karriere").map(item => (
-                  <Link key={item.href} to={item.absolute ? item.href : sp(item.href)} onClick={() => { setMenuOpen(false); setMobileSelskapetOpen(false); }}
-                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
-                  >
-                    <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            {/* Mobile Selskapet — only on hub */}
+            {!isInSection && (
+              <>
+                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+                  Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
+                  <div className="py-2 pl-1 flex flex-col gap-0.5">
+                    {selskapetLinks.filter(item => item.href !== "/om-oss" && item.href !== "/karriere").map(item => (
+                      <Link key={item.href} to={item.absolute ? item.href : sp(item.href)} onClick={() => { setMenuOpen(false); setMobileSelskapetOpen(false); }}
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
+                      >
+                        <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Mobile Ressurser */}
             {!isInSection && (
