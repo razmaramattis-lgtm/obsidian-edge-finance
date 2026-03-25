@@ -43,7 +43,6 @@ interface ArchiveCategory {
 const TABS = [
   { key: "alle", label: "Alle", icon: Filter },
   { key: "nyheter", label: "Nyheter", icon: Newspaper },
-  { key: "blogg", label: "Blogg", icon: FileText },
   { key: "guider", label: "Guider", icon: BookMarked },
   { key: "arkiv", label: "Arkiv", icon: Archive },
 ] as const;
@@ -90,10 +89,9 @@ const Ressurser = () => {
     setSearchParams(tab === "alle" ? {} : { tab });
   };
 
-  // Filter blog posts by category type
-  const NYHETER_CATEGORIES = ["Nyheter", "Regnskap", "Skatt"];
+  // Filter blog posts by category type — Blogg merged into Nyheter
+  const NYHETER_CATEGORIES = ["Nyheter", "Regnskap", "Skatt", "Blogg"];
   const nyheter = posts.filter(p => NYHETER_CATEGORIES.includes(p.category));
-  const blogg = posts.filter(p => p.category === "Blogg");
   const guider = posts.filter(p => p.category === "Guide");
 
   // Search across everything
@@ -111,7 +109,6 @@ const Ressurser = () => {
     (f.category || "").toLowerCase().includes(q);
 
   const filteredNyheter = nyheter.filter(matchPost);
-  const filteredBlogg = blogg.filter(matchPost);
   const filteredGuider = guider.filter(matchPost);
   const filteredArchive = archiveFiles.filter(matchFile);
 
@@ -124,13 +121,11 @@ const Ressurser = () => {
 
   // What to show based on active tab
   const showNyheter = activeTab === "alle" || activeTab === "nyheter";
-  const showBlogg = activeTab === "alle" || activeTab === "blogg";
   const showGuider = activeTab === "alle" || activeTab === "guider";
   const showArkiv = activeTab === "alle" || activeTab === "arkiv";
 
   const totalResults =
     (showNyheter ? filteredNyheter.length : 0) +
-    (showBlogg ? filteredBlogg.length : 0) +
     (showGuider ? filteredGuider.length : 0) +
     (showArkiv ? filteredArchive.length : 0);
 
@@ -193,11 +188,9 @@ const Ressurser = () => {
               {TABS.map(tab => {
                 const count =
                   tab.key === "alle"
-                    ? filteredNyheter.length + filteredBlogg.length + filteredGuider.length + filteredArchive.length
+                    ? filteredNyheter.length + filteredGuider.length + filteredArchive.length
                     : tab.key === "nyheter"
                     ? filteredNyheter.length
-                    : tab.key === "blogg"
-                    ? filteredBlogg.length
                     : tab.key === "guider"
                     ? filteredGuider.length
                     : filteredArchive.length;
@@ -231,10 +224,6 @@ const Ressurser = () => {
             <PostSection title="Nyheter" icon={Newspaper} posts={filteredNyheter} />
           )}
 
-          {/* Blogg */}
-          {showBlogg && filteredBlogg.length > 0 && (
-            <PostSection title="Blogg" icon={FileText} posts={filteredBlogg} />
-          )}
 
           {/* Guider */}
           {showGuider && filteredGuider.length > 0 && (
