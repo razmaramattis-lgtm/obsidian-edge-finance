@@ -716,49 +716,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="container mx-auto px-5 md:px-6 relative pt-12 md:pt-20 pb-8">
             <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
 
-              {/* Tjenester */}
-              <div className="col-span-1 md:col-span-2">
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Tjenester</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  {!isInSection || !section ? (
-                    <>
-                      <Link to="/regnskap/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Regnskap</Link>
-                      <Link to="/hr/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Personal</Link>
-                      <Link to="/markedsforing/tjenester" className="text-foreground/60 hover:text-primary transition-colors">Marked</Link>
-                      <Link to="/it/tjenester" className="text-foreground/60 hover:text-primary transition-colors">IT</Link>
-                    </>
-                  ) : section.id === "regnskap" ? (
-                    <>
-                      <Link to={sp("/tjenester/regnskapsforer")} className="text-foreground/60 hover:text-primary transition-colors">Regnskapsfører</Link>
-                      <Link to={sp("/tjenester/cfo")} className="text-foreground/60 hover:text-primary transition-colors">CFO-as-a-Service</Link>
-                      <Link to={sp("/tjenester/lonn")} className="text-foreground/60 hover:text-primary transition-colors">Lønn</Link>
-                      <Link to={sp("/tjenester/skatteplanlegging")} className="text-foreground/60 hover:text-primary transition-colors">Skatteplanlegging</Link>
-                    </>
-                  ) : section.id === "hr" ? (
-                    <>
-                      <Link to={sp("/tjenester/hr-og-lonn")} className="text-foreground/60 hover:text-primary transition-colors">Lønn & HR</Link>
-                      <Link to={sp("/tjenester/ansettelse")} className="text-foreground/60 hover:text-primary transition-colors">Ansettelse</Link>
-                      <Link to={sp("/tjenester/personalhandbok")} className="text-foreground/60 hover:text-primary transition-colors">Personalhåndbok</Link>
-                      <Link to={sp("/tjenester/arbeidsrett")} className="text-foreground/60 hover:text-primary transition-colors">Arbeidsrett</Link>
-                    </>
-                  ) : section.id === "markedsforing" ? (
-                    <>
-                      <Link to={sp("/tjenester/seo")} className="text-foreground/60 hover:text-primary transition-colors">SEO</Link>
-                      <Link to={sp("/tjenester/meta-annonser")} className="text-foreground/60 hover:text-primary transition-colors">Meta-annonser</Link>
-                      <Link to={sp("/tjenester/google-ads")} className="text-foreground/60 hover:text-primary transition-colors">Google Ads</Link>
-                      <Link to={sp("/tjenester/nettbutikk")} className="text-foreground/60 hover:text-primary transition-colors">Nettbutikk</Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link to={sp("/tjenester/nettsider")} className="text-foreground/60 hover:text-primary transition-colors">Nettsider</Link>
-                      <Link to={sp("/tjenester/chatbot")} className="text-foreground/60 hover:text-primary transition-colors">AI-chatbot</Link>
-                      <Link to={sp("/tjenester/internsystemer")} className="text-foreground/60 hover:text-primary transition-colors">Interne systemer</Link>
-                      <Link to={sp("/tjenester/ai-automatisering")} className="text-foreground/60 hover:text-primary transition-colors">AI & automatisering</Link>
-                    </>
-                  )}
-                  <Link to={sp("/tjenester")} className="text-primary/80 hover:text-primary transition-colors text-[12px] mt-1">Alle tjenester →</Link>
-                </div>
-              </div>
 
               {/* Bransjer */}
               <div className="col-span-1 md:col-span-2">
