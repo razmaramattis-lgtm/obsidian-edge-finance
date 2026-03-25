@@ -31,7 +31,7 @@ const industries = [
   { icon: Factory, name: "Industri & Produksjon", slug: "industri", tagline: "Orden i regnskapet gir orden i produksjonen", short: "Varekostberegning, lagerstyring og SkatteFUNN — vi forstår produksjonsøkonomien." },
   { icon: Sparkles, name: "Renhold & Facility", slug: "renhold", tagline: "Rene tall for ren drift", short: "Mange ansatte og stramme marginer krever presist regnskap. Vi gir deg kontroll per kontrakt." },
   { icon: Film, name: "Kultur, Media & Underholdning", slug: "kultur", tagline: "Kreativiteten er din — økonomien er vår", short: "Prosjektbasert økonomi, tilskudd og rettigheter — vi holder orden bak kulissene." },
-  { icon: Dumbbell, name: "Sport & Fritid", slug: "sport", tagline: "Fokus på trening — vi tar tallene", short: "Medlemsøkonomi, sesongsvingninger og PT-inntekter — full oversikt for treningsbransjen." },
+  
   { icon: GraduationCap, name: "Utdanning & Kurs", slug: "utdanning", tagline: "Du lærer bort — vi holder orden", short: "Kursarrangører og e-læringsplattformer — vi navigerer MVA-fritak og tilskudd for deg." },
   { icon: Scale, name: "Juridisk & Advokat", slug: "juridisk", tagline: "Du håndterer juss — vi håndterer regnskapet", short: "Klientmidler, timeregistrering og partnerkompensasjon — presist og compliant." },
   { icon: Palette, name: "Arkitektur & Design", slug: "arkitektur", tagline: "Du tegner fremtiden — vi holder orden", short: "Prosjektregnskap og lønnsomhetsanalyser per oppdrag for kreative bransjer." },

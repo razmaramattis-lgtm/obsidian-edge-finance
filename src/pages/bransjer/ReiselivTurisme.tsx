@@ -32,7 +32,6 @@ const ReiselivTurisme = () => (
     ]}
     relatedSlugs={[
       { label: "Restaurant & Uteliv", href: "/bransjer/restaurant" },
-      { label: "Sport & Fritid", href: "/bransjer/sport" },
       { label: "Kultur, Media & Underholdning", href: "/bransjer/kultur" },
     ]}
     ctaHeadline="Sesongvariasjoner krever solid planlegging — vi leverer den."

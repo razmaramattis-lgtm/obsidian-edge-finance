@@ -8,7 +8,7 @@ export const hiddenIndustriesPerSection: Record<SectionId, string[]> = {
   regnskap: [],
   hr: [
     "bemanning", "landbruk", "nettbutikk", "arkitektur", "markedsforing",
-    "energi", "kultur", "sport", "reiseliv", "bil",
+    "energi", "kultur", "reiseliv", "bil",
   ],
   markedsforing: [
     "markedsforing", "holding", "landbruk", "juridisk",
@@ -111,11 +111,6 @@ const regnskapOverrides: Record<string, SectionBransjeOverride> = {
     deliverables: ["Prosjektbasert økonomi", "Tilskudd og støtteordninger", "Royalties og rettigheter", "Frilanserhonorarer og oppgjør", "MVA for kultur og media", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "Sesongbasert budsjett"],
     intro: "Kulturbransjen har prosjektbasert økonomi, tilskudd og rettigheter som krever spesialkompetanse. Vi tar tallene — du tar det kreative.",
     body: "Film, musikk, teater og media har alle en prosjektbasert økonomi med tilskudd, royalties og frilansere. Vi forstår finansieringen og sørger for korrekt rapportering til alle instanser.",
-  },
-  sport: {
-    deliverables: ["Medlemsøkonomi og abonnement", "Sesongbasert budsjett", "PT-inntekter og provisjon", "MVA på treningsavgifter", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "Sponsorinntekter og annonsering", "Likviditetsstyring"],
-    intro: "Treningsbransjen har medlemsøkonomi, sesongsvingninger og PT-provisjon. Vi gir deg oversikten — du gir medlemmene resultater.",
-    body: "Treningssentre og idrettslag har spesielle utfordringer med medlemsøkonomi, PT-provisjon og sesongsvingninger. Vi sørger for at du har full kontroll og riktig MVA-behandling.",
   },
   utdanning: {
     deliverables: ["Kursavgifter og MVA-fritak", "Tilskudd og støtteordninger", "Prosjektbasert økonomi", "Frilanserhonorarer og forelesere", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "Deltakeroppfølging og fakturering", "Budsjett per kurs"],

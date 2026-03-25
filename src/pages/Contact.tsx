@@ -154,7 +154,7 @@ const Contact = () => {
     if (d.includes("industri") || d.includes("produksjon") || d.includes("tilvirkning") || d.includes("bearbeiding")) return "Industri & Produksjon";
     if (d.includes("renhold") || d.includes("rengjøring") || d.includes("vaktmester") || d.includes("facility")) return "Renhold & Facility";
     if (d.includes("film") || d.includes("musikk") || d.includes("kunst") || d.includes("medie") || d.includes("forlag") || d.includes("underholdning") || d.includes("teater")) return "Kultur, Media & Underholdning";
-    if (d.includes("sport") || d.includes("trening") || d.includes("fritid") || d.includes("idrett")) return "Sport & Fritid";
+    
     if (d.includes("undervisning") || d.includes("opplæring") || d.includes("kurs") || d.includes("utdanning")) return "Utdanning & Kurs";
     if (d.includes("advokat") || d.includes("juridisk") || d.includes("rettslig")) return "Juridisk & Advokat";
     if (d.includes("arkitekt") || d.includes("design") || d.includes("interiør")) return "Arkitektur & Design";
