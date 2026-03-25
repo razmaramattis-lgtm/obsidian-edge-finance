@@ -97,10 +97,8 @@ const selskapetLinks = [
 const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
   { icon: GraduationCap, title: "Avargo Kurs", desc: "Over 130 kurs innen regnskap, HR og ledelse. Tilgjengelig digitalt med kursbevis — perfekt for å holde teamet oppdatert.", href: "/kurs", accent: "hsl(var(--primary))", featured: true },
   { icon: Calculator, title: "Kontohjelp", desc: "Søk opp riktig konto for bokføring. Vår kontoguide dekker alle vanlige og spesielle posteringer med eksempler og forklaringer.", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)" },
-  { icon: Newspaper, title: "Nyheter", desc: "Hold deg oppdatert på endringer i skatteregler, nye lover og viktige frister som påvirker bedriften din.", href: "/ressurser?tab=nyheter" },
-  { icon: Flame, title: "Nyheter", desc: "Fagartikler og praktiske tips om regnskap, økonomi, HR og vekst — skrevet for norske bedriftseiere.", href: "/ressurser?tab=nyheter" },
-  { icon: BookMarked, title: "Guider", desc: "Steg-for-steg guider til alt fra MVA-registrering og ansettelse til årsoppgjør og skatteplanlegging.", href: "/ressurser?tab=guider" },
-  { icon: Download, title: "Arkiv & maler", desc: "Last ned gratis maler, sjekklister og skjemaer. Alt du trenger for å holde orden på bedriftens dokumenter.", href: "/ressurser?tab=arkiv" },
+  { icon: Newspaper, title: "Nyheter & artikler", desc: "Hold deg oppdatert på skatteregler, nye lover, fagartikler og praktiske tips for norske bedrifter.", href: "/ressurser?tab=nyheter" },
+  { icon: BookMarked, title: "Guider & maler", desc: "Steg-for-steg guider, nedlastbare maler, sjekklister og skjemaer — alt du trenger for å holde orden.", href: "/ressurser?tab=guider" },
   { icon: CalendarClock, title: "Skattekalender", desc: "Oversikt over alle viktige frister for MVA, skattemelding, årsregnskap og a-melding gjennom hele året.", href: "/ressurser/skattekalender" },
 ];
 
