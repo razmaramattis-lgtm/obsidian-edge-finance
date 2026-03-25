@@ -238,7 +238,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* ── Desktop nav ─────────────────────────── */}
           <div className="hidden md:flex items-center gap-1 lg:gap-1.5">
             <NavButton to="/" label="Hjem" isActive={location.pathname === "/"} />
-            <NavButton to={sp("/metoden")} label="Metoden" isActive={location.pathname.endsWith("/metoden")} />
+            
 
             {/* ─── Tjenester dropdown ─── */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
@@ -555,7 +555,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             <MobileNavLink to="/" label="Hjem" onClick={() => setMenuOpen(false)} />
-            <MobileNavLink to={sp("/metoden")} label="Metoden" onClick={() => setMenuOpen(false)} />
+            
 
 
             {/* Mobile Tjenester */}
