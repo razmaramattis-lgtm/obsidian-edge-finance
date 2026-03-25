@@ -120,7 +120,7 @@ const TransportLogistikk = lazy(() => import("./pages/bransjer/TransportLogistik
 const IndustriProduksjon = lazy(() => import("./pages/bransjer/IndustriProduksjon"));
 const RenholdFacility = lazy(() => import("./pages/bransjer/RenholdFacility"));
 const KulturMedia = lazy(() => import("./pages/bransjer/KulturMedia"));
-const SportFritid = lazy(() => import("./pages/bransjer/SportFritid"));
+
 const UtdanningKurs = lazy(() => import("./pages/bransjer/UtdanningKurs"));
 const JuridiskAdvokat = lazy(() => import("./pages/bransjer/JuridiskAdvokat"));
 const ArkitekturDesign = lazy(() => import("./pages/bransjer/ArkitekturDesign"));
@@ -339,7 +339,7 @@ const App = () => (
                             <Route path="/regnskap/bransjer/industri" element={<IndustriProduksjon />} />
                             <Route path="/regnskap/bransjer/renhold" element={<RenholdFacility />} />
                             <Route path="/regnskap/bransjer/kultur" element={<KulturMedia />} />
-                            <Route path="/regnskap/bransjer/sport" element={<SportFritid />} />
+                            
                             <Route path="/regnskap/bransjer/utdanning" element={<UtdanningKurs />} />
                             <Route path="/regnskap/bransjer/juridisk" element={<JuridiskAdvokat />} />
                             <Route path="/regnskap/bransjer/arkitektur" element={<ArkitekturDesign />} />
@@ -404,7 +404,7 @@ const App = () => (
                             <Route path="/bransjer/industri" element={<IndustriProduksjon />} />
                             <Route path="/bransjer/renhold" element={<RenholdFacility />} />
                             <Route path="/bransjer/kultur" element={<KulturMedia />} />
-                            <Route path="/bransjer/sport" element={<SportFritid />} />
+                            
                             <Route path="/bransjer/utdanning" element={<UtdanningKurs />} />
                             <Route path="/bransjer/juridisk" element={<JuridiskAdvokat />} />
                             <Route path="/bransjer/arkitektur" element={<ArkitekturDesign />} />

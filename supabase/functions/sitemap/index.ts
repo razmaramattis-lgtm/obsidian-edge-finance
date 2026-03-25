@@ -13,7 +13,7 @@ const tjenesteSlugs = [
 const bransjeSlugs = [
   "tech-saas","eiendom","holding","consulting","landbruk","varehandel","bygg-anlegg",
   "nettbutikk","helse","restaurant","frisor","handverkere","transport","industri",
-  "renhold","kultur","sport","utdanning","juridisk","arkitektur","markedsforing",
+  "renhold","kultur","utdanning","juridisk","arkitektur","markedsforing",
   "bemanning","reiseliv","bil","energi",
 ];
 
