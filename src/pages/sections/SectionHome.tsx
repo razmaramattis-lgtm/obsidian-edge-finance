@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
-import MetodenSection from "@/components/MetodenSection";
+import MetodenSection, { type MetodenOverrides } from "@/components/MetodenSection";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -47,6 +47,7 @@ interface SectionHomeContent {
   cta: { tag: string; headline: React.ReactNode; sub: string; italic: string; button: string };
   faq: { q: string; a: string }[];
   marqueeLabel: string;
+  metodenOverrides?: MetodenOverrides;
 }
 
 const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
@@ -190,6 +191,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo HR fra andre?", a: "Du får én fast HR-rådgiver som kjenner bedriften din — ikke et callsenter. Alt inkludert i fastpris." },
     ],
     marqueeLabel: "HR & Personal",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt HR-team",
+        headline: <>Ikke én HR-sjef.{" "}<span className="italic text-gradient-rose">En hel personalavdeling.</span></>,
+        sub: "Når du velger Avargo Personal, får du et komplett HR-team som dekker alt fra arbeidsrett og lønn til rekruttering og opplæring — koordinert rundt din bedrift.",
+        footnote: "Alt koordinert av én fast HR-rådgiver som kjenner bedriften din.",
+      },
+      team: [
+        { icon: Users, role: "HR-rådgivere", desc: "Din faste kontakt for alle personalspørsmål. Arbeidsrett, kontrakter, oppsigelser og vanskelige samtaler — vi er der når du trenger oss." },
+        { icon: Calculator, role: "Lønnsansvarlige", desc: "Full lønnskjøring med feriepenger, sykepenger, A-melding og arbeidsgiveravgift. Alt på plass, hver måned." },
+        { icon: Scale, role: "Arbeidsrettsjurister", desc: "Juridisk trygghet i alle personalsaker. Vi sørger for at du følger loven — fra ansettelse til oppsigelse." },
+        { icon: GraduationCap, role: "Kurs- og opplæringsansvarlige", desc: "Lederutvikling, onboarding-programmer og HR-kurs skreddersydd for din bransje." },
+        { icon: Shield, role: "HMS-rådgivere", desc: "Internkontroll, risikovurdering og HMS-dokumentasjon. Vi sørger for at du oppfyller alle lovkrav." },
+      ],
+      journeyIntro: {
+        tag: "Din HR-reise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Trygg arbeidsgiver fra dag én.</span></>,
+        sub: "Fra første samtale til et fullstendig HR-oppsett som dekker alt du trenger som arbeidsgiver. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Kartlegging", duration: "Dag 1", title: "Vi forstår bedriften din.", desc: "Vi gjennomgår dagens personalrutiner, kontrakter, lønnssystem og HMS-dokumentasjon. Hva fungerer? Hva mangler? Hva er risikoen?", note: "En grundig gjennomgang som avdekker alt." },
+        { num: "II", phase: "Oppsett", duration: "Dag 2–5", title: "Alt på plass.", desc: "Personalhåndbok, arbeidskontrakter, varslingsrutiner, HMS-dokumentasjon og lønnsoppsett. Vi bygger hele HR-grunnmuren din fra bunnen.", note: "Komplett HR-oppsett — klar til bruk." },
+        { num: "III", phase: "Drift", duration: "Fra dag 5", title: "Vi kjører lønn. Du fokuserer.", desc: "Månedlig lønnskjøring, sykefraværsoppfølging, kontraktsendringer og personalspørsmål. Vi tar alt det løpende.", note: "Du har en hel HR-avdeling i ryggen." },
+        { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi er der — alltid.", desc: "Vanskelig personalsak? Ny ansettelse? Omorganisering? Vi er din sparringspartner og rådgiver — proaktivt og tilgjengelig.", note: "Svar innen 24 timer. Alltid." },
+      ],
+      ctaBox: {
+        title: "Trygg arbeidsgiver — hver dag.",
+        desc: "Ring eller send melding når som helst. Vi svarer innen 24 timer. Du er ikke alene med personalsaker — vi tar dem sammen.",
+      },
+    },
   },
 
   /* ═══════════════ MARKED ═══════════════ */
@@ -261,6 +292,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo fra andre byråer?", a: "Vi kobler markedsføringen til regnskapet, slik at du ser den faktiske ROI-en — ikke bare klikk og visninger." },
     ],
     marqueeLabel: "Markedsføring & Vekst",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt markedsteam",
+        headline: <>Ikke ett byrå.{" "}<span className="italic text-gradient-rose">En hel markedsavdeling.</span></>,
+        sub: "Når du velger Avargo Marked, får du et dedikert team med SEO-spesialister, annonsører og innholdsprodusenter — alle koordinert rundt din vekst.",
+        footnote: "Alt styrt av én fast markedsfører som kjenner bedriften din og målgruppen.",
+      },
+      team: [
+        { icon: Search, role: "SEO-spesialister", desc: "Organisk synlighet på Google. Vi optimaliserer innhold, teknisk struktur og lokal SEO slik at kundene finner deg først." },
+        { icon: Target, role: "Annonsespesialister", desc: "Google Ads og Meta-annonser med full kontroll. Vi styrer budsjettet og optimaliserer kampanjer for maksimal avkastning." },
+        { icon: Palette, role: "Innholdsprodusenter", desc: "Tekst, bilder og video som engasjerer. Vi bygger innhold som treffer målgruppen og styrker merkevaren." },
+        { icon: BarChart3, role: "Analyseansvarlige", desc: "Datadrevet innsikt koblet til regnskapet. Du ser nøyaktig hva som gir resultater — fra klikk til kunde." },
+        { icon: Megaphone, role: "Strategiske rådgivere", desc: "Helhetlig vekststrategi tilpasset din bransje. Vi ser hele bildet — fra posisjonering til konvertering." },
+      ],
+      journeyIntro: {
+        tag: "Din vekstreise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Synlig fra dag én.</span></>,
+        sub: "Fra analyse av dagens synlighet til en helhetlig vekststrategi som leverer målbare resultater. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Analyse", duration: "Dag 1", title: "Vi kartlegger synligheten din.", desc: "Hvor er du synlig i dag? Hvor finner kundene dine konkurrentene? Vi gjør en grundig analyse av søk, annonser og innhold.", note: "Datadrevet — ikke gjetning." },
+        { num: "II", phase: "Strategi", duration: "Dag 2–5", title: "Planen tar form.", desc: "Basert på analysen lager vi en skreddersydd vekststrategi med konkrete tiltak — SEO, annonser, innhold og sosiale medier.", note: "Tydelig plan. Tydelige mål." },
+        { num: "III", phase: "Gjennomføring", duration: "Fra uke 2", title: "Vi leverer synlighet.", desc: "Kampanjer lanseres, innhold publiseres, SEO optimaliseres. Du ser resultater i sanntid — koblet direkte til regnskapet.", note: "Hver krone spores fra klikk til kunde." },
+        { num: "IV", phase: "Vekst", duration: "For alltid", title: "Vi skalerer det som fungerer.", desc: "Vi analyserer, justerer og skalerer kontinuerlig. Du får proaktive anbefalinger og månedlige rapporter som viser reell ROI.", note: "Langsiktig vekst — ikke kortsiktige triks." },
+      ],
+      ctaBox: {
+        title: "Synlighet som gir resultater.",
+        desc: "Vi kobler markedsføringen direkte til bunnlinjen. Ring eller send melding — vi svarer innen 24 timer med konkrete tiltak.",
+      },
+    },
   },
 
   /* ═══════════════ IT ═══════════════ */
@@ -332,6 +393,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo IT fra andre?", a: "Vi bygger pragmatiske løsninger til fast pris. Ingen timefakturering, ingen overraskelser — bare teknologi som fungerer." },
     ],
     marqueeLabel: "IT & Utvikling",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt IT-team",
+        headline: <>Ikke én utvikler.{" "}<span className="italic text-gradient-rose">Et helt teknologiteam.</span></>,
+        sub: "Når du velger Avargo IT, får du et dedikert utviklerteam som bygger, drifter og forbedrer løsningene dine — fra nettsider og systemer til AI og automatisering.",
+        footnote: "Alt koordinert av én fast IT-rådgiver som kjenner systemene og behovene dine.",
+      },
+      team: [
+        { icon: Code, role: "Fullstack-utviklere", desc: "Moderne nettsider, nettbutikker og web-applikasjoner bygget med de nyeste teknologiene. Rask, responsiv og skalerbar." },
+        { icon: Bot, role: "AI-spesialister", desc: "Chatboter, automatisering og intelligent databehandling. Vi bygger AI-løsninger som faktisk sparer deg tid og penger." },
+        { icon: Database, role: "Systemintegratører", desc: "Vi kobler systemene dine sammen — regnskap, CRM, e-post og lagerstyring. Sømløst og automatisk." },
+        { icon: Monitor, role: "UX-designere", desc: "Brukeropplevelser som konverterer. Vi designer grensesnitt som er vakre, intuitive og bygget for resultater." },
+        { icon: Shield, role: "Sikkerhetsansvarlige", desc: "Overvåking, backup og oppdateringer. Vi holder systemene dine trygge, raske og oppdaterte — 24/7." },
+      ],
+      journeyIntro: {
+        tag: "Din digitale reise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Teknologi som fungerer.</span></>,
+        sub: "Fra behovsanalyse til en fullverdig digital infrastruktur som vokser med bedriften din. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Behovsanalyse", duration: "Dag 1", title: "Vi forstår utfordringene.", desc: "Hva trenger du? Hva bruker du i dag? Hva fungerer — og hva gjør ikke det? Vi kartlegger den digitale infrastrukturen din grundig.", note: "Pragmatisk — ingen unødvendig teknologi." },
+        { num: "II", phase: "Prototyping", duration: "Uke 1–2", title: "Du ser løsningen ta form.", desc: "Vi bygger prototyper og wireframes slik at du ser nøyaktig hva du får — før vi skriver en eneste linje produksjonskode.", note: "Godkjent av deg — ingen overraskelser." },
+        { num: "III", phase: "Utvikling", duration: "Uke 2–6", title: "Vi bygger. Du følger med.", desc: "Iterativ utvikling med løpende demo-visninger. Du ser fremgangen i sanntid og kan gi tilbakemelding underveis.", note: "Transparent prosess fra start til slutt." },
+        { num: "IV", phase: "Drift & vekst", duration: "For alltid", title: "Vi drifter. Du skalerer.", desc: "Hosting, oppdateringer, sikkerhet og support — alt inkludert. Vi proaktivt forbedrer og skalerer løsningene etter hvert som bedriften vokser.", note: "Fast pris. Ingen timefakturering." },
+      ],
+      ctaBox: {
+        title: "Teknologi som bare fungerer.",
+        desc: "Ring eller send melding. Vi svarer innen 24 timer med pragmatiske løsninger — ingen unødvendig kompleksitet.",
+      },
+    },
   },
 };
 
@@ -553,7 +644,7 @@ const SectionHome = () => {
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* METODEN — embedded */}
-      <MetodenSection />
+      <MetodenSection overrides={c.metodenOverrides} />
 
       {/* SERVICES CAROUSEL */}
       <section className="relative overflow-hidden">

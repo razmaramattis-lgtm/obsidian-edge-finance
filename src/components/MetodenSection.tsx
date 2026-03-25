@@ -3,12 +3,35 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Users,
-  Headphones, Code2, Megaphone, Shield, Phone
+  Headphones, Code2, Megaphone, Shield, Phone, type LucideIcon
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import metodenTeam from "@/assets/metoden-team.jpg";
 
-const team = [
+export interface MetodenTeamMember {
+  icon: LucideIcon;
+  role: string;
+  desc: string;
+}
+
+export interface MetodenStep {
+  num: string;
+  phase: string;
+  duration: string;
+  title: string;
+  desc: string;
+  note: string;
+}
+
+export interface MetodenOverrides {
+  teamIntro?: { tag?: string; headline?: React.ReactNode; sub?: string; footnote?: string };
+  team?: MetodenTeamMember[];
+  journeyIntro?: { tag?: string; headline?: React.ReactNode; sub?: string };
+  steps?: MetodenStep[];
+  ctaBox?: { title?: string; desc?: string };
+}
+
+const defaultTeam: MetodenTeamMember[] = [
   { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med svar innen 24 timer." },
   { icon: Users, role: "HR-spesialister", desc: "Lønnskjøring, arbeidsrett, HMS og personaladministrasjon. Vi tar hele HR-byrden slik at du kan fokusere på menneskene, ikke papirene." },
   { icon: Megaphone, role: "Markedsførere", desc: "Vekststrategi, merkevarebygging og digital tilstedeværelse. Vi ser helhetsbilde — fra årsresultat til markedsposisjon." },
@@ -16,14 +39,14 @@ const team = [
   { icon: Shield, role: "Strategiske rådgivere", desc: "Exit, fusjon, kapitalstruktur og vekstplan. Senioreksperter som har sett alt — og vet nøyaktig hva som skal til." },
 ];
 
-const steps = [
+const defaultSteps: MetodenStep[] = [
   { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene.", note: "45 minutter som kan forandre alt." },
   { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt trenger — ikke hva vi tilbyr som standard. Regnskapsfører, HR, markedsfører, utvikler. Eksakt det du trenger.", note: "Én kontaktperson. Hele teamet bak." },
   { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din tilgang aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid.", note: "Full oversikt. Null innsats fra din side." },
   { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Tilgjengelige. Alltid. Uten ekstra kostnad." },
 ];
 
-const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => {
+const StepCard = ({ step, index }: { step: MetodenStep; index: number }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
   const opacity = useTransform(scrollYProgress, [0, 0.6], [0.2, 1]);
@@ -65,7 +88,7 @@ const SpineNode = () => (
   </div>
 );
 
-const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | "right" }) => (
+const ContentBlock = ({ step, align }: { step: MetodenStep; align: "left" | "right" }) => (
   <div className={`max-w-sm ${align === "right" ? "text-left md:text-right" : "text-left"}`}>
     <p className="text-[10px] tracking-[0.35em] uppercase text-secondary mb-3">{step.phase} · {step.duration}</p>
     <h3 className="font-heading text-3xl md:text-4xl mb-4 leading-snug">{step.title}</h3>
@@ -74,7 +97,13 @@ const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | 
   </div>
 );
 
-const MetodenSection = () => {
+const MetodenSection = ({ overrides }: { overrides?: MetodenOverrides }) => {
+  const team = overrides?.team ?? defaultTeam;
+  const steps = overrides?.steps ?? defaultSteps;
+  const ti = overrides?.teamIntro ?? {};
+  const ji = overrides?.journeyIntro ?? {};
+  const cta = overrides?.ctaBox ?? {};
+
   return (
     <>
       {/* TEAM — cinematic split */}
@@ -90,13 +119,12 @@ const MetodenSection = () => {
             <div className="absolute inset-0 ambient-glow opacity-30" />
             <div className="relative z-10">
               <AnimatedSection>
-                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Slik jobber vi</p>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">{ti.tag ?? "Slik jobber vi"}</p>
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-                  Ikke én person.{" "}
-                  <span className="italic text-gradient-rose">Et helt hus.</span>
+                  {ti.headline ?? <>Ikke én person.{" "}<span className="italic text-gradient-rose">Et helt hus.</span></>}
                 </h2>
                 <p className="text-muted-foreground font-light leading-relaxed mb-8 md:mb-10 max-w-md text-sm md:text-base">
-                  Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert rundt selskapet ditt. Vi vurderer hva du faktisk trenger — og setter inn riktig kompetanse.
+                  {ti.sub ?? "Når du velger Avargo, får du tilgang til et tverrfaglig team som jobber koordinert rundt selskapet ditt. Vi vurderer hva du faktisk trenger — og setter inn riktig kompetanse."}
                 </p>
 
                 <div className="flex flex-col gap-3 md:gap-4">
@@ -116,7 +144,7 @@ const MetodenSection = () => {
                 </div>
 
                 <p className="text-xs text-muted-foreground/50 italic font-light mt-7 md:mt-8">
-                  Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører.
+                  {ti.footnote ?? "Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører."}
                 </p>
               </AnimatedSection>
             </div>
@@ -130,13 +158,12 @@ const MetodenSection = () => {
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
             <div className="text-center mb-20 md:mb-28">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Reisen</p>
+              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">{ji.tag ?? "Reisen"}</p>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-5 md:mb-6 leading-snug">
-                Fire faser.{" "}
-                <span className="italic text-gradient-teal">Én destinasjon.</span>
+                {ji.headline ?? <>Fire faser.{" "}<span className="italic text-gradient-teal">Én destinasjon.</span></>}
               </h2>
               <p className="text-muted-foreground font-light max-w-xl mx-auto text-sm md:text-base">
-                Fra det første møtet til en permanent partner som proaktivt driver selskapet ditt fremover. Slik ser reisen ut.
+                {ji.sub ?? "Fra det første møtet til en permanent partner som proaktivt driver selskapet ditt fremover. Slik ser reisen ut."}
               </p>
             </div>
           </AnimatedSection>
@@ -160,9 +187,9 @@ const MetodenSection = () => {
                   <Phone size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">Rask respons — hver gang.</p>
+                  <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">{cta.title ?? "Rask respons — hver gang."}</p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                    Ring, send melding eller e-post — vi svarer innen 24 timer. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om.
+                    {cta.desc ?? "Ring, send melding eller e-post — vi svarer innen 24 timer. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om."}
                   </p>
                 </div>
               </div>
