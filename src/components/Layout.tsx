@@ -708,8 +708,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </Link>
             </div>
 
-            {/* Footer columns — left-aligned like reference */}
-            <div className="grid grid-cols-2 md:grid-cols-[1fr_1fr_2fr] gap-10 md:gap-16 lg:gap-20">
+            {/* Footer columns — centered */}
+            <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-12 text-center">
 
               {/* Bransjer */}
               <div>
@@ -735,10 +735,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </div>
               </div>
 
-              {/* Selskapet + Avdelinger */}
-              <div>
+              {/* Selskapet */}
+              <div className="col-span-2 md:col-span-1">
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-5 font-semibold">Selskapet</p>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-[13px] font-light">
+                <div className="flex flex-col gap-2.5 text-[13px] font-light">
                   <Link to={sp("/kontakt")} className="text-foreground/60 hover:text-primary transition-colors">Kontakt oss</Link>
                   <Link to={sp("/om-oss")} className="text-foreground/60 hover:text-primary transition-colors">Om Avargo</Link>
                   <Link to="/faq" className="text-foreground/60 hover:text-primary transition-colors">Ofte stilte spørsmål</Link>
@@ -746,23 +746,25 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/kunde/logg-inn" className="text-foreground/60 hover:text-primary transition-colors">Innloggingsportal</Link>
                   <Link to="/samarbeid" className="text-foreground/60 hover:text-primary transition-colors">Samarbeid</Link>
                 </div>
+              </div>
+            </div>
 
-                {/* Avdelinger */}
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mt-8 mb-4 font-semibold">Avdelinger</p>
-                <div className="flex flex-wrap gap-2">
-                  {SECTION_LIST.map((s) => (
-                    <Link key={s.id} to={s.basePath}
-                      className="px-4 py-1.5 rounded-full text-[11px] font-medium border transition-all hover:scale-[1.02]"
-                      style={{
-                        color: accentHsl(s.id),
-                        borderColor: accentBg(s.id, 0.25),
-                        ...(isInSection && section?.id === s.id ? { backgroundColor: accentBg(s.id, 0.1) } : {}),
-                      }}
-                    >
-                      {s.shortName}
-                    </Link>
-                  ))}
-                </div>
+            {/* Avdelinger — centered pills */}
+            <div className="flex flex-col items-center mt-12">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Avdelinger</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {SECTION_LIST.map((s) => (
+                  <Link key={s.id} to={s.basePath}
+                    className="px-4 py-1.5 rounded-full text-[11px] font-medium border transition-all hover:scale-[1.02]"
+                    style={{
+                      color: accentHsl(s.id),
+                      borderColor: accentBg(s.id, 0.25),
+                      ...(isInSection && section?.id === s.id ? { backgroundColor: accentBg(s.id, 0.1) } : {}),
+                    }}
+                  >
+                    {s.shortName}
+                  </Link>
+                ))}
               </div>
             </div>
 
