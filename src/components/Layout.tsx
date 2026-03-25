@@ -4,6 +4,7 @@ import AdminFloatingBar from "@/components/AdminFloatingBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
+import avargoLogo from "@/assets/avargo-logo.png";
 import {
   Menu, X, ChevronDown, ChevronRight, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
@@ -816,12 +817,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
 
-            {/* Bottom bar */}
-            <div className="mt-12 pt-6 border-t border-border/10 flex flex-col md:flex-row justify-between items-center gap-4">
-              <span className="text-[11px] text-foreground/40">© 2026 Avargo. Alle rettigheter reservert.</span>
-              <div className="flex gap-6 text-[11px] text-foreground/40">
-                <Link to="/personvern" className="hover:text-foreground/70 transition-colors">Personvern</Link>
-                <Link to="/vilkar" className="hover:text-foreground/70 transition-colors">Vilkår</Link>
+            {/* Logo + Bottom bar */}
+            <div className="mt-12 pt-8 border-t border-border/10 flex flex-col items-center gap-6">
+              <Link to="/">
+                <img src={avargoLogo} alt="Avargo" className="h-8 md:h-10 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" />
+              </Link>
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
+                <span className="text-[11px] text-foreground/40">© 2026 Avargo. Alle rettigheter reservert.</span>
+                <div className="flex gap-6 text-[11px] text-foreground/40">
+                  <Link to="/personvern" className="hover:text-foreground/70 transition-colors">Personvern</Link>
+                  <Link to="/vilkar" className="hover:text-foreground/70 transition-colors">Vilkår</Link>
+                </div>
               </div>
             </div>
           </div>
