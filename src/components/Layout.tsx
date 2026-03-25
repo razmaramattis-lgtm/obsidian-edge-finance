@@ -4,6 +4,7 @@ import AdminFloatingBar from "@/components/AdminFloatingBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
+import avargoLogo from "@/assets/avargo-logo.png";
 import {
   Menu, X, ChevronDown, ChevronRight, BookOpen, TrendingUp, Briefcase, Users,
   LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
