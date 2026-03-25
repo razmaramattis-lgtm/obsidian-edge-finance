@@ -470,9 +470,15 @@ const SectionHome = () => {
               <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 {c.hero.ctaPrimary} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
-                {c.hero.ctaSecondary}
-              </Link>
+              {c.hero.ctaSecondaryHref.startsWith("#") ? (
+                <a href={c.hero.ctaSecondaryHref} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+                  {c.hero.ctaSecondary}
+                </a>
+              ) : (
+                <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/80 tracking-wider rounded-full border border-border/40 hover:border-primary/30 hover:text-foreground transition-all duration-500">
+                  {c.hero.ctaSecondary}
+                </Link>
+              )}
             </div>
           </div>
         </div>
