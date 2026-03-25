@@ -599,83 +599,39 @@ const SectionHome = () => {
         </div>
       </section>
 
-      {/* ROTATING HOOK */}
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-60" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div key={fadeKey} className="css-fade-in">
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-snug mb-8 md:mb-10">{slide.heading}</h2>
-              <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto font-light mb-6 md:mb-8">{slide.body}</p>
-              <p className="text-primary text-lg font-heading italic">{slide.tagline}</p>
-            </div>
+      {/* ═══ SERVICES GRID ═══ */}
+      <section className="py-16 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+            className="mb-10 md:mb-16">
+            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-3 font-medium">Alt inkludert</p>
+            <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3">
+              Én fast pris. <span className="text-gradient-rose">Alt du trenger.</span>
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-xl">{c.hero.priceLine}</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            {c.services.map((service, i) => {
+              const SIcon = service.icon;
+              return (
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05, duration: 0.5 }}>
+                  <Link to={service.href} className="group block p-5 md:p-6 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-300 h-full">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
+                      <SIcon size={16} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-sm font-semibold mb-1.5 group-hover:text-primary transition-colors">{service.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{service.desc}</p>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
-
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* METODEN — embedded */}
       <MetodenSection overrides={c.metodenOverrides} />
-
-      {/* SERVICES CAROUSEL */}
-      <section className="relative overflow-hidden">
-        {serviceBgSrc && (
-          <div key={`bg-${activeService}`} className="absolute inset-0 css-fade-in">
-            <img src={serviceBgSrc} alt="" className="w-full h-full object-cover" loading="lazy" width={1920} height={1080} />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
-
-        <button aria-label="Forrige" className="absolute inset-y-0 left-0 w-1/2 z-20 cursor-w-resize bg-transparent border-0" onClick={prevService} />
-        <button aria-label="Neste" className="absolute inset-y-0 right-0 w-1/2 z-20 cursor-e-resize bg-transparent border-0" onClick={nextService} />
-
-        <div className="relative z-30 py-24 md:py-40 pointer-events-none">
-          <div className="container mx-auto px-4 md:px-6">
-            <AnimatedSection>
-              <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Alt inkludert</p>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-6xl mb-6 md:mb-8 max-w-4xl leading-snug">
-                Én fast pris.{" "}<span className="italic text-gradient-rose">Alt du trenger.</span>
-              </h2>
-            </AnimatedSection>
-
-            <div className="max-w-2xl relative z-30 pointer-events-none">
-              <div key={serviceKey} className="css-slide-in">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm rounded-2xl border border-primary/10 shadow-lg shadow-primary/5">
-                    <CurrentIcon size={28} className="text-primary" strokeWidth={1.5} />
-                  </div>
-                  <span className="font-heading text-6xl md:text-7xl text-primary/15 select-none">
-                    {String(activeService + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <h3 className="font-heading text-3xl md:text-5xl mb-4 md:mb-6">{current.title}</h3>
-                <p className="text-foreground/80 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10 max-w-lg">{current.desc}</p>
-                <Link to={current.href} className="pointer-events-auto group inline-flex items-center gap-3 px-8 py-3.5 bg-primary/10 backdrop-blur-sm border border-primary/20 text-primary text-sm tracking-wider rounded-full hover:bg-primary/20 transition-all duration-500">
-                  Les mer <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 mt-16 md:mt-20">
-              {c.services.map((_, i) => (
-                <div key={i} className={`rounded-full transition-all duration-500 ${i === activeService ? "w-8 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-foreground/20"}`} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-border/10 z-30">
-          <div
-            key={`progress-${activeService}-${serviceAutoplay}`}
-            className="h-full bg-gradient-to-r from-primary to-rose-glow"
-            style={{ animation: serviceAutoplay ? "progressBar 5s linear forwards" : "none", width: serviceAutoplay ? undefined : "0%" }}
-          />
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
 
       {/* INDUSTRIES — only regnskap */}
       {section.id === "regnskap" ? (
