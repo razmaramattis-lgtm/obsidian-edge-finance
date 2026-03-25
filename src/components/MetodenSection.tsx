@@ -46,7 +46,7 @@ const defaultSteps: MetodenStep[] = [
   { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Tilgjengelige. Alltid. Uten ekstra kostnad." },
 ];
 
-const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => {
+const StepCard = ({ step, index }: { step: MetodenStep; index: number }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
   const opacity = useTransform(scrollYProgress, [0, 0.6], [0.2, 1]);
@@ -88,7 +88,7 @@ const SpineNode = () => (
   </div>
 );
 
-const ContentBlock = ({ step, align }: { step: typeof steps[0]; align: "left" | "right" }) => (
+const ContentBlock = ({ step, align }: { step: MetodenStep; align: "left" | "right" }) => (
   <div className={`max-w-sm ${align === "right" ? "text-left md:text-right" : "text-left"}`}>
     <p className="text-[10px] tracking-[0.35em] uppercase text-secondary mb-3">{step.phase} · {step.duration}</p>
     <h3 className="font-heading text-3xl md:text-4xl mb-4 leading-snug">{step.title}</h3>
