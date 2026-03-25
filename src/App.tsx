@@ -38,9 +38,8 @@ const Personvern = lazy(() => import("./pages/Personvern"));
 const Sikkerhet = lazy(() => import("./pages/Sikkerhet"));
 const Vilkar = lazy(() => import("./pages/Vilkar"));
 const Gateway = lazy(() => import("./pages/Gateway"));
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const Login = lazy(() => import("./pages/Login"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const KundeLogin = lazy(() => import("./pages/kunde/KundeLogin"));
 const KundeDashboard = lazy(() => import("./pages/kunde/KundeDashboard"));
 
 // Section pages
@@ -152,8 +151,7 @@ const prefetchRoutes = () => {
     prefetch(() => import("./pages/tjenester/HR"));
     prefetch(() => import("./pages/Ressurser"));
     prefetch(() => import("./pages/FAQ"));
-    prefetch(() => import("./pages/admin/AdminLogin"));
-    prefetch(() => import("./pages/kunde/KundeLogin"));
+    prefetch(() => import("./pages/Login"));
   }, 500);
 };
 
@@ -164,21 +162,21 @@ const PageFallback = () => (
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) return <PageFallback />;
-  if (!user) return <Navigate to="/admin/logg-inn" replace />;
+  if (!user) return <Navigate to="/logg-inn" replace />;
   return <>{children}</>;
 };
 
 const CustomerRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) return <PageFallback />;
-  if (!user) return <Navigate to="/kunde/logg-inn" replace />;
+  if (!user) return <Navigate to="/logg-inn" replace />;
   return <>{children}</>;
 };
 
 const AdminOnlyRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, isAdmin } = useAuth();
   if (loading) return <PageFallback />;
-  if (!user) return <Navigate to="/admin/logg-inn" replace />;
+  if (!user) return <Navigate to="/logg-inn" replace />;
   if (!isAdmin) return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4 text-center">
       <p className="text-lg font-medium">Ingen tilgang</p>
@@ -228,8 +226,12 @@ const App = () => (
               <SubdomainRedirect />
               <Suspense fallback={<PageFallback />}>
                 <Routes>
-                  {/* Admin routes (no Layout wrapper) */}
-                  <Route path="/admin/logg-inn" element={<AdminLogin />} />
+                  {/* Unified login */}
+                  <Route path="/logg-inn" element={<Login />} />
+                  {/* Legacy login redirects */}
+                  <Route path="/admin/logg-inn" element={<Navigate to="/logg-inn" replace />} />
+                  <Route path="/kunde/logg-inn" element={<Navigate to="/logg-inn" replace />} />
+                  {/* Admin dashboard */}
                   <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
 
@@ -271,9 +273,8 @@ const App = () => (
                   </Route>
 
                   {/* Customer routes */}
-                  <Route path="/kunde/logg-inn" element={<KundeLogin />} />
                   <Route path="/kunde/dashboard" element={<CustomerRoute><KundeDashboard /></CustomerRoute>} />
-                  <Route path="/kunde" element={<Navigate to="/kunde/logg-inn" replace />} />
+                  <Route path="/kunde" element={<Navigate to="/logg-inn" replace />} />
 
                   {/* Public routes */}
                   <Route path="/*" element={
