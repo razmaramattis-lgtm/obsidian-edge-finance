@@ -476,6 +476,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </div>
               </DropdownPanel>
             </div>
+            )}
 
             {/* ─── Ressurser dropdown — only on hub ─── */}
             {!isInSection && (
