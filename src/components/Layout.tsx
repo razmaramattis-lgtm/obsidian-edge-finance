@@ -359,9 +359,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                                     {item.title}
                                   </div>
                                 ))}
-                                {group.items.length > 4 && (
-                                  <p className="text-[11px] text-foreground/50 pl-3">+{group.items.length - 4} mer</p>
-                                )}
                               </div>
                             </div>
                           </Link>
