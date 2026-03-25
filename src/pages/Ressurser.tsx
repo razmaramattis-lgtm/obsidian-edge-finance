@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Search, FileText, BookMarked, Newspaper, Archive,
+  ArrowRight, Search, BookMarked, Newspaper, Archive,
   Download, FileSpreadsheet, Clock, Pin, Tag, Filter
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
