@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
+import MetodenSection from "@/components/MetodenSection";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -550,6 +551,9 @@ const SectionHome = () => {
       </section>
 
       <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
+
+      {/* METODEN — embedded */}
+      <MetodenSection />
 
       {/* SERVICES CAROUSEL */}
       <section className="relative overflow-hidden">
