@@ -799,7 +799,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 {/* Avdelinger pills */}
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mt-6 mb-3 font-semibold">Avdelinger</p>
                 <div className="flex flex-wrap gap-1.5">
-                  <Link to="/" className="px-3 py-1.5 rounded-full text-[11px] font-medium border border-primary/20 text-primary/80 hover:bg-primary/10 hover:text-primary transition-all">Avargo</Link>
+                  
                   {SECTION_LIST.map((s) => (
                     <Link key={s.id} to={s.basePath}
                       className="px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all hover:scale-[1.02]"
