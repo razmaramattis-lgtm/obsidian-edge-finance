@@ -714,19 +714,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="absolute inset-0 ambient-glow opacity-10" />
           <div className="container mx-auto px-5 md:px-6 relative pt-12 md:pt-20 pb-8">
             <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
-              {/* Brand */}
-              <div className="col-span-2 md:col-span-3 mb-2 md:mb-0">
-                <Link to={isInSection && section ? section.basePath : "/"} className="font-heading text-2xl text-primary inline-block mb-4">
-                  Avargo{isInSection && section ? <span className="text-lg ml-1" style={{ color: sectionAccent }}>· {section.shortName}</span> : null}
-                </Link>
-                <p className="text-sm text-foreground/60 leading-relaxed font-light max-w-[260px]">
-                  {isInSection && section
-                    ? section.description
-                    : <>Regnskapsbyrået for små og mellomstore bedrifter. Trygghet. Oversikt. Vekst.</>
-                  }
-                </p>
-                <p className="mt-3 text-xs text-foreground/40 font-light">Oscars gate 2B, 3714 Skien</p>
-              </div>
 
               {/* Tjenester */}
               <div className="col-span-1 md:col-span-2">
