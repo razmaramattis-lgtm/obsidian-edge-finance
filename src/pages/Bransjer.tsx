@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight, Globe, Building2, Landmark, Briefcase, Tractor, ShoppingCart,
   HardHat, Store, Heart, TrendingUp, Users, Zap, ChevronRight,
-  Truck, Factory, Sparkles, Film, Dumbbell, GraduationCap, Scale,
+  Truck, Factory, Sparkles, Film, GraduationCap, Scale,
   Palette, Megaphone, UserPlus, Plane, Car, Leaf, Search, X,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
