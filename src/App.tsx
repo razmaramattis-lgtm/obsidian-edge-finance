@@ -21,7 +21,7 @@ import Hub from "./pages/Hub";
 const Pricing = lazy(() => import("./pages/Pricing"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
-const Metoden = lazy(() => import("./pages/Metoden"));
+
 const Tjenester = lazy(() => import("./pages/Tjenester"));
 const Bransjer = lazy(() => import("./pages/Bransjer"));
 const Ressurser = lazy(() => import("./pages/Ressurser"));
@@ -291,7 +291,7 @@ const App = () => (
                             <Route path="/:sectionId/priser" element={<Pricing />} />
                             <Route path="/:sectionId/kontakt" element={<Contact />} />
                             <Route path="/:sectionId/om-oss" element={<About />} />
-                            <Route path="/:sectionId/metoden" element={<Metoden />} />
+                            
                             <Route path="/:sectionId/karriere" element={<Navigate to="/karriere" replace />} />
                             <Route path="/:sectionId/karriere/:slug" element={<Navigate to="/karriere" replace />} />
 
@@ -413,7 +413,7 @@ const App = () => (
                             <Route path="/bransjer/reiseliv" element={<ReiselivTurisme />} />
                             <Route path="/bransjer/bil" element={<BilVerksted />} />
                             <Route path="/bransjer/energi" element={<EnergiMiljo />} />
-                            <Route path="/metoden" element={<Metoden />} />
+                            
                             
                             <Route path="/priser" element={<Pricing />} />
                             <Route path="/ressurser" element={<Ressurser />} />

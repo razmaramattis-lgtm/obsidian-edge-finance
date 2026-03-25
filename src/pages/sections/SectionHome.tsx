@@ -58,7 +58,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       priceLine: "Fra 1 499 kr/mnd for nyoppstartede selskaper.",
       ctaPrimary: "Få et uforpliktende tilbud",
       ctaSecondary: "Slik jobber vi",
-      ctaSecondaryHref: "/metoden",
+      ctaSecondaryHref: "#metoden",
     },
     socialProof: [
       { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
