@@ -147,17 +147,13 @@ const Hub = () => {
                         ))}
                       </ul>
 
-                      <div
-                        className="inline-flex items-center gap-2 px-5 py-2.5 text-[12px] font-medium tracking-wider rounded-full transition-all duration-500 group-hover:scale-[1.02]"
-                        style={{
-                          backgroundColor: accentHsl,
-                          color: "#0d0c0a",
-                          boxShadow: glowShadow,
-                        }}
+                      <span
+                        className="inline-flex items-center gap-2 text-[12px] font-medium tracking-wider transition-all duration-500 group-hover:gap-3"
+                        style={{ color: accentHsl }}
                       >
-                        Utforsk {s.shortName}
+                        Gå til {s.shortName}
                         <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform duration-300" />
-                      </div>
+                      </span>
                     </div>
                   </Link>
                 </AnimatedSection>
