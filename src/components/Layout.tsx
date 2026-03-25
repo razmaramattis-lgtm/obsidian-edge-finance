@@ -751,7 +751,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               {/* Selskapet + Avdelinger */}
               <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-5 font-semibold">Selskapet</p>
-                <div className="grid grid-cols-2 gap-x-10 gap-y-2.5 text-[13px] font-light">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-[13px] font-light">
                   <Link to={sp("/kontakt")} className="text-foreground/60 hover:text-primary transition-colors">Kontakt oss</Link>
                   <Link to={sp("/om-oss")} className="text-foreground/60 hover:text-primary transition-colors">Om Avargo</Link>
                   <Link to="/faq" className="text-foreground/60 hover:text-primary transition-colors">Ofte stilte spørsmål</Link>
