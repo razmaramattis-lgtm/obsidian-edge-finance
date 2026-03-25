@@ -40,7 +40,7 @@ const GRANTABLE_PANELS = [
   { key: "advisor_requests", label: "Rådgiverforespørsler", group: "Kunder" },
   { key: "partner_requests", label: "Avtaleforespørsler", group: "Avtaler" },
   { key: "benefit_applications", label: "Fordelsavtale-søknader", group: "Avtaler" },
-  { key: "blog", label: "Blogg & Nyheter", group: "Innhold" },
+  { key: "blog", label: "Nyheter", group: "Innhold" },
   { key: "page_changes", label: "Sideendringer", group: "Innhold" },
   { key: "org_resources", label: "Organisasjonsressurser", group: "Innhold" },
   { key: "hr", label: "HR & Personal", group: "Internt" },
