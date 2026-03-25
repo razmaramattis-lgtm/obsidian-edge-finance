@@ -363,9 +363,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                                   <p className="text-[11px] text-foreground/50 pl-3">+{group.items.length - 4} mer</p>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: accent }}>
-                                Utforsk <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                              </div>
                             </div>
                           </Link>
                         );
