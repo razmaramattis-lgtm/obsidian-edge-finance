@@ -88,8 +88,7 @@ const bransjerItems = [
 ];
 
 const selskapetLinks = [
-  { icon: Users, title: "Kundeportal", desc: "Logg inn for å se regnskapet ditt, dokumenter og kommunisere med din rådgiver — alt samlet i én oversiktlig portal.", href: "/kunde/logg-inn", absolute: true },
-  { icon: Lock, title: "Ansatte-login", desc: "Intern portal for Avargo-teamet med tilgang til arbeidsverktøy, kundedata og samarbeidsplattformen.", href: "/admin/logg-inn", absolute: true },
+  { icon: Lock, title: "Logg inn", desc: "Logg inn som kunde eller ansatt for tilgang til din portal, dokumenter og verktøy.", href: "/logg-inn", absolute: true },
   { icon: Mail, title: "Kontakt oss", desc: "Få et uforpliktende tilbud eller still spørsmål om våre tjenester. Vi svarer normalt innen én arbeidsdag.", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om Avargo", desc: "Møt teamet bak Avargo. Les om vår visjon, metode og hva som driver oss til å levere bedre løsninger for norske bedrifter.", href: "/om-oss", absolute: false },
   { icon: Briefcase, title: "Karriere", desc: "Se ledige stillinger og bli en del av et voksende team. Vi ser etter dyktige mennesker innen regnskap, HR, marked og teknologi.", href: "/karriere", absolute: true },
@@ -529,13 +528,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
 
-          {/* Mobile: login buttons + hamburger */}
+          {/* Mobile: login button + hamburger */}
           <div className="md:hidden flex items-center gap-2">
-            <Link to="/kunde/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-border/20 text-foreground/80 active:bg-muted/40 transition-colors">
-              Kunde
-            </Link>
-            <Link to="/admin/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-primary/30 text-primary bg-primary/5 active:bg-primary/10 transition-colors">
-              Admin
+            <Link to="/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-primary/30 text-primary bg-primary/5 active:bg-primary/10 transition-colors">
+              Logg inn
             </Link>
             <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-2.5 -mr-2 rounded-xl active:bg-muted/40 transition-colors" aria-label="Åpne meny">
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -766,7 +762,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/karriere" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Jobb hos oss</Link>
                   <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">FAQ</Link>
                   <Link to="/samarbeid" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Samarbeid</Link>
-                  <Link to="/kunde/logg-inn" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kundeportal</Link>
+                  <Link to="/logg-inn" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Logg inn</Link>
                 </div>
               </div>
             </div>
