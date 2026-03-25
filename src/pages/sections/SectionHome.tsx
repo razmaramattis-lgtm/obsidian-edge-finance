@@ -292,6 +292,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo fra andre byråer?", a: "Vi kobler markedsføringen til regnskapet, slik at du ser den faktiske ROI-en — ikke bare klikk og visninger." },
     ],
     marqueeLabel: "Markedsføring & Vekst",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt markedsteam",
+        headline: <>Ikke ett byrå.{" "}<span className="italic text-gradient-rose">En hel markedsavdeling.</span></>,
+        sub: "Når du velger Avargo Marked, får du et dedikert team med SEO-spesialister, annonsører og innholdsprodusenter — alle koordinert rundt din vekst.",
+        footnote: "Alt styrt av én fast markedsfører som kjenner bedriften din og målgruppen.",
+      },
+      team: [
+        { icon: Search, role: "SEO-spesialister", desc: "Organisk synlighet på Google. Vi optimaliserer innhold, teknisk struktur og lokal SEO slik at kundene finner deg først." },
+        { icon: Target, role: "Annonsespesialister", desc: "Google Ads og Meta-annonser med full kontroll. Vi styrer budsjettet og optimaliserer kampanjer for maksimal avkastning." },
+        { icon: Palette, role: "Innholdsprodusenter", desc: "Tekst, bilder og video som engasjerer. Vi bygger innhold som treffer målgruppen og styrker merkevaren." },
+        { icon: BarChart3, role: "Analyseansvarlige", desc: "Datadrevet innsikt koblet til regnskapet. Du ser nøyaktig hva som gir resultater — fra klikk til kunde." },
+        { icon: Megaphone, role: "Strategiske rådgivere", desc: "Helhetlig vekststrategi tilpasset din bransje. Vi ser hele bildet — fra posisjonering til konvertering." },
+      ],
+      journeyIntro: {
+        tag: "Din vekstreise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Synlig fra dag én.</span></>,
+        sub: "Fra analyse av dagens synlighet til en helhetlig vekststrategi som leverer målbare resultater. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Analyse", duration: "Dag 1", title: "Vi kartlegger synligheten din.", desc: "Hvor er du synlig i dag? Hvor finner kundene dine konkurrentene? Vi gjør en grundig analyse av søk, annonser og innhold.", note: "Datadrevet — ikke gjetning." },
+        { num: "II", phase: "Strategi", duration: "Dag 2–5", title: "Planen tar form.", desc: "Basert på analysen lager vi en skreddersydd vekststrategi med konkrete tiltak — SEO, annonser, innhold og sosiale medier.", note: "Tydelig plan. Tydelige mål." },
+        { num: "III", phase: "Gjennomføring", duration: "Fra uke 2", title: "Vi leverer synlighet.", desc: "Kampanjer lanseres, innhold publiseres, SEO optimaliseres. Du ser resultater i sanntid — koblet direkte til regnskapet.", note: "Hver krone spores fra klikk til kunde." },
+        { num: "IV", phase: "Vekst", duration: "For alltid", title: "Vi skalerer det som fungerer.", desc: "Vi analyserer, justerer og skalerer kontinuerlig. Du får proaktive anbefalinger og månedlige rapporter som viser reell ROI.", note: "Langsiktig vekst — ikke kortsiktige triks." },
+      ],
+      ctaBox: {
+        title: "Synlighet som gir resultater.",
+        desc: "Vi kobler markedsføringen direkte til bunnlinjen. Ring eller send melding — vi svarer innen 24 timer med konkrete tiltak.",
+      },
+    },
   },
 
   /* ═══════════════ IT ═══════════════ */
