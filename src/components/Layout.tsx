@@ -714,11 +714,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="border-t border-border/10">
           <div className="absolute inset-0 ambient-glow opacity-10" />
           <div className="container mx-auto px-5 md:px-6 relative pt-12 md:pt-20 pb-8">
-            <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
+            {/* Logo top center */}
+            <div className="flex justify-center mb-12 md:mb-16">
+              <Link to="/">
+                <img src={avargoLogo} alt="Avargo" className="h-8 md:h-10 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" />
+              </Link>
+            </div>
 
+            {/* Footer columns — centered */}
+            <div className="flex flex-wrap justify-center gap-12 md:gap-16 lg:gap-20 text-center">
 
               {/* Bransjer */}
-              <div className="col-span-1 md:col-span-2">
+              <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Bransjer</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to={sp("/bransjer/tech-saas")} className="text-foreground/60 hover:text-primary transition-colors">Tech & SaaS</Link>
@@ -730,7 +737,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               {/* Ressurser */}
-              <div className="col-span-1 md:col-span-2">
+              <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Ressurser</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to="/kurs" className="text-foreground/60 hover:text-primary transition-colors">Avargo Kurs</Link>
@@ -743,9 +750,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               {/* Selskapet */}
-              <div className="col-span-1 md:col-span-3">
+              <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Selskapet</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-[13px] font-light">
+                <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to={sp("/kontakt")} className="text-foreground/60 hover:text-primary transition-colors">Kontakt oss</Link>
                   <Link to={sp("/om-oss")} className="text-foreground/60 hover:text-primary transition-colors">Om Avargo</Link>
                   <Link to="/faq" className="text-foreground/60 hover:text-primary transition-colors">Vanlige spørsmål</Link>
@@ -753,11 +760,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/kunde/logg-inn" className="text-foreground/60 hover:text-primary transition-colors">Kundeportal</Link>
                   <Link to="/samarbeid" className="text-foreground/60 hover:text-primary transition-colors">Samarbeid</Link>
                 </div>
+              </div>
 
-                {/* Avdelinger pills */}
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mt-6 mb-3 font-semibold">Avdelinger</p>
-                <div className="flex flex-wrap gap-1.5">
-                  
+              {/* Avdelinger */}
+              <div>
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-4 font-semibold">Avdelinger</p>
+                <div className="flex flex-wrap justify-center gap-1.5">
                   {SECTION_LIST.map((s) => (
                     <Link key={s.id} to={s.basePath}
                       className="px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all hover:scale-[1.02]"
@@ -774,17 +782,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
 
-            {/* Logo + Bottom bar */}
-            <div className="mt-12 pt-8 border-t border-border/10 flex flex-col items-center gap-6">
-              <Link to="/">
-                <img src={avargoLogo} alt="Avargo" className="h-8 md:h-10 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" />
-              </Link>
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
-                <span className="text-[11px] text-foreground/40">© 2026 Avargo. Alle rettigheter reservert.</span>
-                <div className="flex gap-6 text-[11px] text-foreground/40">
-                  <Link to="/personvern" className="hover:text-foreground/70 transition-colors">Personvern</Link>
-                  <Link to="/vilkar" className="hover:text-foreground/70 transition-colors">Vilkår</Link>
-                </div>
+            {/* Bottom bar */}
+            <div className="mt-12 pt-6 border-t border-border/10 flex flex-col md:flex-row justify-between items-center gap-4">
+              <span className="text-[11px] text-foreground/40">© 2026 Avargo. Alle rettigheter reservert.</span>
+              <div className="flex gap-6 text-[11px] text-foreground/40">
+                <Link to="/personvern" className="hover:text-foreground/70 transition-colors">Personvern</Link>
+                <Link to="/vilkar" className="hover:text-foreground/70 transition-colors">Vilkår</Link>
               </div>
             </div>
           </div>
