@@ -696,19 +696,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* ── Footer ─────────────────────────────────── */}
       <footer className="relative overflow-hidden">
-        {/* CTA band */}
-        <div className="relative border-t border-border/10">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5" />
-          <div className="container mx-auto px-5 md:px-6 relative py-10 md:py-16 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="font-heading text-xl md:text-2xl text-foreground mb-1">Klar for en enklere hverdag?</h3>
-              <p className="text-sm text-foreground/60 font-light">La oss ta en uforpliktende prat om hvordan vi kan hjelpe din bedrift.</p>
-            </div>
-            <Link to={sp("/kontakt")} className="shrink-0 px-8 py-3.5 text-sm font-semibold bg-primary text-primary-foreground rounded-full hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-primary/25">
-              Få tilbud →
-            </Link>
-          </div>
-        </div>
 
         {/* Main footer */}
         <div className="border-t border-border/10">
