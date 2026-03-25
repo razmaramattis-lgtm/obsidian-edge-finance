@@ -191,6 +191,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo HR fra andre?", a: "Du får én fast HR-rådgiver som kjenner bedriften din — ikke et callsenter. Alt inkludert i fastpris." },
     ],
     marqueeLabel: "HR & Personal",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt HR-team",
+        headline: <>Ikke én HR-sjef.{" "}<span className="italic text-gradient-rose">En hel personalavdeling.</span></>,
+        sub: "Når du velger Avargo Personal, får du et komplett HR-team som dekker alt fra arbeidsrett og lønn til rekruttering og opplæring — koordinert rundt din bedrift.",
+        footnote: "Alt koordinert av én fast HR-rådgiver som kjenner bedriften din.",
+      },
+      team: [
+        { icon: Users, role: "HR-rådgivere", desc: "Din faste kontakt for alle personalspørsmål. Arbeidsrett, kontrakter, oppsigelser og vanskelige samtaler — vi er der når du trenger oss." },
+        { icon: Calculator, role: "Lønnsansvarlige", desc: "Full lønnskjøring med feriepenger, sykepenger, A-melding og arbeidsgiveravgift. Alt på plass, hver måned." },
+        { icon: Scale, role: "Arbeidsrettsjurister", desc: "Juridisk trygghet i alle personalsaker. Vi sørger for at du følger loven — fra ansettelse til oppsigelse." },
+        { icon: GraduationCap, role: "Kurs- og opplæringsansvarlige", desc: "Lederutvikling, onboarding-programmer og HR-kurs skreddersydd for din bransje." },
+        { icon: Shield, role: "HMS-rådgivere", desc: "Internkontroll, risikovurdering og HMS-dokumentasjon. Vi sørger for at du oppfyller alle lovkrav." },
+      ],
+      journeyIntro: {
+        tag: "Din HR-reise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Trygg arbeidsgiver fra dag én.</span></>,
+        sub: "Fra første samtale til et fullstendig HR-oppsett som dekker alt du trenger som arbeidsgiver. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Kartlegging", duration: "Dag 1", title: "Vi forstår bedriften din.", desc: "Vi gjennomgår dagens personalrutiner, kontrakter, lønnssystem og HMS-dokumentasjon. Hva fungerer? Hva mangler? Hva er risikoen?", note: "En grundig gjennomgang som avdekker alt." },
+        { num: "II", phase: "Oppsett", duration: "Dag 2–5", title: "Alt på plass.", desc: "Personalhåndbok, arbeidskontrakter, varslingsrutiner, HMS-dokumentasjon og lønnsoppsett. Vi bygger hele HR-grunnmuren din fra bunnen.", note: "Komplett HR-oppsett — klar til bruk." },
+        { num: "III", phase: "Drift", duration: "Fra dag 5", title: "Vi kjører lønn. Du fokuserer.", desc: "Månedlig lønnskjøring, sykefraværsoppfølging, kontraktsendringer og personalspørsmål. Vi tar alt det løpende.", note: "Du har en hel HR-avdeling i ryggen." },
+        { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi er der — alltid.", desc: "Vanskelig personalsak? Ny ansettelse? Omorganisering? Vi er din sparringspartner og rådgiver — proaktivt og tilgjengelig.", note: "Svar innen 24 timer. Alltid." },
+      ],
+      ctaBox: {
+        title: "Trygg arbeidsgiver — hver dag.",
+        desc: "Ring eller send melding når som helst. Vi svarer innen 24 timer. Du er ikke alene med personalsaker — vi tar dem sammen.",
+      },
+    },
   },
 
   /* ═══════════════ MARKED ═══════════════ */
