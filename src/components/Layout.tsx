@@ -219,7 +219,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${sectionAccent}, transparent)` }} />
         )}
 
-        <div className="container mx-auto flex items-center justify-between h-16 md:h-[72px] px-4 md:px-6">
+        <div className="container mx-auto flex items-center justify-between h-[60px] md:h-[80px] px-4 md:px-6">
           {/* Logo */}
           {isInSection && section ? (
             <span className="font-heading text-xl md:text-2xl tracking-wide flex items-baseline gap-1">
