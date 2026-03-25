@@ -442,7 +442,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <NavButton to={sp("/priser")} label="Priser" isActive={location.pathname.includes("/priser")} />
             )}
 
-            {/* ─── Selskapet dropdown ─── */}
+            {/* ─── Selskapet dropdown — only on hub ─── */}
+            {!isInSection && (
             <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
               <button className={dropBtnClass(selskapetOpen)}>
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
