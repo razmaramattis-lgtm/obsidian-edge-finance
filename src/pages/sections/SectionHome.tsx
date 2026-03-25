@@ -11,7 +11,7 @@ import {
   Search, Share2, Palette, Video, Mail,
   Code, Bot, Cpu, Database, Layers, Monitor, type LucideIcon,
 } from "lucide-react";
-import AnimatedSection from "@/components/AnimatedSection";
+import { motion } from "framer-motion";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import MetodenSection, { type MetodenOverrides } from "@/components/MetodenSection";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
