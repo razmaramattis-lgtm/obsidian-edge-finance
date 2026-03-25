@@ -12,6 +12,7 @@ import {
   Code, Bot, Cpu, Database, Layers, Monitor, type LucideIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
 import MetodenSection, { type MetodenOverrides } from "@/components/MetodenSection";
 import { SECTIONS, SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
