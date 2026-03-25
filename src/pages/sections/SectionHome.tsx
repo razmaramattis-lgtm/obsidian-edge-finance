@@ -393,6 +393,36 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva skiller Avargo IT fra andre?", a: "Vi bygger pragmatiske løsninger til fast pris. Ingen timefakturering, ingen overraskelser — bare teknologi som fungerer." },
     ],
     marqueeLabel: "IT & Utvikling",
+    metodenOverrides: {
+      teamIntro: {
+        tag: "Ditt IT-team",
+        headline: <>Ikke én utvikler.{" "}<span className="italic text-gradient-rose">Et helt teknologiteam.</span></>,
+        sub: "Når du velger Avargo IT, får du et dedikert utviklerteam som bygger, drifter og forbedrer løsningene dine — fra nettsider og systemer til AI og automatisering.",
+        footnote: "Alt koordinert av én fast IT-rådgiver som kjenner systemene og behovene dine.",
+      },
+      team: [
+        { icon: Code, role: "Fullstack-utviklere", desc: "Moderne nettsider, nettbutikker og web-applikasjoner bygget med de nyeste teknologiene. Rask, responsiv og skalerbar." },
+        { icon: Bot, role: "AI-spesialister", desc: "Chatboter, automatisering og intelligent databehandling. Vi bygger AI-løsninger som faktisk sparer deg tid og penger." },
+        { icon: Database, role: "Systemintegratører", desc: "Vi kobler systemene dine sammen — regnskap, CRM, e-post og lagerstyring. Sømløst og automatisk." },
+        { icon: Monitor, role: "UX-designere", desc: "Brukeropplevelser som konverterer. Vi designer grensesnitt som er vakre, intuitive og bygget for resultater." },
+        { icon: Shield, role: "Sikkerhetsansvarlige", desc: "Overvåking, backup og oppdateringer. Vi holder systemene dine trygge, raske og oppdaterte — 24/7." },
+      ],
+      journeyIntro: {
+        tag: "Din digitale reise",
+        headline: <>Fire faser.{" "}<span className="italic text-gradient-teal">Teknologi som fungerer.</span></>,
+        sub: "Fra behovsanalyse til en fullverdig digital infrastruktur som vokser med bedriften din. Slik ser reisen ut.",
+      },
+      steps: [
+        { num: "I", phase: "Behovsanalyse", duration: "Dag 1", title: "Vi forstår utfordringene.", desc: "Hva trenger du? Hva bruker du i dag? Hva fungerer — og hva gjør ikke det? Vi kartlegger den digitale infrastrukturen din grundig.", note: "Pragmatisk — ingen unødvendig teknologi." },
+        { num: "II", phase: "Prototyping", duration: "Uke 1–2", title: "Du ser løsningen ta form.", desc: "Vi bygger prototyper og wireframes slik at du ser nøyaktig hva du får — før vi skriver en eneste linje produksjonskode.", note: "Godkjent av deg — ingen overraskelser." },
+        { num: "III", phase: "Utvikling", duration: "Uke 2–6", title: "Vi bygger. Du følger med.", desc: "Iterativ utvikling med løpende demo-visninger. Du ser fremgangen i sanntid og kan gi tilbakemelding underveis.", note: "Transparent prosess fra start til slutt." },
+        { num: "IV", phase: "Drift & vekst", duration: "For alltid", title: "Vi drifter. Du skalerer.", desc: "Hosting, oppdateringer, sikkerhet og support — alt inkludert. Vi proaktivt forbedrer og skalerer løsningene etter hvert som bedriften vokser.", note: "Fast pris. Ingen timefakturering." },
+      ],
+      ctaBox: {
+        title: "Teknologi som bare fungerer.",
+        desc: "Ring eller send melding. Vi svarer innen 24 timer med pragmatiske løsninger — ingen unødvendig kompleksitet.",
+      },
+    },
   },
 };
 
