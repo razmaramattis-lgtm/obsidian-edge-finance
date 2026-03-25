@@ -136,7 +136,7 @@ const prefetchRoutes = () => {
   const prefetch = (fn: () => Promise<unknown>) => fn().catch(() => {});
   prefetch(() => import("./pages/Pricing"));
   prefetch(() => import("./pages/Contact"));
-  prefetch(() => import("./pages/Metoden"));
+  
   prefetch(() => import("./pages/Tjenester"));
   prefetch(() => import("./pages/About"));
   prefetch(() => import("./pages/Bransjer"));
