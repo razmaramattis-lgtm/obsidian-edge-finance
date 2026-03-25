@@ -712,7 +712,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
         {/* Main footer */}
         <div className="border-t border-border/10">
-          <div className="absolute inset-0 ambient-glow opacity-10" />
+          
           <div className="container mx-auto px-5 md:px-6 relative pt-12 md:pt-20 pb-8">
             {/* Logo top center */}
             <div className="flex justify-center mb-12 md:mb-16">
