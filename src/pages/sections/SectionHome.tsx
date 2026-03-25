@@ -47,6 +47,7 @@ interface SectionHomeContent {
   cta: { tag: string; headline: React.ReactNode; sub: string; italic: string; button: string };
   faq: { q: string; a: string }[];
   marqueeLabel: string;
+  metodenOverrides?: MetodenOverrides;
 }
 
 const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
