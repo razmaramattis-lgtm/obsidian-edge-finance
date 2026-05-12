@@ -189,11 +189,9 @@ const Ressurser = () => {
               {TABS.map(tab => {
                 const count =
                   tab.key === "alle"
-                    ? filteredNyheter.length + filteredGuider.length + filteredArchive.length
-                    : tab.key === "nyheter"
-                    ? filteredNyheter.length
-                    : tab.key === "guider"
-                    ? filteredGuider.length
+                    ? filteredArtikler.length + filteredArchive.length
+                    : tab.key === "artikler"
+                    ? filteredArtikler.length
                     : filteredArchive.length;
 
                 return (
