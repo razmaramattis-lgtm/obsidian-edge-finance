@@ -42,8 +42,7 @@ interface ArchiveCategory {
 
 const TABS = [
   { key: "alle", label: "Alle", icon: Filter },
-  { key: "nyheter", label: "Nyheter", icon: Newspaper },
-  { key: "guider", label: "Guider", icon: BookMarked },
+  { key: "artikler", label: "Artikler", icon: Newspaper },
   { key: "arkiv", label: "Arkiv", icon: Archive },
 ] as const;
 
@@ -59,7 +58,9 @@ const formatDate = (d: string) =>
 
 const Ressurser = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as TabKey) || "alle";
+  const rawTab = searchParams.get("tab");
+  const normalizedTab: TabKey = rawTab === "nyheter" || rawTab === "guider" ? "artikler" : (rawTab as TabKey) || "alle";
+  const initialTab = TABS.some(t => t.key === normalizedTab) ? normalizedTab : "alle";
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [archiveFiles, setArchiveFiles] = useState<ArchiveFile[]>([]);
@@ -93,6 +94,9 @@ const Ressurser = () => {
   const NYHETER_CATEGORIES = ["Nyheter", "Regnskap", "Skatt", "Blogg"];
   const nyheter = posts.filter(p => NYHETER_CATEGORIES.includes(p.category));
   const guider = posts.filter(p => p.category === "Guide");
+  const artikler = [...nyheter, ...guider].sort((a, b) =>
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   // Search across everything
   const q = search.toLowerCase();
@@ -108,8 +112,7 @@ const Ressurser = () => {
     (f.description || "").toLowerCase().includes(q) ||
     (f.category || "").toLowerCase().includes(q);
 
-  const filteredNyheter = nyheter.filter(matchPost);
-  const filteredGuider = guider.filter(matchPost);
+  const filteredArtikler = artikler.filter(matchPost);
   const filteredArchive = archiveFiles.filter(matchFile);
 
   // Grouped archive
@@ -120,13 +123,11 @@ const Ressurser = () => {
   }, {} as Record<string, ArchiveFile[]>);
 
   // What to show based on active tab
-  const showNyheter = activeTab === "alle" || activeTab === "nyheter";
-  const showGuider = activeTab === "alle" || activeTab === "guider";
+  const showArtikler = activeTab === "alle" || activeTab === "artikler";
   const showArkiv = activeTab === "alle" || activeTab === "arkiv";
 
   const totalResults =
-    (showNyheter ? filteredNyheter.length : 0) +
-    (showGuider ? filteredGuider.length : 0) +
+    (showArtikler ? filteredArtikler.length : 0) +
     (showArkiv ? filteredArchive.length : 0);
 
   return (
@@ -188,11 +189,9 @@ const Ressurser = () => {
               {TABS.map(tab => {
                 const count =
                   tab.key === "alle"
-                    ? filteredNyheter.length + filteredGuider.length + filteredArchive.length
-                    : tab.key === "nyheter"
-                    ? filteredNyheter.length
-                    : tab.key === "guider"
-                    ? filteredGuider.length
+                    ? filteredArtikler.length + filteredArchive.length
+                    : tab.key === "artikler"
+                    ? filteredArtikler.length
                     : filteredArchive.length;
 
                 return (
@@ -219,15 +218,9 @@ const Ressurser = () => {
       {/* Content sections */}
       <section className="pb-16 md:pb-24">
         <div className="container mx-auto px-4 md:px-6 space-y-16">
-          {/* Nyheter */}
-          {showNyheter && filteredNyheter.length > 0 && (
-            <PostSection title="Nyheter" icon={Newspaper} posts={filteredNyheter} />
-          )}
-
-
-          {/* Guider */}
-          {showGuider && filteredGuider.length > 0 && (
-            <PostSection title="Guider" icon={BookMarked} posts={filteredGuider} />
+          {/* Artikler */}
+          {showArtikler && filteredArtikler.length > 0 && (
+            <PostSection title="Artikler" icon={Newspaper} posts={filteredArtikler} />
           )}
 
           {/* Arkiv */}
