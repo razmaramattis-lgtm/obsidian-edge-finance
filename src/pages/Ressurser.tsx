@@ -42,8 +42,7 @@ interface ArchiveCategory {
 
 const TABS = [
   { key: "alle", label: "Alle", icon: Filter },
-  { key: "nyheter", label: "Nyheter", icon: Newspaper },
-  { key: "guider", label: "Guider", icon: BookMarked },
+  { key: "artikler", label: "Artikler", icon: Newspaper },
   { key: "arkiv", label: "Arkiv", icon: Archive },
 ] as const;
 
