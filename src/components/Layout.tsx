@@ -706,42 +706,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </p>
             </div>
 
-            {/* Navigation grid */}
-            <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mb-14">
+            {/* Navigation grid — forenklet for bedre brukervennlighet */}
+            <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 mb-14">
 
-              {/* Tjenester */}
+              {/* Populært */}
               <div>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Tjenester</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to={sp("/tjenester/regnskapsforer")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Regnskapsfører</Link>
-                  <Link to={sp("/tjenester/lonn")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Lønn & Personal</Link>
-                  <Link to={sp("/tjenester/cfo")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">CFO-tjenester</Link>
-                  <Link to={sp("/tjenester/seo")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">SEO & Synlighet</Link>
-                  <Link to={sp("/tjenester/nettsider")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Nettsider</Link>
-                </div>
-              </div>
-
-              {/* Bransjer */}
-              <div>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Bransjer</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to={sp("/bransjer/tech-saas")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Tech & SaaS</Link>
-                  <Link to={sp("/bransjer/eiendom")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Eiendom</Link>
-                  <Link to={sp("/bransjer/bygg-anlegg")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Bygg & Anlegg</Link>
-                  <Link to={sp("/bransjer/restaurant")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Restaurant</Link>
-                  <Link to={sp("/bransjer")} className="text-foreground/40 hover:text-foreground transition-colors duration-200 text-xs mt-1">Se alle bransjer →</Link>
-                </div>
-              </div>
-
-              {/* Ressurser */}
-              <div>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Ressurser</p>
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Populært</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to="/kurs" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Avargo Kurs</Link>
                   <Link to="/ressurser/kontohjelp" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontohjelp</Link>
                   <Link to="/ressurser/skattekalender" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Skattekalender</Link>
-                  <Link to="/ressurser?tab=guider" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Veiledninger</Link>
-                  <Link to="/ressurser?tab=arkiv" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Maler</Link>
+                  <Link to={sp("/bransjer")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Bransjer</Link>
                 </div>
               </div>
 
@@ -749,12 +724,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Selskapet</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to={sp("/kontakt")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontakt oss</Link>
                   <Link to={sp("/om-oss")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Om Avargo</Link>
                   <Link to="/karriere" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Jobb hos oss</Link>
-                  <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">FAQ</Link>
                   <Link to="/samarbeid" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Samarbeid</Link>
+                  <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Vanlige spørsmål</Link>
+                </div>
+              </div>
+
+              {/* Kontakt & innlogging */}
+              <div className="col-span-2 md:col-span-1">
+                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Kom i gang</p>
+                <div className="flex flex-col gap-2 text-[13px] font-light">
+                  <Link to={sp("/kontakt")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontakt oss</Link>
                   <Link to="/logg-inn" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Logg inn</Link>
+                  <a href="mailto:kontakt@avargo.no" className="text-foreground/55 hover:text-foreground transition-colors duration-200">kontakt@avargo.no</a>
                 </div>
               </div>
             </div>
