@@ -94,6 +94,9 @@ const Ressurser = () => {
   const NYHETER_CATEGORIES = ["Nyheter", "Regnskap", "Skatt", "Blogg"];
   const nyheter = posts.filter(p => NYHETER_CATEGORIES.includes(p.category));
   const guider = posts.filter(p => p.category === "Guide");
+  const artikler = [...nyheter, ...guider].sort((a, b) =>
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   // Search across everything
   const q = search.toLowerCase();
@@ -109,8 +112,7 @@ const Ressurser = () => {
     (f.description || "").toLowerCase().includes(q) ||
     (f.category || "").toLowerCase().includes(q);
 
-  const filteredNyheter = nyheter.filter(matchPost);
-  const filteredGuider = guider.filter(matchPost);
+  const filteredArtikler = artikler.filter(matchPost);
   const filteredArchive = archiveFiles.filter(matchFile);
 
   // Grouped archive
@@ -121,13 +123,11 @@ const Ressurser = () => {
   }, {} as Record<string, ArchiveFile[]>);
 
   // What to show based on active tab
-  const showNyheter = activeTab === "alle" || activeTab === "nyheter";
-  const showGuider = activeTab === "alle" || activeTab === "guider";
+  const showArtikler = activeTab === "alle" || activeTab === "artikler";
   const showArkiv = activeTab === "alle" || activeTab === "arkiv";
 
   const totalResults =
-    (showNyheter ? filteredNyheter.length : 0) +
-    (showGuider ? filteredGuider.length : 0) +
+    (showArtikler ? filteredArtikler.length : 0) +
     (showArkiv ? filteredArchive.length : 0);
 
   return (
