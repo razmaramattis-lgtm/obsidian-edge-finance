@@ -58,7 +58,9 @@ const formatDate = (d: string) =>
 
 const Ressurser = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as TabKey) || "alle";
+  const rawTab = searchParams.get("tab");
+  const normalizedTab: TabKey = rawTab === "nyheter" || rawTab === "guider" ? "artikler" : (rawTab as TabKey) || "alle";
+  const initialTab = TABS.some(t => t.key === normalizedTab) ? normalizedTab : "alle";
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [archiveFiles, setArchiveFiles] = useState<ArchiveFile[]>([]);
