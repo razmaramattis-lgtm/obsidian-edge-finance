@@ -218,15 +218,9 @@ const Ressurser = () => {
       {/* Content sections */}
       <section className="pb-16 md:pb-24">
         <div className="container mx-auto px-4 md:px-6 space-y-16">
-          {/* Nyheter */}
-          {showNyheter && filteredNyheter.length > 0 && (
-            <PostSection title="Nyheter" icon={Newspaper} posts={filteredNyheter} />
-          )}
-
-
-          {/* Guider */}
-          {showGuider && filteredGuider.length > 0 && (
-            <PostSection title="Guider" icon={BookMarked} posts={filteredGuider} />
+          {/* Artikler */}
+          {showArtikler && filteredArtikler.length > 0 && (
+            <PostSection title="Artikler" icon={Newspaper} posts={filteredArtikler} />
           )}
 
           {/* Arkiv */}
