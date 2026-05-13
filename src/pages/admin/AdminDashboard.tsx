@@ -50,6 +50,7 @@ import SmsCenterPanel from "@/components/admin/SmsCenterPanel";
 import AuditLogPanel from "@/components/admin/AuditLogPanel";
 import MarketingPanel from "@/components/admin/MarketingPanel";
 import DigitalJobPanel from "@/components/admin/DigitalJobPanel";
+import ConversionInsightsPanel from "@/components/admin/ConversionInsightsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
   | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing" | "digital_job";
