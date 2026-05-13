@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPricingCopy } from "@/config/sectionPricing";
+import PricingQuickForm from "@/components/PricingQuickForm";
 
 interface PricingPlan {
   id: string;
@@ -24,6 +25,7 @@ interface PricingPlan {
 const Pricing = () => {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quickFormPackage, setQuickFormPackage] = useState<string | null>(null);
   const { section, isInSection } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
@@ -116,13 +118,14 @@ const Pricing = () => {
                         </li>
                       ))}
                     </ul>
-                    <Link
-                      to={`${sectionPath}/kontakt?pakke=${encodeURIComponent(plan.name)}`}
+                    <button
+                      type="button"
+                      onClick={() => setQuickFormPackage(plan.name)}
                       className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${plan.highlighted ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose" : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"}`}
                     >
                       Få tilbud på {plan.name}
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
                 </AnimatedSection>
               ))}
@@ -150,11 +153,11 @@ const Pricing = () => {
                     </p>
                   </div>
                   <div className="flex-shrink-0">
-                    <Link to={`${sectionPath}/kontakt?pakke=Skreddersydd`} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
+                    <button type="button" onClick={() => setQuickFormPackage("Skreddersydd")} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
                       <MessageCircle size={15} className="text-primary" />
                       Ta kontakt
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -207,6 +210,12 @@ const Pricing = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      <PricingQuickForm
+        open={!!quickFormPackage}
+        onOpenChange={(v) => { if (!v) setQuickFormPackage(null); }}
+        packageName={quickFormPackage || ""}
+      />
     </>
   );
 };
