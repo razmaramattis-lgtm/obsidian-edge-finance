@@ -85,6 +85,7 @@ const Contact = () => {
   const [numEmployees, setNumEmployees] = useState("");
   const [financials, setFinancials] = useState<FetchedFinancials | null>(null);
   const [showFinancials, setShowFinancials] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -402,11 +403,11 @@ const Contact = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>Selskapsnavn</label>
-                    <input required type="text" value={selskapsnavn} onChange={(e) => setSelskapsnavn(e.target.value)} className={inputClass} placeholder="Selskapets navn" />
+                    <label className={labelClass}>Selskapsnavn <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
+                    <input type="text" value={selskapsnavn} onChange={(e) => setSelskapsnavn(e.target.value)} className={inputClass} placeholder="Selskapets navn" />
                   </div>
                   <div>
-                    <label className={labelClass}>Org.nummer</label>
+                    <label className={labelClass}>Org.nummer <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
                     <input type="text" value={orgnummer} onChange={(e) => setOrgnummer(e.target.value)} className={inputClass} placeholder="9 siffer" />
                   </div>
                 </div>
@@ -517,18 +518,9 @@ const Contact = () => {
                 </AnimatePresence>
 
                 <div>
-                  <label className={labelClass}>
-                    Kontaktperson
-                  </label>
-                  <input required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt fulle navn" />
+                  <label className={labelClass}>Navn</label>
+                  <input required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt navn" />
                 </div>
-
-                {naering && (
-                  <div>
-                    <label className={labelClass}>Næringsområde</label>
-                    <input type="text" value={naering} onChange={(e) => setNaering(e.target.value)} className={inputClass} />
-                  </div>
-                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -536,70 +528,99 @@ const Contact = () => {
                     <input required type="email" value={epost} onChange={(e) => setEpost(e.target.value)} className={inputClass} placeholder="din@epost.no" />
                   </div>
                   <div>
-                    <label className={labelClass}>Telefon</label>
-                    <input required type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)} className={inputClass} placeholder="+47 000 00 000" />
+                    <label className={labelClass}>Telefon <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
+                    <input type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)} className={inputClass} placeholder="+47 000 00 000" />
                   </div>
                 </div>
 
-                <div>
-                  <label className={labelClass}>Bransje</label>
-                  <select required value={bransje} onChange={(e) => setBransje(e.target.value)} className={inputClass}>
-                    <option value="">Velg bransje</option>
-                    <option>Tech & SaaS</option>
-                    <option>Eiendom & Utvikling</option>
-                    <option>Holding & Investering</option>
-                    <option>Consulting & Rådgivning</option>
-                    <option>Landbruk</option>
-                    <option>Varehandel</option>
-                    <option>Bygg & Anlegg</option>
-                    <option>Nettbutikk & E-commerce</option>
-                    <option>Helse & Velvære</option>
-                    <option>Restaurant & Uteliv</option>
-                    <option>Frisør & Skjønnhet</option>
-                    <option>Håndverkere & Fagfolk</option>
-                    <option>Transport & Logistikk</option>
-                    <option>Industri & Produksjon</option>
-                    <option>Renhold & Facility</option>
-                    <option>Kultur, Media & Underholdning</option>
-                    <option>Sport & Fritid</option>
-                    <option>Utdanning & Kurs</option>
-                    <option>Juridisk & Advokat</option>
-                    <option>Arkitektur & Design</option>
-                    <option>Markedsføring & Reklame</option>
-                    <option>Bemanning & Rekruttering</option>
-                    <option>Reiseliv & Turisme</option>
-                    <option>Bil & Verksted</option>
-                    <option>Energi & Miljø</option>
-                    <option>Annet</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
-                  <select required value={omsetning} onChange={(e) => setOmsetning(e.target.value)} className={inputClass}>
-                    <option value="">Velg omsetningsnivå</option>
-                    <option>Under 1 million</option>
-                    <option>1–5 millioner</option>
-                    <option>5–10 millioner</option>
-                    <option>10–50 millioner</option>
-                    <option>Over 50 millioner</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={labelClass}>Hva er viktigst for deg i en regnskapsfører?</label>
-                  <textarea required rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
+                {/* Optional details — collapsed by default to reduce friction */}
+                <div className="rounded-2xl border border-border/20 bg-card/20 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowDetails(v => !v)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-xs text-foreground/50 hover:text-foreground/80 transition-colors"
+                  >
+                    <span className="uppercase tracking-[0.25em] font-medium text-[11px]">
+                      Vil du at vi forbereder oss? Legg til detaljer (valgfritt)
+                    </span>
+                    {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  </button>
+                  <AnimatePresence>
+                    {showDetails && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-5 space-y-4">
+                          {naering && (
+                            <div>
+                              <label className={labelClass}>Næringsområde</label>
+                              <input type="text" value={naering} onChange={(e) => setNaering(e.target.value)} className={inputClass} />
+                            </div>
+                          )}
+                          <div>
+                            <label className={labelClass}>Bransje</label>
+                            <select value={bransje} onChange={(e) => setBransje(e.target.value)} className={inputClass}>
+                              <option value="">Velg bransje</option>
+                              <option>Tech & SaaS</option>
+                              <option>Eiendom & Utvikling</option>
+                              <option>Holding & Investering</option>
+                              <option>Consulting & Rådgivning</option>
+                              <option>Landbruk</option>
+                              <option>Varehandel</option>
+                              <option>Bygg & Anlegg</option>
+                              <option>Nettbutikk & E-commerce</option>
+                              <option>Helse & Velvære</option>
+                              <option>Restaurant & Uteliv</option>
+                              <option>Frisør & Skjønnhet</option>
+                              <option>Håndverkere & Fagfolk</option>
+                              <option>Transport & Logistikk</option>
+                              <option>Industri & Produksjon</option>
+                              <option>Renhold & Facility</option>
+                              <option>Kultur, Media & Underholdning</option>
+                              <option>Utdanning & Kurs</option>
+                              <option>Juridisk & Advokat</option>
+                              <option>Arkitektur & Design</option>
+                              <option>Markedsføring & Reklame</option>
+                              <option>Bemanning & Rekruttering</option>
+                              <option>Reiseliv & Turisme</option>
+                              <option>Bil & Verksted</option>
+                              <option>Energi & Miljø</option>
+                              <option>Annet</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
+                            <select value={omsetning} onChange={(e) => setOmsetning(e.target.value)} className={inputClass}>
+                              <option value="">Velg omsetningsnivå</option>
+                              <option>Under 1 million</option>
+                              <option>1–5 millioner</option>
+                              <option>5–10 millioner</option>
+                              <option>10–50 millioner</option>
+                              <option>Over 50 millioner</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className={labelClass}>Hva er viktigst for deg?</label>
+                            <textarea rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <button type="submit" disabled={submitting} className="group w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.01] transition-all duration-500 mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
                   {submitting ? (
                     <><Loader2 size={15} className="animate-spin" /> Sender...</>
                   ) : (
-                    <>Send søknad <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
+                    <>Få et uforpliktende tilbud <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>
                   )}
                 </button>
                 <p className="text-xs text-foreground/40 text-center font-light">
-                  Ved å sende inn bekrefter du at en av våre <strong className="text-foreground/60">rådgivere</strong> vil gjennomgå henvendelsen din og ta kontakt innen 24 timer. Helt uforpliktende.
+                  Tar 30 sekunder · Ingen binding · Vi svarer innen 24 timer
                 </p>
               </form>
             )}
