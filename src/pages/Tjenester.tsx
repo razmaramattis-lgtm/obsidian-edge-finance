@@ -235,7 +235,7 @@ const Tjenester = () => {
   return (
     <>
       <Helmet>
-        <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, rådgivning og digital markedsføring — Avargo"}</title>
+        <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, rådgivning & marked — Avargo"}</title>
         <meta name="description" content={copy?.sub || "Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning, HR, SEO, Google Ads, nettsider og AI-automatisering for norske bedrifter."} />
         <link rel="canonical" href={`https://avargo.no${sectionPath}/tjenester`} />
       </Helmet>

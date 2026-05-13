@@ -1,0 +1,43 @@
+# Avargo
+
+> Norsk regnskapsbyrå for små og mellomstore bedrifter. Dedikert statsautorisert regnskapsfører, HR, markedsføring og IT — alt i fast pris.
+
+Avargo leverer regnskap, rådgivning, HR/lønn, digital markedsføring (SEO, Google Ads, Meta) og IT-løsninger til SMB i Norge. Svar innen 24 timer. Kontor i Skien.
+
+## Hovedsider
+
+- [Forside](/): Oversikt over Avargo og våre tjenester.
+- [Tjenester](/tjenester): Alle tjenester fra regnskap til markedsføring.
+- [Bransjer](/bransjer): Bransjespesifikke regnskapstjenester.
+- [Priser](/priser): Pakker og fast pris.
+- [Metoden](/metoden): Slik jobber vi med kundene våre.
+- [Om oss](/om-oss): Om Avargo og teamet.
+- [Kontakt](/kontakt): Få et tilbud eller still spørsmål.
+- [FAQ](/faq): Over 100 svar om regnskap, skatt, lønn og MVA.
+
+## Avdelinger
+
+- [Regnskap](/regnskap): Regnskapsfører, årsregnskap, skatt og rådgivning.
+- [HR & Personal](/hr): Ansettelse, lønn, personalhåndbok og arbeidsrett.
+- [Markedsføring](/markedsforing): SEO, Google Ads, Meta-annonser og nettsider.
+- [IT](/it): Nettsider, AI-automatisering, chatbot og internsystemer.
+
+## Ressurser
+
+- [Ressurser](/ressurser): Guider, nyheter og verktøy.
+- [Skattekalender](/ressurser/skattekalender): Alle viktige frister samlet.
+- [Kontohjelp](/ressurser/kontohjelp): Slå opp riktig kontonummer.
+- [Regnskapsord](/ressurser/regnskapsord): Ordbok over 115+ regnskapsbegreper.
+- [Nyheter](/nyheter): Artikler om regnskap, skatt og drift.
+
+## Karriere & Samarbeid
+
+- [Karriere](/karriere): Ledige stillinger og åpen søknad.
+- [Akademi](/kurs): Kurs innen regnskap, HR og bedriftsledelse.
+- [Samarbeid](/samarbeid): Selg byrået ditt eller bli partner.
+
+## Optional
+
+- [Personvern](/personvern): Personvernerklæring.
+- [Vilkår](/vilkar): Brukervilkår.
+- [Logg inn](/logg-inn): Innlogging for kunder og ansatte.

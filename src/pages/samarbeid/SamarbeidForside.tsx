@@ -31,7 +31,7 @@ const SamarbeidForside = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo Samarbeid | Selg eller samarbeid med Norges mest ambisiøse regnskapsnettverk</title>
+        <title>Avargo Samarbeid | Selg eller samarbeid med oss</title>
         <meta name="description" content="Utforsk mulighetene med Avargo Samarbeid. Selg regnskapsbyrået ditt, inngå samarbeidsavtale eller bli en del av et voksende nettverk med tilgang til HR, IT, AML og stordriftsfordeler." />
         <link rel="canonical" href="https://avargo.no/samarbeid" />
       </Helmet>
