@@ -153,11 +153,11 @@ const Pricing = () => {
                     </p>
                   </div>
                   <div className="flex-shrink-0">
-                    <Link to={`${sectionPath}/kontakt?pakke=Skreddersydd`} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
+                    <button type="button" onClick={() => setQuickFormPackage("Skreddersydd")} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
                       <MessageCircle size={15} className="text-primary" />
                       Ta kontakt
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </motion.div>
