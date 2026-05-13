@@ -1,4 +1,4 @@
-import { Users, Building2, Shield, Clock, Sparkles } from "lucide-react";
+import { Users, Building2, Lock, Clock, Sparkles } from "lucide-react";
 
 /**
  * SocialProofBar
@@ -11,7 +11,7 @@ const SocialProofBar = () => {
   const items = [
     { icon: Users, value: "8", label: "rådgivere", sub: "i teamet" },
     { icon: Building2, value: "4", label: "fagavdelinger", sub: "Regnskap · HR · Marked · IT" },
-    { icon: Shield, value: "ISO", label: "27001-prinsipper", sub: "for trygg databehandling" },
+    { icon: Lock, value: "Kryptert", label: "datalagring", sub: "i Norge/EU" },
     { icon: Clock, value: "24t", label: "responstid", sub: "garantert svar" },
     { icon: Sparkles, value: "0 kr", label: "binding", sub: "ingen oppstartskostnad" },
   ];
