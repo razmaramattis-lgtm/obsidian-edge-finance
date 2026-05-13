@@ -694,6 +694,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       <StickyMobileCta />
       <ExitIntentDialog />
+      <FloatingActionMenu />
 
       {/* ── Footer ─────────────────────────────────── */}
       <footer className="relative overflow-hidden bg-[hsl(var(--background))]">
