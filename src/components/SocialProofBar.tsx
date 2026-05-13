@@ -1,4 +1,4 @@
-import { Users, Building2, Lock, Clock, Sparkles } from "lucide-react";
+import { Users, Building2, Clock, Sparkles } from "lucide-react";
 
 /**
  * SocialProofBar
@@ -11,14 +11,14 @@ const SocialProofBar = () => {
   const items = [
     { icon: Users, value: "8", label: "rådgivere", sub: "i teamet" },
     { icon: Building2, value: "4", label: "fagavdelinger", sub: "Regnskap · HR · Marked · IT" },
-    { icon: Lock, value: "Kryptert", label: "datalagring", sub: "i Norge/EU" },
+    
     { icon: Clock, value: "24t", label: "responstid", sub: "garantert svar" },
     { icon: Sparkles, value: "0 kr", label: "binding", sub: "ingen oppstartskostnad" },
   ];
 
   return (
     <div className="rounded-2xl glass border border-border/20 px-4 md:px-6 py-4 md:py-5">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-2">
         {items.map((it, i) => {
           const Icon = it.icon;
           return (
