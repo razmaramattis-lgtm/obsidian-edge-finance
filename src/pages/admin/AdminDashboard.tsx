@@ -76,6 +76,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Kunder
   { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Kunder" },
+  { id: "conversion_insights", label: "Konvertering & kilder", icon: BarChart3, adminOnly: true, employeeHidden: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, employeeHidden: true, group: "Kunder" },
   { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, employeeHidden: true, group: "Kunder" },
 
