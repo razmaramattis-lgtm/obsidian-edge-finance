@@ -95,6 +95,12 @@ const Pricing = () => {
             </div>
           </AnimatedSection>
 
+          <AnimatedSection delay={0.15}>
+            <div className="max-w-5xl mx-auto mb-12 md:mb-16">
+              <SocialProofBar />
+            </div>
+          </AnimatedSection>
+
           {loading ? (
             <div className="text-center text-foreground/50 text-sm py-12">Laster prisplaner…</div>
           ) : plans.length === 0 ? (
