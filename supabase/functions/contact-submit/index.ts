@@ -216,7 +216,7 @@ serve(async (req) => {
     const {
       company_name, org_number, contact_person, email, phone,
       industry, industry_code, revenue_target, message, package: pkg,
-      section,
+      section, source, referrer,
     } = body;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -254,6 +254,8 @@ serve(async (req) => {
     const safeMessage = optionalString(message, 5000);
     const safePackage = optionalString(pkg, 120);
     const safeSection = optionalString(section, 80);
+    const safeSource = optionalString(source, 500);
+    const safeReferrer = optionalString(referrer, 500);
 
     if ((safeEmail && !isEmail(safeEmail)) || (!safeCompany && !safeContact && !safeEmail)) {
       throw new Error("Ugyldig skjema.");
@@ -266,7 +268,7 @@ serve(async (req) => {
       .insert({
         company_name: safeCompany, org_number: safeOrg, contact_person: safeContact, email: safeEmail || null, phone: safePhone,
         industry: safeIndustry, industry_code: safeIndustryCode, revenue_target: safeRevenue, message: safeMessage, package: safePackage,
-        section: safeSection,
+        section: safeSection, source: safeSource, referrer: safeReferrer,
       });
 
     if (dbError) console.error("DB error:", dbError);
@@ -309,6 +311,7 @@ serve(async (req) => {
               </div>
               ${safeRevenue ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:20px;"><span style="font-size:13px;color:#92400e;font-weight:600;">💰 Omsetningsmål:</span><span style="font-size:14px;color:#78350f;margin-left:6px;">${safeRevenue}</span></div>` : ""}
               ${safeMessage ? `<div style="margin-bottom:20px;"><h2 style="margin:0 0 10px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">💬 Melding fra kunden</h2><div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;white-space:pre-wrap;">${safeMessage}</div></div>` : ""}
+              ${safeSource || safeReferrer ? `<div style="margin-bottom:20px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 18px;font-size:12px;color:#1e3a8a;">${safeSource ? `<div><strong>📊 Kilde:</strong> ${safeSource}</div>` : ""}${safeReferrer ? `<div style="margin-top:4px;"><strong>↗️ Referrer:</strong> ${safeReferrer}</div>` : ""}</div>` : ""}
               <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;"><p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra kontaktskjemaet på <strong>avargo.no</strong>${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p></div>
             </div>
           </div>`;
