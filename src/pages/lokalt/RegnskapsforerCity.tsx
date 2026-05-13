@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { getCityBySlug, CITIES } from "@/data/cities";
 import { ArrowRight, MapPin, Phone, Clock, ShieldCheck, CheckCircle2, Building2 } from "lucide-react";
+import CityContactForm from "@/components/lokalt/CityContactForm";
 
 const RegnskapsforerCity = () => {
   const { city: slug } = useParams<{ city: string }>();
