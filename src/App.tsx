@@ -19,6 +19,7 @@ import Hub from "./pages/Hub";
 
 // Lazy-load everything else
 const Pricing = lazy(() => import("./pages/Pricing"));
+const PrisguidePrint = lazy(() => import("./pages/PrisguidePrint"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 
