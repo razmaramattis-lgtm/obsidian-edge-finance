@@ -551,7 +551,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 
             {/* Mobile Tjenester */}
-            <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+            <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
               Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${mobileTjenesterOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -591,7 +591,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Mobile Bransjer */}
             {isInSection && section && (
               <>
-                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
                   Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -625,7 +625,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Mobile Selskapet — only on hub */}
             {!isInSection && (
               <>
-                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
                   Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -672,7 +672,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* CTA */}
-            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-primary text-primary-foreground rounded-2xl text-center flex items-center justify-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
               Få tilbud
             </Link>
           </div>
