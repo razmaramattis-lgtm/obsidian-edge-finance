@@ -246,6 +246,7 @@ const App = () => (
 
                   {/* Gateway app (no layout, standalone) */}
                   <Route path="/gateway" element={<Gateway />} />
+                  <Route path="/prisguide" element={<PrisguidePrint />} />
 
                   {/* Workspace route (authenticated, no Layout) */}
                   <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />
