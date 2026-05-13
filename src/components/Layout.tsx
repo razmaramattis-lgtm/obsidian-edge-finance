@@ -795,7 +795,7 @@ const NavButton = ({ to, label, isActive }: { to: string; label: string; isActiv
 );
 
 const MobileNavLink = ({ to, label, onClick }: { to: string; label: string; onClick: () => void }) => (
-  <Link to={to} onClick={onClick} className="py-3.5 text-[15px] text-foreground/90 active:text-foreground transition-colors border-b border-border/15 tracking-wide">
+  <Link to={to} onClick={onClick} className="flex items-center min-h-[52px] py-4 text-[15px] text-foreground/90 active:text-foreground active:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors border-b border-border/15 tracking-wide">
     {label}
   </Link>
 );
