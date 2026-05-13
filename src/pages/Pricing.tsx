@@ -118,13 +118,14 @@ const Pricing = () => {
                         </li>
                       ))}
                     </ul>
-                    <Link
-                      to={`${sectionPath}/kontakt?pakke=${encodeURIComponent(plan.name)}`}
+                    <button
+                      type="button"
+                      onClick={() => setQuickFormPackage(plan.name)}
                       className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${plan.highlighted ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose" : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"}`}
                     >
                       Få tilbud på {plan.name}
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
                 </AnimatedSection>
               ))}
