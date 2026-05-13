@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPageCopy } from "@/config/sectionContent";
+import NextStepsTimeline from "@/components/NextStepsTimeline";
+import ContactObjections from "@/components/ContactObjections";
 
 const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
 const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
