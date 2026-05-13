@@ -298,6 +298,7 @@ const AdminDashboard = () => {
       case "account_entries": return <AccountEntriesPanel initialSearch={panelContext?.search} />;
       case "glossary": return <GlossaryPanel />;
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
+      case "conversion_insights": return <ConversionInsightsPanel />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
       case "job_listings": return <JobListingsPanel />;
