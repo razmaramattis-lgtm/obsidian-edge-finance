@@ -221,11 +221,29 @@ const Pricing = () => {
         </div>
       </section>
 
+      <section className="py-16 md:py-24 border-t border-border/15">
+        <div className="container mx-auto px-4 md:px-6">
+          <AnimatedSection>
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <h2 className="font-heading text-3xl md:text-4xl mb-4">Regn ut din <span className="italic text-gradient-rose">besparelse</span></h2>
+              <p className="text-foreground/60 font-light text-sm md:text-base">Se hvor mye tid og penger du sparer ved å outsource til Avargo.</p>
+            </div>
+            <ROIMini />
+            <div className="text-center mt-10">
+              <button type="button" onClick={() => setLeadMagnetOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all">
+                <FileText size={14} className="text-primary" /> Last ned full prisguide (PDF)
+              </button>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       <PricingQuickForm
         open={!!quickFormPackage}
         onOpenChange={(v) => { if (!v) setQuickFormPackage(null); }}
         packageName={quickFormPackage || ""}
       />
+      <LeadMagnetDialog open={leadMagnetOpen} onOpenChange={setLeadMagnetOpen} />
     </>
   );
 };
