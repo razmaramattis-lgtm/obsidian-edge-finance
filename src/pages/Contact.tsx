@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPageCopy } from "@/config/sectionContent";
+import NextStepsTimeline from "@/components/NextStepsTimeline";
+import ContactObjections from "@/components/ContactObjections";
 
 const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
 const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
@@ -350,14 +352,17 @@ const Contact = () => {
           {/* Right - Form */}
           <AnimatedSection delay={0.2}>
             {submitted ? (
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="flex items-center justify-center h-full min-h-[400px]">
-                <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-primary/15 flex items-center justify-center">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
+                <div className="text-center mb-2">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/15 flex items-center justify-center">
                     <Shield size={24} className="text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-heading text-3xl mb-4">Mottatt!</h3>
-                  <p className="text-foreground/60 font-light leading-relaxed mb-4">Vi gjennomgår informasjonen din og kontakter deg innen 24 timer med et tilpasset forslag.</p>
+                  <h3 className="font-heading text-3xl mb-3">Mottatt!</h3>
+                  <p className="text-foreground/60 font-light leading-relaxed mb-2">Vi gjennomgår informasjonen din og kontakter deg innen 24 timer med et tilpasset forslag.</p>
                   <p className="text-sm text-primary italic font-light">Takk for at du vurderer Avargo.</p>
+                </div>
+                <div className="border-t border-border/15 mt-8 pt-2">
+                  <NextStepsTimeline />
                 </div>
               </motion.div>
             ) : (
@@ -630,6 +635,16 @@ const Contact = () => {
         </div>
       </div>
     </section>
+
+    {!submitted && (
+      <section className="py-16 md:py-24 border-t border-border/15">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-3xl mx-auto">
+            <ContactObjections />
+          </div>
+        </div>
+      </section>
+    )}
     </>
   );
 };

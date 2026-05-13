@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowRight, Check, Shield } from "lucide-react";
+import NextStepsTimeline from "@/components/NextStepsTimeline";
 
 interface Props {
   open: boolean;
@@ -52,14 +53,19 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) { setDone(false); setName(""); setEmail(""); setPhone(""); setCompany(""); } }}>
-      <DialogContent className="max-w-md glass border-border/30">
+      <DialogContent className="max-w-md glass border-border/30 max-h-[90vh] overflow-y-auto">
         {done ? (
-          <div className="py-6 text-center space-y-4">
-            <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <Check className="text-primary" size={24} />
+          <div className="py-2 space-y-5">
+            <div className="text-center space-y-3">
+              <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <Check className="text-primary" size={24} />
+              </div>
+              <DialogTitle className="font-heading text-2xl">Takk, {name.split(" ")[0] || "vi har deg"}!</DialogTitle>
+              <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> innen 24 timer.</p>
             </div>
-            <DialogTitle className="font-heading text-2xl">Takk!</DialogTitle>
-            <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> innen 24 timer.</p>
+            <div className="border-t border-border/20 pt-4">
+              <NextStepsTimeline variant="compact" />
+            </div>
           </div>
         ) : (
           <>
