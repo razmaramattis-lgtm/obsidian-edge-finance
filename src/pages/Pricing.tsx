@@ -210,6 +210,12 @@ const Pricing = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      <PricingQuickForm
+        open={!!quickFormPackage}
+        onOpenChange={(v) => { if (!v) setQuickFormPackage(null); }}
+        packageName={quickFormPackage || ""}
+      />
     </>
   );
 };
