@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowRight, Check, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowRight, Check, MessageCircle, Sparkles, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,9 @@ import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPricingCopy } from "@/config/sectionPricing";
 import PricingQuickForm from "@/components/PricingQuickForm";
+import SocialProofBar from "@/components/SocialProofBar";
+import ROIMini from "@/components/ROIMini";
+import LeadMagnetDialog from "@/components/LeadMagnetDialog";
 
 interface PricingPlan {
   id: string;
