@@ -283,6 +283,8 @@ const Contact = () => {
           message: frustrasjon,
           package: valgtPakke,
           section: isInSection && section ? section.id : null,
+          source: typeof window !== "undefined" ? window.location.pathname + window.location.search : null,
+          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
         },
       });
       if (error) throw error;

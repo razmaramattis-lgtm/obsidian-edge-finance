@@ -1015,8 +1015,10 @@ export type Database = {
           org_number: string | null
           package: string | null
           phone: string | null
+          referrer: string | null
           revenue_target: string | null
           section: string | null
+          source: string | null
           status: string
           updated_at: string
         }
@@ -1032,8 +1034,10 @@ export type Database = {
           org_number?: string | null
           package?: string | null
           phone?: string | null
+          referrer?: string | null
           revenue_target?: string | null
           section?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }
@@ -1049,8 +1053,10 @@ export type Database = {
           org_number?: string | null
           package?: string | null
           phone?: string | null
+          referrer?: string | null
           revenue_target?: string | null
           section?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }

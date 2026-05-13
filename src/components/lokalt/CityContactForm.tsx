@@ -59,6 +59,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
           message,
           section: "regnskap",
           source: `regnskapsforer-i/${citySlug}`,
+          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
         },
       });
       if (error) throw error;
