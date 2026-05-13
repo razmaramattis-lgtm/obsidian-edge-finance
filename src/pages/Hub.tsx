@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
+import HeroQuickContact from "@/components/HeroQuickContact";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
@@ -87,7 +88,7 @@ const Hub = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col sm:flex-row gap-3"
+              className="flex flex-col sm:flex-row gap-3 mb-6 md:mb-8"
             >
               <Link
                 to="/kontakt"
@@ -102,6 +103,14 @@ const Hub = () => {
                 Se våre tjenester
               </Link>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <HeroQuickContact source="hub-hero" />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -114,7 +123,7 @@ const Hub = () => {
               { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
               { icon: Clock, label: "Svar innen 24 timer", sub: "Garantert responstid" },
               { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
-              { icon: Sparkles, label: "AI-drevet innsikt", sub: "Moderne verktøy" },
+              { icon: Award, label: "ISO 27001-prinsipper", sub: "Trygg databehandling" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
                 <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center shrink-0">
