@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { getCityBySlug, CITIES } from "@/data/cities";
 import { ArrowRight, MapPin, Phone, Clock, ShieldCheck, CheckCircle2, Building2 } from "lucide-react";
+import CityContactForm from "@/components/lokalt/CityContactForm";
 
 const RegnskapsforerCity = () => {
   const { city: slug } = useParams<{ city: string }>();
@@ -275,26 +276,22 @@ const RegnskapsforerCity = () => {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* CTA — city-specific form */}
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-5 md:px-6">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="font-serif text-4xl md:text-5xl font-light text-foreground mb-6">
-                Klar for et regnskapsbyrå som faktisk svarer?
-              </h2>
-              <p className="text-foreground/65 font-light text-lg mb-10">
-                Send en uforpliktende henvendelse — vi gir tilbud innen 24 timer, fast pris og full oversikt før du bestemmer deg.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Link to="/kontakt" className="group inline-flex items-center gap-2 px-7 py-4 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
-                  Få tilbud for {city.name}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-                <Link to="/priser" className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-border/30 text-foreground/80 text-[14px] font-medium hover:bg-muted/30 transition-colors">
-                  Se priser & pakker
-                </Link>
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="font-serif text-4xl md:text-5xl font-light text-foreground mb-5">
+                  Klar for et regnskapsbyrå som faktisk svarer?
+                </h2>
+                <p className="text-foreground/65 font-light text-lg">
+                  Send en uforpliktende henvendelse — vi gir tilbud innen 24 timer, fast pris og full oversikt før du bestemmer deg.
+                </p>
               </div>
-              <div className="mt-8 inline-flex items-center gap-2 text-[13px] text-foreground/50">
+
+              <CityContactForm cityName={city.name} citySlug={city.slug} />
+
+              <div className="mt-8 text-center inline-flex items-center gap-2 text-[13px] text-foreground/50 w-full justify-center">
                 <Building2 className="w-4 h-4" />
                 Avargo · Oscars gate 2B, 3714 Skien · kontakt@avargo.no
               </div>
