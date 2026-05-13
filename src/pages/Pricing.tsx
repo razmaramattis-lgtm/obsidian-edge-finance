@@ -25,6 +25,7 @@ interface PricingPlan {
 const Pricing = () => {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quickFormPackage, setQuickFormPackage] = useState<string | null>(null);
   const { section, isInSection } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
