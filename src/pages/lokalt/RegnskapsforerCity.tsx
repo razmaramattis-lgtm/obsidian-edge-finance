@@ -10,30 +10,46 @@ const RegnskapsforerCity = () => {
 
   if (!city) return <Navigate to="/regnskapsforer-i" replace />;
 
-  const title = `Regnskapsfører i ${city.name} | Avargo — fast pris, dedikert kontaktperson`;
-  const description = `Avargo er regnskapsbyrået for ${city.name}-bedrifter. Dedikert regnskapsfører, fast pris, full delegering. Svar innen 24 timer.`;
+  const title = `Regnskapsfører i ${city.name} 2026 | Avargo — fast pris fra 1 590 kr`;
+  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 590 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Svar innen 24 t.`;
   const url = `https://avargo.no/regnskapsforer-i/${city.slug}`;
 
   const faq = [
     {
-      q: `Hvor mye koster en regnskapsfører i ${city.name}?`,
-      a: `Hos Avargo starter regnskap fra 1 590 kr/mnd for nye AS og enkeltpersonforetak i ${city.name}. Vi har fast pris uten skjulte tillegg — du vet alltid hva du betaler. Større selskaper får tilbud basert på antall bilag og tjenestebehov.`,
+      q: `Hva koster en regnskapsfører i ${city.name}?`,
+      a: `Hos Avargo starter regnskap fra 1 590 kr/mnd for nye AS og enkeltpersonforetak i ${city.name}. Vi har fast pris uten skjulte tillegg — du vet alltid hva du betaler. Større selskaper får tilbud basert på antall bilag og tjenestebehov. Se hele prislisten på /priser.`,
     },
     {
-      q: `Trenger jeg lokal regnskapsfører i ${city.name}?`,
-      a: `Nei. Moderne regnskapsføring foregår 100 % digitalt — du laster opp bilag fra mobilen, vi tar resten. Avargo har hovedkontor i Skien (Telemark), men leverer til hele Norge inkludert ${city.name}. Du får én dedikert kontaktperson som kjenner deg og bedriften din.`,
+      q: `Trenger jeg en lokal regnskapsfører i ${city.name}?`,
+      a: `Nei. Moderne regnskapsføring foregår 100 % digitalt — du laster opp bilag fra mobilen, vi tar resten. Avargo har hovedkontor i Skien (Telemark), men leverer til hele Norge inkludert ${city.name}. Du får én dedikert kontaktperson som kjenner deg og bedriften din — ofte bedre oppfølging enn fra et lokalt byrå.`,
+    },
+    {
+      q: `Hvordan bytter jeg regnskapsfører i ${city.name}?`,
+      a: `Vi tar over hele regnskapet ditt — også hvis du har et eksisterende byrå i ${city.name}. Vi henter inn data fra Tripletex, Fiken, Conta, PowerOffice eller Visma, varsler tidligere byrå og gjør overgangen sømløs. Du betaler ingenting før du er over hos oss, og det tar typisk 2–4 uker.`,
     },
     {
       q: `Hvor raskt svarer Avargo på henvendelser?`,
-      a: `Vi garanterer svar innen 24 timer på alle henvendelser fra ${city.name}-kunder, hverdager. Eksisterende kunder har i tillegg ubegrenset gratis telefonsupport.`,
-    },
-    {
-      q: `Kan jeg bytte til Avargo midt i året?`,
-      a: `Ja. Vi tar over hele regnskapet ditt — også hvis du har et eksisterende byrå i ${city.name}. Vi henter inn data, gjør overgangen sømløs og du betaler ingenting før du er over hos oss.`,
+      a: `Vi garanterer svar innen 24 timer på alle henvendelser fra ${city.name}-kunder, hverdager. Eksisterende kunder har i tillegg ubegrenset gratis telefonsupport — du betaler ikke per spørsmål eller per minutt.`,
     },
     {
       q: `Hvilke bransjer i ${city.name} jobber dere med?`,
-      a: `Vi har spesialisert kompetanse på ${city.industries.join(", ").toLowerCase()} og en rekke andre bransjer. Vi jobber ikke med sport- eller fritidsklienter.`,
+      a: `Vi har spesialisert kompetanse på ${city.industries.join(", ").toLowerCase()} og en rekke andre bransjer i ${city.region}. Vi jobber ikke med sport- eller fritidsklienter.`,
+    },
+    {
+      q: `Tar dere både AS og enkeltpersonforetak i ${city.name}?`,
+      a: `Ja. Vi leverer komplett regnskap for både aksjeselskap (AS), enkeltpersonforetak (ENK), DA og NUF i ${city.name}. Pakkene tilpasses størrelse og kompleksitet — fra nystartet ENK til AS med ansatte og MVA-pliktig drift.`,
+    },
+    {
+      q: `Tar Avargo seg av lønn og A-melding for ${city.name}-bedrifter?`,
+      a: `Ja. Vi kjører lønn, beregner skattetrekk, sender A-melding hver måned, håndterer feriepenger og rapporterer arbeidsgiveravgift. Alt er inkludert i lønnspakken — ingen overraskelser.`,
+    },
+    {
+      q: `Kan jeg starte AS i ${city.name} med hjelp fra Avargo?`,
+      a: `Ja. Vi hjelper med oppstart av aksjeselskap eller enkeltpersonforetak i ${city.name} — fra valg av selskapsform, registrering i Brønnøysund, MVA-vurdering og oppsett av regnskapssystem. Første samtale er alltid gratis.`,
+    },
+    {
+      q: `Bruker dere Tripletex, Fiken eller Conta?`,
+      a: `Vi jobber med alle de store norske regnskapssystemene — Tripletex, Fiken, Conta, PowerOffice Go, Visma og Xledger. Du beholder systemet du har, eller vi anbefaler det som passer best for ${city.name}-bedriften din.`,
     },
   ];
 
