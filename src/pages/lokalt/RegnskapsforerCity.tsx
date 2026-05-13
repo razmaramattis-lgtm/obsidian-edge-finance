@@ -269,6 +269,101 @@ const RegnskapsforerCity = () => {
           </div>
         </section>
 
+        {/* Tjenester for byen */}
+        <section className="py-16 md:py-24 border-b border-border/10">
+          <div className="container mx-auto px-5 md:px-6">
+            <div className="max-w-3xl mb-10">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Tjenester</p>
+              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
+                Alt en regnskapsfører i {city.name} bør kunne — under ett tak
+              </h2>
+              <p className="text-foreground/65 font-light text-lg leading-relaxed">
+                Du slipper å sjonglere flere leverandører. Avargo dekker hele økonomifunksjonen for små og mellomstore bedrifter i {city.name} og {city.region}.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { t: `Løpende regnskap i ${city.name}`, d: "Bilagsføring, avstemming, rapporter og innsikt — månedlig oppdatert og tilgjengelig digitalt." },
+                { t: "Lønn og A-melding", d: `Vi kjører lønn for ansatte i ${city.name}-bedriften din, beregner trekk og sender A-melding hver måned.` },
+                { t: "MVA og merverdiavgift", d: "Toårige eller tomånedlige terminer — vi rapporterer og betaler i tide, hver gang." },
+                { t: "Årsregnskap og ligning", d: "Komplett årsoppgjør, signert av autorisert regnskapsfører og innsendt til Brønnøysund og Skatteetaten." },
+                { t: "Skatterådgivning", d: "Optimalisering av lønn vs. utbytte, skattefradrag, SkatteFUNN og pensjon — løpende, uten timepris." },
+                { t: "Oppstart av AS / ENK", d: `Hjelper deg å starte aksjeselskap eller enkeltpersonforetak i ${city.name} — fra registrering til første faktura.` },
+                { t: "CFO-tjenester", d: "Likviditetsstyring, budsjett, rapportering til styret og bank — som en intern økonomisjef, men leid inn." },
+                { t: "Bytte regnskapsfører", d: `Vi tar over hele regnskapet ditt fra eksisterende byrå i ${city.name} — kostnadsfritt og sømløst.` },
+                { t: "HR og personalhåndbok", d: "Arbeidsavtaler, HMS-håndbok, sykefraværsoppfølging og personalsystem — inkludert i HR-pakken." },
+              ].map((s) => (
+                <div key={s.t} className="p-5 rounded-2xl border border-border/15 bg-card/20 hover:border-primary/30 transition-colors">
+                  <h3 className="font-medium text-foreground mb-2 text-[15px]">{s.t}</h3>
+                  <p className="text-foreground/55 text-[13px] leading-relaxed font-light">{s.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Pris */}
+        <section className="py-16 md:py-24 border-b border-border/10">
+          <div className="container mx-auto px-5 md:px-6">
+            <div className="max-w-4xl">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Pris</p>
+              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
+                Hva koster en regnskapsfører i {city.name}?
+              </h2>
+              <p className="text-foreground/65 font-light text-lg leading-relaxed mb-10 max-w-2xl">
+                Avargo har fast månedspris — ingen timeforing, ingen overraskelser. Du vet hva du betaler før du begynner. Prisene gjelder hele {city.region}.
+              </p>
+              <div className="grid md:grid-cols-3 gap-4">
+                {[
+                  { name: "Oppstart", price: "fra 1 590 kr", per: "/mnd", desc: `Nystartet ENK eller AS i ${city.name} med få bilag.` },
+                  { name: "Vekst", price: "fra 2 990 kr", per: "/mnd", desc: "Aktive AS med MVA, lønn til 1–3 ansatte og rapportering." },
+                  { name: "Pro", price: "fra 5 490 kr", per: "/mnd", desc: "Etablerte selskaper med større volum, CFO-rådgivning og styrearbeid." },
+                ].map((p) => (
+                  <div key={p.name} className="p-6 rounded-2xl border border-border/20 bg-card/30">
+                    <p className="text-[11px] tracking-[0.25em] uppercase text-primary/70 mb-3">{p.name}</p>
+                    <p className="font-serif text-3xl text-foreground">{p.price}<span className="text-base text-foreground/50 font-light">{p.per}</span></p>
+                    <p className="mt-3 text-foreground/60 text-[14px] font-light leading-relaxed">{p.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <Link to="/priser" className="mt-8 inline-flex items-center gap-2 text-primary text-[14px] hover:underline">
+                Se full prisoversikt <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Bytteprosess */}
+        <section className="py-16 md:py-24 border-b border-border/10">
+          <div className="container mx-auto px-5 md:px-6">
+            <div className="max-w-3xl">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Bytte regnskapsfører</p>
+              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
+                Slik bytter du til Avargo i {city.name}
+              </h2>
+              <p className="text-foreground/65 font-light text-lg leading-relaxed mb-10">
+                Mange {city.name}-bedrifter sitter fast hos et byrå som er for dyrt, for tregt eller for lite tilgjengelig. Å bytte er enklere enn du tror — og du betaler ingenting før alt er på plass.
+              </p>
+              <ol className="space-y-5">
+                {[
+                  { t: "1. Uforpliktende samtale", d: "Vi ringer deg innen 24 timer, kartlegger behov og gir et fast pristilbud — gratis." },
+                  { t: "2. Vi tar kontakt med tidligere byrå", d: `Du slipper de ubehagelige meldingene. Vi henter inn data, saldobalanse og åpne poster fra eksisterende regnskapsfører i ${city.name}.` },
+                  { t: "3. Oppsett og overgang", d: "Vi setter opp regnskapssystem (Tripletex, Fiken, Conta osv.), bankkobling og lønnssystem. Tar 1–2 uker." },
+                  { t: "4. Du er over — og betaler først nå", d: "Første faktura kommer den måneden vi tar over. Ingen oppsett-kostnad, ingen bindingstid." },
+                ].map((step) => (
+                  <li key={step.t} className="flex gap-5 p-5 rounded-2xl border border-border/15 bg-card/20">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 shrink-0" />
+                    <div>
+                      <p className="font-medium text-foreground mb-1">{step.t}</p>
+                      <p className="text-foreground/60 text-[14px] font-light leading-relaxed">{step.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="py-16 md:py-24 border-b border-border/10">
           <div className="container mx-auto px-5 md:px-6">
