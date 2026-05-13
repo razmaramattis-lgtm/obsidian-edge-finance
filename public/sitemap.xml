@@ -16,6 +16,7 @@
   <url><loc>https://avargo.no/ressurser/regnskapsord</loc><lastmod>2026-02-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/personvern</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://avargo.no/vilkar</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://avargo.no/logg-inn</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
   <!-- Tjenester -->
   <url><loc>https://avargo.no/tjenester/regnskapsforer</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -60,7 +61,6 @@
   <url><loc>https://avargo.no/bransjer/industri</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/renhold</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/kultur</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://avargo.no/bransjer/sport</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/utdanning</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/juridisk</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/bransjer/arkitektur</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -118,7 +118,6 @@
   <url><loc>https://avargo.no/tjenester/kurs/apnings--og-avslutningsbalanse</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/arbeidsgiveravgift-diff-satser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/arbeidsmiljolovens-krav</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/automatisering-med-make/zapier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/automatisert-kundeservice</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/avvikling-og-sletting-av-selskap</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/baerekraft-og-esg-rapportering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -183,7 +182,6 @@
   <url><loc>https://avargo.no/tjenester/kurs/maskinlaering-for-beslutningstaking</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/medarbeidersamtalen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/merkevarebygging-og-posisjonering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/meta-annonser-facebook/instagram</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/mva-meldingen-termin-og-innlevering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/mva-pa-fast-eiendom</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/mva-registrering-og-grenser</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -217,7 +215,6 @@
   <url><loc>https://avargo.no/tjenester/kurs/seo-grunnleggende</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/shopify-grunnkurs</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skatt-ved-salg-av-aksjer</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/tjenester/kurs/skattefri-omorganisering-fisjon/fusjon</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skattemelding-for-selskap-rf-1028</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skattemessige-avskrivninger-saldogrupper</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/tjenester/kurs/skatteplanlegging-for-eier</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -796,7 +793,6 @@
   <url><loc>https://avargo.no/regnskap/priser</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://avargo.no/regnskap/kontakt</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/regnskap/om-oss</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/regnskap/metoden</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/regnskap/faq</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/regnskap/nyheter</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://avargo.no/regnskap/ressurser</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -845,7 +841,6 @@
   <url><loc>https://avargo.no/regnskap/bransjer/industri</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/regnskap/bransjer/renhold</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/regnskap/bransjer/kultur</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://avargo.no/regnskap/bransjer/sport</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/regnskap/bransjer/utdanning</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/regnskap/bransjer/juridisk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://avargo.no/regnskap/bransjer/arkitektur</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
