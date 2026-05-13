@@ -219,7 +219,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${sectionAccent}, transparent)` }} />
         )}
 
-        <div className="container mx-auto flex items-center justify-between h-[60px] md:h-[80px] px-4 md:px-6">
+        <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[80px] px-4 md:px-6" style={{ paddingTop: "env(safe-area-inset-top)" }}>
           {/* Logo */}
           {isInSection && section ? (
             <span className="font-heading text-xl md:text-2xl tracking-wide flex items-baseline gap-1">
@@ -234,7 +234,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           )}
 
           {/* ── Desktop nav ─────────────────────────── */}
-          <div className="hidden md:flex items-center gap-1 lg:gap-1.5">
+          <div className="hidden lg:flex items-center gap-1 lg:gap-1.5">
             <NavButton to="/" label="Hjem" isActive={location.pathname === "/"} />
             
 
@@ -246,7 +246,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
               <DropdownPanel
                 open={tjenesterOpen}
-                className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl"
+                className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl"
               >
                 {isInSection && section && (
                   <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent 10%, ${sectionAccent} 50%, transparent 90%)` }} />
@@ -375,7 +375,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <button className={dropBtnClass(bransjerOpen)}>
                   Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={bransjerOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                <DropdownPanel open={bransjerOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
                   <div className="container mx-auto px-6 py-8">
                     <div className="mb-6">
                       <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Bransjeekspertise</p>
@@ -439,7 +439,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <button className={dropBtnClass(selskapetOpen)}>
                 Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
               </button>
-              <DropdownPanel open={selskapetOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+              <DropdownPanel open={selskapetOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
                 <div className="container mx-auto px-6 py-8">
                   <div className="mb-6">
                     <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Avargo</p>
@@ -475,7 +475,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <button className={dropBtnClass(ressurserOpen)}>
                   Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
                 </button>
-                <DropdownPanel open={ressurserOpen} className="fixed top-[72px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
+                <DropdownPanel open={ressurserOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
                   <div className="container mx-auto px-6 py-8">
                     <div className="mb-6">
                       <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Kunnskapssenter</p>
@@ -520,24 +520,25 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
 
-          {/* Mobile: login button + hamburger */}
-          <div className="md:hidden flex items-center gap-2">
-            <Link to="/logg-inn" className="px-3 py-1.5 text-[11px] font-medium rounded-lg border border-primary/30 text-primary bg-primary/5 active:bg-primary/10 transition-colors">
+          {/* Mobile/tablet: login button + hamburger */}
+          <div className="lg:hidden flex items-center gap-2">
+            <Link to="/logg-inn" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-xl border border-primary/30 text-primary bg-primary/5 active:bg-primary/15 transition-colors flex items-center">
               Logg inn
             </Link>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-2.5 -mr-2 rounded-xl active:bg-muted/40 transition-colors" aria-label="Åpne meny">
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-3 -mr-2 rounded-xl active:bg-muted/40 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={menuOpen ? "Lukk meny" : "Åpne meny"} aria-expanded={menuOpen}>
+              {menuOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
           </div>
         </div>
 
-        {/* ── Mobile menu ──────────────────────────── */}
+        {/* ── Mobile/tablet menu ──────────────────── */}
         <div
-          className={`md:hidden border-t border-border/15 bg-background backdrop-blur-2xl overflow-y-auto transition-all duration-300 ease-out ${
+          className={`lg:hidden border-t border-border/15 bg-background backdrop-blur-2xl overflow-y-auto transition-all duration-300 ease-out ${
             menuOpen ? "max-h-[calc(100dvh-64px)] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
           }`}
+          style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         >
-          <div className="flex flex-col p-5 pb-8 gap-0.5">
+          <div className="flex flex-col p-5 pb-10 gap-0.5">
             {isInSection && section && (
               <div className="mb-4 p-3 rounded-xl border" style={{ borderColor: accentBg(section.id, 0.3), backgroundColor: accentBg(section.id, 0.06) }}>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-1">Du er i</p>
@@ -550,7 +551,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 
             {/* Mobile Tjenester */}
-            <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+            <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
               Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${mobileTjenesterOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -590,7 +591,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Mobile Bransjer */}
             {isInSection && section && (
               <>
-                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
                   Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -624,7 +625,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Mobile Selskapet — only on hub */}
             {!isInSection && (
               <>
-                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between py-3.5 text-[15px] text-foreground/90 border-b border-border/15 tracking-wide w-full">
+                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
                   Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
@@ -671,7 +672,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* CTA */}
-            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-4 px-5 py-3.5 text-[15px] font-medium bg-primary text-primary-foreground rounded-2xl text-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-primary text-primary-foreground rounded-2xl text-center flex items-center justify-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
               Få tilbud
             </Link>
           </div>
@@ -682,7 +683,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* ── Breadcrumbs ────────────────────────────── */}
-      <div className="pt-16 md:pt-[72px]">
+      <div className="pt-16 lg:pt-[80px]">
         <Breadcrumbs />
       </div>
 
@@ -794,7 +795,7 @@ const NavButton = ({ to, label, isActive }: { to: string; label: string; isActiv
 );
 
 const MobileNavLink = ({ to, label, onClick }: { to: string; label: string; onClick: () => void }) => (
-  <Link to={to} onClick={onClick} className="py-3.5 text-[15px] text-foreground/90 active:text-foreground transition-colors border-b border-border/15 tracking-wide">
+  <Link to={to} onClick={onClick} className="flex items-center min-h-[52px] py-4 text-[15px] text-foreground/90 active:text-foreground active:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors border-b border-border/15 tracking-wide">
     {label}
   </Link>
 );
