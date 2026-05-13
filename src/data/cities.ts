@@ -281,7 +281,7 @@ export const CITIES: City[] = [
     population: "28 000",
     intro: "Lillehammer-bedrifter — fra reiseliv til kunnskapsindustri — bruker Avargo som ekstern regnskapsavdeling.",
     nearby: ["Gjøvik", "Øyer"],
-    industries: ["Reiseliv", "Handel", "Tjenesteyting", "Sport"],
+    industries: ["Reiseliv", "Handel", "Tjenesteyting", "Kultur"],
   },
   {
     slug: "arendal",
