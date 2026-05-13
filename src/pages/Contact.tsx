@@ -635,6 +635,16 @@ const Contact = () => {
         </div>
       </div>
     </section>
+
+    {!submitted && (
+      <section className="py-16 md:py-24 border-t border-border/15">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-3xl mx-auto">
+            <ContactObjections />
+          </div>
+        </div>
+      </section>
+    )}
     </>
   );
 };
