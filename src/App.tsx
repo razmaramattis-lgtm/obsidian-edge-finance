@@ -42,6 +42,14 @@ const Login = lazy(() => import("./pages/Login"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeDashboard = lazy(() => import("./pages/kunde/KundeDashboard"));
 
+// Lokale by-sider + guider (SEO)
+const RegnskapsforerCity = lazy(() => import("./pages/lokalt/RegnskapsforerCity"));
+const RegnskapsforerSteder = lazy(() => import("./pages/lokalt/RegnskapsforerSteder"));
+const GuidePris = lazy(() => import("./pages/guider/RegnskapsforerPris"));
+const GuideBytte = lazy(() => import("./pages/guider/BytteRegnskapsforer"));
+const GuideFastpris = lazy(() => import("./pages/guider/FastprisRegnskap"));
+const GuideAS = lazy(() => import("./pages/guider/RegnskapAS"));
+
 // Section pages
 const SectionHome = lazy(() => import("./pages/sections/SectionHome"));
 const SectionTjenester = lazy(() => import("./pages/sections/SectionTjenester"));
@@ -431,6 +439,17 @@ const App = () => (
                             <Route path="/vilkar" element={<Vilkar />} />
                             <Route path="/karriere" element={<Navigate to="/karriere" replace />} />
                             <Route path="/karriere/:slug" element={<Navigate to="/karriere" replace />} />
+
+                            {/* Lokale SEO-sider */}
+                            <Route path="/regnskapsforer-i" element={<RegnskapsforerSteder />} />
+                            <Route path="/regnskapsforer-i/:city" element={<RegnskapsforerCity />} />
+
+                            {/* Guider (SEO) */}
+                            <Route path="/guider/regnskapsforer-pris" element={<GuidePris />} />
+                            <Route path="/guider/bytte-regnskapsforer" element={<GuideBytte />} />
+                            <Route path="/guider/fastpris-regnskap" element={<GuideFastpris />} />
+                            <Route path="/guider/regnskap-for-as" element={<GuideAS />} />
+
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>

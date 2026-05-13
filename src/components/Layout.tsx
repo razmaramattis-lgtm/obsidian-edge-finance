@@ -717,6 +717,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/kurs" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Avargo Kurs</Link>
                   <Link to="/ressurser/kontohjelp" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontohjelp</Link>
                   <Link to="/ressurser/skattekalender" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Skattekalender</Link>
+                  <Link to="/regnskapsforer-i" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Regnskapsfører i din by</Link>
+                  <Link to="/guider/regnskapsforer-pris" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Pris-guide</Link>
                   <Link to={sp("/bransjer")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Bransjer</Link>
                 </div>
               </div>
