@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, FileText, Briefcase, Building2, DollarSign,
   BookOpen, Archive, Shield, FolderOpen, Handshake,
-  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail, Smartphone, Megaphone
+  Users, MessageSquare, Settings, LogOut, ChevronRight, ChevronDown, Menu, X, Sparkles, GraduationCap, CalendarDays, Inbox, UserPlus, FileCheck, Bell, GripVertical, RotateCcw, ArrowRight, Check, Trash2, AlertTriangle, ExternalLink, Mail, Smartphone, Megaphone, BarChart3
 } from "lucide-react";
 
 // Sub-panels
@@ -50,9 +50,10 @@ import SmsCenterPanel from "@/components/admin/SmsCenterPanel";
 import AuditLogPanel from "@/components/admin/AuditLogPanel";
 import MarketingPanel from "@/components/admin/MarketingPanel";
 import DigitalJobPanel from "@/components/admin/DigitalJobPanel";
+import ConversionInsightsPanel from "@/components/admin/ConversionInsightsPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing" | "digital_job";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing" | "digital_job" | "conversion_insights";
 
 interface NavItem {
   id: Panel;
@@ -75,6 +76,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Kunder
   { id: "contact_submissions", label: "Henvendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Kunder" },
+  { id: "conversion_insights", label: "Konvertering & kilder", icon: BarChart3, adminOnly: true, employeeHidden: true, group: "Kunder" },
   { id: "employee_invitations", label: "Ansattinvitasjoner", icon: UserPlus, adminOnly: true, employeeHidden: true, group: "Kunder" },
   { id: "advisor_requests", label: "Rådgiverforespørsler", icon: Users, adminOnly: true, employeeHidden: true, group: "Kunder" },
 
@@ -296,6 +298,7 @@ const AdminDashboard = () => {
       case "account_entries": return <AccountEntriesPanel initialSearch={panelContext?.search} />;
       case "glossary": return <GlossaryPanel />;
       case "contact_submissions": return <ContactSubmissionsPanel onStatusChange={refreshNotifications} />;
+      case "conversion_insights": return <ConversionInsightsPanel />;
       case "account_feedback": return <AccountFeedbackPanel onStatusChange={refreshNotifications} />;
       case "pending_tasks": return <PendingTasksPanel onStatusChange={refreshNotifications} onNavigate={(p, ctx) => { setPanelContext(ctx || null); setActivePanel(p as Panel); }} />;
       case "job_listings": return <JobListingsPanel />;

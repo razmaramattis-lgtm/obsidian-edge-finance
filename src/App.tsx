@@ -19,6 +19,7 @@ import Hub from "./pages/Hub";
 
 // Lazy-load everything else
 const Pricing = lazy(() => import("./pages/Pricing"));
+const PrisguidePrint = lazy(() => import("./pages/PrisguidePrint"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 
@@ -245,6 +246,7 @@ const App = () => (
 
                   {/* Gateway app (no layout, standalone) */}
                   <Route path="/gateway" element={<Gateway />} />
+                  <Route path="/prisguide" element={<PrisguidePrint />} />
 
                   {/* Workspace route (authenticated, no Layout) */}
                   <Route path="/workspace" element={<ProtectedRoute><WorkspacePage /></ProtectedRoute>} />
