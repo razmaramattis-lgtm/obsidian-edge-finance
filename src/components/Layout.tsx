@@ -3,6 +3,7 @@ import { useState, useRef, useMemo } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
+import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import { sectionTjenesterGroups } from "@/config/sectionContent";
