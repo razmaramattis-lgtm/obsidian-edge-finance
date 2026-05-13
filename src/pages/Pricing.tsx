@@ -29,6 +29,7 @@ const Pricing = () => {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [quickFormPackage, setQuickFormPackage] = useState<string | null>(null);
+  const [leadMagnetOpen, setLeadMagnetOpen] = useState(false);
   const { section, isInSection } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
