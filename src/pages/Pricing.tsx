@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
 import { sectionPricingCopy } from "@/config/sectionPricing";
+import PricingQuickForm from "@/components/PricingQuickForm";
 
 interface PricingPlan {
   id: string;
