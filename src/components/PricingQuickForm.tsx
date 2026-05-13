@@ -16,13 +16,14 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [company, setCompany] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) {
-      toast.error("Navn og e-post er påkrevd");
+    if (!name.trim() || !email.trim() || !company.trim()) {
+      toast.error("Navn, selskap og e-post er påkrevd");
       return;
     }
     setLoading(true);
@@ -30,6 +31,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
       const { error } = await supabase.functions.invoke("contact-submit", {
         body: {
           contact_person: name,
+          company_name: company,
           email,
           phone: phone || null,
           message: `Ønsker tilbud på pakke: ${packageName}`,
@@ -49,7 +51,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) { setDone(false); setName(""); setEmail(""); setPhone(""); } }}>
+    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) { setDone(false); setName(""); setEmail(""); setPhone(""); setCompany(""); } }}>
       <DialogContent className="max-w-md glass border-border/30">
         {done ? (
           <div className="py-6 text-center space-y-4">
@@ -64,13 +66,14 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
             <DialogHeader>
               <DialogTitle className="font-heading text-2xl">Få tilbud på {packageName}</DialogTitle>
               <DialogDescription className="font-light">
-                Kun navn og e-post — vi tar kontakt innen 24 timer. Helt uforpliktende.
+                Tre felt — vi tar kontakt innen 24 timer. Helt uforpliktende.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-3 mt-2">
-              <Input placeholder="Navn *" value={name} onChange={(e) => setName(e.target.value)} required />
-              <Input type="email" placeholder="E-post *" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              <Input type="tel" placeholder="Telefon (valgfritt)" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Input placeholder="Navn *" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} />
+              <Input placeholder="Selskap *" value={company} onChange={(e) => setCompany(e.target.value)} required maxLength={150} />
+              <Input type="email" placeholder="E-post *" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} />
+              <Input type="tel" placeholder="Telefon (valgfritt)" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} />
               <Button type="submit" disabled={loading} className="w-full glow-rose group">
                 {loading ? "Sender…" : (<>Send forespørsel <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" /></>)}
               </Button>
