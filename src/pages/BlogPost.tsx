@@ -106,7 +106,40 @@ const BlogPost = () => {
           dateModified: post.updated_at,
           author: { "@type": "Organization", name: "Avargo" },
           publisher: { "@type": "Organization", name: "Avargo" },
+          mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
         })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Hjem", item: "https://avargo.no/" },
+            { "@type": "ListItem", position: 2, name: "Nyheter", item: "https://avargo.no/nyheter" },
+            { "@type": "ListItem", position: 3, name: post.title, item: postUrl },
+          ],
+        })}</script>
+        {(() => {
+          const html = post.content || "";
+          const faqs: { q: string; a: string }[] = [];
+          const re = /<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi;
+          let m: RegExpExecArray | null;
+          while ((m = re.exec(html)) !== null) {
+            const q = m[1].replace(/<[^>]+>/g, "").trim();
+            const a = m[2].replace(/<[^>]+>/g, "").trim();
+            if (q.endsWith("?") && a.length > 20) faqs.push({ q, a });
+          }
+          if (faqs.length < 2) return null;
+          return (
+            <script type="application/ld+json">{JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map(f => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            })}</script>
+          );
+        })()}
       </Helmet>
 
       {/* Hero Image — full-bleed newspaper style */}
