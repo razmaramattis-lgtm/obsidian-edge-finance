@@ -286,6 +286,9 @@ const Hub = () => {
         </div>
       </section>
 
+      {/* ═══ COMPARISON ═══ */}
+      <ComparisonSection />
+
       {/* ═══ CTA ═══ */}
       <section className="py-16 md:py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/3 via-primary/5 to-transparent" />
