@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Cl
 import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
+import ComparisonSection from "@/components/ComparisonSection";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
@@ -284,6 +285,9 @@ const Hub = () => {
           </div>
         </div>
       </section>
+
+      {/* ═══ COMPARISON ═══ */}
+      <ComparisonSection />
 
       {/* ═══ CTA ═══ */}
       <section className="py-16 md:py-32 relative">
