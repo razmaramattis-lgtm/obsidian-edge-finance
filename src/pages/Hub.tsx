@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Award } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
