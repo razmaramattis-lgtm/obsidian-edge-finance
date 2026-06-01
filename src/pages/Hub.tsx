@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Award } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
@@ -97,7 +97,7 @@ const Hub = () => {
                 Få et uforpliktende tilbud <ArrowRight size={14} />
               </Link>
               <Link
-                to="/regnskap"
+                to="/tjenester"
                 className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
               >
                 Se våre tjenester
@@ -118,12 +118,11 @@ const Hub = () => {
       {/* ═══ TRUST BAR ═══ */}
       <section className="py-8 md:py-12 border-y border-border/10">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
               { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
               { icon: Clock, label: "Svar innen 24 timer", sub: "Garantert responstid" },
               { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
-              { icon: Award, label: "ISO 27001-prinsipper", sub: "Trygg databehandling" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
                 <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center shrink-0">
