@@ -11,7 +11,6 @@ import {
   Megaphone,
   ShoppingCart,
   Bot,
-  LayoutTemplate,
   Briefcase,
   ChevronRight,
   UserPlus,
@@ -20,7 +19,6 @@ import {
   Code,
   Monitor,
   Cpu,
-  Lightbulb,
   BarChart3,
   Receipt,
   PieChart,
@@ -44,56 +42,112 @@ const categories = [
         href: "/tjenester/regnskapsforer",
         title: "Din egen regnskapsfører",
         desc: "Du får én fast person som tar seg av regnskapet ditt. Ingen køer, ingen nye ansikter hver gang. En person som kjenner bedriften din og følger opp uten at du trenger å be om det.",
-        sub: ["Bokføring og moms", "Kvitteringer og bilag", "Aksjonæroppgaver", "Hjelp ved revisjon"],
+        sub: [
+          "Løpende bokføring av alle bilag",
+          "MVA-rapportering og innlevering",
+          "Årsregnskap og næringsoppgave",
+          "Skattemelding for selskap og eier",
+          "Aksjonærregisteroppgave (RF-1086)",
+          "Bankintegrasjon og automatisert bilagsflyt",
+        ],
       },
       {
         icon: Receipt,
         href: "/tjenester/lonn",
         title: "Lønnskjøring",
         desc: "Vi sørger for at de ansatte får lønnen sin til rett tid, hver eneste måned. Feriepenger, sykepenger og alt som skal rapporteres til det offentlige — vi tar det.",
-        sub: ["Lønn og innrapportering", "Feriepenger og sykepenger", "Reiseregninger og utlegg", "Rapportering til NAV og Skatteetaten"],
+        sub: [
+          "Lønnskjøring hver måned",
+          "A-melding til Skatteetaten",
+          "Feriepenger og feriepengeberegning",
+          "Sykepenger og refusjoner fra NAV",
+          "Reiseregninger og utlegg",
+          "Årsavslutning og lønnsoppsummering",
+        ],
       },
       {
         icon: PieChart,
         href: "/tjenester/arsregnskap",
         title: "Årsoppgjør og skattemelding",
         desc: "Vi gjør ferdig årsregnskapet og skattemeldingen for deg — uten stress. Alt leveres innen fristen, slik at du slipper å tenke på det.",
-        sub: ["Ferdig årsregnskap", "Skattemelding for selskapet", "Skattemelding for deg som eier", "All dokumentasjon på plass"],
+        sub: [
+          "Komplett årsregnskap",
+          "Skattemelding for selskap",
+          "Skattemelding for eiere",
+          "Aksjonærregisteroppgave",
+          "Avstemming av balanseposter",
+          "Revisjonstøtte ved behov",
+        ],
       },
       {
         icon: Briefcase,
         href: "/tjenester/cfo",
         title: "Økonomisk rådgiver",
         desc: "En erfaren rådgiver som hjelper deg med de store beslutningene — budsjett, vekstplaner, investorer og hva du bør gjøre videre. Uten at du trenger å ansette noen på heltid.",
-        sub: ["Hjelp med budsjett og planer", "Snakke med investorer og styret", "Finne ut hva som lønner seg", "Planlegge salg eller sammenslåing"],
+        sub: [
+          "Budsjett og langsiktige planer",
+          "Kommunikasjon med investorer og styret",
+          "Økonomiske modeller og prognoser",
+          "Rapporter til styret og eiere",
+          "Vurdering av risiko og internkontroll",
+          "Støtte ved store beslutninger",
+        ],
       },
       {
         icon: Receipt,
         href: "/tjenester/fakturering",
         title: "Fakturering og oppfølging",
         desc: "Vi sender ut fakturaene dine, følger opp de som ikke betaler, og sørger for at pengene faktisk kommer inn på konto. Du slipper å mase på kundene dine.",
-        sub: ["Sending av fakturaer", "Purringer og påminnelser", "Oversikt over hva som er utestående", "Kobling mot regnskapet"],
+        sub: [
+          "Utgående fakturering",
+          "Automatiske purringer",
+          "Aldersfordeling og oppfølging",
+          "Integrasjon med regnskapssystem",
+          "Kredittvurdering av nye kunder",
+          "Rapportering på utestående",
+        ],
       },
       {
         icon: TrendingUp,
         href: "/tjenester/skatteplanlegging",
         title: "Skatterådgivning",
         desc: "Vi hjelper deg å betale riktig skatt — ikke for mye, ikke for lite. Vi ser på helheten gjennom hele året, ikke bare når skattemeldingen skal inn.",
-        sub: ["Lønn eller utbytte — hva lønner seg?", "Finne fradrag du har krav på", "Strukturere selskapet smart", "Planlegge formue og verdier"],
+        sub: [
+          "Lønn vs. utbytte-vurdering",
+          "Fradragsoptimalisering",
+          "Selskapsstrukturering",
+          "Planlegging av utbyttepolitikk",
+          "Generasjonsskifte og eierbytte",
+          "Løpende skatterådgivning",
+        ],
       },
       {
         icon: BarChart3,
         href: "/tjenester/1-1-regnskap",
         title: "Personlig regnskapsgjennomgang",
         desc: "Book et møte med en rådgiver som går gjennom tallene dine sammen med deg. Du får konkrete tips og en plan for hva du bør gjøre videre.",
-        sub: ["Gjennomgang av regnskapet", "Se hva du tjener og hva du bruker", "Tips for å betale mindre skatt", "Plan for neste steg"],
+        sub: [
+          "Gjennomgang av resultat, balanse og nøkkeltall",
+          "En hel time dedikert til din bedrift",
+          "Konkrete anbefalinger og handlingsplan",
+          "Second opinion på regnskapet",
+          "Gjennomgang av årsoppgjør og skattemelding",
+          "Strategisk økonomisk rådgivning",
+        ],
       },
       {
         icon: Monitor,
         href: "/tjenester/dashboard",
         title: "Avargo Dashboard",
         desc: "Et kommende verktøy på Avargo.no der du kan se økonomien din, laste ned rapporter og snakke direkte med regnskapsføreren — alt på ett sted. Kommer august 2026.",
-        sub: ["Se økonomien i sanntid", "Rapporter og nøkkeltall", "Snakke direkte med rådgiveren din", "Dele og signere dokumenter"],
+        sub: [
+          "Sanntidsoversikt over økonomi",
+          "Rapporter og nøkkeltall",
+          "Direkte kommunikasjon med rådgiver",
+          "Dokumentdeling og signering",
+          "Varsler og påminnelser",
+          "Sikker innlogging og tilgangsstyring",
+        ],
       },
     ],
   },
@@ -111,28 +165,56 @@ const categories = [
         href: "/tjenester/hr-og-lonn",
         title: "Lønn og personalarbeid",
         desc: "Vi kjører lønn, holder styr på feriepenger og sykepenger, og rapporterer til det offentlige. Alt stemmer — hver eneste måned.",
-        sub: ["Lønnskjøring og innrapportering", "Feriepenger og sykepenger", "Reiseregninger og utlegg", "Rapportering til NAV og Skatteetaten"],
+        sub: [
+          "Lønnskjøring og innrapportering",
+          "Arbeidskontrakter og personalregler",
+          "Arbeidsmiljø og sikkerhetsdokumentasjon",
+          "Oppfølging av sykefravær",
+          "Personalhåndbok og retningslinjer",
+          "Rådgivning i personalsaker",
+        ],
       },
       {
         icon: UserPlus,
         href: "/tjenester/ansettelse",
         title: "Ansettelse og rekruttering",
         desc: "Vi hjelper deg med hele prosessen — fra å skrive stillingsannonsen til å lage kontrakt og gi den nye ansatte en god start. Så du finner riktig person uten å bruke unødvendig tid.",
-        sub: ["Stillingsannonse og utvelgelse", "Arbeidskontrakt og vilkår", "God oppstart for nye ansatte", "Oppfølging i prøvetiden"],
+        sub: [
+          "Stillingsutlysning og kravspesifikasjon",
+          "Screening og utvelgelse",
+          "Arbeidskontrakter og betingelser",
+          "Strukturert onboarding",
+          "Prøvetidsoppfølging",
+          "Lønnsforhandling og rådgivning",
+        ],
       },
       {
         icon: FileText,
         href: "/tjenester/personalhandbok",
         title: "Personalhåndbok og regler",
         desc: "Vi lager en komplett håndbok med regler og retningslinjer for bedriften din — alt fra ferie til varsling. Så alle vet hva som gjelder.",
-        sub: ["Tilpasset personalhåndbok", "Regler for arbeidsplassen", "Rutiner for varsling", "Permisjoner og fravær"],
+        sub: [
+          "Tilpasset personalhåndbok",
+          "Arbeidsreglement",
+          "Varslingsrutiner",
+          "Permisjonsregler og fravær",
+          "IT- og sikkerhetspolicy",
+          "Løpende oppdatering ved lovendringer",
+        ],
       },
       {
         icon: Scale,
         href: "/tjenester/arbeidsrett",
         title: "Arbeidsrett og arbeidsmiljø",
         desc: "Som arbeidsgiver har du en del krav du må oppfylle. Vi hjelper deg med dokumentasjon, oppfølging av sykefravær og rådgivning når det blir vanskelig.",
-        sub: ["Arbeidsmiljø og sikkerhet", "Oppfølging av sykefravær", "Oppsigelser og sluttavtaler", "Rådgivning i vanskelige saker"],
+        sub: [
+          "HMS-dokumentasjon og internkontroll",
+          "Risikovurdering av arbeidsmiljø",
+          "Oppfølging av sykefravær",
+          "Sluttavtaler og oppsigelser",
+          "Varslingshåndtering",
+          "Arbeidstidsordninger og unntak",
+        ],
       },
     ],
   },
@@ -150,28 +232,56 @@ const categories = [
         href: "/tjenester/seo",
         title: "Bli funnet på Google",
         desc: "Vi sørger for at bedriften din dukker opp når folk søker etter det du tilbyr. Uten at du betaler for hvert klikk — det handler om å bygge synlighet over tid.",
-        sub: ["Gjøre nettsiden søkevennlig", "Bli synlig lokalt på Google", "Skrive innhold folk søker etter", "Se hva konkurrentene gjør"],
+        sub: [
+          "Teknisk søkemotoroptimalisering",
+          "Søkeordanalyse for din bransje",
+          "Innholdsproduksjon og -forbedring",
+          "Lokal synlighet på Google",
+          "Lenkebygging og troverdighet",
+          "Månedlig rapport med resultater",
+        ],
       },
       {
         icon: Megaphone,
         href: "/tjenester/meta-annonser",
         title: "Annonser på Facebook og Instagram",
         desc: "Vi lager og styrer annonser som treffer de riktige menneskene — de som faktisk er interessert i det du selger. Du får flere henvendelser og mer salg.",
-        sub: ["Finne riktig målgruppe", "Lage annonser som fungerer", "Vise annonser til folk som allerede har vist interesse", "Måle hva som gir best resultat"],
+        sub: [
+          "Målgruppedefinisjon og segmentering",
+          "Annonser med bilder, video eller karuseller",
+          "A/B-testing av annonser",
+          "Remarketing mot varme leads",
+          "Oppsett av konverteringssporing",
+          "Månedlig rapport med resultater",
+        ],
       },
       {
         icon: Globe,
         href: "/tjenester/google-ads",
         title: "Annonser på Google",
         desc: "Vis deg øverst på Google akkurat når noen søker etter det du tilbyr. Vi styrer budsjettet og sørger for at hver krone gir mest mulig tilbake.",
-        sub: ["Søkeannonser", "Annonser som vises flere steder", "Lokale annonser", "Holde styr på budsjettet"],
+        sub: [
+          "Søkeannonser på Google",
+          "Displayannonser på nettsider og apper",
+          "Lokale annonser på Google Maps",
+          "Søkeordanalyse og budstrategi",
+          "Måling av faktiske resultater",
+          "Månedlig rapport med anbefalinger",
+        ],
       },
       {
         icon: ShoppingCart,
         href: "/tjenester/nettbutikk",
         title: "Nettbutikk",
         desc: "Vi bygger en nettbutikk som gjør det enkelt for kundene å handle hos deg. Fin å se på, enkel å bruke — og klar til å vokse med bedriften din.",
-        sub: ["Shopify og WooCommerce", "Produktsider som selger", "Betaling og frakt", "Lager og ordrehåndtering"],
+        sub: [
+          "Nettbutikk med Shopify eller WooCommerce",
+          "Produktsider tilpasset salg",
+          "Enkel og trygg betalingsløsning",
+          "Kobling mot lager og regnskapssystem",
+          "Mobilvennlig design",
+          "Automatiske e-poster ved avbrutte kjøp",
+        ],
       },
     ],
   },
@@ -189,28 +299,56 @@ const categories = [
         href: "/tjenester/nettsider",
         title: "Nettsider",
         desc: "Moderne nettsider som ser bra ut, laster raskt og gjør det enkelt for kundene dine å ta kontakt eller kjøpe. Vi bygger nettsider som faktisk gir resultater.",
-        sub: ["Ny nettside fra bunnen av", "Oppgradering av gammel nettside", "Sider som gir flere kunder", "Fungerer perfekt på mobil"],
+        sub: [
+          "Ny nettside fra bunnen av",
+          "Fungerer på mobil, nettbrett og PC",
+          "Sider som konverterer besøkende",
+          "Enkelt å oppdatere innhold selv",
+          "Bygget for å bli funnet på Google",
+          "Løpende vedlikehold inkludert",
+        ],
       },
       {
         icon: Bot,
         href: "/tjenester/chatbot",
         title: "Chatbot for kundeservice",
         desc: "En smart chatbot som svarer kundene dine hele døgnet. Den tar seg av de vanlige spørsmålene, slik at du og teamet ditt slipper — uten at kvaliteten lider.",
-        sub: ["Chatbot tilpasset din bedrift", "Følger opp interesserte kunder", "Kobles til e-post og andre verktøy", "Kundene finner svar selv"],
+        sub: [
+          "Skreddersydd AI-chatbot",
+          "Trent på din bedrifts egne data",
+          "Automatisk leadoppfølging",
+          "Integrasjon med CRM og e-post",
+          "Flerspråklig støtte",
+          "Rapportering og løpende optimalisering",
+        ],
       },
       {
         icon: Code,
         href: "/tjenester/internsystemer",
         title: "Egne systemer og verktøy",
         desc: "Vi bygger verktøy som erstatter manuelle oppgaver med smarte løsninger. Enten det er et eget dashboard, et bestillingssystem eller noe helt annet.",
-        sub: ["Oversiktlige dashboards", "Automatisering av oppgaver", "Koble sammen systemene dine", "Brukertilgang og sikkerhet"],
+        sub: [
+          "Dashboards og rapporteringsverktøy",
+          "Prosessautomatisering",
+          "API-integrasjoner og dataflyt",
+          "CRM og kundehåndtering",
+          "Dokumenthåndtering",
+          "Løpende vedlikehold og support",
+        ],
       },
       {
         icon: Cpu,
         href: "/tjenester/ai-automatisering",
         title: "Automatisering og AI",
         desc: "Vi setter opp smarte løsninger som gjør de kjedelige oppgavene for deg — automatisk. Slik at du kan bruke tiden på det som faktisk betyr noe.",
-        sub: ["Automatisere oppgaver som tar tid", "Smarte systemer som tar beslutninger", "Håndtere dokumenter med AI", "Tilpassede AI-løsninger"],
+        sub: [
+          "Arbeidsflyter som kjører av seg selv",
+          "Kobling mellom regnskap, nettbutikk og e-post",
+          "Automatisk oppfølging av leads",
+          "Rapporter som lages automatisk",
+          "Dokumentsortering og godkjenning",
+          "Egne AI-løsninger tilpasset bedriften",
+        ],
       },
     ],
   },
@@ -322,7 +460,7 @@ const Tjenester = () => {
               </div>
             </AnimatedSection>
 
-            <div className={`grid grid-cols-1 ${cat.services.length === 1 ? "md:grid-cols-1 max-w-3xl" : cat.services.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-6 md:gap-8`}>
+            <div className={`grid grid-cols-1 ${cat.services.length === 1 ? "md:grid-cols-1 max-w-3xl" : "md:grid-cols-2"} gap-6 md:gap-8`}>
               {cat.services.map((service, i) => (
                  <AnimatedSection key={service.title} delay={i * 0.1}>
                   <Link
@@ -333,14 +471,14 @@ const Tjenester = () => {
                      <service.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{service.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8 flex-1">
+                    <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8">
                       {service.desc}
                     </p>
-                    <ul className="space-y-2 mb-6 md:mb-8">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2.5 mb-6 md:mb-8 flex-1">
                       {service.sub.map((s) => (
-                        <li key={s} className="flex items-center gap-2.5 text-[13px] text-foreground/75 font-light">
-                          <div className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
-                          {s}
+                        <li key={s} className="flex items-start gap-2.5 text-[13px] text-foreground/80 font-light leading-snug">
+                          <div className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-[7px]" />
+                          <span>{s}</span>
                         </li>
                       ))}
                     </ul>
