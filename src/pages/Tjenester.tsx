@@ -449,18 +449,39 @@ const Tjenester = () => {
           {catIdx % 2 !== 0 && <div className="absolute inset-0 ambient-glow opacity-15" />}
           <div className="container mx-auto px-4 md:px-6 relative">
             <AnimatedSection>
-              <div className="max-w-2xl mb-14 md:mb-20">
-                <div className="flex items-center gap-3 mb-5 md:mb-6">
-                  <span className={`text-[10px] tracking-[0.4em] uppercase ${cat.tagColor}`}>{cat.tag}</span>
-                  <span className="text-border/40">·</span>
-                  <span className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground/70">{cat.label}</span>
+              <div className="mb-14 md:mb-20">
+                {/* Big colored category banner */}
+                <div
+                  className="flex items-center gap-5 md:gap-7 mb-8 md:mb-10 pb-6 md:pb-8 border-b"
+                  style={{ borderColor: `rgb(${cat.accent} / 0.25)` }}
+                >
+                  <div
+                    className="h-12 md:h-16 w-1.5 rounded-full"
+                    style={{ background: `rgb(${cat.accent})`, boxShadow: `0 0 24px rgb(${cat.accent} / 0.6)` }}
+                  />
+                  <div className="flex-1">
+                    <p
+                      className="text-[10px] md:text-[11px] tracking-[0.4em] uppercase mb-2 md:mb-3"
+                      style={{ color: `rgb(${cat.accent})` }}
+                    >
+                      {cat.tag}
+                    </p>
+                    <h2
+                      className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05]"
+                      style={{ color: `rgb(${cat.accent})` }}
+                    >
+                      {cat.label}
+                    </h2>
+                  </div>
                 </div>
-                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6 leading-snug">
-                  {cat.headline}
-                </h2>
-                <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-                  {cat.intro}
-                </p>
+                <div className="max-w-2xl">
+                  <h3 className="font-heading text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-5 leading-snug text-foreground">
+                    {cat.headline}
+                  </h3>
+                  <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
+                    {cat.intro}
+                  </p>
+                </div>
               </div>
             </AnimatedSection>
 
@@ -469,10 +490,28 @@ const Tjenester = () => {
                  <AnimatedSection key={service.title} delay={i * 0.1}>
                   <Link
                     to={service.href}
-                    className="relative block p-8 md:p-10 rounded-3xl h-full flex flex-col group border border-primary/15 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.22),hsl(var(--primary)/0.04)_45%,transparent_75%)] shadow-[0_20px_70px_-40px_hsl(var(--primary)/0.45),inset_0_1px_0_hsl(var(--primary)/0.08)] hover:border-primary/35 hover:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.38),hsl(var(--primary)/0.14)_60%,hsl(var(--primary)/0.05)_100%)] hover:-translate-y-1.5 hover:shadow-[0_34px_110px_-28px_hsl(var(--primary)/0.7),inset_0_1px_0_hsl(var(--primary)/0.2)] transition-all duration-500"
+                    className="relative block p-8 md:p-10 rounded-3xl h-full flex flex-col group border transition-all duration-500"
+                    style={{
+                      borderColor: `rgb(${cat.accent} / 0.18)`,
+                      backgroundImage: `radial-gradient(circle at top left, rgb(${cat.accent} / 0.22), rgb(${cat.accent} / 0.04) 45%, transparent 75%)`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `rgb(${cat.accent} / 0.4)`;
+                      e.currentTarget.style.backgroundImage = `radial-gradient(circle at center, rgb(${cat.accent} / 0.35) 0%, rgb(${cat.accent} / 0.18) 55%, rgb(${cat.accent} / 0.06) 100%)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `rgb(${cat.accent} / 0.18)`;
+                      e.currentTarget.style.backgroundImage = `radial-gradient(circle at top left, rgb(${cat.accent} / 0.22), rgb(${cat.accent} / 0.04) 45%, transparent 75%)`;
+                    }}
                   >
-                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/35 group-hover:border-primary/55 group-hover:scale-110 group-hover:shadow-[0_0_44px_hsl(var(--primary)/0.34)] transition-all duration-500">
-                     <service.icon size={18} className="text-primary" strokeWidth={1.5} />
+                    <div
+                      className="w-11 h-11 md:w-12 md:h-12 rounded-2xl border flex items-center justify-center mb-5 md:mb-6 transition-all duration-500"
+                      style={{
+                        backgroundColor: `rgb(${cat.accent} / 0.22)`,
+                        borderColor: `rgb(${cat.accent} / 0.4)`,
+                      }}
+                    >
+                     <service.icon size={18} style={{ color: `rgb(${cat.accent})` }} strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{service.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8">
@@ -481,13 +520,14 @@ const Tjenester = () => {
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2.5 mb-6 md:mb-8 flex-1">
                       {service.sub.map((s) => (
                         <li key={s} className="flex items-start gap-2.5 text-[13px] text-foreground/80 font-light leading-snug">
-                          <div className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-[7px]" />
+                          <div className="w-1 h-1 rounded-full shrink-0 mt-[7px]" style={{ backgroundColor: `rgb(${cat.accent} / 0.7)` }} />
                           <span>{s}</span>
                         </li>
                       ))}
                     </ul>
-                    <div className="mt-auto flex items-center gap-2 text-[11px] tracking-widest uppercase text-primary/80 group-hover:text-primary transition-colors duration-300">
+                    <div className="mt-auto flex items-center gap-2 text-[11px] tracking-widest uppercase transition-colors duration-300" style={{ color: `rgb(${cat.accent} / 0.9)` }}>
                       Les mer <ChevronRight size={11} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+
                     </div>
                   </Link>
                 </AnimatedSection>
