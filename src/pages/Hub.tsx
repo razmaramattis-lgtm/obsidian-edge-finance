@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import ComparisonSection from "@/components/ComparisonSection";
 import MetodenSection from "@/components/MetodenSection";
-import HubPricingAnchors from "@/components/HubPricingAnchors";
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -258,14 +257,17 @@ const Hub = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
             {[
               {
+                icon: Layers,
                 title: "Én partner for alt",
                 desc: "Slutt med å koordinere mellom regnskapsfører, markedsbyrå og IT-konsulent. Hos oss får du alt samlet.",
               },
               {
+                icon: BadgeCheck,
                 title: "Fast pris, ingen overraskelser",
                 desc: "Du vet nøyaktig hva du betaler. Rådgivning, rapportering og support er alltid inkludert.",
               },
               {
+                icon: HeartHandshake,
                 title: "Dedikert team som kjenner deg",
                 desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny person hver gang.",
               },
@@ -278,8 +280,8 @@ const Hub = () => {
                 transition={{ delay: i * 0.1, duration: 0.6 }}
                 className="p-6 md:p-8 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-500"
               >
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <div className="w-2 h-2 rounded-full bg-primary" />
+                <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5">
+                  <item.icon size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <h3 className="text-base font-semibold mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -294,9 +296,6 @@ const Hub = () => {
 
       {/* ═══ METODEN ═══ */}
       <MetodenSection />
-
-      {/* ═══ PRICING ANCHORS ═══ */}
-      <HubPricingAnchors />
 
       {/* ═══ FAQ ═══ */}
       <HubFAQ />
