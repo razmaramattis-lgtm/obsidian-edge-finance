@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Inline ekspresskjema for hero/trafikktung side.
- * Felter: navn, firma, e-post, telefon — alt over én knapp.
+ * Felter: navn, firma, e-post, telefon og kort melding — alt over én knapp.
  */
 const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -29,7 +30,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
           phone: phone.trim().slice(0, 40) || null,
           source: `${source}:${typeof window !== "undefined" ? window.location.pathname : ""}`,
           referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
-          message: "Sendt fra ekspresskjema – ingen detaljer oppgitt.",
+          message: message.trim().slice(0, 600) || "Sendt fra ekspresskjema – ingen detaljer oppgitt.",
         },
       });
       if (error) throw error;
@@ -112,6 +113,14 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             className={inputCls}
           />
         </div>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          maxLength={600}
+          rows={3}
+          placeholder="Melding"
+          className={`${inputCls} min-h-24 resize-none`}
+        />
         <button
           type="submit"
           disabled={busy || !name || !email}
