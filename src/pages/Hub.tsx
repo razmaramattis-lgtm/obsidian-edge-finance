@@ -297,9 +297,6 @@ const Hub = () => {
       {/* ═══ METODEN ═══ */}
       <MetodenSection />
 
-      {/* ═══ PRICING ANCHORS ═══ */}
-      <HubPricingAnchors />
-
       {/* ═══ FAQ ═══ */}
       <HubFAQ />
 
