@@ -32,7 +32,8 @@ const categories = [
     id: "regnskap",
     label: "Regnskap & Økonomi",
     tag: "Kjerneleveranse",
-    tagColor: "text-primary",
+    tagColor: "text-[#e8b08a]",
+    accent: "232 176 138",
     headline: "Vi tar oss av tallene. Du tar deg av bedriften.",
     intro:
       "Godt regnskap handler ikke bare om å følge regler — det handler om å vite hvordan bedriften din faktisk gjør det. Vi gir deg en egen regnskapsfører som kjenner deg og bedriften din, og som sørger for at alt er i orden — hele året.",
