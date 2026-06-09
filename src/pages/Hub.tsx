@@ -147,8 +147,9 @@ const Hub = () => {
 
       {/* ═══ DEPARTMENTS ═══ */}
       <section className="py-16 md:py-32 relative">
-        <div aria-hidden className="absolute inset-0 pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(15_55%_65%/0.05),transparent_60%)]" />
+        <div aria-hidden className="absolute inset-0 pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]">
+          <div className="absolute inset-0 bg-[hsl(20_8%_8.5%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(15_55%_65%/0.09),transparent_60%)]" />
         </div>
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
