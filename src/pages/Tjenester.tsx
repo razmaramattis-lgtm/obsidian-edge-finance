@@ -325,8 +325,11 @@ const Tjenester = () => {
             <div className={`grid grid-cols-1 ${cat.services.length === 1 ? "md:grid-cols-1 max-w-3xl" : cat.services.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-6 md:gap-8`}>
               {cat.services.map((service, i) => (
                  <AnimatedSection key={service.title} delay={i * 0.1}>
-                  <Link to={service.href} className="block p-8 md:p-10 rounded-3xl h-full flex flex-col group bg-primary/15 border-2 border-primary/45 shadow-[0_26px_90px_-34px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(var(--primary)/0.18)] hover:bg-primary/20 hover:border-primary/70 hover:-translate-y-1.5 hover:shadow-[0_34px_110px_-28px_hsl(var(--primary)/0.75),0_0_0_1px_hsl(var(--primary)/0.18),inset_0_1px_0_hsl(var(--primary)/0.24)] transition-all duration-500">
-                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-primary/35 border border-primary/60 shadow-[0_0_30px_hsl(var(--primary)/0.22)] flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/45 group-hover:scale-110 group-hover:shadow-[0_0_44px_hsl(var(--primary)/0.34)] transition-all duration-500">
+                  <Link
+                    to={service.href}
+                    className="relative block p-8 md:p-10 rounded-3xl h-full flex flex-col group border border-primary/15 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.22),hsl(var(--primary)/0.04)_45%,transparent_75%)] shadow-[0_20px_70px_-40px_hsl(var(--primary)/0.45),inset_0_1px_0_hsl(var(--primary)/0.08)] hover:border-primary/35 hover:bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.38),hsl(var(--primary)/0.14)_60%,hsl(var(--primary)/0.05)_100%)] hover:-translate-y-1.5 hover:shadow-[0_34px_110px_-28px_hsl(var(--primary)/0.7),inset_0_1px_0_hsl(var(--primary)/0.2)] transition-all duration-500"
+                  >
+                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/35 group-hover:border-primary/55 group-hover:scale-110 group-hover:shadow-[0_0_44px_hsl(var(--primary)/0.34)] transition-all duration-500">
                      <service.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{service.title}</h3>
