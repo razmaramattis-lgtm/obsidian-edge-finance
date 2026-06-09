@@ -244,8 +244,9 @@ const Hub = () => {
       </section>
 
       {/* ═══ VALUE PROPOSITION ═══ */}
-      <section className="py-16 md:py-32 relative bg-[hsl(20_8%_7%)] [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
-        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_bottom_right,hsl(170_35%_42%/0.04),transparent_60%)]" />
+      <section className="py-16 md:py-32 relative">
+        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[hsl(20_8%_7%)] [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]" />
+        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_bottom_right,hsl(170_35%_42%/0.05),transparent_60%)]" />
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
