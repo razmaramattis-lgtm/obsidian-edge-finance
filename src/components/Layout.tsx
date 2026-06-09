@@ -243,9 +243,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* ─── Tjenester dropdown ─── */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
-              <button className={dropBtnClass(tjenesterOpen)}>
-                Tjenester <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
-              </button>
+              <div className={dropBtnClass(tjenesterOpen)}>
+                <Link to={sp("/tjenester")} onClick={() => setTjenesterOpen(false)} className="flex items-center">
+                  Tjenester
+                </Link>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setTjenesterOpen(!tjenesterOpen); }}
+                  className="ml-0.5 p-0.5 rounded hover:bg-muted/50 transition-colors"
+                  aria-label={tjenesterOpen ? "Lukk tjenester" : "Åpne tjenester"}
+                >
+                  <ChevronDown size={11} className={`transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
+                </button>
+              </div>
 
               <DropdownPanel
                 open={tjenesterOpen}
