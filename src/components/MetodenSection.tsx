@@ -43,7 +43,7 @@ const defaultSteps: MetodenStep[] = [
   { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene.", note: "45 minutter som kan forandre alt." },
   { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt trenger — ikke hva vi tilbyr som standard. Regnskapsfører, HR, markedsfører, utvikler. Eksakt det du trenger.", note: "Én kontaktperson. Hele teamet bak." },
   { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din tilgang aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid.", note: "Full oversikt. Null innsats fra din side." },
-  { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Tilgjengelige. Alltid. Uten ekstra kostnad." },
+  { num: "IV", phase: "Partnerskap", duration: "Løpende", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Rask respons innen 24 timer — uten ekstra kostnad." },
 ];
 
 const StepCard = ({ step, index }: { step: MetodenStep; index: number }) => {
