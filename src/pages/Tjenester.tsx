@@ -224,7 +224,8 @@ const categories = [
     id: "marked",
     label: "Markedsføring & Vekst",
     tag: "Avargo · Markedsføring",
-    tagColor: "text-primary",
+    tagColor: "text-[#c4a3f0]",
+    accent: "196 163 240",
     headline: "Bli sett. Få flere kunder. Voks.",
     intro:
       "Vi hjelper deg å bli synlig på nett, få flere henvendelser og gjøre besøkende til betalende kunder. Alt henger sammen med tallene dine — så du vet at pengene brukes smart.",
