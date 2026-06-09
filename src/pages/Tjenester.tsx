@@ -327,7 +327,7 @@ const Tjenester = () => {
                 <AnimatedSection key={service.title} delay={i * 0.1}>
                   <Link to={service.href} className="block p-8 md:p-10 rounded-3xl h-full flex flex-col group bg-primary/[0.04] border border-primary/15 hover:bg-primary/[0.08] hover:border-primary/30 hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.25)] transition-all duration-500">
                     <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center mb-5 md:mb-6 group-hover:bg-primary/25 group-hover:scale-110 transition-all duration-500">
-                      <Icon size={18} className="text-primary" strokeWidth={1.5} />
+                      <service.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-xl md:text-2xl mb-3 md:mb-4">{service.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed font-light mb-6 md:mb-8 flex-1">
