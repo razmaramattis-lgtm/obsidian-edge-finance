@@ -156,7 +156,8 @@ const categories = [
     id: "hr",
     label: "HR & Personal",
     tag: "Menneskene i selskapet",
-    tagColor: "text-secondary",
+    tagColor: "text-[#f5c87a]",
+    accent: "245 200 122",
     headline: "Alt du trenger for å ta godt vare på de ansatte.",
     intro:
       "Fra å finne riktig person til å sørge for at alt er på stell med kontrakter, lønn og arbeidsmiljø. Vi tar oss av papirarbeidet og reglene — du tar deg av menneskene.",
