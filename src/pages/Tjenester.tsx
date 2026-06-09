@@ -292,7 +292,8 @@ const categories = [
     id: "it",
     label: "IT & Utvikling",
     tag: "Avargo · Teknologi",
-    tagColor: "text-secondary",
+    tagColor: "text-[#7dd3fc]",
+    accent: "125 211 252",
     headline: "Teknologi som gjør hverdagen enklere.",
     intro:
       "Vi bygger nettsider, smarte verktøy og løsninger som sparer deg for tid. Enten du trenger en ny nettside, en chatbot som svarer kundene dine, eller et eget system for bedriften.",
