@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import ComparisonSection from "@/components/ComparisonSection";
+import MetodenSection from "@/components/MetodenSection";
+import HubPricingAnchors from "@/components/HubPricingAnchors";
+import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
@@ -288,6 +291,17 @@ const Hub = () => {
 
       {/* ═══ COMPARISON ═══ */}
       <ComparisonSection />
+
+      {/* ═══ METODEN ═══ */}
+      <MetodenSection />
+
+      {/* ═══ PRICING ANCHORS ═══ */}
+      <HubPricingAnchors />
+
+      {/* ═══ FAQ ═══ */}
+      <HubFAQ />
+
+
 
       {/* ═══ CTA ═══ */}
       <section className="py-16 md:py-32 relative">
