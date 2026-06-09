@@ -430,7 +430,8 @@ const Tjenester = () => {
               <a
                 key={cat.id}
                 href={`#${cat.id}`}
-                className="shrink-0 px-4 py-1.5 text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded-full transition-all duration-300"
+                className="shrink-0 px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full transition-all duration-300 border"
+                style={{ color: `rgb(${cat.accent})`, borderColor: `rgb(${cat.accent} / 0.25)` }}
               >
                 {cat.label}
               </a>
