@@ -243,9 +243,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* ─── Tjenester dropdown ─── */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
-              <button className={dropBtnClass(tjenesterOpen)}>
-                Tjenester <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
-              </button>
+              <div className={dropBtnClass(tjenesterOpen)}>
+                <Link to={sp("/tjenester")} onClick={() => setTjenesterOpen(false)} className="flex items-center">
+                  Tjenester
+                </Link>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setTjenesterOpen(!tjenesterOpen); }}
+                  className="ml-0.5 p-0.5 rounded hover:bg-muted/50 transition-colors"
+                  aria-label={tjenesterOpen ? "Lukk tjenester" : "Åpne tjenester"}
+                >
+                  <ChevronDown size={11} className={`transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
+                </button>
+              </div>
 
               <DropdownPanel
                 open={tjenesterOpen}
@@ -554,9 +563,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 
             {/* Mobile Tjenester */}
-            <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
-              Tjenester <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
-            </button>
+            <div className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide">
+              <Link to={sp("/tjenester")} onClick={() => setMenuOpen(false)} className="flex-1">Tjenester</Link>
+              <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="p-2 -mr-2 rounded-lg active:bg-muted/30">
+                <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
+              </button>
+            </div>
             <div className={`overflow-hidden transition-all duration-300 ${mobileTjenesterOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="py-2 pl-1 flex flex-col gap-0.5">
                 {visibleTjenesterGroups.map((group) => {
