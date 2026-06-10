@@ -122,6 +122,7 @@ serve(async (req) => {
     const smtpPass = Deno.env.get("SMTP_PASS");
 
     if (smtpUser && smtpPass) {
+      const wrappedLink = `https://avargo.no/auth/bekreft?to=${encodeURIComponent(linkData.properties.action_link)}`;
       const htmlBody = `
         <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;">
           <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
@@ -130,9 +131,10 @@ serve(async (req) => {
           <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
             <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 20px;">Hei! Du har bedt om å tilbakestille passordet ditt hos Avargo. Av sikkerhetsgrunner sender vi ikke passord på e-post.</p>
             <div style="text-align:center;margin:24px 0;">
-              <a href="${linkData.properties.action_link}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;">Åpne sikker lenke</a>
+              <a href="${wrappedLink}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;">Åpne sikker lenke</a>
             </div>
-            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">Lenken logger deg inn sikkert slik at du kan velge nytt passord selv. Hvis du ikke ba om dette, kan du se bort fra e-posten.</p>
+            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 12px;">Du blir bedt om å bekrefte ett ekstra klikk før du videresendes. Dette beskytter lenken mot automatiske skannere i Outlook/Gmail som ellers kan «brenne» den før du rekker å bruke den.</p>
+            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">Lenken kan kun brukes én gang. Hvis du ikke ba om dette, kan du se bort fra e-posten.</p>
             <div style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong> · kontakt@avargo.no til ${escapeHtml(normalizedEmail)}</p>
             </div>
