@@ -266,6 +266,11 @@ const FAQ = () => {
         <title>Vanlige spørsmål om regnskap og skatt | Avargo</title>
         <meta name="description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering. Alt du trenger å vite — samlet på ett sted." />
         <link rel="canonical" href="https://avargo.no/faq" />
+        <meta property="og:title" content="Vanlige spørsmål om regnskap og skatt | Avargo" />
+        <meta property="og:description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering — samlet på ett sted." />
+        <meta property="og:url" content="https://avargo.no/faq" />
+        <meta name="twitter:title" content="Vanlige spørsmål om regnskap og skatt | Avargo" />
+        <meta name="twitter:description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering — samlet på ett sted." />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",

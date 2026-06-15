@@ -12,11 +12,23 @@ const About = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{copy ? `Om oss — ${section!.name} | Avargo` : "Om Avargo | Regnskapsbyrå for små og mellomstore bedrifter"}</title>
-        <meta name="description" content={copy?.intro1 || "Møt Avargo — regnskapsbyrået med statsautoriserte regnskapsførere som gir små og mellomstore bedrifter trygghet, oversikt og rom til å vokse."} />
-        <link rel="canonical" href={`https://avargo.no${sectionPath}/om-oss`} />
-      </Helmet>
+      {(() => {
+        const pageTitle = copy ? `Om oss — ${section!.name} | Avargo` : "Om Avargo | Regnskapsbyrå for små og mellomstore bedrifter";
+        const pageDesc = copy?.intro1 || "Møt Avargo — regnskapsbyrået med statsautoriserte regnskapsførere som gir små og mellomstore bedrifter trygghet, oversikt og rom til å vokse.";
+        const pageUrl = `https://avargo.no${sectionPath}/om-oss`;
+        return (
+          <Helmet>
+            <title>{pageTitle}</title>
+            <meta name="description" content={pageDesc} />
+            <link rel="canonical" href={pageUrl} />
+            <meta property="og:title" content={pageTitle} />
+            <meta property="og:description" content={pageDesc} />
+            <meta property="og:url" content={pageUrl} />
+            <meta name="twitter:title" content={pageTitle} />
+            <meta name="twitter:description" content={pageDesc} />
+          </Helmet>
+        );
+      })()}
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />
         <div className="container mx-auto px-4 md:px-6 relative">
