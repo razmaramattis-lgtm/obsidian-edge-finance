@@ -68,11 +68,23 @@ const Pricing = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{copy ? `Priser — ${section!.name} | Avargo` : `Priser | ${lowestPriceFormatted ? `Regnskap fra ${lowestPriceFormatted} kr/mnd` : "Regnskap"} — Avargo`}</title>
-        <meta name="description" content={copy?.sub || "Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert."} />
-        <link rel="canonical" href={`https://avargo.no${sectionPath}/priser`} />
-      </Helmet>
+      {(() => {
+        const pageTitle = copy ? `Priser — ${section!.name} | Avargo` : `Priser | ${lowestPriceFormatted ? `Regnskap fra ${lowestPriceFormatted} kr/mnd` : "Regnskap"} — Avargo`;
+        const pageDesc = copy?.sub || "Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert.";
+        const pageUrl = `https://avargo.no${sectionPath}/priser`;
+        return (
+          <Helmet>
+            <title>{pageTitle}</title>
+            <meta name="description" content={pageDesc} />
+            <link rel="canonical" href={pageUrl} />
+            <meta property="og:title" content={pageTitle} />
+            <meta property="og:description" content={pageDesc} />
+            <meta property="og:url" content={pageUrl} />
+            <meta name="twitter:title" content={pageTitle} />
+            <meta name="twitter:description" content={pageDesc} />
+          </Helmet>
+        );
+      })()}
 
       <section className="py-24 md:py-40 relative">
         <div className="absolute inset-0 ambient-glow opacity-40" />

@@ -22,7 +22,7 @@ const Hub = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo | Regnskap, HR, markedsføring og IT for norske bedrifter</title>
+        <title>Avargo — Regnskap, HR, marked og IT for bedrifter</title>
         <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({

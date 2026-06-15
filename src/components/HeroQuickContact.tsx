@@ -83,6 +83,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             onChange={(e) => setName(e.target.value)}
             maxLength={120}
             placeholder="Navn *"
+            aria-label="Navn"
             className={inputCls}
           />
           <input
@@ -91,6 +92,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             onChange={(e) => setCompany(e.target.value)}
             maxLength={160}
             placeholder="Firma"
+            aria-label="Firma"
             className={inputCls}
           />
         </div>
@@ -102,6 +104,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             onChange={(e) => setEmail(e.target.value)}
             maxLength={255}
             placeholder="E-post *"
+            aria-label="E-post"
             className={inputCls}
           />
           <input
@@ -110,6 +113,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             onChange={(e) => setPhone(e.target.value)}
             maxLength={40}
             placeholder="Telefon"
+            aria-label="Telefon"
             className={inputCls}
           />
         </div>
@@ -119,6 +123,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
           maxLength={600}
           rows={3}
           placeholder="Melding"
+          aria-label="Melding"
           className={`${inputCls} min-h-24 resize-none`}
         />
         <button
