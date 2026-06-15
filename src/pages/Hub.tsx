@@ -199,8 +199,13 @@ const Hub = () => {
                 >
                   <Link
                     to={s.basePath}
-                    className="group relative block rounded-3xl overflow-hidden border border-border/10 hover:border-border/25 transition-all duration-500"
+                    className="group relative block rounded-3xl overflow-hidden border border-border/20 bg-card hover:border-border/40 transition-all duration-500"
                   >
+                    {/* subtle top sheen */}
+                    <div
+                      className="absolute inset-x-0 top-0 h-px opacity-30"
+                      style={{ backgroundColor: accentHsl }}
+                    />
                     {/* Hover glow */}
                     <div
                       className="absolute -top-20 -right-20 w-48 h-48 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-700 blur-3xl"
