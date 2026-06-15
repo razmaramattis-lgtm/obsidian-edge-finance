@@ -30,7 +30,6 @@ const staticPages = [
   { loc: "/ressurser", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/skattekalender", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/kontohjelp", priority: "0.7", changefreq: "monthly" },
-  { loc: "/ressurser/regnskapsord", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/katalog", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/regnskap", priority: "0.6", changefreq: "monthly" },
@@ -57,7 +56,7 @@ const staticPages = [
     { loc: `/${sec}/ressurser`, priority: "0.7", changefreq: "weekly" },
     { loc: `/${sec}/ressurser/skattekalender`, priority: "0.7", changefreq: "weekly" },
     { loc: `/${sec}/ressurser/kontohjelp`, priority: "0.6", changefreq: "monthly" },
-    { loc: `/${sec}/regnskapsord`, priority: "0.6", changefreq: "monthly" },
+    
     ...tjenesteSlugs.map(t => ({ loc: `/${sec}/tjenester/${t}`, priority: "0.6", changefreq: "monthly" })),
   ]),
   // Regnskap bransje sub-pages
