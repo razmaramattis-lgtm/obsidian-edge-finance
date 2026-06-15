@@ -169,7 +169,7 @@ const Hub = () => {
               const Icon = sectionIcons[s.id];
               const accentHsl = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)`;
               return (
-                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 p-4 rounded-2xl border border-border/10 bg-muted/5 active:bg-muted/20 transition-colors group">
+                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 p-4 rounded-2xl border border-border/20 bg-card active:bg-muted/20 transition-colors group">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)` }}>
                     <Icon size={18} style={{ color: accentHsl }} strokeWidth={1.5} />
                   </div>
@@ -199,8 +199,13 @@ const Hub = () => {
                 >
                   <Link
                     to={s.basePath}
-                    className="group relative block rounded-3xl overflow-hidden border border-border/10 hover:border-border/25 transition-all duration-500"
+                    className="group relative block rounded-3xl overflow-hidden border border-border/20 bg-card hover:border-border/40 transition-all duration-500"
                   >
+                    {/* subtle top sheen */}
+                    <div
+                      className="absolute inset-x-0 top-0 h-px opacity-30"
+                      style={{ backgroundColor: accentHsl }}
+                    />
                     {/* Hover glow */}
                     <div
                       className="absolute -top-20 -right-20 w-48 h-48 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-700 blur-3xl"
