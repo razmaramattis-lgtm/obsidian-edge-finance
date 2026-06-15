@@ -73,11 +73,24 @@ const BransjePage = ({
 
   return (
   <>
-    <Helmet>
-      <title>{titlePrefix} for {name} | Avargo</title>
-      <meta name="description" content={intro.length > 160 ? intro.slice(0, 157) + "..." : intro} />
-      <link rel="canonical" href={`https://avargo.no${isInSection && section ? section.basePath : ""}/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`} />
-    </Helmet>
+    {(() => {
+      const bransjeTitle = `${titlePrefix} for ${name} | Avargo`;
+      const bransjeDesc = intro.length > 160 ? intro.slice(0, 157) + "..." : intro;
+      const bransjeUrl = `https://avargo.no${isInSection && section ? section.basePath : ""}/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`;
+      return (
+        <Helmet>
+          <title>{bransjeTitle}</title>
+          <meta name="description" content={bransjeDesc} />
+          <link rel="canonical" href={bransjeUrl} />
+          <meta property="og:title" content={bransjeTitle} />
+          <meta property="og:description" content={bransjeDesc} />
+          <meta property="og:url" content={bransjeUrl} />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:title" content={bransjeTitle} />
+          <meta name="twitter:description" content={bransjeDesc} />
+        </Helmet>
+      );
+    })()}
     {/* HERO */}
     <section className="py-28 md:py-44 relative overflow-hidden">
       <img src={ambientTexture1} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
