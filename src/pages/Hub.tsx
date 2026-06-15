@@ -123,7 +123,7 @@ const Hub = () => {
       </section>
 
       {/* ═══ TRUST BAR ═══ */}
-      <section className="py-8 md:py-12 border-y border-border/10">
+      <section className="py-8 md:py-12 bg-primary">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
@@ -132,12 +132,12 @@ const Hub = () => {
               { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
-                <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center shrink-0">
-                  <item.icon size={16} className="text-primary" strokeWidth={1.5} />
+                <div className="w-9 h-9 rounded-xl bg-primary-foreground/10 flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-primary-foreground" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-foreground/80 leading-tight">{item.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{item.sub}</p>
+                  <p className="text-xs font-semibold text-primary-foreground leading-tight">{item.label}</p>
+                  <p className="text-[10px] text-primary-foreground/70">{item.sub}</p>
                 </div>
               </div>
             ))}
