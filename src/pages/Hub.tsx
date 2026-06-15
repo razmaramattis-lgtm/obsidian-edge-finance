@@ -169,7 +169,7 @@ const Hub = () => {
               const Icon = sectionIcons[s.id];
               const accentHsl = `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)`;
               return (
-                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 p-4 rounded-2xl border border-border/10 bg-muted/5 active:bg-muted/20 transition-colors group">
+                <Link key={s.id} to={s.basePath} className="flex items-center gap-3 p-4 rounded-2xl border border-border/20 bg-card active:bg-muted/20 transition-colors group">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)` }}>
                     <Icon size={18} style={{ color: accentHsl }} strokeWidth={1.5} />
                   </div>
