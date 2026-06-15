@@ -76,10 +76,10 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-3 mt-2">
-              <Input placeholder="Navn *" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} />
-              <Input placeholder="Selskap *" value={company} onChange={(e) => setCompany(e.target.value)} required maxLength={150} />
-              <Input type="email" placeholder="E-post *" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} />
-              <Input type="tel" placeholder="Telefon (valgfritt)" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} />
+              <Input placeholder="Navn *" aria-label="Navn" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} />
+              <Input placeholder="Selskap *" aria-label="Selskap" value={company} onChange={(e) => setCompany(e.target.value)} required maxLength={150} />
+              <Input type="email" placeholder="E-post *" aria-label="E-post" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} />
+              <Input type="tel" placeholder="Telefon (valgfritt)" aria-label="Telefon" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} />
               <Button type="submit" disabled={loading} className="w-full glow-rose group">
                 {loading ? "Sender…" : (<>Send forespørsel <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" /></>)}
               </Button>
