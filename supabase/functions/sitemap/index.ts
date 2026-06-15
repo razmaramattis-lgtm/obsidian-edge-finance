@@ -51,7 +51,7 @@ const staticPages = [
     { loc: `/${sec}/priser`, priority: "0.8", changefreq: "monthly" },
     { loc: `/${sec}/kontakt`, priority: "0.7", changefreq: "monthly" },
     { loc: `/${sec}/om-oss`, priority: "0.6", changefreq: "monthly" },
-    ...(sec === "regnskap" ? [{ loc: `/${sec}/metoden`, priority: "0.7", changefreq: "monthly" as const }] : []),
+    
     { loc: `/${sec}/faq`, priority: "0.7", changefreq: "monthly" },
     { loc: `/${sec}/nyheter`, priority: "0.7", changefreq: "weekly" },
     { loc: `/${sec}/ressurser`, priority: "0.7", changefreq: "weekly" },
