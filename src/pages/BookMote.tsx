@@ -357,7 +357,7 @@ const BookMote = () => {
                       const Icon = s.icon;
                       const active = service === s.id;
                       return (
-                        <button key={s.id} onClick={() => setService(s.id)}
+                        <button key={s.id} onClick={() => pickService(s.id)}
                           className={`text-left p-5 rounded-2xl border transition-all ${active ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} border border-border/20 flex items-center justify-center mb-3`}>
                             <Icon size={18} className="text-foreground" />
