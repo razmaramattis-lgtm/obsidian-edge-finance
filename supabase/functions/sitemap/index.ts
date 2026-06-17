@@ -30,6 +30,7 @@ const staticPages = [
   { loc: "/ressurser", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/skattekalender", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/kontohjelp", priority: "0.7", changefreq: "monthly" },
+  { loc: "/ressurser/regnskapsord", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/katalog", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/regnskap", priority: "0.6", changefreq: "monthly" },
