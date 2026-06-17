@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfWeek, isBefore, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -11,6 +11,15 @@ interface Availability { profile_id: string; day_of_week: number; start_time: st
 interface BlockedDate { profile_id: string; blocked_date: string; }
 interface ExistingBooking { advisor_id: string; booking_date: string; booking_time: string; }
 interface AdvisorInfo { id: string; name: string; }
+
+type BrregEnhet = {
+  organisasjonsnummer: string;
+  navn: string;
+  antallAnsatte?: number;
+  organisasjonsform?: { beskrivelse?: string };
+  forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
+};
+
 
 const services = [
   { id: "regnskap", label: "Regnskap & økonomi", desc: "Bokføring, årsregnskap, MVA, rådgivning", icon: Calculator, color: "from-rose-500/20 to-orange-500/10" },
@@ -53,7 +62,17 @@ const BookMote = () => {
   const [size, setSize] = useState<string | null>(null);
   const [hasAccountant, setHasAccountant] = useState<string | null>(null);
   const [goal, setGoal] = useState<string | null>(null);
-  const [form, setForm] = useState({ firma: "", navn: "", telefon: "", epost: "", melding: "" });
+  const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
+
+  // Brreg company search (step 1)
+  const [companySearch, setCompanySearch] = useState("");
+  const [searchResults, setSearchResults] = useState<BrregEnhet[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
 
   // Calendar
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
@@ -87,6 +106,68 @@ const BookMote = () => {
 
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
+  // Brreg search debounce
+  useEffect(() => {
+    if (companySearch.length < 2 || (selectedCompany && companySearch === selectedCompany.navn)) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const isOrgNr = /^\d{9}$/.test(companySearch.trim());
+        const url = isOrgNr
+          ? `https://data.brreg.no/enhetsregisteret/api/enheter/${companySearch.trim()}`
+          : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(companySearch)}&size=8&fraAntallAnsatte=0`;
+        const res = await fetch(url);
+        if (!res.ok) { setSearchResults([]); setSearching(false); return; }
+        const data = await res.json();
+        if (isOrgNr) {
+          setSearchResults(data?.organisasjonsnummer ? [data] : []);
+          setShowDropdown(!!data?.organisasjonsnummer);
+        } else {
+          setSearchResults(data._embedded?.enheter || []);
+          setShowDropdown((data._embedded?.enheter || []).length > 0);
+        }
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+    return () => { if (searchTimeout.current) clearTimeout(searchTimeout.current); };
+  }, [companySearch, selectedCompany]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowDropdown(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const selectCompany = (enhet: BrregEnhet) => {
+    setSelectedCompany(enhet);
+    setCompanySearch(enhet.navn);
+    setShowDropdown(false);
+    setForm(f => ({ ...f, firma: enhet.navn, orgnr: enhet.organisasjonsnummer }));
+    // Auto-pick size from antallAnsatte
+    const n = enhet.antallAnsatte ?? 0;
+    if (n === 0) setSize("Ingen ansatte");
+    else if (n <= 5) setSize("1–5 ansatte");
+    else if (n <= 20) setSize("6–20 ansatte");
+    else setSize("20+ ansatte");
+  };
+
+  const clearCompany = () => {
+    setSelectedCompany(null);
+    setCompanySearch("");
+    setForm(f => ({ ...f, firma: "", orgnr: "" }));
+  };
+
+
   const getSlots = (date: Date) => {
     const dow = ((date.getDay() + 6) % 7) + 1;
     const dateStr = format(date, "yyyy-MM-dd");
@@ -116,6 +197,7 @@ const BookMote = () => {
     const bookingDate = format(selectedDate, "yyyy-MM-dd");
     const meldingFull = [
       `Tjenesteområde: ${services.find(s => s.id === service)?.label}`,
+      form.orgnr ? `Org.nr: ${form.orgnr}` : "",
       `Størrelse: ${size}`,
       `Regnskapsfører i dag: ${hasAccountant}`,
       `Mål: ${goal}`,
@@ -261,7 +343,73 @@ const BookMote = () => {
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Spørsmål 2 av 4</p>
                     <h1 className="text-2xl md:text-3xl font-semibold">Fortell litt om bedriften</h1>
+                    <p className="text-sm text-muted-foreground">Søk opp bedriften så fyller vi inn det vi kan automatisk.</p>
                   </div>
+
+                  {/* Brreg search */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Bedrift</p>
+                    <div className="relative" ref={dropdownRef}>
+                      <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                      <input
+                        value={companySearch}
+                        onChange={e => { setCompanySearch(e.target.value); if (selectedCompany) setSelectedCompany(null); }}
+                        onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
+                        placeholder="Søk firmanavn eller org.nr (9 siffer)…"
+                        className={`${inputClass} pl-11 pr-10`}
+                        autoComplete="off"
+                      />
+                      {searching && <Loader2 size={15} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin" />}
+                      {!searching && selectedCompany && (
+                        <button type="button" onClick={clearCompany} className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted/40">
+                          Endre
+                        </button>
+                      )}
+
+                      <AnimatePresence>
+                        {showDropdown && searchResults.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                            className="absolute z-20 left-0 right-0 mt-2 rounded-2xl border border-border/30 bg-card shadow-xl overflow-hidden max-h-72 overflow-y-auto"
+                          >
+                            {searchResults.map(enhet => (
+                              <button
+                                key={enhet.organisasjonsnummer}
+                                type="button"
+                                onClick={() => selectCompany(enhet)}
+                                className="w-full text-left px-4 py-3 flex items-start gap-3 hover:bg-muted/40 transition border-b border-border/10 last:border-0"
+                              >
+                                <Building2 size={15} className="text-primary shrink-0 mt-0.5" />
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium truncate">{enhet.navn}</p>
+                                  <p className="text-[11px] text-muted-foreground">
+                                    Org.nr {enhet.organisasjonsnummer}
+                                    {enhet.organisasjonsform?.beskrivelse && ` · ${enhet.organisasjonsform.beskrivelse}`}
+                                    {typeof enhet.antallAnsatte === "number" && ` · ${enhet.antallAnsatte} ansatte`}
+                                  </p>
+                                </div>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {selectedCompany && (
+                      <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 flex items-start gap-3">
+                        <CheckCircle2 size={15} className="text-primary shrink-0 mt-0.5" />
+                        <div className="text-xs">
+                          <p className="font-medium text-foreground">{selectedCompany.navn}</p>
+                          <p className="text-muted-foreground">
+                            Org.nr {selectedCompany.organisasjonsnummer}
+                            {selectedCompany.organisasjonsform?.beskrivelse && ` · ${selectedCompany.organisasjonsform.beskrivelse}`}
+                            {typeof selectedCompany.antallAnsatte === "number" && ` · ${selectedCompany.antallAnsatte} ansatte`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="space-y-3">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Størrelse</p>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -286,6 +434,7 @@ const BookMote = () => {
                   </div>
                 </div>
               )}
+
 
               {step === 2 && (
                 <div className="space-y-5">
