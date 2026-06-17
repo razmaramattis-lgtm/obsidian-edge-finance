@@ -88,7 +88,7 @@ const BookMote = () => {
 
   const [service, setService] = useState<string | null>(null);
   const [size, setSize] = useState<string | null>(null);
-  const [hasAccountant, setHasAccountant] = useState<string | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [goal, setGoal] = useState<string | null>(null);
   const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
 
@@ -227,7 +227,7 @@ const BookMote = () => {
       `Tjenesteområde: ${services.find(s => s.id === service)?.label}`,
       form.orgnr ? `Org.nr: ${form.orgnr}` : "",
       `Størrelse: ${size}`,
-      `Regnskapsfører i dag: ${hasAccountant}`,
+      `${quiz?.statusLabel || "Status i dag"} ${currentStatus}`,
       `Mål: ${goal}`,
       form.melding ? `\nMelding: ${form.melding}` : "",
     ].filter(Boolean).join("\n");
@@ -269,7 +269,7 @@ const BookMote = () => {
 
   const canNext = () => {
     if (step === 0) return !!service;
-    if (step === 1) return !!size && !!hasAccountant;
+    if (step === 1) return !!size && !!currentStatus;
     if (step === 2) return !!goal;
     if (step === 3) return !!selectedDate && !!selectedTime && !!selectedAdvisor;
     return true;
@@ -450,11 +450,11 @@ const BookMote = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Regnskapsfører i dag?</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["Ja", "Nei", "Vurderer bytte"].map(o => (
-                        <button key={o} onClick={() => setHasAccountant(o)}
-                          className={`p-3 rounded-xl border text-xs font-medium transition ${hasAccountant === o ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                    <div className={`grid gap-2 ${(quiz?.statusOptions.length || 3) > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
+                      {quiz?.statusOptions.map(o => (
+                        <button key={o} onClick={() => setCurrentStatus(o)}
+                          className={`p-3 rounded-xl border text-xs font-medium transition ${currentStatus === o ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                           {o}
                         </button>
                       ))}
@@ -468,11 +468,11 @@ const BookMote = () => {
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Spørsmål 3 av 4</p>
-                    <h1 className="text-2xl md:text-3xl font-semibold">Hva er hovedmålet med møtet?</h1>
+                    <h1 className="text-2xl md:text-3xl font-semibold">{quiz?.goalLabel || "Hva er målet?"}</h1>
                     <p className="text-sm text-muted-foreground">Hjelper rådgiveren forberede seg.</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {goals.map(g => (
+                    {quiz?.goals.map(g => (
                       <button key={g} onClick={() => setGoal(g)}
                         className={`text-left p-4 rounded-2xl border transition ${goal === g ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                         <p className="text-sm font-medium">{g}</p>
