@@ -31,6 +31,7 @@ const Kontohjelp = lazy(() => import("./pages/Kontohjelp"));
 const KontohjelpDetalj = lazy(() => import("./pages/KontohjelpDetalj"));
 const Regnskapsord = lazy(() => import("./pages/Regnskapsord"));
 const RegnskapsordDetalj = lazy(() => import("./pages/RegnskapsordDetalj"));
+const BookMote = lazy(() => import("./pages/BookMote"));
 const BlogListing = lazy(() => import("./pages/BlogListing"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
@@ -440,6 +441,7 @@ const App = () => (
                             <Route path="/nyhet/:slug" element={<BlogPost />} />
                             <Route path="/om-oss" element={<About />} />
                             <Route path="/kontakt" element={<Contact />} />
+                            <Route path="/book-mote" element={<BookMote />} />
                             <Route path="/personvern" element={<Personvern />} />
                             <Route path="/sikkerhet" element={<Sikkerhet />} />
                             <Route path="/vilkar" element={<Vilkar />} />
