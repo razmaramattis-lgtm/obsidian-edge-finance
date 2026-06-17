@@ -86,9 +86,14 @@ const BookMote = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const [service, setService] = useState<string | null>(null);
+  const [service, setService] = useState<ServiceId | null>(null);
   const [size, setSize] = useState<string | null>(null);
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
+  const quiz = service ? serviceQuiz[service] : null;
+  const pickService = (id: ServiceId) => {
+    if (service !== id) { setCurrentStatus(null); setGoal(null); }
+    setService(id);
+  };
   const [goal, setGoal] = useState<string | null>(null);
   const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
 
