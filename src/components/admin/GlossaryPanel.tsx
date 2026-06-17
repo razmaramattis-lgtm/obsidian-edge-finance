@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit2, Trash2, Search, CheckSquare, Square } from "lucide-react";
 import { toast } from "sonner";
+import { GLOSSARY_CATEGORIES, getCategory, type GlossaryCategory } from "@/lib/glossaryCategories";
 
 interface GlossaryTerm {
   id: string;
@@ -9,6 +10,7 @@ interface GlossaryTerm {
   slug: string;
   description: string | null;
   active: boolean;
+  category: GlossaryCategory;
 }
 
 const slugify = (text: string) =>
@@ -18,9 +20,12 @@ const GlossaryPanel = () => {
   const [items, setItems] = useState<GlossaryTerm[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [catFilter, setCatFilter] = useState<GlossaryCategory | "all">("all");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<GlossaryTerm | null>(null);
-  const [form, setForm] = useState({ term: "", slug: "", description: "", active: true });
+  const [form, setForm] = useState<{ term: string; slug: string; description: string; active: boolean; category: GlossaryCategory }>({
+    term: "", slug: "", description: "", active: true, category: "regnskap",
+  });
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
 
@@ -44,7 +49,7 @@ const GlossaryPanel = () => {
       toast.success("Begrep lagt til");
     }
     setShowForm(false); setEditing(null);
-    setForm({ term: "", slug: "", description: "", active: true });
+    setForm({ term: "", slug: "", description: "", active: true, category: "regnskap" });
     fetchData();
   };
 
@@ -74,6 +79,7 @@ const GlossaryPanel = () => {
   };
 
   const filteredItems = items.filter(i => {
+    if (catFilter !== "all" && i.category !== catFilter) return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
     return i.term.toLowerCase().includes(q);
@@ -103,17 +109,33 @@ const GlossaryPanel = () => {
               {selected.size === filteredItems.length ? "Fjern alle" : "Velg alle"}
             </button>
           )}
-          <button onClick={() => { setShowForm(true); setEditing(null); setForm({ term: "", slug: "", description: "", active: true }); }}
+          <button onClick={() => { setShowForm(true); setEditing(null); setForm({ term: "", slug: "", description: "", active: true, category: catFilter === "all" ? "regnskap" : catFilter }); }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm glow-rose hover:opacity-90">
             <Plus size={14} /> Nytt begrep
           </button>
         </div>
       </div>
 
-      <div className="relative max-w-md">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søk begrep…"
-          className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/30 bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+      <div className="flex flex-wrap gap-2 items-center">
+        <div className="relative flex-1 min-w-[200px] max-w-md">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Søk begrep…"
+            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/30 bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+        </div>
+        <button onClick={() => setCatFilter("all")}
+          className={`px-3 h-9 rounded-xl border text-xs font-medium transition-colors ${catFilter === "all" ? "bg-primary/15 border-primary/40 text-primary" : "border-border/30 text-muted-foreground hover:bg-muted/50"}`}>
+          Alle ({items.length})
+        </button>
+        {GLOSSARY_CATEGORIES.map(cat => {
+          const count = items.filter(i => i.category === cat.key).length;
+          return (
+            <button key={cat.key} onClick={() => setCatFilter(cat.key)}
+              className={`px-3 h-9 rounded-xl border text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${catFilter === cat.key ? cat.chipActive : cat.chip}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${cat.dot}`} />
+              {cat.short} ({count})
+            </button>
+          );
+        })}
       </div>
 
       {showForm && (
@@ -121,6 +143,18 @@ const GlossaryPanel = () => {
           <h3 className="font-medium text-sm">{editing ? "Rediger begrep" : "Nytt begrep"}</h3>
           <input value={form.term} onChange={e => setForm({ ...form, term: e.target.value })} placeholder="Begrep / term" required
             className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">Kategori</label>
+            <div className="flex flex-wrap gap-2">
+              {GLOSSARY_CATEGORIES.map(cat => (
+                <button type="button" key={cat.key} onClick={() => setForm({ ...form, category: cat.key })}
+                  className={`px-3 h-9 rounded-xl border text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${form.category === cat.key ? cat.chipActive : cat.chip}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${cat.dot}`} />
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Forklaring" rows={5}
             className="w-full rounded-xl border border-border/30 bg-muted/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
           <div className="flex gap-2">
@@ -131,25 +165,32 @@ const GlossaryPanel = () => {
       )}
 
       <div className="space-y-2">
-        {filteredItems.map(item => (
-          <div key={item.id} className={`glass rounded-2xl px-5 py-3 border flex items-center justify-between gap-4 transition-colors ${selected.has(item.id) ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
-            <div className="flex items-center gap-3">
-              <button onClick={() => toggleSelect(item.id)} className="text-muted-foreground hover:text-primary shrink-0">
-                {selected.has(item.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
-              </button>
-              <div>
-                <p className="text-sm font-medium">{item.term}</p>
-                {item.description && <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>}
+        {filteredItems.map(item => {
+          const cat = getCategory(item.category);
+          return (
+            <div key={item.id} className={`glass rounded-2xl px-5 py-3 border flex items-center justify-between gap-4 transition-colors ${selected.has(item.id) ? "border-primary/40 bg-primary/5" : "border-border/20"}`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <button onClick={() => toggleSelect(item.id)} className="text-muted-foreground hover:text-primary shrink-0">
+                  {selected.has(item.id) ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
+                </button>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${cat.dot}`} title={cat.label} />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-medium">{item.term}</p>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${cat.badge}`}>{cat.short}</span>
+                    {!item.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 rounded">Inaktiv</span>}
+                  </div>
+                  {item.description && <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>}
+                </div>
               </div>
-              {!item.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 rounded">Inaktiv</span>}
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => { document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' }); setEditing(item); setForm({ term: item.term, slug: item.slug, description: item.description || "", active: item.active, category: item.category || "regnskap" }); setShowForm(true); }}
+                  className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
+                <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => { document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' }); setEditing(item); setForm({ term: item.term, slug: item.slug, description: item.description || "", active: item.active }); setShowForm(true); }}
-                className="text-muted-foreground hover:text-foreground"><Edit2 size={14} /></button>
-              <button onClick={() => del(item.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
