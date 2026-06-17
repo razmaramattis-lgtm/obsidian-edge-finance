@@ -130,6 +130,25 @@ serve(async () => {
       }
     }
 
+    // Glossary terms
+    const { data: terms } = await supabase
+      .from("glossary_terms")
+      .select("slug, updated_at")
+      .eq("active", true);
+    if (terms) {
+      for (const term of terms) {
+        if (!term.slug) continue;
+        const lastmod = term.updated_at ? term.updated_at.split("T")[0] : today;
+        xml += `
+  <url>
+    <loc>${DOMAIN}/ressurser/regnskapsord/${term.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>`;
+      }
+    }
+
     xml += `
 </urlset>`;
 
