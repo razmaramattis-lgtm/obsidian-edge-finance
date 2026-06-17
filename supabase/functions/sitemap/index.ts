@@ -30,6 +30,7 @@ const staticPages = [
   { loc: "/ressurser", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/skattekalender", priority: "0.8", changefreq: "weekly" },
   { loc: "/ressurser/kontohjelp", priority: "0.7", changefreq: "monthly" },
+  { loc: "/ressurser/regnskapsord", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/katalog", priority: "0.7", changefreq: "monthly" },
   { loc: "/kurs/regnskap", priority: "0.6", changefreq: "monthly" },
@@ -125,6 +126,25 @@ serve(async () => {
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>`;
+      }
+    }
+
+    // Glossary terms
+    const { data: terms } = await supabase
+      .from("glossary_terms")
+      .select("slug, updated_at")
+      .eq("active", true);
+    if (terms) {
+      for (const term of terms) {
+        if (!term.slug) continue;
+        const lastmod = term.updated_at ? term.updated_at.split("T")[0] : today;
+        xml += `
+  <url>
+    <loc>${DOMAIN}/ressurser/regnskapsord/${term.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>`;
       }
     }

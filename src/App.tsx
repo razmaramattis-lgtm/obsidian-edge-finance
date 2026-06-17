@@ -370,8 +370,10 @@ const App = () => (
                             <Route path="/:sectionId/nyheter" element={<BlogListing />} />
                             <Route path="/:sectionId/nyhet/:slug" element={<BlogPost />} />
                             <Route path="/:sectionId/faq" element={<FAQ />} />
-                            <Route path="/:sectionId/regnskapsord" element={<AdminOnlyRoute><Regnskapsord /></AdminOnlyRoute>} />
-                            <Route path="/:sectionId/regnskapsord/:slug" element={<AdminOnlyRoute><RegnskapsordDetalj /></AdminOnlyRoute>} />
+                            <Route path="/:sectionId/regnskapsord" element={<Regnskapsord />} />
+                            <Route path="/:sectionId/regnskapsord/:slug" element={<RegnskapsordDetalj />} />
+                            <Route path="/ressurser/regnskapsord" element={<Regnskapsord />} />
+                            <Route path="/ressurser/regnskapsord/:slug" element={<RegnskapsordDetalj />} />
 
                             {/* Legacy / shared routes */}
                             <Route path="/tjenester" element={<Tjenester />} />
