@@ -3,12 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, BookMarked } from "lucide-react";
+import { getCategory, type GlossaryCategory } from "@/lib/glossaryCategories";
 
 interface GlossaryTerm {
   id: string;
   term: string;
   slug: string;
   description: string | null;
+  category: GlossaryCategory;
 }
 
 const RegnskapsordDetalj = () => {
