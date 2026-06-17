@@ -519,10 +519,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
 
-            {/* CTA button */}
+            {/* CTA buttons */}
+            <Link
+              to="/book-mote"
+              className="ml-2 px-4 lg:px-5 py-2.5 text-[12px] font-medium border border-primary/40 text-primary rounded-full hover:bg-primary/5 transition-all duration-300 tracking-wide"
+            >
+              Book møte
+            </Link>
             <Link
               to={sp("/kontakt")}
-              className="ml-2 px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide shadow-lg shadow-primary/20"
+              className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide shadow-lg shadow-primary/20"
             >
               Få tilbud
             </Link>
@@ -683,7 +689,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* CTA */}
-            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-primary text-primary-foreground rounded-2xl text-center flex items-center justify-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+            <Link to="/book-mote" onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[52px] py-3 text-[15px] font-medium border border-primary/40 text-primary rounded-2xl text-center flex items-center justify-center transition-all">
+              Book møte
+            </Link>
+            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-2 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-primary text-primary-foreground rounded-2xl text-center flex items-center justify-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
               Få tilbud
             </Link>
           </div>
