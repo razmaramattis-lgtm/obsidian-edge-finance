@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfWeek, isBefore, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -11,6 +11,15 @@ interface Availability { profile_id: string; day_of_week: number; start_time: st
 interface BlockedDate { profile_id: string; blocked_date: string; }
 interface ExistingBooking { advisor_id: string; booking_date: string; booking_time: string; }
 interface AdvisorInfo { id: string; name: string; }
+
+type BrregEnhet = {
+  organisasjonsnummer: string;
+  navn: string;
+  antallAnsatte?: number;
+  organisasjonsform?: { beskrivelse?: string };
+  forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
+};
+
 
 const services = [
   { id: "regnskap", label: "Regnskap & økonomi", desc: "Bokføring, årsregnskap, MVA, rådgivning", icon: Calculator, color: "from-rose-500/20 to-orange-500/10" },
