@@ -197,6 +197,7 @@ const BookMote = () => {
     const bookingDate = format(selectedDate, "yyyy-MM-dd");
     const meldingFull = [
       `Tjenesteområde: ${services.find(s => s.id === service)?.label}`,
+      form.orgnr ? `Org.nr: ${form.orgnr}` : "",
       `Størrelse: ${size}`,
       `Regnskapsfører i dag: ${hasAccountant}`,
       `Mål: ${goal}`,
