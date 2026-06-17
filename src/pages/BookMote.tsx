@@ -89,13 +89,13 @@ const BookMote = () => {
   const [service, setService] = useState<ServiceId | null>(null);
   const [size, setSize] = useState<string | null>(null);
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
+  const [goal, setGoal] = useState<string | null>(null);
+  const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
   const quiz = service ? serviceQuiz[service] : null;
   const pickService = (id: ServiceId) => {
     if (service !== id) { setCurrentStatus(null); setGoal(null); }
     setService(id);
   };
-  const [goal, setGoal] = useState<string | null>(null);
-  const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
 
   // Brreg company search (step 1)
   const [companySearch, setCompanySearch] = useState("");
