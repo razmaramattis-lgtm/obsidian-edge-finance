@@ -28,14 +28,42 @@ const services = [
   { id: "it", label: "IT & systemer", desc: "Automatisering, integrasjoner, support", icon: Cpu, color: "from-cyan-500/20 to-sky-500/10" },
 ] as const;
 
-const goals = [
-  "Bytte regnskapsfører",
-  "Starte opp / nytt selskap",
-  "Få konkret rådgivning",
-  "Annet / utforske",
-] as const;
+type ServiceId = "regnskap" | "hr" | "markedsforing" | "it";
+
+const serviceQuiz: Record<ServiceId, {
+  statusLabel: string;
+  statusOptions: readonly string[];
+  goalLabel: string;
+  goals: readonly string[];
+}> = {
+  regnskap: {
+    statusLabel: "Regnskapsfører i dag?",
+    statusOptions: ["Ja", "Nei", "Vurderer bytte"],
+    goalLabel: "Hva er hovedmålet med møtet?",
+    goals: ["Bytte regnskapsfører", "Starte opp / nytt selskap", "Få konkret rådgivning", "Årsoppgjør / skatt", "Annet / utforske"],
+  },
+  hr: {
+    statusLabel: "Hvordan håndterer dere HR i dag?",
+    statusOptions: ["Internt", "Outsourcet", "Ikke etablert"],
+    goalLabel: "Hva trenger du hjelp med?",
+    goals: ["Ansette første medarbeider", "Personalhåndbok & rutiner", "Lønn & rapportering", "Arbeidsrett / oppsigelse", "Annet / utforske"],
+  },
+  markedsforing: {
+    statusLabel: "Hvordan jobber dere med markedsføring i dag?",
+    statusOptions: ["Internt", "Eksternt byrå", "Lite/ingen aktivitet"],
+    goalLabel: "Hva er målet med møtet?",
+    goals: ["Flere kunder / leads", "Ny nettside eller nettbutikk", "SEO & organisk vekst", "Google Ads / Meta-annonser", "Annet / utforske"],
+  },
+  it: {
+    statusLabel: "Hvordan er den tekniske situasjonen i dag?",
+    statusOptions: ["Moderne systemer", "Eldre / lappeteppe", "Bygger nytt"],
+    goalLabel: "Hva trenger du hjelp med?",
+    goals: ["Ny nettside / nettbutikk", "Automatisering & integrasjoner", "Chatbot / AI-løsning", "Internsystem / dashboard", "Annet / utforske"],
+  },
+};
 
 const sizes = ["Ingen ansatte", "1–5 ansatte", "6–20 ansatte", "20+ ansatte"] as const;
+
 
 function generateSlots(startTime: string, endTime: string): string[] {
   const slots: string[] = [];
@@ -58,11 +86,16 @@ const BookMote = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const [service, setService] = useState<string | null>(null);
+  const [service, setService] = useState<ServiceId | null>(null);
   const [size, setSize] = useState<string | null>(null);
-  const [hasAccountant, setHasAccountant] = useState<string | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [goal, setGoal] = useState<string | null>(null);
   const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
+  const quiz = service ? serviceQuiz[service] : null;
+  const pickService = (id: ServiceId) => {
+    if (service !== id) { setCurrentStatus(null); setGoal(null); }
+    setService(id);
+  };
 
   // Brreg company search (step 1)
   const [companySearch, setCompanySearch] = useState("");
@@ -199,7 +232,7 @@ const BookMote = () => {
       `Tjenesteområde: ${services.find(s => s.id === service)?.label}`,
       form.orgnr ? `Org.nr: ${form.orgnr}` : "",
       `Størrelse: ${size}`,
-      `Regnskapsfører i dag: ${hasAccountant}`,
+      `${quiz?.statusLabel || "Status i dag"} ${currentStatus}`,
       `Mål: ${goal}`,
       form.melding ? `\nMelding: ${form.melding}` : "",
     ].filter(Boolean).join("\n");
@@ -241,7 +274,7 @@ const BookMote = () => {
 
   const canNext = () => {
     if (step === 0) return !!service;
-    if (step === 1) return !!size && !!hasAccountant;
+    if (step === 1) return !!size && !!currentStatus;
     if (step === 2) return !!goal;
     if (step === 3) return !!selectedDate && !!selectedTime && !!selectedAdvisor;
     return true;
@@ -324,7 +357,7 @@ const BookMote = () => {
                       const Icon = s.icon;
                       const active = service === s.id;
                       return (
-                        <button key={s.id} onClick={() => setService(s.id)}
+                        <button key={s.id} onClick={() => pickService(s.id)}
                           className={`text-left p-5 rounded-2xl border transition-all ${active ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} border border-border/20 flex items-center justify-center mb-3`}>
                             <Icon size={18} className="text-foreground" />
@@ -422,11 +455,11 @@ const BookMote = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Regnskapsfører i dag?</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["Ja", "Nei", "Vurderer bytte"].map(o => (
-                        <button key={o} onClick={() => setHasAccountant(o)}
-                          className={`p-3 rounded-xl border text-xs font-medium transition ${hasAccountant === o ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                    <div className={`grid gap-2 ${(quiz?.statusOptions.length || 3) > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
+                      {quiz?.statusOptions.map(o => (
+                        <button key={o} onClick={() => setCurrentStatus(o)}
+                          className={`p-3 rounded-xl border text-xs font-medium transition ${currentStatus === o ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                           {o}
                         </button>
                       ))}
@@ -440,11 +473,11 @@ const BookMote = () => {
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Spørsmål 3 av 4</p>
-                    <h1 className="text-2xl md:text-3xl font-semibold">Hva er hovedmålet med møtet?</h1>
+                    <h1 className="text-2xl md:text-3xl font-semibold">{quiz?.goalLabel || "Hva er målet?"}</h1>
                     <p className="text-sm text-muted-foreground">Hjelper rådgiveren forberede seg.</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {goals.map(g => (
+                    {quiz?.goals.map(g => (
                       <button key={g} onClick={() => setGoal(g)}
                         className={`text-left p-4 rounded-2xl border transition ${goal === g ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                         <p className="text-sm font-medium">{g}</p>
