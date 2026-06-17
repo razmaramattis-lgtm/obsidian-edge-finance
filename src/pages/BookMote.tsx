@@ -28,14 +28,42 @@ const services = [
   { id: "it", label: "IT & systemer", desc: "Automatisering, integrasjoner, support", icon: Cpu, color: "from-cyan-500/20 to-sky-500/10" },
 ] as const;
 
-const goals = [
-  "Bytte regnskapsfører",
-  "Starte opp / nytt selskap",
-  "Få konkret rådgivning",
-  "Annet / utforske",
-] as const;
+type ServiceId = "regnskap" | "hr" | "markedsforing" | "it";
+
+const serviceQuiz: Record<ServiceId, {
+  statusLabel: string;
+  statusOptions: readonly string[];
+  goalLabel: string;
+  goals: readonly string[];
+}> = {
+  regnskap: {
+    statusLabel: "Regnskapsfører i dag?",
+    statusOptions: ["Ja", "Nei", "Vurderer bytte"],
+    goalLabel: "Hva er hovedmålet med møtet?",
+    goals: ["Bytte regnskapsfører", "Starte opp / nytt selskap", "Få konkret rådgivning", "Årsoppgjør / skatt", "Annet / utforske"],
+  },
+  hr: {
+    statusLabel: "Hvordan håndterer dere HR i dag?",
+    statusOptions: ["Internt", "Outsourcet", "Ikke etablert"],
+    goalLabel: "Hva trenger du hjelp med?",
+    goals: ["Ansette første medarbeider", "Personalhåndbok & rutiner", "Lønn & rapportering", "Arbeidsrett / oppsigelse", "Annet / utforske"],
+  },
+  markedsforing: {
+    statusLabel: "Hvordan jobber dere med markedsføring i dag?",
+    statusOptions: ["Internt", "Eksternt byrå", "Lite/ingen aktivitet"],
+    goalLabel: "Hva er målet med møtet?",
+    goals: ["Flere kunder / leads", "Ny nettside eller nettbutikk", "SEO & organisk vekst", "Google Ads / Meta-annonser", "Annet / utforske"],
+  },
+  it: {
+    statusLabel: "Hvordan er den tekniske situasjonen i dag?",
+    statusOptions: ["Moderne systemer", "Eldre / lappeteppe", "Bygger nytt"],
+    goalLabel: "Hva trenger du hjelp med?",
+    goals: ["Ny nettside / nettbutikk", "Automatisering & integrasjoner", "Chatbot / AI-løsning", "Internsystem / dashboard", "Annet / utforske"],
+  },
+};
 
 const sizes = ["Ingen ansatte", "1–5 ansatte", "6–20 ansatte", "20+ ansatte"] as const;
+
 
 function generateSlots(startTime: string, endTime: string): string[] {
   const slots: string[] = [];
