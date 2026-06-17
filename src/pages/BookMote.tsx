@@ -62,7 +62,17 @@ const BookMote = () => {
   const [size, setSize] = useState<string | null>(null);
   const [hasAccountant, setHasAccountant] = useState<string | null>(null);
   const [goal, setGoal] = useState<string | null>(null);
-  const [form, setForm] = useState({ firma: "", navn: "", telefon: "", epost: "", melding: "" });
+  const [form, setForm] = useState({ firma: "", orgnr: "", navn: "", telefon: "", epost: "", melding: "" });
+
+  // Brreg company search (step 1)
+  const [companySearch, setCompanySearch] = useState("");
+  const [searchResults, setSearchResults] = useState<BrregEnhet[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
 
   // Calendar
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
