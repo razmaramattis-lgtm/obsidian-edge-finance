@@ -106,6 +106,68 @@ const BookMote = () => {
 
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
+  // Brreg search debounce
+  useEffect(() => {
+    if (companySearch.length < 2 || (selectedCompany && companySearch === selectedCompany.navn)) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const isOrgNr = /^\d{9}$/.test(companySearch.trim());
+        const url = isOrgNr
+          ? `https://data.brreg.no/enhetsregisteret/api/enheter/${companySearch.trim()}`
+          : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(companySearch)}&size=8&fraAntallAnsatte=0`;
+        const res = await fetch(url);
+        if (!res.ok) { setSearchResults([]); setSearching(false); return; }
+        const data = await res.json();
+        if (isOrgNr) {
+          setSearchResults(data?.organisasjonsnummer ? [data] : []);
+          setShowDropdown(!!data?.organisasjonsnummer);
+        } else {
+          setSearchResults(data._embedded?.enheter || []);
+          setShowDropdown((data._embedded?.enheter || []).length > 0);
+        }
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+    return () => { if (searchTimeout.current) clearTimeout(searchTimeout.current); };
+  }, [companySearch, selectedCompany]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowDropdown(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const selectCompany = (enhet: BrregEnhet) => {
+    setSelectedCompany(enhet);
+    setCompanySearch(enhet.navn);
+    setShowDropdown(false);
+    setForm(f => ({ ...f, firma: enhet.navn, orgnr: enhet.organisasjonsnummer }));
+    // Auto-pick size from antallAnsatte
+    const n = enhet.antallAnsatte ?? 0;
+    if (n === 0) setSize("Ingen ansatte");
+    else if (n <= 5) setSize("1–5 ansatte");
+    else if (n <= 20) setSize("6–20 ansatte");
+    else setSize("20+ ansatte");
+  };
+
+  const clearCompany = () => {
+    setSelectedCompany(null);
+    setCompanySearch("");
+    setForm(f => ({ ...f, firma: "", orgnr: "" }));
+  };
+
+
   const getSlots = (date: Date) => {
     const dow = ((date.getDay() + 6) % 7) + 1;
     const dateStr = format(date, "yyyy-MM-dd");
