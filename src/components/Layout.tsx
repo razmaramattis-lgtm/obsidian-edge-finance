@@ -636,7 +636,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* ─── Direct links: Om oss, Karriere, Akademi ─── */}
             <MobileNavLink to={sp("/om-oss")} label="Om oss" onClick={() => setMenuOpen(false)} />
-            <MobileNavLink to="/karriere" label="Karriere" onClick={() => setMenuOpen(false)} />
+            
             <MobileNavLink to="/kurs" label="Akademi" onClick={() => setMenuOpen(false)} />
 
             {/* Mobile Selskapet — only on hub */}
