@@ -94,7 +94,7 @@ const selskapetLinks = [
   { icon: Lock, title: "Logg inn", desc: "Logg inn som kunde eller ansatt for tilgang til din portal, dokumenter og verktøy.", href: "/logg-inn", absolute: true },
   { icon: Mail, title: "Kontakt oss", desc: "Få et uforpliktende tilbud eller still spørsmål om våre tjenester. Vi svarer normalt innen én arbeidsdag.", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om Avargo", desc: "Møt teamet bak Avargo. Les om vår visjon, metode og hva som driver oss til å levere bedre løsninger for norske bedrifter.", href: "/om-oss", absolute: false },
-  { icon: Briefcase, title: "Karriere", desc: "Se ledige stillinger og bli en del av et voksende team. Vi ser etter dyktige mennesker innen regnskap, HR, marked og teknologi.", href: "/karriere", absolute: true },
+  
 ];
 
 const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
@@ -636,7 +636,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* ─── Direct links: Om oss, Karriere, Akademi ─── */}
             <MobileNavLink to={sp("/om-oss")} label="Om oss" onClick={() => setMenuOpen(false)} />
-            <MobileNavLink to="/karriere" label="Karriere" onClick={() => setMenuOpen(false)} />
+            
             <MobileNavLink to="/kurs" label="Akademi" onClick={() => setMenuOpen(false)} />
 
             {/* Mobile Selskapet — only on hub */}
@@ -752,8 +752,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Selskapet</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to={sp("/om-oss")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Om Avargo</Link>
-                  <Link to="/karriere" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Jobb hos oss</Link>
-                  <Link to="/samarbeid" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Samarbeid</Link>
                   <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Vanlige spørsmål</Link>
                 </div>
               </div>
