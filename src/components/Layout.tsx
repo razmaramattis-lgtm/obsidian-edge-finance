@@ -752,8 +752,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Selskapet</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
                   <Link to={sp("/om-oss")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Om Avargo</Link>
-                  <Link to="/karriere" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Jobb hos oss</Link>
-                  <Link to="/samarbeid" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Samarbeid</Link>
                   <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Vanlige spørsmål</Link>
                 </div>
               </div>
