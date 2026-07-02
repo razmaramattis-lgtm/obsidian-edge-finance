@@ -94,7 +94,7 @@ const selskapetLinks = [
   { icon: Lock, title: "Logg inn", desc: "Logg inn som kunde eller ansatt for tilgang til din portal, dokumenter og verktøy.", href: "/logg-inn", absolute: true },
   { icon: Mail, title: "Kontakt oss", desc: "Få et uforpliktende tilbud eller still spørsmål om våre tjenester. Vi svarer normalt innen én arbeidsdag.", href: "/kontakt", absolute: false },
   { icon: Info, title: "Om Avargo", desc: "Møt teamet bak Avargo. Les om vår visjon, metode og hva som driver oss til å levere bedre løsninger for norske bedrifter.", href: "/om-oss", absolute: false },
-  { icon: Briefcase, title: "Karriere", desc: "Se ledige stillinger og bli en del av et voksende team. Vi ser etter dyktige mennesker innen regnskap, HR, marked og teknologi.", href: "/karriere", absolute: true },
+  
 ];
 
 const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
