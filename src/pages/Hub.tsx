@@ -157,7 +157,7 @@ const Hub = () => {
               Velg det du trenger
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
-              Fire avdelinger, spesialisert på hvert sitt felt — eller kombiner dem til én sømløs løsning.
+              To spesialiserte avdelinger — eller kombiner dem til én sømløs løsning.
             </p>
           </motion.div>
 
