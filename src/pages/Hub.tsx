@@ -83,7 +83,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Fire spesialiserte avdelinger. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
+                Regnskap og HR under ett tak. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
               </motion.p>
 
               <motion.div
