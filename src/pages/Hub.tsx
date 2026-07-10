@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
-import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
+import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import ComparisonSection from "@/components/ComparisonSection";
 import MetodenSection from "@/components/MetodenSection";
@@ -17,7 +17,7 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
 };
 
 const Hub = () => {
-  const sections = Object.values(SECTIONS);
+  const sections = SECTION_LIST;
 
   return (
     <>
