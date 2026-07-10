@@ -361,14 +361,13 @@ const categories = [
 const Tjenester = () => {
   const { section, isInSection } = useSection();
 
-  // Filter categories based on active section
+  // Hide marketing & IT categories globally; filter further by section when active
+  const HIDDEN_CATEGORY_IDS = ["marked", "it"];
   const visibleCategories = (() => {
-    if (!isInSection || !section) return categories;
-
+    const base = categories.filter((cat) => !HIDDEN_CATEGORY_IDS.includes(cat.id));
+    if (!isInSection || !section) return base;
     const allowedIds = sectionCategoryIds[section.id];
-
-    return categories
-      .filter((cat) => allowedIds.includes(cat.id));
+    return base.filter((cat) => allowedIds.includes(cat.id));
   })();
 
   const copy = isInSection && section ? sectionPageCopy[section.id].tjenester : null;
