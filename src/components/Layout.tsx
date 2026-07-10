@@ -33,6 +33,8 @@ const groupSectionIdMap: Record<string, string> = {
   "IT & Utvikling": "it",
 };
 
+const HIDDEN_GROUP_LABELS = ["Markedsføring & Vekst", "IT & Utvikling"];
+
 const tjenesterGroups = [
   {
     label: "Regnskap & Økonomi",
@@ -54,24 +56,6 @@ const tjenesterGroups = [
       { icon: UserPlus, title: "Ansettelse & rekruttering", desc: "Finn og ansett riktig kandidat", href: "/tjenester/ansettelse" },
       { icon: FileText, title: "Personalhåndbok", desc: "Skreddersydde retningslinjer", href: "/tjenester/personalhandbok" },
       { icon: Scale, title: "Arbeidsrett & HMS", desc: "Juridisk trygghet og HMS-system", href: "/tjenester/arbeidsrett" },
-    ],
-  },
-  {
-    label: "Markedsføring & Vekst",
-    items: [
-      { icon: Search, title: "SEO & søkbarhet", desc: "Bli funnet av kundene dine", href: "/tjenester/seo" },
-      { icon: Megaphone, title: "Meta-annonser", desc: "Facebook & Instagram-annonsering", href: "/tjenester/meta-annonser" },
-      { icon: Globe, title: "Google Ads", desc: "Målrettet annonsering på Google", href: "/tjenester/google-ads" },
-      { icon: ShoppingCart, title: "Nettbutikk & e-handel", desc: "Salgsplattform som konverterer", href: "/tjenester/nettbutikk" },
-    ],
-  },
-  {
-    label: "IT & Utvikling",
-    items: [
-      { icon: Monitor, title: "Skreddersydde nettsider", desc: "Unikt design som skiller seg ut", href: "/tjenester/nettsider" },
-      { icon: Bot, title: "AI-chatbot & kundeservice", desc: "Automatisert kundehåndtering 24/7", href: "/tjenester/chatbot" },
-      { icon: Code, title: "Interne systemer", desc: "Skreddersydde verktøy for teamet", href: "/tjenester/internsystemer" },
-      { icon: Cpu, title: "AI & automatisering", desc: "Smartere drift med AI-løsninger", href: "/tjenester/ai-automatisering" },
     ],
   },
 ];
