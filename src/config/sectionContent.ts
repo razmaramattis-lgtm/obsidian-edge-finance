@@ -19,8 +19,8 @@ export const sectionCategoryIds: Record<SectionId, string[]> = {
 export const sectionTjenesterGroups: Record<SectionId, string[]> = {
   regnskap: ["Regnskap & Økonomi"],
   hr: ["HR & Personal"],
-  markedsforing: ["Markedsføring & Vekst"],
-  it: ["IT & Utvikling"],
+  markedsforing: [],
+  it: [],
 };
 
 /**

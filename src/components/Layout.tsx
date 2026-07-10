@@ -21,19 +21,13 @@ import {
 const groupSectionMap: Record<string, string> = {
   "Regnskap & Økonomi": "/regnskap",
   "HR & Personal": "/hr",
-  "Markedsføring & Vekst": "/markedsforing",
-  "IT & Utvikling": "/it",
 };
 
 /** Maps tjenester group label → SectionId for accent colors */
 const groupSectionIdMap: Record<string, string> = {
   "Regnskap & Økonomi": "regnskap",
   "HR & Personal": "hr",
-  "Markedsføring & Vekst": "markedsforing",
-  "IT & Utvikling": "it",
 };
-
-const HIDDEN_GROUP_LABELS = ["Markedsføring & Vekst", "IT & Utvikling"];
 
 const tjenesterGroups = [
   {
