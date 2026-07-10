@@ -63,11 +63,6 @@ const Regnskapsforer = lazy(() => import("./pages/tjenester/Regnskapsforer"));
 const AiInnsikt = lazy(() => import("./pages/tjenester/AiInnsikt"));
 const CFO = lazy(() => import("./pages/tjenester/CFO"));
 const HR = lazy(() => import("./pages/tjenester/HR"));
-const Nettsider = lazy(() => import("./pages/tjenester/Nettsider"));
-const SEO = lazy(() => import("./pages/tjenester/SEO"));
-const MetaAnnonser = lazy(() => import("./pages/tjenester/MetaAnnonser"));
-const GoogleAds = lazy(() => import("./pages/tjenester/GoogleAds"));
-const Nettbutikk = lazy(() => import("./pages/tjenester/Nettbutikk"));
 const AiAutomatisering = lazy(() => import("./pages/tjenester/AiAutomatisering"));
 const Kurs = lazy(() => import("./pages/tjenester/Kurs"));
 const EnTilEnRegnskap = lazy(() => import("./pages/tjenester/EnTilEnRegnskap"));
@@ -76,15 +71,13 @@ const Lonn = lazy(() => import("./pages/tjenester/Lonn"));
 const Arsregnskap = lazy(() => import("./pages/tjenester/Arsregnskap"));
 const Fakturering = lazy(() => import("./pages/tjenester/Fakturering"));
 const Skatteplanlegging = lazy(() => import("./pages/tjenester/Skatteplanlegging"));
-const DashboardPage = lazy(() => import("./pages/tjenester/Dashboard"));
 const Ansettelse = lazy(() => import("./pages/tjenester/Ansettelse"));
 const Personalhandbok = lazy(() => import("./pages/tjenester/Personalhandbok"));
 const Arbeidsrett = lazy(() => import("./pages/tjenester/Arbeidsrett"));
-const Chatbot = lazy(() => import("./pages/tjenester/Chatbot"));
 const WorkspacePage = lazy(() => import("./pages/Workspace"));
-const Internsystemer = lazy(() => import("./pages/tjenester/Internsystemer"));
 const HrKurs = lazy(() => import("./pages/tjenester/HrKurs"));
 const Bedriftskurs = lazy(() => import("./pages/tjenester/Bedriftskurs"));
+
 const KarriereLayout = lazy(() => import("./components/karriere/KarriereLayout"));
 const KarriereForside = lazy(() => import("./pages/karriere/KarriereForside"));
 const KarriereFagomrader = lazy(() => import("./pages/karriere/KarriereFagomrader"));
@@ -157,8 +150,6 @@ const prefetchRoutes = () => {
     prefetch(() => import("./pages/tjenester/Regnskapsforer"));
     prefetch(() => import("./pages/tjenester/CFO"));
     prefetch(() => import("./pages/tjenester/Lonn"));
-    prefetch(() => import("./pages/tjenester/Nettsider"));
-    prefetch(() => import("./pages/tjenester/SEO"));
     prefetch(() => import("./pages/tjenester/HR"));
     prefetch(() => import("./pages/Ressurser"));
     prefetch(() => import("./pages/FAQ"));
@@ -321,11 +312,11 @@ const App = () => (
                             <Route path="/:sectionId/tjenester/ai-innsikt" element={<AiInnsikt />} />
                             <Route path="/:sectionId/tjenester/cfo" element={<CFO />} />
                             <Route path="/:sectionId/tjenester/hr-og-lonn" element={<HR />} />
-                            <Route path="/:sectionId/tjenester/nettsider" element={<Nettsider />} />
-                            <Route path="/:sectionId/tjenester/seo" element={<SEO />} />
-                            <Route path="/:sectionId/tjenester/meta-annonser" element={<MetaAnnonser />} />
-                            <Route path="/:sectionId/tjenester/google-ads" element={<GoogleAds />} />
-                            <Route path="/:sectionId/tjenester/nettbutikk" element={<Nettbutikk />} />
+                            <Route path="/:sectionId/tjenester/nettsider" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/:sectionId/tjenester/seo" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/:sectionId/tjenester/meta-annonser" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/:sectionId/tjenester/google-ads" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/:sectionId/tjenester/nettbutikk" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/ai-automatisering" element={<AiAutomatisering />} />
                             <Route path="/:sectionId/tjenester/kurs" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/:sectionId/tjenester/kurs/:slug" element={<Navigate to="/kurs/katalog" replace />} />
@@ -334,14 +325,15 @@ const App = () => (
                             <Route path="/:sectionId/tjenester/arsregnskap" element={<Arsregnskap />} />
                             <Route path="/:sectionId/tjenester/fakturering" element={<Fakturering />} />
                             <Route path="/:sectionId/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
-                            <Route path="/:sectionId/tjenester/dashboard" element={<DashboardPage />} />
+                            <Route path="/:sectionId/tjenester/dashboard" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/ansettelse" element={<Ansettelse />} />
                             <Route path="/:sectionId/tjenester/personalhandbok" element={<Personalhandbok />} />
                             <Route path="/:sectionId/tjenester/arbeidsrett" element={<Arbeidsrett />} />
-                            <Route path="/:sectionId/tjenester/chatbot" element={<Chatbot />} />
-                            <Route path="/:sectionId/tjenester/internsystemer" element={<Internsystemer />} />
+                            <Route path="/:sectionId/tjenester/chatbot" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/:sectionId/tjenester/internsystemer" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/hr-kurs" element={<Navigate to="/kurs/hr-kurs" replace />} />
                             <Route path="/:sectionId/tjenester/bedriftskurs" element={<Navigate to="/kurs/bedriftskurs" replace />} />
+
 
                             {/* Section bransje sub-pages (only regnskap) */}
                             <Route path="/regnskap/bransjer/tech-saas" element={<TechSaas />} />
@@ -389,11 +381,11 @@ const App = () => (
                             <Route path="/tjenester/ai-innsikt" element={<AiInnsikt />} />
                             <Route path="/tjenester/cfo" element={<CFO />} />
                             <Route path="/tjenester/hr-og-lonn" element={<HR />} />
-                            <Route path="/tjenester/nettsider" element={<Nettsider />} />
-                            <Route path="/tjenester/seo" element={<SEO />} />
-                            <Route path="/tjenester/meta-annonser" element={<MetaAnnonser />} />
-                            <Route path="/tjenester/google-ads" element={<GoogleAds />} />
-                            <Route path="/tjenester/nettbutikk" element={<Nettbutikk />} />
+                            <Route path="/tjenester/nettsider" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/tjenester/seo" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/tjenester/meta-annonser" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/tjenester/google-ads" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/tjenester/nettbutikk" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
                             <Route path="/tjenester/kurs" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/tjenester/kurs/:slug" element={<Navigate to="/kurs/katalog" replace />} />
@@ -402,14 +394,15 @@ const App = () => (
                             <Route path="/tjenester/arsregnskap" element={<Arsregnskap />} />
                             <Route path="/tjenester/fakturering" element={<Fakturering />} />
                             <Route path="/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
-                            <Route path="/tjenester/dashboard" element={<DashboardPage />} />
+                            <Route path="/tjenester/dashboard" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/ansettelse" element={<Ansettelse />} />
                             <Route path="/tjenester/personalhandbok" element={<Personalhandbok />} />
                             <Route path="/tjenester/arbeidsrett" element={<Arbeidsrett />} />
-                            <Route path="/tjenester/chatbot" element={<Chatbot />} />
-                            <Route path="/tjenester/internsystemer" element={<Internsystemer />} />
+                            <Route path="/tjenester/chatbot" element={<Navigate to="/tjenester" replace />} />
+                            <Route path="/tjenester/internsystemer" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/hr-kurs" element={<Navigate to="/kurs/hr-kurs" replace />} />
                             <Route path="/tjenester/bedriftskurs" element={<Navigate to="/kurs/bedriftskurs" replace />} />
+
                             <Route path="/bransjer" element={<Bransjer />} />
                             <Route path="/bransjer/tech-saas" element={<TechSaas />} />
                             <Route path="/bransjer/eiendom" element={<Eiendom />} />

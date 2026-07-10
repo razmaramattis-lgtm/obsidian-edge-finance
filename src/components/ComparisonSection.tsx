@@ -5,17 +5,15 @@ import { Link } from "react-router-dom";
 const traditional = [
   { label: "Regnskapsfører", color: "hsl(var(--muted-foreground))" },
   { label: "HR-konsulent", color: "hsl(var(--muted-foreground))" },
-  { label: "Markedsbyrå", color: "hsl(var(--muted-foreground))" },
-  { label: "IT-leverandør", color: "hsl(var(--muted-foreground))" },
 ];
 
 const rows: { label: string; traditional: string; avargo: string }[] = [
-  { label: "Antall leverandører", traditional: "4 separate avtaler", avargo: "1 partner" },
-  { label: "Kontaktpersoner", traditional: "4–8 personer", avargo: "Ett dedikert team" },
-  { label: "Fakturering", traditional: "4 fakturaer, ulike syklus", avargo: "Én månedlig faktura" },
+  { label: "Antall leverandører", traditional: "Flere separate avtaler", avargo: "Én partner" },
+  { label: "Kontaktpersoner", traditional: "Flere kontaktpunkter", avargo: "Ett dedikert team" },
+  { label: "Fakturering", traditional: "Flere fakturaer, ulike sykluser", avargo: "Én månedlig faktura" },
   { label: "Prising", traditional: "Timepris + tillegg", avargo: "Fast pris, alt inkludert" },
   { label: "Responstid", traditional: "2–5 dager", avargo: "Innen 24 timer" },
-  { label: "Datasiloer", traditional: "Spredt på 4 systemer", avargo: "Samlet i én portal" },
+  { label: "Data & innsyn", traditional: "Spredt på flere systemer", avargo: "Samlet i én portal" },
   { label: "Koordinering", traditional: "Du gjør det selv", avargo: "Vi koordinerer internt" },
 ];
 
@@ -34,10 +32,10 @@ const ComparisonSection = () => {
             Sammenligning
           </p>
           <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3 md:mb-4">
-            Fra fire byråer til <span className="text-gradient-rose">én partner</span>
+            Fra flere leverandører til <span className="text-gradient-rose">én partner</span>
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            Slutt med å jonglere mellom leverandører. Se hva som faktisk endrer seg når alt samles under ett tak.
+            Regnskap og HR samlet under ett tak — ett team, én faktura, én kontaktperson. Slik ser forskjellen ut i praksis.
           </p>
         </motion.div>
 

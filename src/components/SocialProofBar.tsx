@@ -10,8 +10,8 @@ import { Users, Building2, Clock, Sparkles } from "lucide-react";
 const SocialProofBar = () => {
   const items = [
     { icon: Users, value: "8", label: "rådgivere", sub: "i teamet" },
-    { icon: Building2, value: "4", label: "fagavdelinger", sub: "Regnskap · HR · Marked · IT" },
-    
+    { icon: Building2, value: "2", label: "fagavdelinger", sub: "Regnskap · HR" },
+
     { icon: Clock, value: "24t", label: "responstid", sub: "garantert svar" },
     { icon: Sparkles, value: "0 kr", label: "binding", sub: "ingen oppstartskostnad" },
   ];

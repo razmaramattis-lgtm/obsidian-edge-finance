@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
+import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
@@ -12,8 +12,8 @@ import heroBg from "@/assets/hero-bg.jpg";
 const sectionIcons: Record<SectionId, React.ElementType> = {
   regnskap: BookOpen,
   hr: Users,
-  markedsforing: Megaphone,
-  it: Code2,
+  markedsforing: BookOpen,
+  it: BookOpen,
 };
 
 const Hub = () => {
@@ -72,7 +72,7 @@ const Hub = () => {
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6 md:mb-8"
               >
-                Alt din bedrift trenger.
+                Regnskap og HR.
                 <br />
                 <span className="text-gradient-rose">Under ett tak.</span>
               </motion.h1>
@@ -83,7 +83,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Regnskap og HR under ett tak. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
+                Statsautorisert regnskap og komplett HR — levert av ett koordinert team. Fast månedspris, svar innen 24 timer, ingen overraskelser. Bygget for små og mellomstore bedrifter i Norge.
               </motion.p>
 
               <motion.div
@@ -157,7 +157,7 @@ const Hub = () => {
               Velg det du trenger
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
-              To spesialiserte avdelinger — eller kombiner dem til én sømløs løsning.
+              To spesialiserte avdelinger — hver for seg, eller kombinert til én sømløs løsning med felles team.
             </p>
           </motion.div>
 
@@ -266,18 +266,18 @@ const Hub = () => {
             {[
               {
                 icon: Layers,
-                title: "Én partner for alt",
-                desc: "Slutt med å koordinere mellom regnskapsfører, markedsbyrå og IT-konsulent. Hos oss får du alt samlet.",
+                title: "Én partner for regnskap og HR",
+                desc: "Slutt med å koordinere mellom regnskapsfører og HR-konsulent. Ett team, én kontaktperson, én faktura.",
               },
               {
                 icon: BadgeCheck,
                 title: "Fast pris, ingen overraskelser",
-                desc: "Du vet nøyaktig hva du betaler. Rådgivning, rapportering og support er alltid inkludert.",
+                desc: "Du vet nøyaktig hva du betaler hver måned. Rådgivning, rapportering og support er alltid inkludert.",
               },
               {
                 icon: HeartHandshake,
                 title: "Dedikert team som kjenner deg",
-                desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny person hver gang.",
+                desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny saksbehandler hver gang.",
               },
             ].map((item, i) => (
               <motion.div

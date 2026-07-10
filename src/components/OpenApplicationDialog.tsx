@@ -6,7 +6,7 @@ import { Send, User, Mail, Phone, MapPin, Linkedin, Globe, Calendar, Briefcase, 
 import { motion, AnimatePresence } from "framer-motion";
 import CvUpload from "@/components/CvUpload";
 
-const CATEGORIES = ["Regnskap", "Personal", "Marked", "IT", "Annet"];
+const CATEGORIES = ["Regnskap", "Personal", "Annet"];
 
 interface OpenApplicationDialogProps {
   trigger: React.ReactNode;
