@@ -7,27 +7,27 @@ import { Helmet } from "react-helmet-async";
 const faqs = [
   {
     q: "Hva koster det å bruke Avargo?",
-    a: "Vi har faste månedspriser fra 1 499 kr for regnskap, og egne pakker for HR, markedsføring og IT. Alt er inkludert i prisen — ingen timefakturering eller skjulte tillegg. Kombinerer du flere avdelinger får du bedre totalpris.",
+    a: "Regnskap starter på 1 499 kr i måneden, og HR har egne fastprispakker. Alt er inkludert i prisen — ingen timefakturering, ingen skjulte tillegg. Kombinerer du regnskap og HR får du bedre totalpris og ett samlet team.",
   },
   {
     q: "Må jeg binde meg?",
-    a: "Nei. Vi har ingen lange bindingstider. Du kan oppgradere, nedgradere eller avslutte med én måneds varsel. Vi tror på å beholde deg gjennom kvalitet — ikke kontrakter.",
+    a: "Nei. Vi jobber uten lange bindingstider. Du kan oppgradere, nedgradere eller avslutte med én måneds varsel. Vi tror vi må fortjene deg hver måned — ikke låse deg inne i en kontrakt.",
   },
   {
     q: "Hvor raskt svarer dere?",
-    a: "Vi garanterer svar innen 24 timer på alle henvendelser — i praksis er det ofte raskere. Du får en dedikert kontaktperson som kjenner bedriften din.",
+    a: "Vi garanterer svar innen 24 timer på alle henvendelser — i praksis er det som regel raskere. Du får en dedikert kontaktperson som kjenner bedriften din, ikke et generisk saksnummer.",
   },
   {
     q: "Kan jeg bare bruke én avdeling?",
-    a: "Ja. Du velger fritt hvilke avdelinger du trenger — regnskap, HR, markedsføring eller IT. Mange starter med én og legger til flere etter hvert som behovet vokser.",
+    a: "Ja. Du velger fritt om du kun trenger regnskap, kun HR — eller begge deler. Mange starter med regnskap og legger til HR når bedriften vokser.",
   },
   {
     q: "Hvordan bytter jeg fra dagens leverandør?",
-    a: "Vi tar hele jobben. Vi henter ut data, koordinerer med din nåværende leverandør og setter opp alt — uten avbrudd i driften. Du trenger ikke gjøre noe.",
+    a: "Vi tar hele jobben. Vi henter ut data, koordinerer med din nåværende leverandør og setter opp alt sømløst — uten avbrudd i driften eller ekstra arbeid for deg.",
   },
   {
     q: "Hvilke selskaper passer for Avargo?",
-    a: "Vi jobber primært med små og mellomstore bedrifter i Norge — fra nyetablerte AS til selskaper i sterk vekst. Vi tar ikke kunder innen sport og fritid.",
+    a: "Vi jobber primært med små og mellomstore bedrifter i Norge — fra nyetablerte AS til selskaper i sterk vekst. Vi tar ikke oppdrag innen sport og fritid.",
   },
 ];
 

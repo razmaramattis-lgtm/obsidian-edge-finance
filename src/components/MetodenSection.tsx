@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight, TrendingUp, Users,
-  Headphones, Code2, Megaphone, Shield, Phone, type LucideIcon
+  Headphones, Shield, Phone, type LucideIcon
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import metodenTeam from "@/assets/metoden-team.jpg";
@@ -32,18 +32,16 @@ export interface MetodenOverrides {
 }
 
 const defaultTeam: MetodenTeamMember[] = [
-  { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med svar innen 24 timer." },
+  { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner bransjen din ut og inn. Én dedikert kontakt — med svar innen 24 timer." },
   { icon: Users, role: "HR-spesialister", desc: "Lønnskjøring, arbeidsrett, HMS og personaladministrasjon. Vi tar hele HR-byrden slik at du kan fokusere på menneskene, ikke papirene." },
-  { icon: Megaphone, role: "Markedsførere", desc: "Vekststrategi, merkevarebygging og digital tilstedeværelse. Vi ser helhetsbilde — fra årsresultat til markedsposisjon." },
-  { icon: Code2, role: "Utviklere", desc: "Systemintegrasjoner, automatisering og digitalisering av prosesser. Teknologi som gjør at selskapet ditt skalerer uten friksjon." },
-  { icon: Shield, role: "Strategiske rådgivere", desc: "Exit, fusjon, kapitalstruktur og vekstplan. Senioreksperter som har sett alt — og vet nøyaktig hva som skal til." },
+  { icon: Shield, role: "Strategiske rådgivere", desc: "Vekstplan, kapitalstruktur, fusjon og exit. Senioreksperter som har sett alt — og vet nøyaktig hva som skal til for å ta selskapet neste steg." },
 ];
 
 const defaultSteps: MetodenStep[] = [
-  { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene, smertepunktene.", note: "45 minutter som kan forandre alt." },
-  { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt trenger — ikke hva vi tilbyr som standard. Regnskapsfører, HR, markedsfører, utvikler. Eksakt det du trenger.", note: "Én kontaktperson. Hele teamet bak." },
-  { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din tilgang aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid.", note: "Full oversikt. Null innsats fra din side." },
-  { num: "IV", phase: "Partnerskap", duration: "Løpende", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Rask respons innen 24 timer — uten ekstra kostnad." },
+  { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene og smertepunktene.", note: "45 minutter som kan forandre alt." },
+  { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt faktisk trenger — regnskapsfører, HR-rådgiver og strategisk rådgiver. Presis kompetanse, ingen påkostet hyllevare.", note: "Én kontaktperson. Hele teamet bak." },
+  { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din portal aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid tilgjengelig.", note: "Full oversikt. Null innsats fra din side." },
+  { num: "IV", phase: "Partnerskap", duration: "Løpende", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Svar innen 24 timer — uten ekstra kostnad." },
 ];
 
 const StepCard = ({ step, index }: { step: MetodenStep; index: number }) => {
@@ -144,7 +142,7 @@ const MetodenSection = ({ overrides }: { overrides?: MetodenOverrides }) => {
                 </div>
 
                 <p className="text-xs text-muted-foreground/50 italic font-light mt-7 md:mt-8">
-                  {ti.footnote ?? "Alle disipliner koordinert av én kontaktperson. Du slipper å snakke med fem leverandører."}
+                  {ti.footnote ?? "Regnskap og HR koordinert av én kontaktperson. Du slipper å jonglere flere leverandører."}
                 </p>
               </AnimatedSection>
             </div>

@@ -21,7 +21,7 @@ const FloatingActionMenu = () => {
   const sectionContactPath = (() => {
     const p = location.pathname;
     const seg = p.split("/")[1];
-    if (["regnskap", "hr", "markedsforing", "it"].includes(seg)) return `/${seg}/kontakt`;
+    if (["regnskap", "hr"].includes(seg)) return `/${seg}/kontakt`;
     return "/kontakt";
   })();
 
