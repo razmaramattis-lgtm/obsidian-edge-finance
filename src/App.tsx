@@ -237,6 +237,13 @@ const App = () => (
               <SubdomainRedirect />
               <Suspense fallback={<PageFallback />}>
                 <Routes>
+                  {/* Hidden sections & portals — redirect to hub */}
+                  <Route path="/markedsforing/*" element={<Navigate to="/" replace />} />
+                  <Route path="/it/*" element={<Navigate to="/" replace />} />
+                  <Route path="/kurs/*" element={<Navigate to="/" replace />} />
+                  <Route path="/karriere/*" element={<Navigate to="/" replace />} />
+                  <Route path="/samarbeid/*" element={<Navigate to="/" replace />} />
+
                   {/* Unified login */}
                   <Route path="/logg-inn" element={<Login />} />
                   <Route path="/auth/bekreft" element={<AuthBekreft />} />

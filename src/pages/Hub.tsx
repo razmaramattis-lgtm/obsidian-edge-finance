@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, BookOpen, Users, Megaphone, Code2, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
-import { SECTIONS, type SectionId } from "@/contexts/SectionContext";
+import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import ComparisonSection from "@/components/ComparisonSection";
 import MetodenSection from "@/components/MetodenSection";
@@ -17,13 +17,13 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
 };
 
 const Hub = () => {
-  const sections = Object.values(SECTIONS);
+  const sections = SECTION_LIST;
 
   return (
     <>
       <Helmet>
-        <title>Avargo — Regnskap, HR, marked og IT for bedrifter</title>
-        <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
+        <title>Avargo — Regnskap og HR for bedrifter</title>
+        <meta name="description" content="Avargo samler regnskap og HR under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -32,20 +32,18 @@ const Hub = () => {
           "url": "https://avargo.no",
           "logo": "https://avargo.no/logo.png",
           "image": "https://avargo.no/og-image.jpg",
-          "description": "Avargo samler regnskap, HR, markedsføring og IT under ett tak for små og mellomstore bedrifter i Norge.",
+          "description": "Avargo samler regnskap og HR under ett tak for små og mellomstore bedrifter i Norge.",
           "address": { "@type": "PostalAddress", "addressLocality": "Oslo", "addressCountry": "NO" },
           "areaServed": { "@type": "Country", "name": "Norway" },
           "priceRange": "$$",
           "sameAs": [],
-          "serviceType": ["Regnskap", "HR", "Markedsføring", "IT"],
+          "serviceType": ["Regnskap", "HR"],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Tjenester",
             "itemListElement": [
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dedikert regnskapsfører" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HR og lønnskjøring" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Markedsføring og SEO" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "IT og utvikling" } }
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HR og lønnskjøring" } }
             ]
           }
         })}</script>
@@ -64,7 +62,7 @@ const Hub = () => {
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
                 <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-medium">
-                  Regnskap · HR · Markedsføring · IT
+                  Regnskap · HR
                 </p>
               </motion.div>
 
@@ -85,7 +83,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Fire spesialiserte avdelinger. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
+                Regnskap og HR under ett tak. Ett koordinert team. Fast pris, ingen overraskelser — skreddersydd for små og mellomstore bedrifter i Norge.
               </motion.p>
 
               <motion.div
@@ -159,7 +157,7 @@ const Hub = () => {
               Velg det du trenger
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
-              Fire avdelinger, spesialisert på hvert sitt felt — eller kombiner dem til én sømløs løsning.
+              To spesialiserte avdelinger — eller kombiner dem til én sømløs løsning.
             </p>
           </motion.div>
 

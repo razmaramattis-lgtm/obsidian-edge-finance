@@ -33,6 +33,8 @@ const groupSectionIdMap: Record<string, string> = {
   "IT & Utvikling": "it",
 };
 
+const HIDDEN_GROUP_LABELS = ["Markedsføring & Vekst", "IT & Utvikling"];
+
 const tjenesterGroups = [
   {
     label: "Regnskap & Økonomi",
@@ -54,24 +56,6 @@ const tjenesterGroups = [
       { icon: UserPlus, title: "Ansettelse & rekruttering", desc: "Finn og ansett riktig kandidat", href: "/tjenester/ansettelse" },
       { icon: FileText, title: "Personalhåndbok", desc: "Skreddersydde retningslinjer", href: "/tjenester/personalhandbok" },
       { icon: Scale, title: "Arbeidsrett & HMS", desc: "Juridisk trygghet og HMS-system", href: "/tjenester/arbeidsrett" },
-    ],
-  },
-  {
-    label: "Markedsføring & Vekst",
-    items: [
-      { icon: Search, title: "SEO & søkbarhet", desc: "Bli funnet av kundene dine", href: "/tjenester/seo" },
-      { icon: Megaphone, title: "Meta-annonser", desc: "Facebook & Instagram-annonsering", href: "/tjenester/meta-annonser" },
-      { icon: Globe, title: "Google Ads", desc: "Målrettet annonsering på Google", href: "/tjenester/google-ads" },
-      { icon: ShoppingCart, title: "Nettbutikk & e-handel", desc: "Salgsplattform som konverterer", href: "/tjenester/nettbutikk" },
-    ],
-  },
-  {
-    label: "IT & Utvikling",
-    items: [
-      { icon: Monitor, title: "Skreddersydde nettsider", desc: "Unikt design som skiller seg ut", href: "/tjenester/nettsider" },
-      { icon: Bot, title: "AI-chatbot & kundeservice", desc: "Automatisert kundehåndtering 24/7", href: "/tjenester/chatbot" },
-      { icon: Code, title: "Interne systemer", desc: "Skreddersydde verktøy for teamet", href: "/tjenester/internsystemer" },
-      { icon: Cpu, title: "AI & automatisering", desc: "Smartere drift med AI-løsninger", href: "/tjenester/ai-automatisering" },
     ],
   },
 ];
@@ -98,8 +82,7 @@ const selskapetLinks = [
 ];
 
 const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
-  { icon: GraduationCap, title: "Avargo Kurs", desc: "Over 130 kurs innen regnskap, HR og ledelse. Tilgjengelig digitalt med kursbevis — perfekt for å holde teamet oppdatert.", href: "/kurs", accent: "hsl(var(--primary))", featured: true },
-  { icon: Calculator, title: "Kontohjelp", desc: "Søk opp riktig konto for bokføring. Vår kontoguide dekker alle vanlige og spesielle posteringer med eksempler og forklaringer.", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)" },
+  { icon: Calculator, title: "Kontohjelp", desc: "Søk opp riktig konto for bokføring. Vår kontoguide dekker alle vanlige og spesielle posteringer med eksempler og forklaringer.", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)", featured: true },
   { icon: Newspaper, title: "Nyheter & artikler", desc: "Hold deg oppdatert på skatteregler, nye lover, fagartikler og praktiske tips for norske bedrifter.", href: "/ressurser?tab=nyheter" },
   { icon: BookMarked, title: "Guider & maler", desc: "Steg-for-steg guider, nedlastbare maler, sjekklister og skjemaer — alt du trenger for å holde orden.", href: "/ressurser?tab=guider" },
   { icon: CalendarClock, title: "Skattekalender", desc: "Oversikt over alle viktige frister for MVA, skattemelding, årsregnskap og a-melding gjennom hele året.", href: "/ressurser/skattekalender" },
@@ -634,10 +617,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <MobileNavLink to={sp("/priser")} label="Priser" onClick={() => setMenuOpen(false)} />
             )}
 
-            {/* ─── Direct links: Om oss, Karriere, Akademi ─── */}
+            {/* ─── Direct link: Om oss ─── */}
             <MobileNavLink to={sp("/om-oss")} label="Om oss" onClick={() => setMenuOpen(false)} />
-            
-            <MobileNavLink to="/kurs" label="Akademi" onClick={() => setMenuOpen(false)} />
 
             {/* Mobile Selskapet — only on hub */}
             {!isInSection && (
@@ -738,7 +719,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Populært</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to="/kurs" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Avargo Kurs</Link>
+                  
                   <Link to="/ressurser/kontohjelp" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontohjelp</Link>
                   <Link to="/ressurser/skattekalender" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Skattekalender</Link>
                   <Link to="/regnskapsforer-i" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Regnskapsfører i din by</Link>

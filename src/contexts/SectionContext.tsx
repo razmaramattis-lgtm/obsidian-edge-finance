@@ -57,7 +57,11 @@ export const SECTIONS: Record<SectionId, SectionConfig> = {
   },
 };
 
-export const SECTION_LIST = Object.values(SECTIONS);
+/** Sections hidden from all navigation surfaces. Routes still exist but are redirected in App.tsx. */
+export const HIDDEN_SECTION_IDS: SectionId[] = ["markedsforing", "it"];
+export const SECTION_LIST = Object.values(SECTIONS).filter(
+  (s) => !HIDDEN_SECTION_IDS.includes(s.id)
+);
 
 interface SectionContextValue {
   section: SectionConfig | null;
