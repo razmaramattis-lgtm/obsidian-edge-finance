@@ -719,7 +719,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <div>
                 <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Populært</p>
                 <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to="/kurs" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Avargo Kurs</Link>
+                  
                   <Link to="/ressurser/kontohjelp" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontohjelp</Link>
                   <Link to="/ressurser/skattekalender" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Skattekalender</Link>
                   <Link to="/regnskapsforer-i" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Regnskapsfører i din by</Link>
