@@ -22,8 +22,8 @@ const Hub = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo — Regnskap, HR, marked og IT for bedrifter</title>
-        <meta name="description" content="Avargo samler regnskap, HR, markedsføring og IT under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
+        <title>Avargo — Regnskap og HR for bedrifter</title>
+        <meta name="description" content="Avargo samler regnskap og HR under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -32,20 +32,18 @@ const Hub = () => {
           "url": "https://avargo.no",
           "logo": "https://avargo.no/logo.png",
           "image": "https://avargo.no/og-image.jpg",
-          "description": "Avargo samler regnskap, HR, markedsføring og IT under ett tak for små og mellomstore bedrifter i Norge.",
+          "description": "Avargo samler regnskap og HR under ett tak for små og mellomstore bedrifter i Norge.",
           "address": { "@type": "PostalAddress", "addressLocality": "Oslo", "addressCountry": "NO" },
           "areaServed": { "@type": "Country", "name": "Norway" },
           "priceRange": "$$",
           "sameAs": [],
-          "serviceType": ["Regnskap", "HR", "Markedsføring", "IT"],
+          "serviceType": ["Regnskap", "HR"],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Tjenester",
             "itemListElement": [
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dedikert regnskapsfører" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HR og lønnskjøring" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Markedsføring og SEO" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "IT og utvikling" } }
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "HR og lønnskjøring" } }
             ]
           }
         })}</script>
