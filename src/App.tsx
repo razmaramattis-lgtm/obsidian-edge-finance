@@ -480,7 +480,6 @@ const App = () => (
                   } />
                 </Routes>
               </Suspense>
-              <InstallPromptBanner />
             </SectionProvider>
           </AuthProvider>
         </BrowserRouter>
