@@ -77,7 +77,7 @@ const includedServices = [
   { icon: Receipt, title: "Daglig bokføring", description: "Automatisk bankintegrasjon, bilagsregistrering og månedlig avstemming — uten tillegg i timen." },
   { icon: FileText, title: "MVA & skatt", description: "MVA-melding, skatteberegning og oppfølging mot Skatteetaten og Brønnøysundregistrene." },
   { icon: Users, title: "Lønn & HR", description: "Lønnskjøring, a-melding, feriepenger og sykefraværsoppfølging for deg og dine ansatte." },
-  { icon: Building2, title: "Årsregnskap", description: "Komplett årsavslutning, selvangivelse, næringsoppgave og offentlig rapportering." },
+  { icon: Building2, title: "Årsregnskap", description: "Komplett årsavslutning, skattemelding, næringsoppgave og offentlig rapportering." },
   { icon: Calculator, title: "Økonomisk oversikt", description: "Månedsrapporter, nøkkeltall og likviditetsstyring slik at du alltid vet hvor du står." },
   { icon: Shield, title: "Rådgivning & support", description: "Dedikert regnskapsfører, skatterådgivning og ubegrenset support — rask respons på hverdager." },
 ];
@@ -715,7 +715,7 @@ const Pricing = () => {
                     "MVA-beregning og MVA-melding",
                     "Lønnskjøring og a-melding",
                     "Feriepenger og sykefraværsoppfølging",
-                    "Årsregnskap og selvangivelse",
+                    "Årsregnskap og skattemelding",
                     "Næringsoppgave og offentlig rapportering",
                     "Månedsrapporter og nøkkeltall",
                     "Skatterådgivning og planlegging",
