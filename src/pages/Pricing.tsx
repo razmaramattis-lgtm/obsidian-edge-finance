@@ -22,37 +22,45 @@ import { useSection } from "@/contexts/SectionContext";
 import { supabase } from "@/integrations/supabase/client";
 
 // ── Pricing model ────────────────────────────────────────────
-const BASE_PRICE = 1999;
+const BASE_PRICE = 1950;
 
 const companyForms = [
+  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 0 },
   { key: "ENK", label: "ENK", desc: "Enkeltpersonforetak", addon: 0 },
-  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 600 },
-  { key: "DA", label: "DA", desc: "Delt ansvar", addon: 400 },
-  { key: "ANS", label: "ANS", desc: "Ansvarlig selskap", addon: 400 },
 ];
 
 const industries = [
-  { key: "tjeneste", label: "Tjenesteyting", addon: 0 },
-  { key: "varehandel", label: "Varehandel", addon: 400 },
-  { key: "nettbutikk", label: "Nettbutikk", addon: 600 },
-  { key: "bygg", label: "Bygg og anlegg", addon: 500 },
-  { key: "industri", label: "Industri", addon: 600 },
-  { key: "eiendom", label: "Eiendom", addon: 400 },
-  { key: "it", label: "IT og teknologi", addon: 200 },
-  { key: "bruktbil", label: "Bruktbil", addon: 800 },
-  { key: "helse", label: "Helse", addon: 300 },
-  { key: "restaurant", label: "Restaurant og kafé", addon: 700 },
-  { key: "transport", label: "Transport", addon: 500 },
-  { key: "annet", label: "Annet", addon: 200 },
+  { key: "tjeneste", label: "Tjenesteyting" },
+  { key: "varehandel", label: "Varehandel" },
+  { key: "nettbutikk", label: "Nettbutikk" },
+  { key: "bygg", label: "Bygg og anlegg" },
+  { key: "industri", label: "Industri" },
+  { key: "eiendom", label: "Eiendom" },
+  { key: "it", label: "IT og teknologi" },
+  { key: "bruktbil", label: "Bruktbil" },
+  { key: "helse", label: "Helse" },
+  { key: "restaurant", label: "Restaurant og kafé" },
+  { key: "transport", label: "Transport" },
+  { key: "landbruk", label: "Landbruk" },
+  { key: "kultur", label: "Kultur og media" },
+  { key: "utdanning", label: "Utdanning og kurs" },
+  { key: "annet", label: "Annet" },
 ];
 
-const revenueTiers = [
-  { key: "0", label: "0 – 500 000 kr", addon: 0 },
-  { key: "1", label: "500 000 – 2 mill.", addon: 400 },
-  { key: "2", label: "2 – 5 mill.", addon: 900 },
-  { key: "3", label: "5 – 10 mill.", addon: 1500 },
-  { key: "4", label: "10 mill.+", addon: 2500 },
-];
+// Revenue as a continuous slider. Values in NOK. > 5 000 000 triggers "custom offer" flow.
+const REVENUE_MIN = 0;
+const REVENUE_MAX = 5_000_000;
+const REVENUE_STEP = 100_000;
+const REVENUE_CUSTOM = REVENUE_MAX + REVENUE_STEP; // 5,1 mill = custom-tilbud flagg
+
+// Continuous pricing based on revenue (only counts up to 5 mill.)
+const priceFromRevenue = (nok: number) => {
+  const v = Math.min(nok, REVENUE_MAX);
+  if (v <= 500_000) return 0;
+  if (v <= 2_000_000) return 400;
+  if (v <= 3_500_000) return 900;
+  return 1400;
+};
 
 const bilagTiers = [
   { key: "0", label: "0 – 20 bilag", addon: 0 },
