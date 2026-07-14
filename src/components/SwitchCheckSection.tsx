@@ -1,0 +1,121 @@
+import { motion } from "framer-motion";
+import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const benefits = [
+  "Få en tydelig plan for overtagelse og ansvar",
+  "Avklar behov for system, rapportering og rådgivning",
+  "Sikre god flyt uten stopp i drift og frister",
+];
+
+const SwitchCheckSection = () => {
+  return (
+    <section className="py-16 md:py-32 border-t border-border/10">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
+          {/* Text */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-[10px] md:text-xs font-medium tracking-wide mb-5 md:mb-6">
+              <Sparkles size={12} strokeWidth={1.5} />
+              Vurderer du å bytte regnskapsfører?
+            </span>
+
+            <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-4 md:mb-5">
+              Få en sjekk om vi er <span className="text-gradient-rose">riktig for deg</span>
+            </h2>
+
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mb-6 md:mb-8">
+              Riktig regnskapsfører er et viktig valg. Svar på fem korte spørsmål, så får du en personlig vurdering og ærlig beskjed hvis vi ikke passer.
+            </p>
+
+            <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10">
+              {benefits.map((benefit, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
+                  className="flex items-start gap-3"
+                >
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check size={11} className="text-primary" strokeWidth={2.5} />
+                  </div>
+                  <span className="text-sm md:text-base text-foreground/90">{benefit}</span>
+                </motion.li>
+              ))}
+            </ul>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                to="/book-mote"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300"
+              >
+                Ta sjekken
+                <ArrowRight size={14} />
+              </Link>
+              <Link
+                to="/tjenester"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+              >
+                Slik bytter du regnskapsfører
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Visual — no photo, built from shapes */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="relative"
+          >
+            <div className="relative aspect-[4/3] md:aspect-[16/12] rounded-3xl overflow-hidden border border-border/15 bg-gradient-to-br from-muted/30 via-card to-muted/20">
+              {/* Ambient glows */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-56 h-56 bg-secondary/5 rounded-full blur-3xl" />
+
+              {/* Abstract figure silhouette */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  {/* Head */}
+                  <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-b from-primary/20 to-primary/5 border border-primary/10 mx-auto mb-2 md:mb-3" />
+                  {/* Shoulders */}
+                  <div className="w-40 h-24 md:w-56 md:h-32 rounded-t-[3rem] bg-gradient-to-b from-secondary/15 to-secondary/5 border border-secondary/10" />
+                </div>
+              </div>
+
+              {/* Floating quiz card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="absolute bottom-5 left-5 right-5 md:bottom-8 md:left-8 md:right-8 glass rounded-2xl p-4 md:p-5 flex items-center gap-4"
+              >
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
+                  <Sparkles size={18} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-base md:text-lg font-semibold text-foreground">5 spørsmål</p>
+                  <div className="flex items-center gap-1.5 text-xs md:text-sm text-muted-foreground">
+                    <Clock size={12} strokeWidth={1.5} />
+                    <span>ca. 60 sekunder</span>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SwitchCheckSection;
