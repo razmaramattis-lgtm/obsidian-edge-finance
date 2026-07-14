@@ -48,6 +48,7 @@ const ressurserLinks = [
   { icon: BookMarked,   title: "Guider & maler",     desc: "Sjekklister, kontrakter og steg-for-steg guider til nedlasting.",       href: "/ressurser?tab=guider" },
   { icon: CalendarClock,title: "Skattekalender",     desc: "Alle frister for MVA, årsregnskap og a-melding gjennom året.",          href: "/ressurser/skattekalender" },
   { icon: FileSignature,title: "Protokollgenerator", desc: "Lag juridisk korrekte styreprotokoller og generalforsamlingsdokumenter.", href: "/ressurser/protokollgenerator" },
+  { icon: Car,          title: "Firmabilkalkulator", desc: "Beregn skattepliktig fordel av firmabil etter gjeldende sjablongregler.", href: "/ressurser/firmabilkalkulator" },
 ];
 
 /* ── Editorial dropdown panel ── */
