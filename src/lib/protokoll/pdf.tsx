@@ -235,20 +235,6 @@ function MoteInfo({ profile, includeMotenr }: { profile: CompanyProfile; include
   );
 }
 
-function Footer() {
-  return (
-    <>
-      <Text style={styles.footerLeft} fixed>
-        Protokoll- og generalforsamlingsgenerator er produsert av Avargo.
-      </Text>
-      <Text
-        style={styles.footerRight}
-        fixed
-        render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`}
-      />
-    </>
-  );
-}
 
 // ---------- Dokumenttype: Styremøteprotokoll ----------
 
