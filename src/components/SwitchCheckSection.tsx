@@ -11,8 +11,10 @@ const benefits = [
 ];
 
 const SwitchCheckSection = () => {
+  const [open, setOpen] = useState(false);
   return (
     <section className="py-16 md:py-32 border-t border-border/10">
+      <SwitchCheckDialog open={open} onOpenChange={setOpen} />
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
           {/* Text */}
