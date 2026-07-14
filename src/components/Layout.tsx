@@ -292,7 +292,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </MobileGroup>
 
             <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-foreground text-background rounded-full text-center flex items-center justify-center active:scale-[0.98] transition-all">
-              Få et uforpliktende tilbud
+              Bli kunde
             </Link>
             <Link to="/book-mote" onClick={() => setMenuOpen(false)} className="mt-2 px-5 min-h-[52px] py-3 text-[15px] font-medium border border-border text-foreground rounded-full text-center flex items-center justify-center transition-all">
               Book møte
