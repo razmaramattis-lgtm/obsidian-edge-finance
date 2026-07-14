@@ -9,8 +9,9 @@ import {
 
 /**
  * Firmabilkalkulator — sjablongmetoden (skatteloven § 5-13).
- * Kalibrert mot BDOs kalkulator for inntektsåret 2026.
+ * Beregningene følger gjeldende satser for inntektsåret 2026.
  *
+
  *   Grunnlag = (listepris + ekstrautstyr) × reduksjoner
  *   Reduksjoner (multiplikative):
  *     - Bil eldre enn 3 år per 1.1.        → × 0,75
@@ -28,13 +29,13 @@ import {
  *
  *   Arbeidsgiveravgift beregnes med sone-sats. Finnmark/Nord-Troms (sone V) = 0 %.
  *
- *   "Skatt fordelt i lønn" bruker BDOs metode: årlig skatt / 10,5 mnd
- *   (én måneds ferieavvikling + halv skatt i desember).
+ *   "Skatt fordelt i lønn" bruker standard norsk lønnsavviklingsmetode:
+ *   årlig skatt / 10,5 mnd (én måneds ferieavvikling + halv skatt i desember).
  */
 
-const TERSKEL_2026 = 370_300; // knekkpunkt 30 % / 20 % — BDO 2026
+const TERSKEL_2026 = 370_300; // knekkpunkt 30 % / 20 % for 2026
 
-// Trinnskatt 2026 (BDO-prognose). Tuples: [nedre grense, sats]
+// Trinnskatt 2026. Tuples: [nedre grense, sats]
 const TRINN = [
   { fra: 0,         sats: 0.000 },
   { fra: 226_400,   sats: 0.017 },
@@ -149,7 +150,7 @@ const Firmabilkalkulator = () => {
               Firmabilkalkulator — <span className="italic text-gradient-rose">enkelt forklart.</span>
             </h1>
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed">
-              Se hva firmabilen faktisk koster ansatte i skatt og arbeidsgiver i arbeidsgiveravgift. Bygget på Skatteetatens sjablongmetode (§ 5-13) og kalibrert mot BDOs kalkulator for 2026.
+              Se hva firmabilen faktisk koster ansatte i skatt og arbeidsgiver i arbeidsgiveravgift. Bygget på Skatteetatens sjablongmetode (§ 5-13) med gjeldende satser for 2026.
             </p>
           </motion.div>
         </div>
@@ -293,7 +294,7 @@ const Firmabilkalkulator = () => {
                   primary={NOK.format(r.arligSkattAnsatt)}
                   primaryLabel={`per år · marginal ~${r.marginalPst.toFixed(1).replace(".", ",")} %`}
                   secondary={`${NOK.format(r.skattPer10_5)} per lønnsslipp`}
-                  detail="Fordelt over 10,5 mnd (én måneds ferieavvikling + halv skatt i desember) — samme metode som BDO."
+                  detail="Fordelt over 10,5 mnd (én måneds ferieavvikling + halv skatt i desember)."
                 />
                 <ResultCard
                   icon={Building2}
