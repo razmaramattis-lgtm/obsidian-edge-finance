@@ -173,11 +173,6 @@ const hrOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulentselskaper kjemper om de beste hodene. Vi hjelper deg med kontrakter, kompetanseutvikling og en arbeidsgiverprofil som tiltrekker talent.",
     body: "Konsulentbransjen har høy mobilitet blant ansatte, komplekse bonusmodeller og behov for kontinuerlig kompetanseutvikling. Vi tar HR-byrden så du kan fokusere på leveransene.",
   },
-  landbruk: {
-    deliverables: ["Arbeidskontrakter for sesongarbeidere", "Utenlandsk arbeidskraft og dokumentasjon", "HMS på gårdsbruk", "Lønnskjøring med naturalytelser", "Sykefraværsoppfølging", "Bolig for ansatte og pendlere", "Arbeidsrett for primærnæring", "Kompetansekrav og sertifikater"],
-    intro: "Landbruket har sesongarbeidere, utenlandsk arbeidskraft og spesielle HMS-krav. Vi sørger for at alt er i orden som arbeidsgiver.",
-    body: "Gårdsbruk og landbruk har ulike ansettelsesforhold gjennom sesongen, ofte med utenlandsk arbeidskraft som krever spesiell dokumentasjon. Vi håndterer alt.",
-  },
   varehandel: {
     deliverables: ["Arbeidskontrakter for deltid og heltid", "Turnusplanlegging og vaktlister", "Lønnskjøring med kvelds- og helgetillegg", "Personalhåndbok for butikk", "HMS i butikkdrift", "Sykefraværsoppfølging", "Onboarding av butikkmedarbeidere", "Opplæring og kompetanseutvikling"],
     intro: "Varehandelen har mange deltidsansatte, turnus og sesongsvingninger. Vi tar HR-byrden — fra kontrakter til opplæring.",
