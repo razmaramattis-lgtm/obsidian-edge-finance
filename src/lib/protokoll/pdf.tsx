@@ -624,7 +624,14 @@ export function ProtokollDocument({ profile, doc }: { profile: CompanyProfile; d
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Footer />
+        <Text style={styles.footerLeft} fixed>
+          Protokoll- og generalforsamlingsgenerator er produsert av Avargo.
+        </Text>
+        <Text
+          style={styles.footerRight}
+          fixed
+          render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`}
+        />
         {content}
       </Page>
     </Document>
