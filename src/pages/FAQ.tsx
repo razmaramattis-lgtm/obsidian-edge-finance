@@ -182,7 +182,7 @@ const categories: FAQCategory[] = [
     items: [
       { q: "Hva er arbeidsgiverperioden?", a: "De første 16 kalenderdagene av sykefravær der arbeidsgiver betaler sykepenger. Deretter overtar NAV frem til 52 uker." },
       { q: "Hva er egenmelding?", a: "Ansatt kan melde seg syk uten sykmelding i inntil 3 kalenderdager om gangen, maks 4 ganger på 12 måneder. IA-bedrifter: 8 dager, 24 ganger." },
-      { q: "Hvor mye får ansatt i sykepenger?", a: "100 % av lønn opp til 6 G (711 720 kr i 2026). Lønn over 6 G dekkes ikke av NAV, men mange arbeidsgivere kompenserer full lønn." },
+      { q: "Hvor mye får ansatt i sykepenger?", a: "100 % av lønn opp til 6 G (819 294 kr — 1 G er 136 549 kr). Lønn over 6 G dekkes ikke av NAV, men mange arbeidsgivere kompenserer full lønn." },
       { q: "Hvor lenge kan man være sykmeldt?", a: "Maks 52 uker i løpet av 3 år. Deretter kreves arbeidsavklaringspenger (AAP) fra NAV." },
       { q: "Hva er sykefraværsoppfølging?", a: "Arbeidsgivers lovpålagte plan for oppfølging: samtale innen 4 uker, oppfølgingsplan, dialogmøte 1 (7 uker) og 2 (26 uker) med NAV." },
       { q: "Hva er foreldrepenger?", a: "Stønad fra NAV ved fødsel og adopsjon: 49 uker med 100 % eller 59 uker med 80 % lønn. Krever opptjening (6 av 10 siste måneder)." },
@@ -228,7 +228,7 @@ const categories: FAQCategory[] = [
       { q: "Hva er sykelønnsforsikring?", a: "Frivillig forsikring som dekker arbeidsgivers kostnader ved langvarig sykefravær utover arbeidsgiverperioden — særlig relevant for lønn over 6 G." },
       { q: "Kan jeg spare i egen pensjon (IPS)?", a: "Ja, individuell pensjonssparing gir skattefradrag opp til 15 000 kr/år. Utbetales tidligst fra 62 år og beskattes som pensjon." },
       { q: "Hva er pensjonsopptjening?", a: "Fra 2010 tjener alle nordmenn pensjonspoeng basert på inntekt (opp til 7,1 G). Utbetales fra Folketrygden fra 62 år." },
-      { q: "Hva er 1 G?", a: "Grunnbeløpet i folketrygden — 118 620 kr fra mai 2025. Justeres årlig 1. mai og brukes i beregning av trygdeytelser og pensjon." },
+      { q: "Hva er 1 G?", a: "Grunnbeløpet i folketrygden — 136 549 kr. Justeres årlig 1. mai og brukes i beregning av trygdeytelser og pensjon." },
     ],
   },
   {
