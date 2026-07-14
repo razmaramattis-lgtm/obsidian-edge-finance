@@ -1,88 +1,62 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { useSection, SECTION_LIST, SECTIONS, type SectionId } from "@/contexts/SectionContext";
-import { sectionTjenesterGroups } from "@/config/sectionContent";
 import avargoLogo from "@/assets/avargo-logo.png";
 import {
-  Menu, X, ChevronDown, ChevronRight, BookOpen, TrendingUp, Briefcase, Users,
-  LayoutTemplate, Search, Megaphone, Globe, ShoppingCart, Bot,
+  Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  Mail, Info, FileText, BookMarked, Newspaper, Lock, Archive, CalendarClock,
-  GraduationCap, Calculator, HelpCircle, Download, Flame, ArrowRight, Layers,
-  Monitor, Code, Cpu, Receipt, PieChart, BarChart3, UserPlus, Scale,
+  Mail, Info, FileText, BookMarked, Newspaper, Lock, CalendarClock,
+  Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe,
 } from "lucide-react";
 
-/** Maps tjenester group label → section basePath for auto-routing */
-const groupSectionMap: Record<string, string> = {
-  "Regnskap & Økonomi": "/regnskap",
-  "HR & Personal": "/hr",
-};
+/* ── Editorial nav data — regnskap first, HR as one line at the end ── */
+const tjenesterCore = [
+  { icon: BookOpen,   title: "Dedikert regnskapsfører",      desc: "Én fast kontaktperson som kjenner bedriften din.", href: "/tjenester/regnskapsforer" },
+  { icon: PieChart,   title: "Årsregnskap & skattemelding",  desc: "Komplett årsoppgjør — levert i god tid før fristen.", href: "/tjenester/arsregnskap" },
+  { icon: Receipt,    title: "Lønn & rapportering",          desc: "Presis lønnskjøring, A-melding og feriepenger.", href: "/tjenester/lonn" },
+  { icon: Receipt,    title: "Fakturering & innkreving",     desc: "Utgående faktura, purringer og oppfølging.", href: "/tjenester/fakturering" },
+  { icon: TrendingUp, title: "Skatterådgivning",             desc: "Optimaliser skatteposisjonen — hele året, ikke bare i mai.", href: "/tjenester/skatteplanlegging" },
+  { icon: Briefcase,  title: "CFO-rådgivning",               desc: "Erfaren økonomisjef på timen — når du trenger et strategisk blikk.", href: "/tjenester/cfo" },
+  { icon: BarChart3,  title: "1-1 regnskapsgjennomgang",     desc: "En time dedikert til dine tall — med konkret handlingsplan.", href: "/tjenester/1-1-regnskap" },
+];
 
-/** Maps tjenester group label → SectionId for accent colors */
-const groupSectionIdMap: Record<string, string> = {
-  "Regnskap & Økonomi": "regnskap",
-  "HR & Personal": "hr",
-};
-
-const tjenesterGroups = [
-  {
-    label: "Regnskap & Økonomi",
-    items: [
-      { icon: BookOpen, title: "Dedikert regnskapsfører", desc: "Din faste kontaktperson for alt regnskap", href: "/tjenester/regnskapsforer" },
-      { icon: Receipt, title: "Lønn & lønnskjøring", desc: "Automatisert lønnskjøring og rapportering", href: "/tjenester/lonn" },
-      { icon: PieChart, title: "Årsregnskap & skattemelding", desc: "Komplett årsoppgjør og innlevering", href: "/tjenester/arsregnskap" },
-      { icon: Briefcase, title: "CFO-as-a-Service", desc: "Strategisk økonomisk rådgivning", href: "/tjenester/cfo" },
-      { icon: Receipt, title: "Fakturering & innkreving", desc: "Effektiv fakturering og oppfølging", href: "/tjenester/fakturering" },
-      { icon: TrendingUp, title: "Skatteplanlegging", desc: "Optimaliser skatteposisjonen din", href: "/tjenester/skatteplanlegging" },
-      { icon: BarChart3, title: "1-1 Regnskap", desc: "Personlig regnskapsoppfølging", href: "/tjenester/1-1-regnskap" },
-      { icon: Monitor, title: "Avargo Dashboard", desc: "Sanntidsoversikt over økonomien", href: "/tjenester/dashboard" },
-    ],
-  },
-  {
-    label: "HR & Personal",
-    items: [
-      { icon: Users, title: "Lønn & HR-administrasjon", desc: "Komplett HR-løsning for din bedrift", href: "/tjenester/hr-og-lonn" },
-      { icon: UserPlus, title: "Ansettelse & rekruttering", desc: "Finn og ansett riktig kandidat", href: "/tjenester/ansettelse" },
-      { icon: FileText, title: "Personalhåndbok", desc: "Skreddersydde retningslinjer", href: "/tjenester/personalhandbok" },
-      { icon: Scale, title: "Arbeidsrett & HMS", desc: "Juridisk trygghet og HMS-system", href: "/tjenester/arbeidsrett" },
-    ],
-  },
+const tjenesterHr = [
+  { icon: Users,      title: "HR & personaladministrasjon",  desc: "Kontrakter, arbeidsrett og personalhåndbok som ekstra tjeneste.", href: "/tjenester/hr-og-lonn" },
 ];
 
 const bransjerItems = [
-  { icon: Globe, title: "Tech & SaaS", desc: "Skalerbar økonomistyring tilpasset abonnementsmodeller, MRR-rapportering og investorkommunikasjon.", href: "/bransjer/tech-saas" },
-  { icon: Building2, title: "Eiendom & Utvikling", desc: "Prosjektregnskap, avskrivninger og skatteoptimalisering for eiendomsselskaper og utviklere.", href: "/bransjer/eiendom" },
-  { icon: Landmark, title: "Holding & Investering", desc: "Konsernregnskap, utbytteplanlegging og strukturering for holdingselskaper med flere datterselskaper.", href: "/bransjer/holding" },
-  { icon: Briefcase, title: "Consulting & Rådgivning", desc: "Prosjektbasert fakturering, timeregnskap og lønnsomhetsanalyse for rådgivningsfirmaer.", href: "/bransjer/consulting" },
-  { icon: Tractor, title: "Landbruk", desc: "Spesialtilpasset regnskapsføring med jordbruksfradrag, tilskuddsrapportering og MVA på landbruk.", href: "/bransjer/landbruk" },
-  { icon: HardHat, title: "Bygg & Anlegg", desc: "Prosjektregnskap med løpende avregning, underentreprenørhåndtering og HMS-dokumentasjon.", href: "/bransjer/bygg-anlegg" },
-  { icon: Store, title: "Nettbutikk & E-commerce", desc: "Varelagerføring, integrasjon med Shopify/WooCommerce og MVA på tvers av landegrenser.", href: "/bransjer/nettbutikk" },
-  { icon: Heart, title: "Helse & Velvære", desc: "Regnskap for klinikker, terapeuter og helsebedrifter med fokus på merverdiavgift og konsesjoner.", href: "/bransjer/helse" },
-  { icon: TrendingUp, title: "Restaurant & Uteliv", desc: "Daglig kassaoppgjør, varekostkontroll og personaladministrasjon for serveringsbransjen.", href: "/bransjer/restaurant" },
-  { icon: Users, title: "Frisør & Skjønnhet", desc: "Stolleie-modeller, MVA på tjenester og enkel økonomistyring for frisør- og skjønnhetssalonger.", href: "/bransjer/frisor" },
-  { icon: Zap, title: "Håndverkere & Fagfolk", desc: "Fakturering, prosjektoppfølging og skatteplanlegging skreddersydd for håndverksbedrifter.", href: "/bransjer/handverkere" },
+  { icon: Globe,      title: "Tech & SaaS",           desc: "MRR-rapportering, investorkommunikasjon og skalerbar økonomistyring.", href: "/bransjer/tech-saas" },
+  { icon: Building2,  title: "Eiendom & utvikling",   desc: "Prosjektregnskap, avskrivninger og skatteoptimalisering.", href: "/bransjer/eiendom" },
+  { icon: Landmark,   title: "Holding & investering", desc: "Konsernregnskap, utbytteplanlegging og strukturering.", href: "/bransjer/holding" },
+  { icon: Briefcase,  title: "Consulting & rådgivning", desc: "Prosjektbasert fakturering, timeregnskap og lønnsomhet.", href: "/bransjer/consulting" },
+  { icon: HardHat,    title: "Bygg & anlegg",         desc: "Løpende avregning, underentreprenører og HMS-dokumentasjon.", href: "/bransjer/bygg-anlegg" },
+  { icon: Store,      title: "Nettbutikk & e-handel", desc: "Varelager, betalingsintegrasjoner og MVA over landegrenser.", href: "/bransjer/nettbutikk" },
+  { icon: Heart,      title: "Helse & velvære",       desc: "Klinikker og terapeuter — konsesjoner og MVA-tilpasning.", href: "/bransjer/helse" },
+  { icon: TrendingUp, title: "Restaurant & servering", desc: "Kassaoppgjør, varekostkontroll og personaladministrasjon.", href: "/bransjer/restaurant" },
+  { icon: Tractor,    title: "Landbruk",              desc: "Jordbruksfradrag, tilskudd og MVA i landbruket.", href: "/bransjer/landbruk" },
+  { icon: Users,      title: "Frisør & skjønnhet",    desc: "Stolleie, MVA på tjenester og enkel driftsøkonomi.", href: "/bransjer/frisor" },
+  { icon: Zap,        title: "Håndverkere & fagfolk", desc: "Fakturering, prosjekt­oppfølging og skatteplanlegging.", href: "/bransjer/handverkere" },
+];
+
+const ressurserLinks = [
+  { icon: Calculator,   title: "Kontohjelp",         desc: "Slå opp riktig konto — 400+ kontoer med eksempler og forklaring.",     href: "/ressurser/kontohjelp", featured: true },
+  { icon: Newspaper,    title: "Nyheter & artikler", desc: "Fagartikler om skatt, lovendringer og praktisk drift for norske SMB.", href: "/ressurser?tab=nyheter" },
+  { icon: BookMarked,   title: "Guider & maler",     desc: "Sjekklister, kontrakter og steg-for-steg guider til nedlasting.",       href: "/ressurser?tab=guider" },
+  { icon: CalendarClock,title: "Skattekalender",     desc: "Alle frister for MVA, årsregnskap og a-melding gjennom året.",          href: "/ressurser/skattekalender" },
 ];
 
 const selskapetLinks = [
-  { icon: Lock, title: "Logg inn", desc: "Logg inn som kunde eller ansatt for tilgang til din portal, dokumenter og verktøy.", href: "/logg-inn", absolute: true },
-  { icon: Mail, title: "Kontakt oss", desc: "Få et uforpliktende tilbud eller still spørsmål om våre tjenester. Vi svarer normalt innen én arbeidsdag.", href: "/kontakt", absolute: false },
-  { icon: Info, title: "Om Avargo", desc: "Møt teamet bak Avargo. Les om vår visjon, metode og hva som driver oss til å levere bedre løsninger for norske bedrifter.", href: "/om-oss", absolute: false },
-  
+  { icon: Info,  title: "Om Avargo",     desc: "Møt teamet og les om hva som driver oss.",              href: "/om-oss",  absolute: false },
+  { icon: Mail,  title: "Kontakt oss",   desc: "Få et uforpliktende tilbud — svar innen 24 timer.",     href: "/kontakt", absolute: false },
+  { icon: FileText, title: "Vanlige spørsmål", desc: "Alt du lurer på om priser, oppstart og bytte.",   href: "/faq",     absolute: false },
+  { icon: Lock,  title: "Logg inn",      desc: "Tilgang til kundeportal, dokumenter og verktøy.",       href: "/logg-inn", absolute: true },
 ];
 
-const ressurserLinks: { icon: typeof BookOpen; title: string; desc: string; href: string; accent?: string; featured?: boolean }[] = [
-  { icon: Calculator, title: "Kontohjelp", desc: "Søk opp riktig konto for bokføring. Vår kontoguide dekker alle vanlige og spesielle posteringer med eksempler og forklaringer.", href: "/ressurser/kontohjelp", accent: "hsl(45 80% 60%)", featured: true },
-  { icon: Newspaper, title: "Nyheter & artikler", desc: "Hold deg oppdatert på skatteregler, nye lover, fagartikler og praktiske tips for norske bedrifter.", href: "/ressurser?tab=nyheter" },
-  { icon: BookMarked, title: "Guider & maler", desc: "Steg-for-steg guider, nedlastbare maler, sjekklister og skjemaer — alt du trenger for å holde orden.", href: "/ressurser?tab=guider" },
-  { icon: CalendarClock, title: "Skattekalender", desc: "Oversikt over alle viktige frister for MVA, skattemelding, årsregnskap og a-melding gjennom hele året.", href: "/ressurser/skattekalender" },
-];
-
-/* ── Dropdown panel ─────────────────────────────── */
+/* ── Editorial dropdown panel ── */
 const DropdownPanel = ({ open, children, className = "" }: { open: boolean; children: React.ReactNode; className?: string }) => (
   <div
     className={`transition-all duration-300 ease-out ${className} ${
@@ -94,57 +68,10 @@ const DropdownPanel = ({ open, children, className = "" }: { open: boolean; chil
   </div>
 );
 
-/* ── Accent helper ──────────────────────────────── */
-const accentHsl = (sId: string) => {
-  const s = SECTIONS[sId as SectionId];
-  return s ? `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}%)` : undefined;
-};
-const accentBg = (sId: string, opacity = 0.1) => {
-  const s = SECTIONS[sId as SectionId];
-  return s ? `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / ${opacity})` : undefined;
-};
-
-/* ── Consistent dropdown item ───────────────────── */
-const DropdownItem = ({
-  to,
-  icon: Icon,
-  title,
-  desc,
-  onClick,
-  iconColor,
-  iconBg,
-}: {
-  to: string;
-  icon: typeof BookOpen;
-  title: string;
-  desc?: string;
-  onClick?: () => void;
-  iconColor?: string;
-  iconBg?: string;
-}) => (
-  <Link
-    to={to}
-    onClick={onClick}
-    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/60 group/item transition-all duration-200"
-  >
-    <div
-      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200"
-      style={{ backgroundColor: iconBg || "hsl(var(--primary) / 0.1)", }}
-    >
-      <Icon size={14} style={{ color: iconColor || "hsl(var(--primary))" }} strokeWidth={1.5} />
-    </div>
-    <div className="min-w-0">
-      <p className="text-[13px] text-foreground/90 group-hover/item:text-foreground font-medium transition-colors leading-tight">{title}</p>
-      {desc && <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">{desc}</p>}
-    </div>
-  </Link>
-);
-
 /* ══════════════════════════════════════════════════
    LAYOUT
    ══════════════════════════════════════════════════ */
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { section, isInSection } = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
@@ -152,7 +79,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [ressurserOpen, setRessurserOpen] = useState(false);
   const [mobileTjenesterOpen, setMobileTjenesterOpen] = useState(false);
   const [mobileBransjerOpen, setMobileBransjerOpen] = useState(false);
-  const [mobileSelskapetOpen, setMobileSelskapetOpen] = useState(false);
+  const [mobileMerOpen, setMobileMerOpen] = useState(false);
 
   const tjenesterRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bransjerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -162,19 +89,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setSelskapetOpen(false); setRessurserOpen(false); };
 
-  const sp = (path: string) => isInSection && section ? `${section.basePath}${path}` : path;
-
-  const tjenesterPath = (href: string, groupLabel: string) => {
-    if (isInSection && section) return `${section.basePath}${href}`;
-    return `${groupSectionMap[groupLabel] || ""}${href}`;
-  };
-
-  const visibleTjenesterGroups = useMemo(() => {
-    if (!isInSection || !section) return tjenesterGroups;
-    const allowed = sectionTjenesterGroups[section.id];
-    return tjenesterGroups.filter(g => allowed.includes(g.label));
-  }, [isInSection, section]);
-
   const makeHandlers = (
     setter: (v: boolean) => void,
     timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
@@ -183,268 +97,104 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     onMouseLeave: () => { timerRef.current = setTimeout(() => setter(false), 150); },
   });
 
-  const sectionAccent = isInSection && section ? accentHsl(section.id) : undefined;
-
-  /* Shared dropdown button style */
   const dropBtnClass = (isOpen: boolean) =>
-    `flex items-center gap-1 px-3 py-2 rounded-lg text-[13px] tracking-wide font-light transition-all duration-200 ${
-      isOpen ? "bg-primary/10 text-foreground" : "text-foreground/80 hover:text-foreground hover:bg-muted/40"
+    `flex items-center gap-1 px-3 py-2 rounded-md text-[13px] tracking-wide font-normal transition-all duration-200 ${
+      isOpen ? "text-foreground bg-muted/70" : "text-foreground/75 hover:text-foreground hover:bg-muted/40"
     }`;
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      {/* ── NAV BAR ────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-background/80">
-        {isInSection && section && (
-          <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${sectionAccent}, transparent)` }} />
-        )}
-
-        <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[80px] px-4 md:px-6" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-          {/* Logo */}
-          {isInSection && section ? (
-            <span className="font-heading text-xl md:text-2xl tracking-wide flex items-baseline gap-1">
-              <Link to="/" className="text-primary hover:text-primary/80 transition-colors">Avargo</Link>
-              <span className="text-foreground/30">·</span>
-              <Link to={section.basePath} className="transition-colors text-lg" style={{ color: sectionAccent }}>
-                {section.shortName}
-              </Link>
-            </span>
-          ) : (
-            <Link to="/" className="font-heading text-xl md:text-2xl text-primary tracking-wide">Avargo</Link>
-          )}
+      {/* ── NAV BAR — editorial ─────────────────────── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border/60">
+        <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[76px] px-4 md:px-8" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+          {/* Logo — editorial masthead */}
+          <Link to="/" className="flex items-baseline gap-2 group">
+            <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
+            <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">Regnskap</span>
+          </Link>
 
           {/* ── Desktop nav ─────────────────────────── */}
-          <div className="hidden lg:flex items-center gap-1 lg:gap-1.5">
+          <div className="hidden lg:flex items-center gap-1">
             <NavButton to="/" label="Hjem" isActive={location.pathname === "/"} />
-            
 
-            {/* ─── Tjenester dropdown ─── */}
+            {/* Tjenester dropdown */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
-              <Link
-                to={sp("/tjenester")}
-                onClick={() => setTjenesterOpen(false)}
-                className={dropBtnClass(tjenesterOpen)}
-              >
+              <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className={dropBtnClass(tjenesterOpen)}>
                 Tjenester
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
               </Link>
-
-              <DropdownPanel
-                open={tjenesterOpen}
-                className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl"
-              >
-                {isInSection && section && (
-                  <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent 10%, ${sectionAccent} 50%, transparent 90%)` }} />
-                )}
-                <div className="container mx-auto px-6 py-8">
-                  {isInSection && section ? (
-                    /* ── Section view: same rich card layout as hub ── */
-                    (() => {
-                      const currentGroup = tjenesterGroups.find(g => groupSectionIdMap[g.label] === section.id);
-                      const otherGroups = tjenesterGroups.filter(g => groupSectionIdMap[g.label] !== section.id);
-                      return (
-                        <div className="relative">
-                          {/* Small department links in top-right corner */}
-                          <div className="absolute top-0 right-0 flex items-center gap-4 z-10">
-                            {otherGroups.map(g => {
-                              const sId = groupSectionIdMap[g.label];
-                              const accent = accentHsl(sId);
-                              const targetPath = groupSectionMap[g.label] || "";
-                              const sData = SECTIONS[sId as SectionId];
-                              return (
-                                <Link
-                                  key={g.label}
-                                  to={`${targetPath}/tjenester`}
-                                  onClick={() => setTjenesterOpen(false)}
-                                  className="group/dept flex items-center gap-2 px-3 py-1.5 rounded-lg border border-transparent hover:border-border/20 transition-all duration-300"
-                                  style={{ color: accent }}
-                                >
-                                  <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ backgroundColor: accentBg(sId, 0.15) }}>
-                                    <Layers size={10} style={{ color: accent }} strokeWidth={1.5} />
-                                  </div>
-                                  <span className="text-[11px] tracking-wide font-medium opacity-60 group-hover/dept:opacity-100 transition-opacity">{sData?.shortName}</span>
-                                  <ArrowRight size={9} className="opacity-0 group-hover/dept:opacity-60 -ml-1 transition-all duration-200" />
-                                </Link>
-                              );
-                            })}
-                          </div>
-
-                          {/* Section heading */}
-                          <div className="mb-6">
-                            <div className="flex items-center gap-3 mb-1">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
-                                <Layers size={17} style={{ color: sectionAccent }} strokeWidth={1.5} />
-                              </div>
-                              <div>
-                                <h3 className="font-heading text-lg" style={{ color: sectionAccent }}>{section.name}</h3>
-                                <p className="text-[12px] text-foreground/50 font-light">{section.tagline}</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Current section services in rich card grid */}
-                          <div className="grid grid-cols-4 gap-5">
-                            {(currentGroup?.items || []).map(item => (
-                              <Link
-                                key={item.href}
-                                to={`${section.basePath}${item.href}`}
-                                onClick={() => setTjenesterOpen(false)}
-                                className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
-                                style={{ backgroundColor: accentBg(section.id, 0.06) }}
-                              >
-                                <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: sectionAccent }} />
-                                <div className="relative">
-                                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(section.id, 0.15), borderColor: accentBg(section.id, 0.25) }}>
-                                    <item.icon size={17} style={{ color: sectionAccent }} strokeWidth={1.5} />
-                                  </div>
-                                  <h3 className="font-heading text-base mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h3>
-                                  <p className="text-[12px] text-foreground/60 font-light leading-relaxed mb-4">{item.desc}</p>
-                                  <div className="flex items-center gap-1.5 text-[12px] font-medium opacity-70 group-hover:opacity-100 transition-opacity" style={{ color: sectionAccent }}>
-                                    Les mer <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                                  </div>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })()
-                  ) : (
-                  /* ── Hub view: department cards grid ── */
-                  <div className="grid gap-5 grid-cols-4">
-                    {tjenesterGroups.map((group) => {
-                        const sId = groupSectionIdMap[group.label];
-                        const accent = accentHsl(sId);
-                        const bg = accentBg(sId, 0.06);
-                        const targetPath = groupSectionMap[group.label] || "";
-                        const sectionData = SECTIONS[sId as SectionId];
-                        return (
-                          <Link
-                            key={group.label}
-                            to={`${targetPath}/tjenester`}
-                            onClick={() => setTjenesterOpen(false)}
-                            className="group relative p-6 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden"
-                            style={{ backgroundColor: bg }}
-                          >
-                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: accent }} />
-                            <div className="relative">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 border transition-colors duration-300" style={{ backgroundColor: accentBg(sId, 0.15), borderColor: accentBg(sId, 0.25) }}>
-                                <Layers size={17} style={{ color: accent }} strokeWidth={1.5} />
-                              </div>
-                              <h3 className="font-heading text-base mb-1.5" style={{ color: accent }}>{group.label}</h3>
-                              <p className="text-[12px] text-foreground/65 font-light leading-relaxed mb-4">
-                                {sectionData?.tagline}
-                              </p>
-                              <div className="space-y-2 mb-4">
-                                {group.items.slice(0, 4).map(item => (
-                                  <div key={item.href} className="flex items-center gap-2 text-[12px] text-foreground/75">
-                                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: accent }} />
-                                    {item.title}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </Link>
-                        );
-                      })}
+              <DropdownPanel open={tjenesterOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+                <div className="container mx-auto px-8 py-10 grid grid-cols-12 gap-10">
+                  {/* Left column — editorial intro */}
+                  <div className="col-span-3 border-r border-border/70 pr-8">
+                    <p className="text-[10px] tracking-[0.35em] uppercase text-primary/80 font-semibold mb-3">Kjerneleveranse</p>
+                    <h3 className="font-heading text-2xl leading-tight mb-4 text-foreground">Regnskap, levert med presisjon.</h3>
+                    <p className="text-[12.5px] text-muted-foreground font-light leading-relaxed mb-6">
+                      Autorisert regnskapsbyrå for små og mellomstore bedrifter. Fast pris, dedikert team og svar innen 24 timer.
+                    </p>
+                    <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className="inline-flex items-center gap-1.5 text-[12px] text-primary font-medium hover:gap-2.5 transition-all">
+                      Se alle tjenester <ArrowRight size={11} />
+                    </Link>
                   </div>
-                  )}
+
+                  {/* Right column — services list */}
+                  <div className="col-span-9 grid grid-cols-2 gap-x-8 gap-y-1">
+                    {tjenesterCore.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        onClick={() => setTjenesterOpen(false)}
+                        className="group flex items-start gap-3 py-3 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-primary/8 border border-primary/12 group-hover:bg-primary/14 transition-colors">
+                          <item.icon size={15} className="text-primary" strokeWidth={1.6} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[13.5px] font-medium text-foreground leading-tight">{item.title}</p>
+                          <p className="text-[11.5px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+
+                    {/* HR as understated secondary line */}
+                    <div className="col-span-2 mt-4 pt-4 border-t border-border/60 flex flex-wrap gap-3 items-center">
+                      <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold">Ekstratjenester</span>
+                      {tjenesterHr.map((item) => (
+                        <Link key={item.href} to={item.href} onClick={() => setTjenesterOpen(false)} className="text-[12.5px] text-foreground/70 hover:text-primary transition-colors underline-offset-4 hover:underline">
+                          {item.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </DropdownPanel>
             </div>
 
-            {/* ─── Bransjer dropdown (all sections + hub) ─── */}
-            {isInSection && section ? (
-              section.id === "regnskap" ? (
-              <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
-                <button className={dropBtnClass(bransjerOpen)}>
-                  Bransjer <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
-                </button>
-                <DropdownPanel open={bransjerOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
-                  <div className="container mx-auto px-6 py-8">
-                    <div className="mb-6">
-                      <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Bransjeekspertise</p>
-                      <h3 className="font-heading text-lg text-foreground/90">Vi forstår din bransje — og tilpasser regnskapet deretter.</h3>
+            {/* Bransjer dropdown */}
+            <div className="relative" {...makeHandlers(setBransjerOpen, bransjerRef)}>
+              <Link to="/bransjer" onClick={() => setBransjerOpen(false)} className={dropBtnClass(bransjerOpen)}>
+                Bransjer
+                <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
+              </Link>
+              <DropdownPanel open={bransjerOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+                <div className="container mx-auto px-8 py-10">
+                  <div className="mb-6 flex items-end justify-between border-b border-border/60 pb-4">
+                    <div>
+                      <p className="text-[10px] tracking-[0.35em] uppercase text-primary/80 font-semibold mb-1">Bransjeekspertise</p>
+                      <h3 className="font-heading text-2xl text-foreground">Vi kjenner bransjen din — og tilpasser regnskapet deretter.</h3>
                     </div>
-                    <div className="grid grid-cols-4 gap-4">
-                      {bransjerItems.map((item) => (
-                        <Link
-                          key={item.href}
-                          to={sp(item.href)}
-                          onClick={() => setBransjerOpen(false)}
-                          className="group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/20 hover:bg-muted/40"
-                        >
-                          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
-                          <div className="relative">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border border-primary/15 bg-primary/8 group-hover:bg-primary/15 transition-colors duration-300">
-                              <item.icon size={17} className="text-primary" strokeWidth={1.5} />
-                            </div>
-                            <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
-                            <p className="text-[11px] text-foreground/55 font-light leading-relaxed mb-3">{item.desc}</p>
-                            <div className="flex items-center gap-1.5 text-[11px] font-medium text-primary/70 group-hover:text-primary transition-colors">
-                              Les mer <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                      {/* "Se alle" card filling the empty grid slot */}
-                      <Link
-                        to={sp("/bransjer")}
-                        onClick={() => setBransjerOpen(false)}
-                        className="group relative p-5 rounded-2xl border border-dashed border-primary/25 hover:border-primary/50 transition-all duration-300 overflow-hidden flex flex-col items-center justify-center text-center bg-primary/[0.03] hover:bg-primary/[0.08]"
-                      >
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-2xl bg-primary" />
-                        <div className="relative flex flex-col items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-primary/20 bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-                            <ArrowRight size={20} className="text-primary group-hover:translate-x-0.5 transition-transform duration-300" />
-                          </div>
-                          <div>
-                            <h4 className="font-heading text-sm text-primary/80 group-hover:text-primary transition-colors mb-1">Se alle bransjer</h4>
-                            <p className="text-[11px] text-foreground/45 font-light">Utforsk alle {bransjerItems.length}+ bransjer vi dekker</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
+                    <Link to="/bransjer" onClick={() => setBransjerOpen(false)} className="text-[12px] text-primary font-medium hover:gap-2.5 inline-flex items-center gap-1.5 transition-all shrink-0">
+                      Se alle 20+ bransjer <ArrowRight size={11} />
+                    </Link>
                   </div>
-                </DropdownPanel>
-              </div>
-              ) : (
-              <NavButton to={sp("/bransjer")} label="Bransjer" isActive={location.pathname.includes("/bransjer")} />
-              )
-            ) : null}
-
-            {/* Priser — only show in sections */}
-            {isInSection && section && (
-              <NavButton to={sp("/priser")} label="Priser" isActive={location.pathname.includes("/priser")} />
-            )}
-
-            {/* ─── Selskapet dropdown — only on hub ─── */}
-            {!isInSection && (
-            <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
-              <button className={dropBtnClass(selskapetOpen)}>
-                Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
-              </button>
-              <DropdownPanel open={selskapetOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
-                <div className="container mx-auto px-6 py-8">
-                  <div className="mb-6">
-                    <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Avargo</p>
-                    <h3 className="font-heading text-lg text-foreground/90">Bli kjent med oss — eller logg inn på din portal.</h3>
-                  </div>
-                  <div className="grid grid-cols-5 gap-4">
-                    {selskapetLinks.map((item) => (
-                      <Link
-                        key={item.href}
-                        to={item.absolute ? item.href : sp(item.href)}
-                        onClick={() => setSelskapetOpen(false)}
-                        className="group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden bg-muted/20 hover:bg-muted/40"
-                      >
-                        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl bg-primary" />
-                        <div className="relative">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border border-primary/15 bg-primary/8 group-hover:bg-primary/15 transition-colors duration-300">
-                            <item.icon size={17} className="text-primary" strokeWidth={1.5} />
-                          </div>
-                          <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
-                          <p className="text-[11px] text-foreground/55 font-light leading-relaxed">{item.desc}</p>
+                  <div className="grid grid-cols-4 gap-x-6 gap-y-1">
+                    {bransjerItems.map((item) => (
+                      <Link key={item.href} to={item.href} onClick={() => setBransjerOpen(false)}
+                        className="group flex items-start gap-3 py-3 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors">
+                        <item.icon size={14} className="text-primary mt-0.5 shrink-0" strokeWidth={1.6} />
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-medium text-foreground leading-tight">{item.title}</p>
+                          <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
                         </div>
                       </Link>
                     ))}
@@ -452,233 +202,141 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </div>
               </DropdownPanel>
             </div>
-            )}
 
-            {/* ─── Ressurser dropdown — only on hub ─── */}
-            {!isInSection && (
-              <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
-                <button className={dropBtnClass(ressurserOpen)}>
-                  Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
-                </button>
-                <DropdownPanel open={ressurserOpen} className="fixed top-[80px] left-0 right-0 z-50 bg-card border-b border-border/20 shadow-2xl">
-                  <div className="container mx-auto px-6 py-8">
-                    <div className="mb-6">
-                      <p className="text-[10px] tracking-[0.4em] uppercase text-primary/70 mb-1">Kunnskapssenter</p>
-                      <h3 className="font-heading text-lg text-foreground/90">Kurs, guider og verktøy som gjør deg smartere — helt gratis.</h3>
-                    </div>
-                    <div className="grid grid-cols-4 gap-4">
-                      {ressurserLinks.map((item) => {
-                        const itemAccent = item.accent || "hsl(var(--primary))";
-                        const itemBg = item.accent ? `${item.accent.replace(")", " / 0.08)")}` : "hsl(var(--primary) / 0.08)";
-                        const itemBorder = item.accent ? `${item.accent.replace(")", " / 0.15)")}` : "hsl(var(--primary) / 0.15)";
-                        return (
-                          <Link
-                            key={item.title}
-                            to={item.href.startsWith("/kurs") || item.href.startsWith("/ressurser") ? item.href : sp(item.href)}
-                            onClick={() => setRessurserOpen(false)}
-                            className={`group relative p-5 rounded-2xl border border-border/15 hover:border-border/40 transition-all duration-300 overflow-hidden ${item.featured ? "col-span-2 row-span-1" : ""} bg-muted/20 hover:bg-muted/40`}
-                          >
-                            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl" style={{ backgroundColor: itemAccent }} />
-                            <div className="relative">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 border transition-colors duration-300" style={{ backgroundColor: itemBg, borderColor: itemBorder }}>
-                                <item.icon size={17} style={{ color: itemAccent }} strokeWidth={1.5} />
-                              </div>
-                              <h4 className="font-heading text-sm mb-1.5 text-foreground/90 group-hover:text-foreground transition-colors">{item.title}</h4>
-                              <p className="text-[11px] text-foreground/55 font-light leading-relaxed">{item.desc}</p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </DropdownPanel>
-              </div>
-            )}
+            <NavButton to="/priser" label="Priser" isActive={location.pathname.startsWith("/priser")} />
 
+            {/* Selskapet dropdown */}
+            <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
+              <button className={dropBtnClass(selskapetOpen)}>
+                Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
+              </button>
+              <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-2 w-[560px] bg-card border border-border rounded-xl shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.22)] p-3">
+                <div className="grid grid-cols-2 gap-1">
+                  {selskapetLinks.map((item) => (
+                    <Link key={item.href} to={item.href} onClick={() => setSelskapetOpen(false)}
+                      className="group flex items-start gap-3 py-3 px-3 rounded-lg hover:bg-muted/60 transition-colors">
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-primary/8 border border-primary/12 group-hover:bg-primary/14 transition-colors">
+                        <item.icon size={15} className="text-primary" strokeWidth={1.6} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-foreground leading-tight">{item.title}</p>
+                        <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </DropdownPanel>
+            </div>
 
-            {/* CTA buttons */}
-            <Link
-              to="/book-mote"
-              className="ml-2 px-4 lg:px-5 py-2.5 text-[12px] font-medium border border-primary/40 text-primary rounded-full hover:bg-primary/5 transition-all duration-300 tracking-wide"
-            >
-              Book møte
-            </Link>
-            <Link
-              to={sp("/kontakt")}
-              className="px-5 lg:px-6 py-2.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-full hover:scale-[1.02] transition-all duration-500 tracking-wide shadow-lg shadow-primary/20"
-            >
-              Få tilbud
-            </Link>
+            {/* Ressurser dropdown */}
+            <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
+              <Link to="/ressurser" onClick={() => setRessurserOpen(false)} className={dropBtnClass(ressurserOpen)}>
+                Ressurser <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${ressurserOpen ? "rotate-180" : ""}`} />
+              </Link>
+              <DropdownPanel open={ressurserOpen} className="absolute top-full right-0 mt-2 w-[560px] bg-card border border-border rounded-xl shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.22)] p-3">
+                <div className="grid grid-cols-2 gap-1">
+                  {ressurserLinks.map((item) => (
+                    <Link key={item.href} to={item.href} onClick={() => setRessurserOpen(false)}
+                      className="group flex items-start gap-3 py-3 px-3 rounded-lg hover:bg-muted/60 transition-colors">
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-primary/8 border border-primary/12 group-hover:bg-primary/14 transition-colors">
+                        <item.icon size={15} className="text-primary" strokeWidth={1.6} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-foreground leading-tight">{item.title}</p>
+                        <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </DropdownPanel>
+            </div>
+
+            {/* CTAs */}
+            <div className="ml-4 flex items-center gap-2 pl-4 border-l border-border/70">
+              <Link to="/logg-inn" className="px-3 py-2 text-[12.5px] font-medium text-foreground/70 hover:text-foreground transition-colors tracking-wide">
+                Logg inn
+              </Link>
+              <Link
+                to="/kontakt"
+                className="px-5 py-2.5 text-[12.5px] font-medium bg-foreground text-background rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide"
+              >
+                Få tilbud
+              </Link>
+            </div>
           </div>
 
-          {/* Mobile/tablet: login button + hamburger */}
+          {/* Mobile/tablet toggle */}
           <div className="lg:hidden flex items-center gap-2">
-            <Link to="/logg-inn" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-xl border border-primary/30 text-primary bg-primary/5 active:bg-primary/15 transition-colors flex items-center">
+            <Link to="/logg-inn" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-full border border-border text-foreground/80 active:bg-muted transition-colors flex items-center">
               Logg inn
             </Link>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-3 -mr-2 rounded-xl active:bg-muted/40 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={menuOpen ? "Lukk meny" : "Åpne meny"} aria-expanded={menuOpen}>
-              {menuOpen ? <X size={26} /> : <Menu size={26} />}
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-3 -mr-2 rounded-lg active:bg-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={menuOpen ? "Lukk meny" : "Åpne meny"} aria-expanded={menuOpen}>
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* ── Mobile/tablet menu ──────────────────── */}
+        {/* ── Mobile menu ─────────────────────────── */}
         <div
-          className={`lg:hidden border-t border-border/15 bg-background backdrop-blur-2xl overflow-y-auto transition-all duration-300 ease-out ${
+          className={`lg:hidden border-t border-border/70 bg-background overflow-y-auto transition-all duration-300 ease-out ${
             menuOpen ? "max-h-[calc(100dvh-64px)] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
           }`}
           style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         >
           <div className="flex flex-col p-5 pb-10 gap-0.5">
-            {isInSection && section && (
-              <div className="mb-4 p-3 rounded-xl border" style={{ borderColor: accentBg(section.id, 0.3), backgroundColor: accentBg(section.id, 0.06) }}>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 mb-1">Du er i</p>
-                <p className="font-heading text-base" style={{ color: sectionAccent }}>{section.name}</p>
-              </div>
-            )}
-
             <MobileNavLink to="/" label="Hjem" onClick={() => setMenuOpen(false)} />
-            
 
-
-            {/* Mobile Tjenester */}
-            <div className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide">
-              <Link to={sp("/tjenester")} onClick={() => setMenuOpen(false)} className="flex-1">Tjenester</Link>
-              <button onClick={() => setMobileTjenesterOpen(!mobileTjenesterOpen)} className="p-2 -mr-2 rounded-lg active:bg-muted/30">
-                <ChevronDown size={14} className={`transition-transform duration-200 ${mobileTjenesterOpen ? "rotate-180" : ""}`} />
-              </button>
-            </div>
-            <div className={`overflow-hidden transition-all duration-300 ${mobileTjenesterOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
-              <div className="py-2 pl-1 flex flex-col gap-0.5">
-                {visibleTjenesterGroups.map((group) => {
-                  const sId = groupSectionIdMap[group.label];
-                  const accent = accentHsl(sId);
-                  return (
-                    <div key={group.label}>
-                      {!isInSection && (
-                        <p className="text-[11px] tracking-[0.25em] uppercase font-medium mt-3 mb-1.5 px-3" style={{ color: accent }}>{group.label}</p>
-                      )}
-                      {(!isInSection ? group.items.slice(0, 2) : group.items).map(item => (
-                        <Link key={item.href} to={tjenesterPath(item.href, group.label)} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
-                        >
-                          <item.icon size={14} className="shrink-0" style={{ color: isInSection ? sectionAccent : accent }} strokeWidth={1.5} />
-                          {item.title}
-                        </Link>
-                      ))}
-                      {!isInSection && group.items.length > 2 && (
-                        <Link to={`${groupSectionMap[group.label]}/tjenester`} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                          className="px-3 py-1 text-[12px] font-medium" style={{ color: accent }}>
-                          +{group.items.length - 2} mer →
-                        </Link>
-                      )}
-                    </div>
-                  );
-                })}
-                <Link to={sp("/tjenester")} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                  className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide mt-1">
-                  Se alle tjenester →
+            <MobileGroup label="Tjenester" open={mobileTjenesterOpen} setOpen={setMobileTjenesterOpen} listHref="/tjenester" onNavigate={() => setMenuOpen(false)}>
+              {tjenesterCore.map((item) => (
+                <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
+                  <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
                 </Link>
+              ))}
+              <div className="mt-2 pt-2 border-t border-border/60 flex flex-wrap gap-x-4 gap-y-1 px-3">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold w-full">Ekstratjenester</span>
+                {tjenesterHr.map((item) => (
+                  <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
+                    className="text-[13px] text-foreground/70 py-1.5">{item.title}</Link>
+                ))}
               </div>
-            </div>
+            </MobileGroup>
 
-            {/* Mobile Bransjer */}
-            {isInSection && section && (
-              <>
-                <button onClick={() => setMobileBransjerOpen(!mobileBransjerOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
-                  Bransjer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileBransjerOpen ? "rotate-180" : ""}`} />
-                </button>
-                <div className={`overflow-hidden transition-all duration-300 ${mobileBransjerOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
-                  <div className="py-2 pl-1 flex flex-col gap-0.5">
-                    {bransjerItems.slice(0, 6).map((item) => (
-                      <Link key={item.href} to={sp(item.href)} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
-                      >
-                        <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                      </Link>
-                    ))}
-                    <Link to={sp("/bransjer")} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
-                      className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">
-                      Se alle bransjer →
-                    </Link>
-                  </div>
-                </div>
-              </>
-            )}
+            <MobileGroup label="Bransjer" open={mobileBransjerOpen} setOpen={setMobileBransjerOpen} listHref="/bransjer" onNavigate={() => setMenuOpen(false)}>
+              {bransjerItems.slice(0, 8).map((item) => (
+                <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
+                  <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
+                </Link>
+              ))}
+              <Link to="/bransjer" onClick={() => { setMenuOpen(false); setMobileBransjerOpen(false); }}
+                className="px-3 py-2 text-[13px] text-primary font-medium tracking-wide">Se alle bransjer →</Link>
+            </MobileGroup>
 
-            {/* Mobile Priser */}
-            {isInSection && section && (
-              <MobileNavLink to={sp("/priser")} label="Priser" onClick={() => setMenuOpen(false)} />
-            )}
+            <MobileNavLink to="/priser" label="Priser" onClick={() => setMenuOpen(false)} />
+            <MobileNavLink to="/om-oss" label="Om Avargo" onClick={() => setMenuOpen(false)} />
 
-            {/* ─── Direct link: Om oss ─── */}
-            <MobileNavLink to={sp("/om-oss")} label="Om oss" onClick={() => setMenuOpen(false)} />
+            <MobileGroup label="Mer" open={mobileMerOpen} setOpen={setMobileMerOpen} onNavigate={() => setMenuOpen(false)}>
+              {[...ressurserLinks, ...selskapetLinks.filter(l => l.href !== "/om-oss")].map((item: any) => (
+                <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileMerOpen(false); }}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
+                  <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
+                </Link>
+              ))}
+            </MobileGroup>
 
-            {/* Mobile Selskapet — only on hub */}
-            {!isInSection && (
-              <>
-                <button onClick={() => setMobileSelskapetOpen(!mobileSelskapetOpen)} className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted/30 -mx-2 px-2 rounded-lg border-b border-border/15 tracking-wide w-full">
-                  Mer <ChevronDown size={14} className={`transition-transform duration-200 ${mobileSelskapetOpen ? "rotate-180" : ""}`} />
-                </button>
-                <div className={`overflow-hidden transition-all duration-300 ${mobileSelskapetOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"}`}>
-                  <div className="py-2 pl-1 flex flex-col gap-0.5">
-                    {selskapetLinks.filter(item => item.href !== "/om-oss" && item.href !== "/karriere").map(item => (
-                      <Link key={item.href} to={item.absolute ? item.href : sp(item.href)} onClick={() => { setMenuOpen(false); setMobileSelskapetOpen(false); }}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[14px] text-foreground/85 active:text-foreground active:bg-primary/5 transition-colors"
-                      >
-                        <item.icon size={14} className="text-primary shrink-0" strokeWidth={1.5} /> {item.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Mobile Ressurser */}
-            {!isInSection && (
-              <MobileNavLink to="/ressurser" label="Ressurser" onClick={() => setMenuOpen(false)} />
-            )}
-
-            {/* Cross-navigation on mobile when in section */}
-            {isInSection && section && (
-              <div className="mt-4 mb-2">
-                <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/50 mb-2 font-medium">Andre avdelinger</p>
-                <div className="flex flex-wrap gap-2">
-                  {SECTION_LIST.filter(s => s.id !== section.id).map(s => (
-                    <Link
-                      key={s.id}
-                      to={s.basePath}
-                      onClick={() => setMenuOpen(false)}
-                      className="px-3.5 py-2 rounded-xl text-[12px] font-medium border transition-all active:scale-95"
-                      style={{ color: accentHsl(s.id), borderColor: accentBg(s.id, 0.25), backgroundColor: accentBg(s.id, 0.08) }}
-                    >
-                      {s.shortName}
-                    </Link>
-                  ))}
-                  <Link to="/" onClick={() => setMenuOpen(false)}
-                    className="px-3.5 py-2 rounded-xl text-[12px] font-medium text-primary border border-primary/25 bg-primary/5 transition-all active:scale-95">
-                    Avargo
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* CTA */}
-            <Link to="/book-mote" onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[52px] py-3 text-[15px] font-medium border border-primary/40 text-primary rounded-2xl text-center flex items-center justify-center transition-all">
-              Book møte
+            <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-foreground text-background rounded-full text-center flex items-center justify-center active:scale-[0.98] transition-all">
+              Få et uforpliktende tilbud
             </Link>
-            <Link to={sp("/kontakt")} onClick={() => setMenuOpen(false)} className="mt-2 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-primary text-primary-foreground rounded-2xl text-center flex items-center justify-center active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
-              Få tilbud
+            <Link to="/book-mote" onClick={() => setMenuOpen(false)} className="mt-2 px-5 min-h-[52px] py-3 text-[15px] font-medium border border-border text-foreground rounded-full text-center flex items-center justify-center transition-all">
+              Book møte
             </Link>
           </div>
         </div>
-
-        {/* Bottom border */}
-        <div className="h-px w-full bg-border/20" />
       </nav>
 
-      {/* ── Breadcrumbs ────────────────────────────── */}
-      <div className="pt-16 lg:pt-[80px]">
+      {/* ── Breadcrumbs & main ───────────────────── */}
+      <div className="pt-16 lg:pt-[76px]">
         <Breadcrumbs />
       </div>
 
@@ -688,90 +346,75 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <ExitIntentDialog />
       <FloatingActionMenu />
 
-      {/* ── Footer ─────────────────────────────────── */}
-      <footer className="relative overflow-hidden bg-[hsl(var(--background))]">
-        {/* Ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="border-t border-border/10">
-          <div className="container mx-auto px-5 md:px-6 relative pt-16 md:pt-24 pb-10">
-
-            {/* Top section — CTA + Logo */}
-            <div className="flex flex-col items-center mb-16 md:mb-20">
-              <Link to="/" className="mb-8">
-                <img src={avargoLogo} alt="Avargo" className="h-9 md:h-11 w-auto opacity-80 hover:opacity-100 transition-opacity duration-500" />
+      {/* ── Footer — editorial masthead ─────────── */}
+      <footer className="relative border-t border-border/70 bg-muted/30 mt-24 md:mt-32">
+        <div className="container mx-auto px-5 md:px-8 pt-20 md:pt-24 pb-10">
+          {/* Masthead */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16">
+            {/* Brand column */}
+            <div className="md:col-span-5">
+              <Link to="/" className="inline-flex items-baseline gap-2 mb-6">
+                <img src={avargoLogo} alt="Avargo" className="h-9 w-auto opacity-90" />
+                <span className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-semibold">Regnskap</span>
               </Link>
-              <p className="text-sm text-foreground/50 font-light max-w-md text-center leading-relaxed">
-                Regnskapsbyrået som gir deg et helt team — ikke bare en regnskapsfører.
+              <p className="font-heading text-3xl md:text-[34px] leading-[1.15] text-foreground mb-5 max-w-md">
+                Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
               </p>
+              <p className="text-[13.5px] text-muted-foreground font-light leading-relaxed max-w-md mb-8">
+                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og svar innen 24 timer — bygget for små og mellomstore bedrifter i Norge.
+              </p>
+              <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background text-[12.5px] font-medium rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide">
+                Få et uforpliktende tilbud <ArrowRight size={13} />
+              </Link>
             </div>
 
-            {/* Navigation grid — forenklet for bedre brukervennlighet */}
-            <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 mb-14">
-
-              {/* Populært */}
+            {/* Navigation columns */}
+            <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
               <div>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Populært</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  
-                  <Link to="/ressurser/kontohjelp" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontohjelp</Link>
-                  <Link to="/ressurser/skattekalender" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Skattekalender</Link>
-                  <Link to="/regnskapsforer-i" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Regnskapsfører i din by</Link>
-                  <Link to="/guider/regnskapsforer-pris" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Pris-guide</Link>
-                  <Link to={sp("/bransjer")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Bransjer</Link>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Tjenester</p>
+                <div className="flex flex-col gap-3 text-[13px] font-light">
+                  <Link to="/tjenester/regnskapsforer" className="text-muted-foreground hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
+                  <Link to="/tjenester/arsregnskap"   className="text-muted-foreground hover:text-foreground transition-colors">Årsregnskap</Link>
+                  <Link to="/tjenester/lonn"          className="text-muted-foreground hover:text-foreground transition-colors">Lønn & rapportering</Link>
+                  <Link to="/tjenester/skatteplanlegging" className="text-muted-foreground hover:text-foreground transition-colors">Skatterådgivning</Link>
+                  <Link to="/tjenester/cfo"           className="text-muted-foreground hover:text-foreground transition-colors">CFO-rådgivning</Link>
+                  <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">Alle tjenester →</Link>
                 </div>
               </div>
 
-              {/* Selskapet */}
               <div>
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Selskapet</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to={sp("/om-oss")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Om Avargo</Link>
-                  <Link to="/faq" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Vanlige spørsmål</Link>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Ressurser</p>
+                <div className="flex flex-col gap-3 text-[13px] font-light">
+                  <Link to="/ressurser/kontohjelp"      className="text-muted-foreground hover:text-foreground transition-colors">Kontohjelp</Link>
+                  <Link to="/ressurser/skattekalender"  className="text-muted-foreground hover:text-foreground transition-colors">Skattekalender</Link>
+                  <Link to="/guider/regnskapsforer-pris" className="text-muted-foreground hover:text-foreground transition-colors">Prisguide</Link>
+                  <Link to="/regnskapsforer-i"          className="text-muted-foreground hover:text-foreground transition-colors">Regnskapsfører i din by</Link>
+                  <Link to="/bransjer"                  className="text-muted-foreground hover:text-foreground transition-colors">Bransjer</Link>
+                  <Link to="/faq"                       className="text-muted-foreground hover:text-foreground transition-colors">Vanlige spørsmål</Link>
                 </div>
               </div>
 
-              {/* Kontakt & innlogging */}
               <div className="col-span-2 md:col-span-1">
-                <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Kom i gang</p>
-                <div className="flex flex-col gap-2 text-[13px] font-light">
-                  <Link to={sp("/kontakt")} className="text-foreground/55 hover:text-foreground transition-colors duration-200">Kontakt oss</Link>
-                  <Link to="/logg-inn" className="text-foreground/55 hover:text-foreground transition-colors duration-200">Logg inn</Link>
-                  <a href="mailto:kontakt@avargo.no" className="text-foreground/55 hover:text-foreground transition-colors duration-200">kontakt@avargo.no</a>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Kontakt</p>
+                <div className="flex flex-col gap-3 text-[13px] font-light">
+                  <Link to="/om-oss"   className="text-muted-foreground hover:text-foreground transition-colors">Om Avargo</Link>
+                  <Link to="/kontakt"  className="text-muted-foreground hover:text-foreground transition-colors">Kontakt oss</Link>
+                  <Link to="/book-mote" className="text-muted-foreground hover:text-foreground transition-colors">Book møte</Link>
+                  <Link to="/logg-inn" className="text-muted-foreground hover:text-foreground transition-colors">Logg inn</Link>
+                  <a href="mailto:kontakt@avargo.no" className="text-muted-foreground hover:text-foreground transition-colors">kontakt@avargo.no</a>
+                  <span className="text-muted-foreground/80">Oscars gate 2B<br/>3714 Skien</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Avdelinger — pills */}
-            <div className="flex flex-col items-center mb-14">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-4 font-semibold">Avdelinger</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {SECTION_LIST.map((s) => (
-                  <Link key={s.id} to={s.basePath}
-                    className="px-4 py-1.5 rounded-full text-[11px] font-medium border transition-all duration-300 hover:scale-[1.03]"
-                    style={{
-                      color: accentHsl(s.id),
-                      borderColor: accentBg(s.id, 0.2),
-                      ...(isInSection && section?.id === s.id ? { backgroundColor: accentBg(s.id, 0.1) } : {}),
-                    }}
-                  >
-                    {s.shortName}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-border/8" />
-
-            {/* Bottom bar */}
-            <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-              <span className="text-[11px] text-foreground/35 font-light">© {new Date().getFullYear()} Avargo AS · Org.nr 123 456 789</span>
-              <div className="flex items-center gap-6 text-[11px] text-foreground/35 font-light">
-                <Link to="/personvern" className="hover:text-foreground/60 transition-colors duration-200">Personvern</Link>
-                <Link to="/vilkar" className="hover:text-foreground/60 transition-colors duration-200">Vilkår</Link>
-                <Link to="/sikkerhet" className="hover:text-foreground/60 transition-colors duration-200">Sikkerhet</Link>
-              </div>
+          {/* Bottom bar */}
+          <div className="border-t border-border/70 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span className="text-[11px] text-muted-foreground font-light">© {new Date().getFullYear()} Avargo AS · Autorisert regnskapsbyrå · Org.nr 123 456 789</span>
+            <div className="flex items-center gap-6 text-[11px] text-muted-foreground font-light">
+              <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
+              <Link to="/vilkar"     className="hover:text-foreground transition-colors">Vilkår</Link>
+              <Link to="/sikkerhet"  className="hover:text-foreground transition-colors">Sikkerhet</Link>
             </div>
           </div>
         </div>
@@ -785,8 +428,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 const NavButton = ({ to, label, isActive }: { to: string; label: string; isActive?: boolean }) => (
   <Link
     to={to}
-    className={`px-3 py-2 rounded-lg text-[13px] tracking-wide font-light transition-all duration-200 ${
-      isActive ? "bg-primary/10 text-foreground" : "text-foreground/80 hover:text-foreground hover:bg-muted/40"
+    className={`px-3 py-2 rounded-md text-[13px] tracking-wide font-normal transition-all duration-200 ${
+      isActive ? "text-foreground bg-muted/70" : "text-foreground/75 hover:text-foreground hover:bg-muted/40"
     }`}
   >
     {label}
@@ -794,9 +437,31 @@ const NavButton = ({ to, label, isActive }: { to: string; label: string; isActiv
 );
 
 const MobileNavLink = ({ to, label, onClick }: { to: string; label: string; onClick: () => void }) => (
-  <Link to={to} onClick={onClick} className="flex items-center min-h-[52px] py-4 text-[15px] text-foreground/90 active:text-foreground active:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors border-b border-border/15 tracking-wide">
+  <Link to={to} onClick={onClick} className="flex items-center min-h-[52px] py-4 text-[15px] text-foreground/90 active:bg-muted -mx-2 px-2 rounded-lg transition-colors border-b border-border/60 tracking-wide">
     {label}
   </Link>
+);
+
+const MobileGroup = ({
+  label, open, setOpen, listHref, onNavigate, children,
+}: {
+  label: string; open: boolean; setOpen: (v: boolean) => void; listHref?: string; onNavigate: () => void; children: React.ReactNode;
+}) => (
+  <>
+    <div className="flex items-center justify-between min-h-[52px] py-4 text-[15px] text-foreground/90 -mx-2 px-2 rounded-lg border-b border-border/60 tracking-wide">
+      {listHref ? (
+        <Link to={listHref} onClick={onNavigate} className="flex-1">{label}</Link>
+      ) : (
+        <span className="flex-1">{label}</span>
+      )}
+      <button onClick={() => setOpen(!open)} className="p-2 -mr-2 rounded-lg active:bg-muted">
+        <ChevronDown size={14} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+    </div>
+    <div className={`overflow-hidden transition-all duration-300 ${open ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div className="py-2 pl-1 flex flex-col gap-0.5">{children}</div>
+    </div>
+  </>
 );
 
 export default Layout;

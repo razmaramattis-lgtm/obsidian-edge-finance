@@ -22,8 +22,8 @@ const Hub = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo — Regnskap og HR for bedrifter</title>
-        <meta name="description" content="Avargo samler regnskap og HR under ett tak. Fast pris, dedikert team, ingen overraskelser. Få et uforpliktende tilbud i dag." />
+        <title>Avargo — Autorisert regnskapsbyrå for norske bedrifter</title>
+        <meta name="description" content="Regnskap som løfter bedriften din. Dedikert regnskapsfører, fast månedspris og svar innen 24 timer — for små og mellomstore bedrifter i Norge." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -61,8 +61,8 @@ const Hub = () => {
           <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-                <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-medium">
-                  Regnskap · HR
+                <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-semibold">
+                  Autorisert regnskapsbyrå · Etablert i Norge
                 </p>
               </motion.div>
 
@@ -70,20 +70,20 @@ const Hub = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6 md:mb-8"
+                className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[92px] leading-[0.95] tracking-tight mb-6 md:mb-8"
               >
-                Regnskap og HR.
+                Regnskapet ditt,
                 <br />
-                <span className="text-gradient-rose">Under ett tak.</span>
+                <span className="italic text-gradient-rose">i trygge hender.</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-xl mb-8 md:mb-10"
+                className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Statsautorisert regnskap og komplett HR — levert av ett koordinert team. Fast månedspris, svar innen 24 timer, ingen overraskelser. Bygget for små og mellomstore bedrifter i Norge.
+                Autorisert regnskapsbyrå bygget for ambisiøse små og mellomstore bedrifter. Dedikert regnskapsfører, fast månedspris og svar innen 24 timer — så du kan bruke tiden på å drive bedriften videre.
               </motion.p>
 
               <motion.div
