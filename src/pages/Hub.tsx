@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import ComparisonSection from "@/components/ComparisonSection";
-import MetodenSection from "@/components/MetodenSection";
+
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -301,9 +301,6 @@ const Hub = () => {
 
       {/* ═══ COMPARISON ═══ */}
       <ComparisonSection />
-
-      {/* ═══ METODEN ═══ */}
-      <MetodenSection />
 
       {/* ═══ FAQ ═══ */}
       <HubFAQ />
