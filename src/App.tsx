@@ -63,7 +63,7 @@ const Regnskapsforer = lazy(() => import("./pages/tjenester/Regnskapsforer"));
 const AiInnsikt = lazy(() => import("./pages/tjenester/AiInnsikt"));
 const CFO = lazy(() => import("./pages/tjenester/CFO"));
 const HR = lazy(() => import("./pages/tjenester/HR"));
-const AiAutomatisering = lazy(() => import("./pages/tjenester/AiAutomatisering"));
+
 const Kurs = lazy(() => import("./pages/tjenester/Kurs"));
 const EnTilEnRegnskap = lazy(() => import("./pages/tjenester/EnTilEnRegnskap"));
 const KursDetalj = lazy(() => import("./pages/tjenester/KursDetalj"));
@@ -127,7 +127,7 @@ const KulturMedia = lazy(() => import("./pages/bransjer/KulturMedia"));
 const UtdanningKurs = lazy(() => import("./pages/bransjer/UtdanningKurs"));
 const JuridiskAdvokat = lazy(() => import("./pages/bransjer/JuridiskAdvokat"));
 const ArkitekturDesign = lazy(() => import("./pages/bransjer/ArkitekturDesign"));
-const MarkedsforingReklame = lazy(() => import("./pages/bransjer/MarkedsforingReklame"));
+
 const BemanningRekruttering = lazy(() => import("./pages/bransjer/BemanningRekruttering"));
 const ReiselivTurisme = lazy(() => import("./pages/bransjer/ReiselivTurisme"));
 const BilVerksted = lazy(() => import("./pages/bransjer/BilVerksted"));
@@ -317,7 +317,7 @@ const App = () => (
                             <Route path="/:sectionId/tjenester/meta-annonser" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/google-ads" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/nettbutikk" element={<Navigate to="/tjenester" replace />} />
-                            <Route path="/:sectionId/tjenester/ai-automatisering" element={<AiAutomatisering />} />
+                            <Route path="/:sectionId/tjenester/ai-automatisering" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/:sectionId/tjenester/kurs" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/:sectionId/tjenester/kurs/:slug" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/:sectionId/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
@@ -356,7 +356,7 @@ const App = () => (
                             <Route path="/regnskap/bransjer/utdanning" element={<UtdanningKurs />} />
                             <Route path="/regnskap/bransjer/juridisk" element={<JuridiskAdvokat />} />
                             <Route path="/regnskap/bransjer/arkitektur" element={<ArkitekturDesign />} />
-                            <Route path="/regnskap/bransjer/markedsforing" element={<MarkedsforingReklame />} />
+                            <Route path="/regnskap/bransjer/markedsforing" element={<Navigate to="/bransjer" replace />} />
                             <Route path="/regnskap/bransjer/bemanning" element={<BemanningRekruttering />} />
                             <Route path="/regnskap/bransjer/reiseliv" element={<ReiselivTurisme />} />
                             <Route path="/regnskap/bransjer/bil" element={<BilVerksted />} />
@@ -386,7 +386,7 @@ const App = () => (
                             <Route path="/tjenester/meta-annonser" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/google-ads" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/nettbutikk" element={<Navigate to="/tjenester" replace />} />
-                            <Route path="/tjenester/ai-automatisering" element={<AiAutomatisering />} />
+                            <Route path="/tjenester/ai-automatisering" element={<Navigate to="/tjenester" replace />} />
                             <Route path="/tjenester/kurs" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/tjenester/kurs/:slug" element={<Navigate to="/kurs/katalog" replace />} />
                             <Route path="/tjenester/1-1-regnskap" element={<EnTilEnRegnskap />} />
@@ -424,7 +424,7 @@ const App = () => (
                             <Route path="/bransjer/utdanning" element={<UtdanningKurs />} />
                             <Route path="/bransjer/juridisk" element={<JuridiskAdvokat />} />
                             <Route path="/bransjer/arkitektur" element={<ArkitekturDesign />} />
-                            <Route path="/bransjer/markedsforing" element={<MarkedsforingReklame />} />
+                            <Route path="/bransjer/markedsforing" element={<Navigate to="/bransjer" replace />} />
                             <Route path="/bransjer/bemanning" element={<BemanningRekruttering />} />
                             <Route path="/bransjer/reiseliv" element={<ReiselivTurisme />} />
                             <Route path="/bransjer/bil" element={<BilVerksted />} />
