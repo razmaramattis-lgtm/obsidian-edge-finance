@@ -6,51 +6,51 @@
 
 @layer base {
   :root {
-    /* Editorial Clarity — light, warm, professional yet approachable */
-    --background: 40 22% 97%;         /* #F9F8F6 warm off-white */
-    --foreground: 20 10% 12%;         /* #211F1D ink */
+    /* Editorial Clarity — warm parchment, deeper contrast for readability */
+    --background: 36 20% 92%;         /* #ECE6DD warm cream */
+    --foreground: 20 14% 10%;         /* deep ink */
 
-    --card: 0 0% 100%;                /* pure paper */
-    --card-foreground: 20 10% 12%;
+    --card: 38 22% 96%;               /* softer than pure paper */
+    --card-foreground: 20 14% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 12%;
+    --popover: 38 22% 96%;
+    --popover-foreground: 20 14% 10%;
 
-    --primary: 15 55% 46%;            /* warm terracotta accent */
+    --primary: 15 62% 38%;            /* deeper terracotta / burnt sienna */
     --primary-foreground: 40 22% 98%;
 
-    --secondary: 170 32% 30%;         /* deep teal ink */
+    --secondary: 175 38% 22%;         /* deep forest teal */
     --secondary-foreground: 40 22% 98%;
 
-    --muted: 40 14% 92%;              /* soft warm neutral */
-    --muted-foreground: 20 8% 38%;
+    --muted: 35 14% 86%;              /* deeper warm neutral */
+    --muted-foreground: 20 10% 32%;
 
-    --accent: 40 20% 90%;
-    --accent-foreground: 20 10% 12%;
+    --accent: 35 18% 82%;
+    --accent-foreground: 20 14% 10%;
 
-    --destructive: 5 62% 48%;
+    --destructive: 5 68% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 35 15% 87%;             /* hairline */
-    --input: 35 15% 90%;
-    --ring: 15 55% 46%;
+    --border: 30 14% 78%;             /* stronger hairline */
+    --input: 30 14% 82%;
+    --ring: 15 62% 38%;
 
-    --radius: 0.5rem;                 /* sharper editorial corners */
+    --radius: 0.5rem;
 
-    --rose: 15 55% 46%;
-    --rose-glow: 15 65% 62%;
-    --teal: 170 32% 30%;
-    --teal-glow: 170 40% 42%;
-    --warm: 20 10% 12%;
+    --rose: 15 62% 38%;
+    --rose-glow: 15 68% 54%;
+    --teal: 175 38% 22%;
+    --teal-glow: 175 42% 34%;
+    --warm: 20 14% 10%;
 
-    --sidebar-background: 40 20% 95%;
-    --sidebar-foreground: 20 10% 12%;
-    --sidebar-primary: 15 55% 46%;
+    --sidebar-background: 36 18% 88%;
+    --sidebar-foreground: 20 14% 10%;
+    --sidebar-primary: 15 62% 38%;
     --sidebar-primary-foreground: 40 22% 98%;
-    --sidebar-accent: 40 14% 90%;
-    --sidebar-accent-foreground: 20 10% 12%;
-    --sidebar-border: 35 15% 87%;
-    --sidebar-ring: 15 55% 46%;
+    --sidebar-accent: 35 14% 84%;
+    --sidebar-accent-foreground: 20 14% 10%;
+    --sidebar-border: 30 14% 78%;
+    --sidebar-ring: 15 62% 38%;
   }
 }
 
