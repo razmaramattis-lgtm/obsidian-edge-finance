@@ -120,9 +120,6 @@ const Hub = () => {
 
       </section>
 
-      {/* ═══ SWITCH CHECK ═══ */}
-      <SwitchCheckSection />
-
       {/* ═══ TRUST BAR ═══ */}
       <section className="py-8 md:py-12 bg-secondary border-y border-accent/20">
 
@@ -146,6 +143,9 @@ const Hub = () => {
           </div>
         </div>
       </section>
+
+      {/* ═══ SWITCH CHECK ═══ */}
+      <SwitchCheckSection />
 
 
 
