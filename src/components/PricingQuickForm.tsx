@@ -61,7 +61,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
                 <Check className="text-primary" size={24} />
               </div>
               <DialogTitle className="font-heading text-2xl">Takk, {name.split(" ")[0] || "vi har deg"}!</DialogTitle>
-              <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> raskt — som regel samme arbeidsdag.</p>
+              <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> så raskt vi kan — som regel samme arbeidsdag.</p>
             </div>
             <div className="border-t border-border/20 pt-4">
               <NextStepsTimeline variant="compact" />
