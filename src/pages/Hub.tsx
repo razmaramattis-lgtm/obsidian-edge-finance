@@ -62,7 +62,7 @@ const Hub = () => {
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
                 <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-semibold">
-                  Autorisert regnskapsbyrå · Etablert i Norge
+                  Autorisert regnskapsbyrå · Skien · Hele Norge
                 </p>
               </motion.div>
 
@@ -72,9 +72,9 @@ const Hub = () => {
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[92px] leading-[0.95] tracking-tight mb-6 md:mb-8"
               >
-                Regnskapet ditt,
+                Regnskap som
                 <br />
-                <span className="italic text-gradient-rose">i trygge hender.</span>
+                <span className="italic text-gradient-rose">frigjør tid.</span>
               </motion.h1>
 
               <motion.p
@@ -83,7 +83,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Autorisert regnskapsbyrå bygget for ambisiøse små og mellomstore bedrifter. Dedikert regnskapsfører, fast månedspris og svar innen 24 timer — så du kan bruke tiden på å drive bedriften videre.
+                Vi er regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Dedikert autorisert regnskapsfører, fast månedspris uten overraskelser, og reell rådgivning når du trenger den. Vi tar hele byttet fra din nåværende regnskapsfører.
               </motion.p>
 
               <motion.div
