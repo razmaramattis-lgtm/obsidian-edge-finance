@@ -319,66 +319,70 @@ const Pricing = () => {
                       </>
                     )}
 
-                    {/* Step 2: industry */}
+                    {/* Step 2: industry (dropdown) */}
                     {step === 2 && (
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">2. Velg bransje</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Velg hvilken bransje virksomheten din tilhører. Dette hjelper oss å gi deg en mer nøyaktig pris.
+                          Velg hvilken bransje virksomheten din tilhører. Dette hjelper oss å tilpasse tilbudet.
                         </p>
-                        <div className="grid grid-cols-2 gap-2.5">
-                          {industries.map((it) => {
-                            const active = industry === it.key;
-                            return (
-                              <button
-                                key={it.key}
-                                type="button"
-                                onClick={() => setIndustry(it.key)}
-                                className={`text-left px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
-                                  active
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                                }`}
-                              >
-                                {it.label}
-                              </button>
-                            );
-                          })}
-                        </div>
+                        <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                          Bransje
+                        </label>
+                        <select
+                          value={industry}
+                          onChange={(e) => setIndustry(e.target.value)}
+                          className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                        >
+                          <option value="">Velg bransje …</option>
+                          {industries.map((it) => (
+                            <option key={it.key} value={it.key}>
+                              {it.label}
+                            </option>
+                          ))}
+                        </select>
                       </>
                     )}
 
-                    {/* Step 3: revenue */}
+                    {/* Step 3: revenue slider */}
                     {step === 3 && (
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">3. Årlig omsetning</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Velg hvor mye virksomheten din omsetter for i året. Dette påvirker prisen.
+                          Dra prikken frem eller tilbake for å angi omtrentlig årlig omsetning.
                         </p>
-                        <div className="space-y-2.5">
-                          {revenueTiers.map((t, i) => {
-                            const active = revenue === i;
-                            return (
-                              <button
-                                key={t.key}
-                                type="button"
-                                onClick={() => setRevenue(i)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
-                                  active
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                                }`}
-                              >
-                                <span>{t.label}</span>
-                                {t.addon > 0 && (
-                                  <span className={`text-xs ${active ? "text-primary-foreground/80" : "text-foreground/50"}`}>
-                                    +{t.addon.toLocaleString("nb-NO")} kr
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
+
+                        <div className="flex items-baseline justify-between mb-3">
+                          <span className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            Omsetning
+                          </span>
+                          <span className="font-heading text-2xl text-foreground">
+                            {isCustomOffer ? "5 mill.+" : `${(revenue / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`}
+                          </span>
                         </div>
+
+                        <input
+                          type="range"
+                          min={REVENUE_MIN}
+                          max={REVENUE_CUSTOM}
+                          step={REVENUE_STEP}
+                          value={revenue}
+                          onChange={(e) => setRevenue(Number(e.target.value))}
+                          className="w-full accent-primary cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[11px] text-foreground/50 font-light mt-2">
+                          <span>0 kr</span>
+                          <span>2,5 mill.</span>
+                          <span>5 mill.+</span>
+                        </div>
+
+                        {isCustomOffer && (
+                          <div className="mt-6 p-4 rounded-2xl bg-primary/8 border border-primary/25">
+                            <p className="text-sm text-foreground leading-relaxed">
+                              Omsetning over 5 mill. gir stor variasjon i behov. Trykk deg videre — så gir vi deg et <span className="font-medium">skreddersydd tilbud</span> basert på hva du faktisk trenger.
+                            </p>
+                          </div>
+                        )}
                       </>
                     )}
 
@@ -397,18 +401,13 @@ const Pricing = () => {
                                 key={t.key}
                                 type="button"
                                 onClick={() => setBilag(i)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
+                                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
                                   active
                                     ? "bg-primary text-primary-foreground border-primary"
                                     : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
                                 }`}
                               >
-                                <span>{t.label}</span>
-                                {t.addon > 0 && (
-                                  <span className={`text-xs ${active ? "text-primary-foreground/80" : "text-foreground/50"}`}>
-                                    +{t.addon.toLocaleString("nb-NO")} kr
-                                  </span>
-                                )}
+                                {t.label}
                               </button>
                             );
                           })}
