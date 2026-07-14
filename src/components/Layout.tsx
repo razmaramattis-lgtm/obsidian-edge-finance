@@ -75,19 +75,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [tjenesterOpen, setTjenesterOpen] = useState(false);
   const [bransjerOpen, setBransjerOpen] = useState(false);
-  const [selskapetOpen, setSelskapetOpen] = useState(false);
   const [ressurserOpen, setRessurserOpen] = useState(false);
   const [mobileTjenesterOpen, setMobileTjenesterOpen] = useState(false);
   const [mobileBransjerOpen, setMobileBransjerOpen] = useState(false);
-  const [mobileMerOpen, setMobileMerOpen] = useState(false);
+  const [mobileRessurserOpen, setMobileRessurserOpen] = useState(false);
 
   const tjenesterRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bransjerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const selskapetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ressurserRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
 
-  const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setSelskapetOpen(false); setRessurserOpen(false); };
+  const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setRessurserOpen(false); };
 
   const makeHandlers = (
     setter: (v: boolean) => void,
