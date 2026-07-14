@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
+import { Calculator, Users, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfWeek, isBefore, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -24,11 +24,9 @@ type BrregEnhet = {
 const services = [
   { id: "regnskap", label: "Regnskap & økonomi", desc: "Bokføring, årsregnskap, MVA, rådgivning", icon: Calculator, color: "from-rose-500/20 to-orange-500/10" },
   { id: "hr", label: "HR & personal", desc: "Ansettelse, lønn, personalhåndbok", icon: Users, color: "from-amber-500/20 to-yellow-500/10" },
-  { id: "markedsforing", label: "Markedsføring", desc: "SEO, annonser, nettsider, innhold", icon: Megaphone, color: "from-violet-500/20 to-fuchsia-500/10" },
-  { id: "it", label: "IT & systemer", desc: "Automatisering, integrasjoner, support", icon: Cpu, color: "from-cyan-500/20 to-sky-500/10" },
 ] as const;
 
-type ServiceId = "regnskap" | "hr" | "markedsforing" | "it";
+type ServiceId = "regnskap" | "hr";
 
 const serviceQuiz: Record<ServiceId, {
   statusLabel: string;
@@ -47,18 +45,6 @@ const serviceQuiz: Record<ServiceId, {
     statusOptions: ["Internt", "Outsourcet", "Ikke etablert"],
     goalLabel: "Hva trenger du hjelp med?",
     goals: ["Ansette første medarbeider", "Personalhåndbok & rutiner", "Lønn & rapportering", "Arbeidsrett / oppsigelse", "Annet / utforske"],
-  },
-  markedsforing: {
-    statusLabel: "Hvordan jobber dere med markedsføring i dag?",
-    statusOptions: ["Internt", "Eksternt byrå", "Lite/ingen aktivitet"],
-    goalLabel: "Hva er målet med møtet?",
-    goals: ["Flere kunder / leads", "Ny nettside eller nettbutikk", "SEO & organisk vekst", "Google Ads / Meta-annonser", "Annet / utforske"],
-  },
-  it: {
-    statusLabel: "Hvordan er den tekniske situasjonen i dag?",
-    statusOptions: ["Moderne systemer", "Eldre / lappeteppe", "Bygger nytt"],
-    goalLabel: "Hva trenger du hjelp med?",
-    goals: ["Ny nettside / nettbutikk", "Automatisering & integrasjoner", "Chatbot / AI-løsning", "Internsystem / dashboard", "Annet / utforske"],
   },
 };
 
@@ -103,6 +89,8 @@ const BookMote = () => {
   const [searching, setSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
+  const [hasAccountant, setHasAccountant] = useState<null | boolean>(null);
+  const [checkingAccountant, setCheckingAccountant] = useState(false);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -181,7 +169,7 @@ const BookMote = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const selectCompany = (enhet: BrregEnhet) => {
+  const selectCompany = async (enhet: BrregEnhet) => {
     setSelectedCompany(enhet);
     setCompanySearch(enhet.navn);
     setShowDropdown(false);
@@ -192,12 +180,40 @@ const BookMote = () => {
     else if (n <= 5) setSize("1–5 ansatte");
     else if (n <= 20) setSize("6–20 ansatte");
     else setSize("20+ ansatte");
+
+    // Sjekk regnskapsfører via Brreg roller-API (kun relevant for regnskap-tjeneste)
+    setHasAccountant(null);
+    if (service === "regnskap") {
+      setCheckingAccountant(true);
+      try {
+        const res = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`);
+        if (res.ok) {
+          const data = await res.json();
+          const groups: any[] = data?.rollegrupper || [];
+          const found = groups.some(g => {
+            const kode = g?.type?.kode || "";
+            if (kode === "REGN" || kode === "REGN_FORE") return true;
+            return (g?.roller || []).some((r: any) => (r?.type?.kode || "").startsWith("REGN"));
+          });
+          setHasAccountant(found);
+          setCurrentStatus(found ? "Ja" : "Nei");
+        } else {
+          setHasAccountant(false);
+          setCurrentStatus("Nei");
+        }
+      } catch {
+        setHasAccountant(null);
+      } finally {
+        setCheckingAccountant(false);
+      }
+    }
   };
 
   const clearCompany = () => {
     setSelectedCompany(null);
     setCompanySearch("");
     setForm(f => ({ ...f, firma: "", orgnr: "" }));
+    setHasAccountant(null);
   };
 
 
@@ -455,7 +471,20 @@ const BookMote = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                      {service === "regnskap" && selectedCompany && (
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 inline-flex items-center gap-1.5">
+                          {checkingAccountant ? (
+                            <><Loader2 size={11} className="animate-spin" /> Sjekker Brønnøysund…</>
+                          ) : hasAccountant === true ? (
+                            <><CheckCircle2 size={11} className="text-primary" /> Registrert regnskapsfører (Brreg)</>
+                          ) : hasAccountant === false ? (
+                            <><CheckCircle2 size={11} className="text-secondary" /> Ingen regnskapsfører registrert (Brreg)</>
+                          ) : null}
+                        </span>
+                      )}
+                    </div>
                     <div className={`grid gap-2 ${(quiz?.statusOptions.length || 3) > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
                       {quiz?.statusOptions.map(o => (
                         <button key={o} onClick={() => setCurrentStatus(o)}
