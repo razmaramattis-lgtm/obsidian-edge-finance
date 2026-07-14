@@ -61,9 +61,9 @@ const Hub = () => {
           <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-                <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-semibold">
+                <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-6 md:mb-8 font-semibold px-3.5 py-1.5 rounded-full border border-background/70 bg-secondary/5">
                   Autorisert regnskapsbyrå
-                </p>
+                </span>
               </motion.div>
 
               <motion.h1
