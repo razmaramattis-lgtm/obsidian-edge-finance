@@ -89,6 +89,8 @@ const BookMote = () => {
   const [searching, setSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<BrregEnhet | null>(null);
+  const [hasAccountant, setHasAccountant] = useState<null | boolean>(null);
+  const [checkingAccountant, setCheckingAccountant] = useState(false);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
