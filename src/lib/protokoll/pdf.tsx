@@ -14,8 +14,10 @@ const styles = StyleSheet.create({
     paddingRight: 56,
     fontFamily: "Times-Roman",
     fontSize: 10.5,
-    lineHeight: 1.45,
     color: "#111827",
+  },
+  content: {
+    lineHeight: 1.45,
   },
   title: { fontFamily: "Times-Bold", fontSize: 20, marginBottom: 4 },
   subtitle: { fontSize: 12, marginBottom: 18, color: "#374151" },
@@ -40,15 +42,19 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     width: 220,
   },
-  footer: {
+  footerLeft: {
     position: "absolute",
     bottom: 24,
     left: 71,
+    fontSize: 8,
+    color: "#9CA3AF",
+  },
+  footerRight: {
+    position: "absolute",
+    bottom: 24,
     right: 56,
     fontSize: 8,
     color: "#9CA3AF",
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
 });
 
@@ -231,14 +237,6 @@ function MoteInfo({ profile, includeMotenr }: { profile: CompanyProfile; include
   );
 }
 
-function Footer() {
-  return (
-    <View style={styles.footer} fixed>
-      <Text>Generert digitalt via Avargo</Text>
-      <Text render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
-    </View>
-  );
-}
 
 // ---------- Dokumenttype: Styremøteprotokoll ----------
 
@@ -628,8 +626,15 @@ export function ProtokollDocument({ profile, doc }: { profile: CompanyProfile; d
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {content}
-        <Footer />
+        <Text style={styles.footerLeft} fixed>
+          Protokoll- og generalforsamlingsgenerator er produsert av Avargo.
+        </Text>
+        <Text
+          style={styles.footerRight}
+          fixed
+          render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`}
+        />
+        <View style={styles.content}>{content}</View>
       </Page>
     </Document>
   );
