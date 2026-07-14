@@ -495,7 +495,7 @@ const Pricing = () => {
                           {[
                             ["Selskapsform", form ?? "—"],
                             ["Bransje", industries.find((i) => i.key === industry)?.label ?? "—"],
-                            ["Årlig omsetning", revenueTiers[revenue]?.label ?? "—"],
+                            ["Årlig omsetning", revenueLabel],
                             ["Bilag / mnd", bilagTiers[bilag]?.label ?? "—"],
                             ["Lønnsslipper / mnd", String(payslips)],
                             ["Årsoppgjør", aarsoppgjor ? "Ja" : "Nei"],
