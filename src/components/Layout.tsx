@@ -320,7 +320,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Brand column */}
             <div className="md:col-span-5">
               <Link to="/" className="inline-flex items-baseline gap-2 mb-6">
-                <img src={avargoLogo} alt="Avargo" className="h-9 w-auto opacity-90" />
+                <span className="font-heading text-2xl text-foreground">Avargo</span>
                 <span className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-semibold">Regnskap</span>
               </Link>
               <p className="font-heading text-3xl md:text-[34px] leading-[1.15] text-foreground mb-5 max-w-md">
