@@ -61,9 +61,9 @@ const Hub = () => {
           <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-                <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-semibold">
+                <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-6 md:mb-8 font-semibold px-3.5 py-1.5 rounded-full border border-background/70 bg-secondary/5">
                   Autorisert regnskapsbyrå
-                </p>
+                </span>
               </motion.div>
 
               <motion.h1
@@ -100,7 +100,7 @@ const Hub = () => {
                 </Link>
                 <Link
                   to="/tjenester"
-                  className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-secondary text-accent rounded-xl md:rounded-2xl text-sm font-semibold border border-accent/40 hover:bg-secondary/90 hover:text-accent hover:scale-[1.02] transition-all duration-300"
                 >
                   Se våre tjenester
                 </Link>

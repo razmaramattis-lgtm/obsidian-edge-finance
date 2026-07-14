@@ -67,7 +67,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
       onSubmit={submit}
       className="rounded-3xl border border-border/30 bg-card/50 backdrop-blur-xl p-6 md:p-7"
     >
-      <p className="text-[11px] tracking-[0.3em] uppercase text-primary/80 mb-1.5 font-medium">
+      <p className="inline-block text-[11px] tracking-[0.3em] uppercase text-secondary mb-2 font-semibold px-3 py-1 rounded-full border border-background/70 bg-secondary/5">
         Be oss ringe deg
       </p>
       <p className="text-xs text-muted-foreground mb-5 font-light">
