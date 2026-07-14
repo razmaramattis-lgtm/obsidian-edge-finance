@@ -1611,7 +1611,7 @@ const JobListingsPanel = () => {
                   <div>
                     <label className="text-xs font-medium text-foreground block mb-1.5">Sted / adresse</label>
                     <input type="text" value={interviewLocation} onChange={e => setInterviewLocation(e.target.value)}
-                      placeholder="F.eks: Oscars gate 2B, 3714 Skien"
+                      placeholder="F.eks: Blåbærbakken 17, 2100 Skarnes"
                       className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                   </div>
                 )}
@@ -1722,7 +1722,7 @@ const JobListingsPanel = () => {
                     type="text"
                     value={offerWorkLocation}
                     onChange={e => setOfferWorkLocation(e.target.value)}
-                    placeholder="F.eks: Oscars gate 2B, Skien (hybrid)"
+                    placeholder="F.eks: Blåbærbakken 17, Skarnes (hybrid)"
                     className="w-full rounded-lg border border-border/30 bg-muted/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
