@@ -10,7 +10,7 @@ import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
-  Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe,
+  Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
