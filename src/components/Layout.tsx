@@ -315,21 +315,21 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <FloatingActionMenu />
 
       {/* ── Footer — editorial masthead ─────────── */}
-      <footer className="relative border-t border-border/70 bg-muted/30 mt-24 md:mt-32">
-        <div className="container mx-auto px-5 md:px-8 pt-20 md:pt-24 pb-10">
+      <footer className="relative border-t border-border/70 bg-muted/30 mt-16 md:mt-24">
+        <div className="container mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
           {/* Masthead */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-10">
             {/* Brand column */}
             <div className="md:col-span-5">
-              <Link to="/" className="inline-flex items-baseline gap-2 mb-6">
-                <span className="font-heading text-2xl text-foreground">Avargo</span>
+              <Link to="/" className="inline-flex items-baseline gap-2 mb-4">
+                <span className="font-heading text-xl text-foreground">Avargo</span>
                 <span className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-semibold">Regnskap</span>
               </Link>
-              <p className="font-heading text-3xl md:text-[34px] leading-[1.15] text-foreground mb-5 max-w-md">
+              <p className="font-heading text-2xl md:text-[26px] leading-[1.15] text-foreground mb-4 max-w-md">
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
               </p>
-              <p className="text-[13.5px] text-muted-foreground font-light leading-relaxed max-w-md mb-8">
-                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager — bygget for små og mellomstore bedrifter i Norge.
+              <p className="text-[13px] text-muted-foreground font-light leading-relaxed max-w-md mb-6">
+                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
               </p>
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background text-[12.5px] font-medium rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide">
                 Få et uforpliktende tilbud <ArrowRight size={13} />
@@ -369,15 +369,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/kontakt"  className="text-muted-foreground hover:text-foreground transition-colors">Kontakt oss</Link>
                   <Link to="/book-mote" className="text-muted-foreground hover:text-foreground transition-colors">Book møte</Link>
                   <Link to="/logg-inn" className="text-muted-foreground hover:text-foreground transition-colors">Logg inn</Link>
-                  <a href="mailto:kontakt@avargo.no" className="text-muted-foreground hover:text-foreground transition-colors">kontakt@avargo.no</a>
-                  <span className="text-muted-foreground/80">Blåbærbakken 17<br/>2100 Skarnes</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="border-t border-border/70 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="border-t border-border/70 pt-4 flex flex-col md:flex-row justify-between items-center gap-3">
             <span className="text-[11px] text-muted-foreground font-light">© {new Date().getFullYear()} Avargo Regnskap AS · Autorisert regnskapsbyrå · Org.nr 938 076 669</span>
             <div className="flex items-center gap-6 text-[11px] text-muted-foreground font-light">
               <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
