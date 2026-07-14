@@ -91,7 +91,6 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: Landmark, name: "Holding", slug: "holding", tagline: "Strukturen som beskytter", desc: "Vi hjelper deg å bygge en ryddig og trygg struktur for aksjer, eiendom og investeringer." },
       { icon: Briefcase, name: "Consulting", slug: "consulting", tagline: "Mer tid til det du er best på", desc: "Vi tar oss av det administrative, slik at du kan bruke tiden på kundene dine." },
       { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Vi holder orden", desc: "God oversikt over hvert prosjekt, slik at du alltid vet om du tjener penger." },
-      { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Vi kjenner gårdens rytme", desc: "Sesongsvingninger, støtteordninger og maskinpark — vi sørger for at du aldri går glipp av noe." },
       { icon: Store, name: "Nettbutikk", slug: "nettbutikk", tagline: "Skalér trygt", desc: "Styr på inntekter, avgifter og kostnader — uansett om du selger til Norge eller utlandet." },
       { icon: Heart, name: "Helse", slug: "helse", tagline: "Fokuser på menneskene", desc: "Vi ordner det økonomiske i bakgrunnen mens du gir full oppmerksomhet til dem du er der for." },
       { icon: TrendingUp, name: "Restaurant", slug: "restaurant", tagline: "Hjulene i gang", desc: "God oversikt over driften slik at du kan ta bedre beslutninger." },
@@ -367,7 +366,6 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Prosjektstyring digitalisert", desc: "Systemer for timeføring, prosjektoppfølging og dokumenthåndtering." },
       { icon: ShoppingCart, name: "Varehandel", slug: "varehandel", tagline: "Omnichannel-løsninger", desc: "Kobling mellom fysisk butikk og netthandel med felles lagerstyring." },
       { icon: Users, name: "Frisør & Skjønnhet", slug: "frisor", tagline: "Alt i ett system", desc: "Booking, kundehistorikk og kassesystem — alt integrert i én løsning." },
-      { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Gårdsdrift digitalisert", desc: "Oversikt over maskinpark, produksjon og økonomi i ett dashboard." },
     ],
     conviction: {
       headline: <>De fleste betaler for mye for teknologi.{" "}<span className="italic text-gradient-rose">Og får hyllevare tilbake.</span></>,
