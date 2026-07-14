@@ -1,6 +1,6 @@
-import { pdf } from "@react-pdf/renderer";
-import { ProtokollDocument } from "/dev-server/src/lib/protokoll/pdf";
-import { emptyProfile, emptyDocument } from "/dev-server/src/lib/protokoll/types";
+import { renderToFile } from "@react-pdf/renderer";
+import { ProtokollDocument } from "./src/lib/protokoll/pdf";
+import { emptyProfile, emptyDocument } from "./src/lib/protokoll/types";
 
 const profile = emptyProfile();
 profile.selskap.navn = "Test AS";
@@ -13,9 +13,6 @@ profile.styre.styreleder = { navn: "Ola Nordmann", rolle: "styreleder", epost: "
 const doc = emptyDocument("styremoteprotokoll");
 doc.answers.signatur_dato = "2026-01-15";
 
-const instance = pdf(<ProtokollDocument profile={profile} doc={doc} />);
-instance.toBuffer().then((buf) => {
-  const fs = require("fs");
-  fs.writeFileSync("/tmp/browser/protokoll/out.pdf", buf);
-  console.log("PDF skrevet");
-});
+renderToFile(<ProtokollDocument profile={profile} doc={doc} />, "/tmp/browser/protokoll/out.pdf")
+  .then(() => console.log("PDF skrevet til /tmp/browser/protokoll/out.pdf"))
+  .catch((err) => { console.error(err); process.exit(1); });
