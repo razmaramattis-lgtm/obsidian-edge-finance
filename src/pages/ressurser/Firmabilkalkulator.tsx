@@ -33,9 +33,9 @@ import {
  *   årlig skatt / 10,5 mnd (én måneds ferieavvikling + halv skatt i desember).
  */
 
-const TERSKEL_2026 = 370_300; // knekkpunkt 30 % / 20 % — BDO 2026
+const TERSKEL_2026 = 370_300; // knekkpunkt 30 % / 20 % for 2026
 
-// Trinnskatt 2026 (BDO-prognose). Tuples: [nedre grense, sats]
+// Trinnskatt 2026. Tuples: [nedre grense, sats]
 const TRINN = [
   { fra: 0,         sats: 0.000 },
   { fra: 226_400,   sats: 0.017 },
