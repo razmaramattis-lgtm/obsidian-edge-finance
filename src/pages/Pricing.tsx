@@ -41,7 +41,6 @@ const industries = [
   { key: "helse", label: "Helse" },
   { key: "restaurant", label: "Restaurant og kafé" },
   { key: "transport", label: "Transport" },
-  { key: "landbruk", label: "Landbruk" },
   { key: "kultur", label: "Kultur og media" },
   { key: "utdanning", label: "Utdanning og kurs" },
   { key: "annet", label: "Annet" },

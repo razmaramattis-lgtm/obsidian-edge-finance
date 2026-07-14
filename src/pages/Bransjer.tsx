@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Globe, Building2, Landmark, Briefcase, Tractor, ShoppingCart,
+  ArrowRight, Globe, Building2, Landmark, Briefcase, ShoppingCart,
   HardHat, Store, Heart, TrendingUp, Users, Zap, ChevronRight,
   Truck, Factory, Sparkles, Film, GraduationCap, Scale,
   Palette, Megaphone, UserPlus, Plane, Car, Leaf, Search, X,
@@ -19,7 +19,6 @@ const industries = [
   { icon: Building2, name: "Eiendom & Utvikling", slug: "eiendom", tagline: "Oversikt fra kjøp til salg", short: "Full kontroll over portefølje, skatt og likviditet — enten du har én eller hundre enheter." },
   { icon: Landmark, name: "Holding & Investering", slug: "holding", tagline: "Strukturen som beskytter deg", short: "Konsernregnskap, utbytte, kapitalforvaltning og skatteoptimalisering på tvers av selskaper." },
   { icon: Briefcase, name: "Consulting & Rådgivning", slug: "consulting", tagline: "Mer tid til det du er best på", short: "Prosjektøkonomi, fakturering og skatteplanlegging for konsulenter og rådgivningsbyråer." },
-  { icon: Tractor, name: "Landbruk", slug: "landbruk", tagline: "Vi kjenner gårdens rytme", short: "Jordbruksfradrag, produksjonstilskudd og sesongøkonomi — vi kjenner regelverket." },
   { icon: ShoppingCart, name: "Varehandel", slug: "varehandel", tagline: "Alltid kontroll på varene og pengene", short: "Lager, innkjøp, marginer og svinn — oversikt som hjelper deg å selge smartere." },
   { icon: HardHat, name: "Bygg & Anlegg", slug: "bygg-anlegg", tagline: "Vi holder orden mens du bygger", short: "Prosjektregnskap, anbudskalkylering og fakturering tilpasset byggebransjen." },
   { icon: Store, name: "Nettbutikk & E-commerce", slug: "nettbutikk", tagline: "Skalér trygt — vi har ryggen din", short: "MVA på tvers av landegrenser, betalingsplattformer og automatisert ordreøkonomi." },
@@ -70,7 +69,7 @@ const Bransjer = () => {
   <>
     <Helmet>
       <title>{copy ? `Bransjer — ${section!.name} | Avargo` : "Bransjer vi betjener | Regnskapsfører for din bransje — Avargo"}</title>
-      <meta name="description" content={copy?.sub || "Avargo tilbyr bransjespesialiserte regnskapstjenester for tech, eiendom, bygg, restaurant, helse, landbruk og 20+ andre bransjer i Norge."} />
+      <meta name="description" content={copy?.sub || "Avargo tilbyr bransjespesialiserte regnskapstjenester for tech, eiendom, bygg, restaurant, helse og 20+ andre bransjer i Norge."} />
       <link rel="canonical" href={`https://avargo.no${sectionPath}/bransjer`} />
     </Helmet>
     {/* HERO */}

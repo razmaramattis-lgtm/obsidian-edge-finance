@@ -25,7 +25,6 @@ const SEGMENT_LABELS: Record<string, string> = {
   eiendom: "Eiendom & Utvikling",
   holding: "Holding & Investering",
   consulting: "Consulting & Rådgivning",
-  landbruk: "Landbruk",
   "bygg-anlegg": "Bygg & Anlegg",
   restaurant: "Restaurant & Uteliv",
   frisor: "Frisør & Skjønnhet",
