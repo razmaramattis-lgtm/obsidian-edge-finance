@@ -7,9 +7,10 @@ const styles = StyleSheet.create({
     paddingLeft: 71,
     paddingRight: 56,
     fontSize: 10.5,
-    lineHeight: 1.45,
+    color: "#111827",
   },
-  footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF", lineHeight: 1 },
+  content: { lineHeight: 1.45 },
+  footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF" },
 });
 
 const lotsOfContent = Array.from({ length: 50 }, (_, i) => <Text key={i}>Line {i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>);
@@ -18,7 +19,7 @@ const TestDoc = () => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.footerRight} fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
-      {lotsOfContent}
+      <View style={styles.content}>{lotsOfContent}</View>
     </Page>
   </Document>
 );
