@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import SwitchCheckDialog from "./SwitchCheckDialog";
 
 const benefits = [
   "Få en tydelig plan for overtagelse og ansvar",
