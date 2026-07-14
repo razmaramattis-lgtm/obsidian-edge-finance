@@ -410,11 +410,6 @@ const itOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulentselskaper trenger smarte systemer for prosjekter, kunder og leveranser. Vi bygger verktøy som gjør deg mer effektiv.",
     body: "Prosjektstyring, timeregistrering og kundekommunikasjon — alt kan samles i ett system. Vi bygger løsningene som gjør konsulentarbeidet mer effektivt.",
   },
-  landbruk: {
-    deliverables: ["Nettside for gårdsutsalg", "Bestillingssystem for REKO-ring", "Produksjonsstyring og sporbarhet", "Værdata og avlingsprognose", "Automatisert tilskuddsrapportering", "Mobilapp for gårdsdrift", "IoT-integrasjon for fjøs og drivhus", "Nettbutikk for lokalmat"],
-    intro: "Moderne landbruk trenger digitale verktøy for produksjon, sporbarhet og direktesalg. Vi bygger løsningene som effektiviserer gårdsdriften.",
-    body: "Fra IoT-sensorer i fjøset til nettbutikk for lokalmat — digitalisering gir landbruket nye muligheter. Vi bygger verktøyene som passer din gård.",
-  },
   varehandel: {
     deliverables: ["Nettbutikk med fysisk butikk-integrasjon", "Kassasystem og POS-integrasjon", "Lagerstyring og varetelling", "Kundelojalitetssystem", "CRM for kundekommunikasjon", "Automatisert bestilling og innkjøp", "Dashboard for salgsrapportering", "Mobilapp for kunder"],
     intro: "Varehandelen trenger sømløs integrasjon mellom butikk og nett. Vi bygger systemene som gir deg full kontroll.",
