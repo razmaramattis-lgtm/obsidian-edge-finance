@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Search, BookMarked, Newspaper, Archive,
-  Download, FileSpreadsheet, Clock, Pin, Tag, Filter
+  Download, FileSpreadsheet, Clock, Pin, Tag, Filter, ClipboardList,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
