@@ -34,44 +34,6 @@ const ComparisonSection = () => {
           <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3 md:mb-4">
             Fra flere leverandører til <span className="text-gradient-rose">én partner</span>
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Regnskap og HR samlet under ett tak — ett team, én faktura, én kontaktperson. Slik ser forskjellen ut i praksis.
-          </p>
-        </motion.div>
-
-        {/* Visual: 4 → 1 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="max-w-4xl mx-auto mb-12 md:mb-16"
-        >
-          <div className="flex items-center justify-center gap-4 md:gap-8">
-            {/* Four boxes */}
-            <div className="grid grid-cols-2 gap-2 md:gap-3">
-              {traditional.map((t) => (
-                <div
-                  key={t.label}
-                  className="px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl border border-border/15 bg-muted/5 text-[10px] md:text-xs text-muted-foreground text-center min-w-[100px] md:min-w-[140px]"
-                >
-                  {t.label}
-                </div>
-              ))}
-            </div>
-
-            <ArrowRight className="text-primary shrink-0" size={28} strokeWidth={1.5} />
-
-            {/* One box */}
-            <div className="relative">
-              <div className="absolute -inset-2 bg-primary/20 blur-2xl rounded-2xl" />
-              <div className="relative px-6 md:px-10 py-6 md:py-10 rounded-2xl border border-primary/30 bg-primary/5 text-center">
-                <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-primary mb-2">Avargo</p>
-                <p className="text-lg md:text-2xl font-bold">Ett tak</p>
-                <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Ett team</p>
-              </div>
-            </div>
-          </div>
         </motion.div>
 
         {/* Table */}
