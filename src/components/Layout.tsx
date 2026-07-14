@@ -9,7 +9,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  BookMarked, Newspaper, CalendarClock,
+  BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe,
 } from "lucide-react";
 
