@@ -315,10 +315,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <FloatingActionMenu />
 
       {/* ── Footer — editorial masthead ─────────── */}
-      <footer className="relative border-t border-border/70 bg-muted/30 mt-24 md:mt-32">
-        <div className="container mx-auto px-5 md:px-8 pt-20 md:pt-24 pb-10">
+      <footer className="relative border-t border-border/70 bg-muted/30 mt-16 md:mt-24">
+        <div className="container mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
           {/* Masthead */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-10">
             {/* Brand column */}
             <div className="md:col-span-5">
               <Link to="/" className="inline-flex items-baseline gap-2 mb-6">
