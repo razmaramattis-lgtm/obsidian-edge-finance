@@ -3,7 +3,7 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowRight, TrendingUp, Shield, Zap, Globe, Building2, Briefcase, Landmark,
-  Tractor, ShoppingCart, HardHat, Heart, Store, Users,
+  ShoppingCart, HardHat, Heart, Store, Users,
   Sparkles, Eye, PiggyBank, Handshake, Gem, Flame, Crown, Target,
   ChevronDown, Award, Clock, CheckCircle2,
   FileText, Scale, BarChart3, Calculator, ClipboardList,
