@@ -90,7 +90,7 @@ const Pricing = () => {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<string | null>(null);
   const [industry, setIndustry] = useState<string>("");
-  const [revenue, setRevenue] = useState<number>(0);
+  const [revenue, setRevenue] = useState<number>(500_000); // NOK
   const [bilag, setBilag] = useState<number>(0);
   const [payslips, setPayslips] = useState<number>(0);
   const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
@@ -104,16 +104,21 @@ const Pricing = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const isCustomOffer = revenue >= REVENUE_CUSTOM;
+
+  const revenueLabel = useMemo(() => {
+    if (isCustomOffer) return "5 mill.+ (skreddersydd tilbud)";
+    return `${revenue.toLocaleString("nb-NO")} kr`;
+  }, [revenue, isCustomOffer]);
+
   const price = useMemo(() => {
     let p = BASE_PRICE;
-    p += companyForms.find((c) => c.key === form)?.addon ?? 0;
-    p += industries.find((i) => i.key === industry)?.addon ?? 0;
-    p += revenueTiers[revenue]?.addon ?? 0;
+    p += priceFromRevenue(revenue);
     p += bilagTiers[bilag]?.addon ?? 0;
     p += payslips * PER_PAYSLIP;
     if (aarsoppgjor) p += AARSOPPGJOR;
     return p;
-  }, [form, industry, revenue, bilag, payslips, aarsoppgjor]);
+  }, [revenue, bilag, payslips, aarsoppgjor]);
 
   const contactValid =
     contactCompany.trim().length > 1 &&
