@@ -65,7 +65,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     },
     socialProof: [
       { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
-      { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
+      { icon: Users, value: "24+", label: "bransjer dekket", sub: "Hele Norge" },
       { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
     ],
@@ -100,7 +100,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       items: [
         { icon: Shield, metric: "100%", label: "fastpris — ingen tillegg", text: "Bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering." },
         { icon: Handshake, metric: "1 person", label: "din statsautoriserte regnskapsfører", text: "Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine." },
-        { icon: Sparkles, metric: "25+", label: "bransjer vi dekker", text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen." },
+        { icon: Sparkles, metric: "24+", label: "bransjer vi dekker", text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen." },
         { icon: Zap, metric: "Raskt", label: "svar — vi vet tiden din er verdifull", text: "Når du sender en melding eller ringer, svarer vi så raskt vi kan." },
       ],
     },
@@ -116,7 +116,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Er regnskapsførerne deres statsautoriserte?", a: "Ja, alle våre regnskapsførere er statsautoriserte og godkjent av Finanstilsynet." },
       { q: "Kan jeg bytte regnskapsfører midt i året?", a: "Absolutt. Vi håndterer hele overgangen for deg — inkludert kontakt med din nåværende regnskapsfører." },
       { q: "Hvor lang er bindingstiden?", a: "Vi har ingen bindingstid. Du kan si opp når som helst med én måneds varsel." },
-      { q: "Dekker dere min bransje?", a: "Vi dekker over 25 bransjer — fra tech og SaaS til bygg, restaurant, eiendom og landbruk." },
+      { q: "Dekker dere min bransje?", a: "Vi dekker over 24 bransjer — fra tech og SaaS til bygg, restaurant, eiendom og mer." },
       { q: "Hva skiller Avargo fra andre regnskapsbyråer?", a: "Du får én dedikert regnskapsfører, støttet av et helt team. Alt inkludert i fastprisen — ingen tillegg for rådgivning." },
     ],
     marqueeLabel: "Regnskap & Økonomi",
@@ -135,7 +135,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     },
     socialProof: [
       { icon: UserCheck, value: "Spesialisert", label: "HR-rådgivning", sub: "Norsk arbeidsrett" },
-      { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
+      { icon: Users, value: "24+", label: "bransjer dekket", sub: "Hele Norge" },
       { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: Shield, value: "Trygt", label: "lønn og personal", sub: "Alt inkludert" },
     ],
@@ -187,7 +187,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Hva inkluderer lønnskjøringen?", a: "Full lønnskjøring med feriepenger, sykepenger, A-melding, arbeidsgiveravgift og skattetrekk." },
       { q: "Hjelper dere med oppsigelser?", a: "Ja. Vi bistår med hele prosessen — fra drøftingsmøte til oppsigelsesdokumentasjon — i tråd med arbeidsmiljøloven." },
       { q: "Trenger vi personalhåndbok?", a: "Ja, alle bedrifter med ansatte bør ha en. Det gir trygghet for både arbeidsgiver og ansatt." },
-      { q: "Dekker dere min bransje?", a: "Vi dekker over 25 bransjer og tilpasser HR-opplegget til din bransjes krav og utfordringer." },
+      { q: "Dekker dere min bransje?", a: "Vi dekker over 24 bransjer og tilpasser HR-opplegget til din bransjes krav og utfordringer." },
       { q: "Hva skiller Avargo HR fra andre?", a: "Du får én fast HR-rådgiver som kjenner bedriften din — ikke et callsenter. Alt inkludert i fastpris." },
     ],
     marqueeLabel: "HR & Personal",
@@ -288,7 +288,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { q: "Inkluderer dere annonsebudsjett?", a: "Nei, annonsebudsjettet betaler du direkte til Google/Meta. Vi tar oss av alt det strategiske og operative." },
       { q: "Hvor raskt ser jeg resultater?", a: "Google Ads gir resultater fra dag én. SEO bygger seg opp over 3–6 måneder, men effekten varer." },
       { q: "Kan dere hjelpe med nettside også?", a: "Absolutt. Vi bygger konverterende nettsider som er optimalisert for søkemotorer fra dag én." },
-      { q: "Dekker dere min bransje?", a: "Vi dekker over 25 bransjer og tilpasser strategien til din bransjes utfordringer og muligheter." },
+      { q: "Dekker dere min bransje?", a: "Vi dekker over 24 bransjer og tilpasser strategien til din bransjes utfordringer og muligheter." },
       { q: "Hva skiller Avargo fra andre byråer?", a: "Vi kobler markedsføringen til regnskapet, slik at du ser den faktiske ROI-en — ikke bare klikk og visninger." },
     ],
     marqueeLabel: "Markedsføring & Vekst",
@@ -646,7 +646,7 @@ const SectionHome = () => {
                 Uansett hva du driver med, møter du en rådgiver hos oss som forstår hverdagen din.
               </p>
               <p className="text-sm text-primary/80 italic font-light mb-14 md:mb-20">
-                Vi dekker over 25 bransjer. Her er noen av dem.
+                Vi dekker over 24 bransjer. Her er noen av dem.
               </p>
             </AnimatedSection>
 
