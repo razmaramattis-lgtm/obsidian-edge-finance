@@ -52,11 +52,6 @@ const regnskapOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulenter og rådgivere trenger presis prosjektøkonomi og smart skatteplanlegging. Vi sørger for at du fakturerer riktig og beholder mest mulig.",
     body: "Konsulentbransjen handler om å selge timer og kompetanse. Vi hjelper deg med prosjektøkonomi, inntektsføring og skatteoptimalisering — slik at bunnlinjen reflekterer innsatsen din.",
   },
-  landbruk: {
-    deliverables: ["Jordbruksfradrag og næringsinntekt", "Produksjonstilskudd og rapportering", "Avskrivning av driftsmidler og bygg", "Sesongbasert budsjett og likviditet", "MVA-oppgjør for primærnæring", "Årsregnskap og skattemelding", "Generasjonsskifte og overdragelse", "Investeringsstøtte og tilskudd"],
-    intro: "Landbruket har egne skatteregler, tilskuddsordninger og sesongbasert økonomi. Vi kjenner regelverket og hjelper deg å utnytte alle fradrag.",
-    body: "Primærnæringen har spesielle fradragsregler, avskrivningsregler for driftsbygninger og sesongbasert likviditet. Vi sørger for at du utnytter alle ordninger og leverer riktig rapportering.",
-  },
   varehandel: {
     deliverables: ["Varekostanalyse og marginrapportering", "Lagervurdering og svinn", "MVA-oppgjør for varehandel", "Innkjøpsoptimalisering og kontantstrøm", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "Franchiserapportering", "Budsjett og sesongplanlegging"],
     intro: "Varehandel handler om marginer, lager og kontantstrøm. Vi gir deg oversikten som gjør at du kjøper smartere og selger mer lønnsomt.",
