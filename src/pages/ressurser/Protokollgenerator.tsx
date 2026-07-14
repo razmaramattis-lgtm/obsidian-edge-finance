@@ -1136,6 +1136,42 @@ const StegSignatur = ({ doc, updateDoc, profile, update }: {
 );
 
 // ============================================================
+// Download-knapp — genererer alltid fersk PDF fra siste state
+// ============================================================
+
+const DownloadButton = ({ doc, profile, filename }: { doc: DocumentState; profile: CompanyProfile; filename: string }) => {
+  const [loading, setLoading] = useState(false);
+  const handle = async () => {
+    setLoading(true);
+    try {
+      const blob = await pdf(<ProtokollDocument profile={profile} doc={doc} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) {
+      console.error(e);
+      toast.error("Kunne ikke generere PDF");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <button
+      onClick={handle}
+      disabled={loading}
+      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs hover:bg-primary/90 transition-all shrink-0 disabled:opacity-60"
+    >
+      <Download size={13} /> {loading ? "Genererer…" : "Last ned PDF"}
+    </button>
+  );
+};
+
+// ============================================================
 // Ferdigstilling
 // ============================================================
 
