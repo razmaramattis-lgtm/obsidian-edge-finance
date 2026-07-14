@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFViewer, pdf } from "@react-pdf/renderer";
 import {
   ArrowLeft, ArrowRight, FileText, Search, Plus, Trash2, Check,
   ChevronRight, Download, Building2, Users, Calendar, ClipboardCheck,
@@ -1136,6 +1136,42 @@ const StegSignatur = ({ doc, updateDoc, profile, update }: {
 );
 
 // ============================================================
+// Download-knapp — genererer alltid fersk PDF fra siste state
+// ============================================================
+
+const DownloadButton = ({ doc, profile, filename }: { doc: DocumentState; profile: CompanyProfile; filename: string }) => {
+  const [loading, setLoading] = useState(false);
+  const handle = async () => {
+    setLoading(true);
+    try {
+      const blob = await pdf(<ProtokollDocument profile={profile} doc={doc} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) {
+      console.error(e);
+      toast.error("Kunne ikke generere PDF");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <button
+      onClick={handle}
+      disabled={loading}
+      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs hover:bg-primary/90 transition-all shrink-0 disabled:opacity-60"
+    >
+      <Download size={13} /> {loading ? "Genererer…" : "Last ned PDF"}
+    </button>
+  );
+};
+
+// ============================================================
 // Ferdigstilling
 // ============================================================
 
@@ -1166,21 +1202,12 @@ const Ferdigstilling = ({ docs, profile, tilbake, reset }: {
                 <p className="text-xs text-muted-foreground truncate">{profile.selskap.navn || "Utkast"}</p>
               </div>
             </div>
-            <PDFDownloadLink
-              document={<ProtokollDocument profile={profile} doc={d} />}
-              fileName={filename}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs hover:bg-primary/90 transition-all shrink-0"
-            >
-              {({ loading }) => (
-                <>
-                  <Download size={13} /> {loading ? "Genererer…" : "Last ned PDF"}
-                </>
-              )}
-            </PDFDownloadLink>
+            <DownloadButton doc={d} profile={profile} filename={filename} />
           </div>
         );
       })}
     </div>
+
 
     <div className="flex items-center justify-between">
       <button onClick={tilbake} className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-2">
