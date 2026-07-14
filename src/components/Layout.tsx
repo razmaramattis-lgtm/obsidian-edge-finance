@@ -378,7 +378,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           {/* Bottom bar */}
           <div className="border-t border-border/70 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <span className="text-[11px] text-muted-foreground font-light">© {new Date().getFullYear()} Avargo AS · Autorisert regnskapsbyrå · Org.nr 123 456 789</span>
+            <span className="text-[11px] text-muted-foreground font-light">© {new Date().getFullYear()} Avargo Regnskap AS · Autorisert regnskapsbyrå · Org.nr 938 076 669</span>
             <div className="flex items-center gap-6 text-[11px] text-muted-foreground font-light">
               <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
               <Link to="/vilkar"     className="hover:text-foreground transition-colors">Vilkår</Link>
