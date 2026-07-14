@@ -24,11 +24,9 @@ type BrregEnhet = {
 const services = [
   { id: "regnskap", label: "Regnskap & økonomi", desc: "Bokføring, årsregnskap, MVA, rådgivning", icon: Calculator, color: "from-rose-500/20 to-orange-500/10" },
   { id: "hr", label: "HR & personal", desc: "Ansettelse, lønn, personalhåndbok", icon: Users, color: "from-amber-500/20 to-yellow-500/10" },
-  { id: "markedsforing", label: "Markedsføring", desc: "SEO, annonser, nettsider, innhold", icon: Megaphone, color: "from-violet-500/20 to-fuchsia-500/10" },
-  { id: "it", label: "IT & systemer", desc: "Automatisering, integrasjoner, support", icon: Cpu, color: "from-cyan-500/20 to-sky-500/10" },
 ] as const;
 
-type ServiceId = "regnskap" | "hr" | "markedsforing" | "it";
+type ServiceId = "regnskap" | "hr";
 
 const serviceQuiz: Record<ServiceId, {
   statusLabel: string;
@@ -47,18 +45,6 @@ const serviceQuiz: Record<ServiceId, {
     statusOptions: ["Internt", "Outsourcet", "Ikke etablert"],
     goalLabel: "Hva trenger du hjelp med?",
     goals: ["Ansette første medarbeider", "Personalhåndbok & rutiner", "Lønn & rapportering", "Arbeidsrett / oppsigelse", "Annet / utforske"],
-  },
-  markedsforing: {
-    statusLabel: "Hvordan jobber dere med markedsføring i dag?",
-    statusOptions: ["Internt", "Eksternt byrå", "Lite/ingen aktivitet"],
-    goalLabel: "Hva er målet med møtet?",
-    goals: ["Flere kunder / leads", "Ny nettside eller nettbutikk", "SEO & organisk vekst", "Google Ads / Meta-annonser", "Annet / utforske"],
-  },
-  it: {
-    statusLabel: "Hvordan er den tekniske situasjonen i dag?",
-    statusOptions: ["Moderne systemer", "Eldre / lappeteppe", "Bygger nytt"],
-    goalLabel: "Hva trenger du hjelp med?",
-    goals: ["Ny nettside / nettbutikk", "Automatisering & integrasjoner", "Chatbot / AI-løsning", "Internsystem / dashboard", "Annet / utforske"],
   },
 };
 
