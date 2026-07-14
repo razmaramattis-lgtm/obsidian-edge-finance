@@ -62,7 +62,7 @@ const Hub = () => {
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
                 <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-6 md:mb-8 font-semibold">
-                  Autorisert regnskapsbyrå · Skien · Hele Norge
+                  Autorisert regnskapsbyrå
                 </p>
               </motion.div>
 
