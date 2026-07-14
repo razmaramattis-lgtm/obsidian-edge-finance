@@ -6,51 +6,60 @@
 
 @layer base {
   :root {
-    /* Editorial Clarity — warm parchment, deeper contrast for readability */
-    --background: 36 20% 92%;         /* #ECE6DD warm cream */
-    --foreground: 20 14% 10%;         /* deep ink */
+    /* Forest & Copper — deep skoggrønn, copper CTA, sage details, cream ground */
+    --background: 43 33% 93%;         /* #F4F1E9 krem / offwhite */
+    --foreground: 152 31% 12%;        /* dyp skoggrønn tekst */
 
-    --card: 38 22% 96%;               /* softer than pure paper */
-    --card-foreground: 20 14% 10%;
+    --card: 43 40% 96%;               /* lettere krem */
+    --card-foreground: 152 31% 12%;
 
-    --popover: 38 22% 96%;
-    --popover-foreground: 20 14% 10%;
+    --popover: 43 40% 96%;
+    --popover-foreground: 152 31% 12%;
 
-    --primary: 15 62% 38%;            /* deeper terracotta / burnt sienna */
-    --primary-foreground: 40 22% 98%;
+    --primary: 26 46% 45%;            /* #A66A3D kobber — CTA/aksent */
+    --primary-foreground: 43 33% 96%;
 
-    --secondary: 175 38% 22%;         /* deep forest teal */
-    --secondary-foreground: 40 22% 98%;
+    --secondary: 152 31% 16%;         /* #1C3529 skoggrønn */
+    --secondary-foreground: 43 33% 96%;
 
-    --muted: 35 14% 86%;              /* deeper warm neutral */
-    --muted-foreground: 20 10% 32%;
+    --muted: 43 20% 88%;              /* dus krem */
+    --muted-foreground: 152 18% 28%;
 
-    --accent: 35 18% 82%;
-    --accent-foreground: 20 14% 10%;
+    --accent: 137 16% 66%;            /* #9CB6A3 salvie */
+    --accent-foreground: 152 31% 12%;
 
     --destructive: 5 68% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 14% 78%;             /* stronger hairline */
-    --input: 30 14% 82%;
-    --ring: 15 62% 38%;
+    --border: 137 12% 72%;            /* salvie-tonet hårlinje */
+    --input: 43 18% 82%;
+    --ring: 26 46% 45%;
 
     --radius: 0.5rem;
 
-    --rose: 15 62% 38%;
-    --rose-glow: 15 68% 54%;
-    --teal: 175 38% 22%;
-    --teal-glow: 175 42% 34%;
-    --warm: 20 14% 10%;
+    /* Legacy alias-tokens — remapped to den nye paletten så eksisterende komponenter beholder harmoni */
+    --rose: 26 46% 45%;               /* kobber (var terracotta) */
+    --rose-glow: 26 52% 58%;           /* varm kobber-glød */
+    --teal: 152 31% 16%;              /* skoggrønn (var teal) */
+    --teal-glow: 137 16% 66%;         /* salvie */
+    --warm: 152 31% 12%;
 
-    --sidebar-background: 36 18% 88%;
-    --sidebar-foreground: 20 14% 10%;
-    --sidebar-primary: 15 62% 38%;
-    --sidebar-primary-foreground: 40 22% 98%;
-    --sidebar-accent: 35 14% 84%;
-    --sidebar-accent-foreground: 20 14% 10%;
-    --sidebar-border: 30 14% 78%;
-    --sidebar-ring: 15 62% 38%;
+    /* Merkespesifikke tokens */
+    --forest: 152 31% 16%;
+    --forest-deep: 152 34% 10%;
+    --copper: 26 46% 45%;
+    --copper-glow: 26 52% 58%;
+    --sage: 137 16% 66%;
+    --cream: 43 33% 93%;
+
+    --sidebar-background: 152 31% 16%;
+    --sidebar-foreground: 43 33% 93%;
+    --sidebar-primary: 26 46% 45%;
+    --sidebar-primary-foreground: 43 33% 96%;
+    --sidebar-accent: 152 28% 22%;
+    --sidebar-accent-foreground: 137 16% 66%;
+    --sidebar-border: 152 20% 26%;
+    --sidebar-ring: 26 46% 45%;
   }
 }
 
