@@ -240,8 +240,8 @@ const Tjenester = () => {
   return (
     <>
       <Helmet>
-        <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, rådgivning & marked — Avargo"}</title>
-        <meta name="description" content={copy?.sub || "Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning, HR, SEO, Google Ads, nettsider og AI-automatisering for norske bedrifter."} />
+        <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, CFO-rådgivning & HR — Avargo"}</title>
+        <meta name="description" content={copy?.sub || "Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning og HR for norske bedrifter. En økonomisk støttespiller som lar deg fokusere på det du kan best."} />
         <link rel="canonical" href={`https://avargo.no${sectionPath}/tjenester`} />
       </Helmet>
       {/* HERO */}
