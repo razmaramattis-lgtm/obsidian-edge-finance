@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import {
   ArrowLeft, ArrowRight, FileText, Search, Plus, Trash2, Check,
   ChevronRight, Download, Building2, Users, Calendar, ClipboardCheck,
+  Sparkles, SkipForward,
 } from "lucide-react";
 import {
   emptyProfile, emptyDocument, documentTypes, sakModuler,
@@ -243,6 +244,60 @@ const Protokollgenerator = () => {
     }
   };
 
+  // Steg som kan hoppes over (kun for å komme raskt til fritt valg av saker)
+  const canSkipCurrent = currentSteg?.id === "vedtak" || currentSteg?.id === "regnskap";
+
+  // ---- Live PDF change tracker ------------------------------------------
+  // Sporer hvilke sak-moduler og hovedområder som er oppdatert siden forrige render.
+  const prevSnapshotRef = useRef<{ profile: string; saker: Record<string, string>; answers: string } | null>(null);
+  const [changeTick, setChangeTick] = useState(0);
+  const [lastChangeLabel, setLastChangeLabel] = useState<string>("");
+  const [changedSaker, setChangedSaker] = useState<Set<string>>(new Set());
+  const changedProfileRef = useRef(false);
+  const [profilePulseTick, setProfilePulseTick] = useState(0);
+
+  useEffect(() => {
+    if (!activeDoc) return;
+    const profileHash = JSON.stringify(profile);
+    const answersHash = JSON.stringify(activeDoc.answers);
+    const sakerHash: Record<string, string> = {};
+    activeDoc.sub_sections.forEach(s => { sakerHash[`${s.id}-${activeDoc.sub_sections.indexOf(s)}`] = JSON.stringify(s.data); });
+
+    const prev = prevSnapshotRef.current;
+    if (prev) {
+      const newChanged = new Set<string>();
+      let label = "";
+      if (prev.profile !== profileHash) { label = "Selskapsprofil"; setProfilePulseTick(t => t + 1); }
+      if (prev.answers !== answersHash) label = label || "Dokumentvalg";
+      activeDoc.sub_sections.forEach((s, idx) => {
+        const key = `${s.id}-${idx}`;
+        if (prev.saker[key] !== sakerHash[key]) {
+          newChanged.add(s.id);
+          const def = sakModuler.find(m => m.id === s.id);
+          label = def?.tittel || label;
+        }
+      });
+      // Sjekk om sak lagt til/fjernet
+      const prevIds = Object.keys(prev.saker);
+      const currIds = Object.keys(sakerHash);
+      if (prevIds.length !== currIds.length) label = label || "Sakslisten";
+
+      if (label) {
+        setLastChangeLabel(label);
+        setChangedSaker(newChanged);
+        setChangeTick(t => t + 1);
+      }
+    }
+    prevSnapshotRef.current = { profile: profileHash, saker: sakerHash, answers: answersHash };
+  }, [profile, activeDoc]);
+
+  // Fjern sak-pulse etter 1.4s
+  useEffect(() => {
+    if (changedSaker.size === 0) return;
+    const t = setTimeout(() => setChangedSaker(new Set()), 1400);
+    return () => clearTimeout(t);
+  }, [changeTick]);
+
   const applyBrreg = (data: {
     navn?: string; organisasjonsnummer?: string;
     forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
@@ -385,7 +440,7 @@ const Protokollgenerator = () => {
                 <h2 className="font-heading text-2xl md:text-3xl mb-6">{currentSteg?.tittel}</h2>
                 <div className="space-y-5">{renderSteg()}</div>
 
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/20">
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/20 gap-2">
                   <button
                     onClick={forrigeSteg}
                     disabled={activeDocIdx === 0 && stegIdx === 0}
@@ -393,22 +448,36 @@ const Protokollgenerator = () => {
                   >
                     <ArrowLeft size={14} /> Forrige
                   </button>
-                  <button
-                    onClick={nesteSteg}
-                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-all"
-                  >
-                    {stegIdx === steg.length - 1 && activeDocIdx === docs.length - 1 ? "Til ferdigstilling" : "Neste"}
-                    <ArrowRight size={14} />
-                  </button>
+                  <div className="flex items-center gap-3">
+                    {canSkipCurrent && (
+                      <button
+                        onClick={nesteSteg}
+                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+                        title="Hopp over dette steget — du kan f.eks. gå rett til å velge kun konsernbidrag eller kun daglig leder."
+                      >
+                        <SkipForward size={12} /> Hopp over
+                      </button>
+                    )}
+                    <button
+                      onClick={nesteSteg}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-all"
+                    >
+                      {stegIdx === steg.length - 1 && activeDocIdx === docs.length - 1 ? "Til ferdigstilling" : "Neste"}
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Live preview */}
-              <div className="hidden lg:block h-[80vh] rounded-2xl overflow-hidden border border-border/20 bg-white">
-                <PDFViewer width="100%" height="100%" showToolbar={false}>
-                  <ProtokollDocument profile={profile} doc={activeDoc} />
-                </PDFViewer>
-              </div>
+              {/* Live preview med endringsindikator */}
+              <LivePreviewPanel
+                profile={profile}
+                doc={activeDoc}
+                changeTick={changeTick}
+                lastChangeLabel={lastChangeLabel}
+                changedSaker={changedSaker}
+                profilePulseTick={profilePulseTick}
+              />
             </div>
           )}
 
@@ -841,36 +910,56 @@ const StegSaker = ({ doc, updateDoc }: { doc: DocumentState; updateDoc: (u: (d: 
       updateDoc(d => ({ ...d, sub_sections: [...d.sub_sections, { id, data: {} }] }));
     }
   };
+  const onlyThis = (id: SakModulId) => {
+    updateDoc(d => ({ ...d, sub_sections: [{ id, data: d.sub_sections.find(s => s.id === id)?.data || {} }] }));
+    toast.success(`Nå har dokumentet kun én sak: ${sakModuler.find(m => m.id === id)?.tittel}`);
+  };
+  const clearAll = () => updateDoc(d => ({ ...d, sub_sections: [] }));
   const setField = (idx: number, key: string, value: string | number | boolean) => {
     updateDoc(d => ({ ...d, sub_sections: d.sub_sections.map((s, i) => i === idx ? { ...s, data: { ...s.data, [key]: value } } : s) }));
   };
 
   return (
     <>
-      <p className="text-sm text-muted-foreground -mt-2 mb-2">Velg hvilke ekstra saker som skal behandles i dokumentet.</p>
+      <div className="-mt-2 mb-2 rounded-xl border border-primary/20 bg-primary/5 p-3 flex items-start gap-2.5">
+        <Sparkles size={14} className="text-primary shrink-0 mt-0.5" />
+        <div className="text-xs text-muted-foreground leading-relaxed">
+          <span className="text-foreground font-medium">Kun én sak?</span> Trenger du f.eks. <em>bare konsernbidrag</em> eller <em>bare valg av daglig leder</em>? Hak av kun den saken — eller bruk <span className="text-primary">Kun denne</span>-snarveien på hvert kort.
+          {doc.sub_sections.length > 0 && (
+            <button onClick={clearAll} className="ml-2 text-destructive/80 hover:text-destructive underline underline-offset-2">Fjern alle valg</button>
+          )}
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {sakModuler.map(m => {
           const selected = doc.sub_sections.some(s => s.id === m.id);
           return (
-            <button
+            <div
               key={m.id}
-              onClick={() => toggle(m.id)}
               className={`text-left p-3 rounded-xl border transition-all ${
                 selected ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/30"
               }`}
             >
-              <div className="flex items-start gap-2">
-                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 ${
-                  selected ? "bg-primary text-primary-foreground" : "border border-border/40"
-                }`}>
-                  {selected && <Check size={12} />}
+              <button onClick={() => toggle(m.id)} className="w-full text-left">
+                <div className="flex items-start gap-2">
+                  <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 ${
+                    selected ? "bg-primary text-primary-foreground" : "border border-border/40"
+                  }`}>
+                    {selected && <Check size={12} />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{m.tittel}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{m.beskrivelse}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{m.tittel}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-1">{m.beskrivelse}</p>
-                </div>
-              </div>
-            </button>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onlyThis(m.id); }}
+                className="mt-2 ml-7 text-[10px] tracking-wide uppercase text-primary/80 hover:text-primary transition-colors"
+              >
+                Kun denne →
+              </button>
+            </div>
           );
         })}
       </div>
@@ -900,6 +989,90 @@ const StegSaker = ({ doc, updateDoc }: { doc: DocumentState; updateDoc: (u: (d: 
         </div>
       )}
     </>
+  );
+};
+
+// ============================================================
+// Live preview-panel med endringsindikator
+// ============================================================
+
+const LivePreviewPanel = ({ profile, doc, changeTick, lastChangeLabel, changedSaker, profilePulseTick }: {
+  profile: CompanyProfile;
+  doc: DocumentState;
+  changeTick: number;
+  lastChangeLabel: string;
+  changedSaker: Set<string>;
+  profilePulseTick: number;
+}) => {
+  const [showBadge, setShowBadge] = useState(false);
+  useEffect(() => {
+    if (changeTick === 0) return;
+    setShowBadge(true);
+    const t = setTimeout(() => setShowBadge(false), 1800);
+    return () => clearTimeout(t);
+  }, [changeTick]);
+
+  return (
+    <div className="hidden lg:flex flex-col h-[80vh] rounded-2xl overflow-hidden border border-border/20 bg-white">
+      <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-neutral-950 text-white/90 border-b border-white/10">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className={`absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 ${showBadge ? "animate-ping" : ""}`} />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+          </span>
+          <p className="text-[10px] tracking-[0.3em] uppercase">Live PDF</p>
+          <AnimatePresence>
+            {showBadge && lastChangeLabel && (
+              <motion.span
+                key={changeTick}
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-[10px] px-2 py-0.5 rounded-full bg-primary text-primary-foreground truncate max-w-[220px]"
+              >
+                Oppdatert: {lastChangeLabel}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+        <motion.span
+          key={profilePulseTick}
+          initial={{ scale: 1 }}
+          animate={{ scale: profilePulseTick > 0 ? [1, 1.08, 1] : 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-[10px] text-white/50 truncate"
+        >
+          {profile.selskap.navn || "Selskapsprofil ikke satt"}
+        </motion.span>
+      </div>
+
+      {doc.sub_sections.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 px-3 py-2 bg-neutral-100 border-b border-border/20">
+          {doc.sub_sections.map((s, idx) => {
+            const def = sakModuler.find(m => m.id === s.id);
+            const pulsing = changedSaker.has(s.id);
+            return (
+              <span
+                key={`${s.id}-${idx}`}
+                className={`text-[10px] px-2 py-1 rounded-full border transition-all ${
+                  pulsing
+                    ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary/40 animate-pulse"
+                    : "bg-white border-border/40 text-neutral-700"
+                }`}
+              >
+                {idx + 1}. {def?.tittel}
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="flex-1 min-h-0">
+        <PDFViewer width="100%" height="100%" showToolbar={false}>
+          <ProtokollDocument profile={profile} doc={doc} />
+        </PDFViewer>
+      </div>
+    </div>
   );
 };
 
