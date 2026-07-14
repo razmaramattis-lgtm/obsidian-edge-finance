@@ -219,22 +219,25 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* CTAs */}
             <div className="ml-4 flex items-center gap-2 pl-4 border-l border-border/70">
-              <Link to="/logg-inn" className="px-3 py-2 text-[12.5px] font-medium text-foreground/70 hover:text-foreground transition-colors tracking-wide">
-                Logg inn
+              <Link
+                to="/book-mote"
+                className="px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground transition-all duration-300 tracking-wide"
+              >
+                Book møte
               </Link>
               <Link
                 to="/kontakt"
                 className="px-5 py-2.5 text-[12.5px] font-medium bg-foreground text-background rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide"
               >
-                Få tilbud
+                Bli kunde
               </Link>
             </div>
           </div>
 
           {/* Mobile/tablet toggle */}
           <div className="lg:hidden flex items-center gap-2">
-            <Link to="/logg-inn" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-full border border-border text-foreground/80 active:bg-muted transition-colors flex items-center">
-              Logg inn
+            <Link to="/book-mote" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-full border border-border text-foreground/80 active:bg-muted transition-colors flex items-center">
+              Book møte
             </Link>
             <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-3 -mr-2 rounded-lg active:bg-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={menuOpen ? "Lukk meny" : "Åpne meny"} aria-expanded={menuOpen}>
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -289,7 +292,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </MobileGroup>
 
             <Link to="/kontakt" onClick={() => setMenuOpen(false)} className="mt-6 px-5 min-h-[56px] py-4 text-[16px] font-semibold bg-foreground text-background rounded-full text-center flex items-center justify-center active:scale-[0.98] transition-all">
-              Få et uforpliktende tilbud
+              Bli kunde
             </Link>
             <Link to="/book-mote" onClick={() => setMenuOpen(false)} className="mt-2 px-5 min-h-[52px] py-3 text-[15px] font-medium border border-border text-foreground rounded-full text-center flex items-center justify-center transition-all">
               Book møte
