@@ -10,7 +10,7 @@ const lotsOfContent = Array.from({ length: 50 }, (_, i) => <Text key={i}>Line {i
 const TestDoc = () => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.footerRight} render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+      <Text style={styles.footerRight} fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
       {lotsOfContent}
     </Page>
   </Document>
