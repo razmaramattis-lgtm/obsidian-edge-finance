@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
 interface FAQItem {
@@ -20,213 +19,402 @@ const categories: FAQCategory[] = [
     title: "Regnskap & Regnskapsfører",
     items: [
       { q: "Hva koster en regnskapsfører?", a: "Hos Avargo starter prisene fra 1 499 kr/mnd for nyoppstartede selskaper. Alt er inkludert i fastprisen — bokføring, årsregnskap, skattemelding, MVA-rapportering og rådgivning. Du betaler aldri ekstra for telefoner, spørsmål eller rådgivning." },
-      { q: "Hva gjør en regnskapsfører?", a: "En regnskapsfører håndterer den økonomiske administrasjonen i bedriften din: løpende bokføring av bilag, MVA-rapportering og innlevering, årsregnskap og næringsoppgave, skattemelding for selskap og eier, aksjonærregisteroppgave og proaktiv rådgivning. Hos Avargo får du én fast person som kjenner selskapet ditt og bransjen din." },
-      { q: "Hvordan bytter jeg regnskapsfører?", a: "Å bytte regnskapsfører er enklere enn de fleste tror: 1) Ta kontakt med oss for en uforpliktende samtale. 2) Vi sender oppsigelsesbrev til din nåværende regnskapsfører. 3) Vi henter alle data og setter opp systemene. 4) Du får en dedikert regnskapsfører fra dag én. Hele prosessen tar vanligvis 2-4 uker, og vi håndterer alt det praktiske." },
-      { q: "Trenger jeg en autorisert regnskapsfører?", a: "Ja, i Norge er det lovpålagt at regnskapsførere som tilbyr tjenester til andre må være autorisert av Finanstilsynet. Alle regnskapsførere hos Avargo er autoriserte og holder seg kontinuerlig oppdatert på gjeldende regelverk gjennom obligatorisk etterutdanning." },
-      { q: "Hva er forskjellen mellom regnskapsfører og revisor?", a: "En regnskapsfører fører regnskapet ditt løpende gjennom året — bokføring, MVA, lønn og årsregnskap. En revisor kontrollerer regnskapet i etterkant og avgir en uavhengig beretning. De fleste små og mellomstore bedrifter trenger en regnskapsfører, men ikke nødvendigvis revisor. Revisjonsplikten gjelder først når to av tre vilkår er oppfylt: over 7 MNOK i driftsinntekter, over 27 MNOK i balansesum, eller gjennomsnittlig over 10 årsverk." },
-      { q: "Hva er inkludert i regnskapstjenesten?", a: "Alt du trenger for et komplett regnskap: løpende bokføring av alle bilag, MVA-rapportering og innlevering, årsregnskap og næringsoppgave, skattemelding for selskap og eier, aksjonærregisteroppgave (RF-1086), bankintegrasjon og automatisert bilagsflyt, revisjonstøtte og dokumentasjonspakke, og proaktiv rådgivning — alltid inkludert." },
-      { q: "Hva er forskjellen mellom regnskap og bokføring?", a: "Bokføring er den daglige registreringen av økonomiske transaksjoner — bilag, fakturaer og betalinger. Regnskap er det overordnede begrepet som inkluderer bokføring, men også årsregnskap, skattemelding, MVA-rapportering og finansiell analyse. En regnskapsfører hos Avargo håndterer begge deler." },
-      { q: "Kan jeg føre regnskapet selv?", a: "Ja, du kan føre regnskapet selv dersom du har kompetansen. Men mange bedriftseiere bruker timer hver uke på bilag og rapportering — tid som kunne gått til salg og utvikling. Med en regnskapsfører fra Avargo får du garantert kvalitet, overholdelse av frister og proaktiv rådgivning som ofte sparer deg for langt mer enn det koster." },
-      { q: "Hva er et årsregnskap?", a: "Et årsregnskap er en lovpålagt økonomisk rapport som viser selskapets finansielle stilling ved årsslutt. Det består av resultatregnskap (inntekter og kostnader), balanse (eiendeler, gjeld og egenkapital) og noter. Alle aksjeselskaper i Norge er pliktige til å utarbeide og sende inn årsregnskap til Brønnøysundregistrene innen 31. juli." },
-      { q: "Hva er bilagshåndtering?", a: "Bilagshåndtering er prosessen med å samle inn, sortere, registrere og arkivere alle økonomiske dokumenter — fakturaer, kvitteringer, bankbilag og kontraktsbilag. God bilagshåndtering er grunnlaget for et korrekt regnskap. Avargo tilbyr automatisert bilagsflyt med bankintegrasjon slik at prosessen blir enkel og feilfri." },
-      { q: "Hva er regnskapsplikt?", a: "Regnskapsplikt betyr at virksomheten er lovpålagt å føre regnskap etter regnskapsloven. I Norge gjelder regnskapsplikten for alle aksjeselskaper (AS og ASA), samt enkeltpersonforetak og ansvarlige selskaper med over 7 MNOK i omsetning eller mer enn 5 ansatte. Avargo sørger for at du alltid oppfyller regnskapsplikten." },
-      { q: "Hva er en næringsoppgave?", a: "Næringsoppgaven er et vedlegg til skattemeldingen som gir en detaljert oversikt over virksomhetens inntekter, kostnader, eiendeler og gjeld. Den brukes av Skatteetaten for å beregne riktig skatt. Avargo utarbeider næringsoppgaven som en del av den årlige leveransen." },
-      { q: "Hva er periodisering i regnskap?", a: "Periodisering betyr å føre inntekter og kostnader i den perioden de tilhører, uavhengig av når betalingen skjer. For eksempel skal en faktura for januar-arbeid inntektsføres i januar, selv om betalingen kommer i februar. Korrekt periodisering gir et rettvisende bilde av selskapets økonomi." },
-      { q: "Hva er kontoplan og hvordan velger jeg riktig?", a: "En kontoplan er en strukturert oversikt over alle kontoer som brukes i regnskapet. I Norge bruker de fleste Norsk Standard kontoplan (NS 4102). Riktig kontoplan sikrer korrekt rapportering til myndighetene og gir god oversikt over inntekter, kostnader og balanseposter. Avargo setter opp kontoplanen tilpasset din bransje." },
+      { q: "Hva gjør en regnskapsfører?", a: "En regnskapsfører håndterer den økonomiske administrasjonen i bedriften din: løpende bokføring, MVA-rapportering, årsregnskap og næringsoppgave, skattemelding, aksjonærregisteroppgave og proaktiv rådgivning. Hos Avargo får du én fast person som kjenner selskapet og bransjen din." },
+      { q: "Hvordan bytter jeg regnskapsfører?", a: "1) Ta kontakt med oss for en uforpliktende samtale. 2) Vi sender oppsigelsesbrev til din nåværende regnskapsfører. 3) Vi henter alle data og setter opp systemene. 4) Du får en dedikert regnskapsfører fra dag én. Prosessen tar 2–4 uker, og vi håndterer alt det praktiske." },
+      { q: "Trenger jeg en autorisert regnskapsfører?", a: "I Norge er det lovpålagt at regnskapsførere som fører regnskap for andre er autorisert av Finanstilsynet. Alle regnskapsførere hos Avargo er autoriserte og oppdaterte gjennom obligatorisk etterutdanning." },
+      { q: "Hva er forskjellen mellom regnskapsfører og revisor?", a: "Regnskapsføreren fører regnskapet ditt løpende — bokføring, MVA, lønn og årsregnskap. Revisoren kontrollerer regnskapet i etterkant og avgir en uavhengig beretning. De fleste SMB trenger regnskapsfører, men ikke nødvendigvis revisor." },
+      { q: "Når har et AS revisjonsplikt?", a: "Revisjonsplikt inntrer når to av tre vilkår er oppfylt: driftsinntekter over 7 MNOK, balansesum over 27 MNOK, eller gjennomsnittlig over 10 årsverk. Under grensene kan generalforsamlingen fravelge revisjon." },
+      { q: "Hva er inkludert i regnskapstjenesten hos Avargo?", a: "Løpende bokføring, MVA-rapportering, årsregnskap og næringsoppgave, skattemelding for selskap og eier, aksjonærregisteroppgave (RF-1086), bankintegrasjon, revisjonstøtte og proaktiv rådgivning — alt til fast pris." },
+      { q: "Hva er forskjellen mellom regnskap og bokføring?", a: "Bokføring er den daglige registreringen av transaksjoner. Regnskap er det overordnede begrepet som også inkluderer årsregnskap, skattemelding, MVA-rapportering og finansiell analyse." },
+      { q: "Kan jeg føre regnskapet selv?", a: "Ja, dersom du har kompetansen. Men mange bruker timer hver uke på bilag og rapportering — tid som kunne gått til drift og salg. En regnskapsfører gir kvalitet, frister og rådgivning som ofte sparer mer enn kostnaden." },
+      { q: "Hva er et årsregnskap?", a: "En lovpålagt rapport som viser selskapets finansielle stilling ved årsslutt: resultatregnskap, balanse og noter. Alle AS må levere årsregnskap til Regnskapsregisteret innen 31. juli." },
+      { q: "Hva er bilagshåndtering?", a: "Prosessen med å samle inn, registrere og arkivere alle økonomiske dokumenter — fakturaer, kvitteringer, bankbilag og kontrakter. Grunnlaget for et korrekt regnskap." },
+      { q: "Hva er regnskapsplikt?", a: "Plikten til å føre regnskap etter regnskapsloven. Gjelder alle AS/ASA, samt ENK og ANS med over 20 MNOK i eiendeler eller over 20 årsverk." },
+      { q: "Hva er en næringsoppgave?", a: "Vedlegg til skattemeldingen som gir detaljert oversikt over inntekter, kostnader, eiendeler og gjeld. Grunnlag for beregning av skatt." },
+      { q: "Hva er periodisering?", a: "Å føre inntekter og kostnader i den perioden de tilhører, uavhengig av betalingsdato. En faktura for januar-arbeid inntektsføres i januar selv om betalingen kommer senere." },
+      { q: "Hva er kontoplan?", a: "En strukturert oversikt over alle regnskapskontoene. De fleste i Norge bruker Norsk Standard kontoplan (NS 4102). Riktig kontoplan sikrer korrekt rapportering." },
+      { q: "Hvor ofte får jeg regnskapsrapporter?", a: "Hos Avargo får du månedlig resultat og balanse som standard, samt sanntidsinnsikt i portalen. Kvartalsvise strategimøter er inkludert." },
+      { q: "Hvem eier regnskapet mitt?", a: "Du eier alltid regnskapsdataene selv. Ved oppsigelse får du full eksport av alle bilag, hovedbok og rapporter." },
+      { q: "Hva er en hovedbok?", a: "Oversikten over alle bokførte transaksjoner sortert per konto. Grunnlaget for resultatregnskap og balanse." },
+      { q: "Hva er balansen?", a: "Balansen viser selskapets eiendeler, gjeld og egenkapital på et gitt tidspunkt. Eiendeler = gjeld + egenkapital." },
+      { q: "Hva er resultatregnskapet?", a: "Rapport som viser inntekter og kostnader over en periode, og selskapets resultat (over-/underskudd)." },
+      { q: "Hva er egenkapital?", a: "Differansen mellom selskapets eiendeler og gjeld — det som tilhører eierne. Består av innskutt egenkapital (aksjekapital, overkurs) og opptjent egenkapital." },
+      { q: "Hva er avskrivning?", a: "Kostnadsføring av driftsmidler over levetid. Et bygg avskrives f.eks. lineært, mens maskiner ofte saldoavskrives (skattemessig) med 20 %." },
+      { q: "Hva er nedskrivning?", a: "Reduksjon av bokført verdi når virkelig verdi er varig lavere enn kostpris. Skjer f.eks. ved tap på fordringer eller verdifall på anleggsmidler." },
+      { q: "Hva koster det å skifte regnskapsfører midt i året?", a: "Hos Avargo koster overgangen ingenting ekstra. Vi tar over historikken, kvalitetssikrer inngående balanse og fortsetter fra der du står." },
+      { q: "Får jeg en fast kontaktperson?", a: "Ja. Hver kunde får én dedikert regnskapsfører som kjenner bedriften. Ved fravær har vi en fast backup slik at du aldri står uten støtte." },
     ],
   },
   {
-    title: "Skatteoptimalisering",
+    title: "Bokføring & Bilag",
     items: [
-      { q: "Hva er skatteoptimalisering?", a: "Skatteoptimalisering betyr å innrette selskapet ditt slik at du betaler riktig skatt — ikke mer enn nødvendig. Det handler om å utnytte lovlige fradrag, velge riktig selskapsstruktur og planlegge utbytte, lønn og investeringer strategisk. Avargo gjennomfører kvartalsvise skattegjennomganger for å sikre at du aldri går glipp av fradrag." },
-      { q: "Hvilke fradrag kan bedriften min få?", a: "Vanlige fradrag inkluderer: kontorkostnader og utstyr, reise- og representasjonskostnader, forsikringer, fagforeningskontingent, pensjonssparing, avskrivning av driftsmidler, tap på fordringer og FoU-kostnader (SkatteFUNN). Avargo bruker AI til å identifisere fradrag du kanskje ikke visste om." },
-      { q: "Når er fristen for skattemeldingen?", a: "For aksjeselskaper (AS) er fristen for skattemeldingen normalt 31. mai. For enkeltpersonforetak er fristen 30. april. MVA-rapportering har frist annenhver måned (10. i måneden etter termin). Avargo holder styr på alle frister og leverer alltid i tide." },
-      { q: "Hva er forskjellen mellom lønn og utbytte?", a: "Lønn er skattepliktig inntekt som belastes med inntektsskatt (opptil 47,4 %) og arbeidsgiveravgift (14,1 %). Utbytte beskattes etter aksjonærmodellen med en effektiv skattesats på ca. 37,84 %. Den optimale fordelingen avhenger av selskapets situasjon, din personlige økonomi og fremtidige planer. Avargo hjelper deg med å finne den mest skatteeffektive kombinasjonen." },
-      { q: "Hva er skjermingsfradrag?", a: "Skjermingsfradraget er et fradrag på utbytte fra aksjeselskaper som reduserer skattepliktig utbytte. Fradraget beregnes basert på aksjenes inngangsverdi multiplisert med en skjermingsrente fastsatt av Skatteetaten. Ubenyttet skjermingsfradrag kan fremføres til senere år. Avargo sørger for at du utnytter skjermingsfradraget fullt ut." },
-      { q: "Hva er forskjellen mellom AS og ENK skattemessig?", a: "I et aksjeselskap (AS) beskattes overskuddet med 22 % selskapsskatt, og utbytte beskattes i tillegg hos eier. I et enkeltpersonforetak (ENK) beskattes overskuddet direkte som personinntekt med marginalskatt opptil 47,4 %. AS gir bedre muligheter for skatteplanlegging, men ENK har enklere administrasjon. Avargo hjelper deg med å velge riktig selskapsform." },
-      { q: "Hva er MVA-plikt og når inntrer den?", a: "Merverdiavgift (MVA) er en avgift på omsetning av varer og tjenester. Du blir MVA-pliktig når omsetningen overstiger 50 000 kr i løpet av en 12-månedersperiode. Etter registrering i Merverdiavgiftsregisteret må du kreve inn 25 % MVA (15 % på mat, 12 % på transport og kultur) og rapportere annenhver måned. Avargo håndterer MVA-rapporteringen automatisk." },
-      { q: "Kan jeg trekke fra hjemmekontor på skatten?", a: "Ja, dersom du bruker en del av boligen din fast og regelmessig til inntektsgivende arbeid, kan du kreve fradrag for hjemmekontor. Du kan enten bruke standardfradrag (kr 1 850 per år) eller faktiske kostnader (andel av husleie, strøm, forsikring basert på areal). Avargo vurderer hvilken metode som gir deg best fradrag." },
-      { q: "Hva er SkatteFUNN?", a: "SkatteFUNN er en offentlig støtteordning som gir skattefradrag for bedrifter som driver med forskning og utvikling (FoU). Du kan få 19 % skattefradrag for FoU-kostnader opptil 25 MNOK per år. Ordningen gjelder for alle norske bedrifter, uavhengig av størrelse og bransje. Avargo hjelper deg med søknaden og dokumentasjonen." },
-      { q: "Hva er forskuddsskatt for selskaper?", a: "Forskuddsskatt er forhåndsberegnet skatt som selskaper betaler i løpet av inntektsåret, basert på forventet overskudd. AS betaler forskuddsskatt i to terminer (15. februar og 15. april året etter inntektsåret). Avargo beregner og varsler deg om forskuddsskatten slik at du unngår renter og tilleggsskatt." },
-      { q: "Hva er fordelingsfradrag og reisefradrag?", a: "Reisefradrag gir rett til fradrag for reisekostnader mellom hjem og arbeid over 14 000 kr per år. For selvstendig næringsdrivende kan reisekostnader i forbindelse med næringsvirksomhet føres som fradrag i næringsoppgaven. Avargo sørger for at du utnytter alle relevante reise- og kostnadsfradrag." },
-    ],
-  },
-  {
-    title: "Lønn & HR",
-    items: [
-      { q: "Hva koster lønnskjøring?", a: "Hos Avargo er lønnskjøring inkludert i HR-pakken. Du betaler én fast månedspris som dekker lønnskjøring, A-melding, feriepengeavregning, skattetrekk, arbeidskontrakter og arbeidsrettslig rådgivning — uten skjulte tillegg." },
-      { q: "Hva er A-melding?", a: "A-meldingen er en månedlig rapportering til Skatteetaten, NAV og SSB som inneholder opplysninger om lønn, skattetrekk, arbeidsgiveravgift og arbeidsforhold for alle ansatte. Fristen er den 5. i måneden etter utbetaling. Avargo håndterer A-meldingen automatisk som del av lønnskjøringen." },
-      { q: "Trenger bedriften min HMS-dokumentasjon?", a: "Ja, alle norske bedrifter er pålagt å ha HMS-dokumentasjon og internkontroll etter internkontrollforskriften. Dette gjelder uansett størrelse på bedriften. Avargo hjelper deg med å opprette og vedlikeholde nødvendig HMS-dokumentasjon slik at bedriften alltid er compliant." },
-      { q: "Hva bør en arbeidskontrakt inneholde?", a: "En arbeidskontrakt skal inneholde: partenes identitet, arbeidssted, stillingsbeskrivelse, tiltredelsestidspunkt, prøvetid, lønn og godtgjørelser, arbeidstid, ferie og feriepengerettigheter, oppsigelsesfrister og referanse til tariffavtale hvis aktuelt. Avargo lager profesjonelle arbeidskontrakter som oppfyller alle krav i arbeidsmiljøloven." },
-      { q: "Hva er arbeidsgiveravgift?", a: "Arbeidsgiveravgift er en avgift arbeidsgivere betaler til staten basert på lønnskostnader. Satsen varierer etter sone — fra 0 % i Nord-Troms og Finnmark (sone 5) til 14,1 % i sentrale strøk (sone 1). Avgiften beregnes av brutto lønn, feriepenger, naturalytelser og pensjonsinnskudd. Avargo beregner og rapporterer arbeidsgiveravgiften automatisk." },
-      { q: "Hvordan beregnes feriepenger?", a: "Feriepenger beregnes som en prosentsats av feriepengegrunnlaget — normalt 10,2 % (12 % for arbeidstakere over 60 år). Grunnlaget er brutto lønn fra foregående kalenderår, minus utbetalte feriepenger. Feriepengene utbetales normalt i juni. Avargo håndterer feriepengeavregningen som del av lønnskjøringen." },
-      { q: "Hva er OTP (obligatorisk tjenestepensjon)?", a: "Obligatorisk tjenestepensjon (OTP) krever at alle bedrifter med minst én ansatt (utover eier) sparer minimum 2 % av lønn mellom 1G og 12G til pensjon. Avargo hjelper deg med å velge riktig pensjonsordning og sørger for at innbetalingene skjer korrekt og i tide." },
-      { q: "Hva er sykefraværsoppfølging?", a: "Som arbeidsgiver har du plikt til å følge opp sykemeldte ansatte. Du skal ha samtale innen 4 uker, utarbeide oppfølgingsplan og delta i dialogmøter med NAV. Arbeidsgiveren dekker sykepenger de første 16 dagene (arbeidsgiverperioden). Avargo hjelper deg med dokumentasjon og oppfølgingsprosessen." },
-      { q: "Hva er prøvetid og hvilke regler gjelder?", a: "Prøvetid kan avtales for inntil 6 måneder og gir arbeidsgiver en kortere oppsigelsesfrist (14 dager) og mulighet til å si opp basert på manglende tilpasning, faglig dyktighet eller pålitelighet. Prøvetiden må avtales skriftlig i arbeidskontrakten. Avargo sørger for at prøvetidsklausulen er juridisk korrekt." },
-      { q: "Hva er reglene for overtid?", a: "Overtid er arbeid utover avtalt arbeidstid og lovens normalarbeidstid (9 timer per dag / 40 timer per uke). Arbeidsgiver skal betale minst 40 % overtidstillegg. Det er grenser for hvor mye overtid som kan pålegges: maks 10 timer per uke, 25 timer per måned og 200 timer per år. Avargo sørger for korrekt overtidsberegning i lønnskjøringen." },
-      { q: "Hvordan håndterer jeg oppsigelser korrekt?", a: "Oppsigelser må oppfylle strenge krav i arbeidsmiljøloven: det må foreligge saklig grunn, oppsigelsen skal være skriftlig med lovpålagt innhold, og arbeidsgiver må gjennomføre drøftingsmøte før beslutning. Oppsigelsesfristen er minst én måned. Avargo bistår med korrekt prosess og dokumentasjon for å unngå tvister." },
-    ],
-  },
-  {
-    title: "Selskapsrett & Stiftelse",
-    items: [
-      { q: "Hvordan stifter jeg et aksjeselskap (AS)?", a: "For å stifte et AS trenger du: 1) Minimum 30 000 kr i aksjekapital. 2) Stiftelsesdokument med vedtekter. 3) Registrering i Foretaksregisteret via Altinn. Hele prosessen kan gjøres digitalt og tar vanligvis 1-3 virkedager. Avargo hjelper deg med all dokumentasjon og registrering." },
-      { q: "Hva er forskjellen mellom AS og ENK?", a: "I et AS har du begrenset personlig ansvar — du risikerer bare aksjekapitalen. I et ENK hefter du personlig med hele din formue. AS gir bedre skatteplanlegging og er mer profesjonelt overfor kunder og leverandører. ENK er enklere å administrere og har lavere oppstartskostnader. Avargo hjelper deg med å velge riktig." },
-      { q: "Hva er aksjekapital?", a: "Aksjekapital er det beløpet eierne skyter inn når selskapet stiftes. Minimumskravet for et AS i Norge er 30 000 kr. Aksjekapitalen kan brukes til drift av selskapet, men den representerer eiernes innskudd og eierandel. Avargo hjelper med kapitalforhøyelser og emisjoner ved behov." },
-      { q: "Hva er et holdingselskap?", a: "Et holdingselskap er et aksjeselskap som eier aksjer i andre selskaper. Fordelen er fritaksmetoden — utbytte og gevinst fra datterselskaper er tilnærmet skattefritt i holdingselskapet. Dette gir fleksibilitet til å reinvestere, ta utbytte gradvis eller selge skatteeffektivt. Avargo hjelper deg med å strukturere holdingselskapet optimalt." },
-      { q: "Hva er fritaksmetoden?", a: "Fritaksmetoden innebærer at aksjeselskaper er fritatt for skatt på utbytte og aksjegevinster fra andre norske og EØS-selskaper (med unntak av 3 % av utbytte som inntektsføres). Dette gjør holdingstrukturer svært skatteeffektive. Avargo hjelper deg med å utnytte fritaksmetoden i din selskapsstruktur." },
-      { q: "Når bør jeg gå fra ENK til AS?", a: "Du bør vurdere å gå fra ENK til AS når: omsetningen overstiger 500 000-700 000 kr, du trenger begrenset personlig ansvar, du vil optimalisere fordelingen mellom lønn og utbytte, du planlegger å ta inn investorer, eller du vil ansette. Avargo hjelper med omdanningen og sikrer at overgangen skjer skattefritt." },
-      { q: "Hva er aksjonæravtale og trenger jeg det?", a: "En aksjonæravtale regulerer forholdet mellom eierne i et selskap — stemmerett, utbyttepolitikk, forkjøpsrett, konkurranseforbud og konflikthåndtering. Den er ikke lovpålagt, men sterkt anbefalt når selskapet har flere eiere. Avargo bistår med utarbeidelse av aksjonæravtaler i samarbeid med juridisk partner." },
-      { q: "Hva er styrets ansvar i et AS?", a: "Styret har overordnet ansvar for forvaltningen av selskapet og skal sørge for forsvarlig organisering, føre tilsyn med daglig leder, og fastsette budsjett og strategi. Styremedlemmer kan holdes personlig ansvarlige ved grov uaktsomhet. Avargo leverer styrerettet rapportering som gir styret grunnlag for gode beslutninger." },
-    ],
-  },
-  {
-    title: "CFO & Strategisk rådgivning",
-    items: [
-      { q: "Hva er CFO-as-a-Service?", a: "CFO-as-a-Service gir deg tilgang til strategisk finansiell ledelse fra senioreksperter — uten å ansette en CFO på heltid. Du får kapitalstrukturstrategi, investor-kommunikasjon, budsjettering, scenarioanalyse og beslutningsstøtte tilpasset din fase og ditt behov." },
-      { q: "Når trenger man en CFO?", a: "Du trenger en CFO når selskapet står overfor strategiske veivalg: investeringsrunder, exit eller fusjon, kraftig vekst, behov for styrerettet rapportering, eller restrukturering. Med CFO-as-a-Service fra Avargo får du seniorkompetanse akkurat når det trengs." },
-      { q: "Hva er forskjellen mellom regnskapsfører og CFO?", a: "En regnskapsfører håndterer den løpende økonomiske administrasjonen — bokføring, rapportering og compliance. En CFO jobber strategisk: kapitalstruktur, investorkommunikasjon, vekststrategi og beslutningsstøtte på ledernivå. Hos Avargo kan du få begge deler." },
-      { q: "Hva er budsjettering og prognoser?", a: "Budsjettering er prosessen med å planlegge selskapets inntekter og kostnader for en kommende periode. Prognoser oppdaterer budsjettet basert på faktiske tall og trender. Sammen gir de ledelsen kontroll og grunnlag for informerte beslutninger. Avargo bygger skreddersydde budsjett- og prognosemodeller for din virksomhet." },
-      { q: "Hva er due diligence?", a: "Due diligence er en grundig gjennomgang av et selskaps finansielle, juridiske og operasjonelle forhold — typisk før en investering, fusjon eller oppkjøp. Prosessen avdekker risikoer, verifiserer verdier og gir grunnlag for forhandlinger. Avargo bistår med finansiell due diligence og forberedelse." },
-      { q: "Hva er KPI-er og hvorfor bør jeg følge dem?", a: "KPI-er (Key Performance Indicators) er nøkkeltall som måler bedriftens ytelse mot definerte mål — f.eks. bruttomargin, kundetilfangstkostnad, churn rate eller EBITDA-margin. Avargo setter opp skreddersydde KPI-dashboards som gir deg sanntidsoversikt over det som betyr noe for din virksomhet." },
-      { q: "Hva er cashflow-styring?", a: "Cashflow-styring handler om å sikre at selskapet alltid har tilstrekkelig likviditet til å dekke løpende forpliktelser. Det inkluderer innbetalingskontroll, utbetalingsplanlegging, kredittidsstyring og likviditetsprognoser. Dårlig cashflow er den vanligste årsaken til at ellers lønnsomme bedrifter går konkurs. Avargo gir deg full kontroll på likviditeten." },
-    ],
-  },
-  {
-    title: "Valg av regnskapssystem",
-    items: [
-      { q: "Hvilket regnskapsprogram bør jeg velge?", a: "Valget avhenger av bedriftens størrelse, bransje og behov. Populære systemer i Norge inkluderer Tripletex, Fiken, Visma eAccounting, PowerOffice Go og Xledger. Avargo er systemuavhengig og jobber med alle ledende plattformer. Vi anbefaler system basert på dine spesifikke behov." },
-      { q: "Hva er Tripletex og hvem passer det for?", a: "Tripletex er Norges mest brukte skybaserte regnskapssystem. Det passer for små og mellomstore bedrifter og tilbyr moduler for regnskap, fakturering, lønn, prosjektstyring og tidsregistrering. Avargo har bred erfaring med Tripletex og kan hjelpe med oppsett, integrasjoner og opplæring." },
-      { q: "Hva er Fiken og hvem passer det for?", a: "Fiken er et brukervennlig regnskapssystem designet for enkeltpersonforetak og små aksjeselskaper. Det har automatisk bokføring, fakturering, bankintegrasjon og MVA-rapportering. Fiken egner seg best for bedrifter med enkle regnskapsbehov og begrenset antall transaksjoner." },
-      { q: "Hva er Visma eAccounting?", a: "Visma eAccounting er et skybasert regnskapssystem fra Visma som passer for små og mellomstore bedrifter. Det tilbyr fakturering, bilagsregistrering, bank- og betalingsintegrasjon, MVA-rapportering og enkel rapportering. Systemet integrerer godt med andre Visma-produkter som Visma Lønn og Visma Expense." },
-      { q: "Hva er PowerOffice Go?", a: "PowerOffice Go er et norskutviklet skybasert ERP-system som kombinerer regnskap, fakturering, lønn, tidsregistrering og prosjektstyring i én plattform. Det passer for bedrifter som ønsker et alt-i-ett-system med gode API-muligheter og integrasjoner." },
-      { q: "Hva er Xledger?", a: "Xledger er et avansert skybasert ERP- og regnskapssystem designet for mellomstore og større bedrifter. Det tilbyr automatisert bokføring, konsolidering, budsjett, prosjektstyring og avansert rapportering. Xledger egner seg for bedrifter med komplekse regnskapsbehov på tvers av selskaper og avdelinger." },
-      { q: "Kan jeg bytte regnskapssystem?", a: "Ja, det er mulig å bytte regnskapssystem. Prosessen innebærer eksport av historiske data, mapping av kontoplan, import til nytt system og kvalitetskontroll. Avargo har erfaring med migrering mellom alle ledende systemer og sørger for en sømløs overgang uten tap av data." },
-      { q: "Hva bør jeg se etter i et regnskapssystem?", a: "Viktige kriterier inkluderer: skybasert tilgang, bankintegrasjon, automatisk bilagslesing (OCR), MVA- og rapporteringsstøtte, fakturering, lønnsmodul, API og integrasjonsmuligheter, brukervennlighet, pris og skalerbarhet. Avargo hjelper deg med å evaluere og velge riktig system." },
-      { q: "Er skybasert regnskap trygt?", a: "Ja, ledende skybaserte regnskapssystemer bruker bankgrad kryptering, flerfaktorautentisering, automatisk backup og følger GDPR. Skybaserte løsninger er generelt sikrere enn lokale installasjoner fordi leverandørene investerer tungt i sikkerhet og oppdateringer. Avargo velger kun systemer med dokumentert høy sikkerhet." },
-    ],
-  },
-  {
-    title: "Integrasjoner & Automatisering",
-    items: [
-      { q: "Hva er bankintegrasjon i regnskap?", a: "Bankintegrasjon kobler regnskapssystemet direkte til bedriftens bankkonto. Transaksjoner hentes automatisk, matches mot fakturaer og bokføres — uten manuell inntasting. Dette sparer tid, reduserer feil og gir sanntidsoversikt over kontantstrømmen. Avargo setter opp bankintegrasjon som en del av onboarding." },
-      { q: "Hva er EHF-faktura?", a: "EHF (Elektronisk Handelsformat) er Norges standard for elektronisk fakturering. Alle leverandører til offentlig sektor er pålagt å sende EHF-fakturaer. Formatet sikrer automatisk mottak, validering og bokføring hos mottaker. Avargo setter opp EHF-sending og -mottak i regnskapssystemet ditt." },
-      { q: "Hva er OCR i bilagshåndtering?", a: "OCR (Optical Character Recognition) er teknologi som leser og tolker tekst fra bilder av dokumenter — kvitteringer, fakturaer og bankbilag. I regnskap brukes OCR til å automatisere bilagsregistrering: systemet leser beløp, dato, leverandør og kontonummer automatisk. Avargo bruker AI-forsterket OCR for høyere nøyaktighet." },
-      { q: "Kan regnskapssystemet integreres med nettbutikken?", a: "Ja, de fleste regnskapssystemer kan integreres med nettbutikkplattformer som Shopify, WooCommerce og Magento. Integrasjonen synkroniserer ordrer, betalinger og varelagerbevegelser automatisk til regnskapet. Avargo setter opp og vedlikeholder integrasjonene slik at du slipper manuell dobbeltregistrering." },
-      { q: "Hva er API-integrasjon?", a: "API (Application Programming Interface) er et teknisk grensesnitt som lar ulike systemer kommunisere og dele data automatisk. I regnskap brukes API-er til å koble sammen regnskapssystem, bank, faktureringsplattform, lønnssystem og CRM. Avargo har teknisk kompetanse til å sette opp skreddersydde API-integrasjoner." },
-      { q: "Kan jeg automatisere fakturering?", a: "Ja, med riktig system kan du sette opp automatisk fakturering for gjentakende kunder — abonnementer, fastprisavtaler og løpende tjenester. Fakturaer genereres, sendes og bokføres automatisk. Avargo hjelper med å sette opp automatisert fakturering i ditt regnskapssystem." },
-      { q: "Hva er Zapier og kan det brukes med regnskap?", a: "Zapier er en automatiseringsplattform som kobler sammen over 5 000 apper uten koding. I regnskap kan Zapier brukes til å automatisere bilagsflyt fra e-post, synkronisere kundedata mellom CRM og regnskap, eller varsle ved forfalte fakturaer. Avargo hjelper med å sette opp smarte automatiseringer." },
-      { q: "Hva er peppol-nettverket?", a: "Peppol er et internasjonalt nettverk for elektronisk utveksling av forretningsdokumenter — primært e-fakturaer. Norge bruker Peppol som standard for elektronisk fakturering til offentlig sektor. Alle selskaper som fakturerer det offentlige må være tilknyttet Peppol. Avargo sørger for at du er korrekt registrert og sender via Peppol." },
-      { q: "Hvordan integrerer jeg betalingsløsning med regnskapet?", a: "Betalingsløsninger som Vipps, Klarna, Stripe og Nets kan integreres direkte med regnskapssystemet. Transaksjoner overføres automatisk, inkludert gebyr-avregning og valutaomregning. Avargo setter opp integrasjonen slik at alle betalinger bokføres korrekt uten manuelt arbeid." },
-    ],
-  },
-  {
-    title: "Digitale tjenester & Markedsføring",
-    items: [
-      { q: "Trenger bedriften min en nettside?", a: "Ja — i 2026 er en profesjonell nettside grunnlaget for din digitale tilstedeværelse. 87 % av norske forbrukere søker på nett før de kontakter en bedrift. En god nettside bygger tillit, genererer leads og jobber for deg 24/7. Avargo bygger moderne, raske nettsider optimalisert for søkemotorer." },
-      { q: "Hva er SEO og hvorfor er det viktig?", a: "SEO (søkemotoroptimalisering) er prosessen med å gjøre nettsiden din synlig i Google og andre søkemotorer. God SEO betyr at potensielle kunder finner deg når de søker etter tjenester du tilbyr. Det er langsiktig, kostnadseffektiv markedsføring som bygger organisk trafikk over tid. Avargo tilbyr strategisk SEO som del av vekstpakken." },
-      { q: "Hva er Google Ads og hva koster det?", a: "Google Ads er betalt annonsering i Googles søkeresultater. Du betaler per klikk (PPC), og prisen varierer etter konkurranse på søkeordene — typisk 5-50 kr per klikk for norske bedrifter. Med riktig strategi kan Google Ads gi umiddelbar trafikk og leads. Avargo håndterer hele annonsestrategien og optimaliseringen." },
-      { q: "Hva er forskjellen mellom SEO og Google Ads?", a: "SEO gir langsiktig organisk synlighet uten løpende annonsekostnader, men tar tid å bygge opp (3-6 måneder). Google Ads gir umiddelbar synlighet, men koster per klikk og stopper når budsjettet er brukt. Den beste strategien kombinerer begge deler — Avargo hjelper deg med å finne riktig balanse." },
-      { q: "Bør bedriften min annonsere på Facebook og Instagram?", a: "Meta-annonser (Facebook/Instagram) er svært effektive for merkevarebygging, retargeting og leadgenerering. Plattformene har avanserte målrettingsmuligheter basert på demografi, interesser og adferd. Avargo bygger og optimaliserer Meta-kampanjer som gir målbar avkastning." },
-      { q: "Hva er konverteringsoptimalisering?", a: "Konverteringsoptimalisering (CRO) handler om å øke andelen besøkende som utfører en ønsket handling — f.eks. fyller ut et kontaktskjema, bestiller en demo eller kjøper et produkt. Det innebærer A/B-testing, analyse av brukeradferd og optimalisering av landingssider. Avargo jobber datadrevet med CRO for å maksimere avkastningen på markedsføring." },
-      { q: "Hva er innholdsmarkedsføring?", a: "Innholdsmarkedsføring er en strategi der du skaper og distribuerer verdifullt innhold — artikler, guider, videoer — for å tiltrekke og engasjere potensielle kunder. Det bygger tillit, forbedrer SEO og posisjonerer deg som ekspert. Avargo hjelper bedrifter med innholdsstrategi som driver trafikk og leads." },
-    ],
-  },
-  {
-    title: "AI & Teknologi i regnskap",
-    items: [
-      { q: "Hvordan bruker Avargo AI i regnskap?", a: "Avargo bruker kunstig intelligens til å automatisere bilagshåndtering, identifisere skattefradrag du ellers ville gått glipp av, oppdage avvik og risiko i sanntid, og gi proaktive anbefalinger. AI-en analyserer tusenvis av transaksjoner og benchmarker mot bransjedata — slik at du alltid ligger et steg foran." },
-      { q: "Er det trygt å bruke AI i regnskapet?", a: "Ja. Hos Avargo er AI et verktøy som forsterker regnskapsførerens kompetanse — den erstatter ikke den menneskelige kontrollen. All AI-analyse kvalitetssikres av autoriserte regnskapsførere. Data er kryptert og behandles i henhold til GDPR og norsk personvernlovgivning." },
-      { q: "Hva er automatisert bilagshåndtering?", a: "Automatisert bilagshåndtering betyr at fakturaer, kvitteringer og bankbilag behandles digitalt — uten manuell inntasting. Systemet leser, kategoriserer og bokfører bilag automatisk gjennom OCR-teknologi og AI. Dette reduserer feil, sparer tid og gir deg sanntidsoversikt over økonomien." },
-      { q: "Kan AI erstatte regnskapsføreren?", a: "Nei — AI er et kraftig verktøy, men det erstatter ikke den menneskelige vurderingen, erfaringen og relasjonen som en god regnskapsfører gir. AI håndterer det repetitive og analytiske, mens regnskapsføreren gir strategisk rådgivning, tolker komplekse situasjoner og er din sparringspartner. Hos Avargo får du det beste av begge verdener." },
-      { q: "Hva er maskinlæring i regnskap?", a: "Maskinlæring er en gren av AI der systemer lærer fra historiske data og forbedrer seg over tid. I regnskap brukes det til å predikere kontokategorier for bilag, oppdage uvanlige transaksjoner, forutsi cashflow og identifisere risiko. Avargos AI-motor blir smartere jo mer den brukes." },
-      { q: "Hva er robotic process automation (RPA) i regnskap?", a: "RPA bruker programvareroboter til å utføre repetitive, regelbaserte oppgaver — som å hente bankutskrifter, sende purringer, generere rapporter og sjekke datakvalitet. I regnskap kan RPA spare hundrevis av timer per år. Avargo bruker RPA-elementer for å eliminere manuelt arbeid og øke nøyaktigheten." },
-    ],
-  },
-  {
-    title: "Bransje & Spesialisering",
-    items: [
-      { q: "Har Avargo erfaring med min bransje?", a: "Avargo betjener over 25 ulike bransjer — fra tech og SaaS til bygg og anlegg, restaurant, eiendom, helse og landbruk. Hver bransje har dedikerte regnskapsførere med spesialkompetanse innen bransjespesifikke regler, fradrag og rapporteringskrav. Se vår bransjeoversikt for detaljert informasjon." },
-      { q: "Hva er bransjespesifikt regnskap?", a: "Bransjespesifikt regnskap betyr at regnskapsføreren forstår de unike økonomiske forholdene i din bransje — enten det er prosjektregnskap i bygg, varelager i varehandel, tipsregler i restaurant eller investoravtaler i tech. Avargo matcher deg med en regnskapsfører som har dyp bransjeerfaring." },
-      { q: "Tilbyr Avargo regnskapstjenester for oppstartsbedrifter?", a: "Ja, Avargo har en egen pakke for nyoppstartede selskaper fra 1 499 kr/mnd. Den inkluderer alt du trenger for å komme i gang: stiftelseshjelp, bokføring, MVA-registrering, skattemelding og rådgivning. Vi forstår startup-dynamikken og hjelper deg med å bygge en solid økonomisk plattform fra dag én." },
-      { q: "Kan Avargo hjelpe med internasjonale selskaper?", a: "Ja, Avargo bistår selskaper med internasjonal virksomhet — inkludert MVA ved grensekryssende handel, transfer pricing, utenlandske ansatte og filialer. Vi samarbeider med partnere i flere land for å sikre compliance på tvers av jurisdiksjoner." },
-      { q: "Hva er prosjektregnskap?", a: "Prosjektregnskap er en metode for å spore inntekter, kostnader og lønnsomhet per prosjekt — vanlig i bygg og anlegg, konsulentbransjen og IT. Det gir oversikt over prosjektmarginer, timeforbruk og materialkostnader. Avargo setter opp prosjektregnskapsstrukturer tilpasset din virksomhet." },
-      { q: "Hva er spesielt med restaurantregnskap?", a: "Restaurantregnskap har egne regler for tips, kontantsalg, kasseapparat, varekostnad og allergenhåndtering. MVA-satsene varierer (15 % på mat til medbringing, 25 % på servering). Avargo har dedikerte regnskapsførere med restaurantbransjekunnskap som sikrer korrekt bokføring og rapportering." },
-      { q: "Hva er eiendomsregnskap?", a: "Eiendomsregnskap dekker bokføring av leieinntekter, vedlikeholdskostnader, avskrivninger, eiendomsskatt og forvaltning av flere eiendommer eller utleieenheter. For selskaper med mange eiendommer er korrekt periodisering og skattemessig behandling avgjørende. Avargo har spesialkompetanse på eiendomsbransjen." },
+      { q: "Hvor lenge må jeg oppbevare bilag?", a: "Primærdokumentasjon som fakturaer og bankbilag skal oppbevares i 5 år etter regnskapsårets slutt. Enkelte bransjer har lengre krav (f.eks. bygg: 10 år for prosjektdokumentasjon)." },
+      { q: "Kan jeg oppbevare bilag digitalt?", a: "Ja. Elektronisk oppbevaring er tillatt så lenge bilagene er sikret mot endring og kan hentes ut i lesbar form i hele oppbevaringsperioden." },
+      { q: "Hva er et gyldig bilag?", a: "Et bilag må inneholde: dato, beløp, beskrivelse, partenes navn/orgnr, MVA-spesifikasjon og bilagsnummer. Kvitteringer på under 40 000 kr kan mangle kjøpers navn." },
+      { q: "Hva er kontering?", a: "Å tildele riktig konto og MVA-kode til en transaksjon i regnskapet. Grunnlaget for korrekt rapportering." },
+      { q: "Hva gjør jeg hvis jeg mister et bilag?", a: "Ta kontakt med leverandøren for kopi. Manglende bilag kan gi fradragsnekt for MVA og kostnad. Ved kortbetaling kan bankutskrift være sekundær dokumentasjon, men ikke tilstrekkelig alene." },
+      { q: "Kan jeg bokføre kontanter?", a: "Ja, men kontantsalg over 40 000 kr per betaling er ulovlig for næringsdrivende. Kasseapparat med kassaregisterlov gjelder for kontantsalg." },
+      { q: "Hva er inngående og utgående MVA?", a: "Utgående MVA er avgiften du krever inn på salg. Inngående MVA er den du betaler ved kjøp og får fradrag for. Differansen betales til (eller refunderes av) Skatteetaten." },
+      { q: "Hva er bilagsnummer?", a: "Et unikt løpenummer som identifiserer hvert bilag. Skal være fortløpende uten hull for å sikre sporbarhet." },
+      { q: "Hva er dobbelt bokføring?", a: "Prinsippet om at hver transaksjon påvirker minst to kontoer (debet og kredit) med like beløp. Sikrer at balansen alltid går opp." },
+      { q: "Hva er debet og kredit?", a: "Debet er venstre side av kontoen (økning av eiendel/kostnad), kredit er høyre side (økning av gjeld/inntekt/EK). Sum debet skal alltid = sum kredit." },
+      { q: "Hva er avstemming?", a: "Kontroll av at regnskapstall stemmer med eksterne kilder — bank, kunder, leverandører, MVA og lønn. Utføres månedlig hos Avargo." },
+      { q: "Hva er en bilagsjournal?", a: "En kronologisk oversikt over alle bokførte bilag med dato, tekst, kontoer og beløp. Utgangspunktet for kontroll og revisjon." },
+      { q: "Kan jeg fradragsføre bevertning?", a: "Bevertning i næring er delvis fradragsberettiget: 469 kr per person per anledning (2026-satser), forutsatt at det er saklig sammenheng med drift og dokumentert." },
+      { q: "Hvordan bokfører jeg bilkostnader?", a: "Firmabil: alle kostnader føres i selskapet, men bruker beskattes for fordel. Privatbil i næring: kilometergodtgjørelse etter statens satser (3,50 kr/km fra 2026)." },
+      { q: "Hva er varekost?", a: "Kostnaden for varer solgt i perioden. Beregnes som inngående lager + kjøp − utgående lager. Direkte knyttet til omsetningen." },
+      { q: "Hva er varelager?", a: "Beholdning av varer for salg, råvarer og varer under tilvirkning. Verdsettes til laveste av kostpris og virkelig verdi ved årsslutt." },
+      { q: "Hvordan telle varelageret?", a: "Fysisk telling ved regnskapsårets slutt (eller løpende med perpetuelt system). Dokumenteres med tellelister signert av teller og kontrollør." },
+      { q: "Hva er en åpningsbalanse?", a: "Balansen ved oppstart eller ved overgang til ny regnskapsfører. Grunnlaget for videre bokføring." },
+      { q: "Kan jeg bokføre fakturaer i utenlandsk valuta?", a: "Ja. Beløp omregnes til NOK etter dagskursen på fakturadato. Valutagevinster/-tap ved betaling føres på egen konto." },
+      { q: "Hva er en purregebyr?", a: "Gebyr ved forsinket betaling — inntil 1/10 av inkassosalæret (85 kr i 2026). Skal varsles i faktura eller ved første purring." },
     ],
   },
   {
     title: "MVA & Avgifter",
     items: [
-      { q: "Hva er MVA-kompensasjon?", a: "MVA-kompensasjon er en ordning der visse virksomheter — som ideelle organisasjoner og kommunale enheter — kan få refundert MVA på sine innkjøp. Ordningen er regulert av kompensasjonsloven. Avargo hjelper berettigede organisasjoner med å søke om og dokumentere MVA-kompensasjon." },
-      { q: "Hva er omvendt avgiftsplikt?", a: "Omvendt avgiftsplikt (reverse charge) betyr at det er kjøperen, ikke selgeren, som beregner og rapporterer MVA. Dette gjelder ved import av tjenester fra utlandet og ved kjøp av klimakvoter. Avargo sørger for korrekt håndtering av omvendt avgiftsplikt i regnskapet." },
-      { q: "Hva er frivillig MVA-registrering?", a: "Frivillig MVA-registrering lar bedrifter som normalt er unntatt MVA-plikt (f.eks. utleie av fast eiendom) registrere seg frivillig for å få fradrag for inngående MVA. Dette er vanlig for eiendomsselskaper som leier ut til MVA-pliktige leietakere. Avargo vurderer om frivillig registrering er lønnsomt for deg." },
-      { q: "Hva er MVA-satser i Norge?", a: "Norge har tre MVA-satser: 25 % (generell sats for de fleste varer og tjenester), 15 % (matvarer), og 12 % (persontransport, kino, museer, fornøyelsesparker og overnatting). Enkelte tjenester er fritatt for MVA, som helsetjenester, undervisning og finansielle tjenester." },
-      { q: "Hva er tolldeklarasjon og importavgifter?", a: "Ved import av varer til Norge skal det leveres tolldeklarasjon til Tolletaten. Du betaler importavgifter som inkluderer toll og importmoms (MVA). Satsene varierer etter varetype og opprinnelsesland. Avargo hjelper med korrekt tollbehandling og bokføring av importtransaksjoner." },
-      { q: "Hva er særavgifter?", a: "Særavgifter er avgifter på spesielle varer som alkohol, tobakk, sukker, drivstoff, strøm og CO₂-utslipp. Bedrifter som produserer eller importerer slike varer må registrere seg hos Skatteetaten og rapportere særavgifter. Avargo har erfaring med særavgiftsrapportering for relevante bransjer." },
+      { q: "Når er jeg MVA-pliktig?", a: "Når avgiftspliktig omsetning overstiger 50 000 kr i løpet av en 12-månedersperiode. Registrering skjer via Samordnet registermelding i Altinn." },
+      { q: "Hva er MVA-satsene i Norge?", a: "25 % (generell), 15 % (matvarer), 12 % (persontransport, overnatting, kino, museer). Enkelte tjenester er fritatt (helse, undervisning, finans)." },
+      { q: "Hvor ofte skal MVA rapporteres?", a: "Standard er to måneder per termin (6 terminer/år). Små virksomheter (under 1 MNOK) kan søke om årlig oppgave. Fristen er 1 måned og 10 dager etter terminslutt." },
+      { q: "Hva er omvendt avgiftsplikt?", a: "Kjøper — ikke selger — beregner og rapporterer MVA. Gjelder ved kjøp av tjenester fra utlandet og enkelte innenlandske ytelser (klimakvoter, gull)." },
+      { q: "Hva er frivillig MVA-registrering?", a: "Bedrifter som normalt er unntatt (f.eks. utleie av fast eiendom) kan registrere seg frivillig for å få fradrag for inngående MVA. Vanlig for næringseiendom." },
+      { q: "Hva er MVA-kompensasjon?", a: "Kommuner, fylkeskommuner og enkelte ideelle organisasjoner kan få refundert MVA på innkjøp gjennom MVA-kompensasjonsordningen." },
+      { q: "Hvordan behandles MVA ved eksport?", a: "Eksport av varer og tjenester ut av MVA-området er fritatt for utgående MVA (0-sats), men gir fortsatt fradrag for inngående MVA. Dokumentasjon på utførsel er påkrevd." },
+      { q: "Hva er importmoms?", a: "MVA som beregnes ved innførsel av varer. MVA-registrerte beregner og rapporterer selv i mva-meldingen (utsatt avregning)." },
+      { q: "Kan jeg få fradrag for MVA på bil?", a: "Personbiler: som hovedregel nei. Varebiler klasse 2 og lastebiler: ja, forutsatt bruk i avgiftspliktig virksomhet. Regelverket er strengt — spør regnskapsfører før kjøp." },
+      { q: "Hva er tolldeklarasjon?", a: "Innmelding av varer ved import/eksport til Tolletaten. TVINN eller Tolldeklarasjonssystemet brukes. Ved import beregnes toll og importmoms." },
+      { q: "Hva er særavgifter?", a: "Avgifter på spesifikke varer: alkohol, tobakk, sukker, drivstoff, elektrisk kraft og CO₂. Rapporteres månedlig i Særavgiftsmelding." },
+      { q: "Hva skjer hvis jeg leverer MVA-melding for sent?", a: "Skatteetaten kan ilegge tvangsmulkt (1 rettsgebyr per dag, maks 50 rettsgebyr). I tillegg kan det bli tilleggsavgift ved feil eller manglende betaling." },
+      { q: "Hva er null-oppgave?", a: "MVA-melding uten aktivitet. Skal likevel leveres innen fristen så lenge selskapet er MVA-registrert." },
+      { q: "Kan jeg slette meg fra MVA-registeret?", a: "Ja, dersom omsetningen har vært under 50 000 kr i minst 12 måneder, eller ved opphør av virksomhet. Sletting skjer via Samordnet registermelding." },
+      { q: "Hva er justering av inngående MVA?", a: "Ved endret bruk av kapitalvarer (typisk fast eiendom) må inngående MVA justeres over 10 år. Aktuelt ved salg, utleie eller bruksomlegging." },
+      { q: "MVA på bevertning — kan jeg fradragsføre?", a: "Nei, bevertning gir ikke rett til fradrag for inngående MVA, med unntak for kantine og kurs/konferanser med enkel servering." },
+      { q: "Hva er finansiell aktivitet og MVA?", a: "Finansielle tjenester (lån, forsikring, aksjemegling) er unntatt fra MVA. Det gir ikke rett til fradrag for inngående MVA på tilhørende kostnader." },
     ],
   },
   {
-    title: "Personvern & Compliance",
+    title: "Skatt & Skatteoptimalisering",
     items: [
-      { q: "Hva er GDPR og gjelder det min bedrift?", a: "GDPR (General Data Protection Regulation / personvernforordningen) gjelder alle bedrifter som behandler personopplysninger om personer i EU/EØS — uansett størrelse. Du må ha behandlingsgrunnlag, personvernerklæring, databehandleravtaler og rutiner for innsyn og sletting. Avargo sørger for at regnskapsdata behandles i henhold til GDPR." },
-      { q: "Hva er en databehandleravtale?", a: "En databehandleravtale regulerer forholdet mellom en virksomhet (behandlingsansvarlig) og en leverandør som behandler personopplysninger på vegne av virksomheten (databehandler). Alle regnskapskunder hos Avargo har en slik avtale som sikrer at data behandles trygt og lovlig." },
-      { q: "Hva er bokføringsloven og oppbevaringsplikten?", a: "Bokføringsloven krever at alle bokføringspliktige virksomheter oppbevarer regnskapsmateriale i minst 5 år etter regnskapsårets slutt. Primærdokumentasjon (fakturaer, bankbilag) og sekundærdokumentasjon (kontrakter, korrespondanse) skal lagres sikkert og være tilgjengelig for kontroll. Avargo håndterer arkivering i henhold til loven." },
-      { q: "Hva er internkontroll?", a: "Internkontroll er systematiske tiltak for å sikre at virksomheten oppfyller krav i lover og forskrifter — særlig HMS, personvern og regelverk for den aktuelle bransjen. Internkontrollforskriften pålegger alle norske virksomheter å ha et dokumentert system. Avargo tilbyr oppsett og vedlikehold av internkontrollsystem." },
-      { q: "Hva er hvitvaskingsloven og hvem gjelder den?", a: "Hvitvaskingsloven pålegger rapporteringspliktige (bl.a. regnskapsførere, revisorer, banker og advokater) å gjennomføre kundekontroll, overvåke transaksjoner og rapportere mistenkelige forhold til Økokrim. Avargo gjennomfører lovpålagt kundekontroll (KYC) som del av onboarding-prosessen." },
+      { q: "Hva er skattesatsen for AS?", a: "Selskapsskatten på overskudd er 22 % (2026). Utbytte til personlig aksjonær beskattes i tillegg med effektivt 37,84 % etter oppjustering." },
+      { q: "Når er fristen for skattemeldingen?", a: "AS: 31. mai. Enkeltpersonforetak (ENK): 31. mai (30. april for personer uten næring). MVA: 1 mnd + 10 dager etter terminslutt. A-melding: 5. i hver måned." },
+      { q: "Hva er skjermingsfradrag?", a: "Et skattefradrag på utbytte fra aksjer, beregnet som inngangsverdi × skjermingsrente. Reduserer effektiv skatt på utbytte. Ubenyttet fradrag kan fremføres." },
+      { q: "Hva er forskjellen mellom lønn og utbytte?", a: "Lønn: skattlegges progressivt (opptil 47,4 %) + arbeidsgiveravgift (14,1 %), men gir trygderettigheter. Utbytte: 37,84 % effektiv skatt, ingen AGA, men bygger ikke pensjon eller sykepenger." },
+      { q: "Hva er forskuddsskatt?", a: "Skatt AS betaler i to terminer (15. februar og 15. april året etter inntektsåret) basert på fjorårets grunnlag. Kan justeres opp/ned via egen søknad." },
+      { q: "Hva er SkatteFUNN?", a: "Skattefradrag for forsknings- og utviklingsprosjekter. 19 % fradrag av godkjente FoU-kostnader opptil 25 MNOK per år. Krever forhåndsgodkjenning fra Forskningsrådet." },
+      { q: "Hvilke fradrag kan et AS få?", a: "Kostnader til inntekts ervervelse: lønn, husleie, forsikring, avskrivninger, reise, kompetanseheving, forsikringer, tap på fordringer, FoU (SkatteFUNN), pensjon m.m." },
+      { q: "Kan jeg fradragsføre hjemmekontor?", a: "AS: leieavtale med eier på markedsvilkår gir fradrag i selskapet. ENK: standardfradrag 1 850 kr/år eller faktisk andel av bokostnader. Ansatt i eget AS: ikke standard, men mulig med bruksavtale." },
+      { q: "Hva er personinntekt for eier av ENK?", a: "Beregnet næringsinntekt som beskattes som lønn (trinnskatt + trygdeavgift 11,4 %). Grunnlag for sykepenger og pensjon." },
+      { q: "Hva er aksjonærmodellen?", a: "Modell for beskatning av utbytte og aksjegevinst hos personlige aksjonærer. Innebærer 37,84 % effektiv skatt etter skjermingsfradrag og oppjustering." },
+      { q: "Hva er fritaksmetoden?", a: "Regel som gjør utbytte og aksjegevinst mellom AS tilnærmet skattefritt (3 % skattlegges). Grunnlaget for holdingstrukturer i Norge." },
+      { q: "Bør jeg ha holdingselskap?", a: "Holdingselskap gir skattefri utbyttebehandling mellom selskapene, fleksibilitet ved reinvestering og enklere generasjonsskifte. Anbefales ofte når selskapet går med overskudd." },
+      { q: "Hva er trinnskatt?", a: "Progressiv skatt på personinntekt med 5 trinn (fra 1,7 % til 17,7 % i 2026). Kommer i tillegg til alminnelig skatt på 22 %." },
+      { q: "Hva er arbeidsgiveravgift?", a: "Avgift arbeidsgiver betaler av lønn — 14,1 % i sone 1. Reduseres i distriktssoner (helt ned til 0 % i tiltakssonen)." },
+      { q: "Hva er trygdeavgift?", a: "Avgift lønnstakere og næringsdrivende betaler for trygderettigheter: 7,8 % (lønn), 11,4 % (næring), 5,1 % (pensjon)." },
+      { q: "Hvordan reduserer jeg skatten lovlig?", a: "Utnytt fradrag (pensjon, FoU, hjemmekontor), balansér lønn/utbytte, invester i driftsmidler, bruk holdingstruktur, avsett til pensjon. Skatteplanlegging er lovlig — skatteunndragelse er ikke." },
+      { q: "Hva er aksjesparekonto (ASK)?", a: "Personlig konto for aksjer og fond der du kan bytte investeringer skattefritt. Skatt beregnes først ved uttak over innskutt beløp." },
+      { q: "Hva er formuesskatt?", a: "Skatt på nettoformue over bunnfradrag (1,76 MNOK i 2026, dobbelt for ektefeller). Sats: 1,0 % stat + 0,7 % kommune. Arbeidende kapital rabatteres." },
+      { q: "Hva er utbytteskatt?", a: "Skatt på utbytte fra AS til personlig aksjonær: 37,84 % effektivt (22 % × oppjusteringsfaktor 1,72) etter skjermingsfradrag." },
+      { q: "Hva er aksjonærregisteroppgaven (RF-1086)?", a: "Årlig oppgave til Skatteetaten som viser eierstruktur, kapitalendringer og utbytte. Frist 31. januar. Skal leveres av alle AS." },
+      { q: "Hva er restskatt og tilleggsforskudd?", a: "Restskatt: skatt som ikke er dekket av forskudd. Tilleggsforskudd: frivillig innbetaling innen 31. mai for å unngå rentetillegg." },
+      { q: "Hva er skatteklasse?", a: "Skatteklassene 1 og 2 er avskaffet fra 2018. I dag beregnes skatten individuelt for alle personer." },
+      { q: "Hva skjer ved bokettersyn?", a: "Skatteetaten kontrollerer regnskapet. Du plikter å fremlegge dokumentasjon og gi opplysninger. Avargo bistår i hele prosessen — fra korrespondanse til møter." },
+      { q: "Hva er tilleggsskatt?", a: "Straff for uriktige/ufullstendige opplysninger til Skatteetaten. Sats 20 % (standard) eller 40–60 % ved grov uaktsomhet/forsett. Kan påklages." },
+      { q: "Hva er koordineringsregler?", a: "Regler som forhindrer dobbeltbeskatning ved grensekryssende inntekt — skatteavtaler og fradrag for skatt betalt i utlandet." },
+    ],
+  },
+  {
+    title: "Lønn & A-melding",
+    items: [
+      { q: "Når skal lønn utbetales?", a: "Vanligvis månedlig med utbetaling siste virkedag i måneden, i tråd med arbeidsavtale og tariffavtale. Utbetalingsdato skal være fast og forutsigbar." },
+      { q: "Hva er A-melding?", a: "Månedlig rapportering til NAV, SSB og Skatteetaten om lønn, arbeidsforhold og skattetrekk. Frist er 5. i måneden etter lønnskjøring." },
+      { q: "Hva er skattetrekk?", a: "Forskuddstrekk arbeidsgiver holder tilbake fra lønn og betaler til Skatteetaten. Skjer etter skattekort hentet elektronisk fra Skatteetaten." },
+      { q: "Hva er skattekort?", a: "Elektronisk dokument som viser hvor mye arbeidsgiver skal trekke i skatt. Hentes automatisk fra Skatteetaten. Frikort utstedes ved lav forventet inntekt." },
+      { q: "Hva er feriepenger?", a: "Opptjenes med 10,2 % av bruttolønn (12 % med 5 uker ferie). Utbetales året etter — normalt i juni. Ansatte over 60 år får 2,5 % tillegg." },
+      { q: "Hva er arbeidsgiveravgift?", a: "Arbeidsgiveravgiften er 14,1 % i sone 1 (Oslo/øst) og lavere i distriktene. Beregnes av all bruttolønn inkl. feriepenger og naturalytelser." },
+      { q: "Hvordan beregnes overtid?", a: "Overtidstillegg er minst 40 % av ordinær timelønn. Kan avtales tatt ut som avspasering, men tillegget skal alltid utbetales som lønn." },
+      { q: "Hva er minstelønn i Norge?", a: "Norge har ikke generell minstelønn, men allmenngjorte tariffavtaler gjelder i bransjer som bygg, renhold, hotell/restaurant, godstransport, elektro og fiskeindustri." },
+      { q: "Hva er lønnsslipp?", a: "Skriftlig oversikt over lønnsutbetaling: bruttolønn, trekk, feriepenger, arbeidsgivers kostnader og netto utbetaling. Skal gis for hver lønnskjøring." },
+      { q: "Hva er naturalytelse?", a: "Ikke-kontant fordel: firmabil, elektronisk kommunikasjon, forsikring, treningsmedlemsskap, gaver. Skattlegges normalt som lønn hos mottaker." },
+      { q: "Hvordan beskattes firmabil?", a: "Sjablongmetoden: 30 % av bilens listepris opp til 351 700 kr + 20 % av overskytende. Blir del av skattepliktig lønn." },
+      { q: "Er treningsmedlemskap skattepliktig?", a: "Ja, som hovedregel. Unntak gjelder trening i arbeidsgivers lokaler, eller ved dokumentert forebyggende helsetiltak for hele bedriften." },
+      { q: "Kan bedriften dekke telefon skattefritt?", a: "Nei. Elektronisk kommunikasjon dekket av arbeidsgiver gir 4 392 kr/år skattepliktig fordel — uavhengig av faktisk kostnad (2026)." },
+      { q: "Hva er reisegodtgjørelse?", a: "Skattefri kompensasjon etter statens satser: 3,50 kr/km privatbil, diett 400 kr/døgn (uten overnatting) osv. Beløp over satsene beskattes som lønn." },
+      { q: "Hva er skattefri gave?", a: "Arbeidsgiver kan gi ansatte gaver skattefritt inntil 5 000 kr/år (2026), forutsatt at gaven ikke er kontanter eller gavekort som kan veksles inn." },
+      { q: "Hva er OTP?", a: "Obligatorisk tjenestepensjon. Alle bedrifter med ansatte skal ha OTP med minst 2 % innskudd av lønn mellom 1 og 12 G." },
+      { q: "Hva er lønnsopplysningsplikt?", a: "Arbeidsgivers plikt til å rapportere all lønn, godtgjørelse og fradrag korrekt i A-meldingen. Feil kan gi tilleggsavgift." },
+      { q: "Kan jeg betale lønn kontant?", a: "Nei, som hovedregel skal lønn utbetales til bankkonto. Kontantlønn over 10 000 kr per måned gir tap av fradragsrett hos arbeidsgiver." },
+      { q: "Hva er OTP-plikt for eier uten ansatte?", a: "AS uten andre ansatte har som hovedregel ikke OTP-plikt for eneste eier/daglig leder, men frivillig ordning anbefales." },
+      { q: "Hva er trekkfri diett?", a: "Diettgodtgjørelse etter statens satser er skattefri: 400 kr (uten overnatting), 634 kr (hybel/brakke), 940 kr (hotell). Krever dokumentasjon på formål og reise." },
+      { q: "Hva er sykepenger fra arbeidsgiver?", a: "Arbeidsgiver betaler sykepenger de første 16 kalenderdagene (arbeidsgiverperioden). Deretter overtar NAV. Krever egenmelding eller sykmelding." },
+      { q: "Hva er permitteringslønn?", a: "Arbeidsgiver betaler lønn de første 15 arbeidsdagene ved permittering (2026). Deretter kan ansatt søke dagpenger fra NAV." },
+      { q: "Hva er obligatorisk yrkesskadeforsikring?", a: "Alle arbeidsgivere med ansatte plikter å tegne yrkesskadeforsikring. Dekker skader og yrkessykdom. Manglende forsikring gir personlig ansvar." },
+      { q: "Kan jeg gi rentefritt lån til ansatt?", a: "Ja, men rentefordel opp til normrentesats (5,25 % i 2026) beskattes som lønn hos ansatt. Lån under 3/5 G er unntatt hvis kort løpetid (<1 år)." },
+      { q: "Hva er sluttvederlag?", a: "Kompensasjon ved oppsigelse — kan være skattefritt inntil 1,5 G ved oppsigelse fra arbeidsgivers side og alder over 50 år (særregler)." },
+    ],
+  },
+  {
+    title: "Arbeidsavtaler & Ansettelse",
+    items: [
+      { q: "Må jeg ha skriftlig arbeidsavtale?", a: "Ja. Arbeidsmiljøloven krever skriftlig avtale for alle arbeidsforhold. Ved varighet over 1 måned skal avtalen inngås senest 1 måned etter oppstart." },
+      { q: "Hva skal en arbeidsavtale inneholde?", a: "Partenes identitet, arbeidssted, stillingstittel og arbeidsoppgaver, oppstartsdato, prøvetid, lønn og godtgjørelser, arbeidstid, ferie, oppsigelsesfrist og tariffavtale." },
+      { q: "Hva er prøvetid?", a: "Prøveperiode med kortere oppsigelsesfrist (14 dager), maks 6 måneder. Må avtales skriftlig i arbeidsavtalen for å være gyldig." },
+      { q: "Kan jeg ansette midlertidig?", a: "Ja, ved vikariat, prosjekter, sesongarbeid eller når arbeidet er av midlertidig karakter. Generell adgang til midlertidig ansettelse ble avskaffet i 2022." },
+      { q: "Hvor lenge kan midlertidig ansettelse vare?", a: "Ved vikariat: så lenge behovet er reelt. Ved midlertidig karakter: opptil 3–4 år, deretter automatisk fast ansettelse (fireårsregelen)." },
+      { q: "Hva er innleie fra bemanningsbyrå?", a: "Bruk av arbeidstakere fra bemanningsforetak. Strengt regulert siden 2023 — kun tillatt ved vikariat, mellom bedrifter i konsern eller etter tariffavtale." },
+      { q: "Hva er fortrinnsrett?", a: "Rett for tidligere ansatte til å bli foretrukket ved nyansettelse i samme stilling innen 12 måneder. Gjelder ved nedbemanning og etter midlertidig ansettelse." },
+      { q: "Hva er drøftingsplikt?", a: "Arbeidsgivers plikt til å drøfte visse beslutninger med tillitsvalgt eller ansatt — f.eks. før oppsigelse, ved omorganisering eller nedbemanning." },
+      { q: "Kan arbeidsavtalen endres ensidig?", a: "Nei. Vesentlige endringer i arbeidsforhold (lønn, stilling, arbeidssted) krever enighet eller endringsoppsigelse med varsel." },
+      { q: "Hva er styringsrett?", a: "Arbeidsgivers rett til å lede, fordele og kontrollere arbeidet innenfor rammen av arbeidsavtalen og loven. Kan ikke brukes til vesentlige endringer." },
+      { q: "Hva er en tariffavtale?", a: "Kollektiv avtale mellom arbeidsgiver(-forening) og fagforening om lønn og arbeidsvilkår. Kan være direkte avtale eller allmenngjort etter loven." },
+      { q: "Må jeg ha tariffavtale?", a: "Nei, tariffavtale er frivillig. Men i allmenngjorte bransjer (bygg, renhold, hotell m.fl.) gjelder minstelønn og vilkår uansett." },
+      { q: "Kan jeg ha karantene i arbeidsavtalen?", a: "Ja, konkurranseklausul kan avtales men er sterkt begrenset: maks 1 år, må ha «særlig grunn», og arbeidsgiver må betale full lønnskompensasjon i perioden." },
+      { q: "Hva er en kundeklausul?", a: "Avtale som forbyr ansatt å ta med seg kunder etter avslutning. Gjelder maks 1 år, må være skriftlig og begrunnet i særlig behov." },
+      { q: "Hva er lærlingkontrakt?", a: "Avtale mellom lærling og lærebedrift om opplæring frem til fagbrev. Skal godkjennes av fylkeskommunen. Egen lønnstabell etter progresjon." },
+      { q: "Hva er en frilanser?", a: "Person som utfører oppdrag uten å være ansatt eller selvstendig næringsdrivende — f.eks. artister, tolker. Beskattes som lønnstaker uten arbeidsgiveravgiftsplikt for oppdragsgiver." },
+      { q: "Hva er forskjellen mellom oppdragsgiver og arbeidsgiver?", a: "Arbeidsgiver: ansettelsesforhold med styringsrett og trekk-/AGA-plikt. Oppdragsgiver: kjøper tjenester fra selvstendig næringsdrivende — som fakturerer med MVA." },
+      { q: "Kan jeg ansette utenlandske arbeidere?", a: "EØS-borgere: fritt, men registreres i Folkeregisteret. Ikke-EØS: krever oppholdstillatelse med rett til arbeid. Arbeidsgiver må rapportere til Skatteetaten." },
+      { q: "Hva er A1-attest?", a: "Bekreftelse fra opprinnelseslandet på at arbeidstaker er trygdedekket der ved utsending til Norge. Fritar for norsk trygdeavgift." },
+      { q: "Hva må jeg gjøre ved nyansettelse?", a: "Skriftlig arbeidsavtale, meld arbeidsforhold i A-melding, sett opp OTP og yrkesskadeforsikring, registrer i lønnssystem og hent skattekort." },
+    ],
+  },
+  {
+    title: "Sykefravær & Permisjon",
+    items: [
+      { q: "Hva er arbeidsgiverperioden?", a: "De første 16 kalenderdagene av sykefravær der arbeidsgiver betaler sykepenger. Deretter overtar NAV frem til 52 uker." },
+      { q: "Hva er egenmelding?", a: "Ansatt kan melde seg syk uten sykmelding i inntil 3 kalenderdager om gangen, maks 4 ganger på 12 måneder. IA-bedrifter: 8 dager, 24 ganger." },
+      { q: "Hvor mye får ansatt i sykepenger?", a: "100 % av lønn opp til 6 G (711 720 kr i 2026). Lønn over 6 G dekkes ikke av NAV, men mange arbeidsgivere kompenserer full lønn." },
+      { q: "Hvor lenge kan man være sykmeldt?", a: "Maks 52 uker i løpet av 3 år. Deretter kreves arbeidsavklaringspenger (AAP) fra NAV." },
+      { q: "Hva er sykefraværsoppfølging?", a: "Arbeidsgivers lovpålagte plan for oppfølging: samtale innen 4 uker, oppfølgingsplan, dialogmøte 1 (7 uker) og 2 (26 uker) med NAV." },
+      { q: "Hva er foreldrepenger?", a: "Stønad fra NAV ved fødsel og adopsjon: 49 uker med 100 % eller 59 uker med 80 % lønn. Krever opptjening (6 av 10 siste måneder)." },
+      { q: "Hvordan fordeles foreldrepermisjonen?", a: "Mødrekvote: 15 uker (100 %) / 19 (80 %). Fedrekvote: samme. Fellesperiode: 16/18 uker. 3 uker før fødsel er forbeholdt mor." },
+      { q: "Hva er svangerskapspermisjon?", a: "12 ukers permisjon før termin — 3 uker er forbeholdt mor. Foreldrepenger utbetales fra 3 uker før termin." },
+      { q: "Hva er omsorgspermisjon?", a: "Far/medmor har rett til 2 uker permisjon rundt fødsel — normalt ulønnet, men mange arbeidsgivere gir lønn (avtale/tariff)." },
+      { q: "Hva er sykt barn-dager?", a: "10 dager/år per forelder (15 fra 3 barn, 20 fra 4). Alenemor/-far: dobbelt. Gjelder til barnet fyller 12 år (18 år ved kronisk syke)." },
+      { q: "Hva er velferdspermisjon?", a: "Kortvarig permisjon ved uforutsette hendelser (dødsfall, alvorlig sykdom hos nære, flytting). Vanligvis lønnet i inntil 1–2 dager, jf. tariff." },
+      { q: "Hva er utdanningspermisjon?", a: "Etter 3 års ansettelse har ansatt rett til opptil 3 års ulønnet permisjon for utdanning som er yrkes-/næringsrelevant." },
+      { q: "Kan sykefravær føre til oppsigelse?", a: "I de første 12 måneders sykdom er ansatt vernet mot oppsigelse begrunnet i sykdom. Etter det kan oppsigelse vurderes, men saklig grunn kreves." },
+      { q: "Hva er tilrettelegging?", a: "Arbeidsgivers plikt til å tilpasse arbeidet ved redusert funksjonsevne — arbeidsoppgaver, tempo, utstyr, arbeidstid. Skal vurderes ved sykefravær." },
+      { q: "Hva er IA-avtale?", a: "Inkluderende arbeidsliv — avtale mellom arbeidsgiver, ansatte og NAV. Gir utvidet rett til egenmelding og tettere NAV-oppfølging." },
+    ],
+  },
+  {
+    title: "Ferie & Feriepenger",
+    items: [
+      { q: "Hvor mange feriedager har jeg krav på?", a: "Ferieloven: 25 virkedager (4 uker + 1 dag). De fleste tariffavtaler gir 30 virkedager (5 uker). Regnes lørdag som virkedag." },
+      { q: "Når kan jeg ta ferie?", a: "Hovedferie (3 uker) i perioden 1. juni – 30. september. Arbeidsgiver fastsetter tidspunkt, men skal drøfte med ansatt senest 2 måneder før." },
+      { q: "Hva er feriepengegrunnlaget?", a: "Sum av all lønn og trekkpliktige ytelser opptjent året før ferieåret (opptjeningsåret). Feriepenger, sluttvederlag og enkelte ytelser telles ikke med." },
+      { q: "Hvor mye er feriepenger?", a: "10,2 % (4 uker + 1 dag) eller 12 % (5 uker) av feriepengegrunnlaget. Ansatte over 60 år: +2,3/2,5 %." },
+      { q: "Når utbetales feriepenger?", a: "Normalt siste vanlige lønning før ferien, ofte i juni. Ved fratreden: siste lønning. Kan avtales månedlig utbetaling." },
+      { q: "Kan feriepenger utbetales i stedet for ferie?", a: "Nei. Ferien skal tas ut som fri. Unntak: opptil 2 uker kan overføres til neste ferieår etter skriftlig avtale." },
+      { q: "Hva skjer med ubrukt ferie?", a: "Ubrukt ferie kan overføres til neste år etter avtale, ellers har ansatt krav på økonomisk kompensasjon dersom arbeidsgiver ikke sørget for at ferie ble tatt." },
+      { q: "Kan jeg tvinge ansatt til å ta ferie?", a: "Ja, arbeidsgiver fastsetter feriedatoer. Ansatt har rett til 3 uker sammenhengende i hovedferieperioden og 1 uke sammenhengende ellers." },
+      { q: "Kan ferie tas ut ved sykdom?", a: "Blir ansatt syk før ferien, kan hele ferien utsettes med legeerklæring. Ved sykdom under ferie: utsettes for de dagene som ikke ble avviklet, med legeerklæring." },
+      { q: "Har jeg krav på ferie første året?", a: "Ja, men uten opptjente feriepenger (med mindre du hadde inntekt året før). Ansatt kan da søke om utsettelse eller motta 4 uker uten lønn." },
+      { q: "Hva er ferieåret vs. opptjeningsåret?", a: "Opptjeningsåret: kalenderåret hvor feriepenger opptjenes. Ferieåret: året etter, hvor ferien avvikles og feriepenger utbetales." },
+      { q: "Feriepenger ved oppsigelse?", a: "Alle opptjente feriepenger — også for inneværende års opptjening — utbetales på siste lønning. Skattlegges som ordinær lønn." },
+      { q: "Feriepenger av sykepenger?", a: "Ja, arbeidsgivers sykepenger de første 16 dagene gir feriepengeopptjening. Sykepenger fra NAV: begrenset til første 48 dager per opptjeningsår." },
+    ],
+  },
+  {
+    title: "Pensjon & Forsikring",
+    items: [
+      { q: "Hva er OTP?", a: "Obligatorisk tjenestepensjon. Alle arbeidsgivere med minst én ansatt i minst 75 % stilling må ha en tjenestepensjonsordning. Minimum 2 % av lønn mellom 1 og 12 G." },
+      { q: "Hva er innskuddspensjon?", a: "Vanligste OTP-form. Arbeidsgiver betaler inn en prosentandel av lønnen. Sluttbeløpet avhenger av innskudd og avkastning." },
+      { q: "Hva er ytelsespensjon?", a: "Pensjonsordning som garanterer en bestemt utbetaling ved pensjonsalder (typisk 66 % av sluttlønn). Sjeldnere i dag pga. kostnad og risiko for arbeidsgiver." },
+      { q: "Hva er AFP?", a: "Avtalefestet pensjon. Livslang tilleggspensjon for ansatte i tariffbundne bedrifter. Krever kvalifikasjon (7 av 9 år i tariffbedrift ved 62 år)." },
+      { q: "Må jeg tegne yrkesskadeforsikring?", a: "Ja. Alle arbeidsgivere med ansatte plikter å tegne yrkesskadeforsikring. Uten forsikring: arbeidsgiver personlig ansvarlig for skader." },
+      { q: "Hva dekker yrkesskadeforsikring?", a: "Skader og sykdom pådratt i arbeid: medisinsk behandling, tap av inntekt, varig mén, dødsfallserstatning. Utbetales av forsikringsselskap." },
+      { q: "Er behandlingsforsikring skattepliktig?", a: "Ja, som hovedregel skattepliktig fordel med mindre den er en del av bedriftshelsetjeneste eller retter seg mot bestemte yrkesrelaterte lidelser." },
+      { q: "Hva er sykelønnsforsikring?", a: "Frivillig forsikring som dekker arbeidsgivers kostnader ved langvarig sykefravær utover arbeidsgiverperioden — særlig relevant for lønn over 6 G." },
+      { q: "Kan jeg spare i egen pensjon (IPS)?", a: "Ja, individuell pensjonssparing gir skattefradrag opp til 15 000 kr/år. Utbetales tidligst fra 62 år og beskattes som pensjon." },
+      { q: "Hva er pensjonsopptjening?", a: "Fra 2010 tjener alle nordmenn pensjonspoeng basert på inntekt (opp til 7,1 G). Utbetales fra Folketrygden fra 62 år." },
+      { q: "Hva er 1 G?", a: "Grunnbeløpet i folketrygden — 118 620 kr fra mai 2025. Justeres årlig 1. mai og brukes i beregning av trygdeytelser og pensjon." },
+    ],
+  },
+  {
+    title: "Oppsigelse & Avvikling av arbeidsforhold",
+    items: [
+      { q: "Hva er saklig grunn for oppsigelse?", a: "Oppsigelse fra arbeidsgiver må ha saklig grunn i virksomhetens, arbeidsgivers eller arbeidstakers forhold. Vurderingen omfatter forholdsmessighet og alternativer." },
+      { q: "Hva er oppsigelsestid?", a: "Standard etter arbeidsmiljøloven: 1 mnd. Etter 5 år: 2 mnd. Etter 10 år: 3 mnd. Over 50 år og 10 år ansiennitet: 4–6 mnd. Prøvetid: 14 dager." },
+      { q: "Hvordan sier jeg opp en ansatt?", a: "Skriftlig oppsigelse, drøftingsmøte i forkant, saklig grunn dokumentert. Oppsigelsen skal inneholde informasjon om rett til å kreve forhandling og reise søksmål." },
+      { q: "Hva er avskjed?", a: "Umiddelbar avslutning uten oppsigelsestid — kun ved grovt mislighold (tyveri, vold, grov illojalitet). Strengt lovregulert og krever solid dokumentasjon." },
+      { q: "Hva er suspensjon?", a: "Midlertidig fritakelse for arbeidsplikten (med lønn) mens saken utredes. Skal være begrunnet og tidsbegrenset, normalt inntil 3 måneder." },
+      { q: "Har ansatt krav på attest?", a: "Ja. Alle ansatte har krav på skriftlig attest ved fratreden. Skal minst inneholde stilling, ansettelsesperiode og arbeidsområde." },
+      { q: "Hva er sluttavtale?", a: "Avtale mellom arbeidsgiver og ansatt om avslutning — ofte mot fratredelsesvederlag. Anbefales å inngå med juridisk bistand." },
+      { q: "Hva er nedbemanning?", a: "Oppsigelse pga. driftsinnskrenking. Krever: dokumentert behov, saklig utvelgelseskrets og -kriterier, drøfting med tillitsvalgte, individuell drøftingssamtale." },
+      { q: "Hva er utvelgelseskriterier ved nedbemanning?", a: "Vanlig: ansiennitet, kompetanse, sosiale forhold. Ansiennitetsprinsippet står sterkt i tariffbedrifter (LO/NHO)." },
+      { q: "Kan gravid sies opp?", a: "Nei, gravide er sterkt vernet. Oppsigelse i graviditet, foreldrepermisjon eller opp til 12 mnd etter fødsel må begrunnes med at grunnen ikke skyldes graviditeten/permisjonen." },
+      { q: "Hva er permittering?", a: "Midlertidig fritak fra arbeidsplikten pga. mangel på arbeid. Krever saklig grunn og skriftlig varsel med minst 14 dagers varsel (2 dager ved uforutsett)." },
+      { q: "Hvor lenge kan man permittere?", a: "Arbeidsgiverperiode: 15 dager (2026). Deretter kan permittering vare inntil 26 uker i løpet av 18 måneder uten lønnsplikt." },
+      { q: "Kan ansatt si opp under prøvetid?", a: "Ja, med 14 dagers oppsigelsestid (eller kortere om avtalt). Arbeidsgiver kan si opp ved manglende tilpasning, faglig dyktighet eller pålitelighet." },
+      { q: "Hva er stillingsvern?", a: "Ansattes rett til ikke å bli oppsagt uten saklig grunn. Grunnleggende prinsipp i arbeidsretten. Brudd gir rett til å stå i stilling og eventuelt erstatning." },
+      { q: "Kan ansatt jobbe hos konkurrent etter oppsigelse?", a: "Ja, med mindre gyldig konkurranseklausul er inngått. Klausulen kan gjelde maks 1 år og krever full lønnskompensasjon." },
+    ],
+  },
+  {
+    title: "HMS & Arbeidsmiljø",
+    items: [
+      { q: "Hva er HMS?", a: "Helse, miljø og sikkerhet. Systematisk arbeid for å sikre trygge arbeidsforhold og forhindre skader. Regulert av arbeidsmiljøloven og internkontrollforskriften." },
+      { q: "Hva er internkontroll?", a: "Systematiske tiltak for å oppfylle krav i HMS-lovgivning: kartlegging, tiltak, oppfølging og dokumentasjon. Alle norske virksomheter må ha et internkontrollsystem." },
+      { q: "Må vi ha verneombud?", a: "Ja, alle bedrifter med minst 5 ansatte skal ha verneombud. Ved færre kan det avtales at ordningen ikke gjelder. Bedrifter over 50 ansatte: arbeidsmiljøutvalg." },
+      { q: "Hva er en risikovurdering?", a: "Systematisk gjennomgang av arbeidsplassen for å identifisere farer og vurdere risiko. Lovpålagt og skal oppdateres jevnlig og ved endringer." },
+      { q: "Hva er bedriftshelsetjeneste?", a: "Godkjent tjeneste som bistår arbeidsgiver med HMS. Obligatorisk i utvalgte bransjer (bygg, industri, helse, jordbruk m.fl.)." },
+      { q: "Hva er en HMS-håndbok?", a: "Dokumentasjon av HMS-arbeidet: rutiner, ansvar, risikovurderinger og avvikssystem. Skal være tilgjengelig for alle ansatte." },
+      { q: "Hva gjør jeg ved arbeidsulykke?", a: "Yt førstehjelp, sikre stedet, meld til NAV (skademelding) og Arbeidstilsynet ved alvorlige skader. Dokumenter og gjennomgå for forebygging." },
+      { q: "Hva er varsling?", a: "Ansattes rett til å varsle om kritikkverdige forhold. Arbeidsmiljøloven verner mot gjengjeldelse. Bedrifter med >5 ansatte skal ha varslingsrutiner." },
+      { q: "Hva er trakassering på jobb?", a: "Uønsket adferd som krenker verdighet og skaper et truende, fiendtlig eller nedverdigende arbeidsmiljø. Arbeidsgiver har handleplikt ved varsel." },
+      { q: "Hvor mange timer kan jeg jobbe per uke?", a: "Alminnelig arbeidstid: 9 t/dag og 40 t/uke. Tariffavtaler har ofte 37,5 t/uke. Overtid: maks 200 t/år (avtalefestet unntak: 400 t)." },
+      { q: "Har jeg krav på pause?", a: "Ja, minst 30 min pause hvis arbeidsdagen er over 5,5 t. Pauser regnes normalt ikke som arbeidstid med mindre du ikke fritt kan forlate arbeidsstedet." },
+      { q: "Hva er nattarbeid?", a: "Arbeid mellom kl. 21 og 06. Kun tillatt når arbeidets art gjør det nødvendig. Egne krav til helsekontroll og maksimal arbeidstid." },
+    ],
+  },
+  {
+    title: "Årsregnskap & Rapportering",
+    items: [
+      { q: "Når skal årsregnskapet leveres?", a: "Innen 31. juli året etter regnskapsåret, til Regnskapsregisteret i Brønnøysund. Elektronisk levering via Altinn." },
+      { q: "Hva består årsregnskapet av?", a: "Resultatregnskap, balanse, kontantstrømoppstilling (for større selskaper), noter og årsberetning (for større enn små)." },
+      { q: "Hva er en «liten virksomhet»?", a: "Regnskapsloven: ikke over to av tre grenser — salgsinntekter 70 MNOK, balansesum 35 MNOK, gjennomsnittlig 50 årsverk. Da gjelder forenklede regler." },
+      { q: "Trenger jeg årsberetning?", a: "Kun store og mellomstore selskaper. Små virksomheter er fritatt (fra 2018), men noten om fortsatt drift skal fortsatt fremgå i regnskapet." },
+      { q: "Hva er noter i regnskapet?", a: "Tilleggsinformasjon som utdyper postene i resultat og balanse — regnskapsprinsipper, avskrivning, lån, egenkapitalbevegelse, lønn til ledelse m.m." },
+      { q: "Hva er tvangsmulkt fra Brønnøysund?", a: "Sanksjon ved forsinket årsregnskap. 1 rettsgebyr/dag i 8 uker, deretter dobbelt. Etter 6 mnd forsinkelse: tvangsoppløsning av selskapet." },
+      { q: "Hvem har innsyn i årsregnskapet?", a: "Alle. Årsregnskap er offentlig og tilgjengelig via proff.no, purehelp.no eller Brønnøysundregistrene." },
+      { q: "Kan jeg endre et innlevert årsregnskap?", a: "Ja, ved feil kan omgjort årsregnskap leveres inntil neste årsregnskap. Ved vesentlige feil kreves generalforsamlingsvedtak." },
+      { q: "Hva er A-melding-frist?", a: "Månedlig, senest 5. i måneden etter lønnskjøring. Skal inneholde all lønnsutbetaling, skattetrekk og arbeidsgiveravgift." },
+      { q: "Hva er terminvis rapportering?", a: "MVA rapporteres normalt hver 2. måned (6 terminer/år). Frist: 1 måned og 10 dager etter terminslutt." },
+      { q: "Hva er RF-1086?", a: "Aksjonærregisteroppgaven. Rapporterer eiere, aksjekapitalendringer og utbytte. Frist 31. januar. Grunnlag for skjermingsfradrag." },
+      { q: "Hva er tredjepartsopplysninger?", a: "Innmelding av opplysninger til Skatteetaten om andre — f.eks. renter til bank, kjøp/salg av aksjer, utbetalinger til frilansere. Skjer i A-melding og separate skjemaer." },
+      { q: "Hva er offentlig regnskap?", a: "Årsregnskap som er levert til Regnskapsregisteret og gjort tilgjengelig for allmennheten. Grunnlaget for kredittvurdering og analyse." },
+    ],
+  },
+  {
+    title: "CFO & Strategisk rådgivning",
+    items: [
+      { q: "Hva er CFO-as-a-Service?", a: "Strategisk finansiell ledelse fra senioreksperter — uten å ansette en CFO på heltid. Kapitalstruktur, investor-kommunikasjon, budsjett, scenarioanalyse og beslutningsstøtte." },
+      { q: "Når trenger man en CFO?", a: "Ved investeringsrunder, exit, fusjon, kraftig vekst, styrerettet rapportering eller restrukturering. CFO-as-a-Service gir seniorkompetanse akkurat når det trengs." },
+      { q: "Regnskapsfører vs. CFO — hva er forskjellen?", a: "Regnskapsfører håndterer løpende bokføring, rapportering og compliance. CFO jobber strategisk med kapital, styring og beslutninger på ledernivå." },
+      { q: "Hva er budsjett og prognose?", a: "Budsjett: plan for inntekter og kostnader. Prognose: løpende oppdatering basert på faktiske tall og markedsutvikling. Grunnlag for styring." },
+      { q: "Hva er KPI-rapportering?", a: "Målestokk for bedriftens ytelse: bruttomargin, kundeanskaffelseskostnad, churn, EBITDA. Skreddersydde dashboards gir sanntidsoversikt." },
+      { q: "Hva er cashflow-styring?", a: "Sikring av tilstrekkelig likviditet: innbetalingskontroll, utbetalingsplanlegging, kredittidsstyring og prognoser." },
+      { q: "Hva er due diligence?", a: "Grundig gjennomgang av selskapets finansielle, juridiske og operasjonelle forhold — typisk ved kjøp/salg/investering. Avdekker risiko og grunnlag for forhandling." },
+      { q: "Hva er verdivurdering?", a: "Estimering av selskapets verdi ved salg, investering eller skatteformål. Metoder: DCF, multipler (P/E, EV/EBITDA), substansverdi." },
+      { q: "Hva er styrerapportering?", a: "Månedlig/kvartalsvis rapport som gir styret grunnlag for beslutninger: økonomi, drift, KPI, risiko og status på strategiske initiativ." },
+    ],
+  },
+  {
+    title: "Valg av regnskapssystem",
+    items: [
+      { q: "Hvilket regnskapsprogram bør jeg velge?", a: "Avhenger av størrelse, bransje og behov. Vanlige valg: Tripletex, Fiken, Visma eAccounting, PowerOffice Go, Xledger. Avargo er systemuavhengig." },
+      { q: "Hva er Tripletex?", a: "Norges mest brukte skybaserte system for SMB. Regnskap, fakturering, lønn, prosjekt og tid i én løsning. Sterk API-støtte." },
+      { q: "Hva er Fiken?", a: "Enkelt regnskapssystem for ENK og små AS. Automatisk bokføring, bankintegrasjon og MVA-rapportering. Passer bedrifter med begrenset volum." },
+      { q: "Hva er PowerOffice Go?", a: "Norskutviklet ERP med regnskap, fakturering, lønn, tid og prosjekt. Passer for voksende bedrifter med behov for full plattform." },
+      { q: "Hva er Xledger?", a: "Skybasert ERP for mellomstore og større. Automatisert bokføring, konsolidering, budsjett og avansert rapportering på tvers av selskaper." },
+      { q: "Hva er Visma eAccounting?", a: "Skybasert Visma-system for SMB. Fakturering, bilagsregistrering, bankintegrasjon og god integrasjon med Visma Lønn og Expense." },
+      { q: "Kan jeg bytte regnskapssystem?", a: "Ja. Prosessen omfatter eksport, kontoplanmapping, import og kvalitetskontroll. Avargo migrerer sømløst mellom alle ledende systemer." },
+      { q: "Hva bør jeg se etter i et regnskapssystem?", a: "Skybasert tilgang, bankintegrasjon, OCR, MVA-støtte, fakturering, lønn, API, brukervennlighet, pris og skalerbarhet." },
+      { q: "Er skybasert regnskap trygt?", a: "Ja. Ledende systemer bruker bankgrad kryptering, MFA, automatisk backup og følger GDPR. Ofte sikrere enn lokale installasjoner." },
+    ],
+  },
+  {
+    title: "Integrasjoner & Automatisering",
+    items: [
+      { q: "Hva er bankintegrasjon?", a: "Direktekobling mellom regnskapssystem og bankkonto. Transaksjoner hentes automatisk og matches mot fakturaer — sanntidsoversikt uten manuell inntasting." },
+      { q: "Hva er EHF-faktura?", a: "Elektronisk Handelsformat — Norges standard for e-faktura. Obligatorisk til offentlig sektor. Automatisk mottak og bokføring." },
+      { q: "Hva er OCR-fakturaflyt?", a: "Optical Character Recognition leser fakturaer og kvitteringer og legger dem klar til bokføring — beløp, dato, leverandør og kontonummer identifiseres automatisk." },
+      { q: "Kan regnskapet integreres med nettbutikk?", a: "Ja. Shopify, WooCommerce, Magento og andre kan synkronisere ordrer, betalinger og varelager direkte til regnskapet." },
+      { q: "Hva er API-integrasjon?", a: "Teknisk grensesnitt som lar systemer utveksle data automatisk — CRM, faktureringsplattform, lønn, kassesystem og regnskap." },
+      { q: "Kan jeg automatisere fakturering?", a: "Ja. Gjentakende fakturaer, abonnementer og fastprisavtaler kan settes opp med automatisk generering, sending og bokføring." },
+      { q: "Hva er Peppol?", a: "Internasjonalt nettverk for e-fakturering. Standard for offentlig sektor i Norge og økende bruk mellom private virksomheter." },
+      { q: "Kan Vipps/Stripe/Klarna kobles til regnskapet?", a: "Ja. Betalingsløsninger integreres slik at transaksjoner, gebyrer og valutaomregning bokføres automatisk." },
     ],
   },
   {
     title: "Fakturering & Inkasso",
     items: [
-      { q: "Hva skal en faktura inneholde?", a: "En gyldig faktura i Norge skal inneholde: selgers navn, adresse og organisasjonsnummer, kjøpers navn og adresse, fakturanummer, dato, beskrivelse av varen/tjenesten, beløp ekskl. og inkl. MVA, MVA-beløp spesifisert per sats, betalingsfrist og kontonummer. Avargo sørger for at alle fakturaer oppfyller kravene i bokføringsloven." },
-      { q: "Hva er kreditnota?", a: "En kreditnota er et dokument som korrigerer eller kansellerer en tidligere utstedt faktura — helt eller delvis. Den brukes ved feil på faktura, returer, prisavslag eller kansellerte ordre. Kreditnotaen skal referere til original faktura og bokføres som en reduksjon av omsetning." },
-      { q: "Når kan jeg sende inkassovarsel?", a: "Du kan sende inkassovarsel tidligst 14 dager etter forfall på fakturaen, eller 14 dager etter at purring med 14 dagers betalingsfrist er sendt. Inkassovarselet må oppfylle kravene i inkassoloven, inkludert minimum 14 dagers betalingsfrist. Avargo har integrasjon med inkassopartner for automatisert purring og inkasso." },
-      { q: "Hva er forfallsdato og betalingsbetingelser?", a: "Forfallsdato er den siste dagen kunden kan betale uten forsinkelsesgebyr. Vanlige betalingsbetingelser i Norge er 14 eller 30 dager. Du kan avtale egne betingelser med kunden. Ved forsinket betaling har du krav på forsinkelsesrente fastsatt av Finansdepartementet. Avargo automatiserer purring og oppfølging av utestående fakturaer." },
-      { q: "Hva er e-faktura til privatpersoner?", a: "E-faktura (eFaktura) er en elektronisk faktura sendt direkte til kundens nettbank. Kunden godkjenner og betaler i nettbanken uten å taste inn KID-nummer. For å sende eFaktura må du registrere deg hos Mastercard Payment Services. Avargo hjelper med oppsett av eFaktura og automatisk distribusjon." },
+      { q: "Hva skal en gyldig faktura inneholde?", a: "Selgers navn/adresse/orgnr med MVA-tillegg, kjøpers navn/adresse, fakturanummer, dato, beskrivelse, beløp eks./inkl. MVA, MVA per sats, forfallsdato og kontonummer." },
+      { q: "Hva er KID-nummer?", a: "Kunde-ID-nummer som identifiserer fakturaen ved betaling. Sikrer automatisk avstemming mellom innbetaling og faktura." },
+      { q: "Når kan jeg sende purring?", a: "Tidligst 14 dager etter forfall. Purringen skal gi minst 14 dagers ny frist. Purregebyr maks 1/10 av inkassosalæret (85 kr i 2026)." },
+      { q: "Når kan jeg sende inkassovarsel?", a: "Tidligst 14 dager etter forfall (eller etter purring med 14 dagers frist). Skal oppfylle inkassolovens krav og gi minst 14 dagers betalingsfrist." },
+      { q: "Hva er en kreditnota?", a: "Dokument som korrigerer eller kansellerer en tidligere faktura — helt eller delvis. Skal referere til originalfaktura og bokføres som reduksjon av omsetning." },
+      { q: "Hva er forsinkelsesrente?", a: "Rente ved forsinket betaling. Sats: 11,25 % (per 2026, fastsettes halvårlig). Kan kreves fra første dag etter forfall uten særskilt avtale." },
+      { q: "Kan jeg fakturere før arbeidet er utført?", a: "Ja, som forskuddsfaktura. MVA må da bokføres på fakturadato. Tjenester som skjer over tid kan periodiseres i regnskapet." },
+      { q: "Hva er eFaktura til privatpersoner?", a: "Elektronisk faktura direkte i kundens nettbank. Krever avtale med Mastercard Payment Services eller lignende leverandør." },
+      { q: "Hva er avtalegiro?", a: "Fast trekkavtale mellom kunde og virksomhet — trekk skjer automatisk fra kundens konto på forfallsdato." },
+      { q: "Kan jeg fakturere uten MVA?", a: "Ja, dersom du ikke er MVA-registrert (omsetning under 50 000 kr), eller ved fritatte tjenester (helse, undervisning, finans)." },
     ],
   },
   {
     title: "Oppstart & Gründer",
     items: [
-      { q: "Hva trenger jeg for å starte bedrift i Norge?", a: "For å starte bedrift trenger du: en forretningsidé, valg av selskapsform (ENK eller AS), registrering i Brønnøysundregistrene, åpning av bedriftskonto, eventuell MVA-registrering og regnskapsfører. Avargo har en komplett oppstartspakke som inkluderer alt — fra stiftelse til løpende regnskap." },
-      { q: "Hva koster det å starte et AS?", a: "Kostnader for å starte et AS inkluderer: 30 000 kr i aksjekapital (som blir selskapets midler), ca. 5 570 kr i registreringsgebyr til Brønnøysundregistrene, og eventuelt honorar til advokat/regnskapsfører for stiftelsesdokumenter. Avargo hjelper med stiftelsen til en fast pris." },
-      { q: "Hva er Innovasjon Norge og kan de hjelpe meg?", a: "Innovasjon Norge er en statlig aktør som tilbyr finansiering (lån, tilskudd), rådgivning og nettverk for bedrifter med vekstpotensial. De tilbyr oppstartslån, innovasjonslån, markedsavklaringstilskudd og mentorprogrammer. Avargo hjelper deg med søknader og utarbeidelse av forretningsplan." },
-      { q: "Hva er etablererstøtte?", a: "Etablererstøtte er offentlige tilskudd og veiledningsprogrammer for gründere. Kommuner og fylkeskommuner tilbyr ofte kurs, mentorordninger og tilskudd. I tillegg finnes nasjonale ordninger gjennom Innovasjon Norge, Forskningsrådet og SIVA. Avargo kjenner de relevante ordningene og hjelper med søknader." },
-      { q: "Hva er forretningsplan og trenger jeg det?", a: "En forretningsplan beskriver forretningsideen, markedet, konkurrenter, strategi, organisasjon og økonomi. Den er nødvendig for å søke finansiering, men er også et verdifullt styringsverktøy. Avargo bistår med utarbeidelse av forretningsplan med vekt på den finansielle delen — budsjett, likviditetsprognose og break-even-analyse." },
-      { q: "Bør jeg velge ENK eller AS som gründer?", a: "Det avhenger av risiko, inntektsnivå og planer. AS anbefales dersom du forventer omsetning over 500 000 kr, ønsker begrenset ansvar, planlegger å ta inn partnere/investorer eller ansette. ENK passer dersom risikoen er lav og inntektene moderate. Avargo gir deg en konkret anbefaling basert på din situasjon." },
-      { q: "Hva er MVA-registrering og når må jeg registrere meg?", a: "Du må registrere deg i Merverdiavgiftsregisteret når omsetningen de siste 12 månedene overstiger 50 000 kr. Registreringen gjøres via Altinn. Etter registrering må du beregne og kreve inn MVA, og rapportere annenhver måned. Du kan også forhåndsregistrere deg dersom du har store oppstartsinvesteringer." },
+      { q: "Hvordan starter jeg et AS?", a: "Utarbeid stiftelsesdokument, sett inn aksjekapital (min 30 000 kr) på bedriftskonto, registrer i Foretaksregisteret via Altinn. Avargo håndterer hele prosessen." },
+      { q: "Hva koster det å starte et AS?", a: "Aksjekapital 30 000 kr (blir selskapets midler), registreringsgebyr ca. 5 570 kr, eventuelle honorar. Avargo tilbyr stiftelse til fast pris." },
+      { q: "Bør jeg velge ENK eller AS?", a: "AS: ved forventet omsetning > 500 000 kr, ønske om ansvarsbegrensning, ansatte eller investorer. ENK: enkel drift, lav risiko, moderate inntekter." },
+      { q: "Hva er personlig ansvar i ENK?", a: "Eier hefter personlig og ubegrenset for gjeld og forpliktelser. Ved konkurs kan private eiendeler tas beslag i." },
+      { q: "Hva er ansvarsbegrensning i AS?", a: "Aksjonærer hefter kun med innskutt aksjekapital. Personlig formue er beskyttet — unntatt ved styrets uaktsomhet eller ulovlig utbytte." },
+      { q: "Hva er Innovasjon Norge?", a: "Statlig aktør som tilbyr finansiering, tilskudd og rådgivning til bedrifter med vekstpotensial. Vurder oppstartslån, innovasjonstilskudd og mentorprogram." },
+      { q: "Hva er forretningsplan?", a: "Beskrivelse av forretningsidé, marked, konkurrenter, strategi, organisasjon og økonomi. Nødvendig ved finansiering, verdifullt som styringsverktøy." },
+      { q: "Trenger jeg bedriftskonto?", a: "Ja, obligatorisk for AS. For ENK: sterkt anbefalt for å skille privat og forretning, forenkler bokføring og skattekontroll." },
+      { q: "Når må jeg MVA-registrere meg?", a: "Når avgiftspliktig omsetning overstiger 50 000 kr i løpet av 12 måneder. Kan også forhåndsregistreres ved store startinvesteringer." },
+      { q: "Hva er stiftelsesutgifter?", a: "Kostnader ved opprettelse av selskapet: registrering, notarialbekreftelse, honorar, første regnskapsføring. Fradragsberettiget i selskapet." },
     ],
   },
   {
-    title: "Rapportering & Frister",
+    title: "Selskapsform & Selskapsrett",
     items: [
-      { q: "Hva er de viktigste regnskapsfristene?", a: "Viktige frister i Norge: A-melding den 5. i hver måned, MVA-rapportering annenhver måned (10. i måneden etter termin), forskuddsskatt 15. februar og 15. april, skattemelding for AS 31. mai, skattemelding for ENK 30. april, årsregnskap til Brønnøysund 31. juli. Avargo holder styr på alle frister." },
-      { q: "Hva skjer om jeg leverer for sent?", a: "Forsinkede leveranser kan medføre tvangsmulkt, forsinkelsesgebyr og tilleggsskatt. For MVA-rapportering kan Skatteetaten ilegge tvangsmulkt på opptil 1/4 av avgiftsbeløpet. For forsinket årsregnskap kan Brønnøysundregistrene ilegge tvangsoppløsning. Avargo leverer alltid i tide." },
-      { q: "Hva er skattemelding for selskaper?", a: "Skattemeldingen for selskaper er en årlig innrapportering til Skatteetaten som inneholder næringsoppgaven (RF-1167), selskapets skattbare inntekt, eierskapsopplysninger, aksjonærregisteroppgave og evt. andre vedlegg. Fristen er 31. mai. Avargo utarbeider skattemeldingen og leverer den elektronisk via Altinn." },
-      { q: "Hva er aksjonærregisteroppgaven (RF-1086)?", a: "Aksjonærregisteroppgaven rapporterer endringer i aksjekapital, eierskap og aksjeutbytte i løpet av året. Den leveres til Skatteetaten innen 31. januar. Opplysningene brukes til å beregne skjermingsfradrag og dokumentere aksjeeiernes skatteposisjon. Avargo utarbeider og leverer RF-1086 som del av standardleveransen." },
-      { q: "Hva er Altinn og hvordan brukes det?", a: "Altinn er Norges digitale plattform for innrapportering til offentlige myndigheter. Gjennom Altinn leverer du MVA-rapporter, skattemeldinger, A-meldinger, årsregnskap og andre pliktige skjemaer. Du logger inn med BankID. Avargo har fullmakt til å levere på vegne av kundene sine via Altinn." },
-      { q: "Hva er termin og terminoppgjør?", a: "En termin er en rapporteringsperiode for MVA — i Norge normalt 2 måneder (6 terminer per år). Terminoppgjøret innebærer å beregne differansen mellom utgående og inngående MVA for perioden og rapportere til Skatteetaten. Overskytende MVA utbetales, underskudd innbetales. Avargo håndterer terminoppgjør automatisk." },
+      { q: "Hvilke selskapsformer finnes i Norge?", a: "AS, ASA, ENK, ANS, DA, SA, NUF, Stiftelse, IKS. Mest brukt: AS (60 %) og ENK (35 %)." },
+      { q: "Hva er et AS?", a: "Aksjeselskap — egen juridisk person med begrenset ansvar. Min. 30 000 kr i aksjekapital. Passer for de fleste bedrifter." },
+      { q: "Hva er et ASA?", a: "Allmennaksjeselskap — for børsnotering og selskaper med mange aksjonærer. Min. 1 MNOK i aksjekapital og strengere krav." },
+      { q: "Hva er et ANS?", a: "Ansvarlig selskap — deltakerne hefter solidarisk og ubegrenset for gjelden. Krever minst to eiere. Skattlegges hos deltakerne." },
+      { q: "Hva er et DA?", a: "Selskap med delt ansvar — hver deltaker hefter for sin andel av gjelden (f.eks. 50/50). Ellers likt ANS." },
+      { q: "Hva er en generalforsamling?", a: "AS-eiernes øverste myndighet. Vedtar årsregnskap, velger styre, endrer vedtekter, beslutter utbytte. Ordinær holdes innen 6 mnd etter regnskapsårets slutt." },
+      { q: "Hva er styrets ansvar?", a: "Overordnet forvaltning, tilsyn med daglig leder, budsjett, strategi. Personlig erstatningsansvar ved grov uaktsomhet." },
+      { q: "Hvor mange styremedlemmer må et AS ha?", a: "Minst 1. Styret må ha minst 3 medlemmer hvis selskapet har mer enn 3 MNOK i aksjekapital." },
+      { q: "Hva er en aksjonæravtale?", a: "Frivillig avtale mellom aksjonærer som regulerer eierskifte, forkjøpsrett, stemmegivning, utbytte og konfliktløsning. Sterkt anbefalt ved flere eiere." },
+      { q: "Hva er kapitalforhøyelse?", a: "Økning av aksjekapital — via nytegning (nye aksjer) eller fondsemisjon (fra fri egenkapital). Krever generalforsamlingsvedtak." },
+      { q: "Hva er emisjon?", a: "Utstedelse av nye aksjer — enten rettet (bestemte investorer) eller med fortrinnsrett (eksisterende eiere)." },
+      { q: "Hva er utbytte?", a: "Utdeling fra AS til aksjonærer av opptjent egenkapital. Krever generalforsamlingsvedtak og at selskapet har fri egenkapital." },
+      { q: "Hva er en fusjon?", a: "Sammenslåing av to eller flere selskaper. Kan gjennomføres skattefritt etter fusjonsreglene i aksje- og skatteloven." },
+      { q: "Hva er en fisjon?", a: "Oppdeling av et selskap i to eller flere selskaper — kan være skattefritt etter fisjonsreglene." },
+      { q: "Kan jeg ha holdingselskap over AS?", a: "Ja, holdingselskap-struktur gir skattefri overføring av utbytte mellom AS-ene og fleksibilitet for reinvestering. Vanlig ved lønnsomme selskaper." },
     ],
   },
   {
     title: "Finans & Investering",
     items: [
-      { q: "Hva er kapitalforhøyelse?", a: "Kapitalforhøyelse er en økning av aksjekapitalen i et AS — enten ved nytegning (nye aksjer) eller fondsemisjon (overføring fra egenkapital). Det brukes til å hente inn mer kapital fra eksisterende eller nye aksjonærer. Prosessen krever generalforsamlingsvedtak og registrering i Foretaksregisteret. Avargo håndterer den regnskapsmessige og dokumentasjonsmessige siden." },
-      { q: "Hva er emisjon?", a: "Emisjon er utstedelse av nye aksjer i et selskap for å hente inn kapital. Rettet emisjon rettes mot bestemte investorer, mens fortrinnsrettsemisjon gir eksisterende aksjonærer rett til å tegne nye aksjer. Emisjonens vilkår fastsettes av generalforsamlingen. Avargo bistår med verdsettelse, dokumentasjon og regnskapsmessig behandling." },
-      { q: "Hva er selskapsvurdering/verdivurdering?", a: "Verdivurdering er en estimering av selskapets verdi — brukt ved salg, investering, fusjon eller skattemessige formål. Vanlige metoder inkluderer kontantstrømanalyse (DCF), multippelmetoder (P/E, EV/EBITDA), og substansverdi. Avargo tilbyr finansiell verdivurdering som del av CFO-tjenestene." },
-      { q: "Hva er konsolidert regnskap?", a: "Konsolidert regnskap (konsernregnskap) er et samlet regnskap for et morselskap og dets datterselskaper, presentert som om de var én økonomisk enhet. Konsernregnskap eliminerer interne transaksjoner og fordringer. Det er pålagt for selskaper som kontrollerer ett eller flere datterselskaper. Avargo har erfaring med konsernkonsolidering." },
-      { q: "Hva er EBITDA?", a: "EBITDA står for Earnings Before Interest, Taxes, Depreciation and Amortization — resultat før renter, skatt, avskrivninger og amortiseringer. Det er et mye brukt nøkkeltall for å sammenligne lønnsomhet mellom selskaper uavhengig av kapitalstruktur og avskrivningspolicy. Avargo beregner og rapporterer EBITDA som del av finansiell rapportering." },
-      { q: "Hva er likviditetsbudsjett?", a: "Et likviditetsbudsjett viser forventede inn- og utbetalinger over en periode — typisk 12 måneder. Det avdekker om og når selskapet kan få likviditetsproblemer, og gir grunnlag for tiltak som kassakreditt, betalingsutsettelse eller kapitalinnhenting. Avargo utarbeider likviditetsprognoser som del av CFO-tjenestene." },
+      { q: "Hva er EBITDA?", a: "Earnings Before Interest, Taxes, Depreciation and Amortization. Resultat før finansposter og av-/nedskrivninger. Sammenligner drift på tvers av selskaper." },
+      { q: "Hva er EBIT?", a: "Earnings Before Interest and Tax — driftsresultatet før finansposter og skatt. Måler operativ inntjening." },
+      { q: "Hva er kontantstrømanalyse (DCF)?", a: "Verdivurderingsmetode basert på nåverdien av forventet fremtidig kontantstrøm. Standard ved verdsettelse av selskaper." },
+      { q: "Hva er likviditetsbudsjett?", a: "Prognose over inn- og utbetalinger over 12 måneder. Avdekker fremtidige likviditetsutfordringer." },
+      { q: "Hva er soliditet?", a: "Egenkapital i forhold til totalkapital. Måler selskapets evne til å tåle tap. Kredittvurderes ofte som > 30 % = god." },
+      { q: "Hva er kassakreditt?", a: "Bankkreditt som gir tilgang til likviditet ved behov. Renter betales kun av benyttet beløp. Fleksibel finansiering av arbeidskapital." },
+      { q: "Hva er factoring?", a: "Salg av kundefordringer til finansieringsselskap. Gir umiddelbar likviditet, men reduserer margin. Kan være med eller uten regress." },
+      { q: "Hva er leasing?", a: "Langsiktig leieavtale for driftsmidler. Operasjonell leasing: leiekostnad. Finansiell leasing: aktiveres i balansen." },
+      { q: "Hva er konsolidert regnskap?", a: "Konsernregnskap som samler morselskap og datterselskaper som én økonomisk enhet. Interne transaksjoner elimineres." },
+      { q: "Hva er goodwill?", a: "Merverdi ved oppkjøp utover netto identifiserbare eiendeler. Testes årlig for verdifall, avskrives ikke lineært etter IFRS." },
     ],
   },
   {
     title: "Avslutning & Avvikling",
     items: [
-      { q: "Hvordan legger jeg ned et aksjeselskap?", a: "Nedleggelse av AS skjer enten gjennom frivillig avvikling (generalforsamlingsvedtak, avviklingsstyre, kreditorvarsel, sluttoppgjør) eller tvangsoppløsning. Frivillig avvikling tar normalt 3-6 måneder og krever kunngjøring med 6 ukers kreditorfrist. Avargo håndterer avviklingsregnskap, skattemelding og sluttoppgjør." },
-      { q: "Hva er fusjon og fisjon?", a: "Fusjon er sammenslåing av to eller flere selskaper til ett. Fisjon er oppdeling av et selskap i to eller flere. Begge prosessene kan gjennomføres skattefritt dersom reglene i aksjeloven og skatteloven følges. Avargo bistår med planlegging, regnskapsmessig behandling og dokumentasjon." },
-      { q: "Hva skjer med skatten ved salg av selskap?", a: "Ved salg av aksjer i et AS betaler selgende aksjonær (privatperson) skatt på gevinsten med en effektiv sats på ca. 37,84 % etter oppjustering. Dersom selger er et holdingselskap, er gevinsten tilnærmet skattefri under fritaksmetoden. Avargo hjelper med å strukturere salget på den mest skatteeffektive måten." },
-      { q: "Hva er generasjonsskifte i bedriften?", a: "Generasjonsskifte innebærer overdragelse av bedriften til neste generasjon — gjennom gave, salg eller arv. Det krever skatteplanlegging, verdivurdering og eventuelt aksjonæravtale. Avargo hjelper med å planlegge generasjonsskiftet slik at overføringen skjer smidig og skatteeffektivt." },
+      { q: "Hvordan legger jeg ned et AS?", a: "Frivillig avvikling: generalforsamlingsvedtak, avviklingsstyre, kreditorvarsel (6 uker), sluttoppgjør og sletting. Tar 3–6 måneder." },
+      { q: "Hva er avviklingsregnskap?", a: "Sluttregnskapet ved avvikling. Viser realisering av eiendeler, oppgjør av gjeld og fordeling til aksjonærer." },
+      { q: "Hva er tvangsoppløsning?", a: "Sletting av selskap fra Foretaksregisteret ved brudd på lovkrav — f.eks. manglende årsregnskap i 6 mnd. Kan gjenopprettes ved retting." },
+      { q: "Hva skjer ved konkurs?", a: "Bostyrer overtar forvaltningen, realiserer eiendeler og fordeler til kreditorer etter prioritet. Selskapet oppløses etter avslutning." },
+      { q: "Hva er personlig konkurs?", a: "Konkurs for enkeltperson (typisk ENK-eier). Krever åpning ved tingretten. Etter avslutning gjenstår gjeld i inntil 3 år før gjeldsordning kan søkes." },
+      { q: "Hva skjer med skatten ved salg av AS?", a: "Personlig aksjonær: 37,84 % effektiv gevinstskatt. Holdingselskap: tilnærmet skattefritt under fritaksmetoden." },
+      { q: "Hva er generasjonsskifte?", a: "Overdragelse til neste generasjon gjennom gave, salg eller arv. Krever verdivurdering, aksjonæravtale og skatteplanlegging." },
+      { q: "Kan jeg legge selskapet «i dvale»?", a: "Ja, selskapet kan være aktivt uten drift, men må fortsatt levere årsregnskap, skattemelding og A-melding (om aktuelt) — ellers risiko for tvangsoppløsning." },
+    ],
+  },
+  {
+    title: "Personvern & Compliance",
+    items: [
+      { q: "Hva er GDPR?", a: "EUs personvernforordning. Regulerer behandling av personopplysninger. Krever rettslig grunnlag, personvernerklæring, databehandleravtaler og rutiner for innsyn/sletting." },
+      { q: "Hva er en databehandleravtale?", a: "Kontrakt mellom behandlingsansvarlig og databehandler som regulerer behandling av personopplysninger. Obligatorisk etter GDPR art. 28." },
+      { q: "Hva er bokføringsloven?", a: "Norsk lov som stiller krav til bokføring, dokumentasjon og oppbevaring. Gjelder alle bokføringspliktige — 5 års oppbevaring som hovedregel." },
+      { q: "Hva er hvitvaskingsloven?", a: "Krever rapporteringspliktige (bl.a. regnskapsførere) å gjennomføre kundekontroll (KYC), overvåke transaksjoner og rapportere mistenkelige forhold til Økokrim." },
+      { q: "Hva er reell rettighetshaver?", a: "Fysisk person som eier eller kontrollerer selskapet — direkte eller indirekte. Skal identifiseres og registreres etter hvitvaskingsloven." },
+      { q: "Hva er KYC?", a: "Know Your Customer. Kundeidentifikasjon som del av hvitvaskingsregelverket. Utføres ved oppstart og løpende gjennom kundeforholdet." },
+      { q: "Kan personopplysninger lagres i skyen?", a: "Ja, forutsatt at leverandøren tilbyr tilstrekkelige garantier og databehandleravtale er inngått. Overføring utenfor EØS krever spesielle grunnlag." },
     ],
   },
 ];
@@ -263,14 +451,16 @@ const FAQ = () => {
   return (
     <>
       <Helmet>
-        <title>Vanlige spørsmål om regnskap og skatt | Avargo</title>
-        <meta name="description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering. Alt du trenger å vite — samlet på ett sted." />
+        <title>Vanlige spørsmål om regnskap og HR | Avargo</title>
+        <meta name="description" content={`Over ${allFaqs.length} svar om regnskap, skatt, lønn, HR, MVA, arbeidsrett og selskapsrett. Alt du trenger å vite — samlet på ett sted.`} />
         <link rel="canonical" href="https://avargo.no/faq" />
-        <meta property="og:title" content="Vanlige spørsmål om regnskap og skatt | Avargo" />
-        <meta property="og:description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering — samlet på ett sted." />
+        <meta property="og:title" content="Vanlige spørsmål om regnskap og HR | Avargo" />
+        <meta property="og:description" content={`Over ${allFaqs.length} svar om regnskap, skatt, lønn, HR og selskapsrett — samlet på ett sted.`} />
         <meta property="og:url" content="https://avargo.no/faq" />
-        <meta name="twitter:title" content="Vanlige spørsmål om regnskap og skatt | Avargo" />
-        <meta name="twitter:description" content="Over 100 svar om regnskapsfører, skatt, lønn, MVA, selskapsrett og fakturering — samlet på ett sted." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Vanlige spørsmål om regnskap og HR | Avargo" />
+        <meta name="twitter:description" content={`Over ${allFaqs.length} svar om regnskap, skatt, lønn, HR og selskapsrett — samlet på ett sted.`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
@@ -295,10 +485,10 @@ const FAQ = () => {
             <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5">Ofte stilte spørsmål</p>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl leading-[1.05] mb-6">
               Alt du lurer på om{" "}
-              <span className="italic text-gradient-rose">regnskap.</span>
+              <span className="italic text-gradient-rose">regnskap og HR.</span>
             </h1>
             <p className="text-muted-foreground font-light text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-10">
-              Over {allFaqs.length} svar på spørsmål om regnskapsfører, skatt, lønn, systemer, integrasjoner og rådgivning. Søk eller bla gjennom kategoriene nedenfor.
+              Over {allFaqs.length} svar på spørsmål om regnskap, skatt, lønn, HR, arbeidsrett, selskapsrett og rådgivning. Søk eller bla gjennom kategoriene nedenfor.
             </p>
             <div className="relative max-w-md mx-auto">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
@@ -360,24 +550,27 @@ const FAQ = () => {
                         >
                           <button
                             onClick={() => setOpenIndex(isOpen ? null : key)}
-                            className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                            className="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-left group"
                           >
-                            <span className="text-sm font-medium pr-4">{item.q}</span>
+                            <h3 className="font-heading text-base md:text-lg text-foreground/90 group-hover:text-primary transition-colors">
+                              {item.q}
+                            </h3>
                             <ChevronDown
                               size={16}
                               className={`shrink-0 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                             />
                           </button>
-                          {isOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              transition={{ duration: 0.3 }}
-                              className="px-6 pb-5"
-                            >
-                              <p className="text-sm text-muted-foreground font-light leading-relaxed">{item.a}</p>
-                            </motion.div>
-                          )}
+                          <div
+                            className={`grid transition-all duration-500 ease-out ${
+                              isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                            }`}
+                          >
+                            <div className="overflow-hidden">
+                              <p className="px-5 md:px-6 pb-5 md:pb-6 text-muted-foreground text-sm md:text-base font-light leading-relaxed">
+                                {item.a}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       );
                     })}
@@ -386,28 +579,6 @@ const FAQ = () => {
               </AnimatedSection>
             );
           })}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 md:py-32 border-t border-border/10 text-center relative">
-        <div className="absolute inset-0 ambient-glow opacity-25" />
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-              Fant du ikke svaret ditt?
-            </h2>
-             <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-               En av våre statsautoriserte regnskapsførere kommer tilbake til deg raskt. Helt uforpliktende.
-             </p>
-             <Link
-               to="/kontakt"
-               className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-             >
-               Snakk med en regnskapsfører
-              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-            </Link>
-          </AnimatedSection>
         </div>
       </section>
     </>
