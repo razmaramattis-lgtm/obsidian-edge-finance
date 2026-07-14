@@ -152,7 +152,7 @@ const Skattekalender = () => {
 
   // Calendar feed URL for subscriptions (Google/Outlook/phone)
   const feedUrl = useMemo(() => {
-    const base = `${supabase.supabaseUrl}/functions/v1/tax-deadlines`;
+    const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tax-deadlines`;
     const params = new URLSearchParams();
     params.set("format", "ics");
     params.set("all", "true");
