@@ -450,6 +450,7 @@ const App = () => (
                             <Route path="/ressurser/skattekalender" element={<Skattekalender />} />
                             <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
                             <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
+                            <Route path="/ressurser/protokollgenerator" element={<Protokollgenerator />} />
                             <Route path="/nyheter" element={<BlogListing />} />
                             <Route path="/faq" element={<FAQ />} />
                             <Route path="/nyhet/:slug" element={<BlogPost />} />
