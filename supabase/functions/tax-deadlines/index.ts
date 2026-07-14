@@ -5,6 +5,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const CAT_LABELS: Record<Category, string> = {
+  mva: "MVA",
+  skatt: "Skatt",
+  arbeidsgiver: "Arbeidsgiver",
+  tredjepartsopplysninger: "Tredjepartsopplysninger",
+  saravgift: "Særavgift",
+  regnskap: "Regnskap",
+};
+
+const TYPE_LABELS: Record<CompanyType, string> = {
+  as: "AS",
+  enk: "ENK",
+  arbeidsgiver: "Arbeidsgiver",
+};
+
 type CompanyType = "as" | "enk" | "arbeidsgiver";
 type Category = "mva" | "skatt" | "arbeidsgiver" | "tredjepartsopplysninger" | "saravgift" | "regnskap";
 
@@ -493,15 +508,139 @@ function generateDeadlines(monthsAhead: number = 12) {
   });
 }
 
+function icsEscape(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "");
+}
+
+function icsFold(line: string): string {
+  if (line.length <= 75) return line;
+  const parts: string[] = [];
+  let i = 0;
+  while (i < line.length) {
+    const chunk = i === 0 ? line.slice(i, i + 75) : " " + line.slice(i, i + 74);
+    parts.push(chunk);
+    i += i === 0 ? 75 : 74;
+  }
+  return parts.join("\r\n");
+}
+
+function icsLine(name: string, value: string): string {
+  return icsFold(`${name}:${icsEscape(value)}`);
+}
+
+function icsDateProp(d: Date): string {
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const hours = String(d.getUTCHours()).padStart(2, "0");
+  const minutes = String(d.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(d.getUTCSeconds()).padStart(2, "0");
+  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+}
+
+function uidForDeadline(d: Deadline): string {
+  const base = `${d.date}-${d.category}-${d.title}`;
+  // simple stable hash
+  let hash = 0;
+  for (let i = 0; i < base.length; i++) {
+    hash = ((hash << 5) - hash + base.charCodeAt(i)) | 0;
+  }
+  const hex = Math.abs(hash).toString(16).padStart(8, "0");
+  return `avargo-tax-${d.date}-${hex}@avargo.no`;
+}
+
+function generateIcs(deadlines: Deadline[], filterTypes: CompanyType[]): string {
+  const now = new Date();
+  const typeText = filterTypes.length > 0
+    ? filterTypes.map(t => TYPE_LABELS[t]).join(", ")
+    : "Alle selskapsformer";
+
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Avargo//Skattekalender//NO",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    icsFold(`X-WR-CALNAME:Skattefrister ${typeText} – Avargo`),
+    `X-WR-TIMEZONE:Europe/Oslo`,
+    icsFold(`X-WR-CALDESC:Frister fra Skatteetaten for ${typeText.toLowerCase()}. Oppdatert automatisk.`),
+    "BEGIN:VTIMEZONE",
+    "TZID:Europe/Oslo",
+    "BEGIN:STANDARD",
+    "DTSTART:19701025T030000",
+    "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
+    "TZOFFSETFROM:+0200",
+    "TZOFFSETTO:+0100",
+    "TZNAME:CET",
+    "END:STANDARD",
+    "BEGIN:DAYLIGHT",
+    "DTSTART:19700329T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
+    "TZOFFSETFROM:+0100",
+    "TZOFFSETTO:+0200",
+    "TZNAME:CEST",
+    "END:DAYLIGHT",
+    "END:VTIMEZONE",
+  ];
+
+  for (const d of deadlines) {
+    const [year, month, day] = d.date.split("-").map(Number);
+    const startDate = new Date(year, month - 1, day);
+    const nextDate = new Date(startDate);
+    nextDate.setDate(startDate.getDate() + 1);
+    const dateStamp = startDate.toISOString().split("T")[0].replace(/-/g, "");
+    const endStamp = nextDate.toISOString().split("T")[0].replace(/-/g, "");
+    const typesText = d.types.map(t => TYPE_LABELS[t]).join(", ");
+
+    lines.push("BEGIN:VEVENT");
+    lines.push(`DTSTART;VALUE=DATE:${dateStamp}`);
+    lines.push(`DTEND;VALUE=DATE:${endStamp}`);
+    lines.push(icsLine("SUMMARY", d.title));
+    const descriptionParts = [
+      d.description,
+      `Gjelder: ${typesText}`,
+      `Kategori: ${CAT_LABELS[d.category]}`,
+      d.url,
+    ].filter(Boolean);
+    lines.push(icsLine("DESCRIPTION", descriptionParts.join("\\n\\n")));
+    lines.push(icsLine("URL", d.url));
+    lines.push(icsLine("CATEGORIES", CAT_LABELS[d.category]));
+    lines.push(`UID:${uidForDeadline(d)}`);
+    lines.push(`DTSTAMP:${icsDateProp(now)}`);
+    lines.push("STATUS:CONFIRMED");
+    lines.push("TRANSP:TRANSPARENT");
+    lines.push("END:VEVENT");
+  }
+
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json().catch(() => ({}));
-    const limit = body.limit || 10;
-    const filterTypes: string[] = body.types || [];
-    const filterCategories: string[] = body.categories || [];
-    const allDeadlines = body.all === true;
+    const url = new URL(req.url);
+    const isGet = req.method === "GET";
+
+    const body = isGet ? {} : await req.json().catch(() => ({}));
+    const getParam = (name: string) => url.searchParams.get(name);
+    const getArray = (name: string): string[] => {
+      const raw = getParam(name);
+      if (!raw) return [];
+      return raw.split(",").map(s => s.trim()).filter(Boolean);
+    };
+
+    const limit = isGet ? Number(getParam("limit") || "10") : (body.limit || 10);
+    const filterTypes: string[] = isGet ? getArray("types") : (body.types || []);
+    const filterCategories: string[] = isGet ? getArray("categories") : (body.categories || []);
+    const allDeadlines = isGet ? getParam("all") === "true" : body.all === true;
+    const format = isGet ? getParam("format") : body.format;
 
     let deadlines = generateDeadlines(allDeadlines ? 12 : 6);
 
@@ -513,6 +652,20 @@ serve(async (req) => {
 
     if (filterCategories.length > 0) {
       deadlines = deadlines.filter(d => filterCategories.includes(d.category));
+    }
+
+    if (format === "ics") {
+      const ics = generateIcs(deadlines, filterTypes as CompanyType[]);
+      const fileName = filterTypes.length > 0
+        ? `avargo-skattefrister-${filterTypes.join("-")}.ics`
+        : "avargo-skattefrister.ics";
+      return new Response(ics, {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "text/calendar; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${fileName}"`,
+        },
+      });
     }
 
     return new Response(JSON.stringify({
