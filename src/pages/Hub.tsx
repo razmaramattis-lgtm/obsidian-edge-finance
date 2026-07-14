@@ -206,10 +206,8 @@ const Hub = () => {
         </div>
       </section>
 
-      {/* ═══ SWITCH CHECK ═══ */}
-      <SwitchCheckSection />
-
       {/* ═══ FAQ ═══ */}
+
       <HubFAQ />
 
 
