@@ -80,6 +80,27 @@ async function slaOppOrgnr(orgnr: string) {
   return await res.json();
 }
 
+type BrregTreff = {
+  organisasjonsnummer: string;
+  navn: string;
+  forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
+  organisasjonsform?: { kode?: string; beskrivelse?: string };
+};
+
+async function sokBrreg(q: string): Promise<BrregTreff[]> {
+  const clean = q.trim();
+  if (!clean) return [];
+  const isOrgnr = /^\d[\d\s]{7,}$/.test(clean);
+  const url = isOrgnr
+    ? `https://data.brreg.no/enhetsregisteret/api/enheter?organisasjonsnummer=${clean.replace(/\s/g, "")}`
+    : `https://data.brreg.no/enhetsregisteret/api/enheter?navn=${encodeURIComponent(clean)}&size=8`;
+  const res = await fetch(url);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data?._embedded?.enheter as BrregTreff[]) || [];
+}
+
+
 // ============================================================
 // UI-hjelpere
 // ============================================================
