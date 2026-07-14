@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SwitchCheckDialog from "./SwitchCheckDialog";
+import switchCheckImage from "@/assets/switch-check.jpg";
 
 const benefits = [
   "Få en tydelig plan for overtagelse og ansvar",
@@ -73,7 +74,7 @@ const SwitchCheckSection = () => {
             </div>
           </motion.div>
 
-          {/* Visual — no photo, built from shapes */}
+          {/* Visual — editorial photograph */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -82,19 +83,19 @@ const SwitchCheckSection = () => {
             className="relative"
           >
             <div className="relative aspect-[4/3] md:aspect-[16/12] rounded-3xl overflow-hidden border border-border/15 bg-gradient-to-br from-muted/30 via-card to-muted/20">
+              <img
+                src={switchCheckImage}
+                alt="Rådgiver gjennomgår regnskapet for en bedrift"
+                width={1200}
+                height={912}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {/* Dark gradient overlay for readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
               {/* Ambient glows */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-56 h-56 bg-secondary/5 rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl mix-blend-screen" />
 
-              {/* Abstract figure silhouette */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative">
-                  {/* Head */}
-                  <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-b from-primary/20 to-primary/5 border border-primary/10 mx-auto mb-2 md:mb-3" />
-                  {/* Shoulders */}
-                  <div className="w-40 h-24 md:w-56 md:h-32 rounded-t-[3rem] bg-gradient-to-b from-secondary/15 to-secondary/5 border border-secondary/10" />
-                </div>
-              </div>
 
               {/* Floating quiz card */}
               <motion.div
