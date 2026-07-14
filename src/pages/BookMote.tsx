@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Users, Megaphone, Cpu, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
+import { Calculator, Users, ChevronLeft, ChevronRight, CheckCircle2, Calendar as CalIcon, Clock, ArrowRight, ShieldCheck, Search, Building2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfWeek, isBefore, isSameDay, startOfDay } from "date-fns";
 import { nb } from "date-fns/locale";
