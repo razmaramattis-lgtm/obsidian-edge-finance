@@ -72,7 +72,7 @@ export const varslingsrutinerConfig: GeneratorConfig = {
       fields: [
         { id: "ackDeadlineDays", label: "Bekreftelsesfrist (virkedager)", type: "text", helpText: "Antall virkedager innen mottak av varsel skal bekreftes skriftlig til varsleren. Vanlig er 3 virkedager." },
         { id: "investigationDeadlineDays", label: "Undersøkelsesfrist (virkedager)", type: "text", helpText: "Antall virkedager for å ferdigstille undersøkelse av varselet. Kan forlenges ved komplekse saker med skriftlig begrunnelse." },
-        { id: "externalChannel", label: "Eksternt varslingsverktøy", type: "text", placeholder: "F.eks. Whistlelink, BDO varsling", helpText: "Navn på eventuelt eksternt, uavhengig varslingsverktøy. Sikrer anonymitet og uavhengig behandling. Anbefalt for bedrifter med 50+ ansatte." },
+        { id: "externalChannel", label: "Eksternt varslingsverktøy", type: "text", placeholder: "F.eks. Whistlelink", helpText: "Navn på eventuelt eksternt, uavhengig varslingsverktøy. Sikrer anonymitet og uavhengig behandling. Anbefalt for bedrifter med 50+ ansatte." },
         { id: "externalChannelUrl", label: "URL eksternt verktøy", type: "text", helpText: "Nettadressen til det eksterne varslingsverktøyet, så ansatte vet hvor de finner det." },
         { id: "anonymousReporting", label: "Tillat anonym varsling", type: "checkbox", helpText: "Om ansatte kan varsle anonymt. Anonym varsling kan gjøre undersøkelse vanskeligere, men bør tillates for å senke terskelen." },
         { id: "whistleblowerTraining", label: "Opplæring i varsling", type: "select", options: ["Årlig", "Halvårlig", "Ved ansettelse", "Ved behov"], helpText: "Hvor ofte ansatte skal gjennomgå opplæring i varslingsrutiner. Inkluderer hva man kan varsle om og hvordan." },
