@@ -440,7 +440,7 @@ const Protokollgenerator = () => {
                 <h2 className="font-heading text-2xl md:text-3xl mb-6">{currentSteg?.tittel}</h2>
                 <div className="space-y-5">{renderSteg()}</div>
 
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/20">
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/20 gap-2">
                   <button
                     onClick={forrigeSteg}
                     disabled={activeDocIdx === 0 && stegIdx === 0}
@@ -448,22 +448,36 @@ const Protokollgenerator = () => {
                   >
                     <ArrowLeft size={14} /> Forrige
                   </button>
-                  <button
-                    onClick={nesteSteg}
-                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-all"
-                  >
-                    {stegIdx === steg.length - 1 && activeDocIdx === docs.length - 1 ? "Til ferdigstilling" : "Neste"}
-                    <ArrowRight size={14} />
-                  </button>
+                  <div className="flex items-center gap-3">
+                    {canSkipCurrent && (
+                      <button
+                        onClick={nesteSteg}
+                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+                        title="Hopp over dette steget — du kan f.eks. gå rett til å velge kun konsernbidrag eller kun daglig leder."
+                      >
+                        <SkipForward size={12} /> Hopp over
+                      </button>
+                    )}
+                    <button
+                      onClick={nesteSteg}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-all"
+                    >
+                      {stegIdx === steg.length - 1 && activeDocIdx === docs.length - 1 ? "Til ferdigstilling" : "Neste"}
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Live preview */}
-              <div className="hidden lg:block h-[80vh] rounded-2xl overflow-hidden border border-border/20 bg-white">
-                <PDFViewer width="100%" height="100%" showToolbar={false}>
-                  <ProtokollDocument profile={profile} doc={activeDoc} />
-                </PDFViewer>
-              </div>
+              {/* Live preview med endringsindikator */}
+              <LivePreviewPanel
+                profile={profile}
+                doc={activeDoc}
+                changeTick={changeTick}
+                lastChangeLabel={lastChangeLabel}
+                changedSaker={changedSaker}
+                profilePulseTick={profilePulseTick}
+              />
             </div>
           )}
 
