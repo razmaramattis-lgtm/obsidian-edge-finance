@@ -638,8 +638,8 @@ export function ProtokollDocument({ profile, doc }: { profile: CompanyProfile; d
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {content}
         <Footer />
+        {content}
       </Page>
     </Document>
   );
