@@ -35,7 +35,7 @@ const industries = [
   { icon: GraduationCap, name: "Utdanning & Kurs", slug: "utdanning", tagline: "Du lærer bort — vi holder orden", short: "Kursarrangører og e-læringsplattformer — vi navigerer MVA-fritak og tilskudd for deg." },
   { icon: Scale, name: "Juridisk & Advokat", slug: "juridisk", tagline: "Du håndterer juss — vi håndterer regnskapet", short: "Klientmidler, timeregistrering og partnerkompensasjon — presist og compliant." },
   { icon: Palette, name: "Arkitektur & Design", slug: "arkitektur", tagline: "Du tegner fremtiden — vi holder orden", short: "Prosjektregnskap og lønnsomhetsanalyser per oppdrag for kreative bransjer." },
-  { icon: Megaphone, name: "Markedsføring & Reklame", slug: "markedsforing", tagline: "Du bygger merkevarer — vi bygger bunnlinjen", short: "Kundelønnsomhet, mediaspend og frilanserhonorarer — byråregnskap som gir oversikt." },
+  
   { icon: UserPlus, name: "Bemanning & Rekruttering", slug: "bemanning", tagline: "Du finner folkene — vi ordner tallene", short: "Margin per utleid person, kompleks lønnskjøring og likviditetsstyring ved vekst." },
   { icon: Plane, name: "Reiseliv & Turisme", slug: "reiseliv", tagline: "Vi styrer økonomien — du skaper opplevelsene", short: "Sesongplanlegging, ulike MVA-satser og bookingplattformer — full kontroll for reiseliv." },
   { icon: Car, name: "Bil & Verksted", slug: "bil", tagline: "Du fikser bilene — vi fikser regnskapet", short: "Varelager, timesatskalkyle og arbeidsordreanalyse for verksteder og bilbransjen." },
