@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     lineHeight: 1.45,
   },
-  footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF" },
+  footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF", lineHeight: 1 },
 });
 
 const lotsOfContent = Array.from({ length: 50 }, (_, i) => <Text key={i}>Line {i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>);
