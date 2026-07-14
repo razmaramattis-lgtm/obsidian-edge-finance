@@ -605,7 +605,7 @@ const SectionHome = () => {
         <div className="container mx-auto px-4 md:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
             className="mb-10 md:mb-16">
-            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-3 font-medium">Alt inkludert</p>
+            <p className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-3 font-semibold px-3 py-1 rounded-full border border-background/70 bg-secondary/5">Alt inkludert</p>
             <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3">
               Én fast pris. <span className="text-gradient-rose">Alt du trenger.</span>
             </h2>
