@@ -515,12 +515,18 @@ const Pricing = () => {
 
                         <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-6">
                           <p className="text-xs uppercase tracking-[0.15em] text-primary/80 font-medium mb-1">
-                            Midlertidig estimat
+                            {isCustomOffer ? "Skreddersydd tilbud" : "Midlertidig estimat"}
                           </p>
-                          <p className="font-heading text-3xl md:text-4xl text-foreground">
-                            {price.toLocaleString("nb-NO")}{" "}
-                            <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
-                          </p>
+                          {isCustomOffer ? (
+                            <p className="font-heading text-2xl md:text-3xl text-foreground">
+                              Tilpasset tilbud
+                            </p>
+                          ) : (
+                            <p className="font-heading text-3xl md:text-4xl text-foreground">
+                              {price.toLocaleString("nb-NO")}{" "}
+                              <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
+                            </p>
+                          )}
                           <p className="text-xs text-foreground/60 font-light mt-2 leading-relaxed">
                             Endelig tilbud sendes fra <span className="text-foreground">kontakt@avargo.no</span> og kan justeres ned ved onboarding.
                           </p>
