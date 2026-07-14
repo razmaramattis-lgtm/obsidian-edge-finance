@@ -283,7 +283,7 @@ const Protokollgenerator = () => {
   const renderSteg = () => {
     if (!activeDoc || !currentSteg) return null;
     switch (currentSteg.id) {
-      case "profil": return <StegProfil profile={profile} update={oppdaterProfile} orgSearchVal={orgSearchVal} setOrgSearchVal={setOrgSearchVal} orgLoading={orgLoading} onSearch={handleOrgSlagOpp} />;
+      case "profil": return <StegProfil profile={profile} update={oppdaterProfile} applyBrreg={applyBrreg} />;
       case "styre": return <StegStyre profile={profile} update={oppdaterProfile} />;
       case "aksjonaerer": return <StegAksjonaerer profile={profile} update={oppdaterProfile} />;
       case "mote": return <StegMote profile={profile} update={oppdaterProfile} doc={activeDoc} updateDoc={oppdaterDoc} />;
