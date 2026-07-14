@@ -49,13 +49,6 @@ const ressurserLinks = [
   { icon: CalendarClock,title: "Skattekalender",     desc: "Alle frister for MVA, årsregnskap og a-melding gjennom året.",          href: "/ressurser/skattekalender" },
 ];
 
-const selskapetLinks = [
-  { icon: Info,  title: "Om Avargo",     desc: "Møt teamet og les om hva som driver oss.",              href: "/om-oss",  absolute: false },
-  { icon: Mail,  title: "Kontakt oss",   desc: "Få et uforpliktende tilbud — svar innen 24 timer.",     href: "/kontakt", absolute: false },
-  { icon: FileText, title: "Vanlige spørsmål", desc: "Alt du lurer på om priser, oppstart og bytte.",   href: "/faq",     absolute: false },
-  { icon: Lock,  title: "Logg inn",      desc: "Tilgang til kundeportal, dokumenter og verktøy.",       href: "/logg-inn", absolute: true },
-];
-
 /* ── Editorial dropdown panel ── */
 const DropdownPanel = ({ open, children, className = "" }: { open: boolean; children: React.ReactNode; className?: string }) => (
   <div
