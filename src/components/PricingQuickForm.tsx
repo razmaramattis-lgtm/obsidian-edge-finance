@@ -72,7 +72,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
             <DialogHeader>
               <DialogTitle className="font-heading text-2xl">Få tilbud på {packageName}</DialogTitle>
               <DialogDescription className="font-light">
-                Tre felt — vi tar kontakt raskt — som regel samme arbeidsdag. Helt uforpliktende.
+                Tre felt — vi tar kontakt så raskt vi kan. Helt uforpliktende.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-3 mt-2">
