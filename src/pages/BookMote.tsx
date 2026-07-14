@@ -169,7 +169,7 @@ const BookMote = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const selectCompany = (enhet: BrregEnhet) => {
+  const selectCompany = async (enhet: BrregEnhet) => {
     setSelectedCompany(enhet);
     setCompanySearch(enhet.navn);
     setShowDropdown(false);
@@ -180,12 +180,40 @@ const BookMote = () => {
     else if (n <= 5) setSize("1–5 ansatte");
     else if (n <= 20) setSize("6–20 ansatte");
     else setSize("20+ ansatte");
+
+    // Sjekk regnskapsfører via Brreg roller-API (kun relevant for regnskap-tjeneste)
+    setHasAccountant(null);
+    if (service === "regnskap") {
+      setCheckingAccountant(true);
+      try {
+        const res = await fetch(`https://data.brreg.no/enhetsregisteret/api/enheter/${enhet.organisasjonsnummer}/roller`);
+        if (res.ok) {
+          const data = await res.json();
+          const groups: any[] = data?.rollegrupper || [];
+          const found = groups.some(g => {
+            const kode = g?.type?.kode || "";
+            if (kode === "REGN" || kode === "REGN_FORE") return true;
+            return (g?.roller || []).some((r: any) => (r?.type?.kode || "").startsWith("REGN"));
+          });
+          setHasAccountant(found);
+          setCurrentStatus(found ? "Ja" : "Nei");
+        } else {
+          setHasAccountant(false);
+          setCurrentStatus("Nei");
+        }
+      } catch {
+        setHasAccountant(null);
+      } finally {
+        setCheckingAccountant(false);
+      }
+    }
   };
 
   const clearCompany = () => {
     setSelectedCompany(null);
     setCompanySearch("");
     setForm(f => ({ ...f, firma: "", orgnr: "" }));
+    setHasAccountant(null);
   };
 
 
