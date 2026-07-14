@@ -57,8 +57,8 @@ export const SECTIONS: Record<SectionId, SectionConfig> = {
   },
 };
 
-/** Sections hidden from all navigation surfaces. Routes still exist but are redirected in App.tsx. */
-export const HIDDEN_SECTION_IDS: SectionId[] = ["markedsforing", "it"];
+/** All sections hidden — Avargo is now one unified site (regnskap-first). */
+export const HIDDEN_SECTION_IDS: SectionId[] = ["regnskap", "hr", "markedsforing", "it"];
 export const SECTION_LIST = Object.values(SECTIONS).filter(
   (s) => !HIDDEN_SECTION_IDS.includes(s.id)
 );
