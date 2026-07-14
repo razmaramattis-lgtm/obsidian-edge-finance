@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ArrowRight, ArrowLeft, X, AlertTriangle, CheckCircle2, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2, TrendingUp, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Option = { label: string; score: number; tag: string };
@@ -186,12 +186,7 @@ const SwitchCheckDialog = ({ open, onOpenChange }: Props) => {
             <span className="text-xs font-medium text-muted-foreground">
               {showResult ? "Resultat" : `Spørsmål ${step + 1} av ${total}`}
             </span>
-            <div className="flex items-center gap-3">
-              {!showResult && <span className="text-xs font-medium text-muted-foreground">{Math.round(((step + (selectedIdx != null ? 1 : 0)) / total) * 100)}%</span>}
-              <button onClick={close} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Lukk">
-                <X size={18} />
-              </button>
-            </div>
+            {!showResult && <span className="text-xs font-medium text-muted-foreground">{Math.round(((step + (selectedIdx != null ? 1 : 0)) / total) * 100)}%</span>}
           </div>
           {!showResult && (
             <div className="h-1 w-full rounded-full bg-muted/40 overflow-hidden">
