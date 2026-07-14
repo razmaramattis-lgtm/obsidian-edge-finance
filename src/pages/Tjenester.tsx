@@ -31,7 +31,7 @@ const categories = [
     id: "regnskap",
     label: "Regnskap & Økonomi",
     tag: "Kjerneleveranse",
-    tagColor: "text-[#e8b08a]",
+    tagColor: "text-primary",
     accent: "232 176 138",
     headline: "Vi tar oss av tallene. Du tar deg av bedriften.",
     intro:
@@ -141,7 +141,7 @@ const categories = [
     id: "hr",
     label: "HR & Personal",
     tag: "Menneskene i selskapet",
-    tagColor: "text-[#f5c87a]",
+    tagColor: "text-accent-foreground",
     accent: "245 200 122",
     headline: "Alt du trenger for å ta godt vare på de ansatte.",
     intro:
