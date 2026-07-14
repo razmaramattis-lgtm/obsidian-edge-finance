@@ -22,8 +22,8 @@ const Hub = () => {
   return (
     <>
       <Helmet>
-        <title>Avargo — Autorisert regnskapsbyrå for norske bedrifter</title>
-        <meta name="description" content="Regnskap som løfter bedriften din. Dedikert regnskapsfører, fast månedspris og svar innen 24 timer — for små og mellomstore bedrifter i Norge." />
+        <title>Regnskapsfører for små og mellomstore bedrifter | Avargo</title>
+        <meta name="description" content="Autorisert regnskapsbyrå med dedikert regnskapsfører, fast månedspris og svar innen 24 timer. Bytt regnskapsfører uten friksjon — vi tar hele overføringen." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
