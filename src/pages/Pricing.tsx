@@ -77,7 +77,7 @@ const includedServices = [
   { icon: Receipt, title: "Daglig bokføring", description: "Automatisk bankintegrasjon, bilagsregistrering og månedlig avstemming — uten tillegg i timen." },
   { icon: FileText, title: "MVA & skatt", description: "MVA-melding, skatteberegning og oppfølging mot Skatteetaten og Brønnøysundregistrene." },
   { icon: Users, title: "Lønn & HR", description: "Lønnskjøring, a-melding, feriepenger og sykefraværsoppfølging for deg og dine ansatte." },
-  { icon: Building2, title: "Årsregnskap", description: "Komplett årsavslutning, selvangivelse, næringsoppgave og offentlig rapportering." },
+  { icon: Building2, title: "Årsregnskap", description: "Komplett årsavslutning, skattemelding, næringsoppgave og offentlig rapportering." },
   { icon: Calculator, title: "Økonomisk oversikt", description: "Månedsrapporter, nøkkeltall og likviditetsstyring slik at du alltid vet hvor du står." },
   { icon: Shield, title: "Rådgivning & support", description: "Dedikert regnskapsfører, skatterådgivning og ubegrenset support — rask respons på hverdager." },
 ];
@@ -715,7 +715,7 @@ const Pricing = () => {
                     "MVA-beregning og MVA-melding",
                     "Lønnskjøring og a-melding",
                     "Feriepenger og sykefraværsoppfølging",
-                    "Årsregnskap og selvangivelse",
+                    "Årsregnskap og skattemelding",
                     "Næringsoppgave og offentlig rapportering",
                     "Månedsrapporter og nøkkeltall",
                     "Skatterådgivning og planlegging",
@@ -726,6 +726,53 @@ const Pricing = () => {
                     <div key={item} className="flex items-start gap-3 text-sm text-foreground/70 font-light">
                       <Check size={16} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
                       {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.5}>
+            <div className="max-w-4xl mx-auto mt-20 md:mt-28">
+              <div className="text-center mb-12">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 text-primary text-[11px] font-medium tracking-[0.15em] uppercase mb-5">
+                  Hvorfor velge oss
+                </span>
+                <h3 className="font-heading text-3xl sm:text-4xl mb-4">
+                  Avargo vs. <span className="italic text-gradient-rose">tradisjonelle regnskapsbyråer</span>
+                </h3>
+                <p className="text-foreground/60 font-light leading-relaxed max-w-2xl mx-auto">
+                  Vi har bygget et regnskapsbyrå for små og mellomstore bedrifter som er lei av uforutsigbare regninger og treg respons.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-border/40 bg-card/60 overflow-hidden">
+                <div className="hidden sm:grid grid-cols-3 gap-4 px-6 py-4 bg-primary/5 border-b border-border/40 text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                  <span></span>
+                  <span className="text-center text-primary">Avargo</span>
+                  <span className="text-center">Tradisjonelt byrå</span>
+                </div>
+                <div className="divide-y divide-border/40">
+                  {[
+                    ["Prising", "Fast månedspris – ingen tillegg", "Timepriser og tillegg for MVA, lønn og årsoppgjør"],
+                    ["Rådgivning", "Inkludert – fast pris", "Ofte fakturert separat per time"],
+                    ["Support", "Ubegrenset telefon og e-post", "Begrenset eller timebasert"],
+                    ["Respons", "Rask respons på hverdager", "Dager, noen ganger uker"],
+                    ["Oversikt", "Månedsrapporter og nøkkeltall", "Som regel kun årsregnskap"],
+                    ["Digital tilgang", "Egen kundeportal", "E-post og papirbasert"],
+                    ["Bytte", "Vi tar oss av overgangen", "Kunden står ofte alene"],
+                  ].map(([label, avargo, traditional]) => (
+                    <div key={label} className="grid grid-cols-1 sm:grid-cols-3 gap-2 px-6 py-4 items-center">
+                      <span className="text-sm font-medium text-foreground/80 sm:font-normal">{label}</span>
+                      <div className="flex items-start gap-3 text-sm text-foreground/70 font-light sm:text-center sm:justify-center">
+                        <Check size={16} className="text-secondary mt-0.5 shrink-0 sm:hidden" strokeWidth={2} />
+                        <span className="text-foreground">{avargo}</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm text-foreground/50 font-light sm:text-center sm:justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-foreground/30 mt-2 shrink-0 sm:hidden" />
+                        <span>{traditional}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
