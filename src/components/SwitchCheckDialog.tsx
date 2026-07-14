@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ArrowRight, ArrowLeft, X, AlertTriangle, CheckCircle2, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2, TrendingUp, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Option = { label: string; score: number; tag: string };
