@@ -286,7 +286,7 @@ const Hub = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="p-6 md:p-8 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-500"
+                className="p-6 md:p-8 rounded-2xl bg-card border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500"
               >
                 <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5">
                   <item.icon size={18} className="text-primary" strokeWidth={1.5} />
