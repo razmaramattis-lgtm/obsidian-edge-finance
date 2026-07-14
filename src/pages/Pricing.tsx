@@ -607,11 +607,17 @@ const Pricing = () => {
                           Vi sender et <span className="text-foreground">bekreftet, midlertidig tilbud</span> til <span className="text-foreground">{contactEmail}</span> direkte fra <span className="text-foreground">kontakt@avargo.no</span>. Under onboardingen ser vi over volum og omfang sammen med deg, og prisen kan justeres <span className="text-foreground">ned</span> hvis det er grunnlag for det.
                         </p>
                         <div className="p-4 rounded-2xl border border-border/50 bg-card/40 text-sm">
-                          <p className="text-foreground/60 font-light mb-1">Ditt midlertidige estimat</p>
-                          <p className="font-heading text-2xl text-foreground">
-                            {price.toLocaleString("nb-NO")}{" "}
-                            <span className="text-base text-foreground/50 font-light">kr/mnd</span>
+                          <p className="text-foreground/60 font-light mb-1">
+                            {isCustomOffer ? "Ditt tilbud" : "Ditt midlertidige estimat"}
                           </p>
+                          {isCustomOffer ? (
+                            <p className="font-heading text-2xl text-foreground">Skreddersydd tilbud</p>
+                          ) : (
+                            <p className="font-heading text-2xl text-foreground">
+                              {price.toLocaleString("nb-NO")}{" "}
+                              <span className="text-base text-foreground/50 font-light">kr/mnd</span>
+                            </p>
+                          )}
                         </div>
                       </div>
                     )}
