@@ -319,7 +319,7 @@ const Skattekalender = () => {
                         )}
                         {hasDeadlines && !isSelected && (
                           <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold ${
-                            hasUrgent ? "bg-destructive text-white" : "bg-primary text-primary-foreground"
+                            hasUrgent ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground"
                           }`}>
                             {dayDeadlines.length}
                           </div>
