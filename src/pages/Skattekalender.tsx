@@ -196,10 +196,11 @@ const Skattekalender = () => {
   const copyFeedUrl = async () => {
     try {
       await navigator.clipboard.writeText(webcalUrl);
-      setCopiedUrl(true);
-      setTimeout(() => setCopiedUrl(false), 2500);
     } catch (err) {
       console.error("Copy feed URL error:", err);
+    } finally {
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2500);
     }
   };
 
