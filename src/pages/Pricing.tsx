@@ -135,9 +135,9 @@ const Pricing = () => {
   const goNext = () => setStep((s) => Math.min(6, s + 1));
   const goBack = () => setStep((s) => Math.max(1, s - 1));
 
-  const pageTitle = "Priser | Fastpris fra 1 999 kr/mnd — Avargo";
+  const pageTitle = "Priser | Fastpris fra 1 950 kr/mnd — Avargo";
   const pageDesc =
-    "Fastpris på regnskap fra 1 999 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
+    "Fastpris på regnskap fra 1 950 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
   const pageUrl = `https://avargo.no${sectionPath}/priser`;
 
   const submitOffer = async () => {
