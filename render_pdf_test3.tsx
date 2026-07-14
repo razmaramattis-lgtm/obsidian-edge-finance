@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
     paddingBottom: 56,
     paddingLeft: 71,
     paddingRight: 56,
-    fontFamily: "Times-Roman",
     fontSize: 10.5,
     lineHeight: 1.45,
     color: "#111827",
