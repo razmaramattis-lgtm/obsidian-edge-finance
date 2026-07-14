@@ -107,7 +107,7 @@ const ExitIntentDialog = () => {
             </div>
             <h3 className="font-serif text-2xl mb-2">Takk!</h3>
             <p className="text-sm text-foreground/60 font-light">
-              Vi sender prisoversikten til {email} og tar kontakt innen 24 timer.
+              Vi sender prisoversikten til {email} og tar kontakt raskt — som regel samme arbeidsdag.
             </p>
           </div>
         ) : (

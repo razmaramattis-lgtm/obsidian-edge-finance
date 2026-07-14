@@ -66,7 +66,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
+      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
     ],
     hookSlides: [
@@ -75,7 +75,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { heading: <>Samme trygghet som de store.{" "}<span className="italic text-gradient-teal">Uten byråkratiet.</span></>, body: "Storkonsern har egne økonomiavdelinger og rådgivere. Du har Avargo. Samme kompetanse, samme tilgjengelighet — men uten faste ansatte og millionbudsjetter.", tagline: "Laget for bedrifter som tenker stort — uansett størrelse." },
     ],
     services: [
-      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Svar innen 24 timer.", href: "/regnskap/tjenester/regnskapsforer" },
+      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Rask responsimer.", href: "/regnskap/tjenester/regnskapsforer" },
       { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Ingenting er «ekstra».", href: "/regnskap/tjenester/1-1-regnskap" },
       { icon: Users, title: "Lønn & Personal", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift — inkludert i fastprisen.", href: "/regnskap/tjenester/lonn" },
       { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om.", href: "/regnskap/tjenester/cfo" },
@@ -102,7 +102,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Shield, metric: "100%", label: "fastpris — ingen tillegg", text: "Bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering." },
         { icon: Handshake, metric: "1 person", label: "din statsautoriserte regnskapsfører", text: "Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine." },
         { icon: Sparkles, metric: "25+", label: "bransjer vi dekker", text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Når du sender en melding eller ringer, svarer vi innen 24 timer. Alltid." },
+        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Når du sender en melding eller ringer, svarer vi så raskt vi kan." },
       ],
     },
     cta: {
@@ -137,7 +137,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: UserCheck, value: "Spesialisert", label: "HR-rådgivning", sub: "Norsk arbeidsrett" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
+      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
       { icon: Shield, value: "Trygt", label: "lønn og personal", sub: "Alt inkludert" },
     ],
     hookSlides: [
@@ -173,7 +173,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Shield, metric: "Trygt", label: "arbeidsrett dekket", text: "Vi sørger for at du følger alle lover og regler — fra kontrakter til oppsigelser. Du slipper risikoen." },
         { icon: Handshake, metric: "1 person", label: "din faste HR-rådgiver", text: "Du får én navngitt HR-rådgiver som kjenner bedriften din, bransjen din og de ansatte." },
         { icon: Sparkles, metric: "Alt inkl.", label: "lønn, rett og håndbok", text: "Lønnskjøring, arbeidskontrakter, personalhåndbok og HMS — alt er inkludert i fastprisen." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Står du i en vanskelig personalsak? Vi svarer innen 24 timer. Alltid." },
+        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Står du i en vanskelig personalsak? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
@@ -215,11 +215,11 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { num: "I", phase: "Kartlegging", duration: "Dag 1", title: "Vi forstår bedriften din.", desc: "Vi gjennomgår dagens personalrutiner, kontrakter, lønnssystem og HMS-dokumentasjon. Hva fungerer? Hva mangler? Hva er risikoen?", note: "En grundig gjennomgang som avdekker alt." },
         { num: "II", phase: "Oppsett", duration: "Dag 2–5", title: "Alt på plass.", desc: "Personalhåndbok, arbeidskontrakter, varslingsrutiner, HMS-dokumentasjon og lønnsoppsett. Vi bygger hele HR-grunnmuren din fra bunnen.", note: "Komplett HR-oppsett — klar til bruk." },
         { num: "III", phase: "Drift", duration: "Fra dag 5", title: "Vi kjører lønn. Du fokuserer.", desc: "Månedlig lønnskjøring, sykefraværsoppfølging, kontraktsendringer og personalspørsmål. Vi tar alt det løpende.", note: "Du har en hel HR-avdeling i ryggen." },
-        { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi er der — alltid.", desc: "Vanskelig personalsak? Ny ansettelse? Omorganisering? Vi er din sparringspartner og rådgiver — proaktivt og tilgjengelig.", note: "Svar innen 24 timer. Alltid." },
+        { num: "IV", phase: "Partnerskap", duration: "For alltid", title: "Vi er der — alltid.", desc: "Vanskelig personalsak? Ny ansettelse? Omorganisering? Vi er din sparringspartner og rådgiver — proaktivt og tilgjengelig.", note: "Vi svarer så raskt vi kan — vi vet tiden din er verdifull." },
       ],
       ctaBox: {
         title: "Trygg arbeidsgiver — hver dag.",
-        desc: "Ring eller send melding når som helst. Vi svarer innen 24 timer. Du er ikke alene med personalsaker — vi tar dem sammen.",
+        desc: "Ring eller send melding når som helst. Vi svarer så raskt vi kan. Du er ikke alene med personalsaker — vi tar dem sammen.",
       },
     },
   },
@@ -238,7 +238,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: TrendingUp, value: "Datadrevet", label: "markedsføring", sub: "Koblet til regnskap" },
       { icon: Eye, value: "Full", label: "synlighet", sub: "Google & SoMe" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
+      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen timefakturering" },
     ],
     hookSlides: [
@@ -274,7 +274,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: BarChart3, metric: "100%", label: "sporbart — fra klikk til kunde", text: "Hver krone du bruker på markedsføring spores helt til bunnlinjen. Du ser nøyaktig hva som gir resultater." },
         { icon: Handshake, metric: "1 person", label: "din dedikerte markedsfører", text: "Du får én navngitt markedsfører som kjenner bedriften, bransjen og målgruppen din." },
         { icon: Sparkles, metric: "Helhet", label: "SEO + Ads + innhold", text: "Vi kjører ikke bare annonser — vi bygger en helhetlig strategi som vokser over tid." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Trenger du en rask justering eller har et spørsmål? Vi svarer innen 24 timer." },
+        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Trenger du en rask justering eller har et spørsmål? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
@@ -320,7 +320,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       ],
       ctaBox: {
         title: "Synlighet som gir resultater.",
-        desc: "Vi kobler markedsføringen direkte til bunnlinjen. Ring eller send melding — vi svarer innen 24 timer med konkrete tiltak.",
+        desc: "Vi kobler markedsføringen direkte til bunnlinjen. Ring eller send melding — vi svarer så raskt vi kan med konkrete tiltak.",
       },
     },
   },
@@ -339,7 +339,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Code, value: "Skreddersydd", label: "utvikling", sub: "Ingen hyllevare" },
       { icon: Bot, value: "AI", label: "integrert", sub: "Chatbot & automatisering" },
-      { icon: Clock, value: "24 timer", label: "garantert svar", sub: "Rask respons" },
+      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
       { icon: CheckCircle2, value: "Fast pris", label: "ingen timefakturering", sub: "Forutsigbart" },
     ],
     hookSlides: [
@@ -375,7 +375,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Code, metric: "Skreddersydd", label: "bygget for din bedrift", text: "Vi bygger løsninger som passer din bedrift — ikke en generisk mal alle andre også bruker." },
         { icon: Handshake, metric: "1 team", label: "ditt dedikerte utviklerteam", text: "Du får et navngitt team som kjenner systemene dine, bransjen din og behovene dine." },
         { icon: Sparkles, metric: "AI integrert", label: "smartere systemer", text: "Vi bygger inn AI og automatisering der det gir verdi — ikke for å være fancy, men for å spare deg tid." },
-        { icon: Zap, metric: "24 timer", label: "support — alltid", text: "Trenger du hjelp med noe teknisk? Vi svarer innen 24 timer. Alltid." },
+        { icon: Zap, metric: "24 timer", label: "support — alltid", text: "Trenger du hjelp med noe teknisk? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
@@ -421,7 +421,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       ],
       ctaBox: {
         title: "Teknologi som bare fungerer.",
-        desc: "Ring eller send melding. Vi svarer innen 24 timer med pragmatiske løsninger — ingen unødvendig kompleksitet.",
+        desc: "Ring eller send melding. Vi svarer så raskt vi kan med pragmatiske løsninger — ingen unødvendig kompleksitet.",
       },
     },
   },

@@ -51,7 +51,7 @@ const FloatingActionMenu = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground/90">Be om uforpliktende tilbud</p>
-                  <p className="text-[11px] text-foreground/50 font-light mt-0.5">Svar innen 24 timer</p>
+                  <p className="text-[11px] text-foreground/50 font-light mt-0.5">Rask responsimer</p>
                 </div>
               </Link>
               <a

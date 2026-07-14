@@ -152,7 +152,7 @@ const KursBedrift = () => {
               <div className="text-center glass rounded-3xl p-10 border border-border/20">
                 <CheckCircle2 size={32} className="text-secondary mx-auto mb-4" />
                 <h3 className="font-heading text-2xl mb-2">Takk for henvendelsen!</h3>
-                <p className="text-sm text-muted-foreground">Vi kontakter deg innen 24 timer for å diskutere kurset.</p>
+                <p className="text-sm text-muted-foreground">Vi tar kontakt raskt — som regel samme arbeidsdag for å diskutere kurset.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 border border-border/20 space-y-5">

@@ -398,7 +398,7 @@ const FAQ = () => {
               Fant du ikke svaret ditt?
             </h2>
              <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-               En av våre statsautoriserte regnskapsførere svarer deg innen 24 timer. Helt uforpliktende.
+               En av våre statsautoriserte regnskapsførere kommer tilbake til deg raskt. Helt uforpliktende.
              </p>
              <Link
                to="/kontakt"

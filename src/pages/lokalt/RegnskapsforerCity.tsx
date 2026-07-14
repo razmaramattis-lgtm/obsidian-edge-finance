@@ -11,7 +11,7 @@ const RegnskapsforerCity = () => {
   if (!city) return <Navigate to="/regnskapsforer-i" replace />;
 
   const title = `Regnskapsfører i ${city.name} 2026 | Avargo — fast pris fra 1 590 kr`;
-  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 590 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Svar innen 24 t.`;
+  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 590 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Rask respons.`;
   const url = `https://avargo.no/regnskapsforer-i/${city.slug}`;
 
   const faq = [
@@ -29,7 +29,7 @@ const RegnskapsforerCity = () => {
     },
     {
       q: `Hvor raskt svarer Avargo på henvendelser?`,
-      a: `Vi garanterer svar innen 24 timer på alle henvendelser fra ${city.name}-kunder, hverdager. Eksisterende kunder har i tillegg ubegrenset gratis telefonsupport — du betaler ikke per spørsmål eller per minutt.`,
+      a: `Vi prioriterer å svare deg raskt på alle henvendelser fra ${city.name}-kunder, hverdager. Eksisterende kunder har i tillegg ubegrenset gratis telefonsupport — du betaler ikke per spørsmål eller per minutt.`,
     },
     {
       q: `Hvilke bransjer i ${city.name} jobber dere med?`,
@@ -143,7 +143,7 @@ const RegnskapsforerCity = () => {
 
               <div className="flex flex-wrap gap-3">
                 <Link to="/kontakt" className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
-                  Få tilbud — svar innen 24 t
+                  Få tilbud — rask respons
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <Link to="/priser" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-border/30 text-foreground/80 text-[14px] font-medium hover:bg-muted/30 transition-colors">
@@ -155,7 +155,7 @@ const RegnskapsforerCity = () => {
               <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
                 {[
                   { icon: ShieldCheck, label: "Autorisert byrå" },
-                  { icon: Clock, label: "24t responstid" },
+                  { icon: Clock, label: "Rask respons" },
                   { icon: CheckCircle2, label: "Fast pris" },
                   { icon: Phone, label: "Gratis support" },
                 ].map((t) => (
@@ -346,7 +346,7 @@ const RegnskapsforerCity = () => {
               </p>
               <ol className="space-y-5">
                 {[
-                  { t: "1. Uforpliktende samtale", d: "Vi ringer deg innen 24 timer, kartlegger behov og gir et fast pristilbud — gratis." },
+                  { t: "1. Uforpliktende samtale", d: "Vi tar kontakt raskt — som regel samme arbeidsdag, kartlegger behov og gir et fast pristilbud — gratis." },
                   { t: "2. Vi tar kontakt med tidligere byrå", d: `Du slipper de ubehagelige meldingene. Vi henter inn data, saldobalanse og åpne poster fra eksisterende regnskapsfører i ${city.name}.` },
                   { t: "3. Oppsett og overgang", d: "Vi setter opp regnskapssystem (Tripletex, Fiken, Conta osv.), bankkobling og lønnssystem. Tar 1–2 uker." },
                   { t: "4. Du er over — og betaler først nå", d: "Første faktura kommer den måneden vi tar over. Ingen oppsett-kostnad, ingen bindingstid." },
@@ -396,7 +396,7 @@ const RegnskapsforerCity = () => {
                   Klar for et regnskapsbyrå som faktisk svarer?
                 </h2>
                 <p className="text-foreground/65 font-light text-lg">
-                  Send en uforpliktende henvendelse — vi gir tilbud innen 24 timer, fast pris og full oversikt før du bestemmer deg.
+                  Send en uforpliktende henvendelse — vi gir deg tilbud raskt, fast pris og full oversikt før du bestemmer deg.
                 </p>
               </div>
 

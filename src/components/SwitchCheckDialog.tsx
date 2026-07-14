@@ -65,7 +65,7 @@ const QUESTIONS: Question[] = [
 const RECOMMENDATIONS: Record<string, { title: string; body: string }> = {
   respons: {
     title: "Krev tydelig responsløfte",
-    body: "En regnskapsfører bør svare deg innen 24 timer på hverdager. Be om et skriftlig SLA før du signerer en ny avtale.",
+    body: "En regnskapsfører bør svare deg raskt — som regel samme arbeidsdag på hverdager. Be om et skriftlig SLA før du signerer en ny avtale.",
   },
   pris: {
     title: "Be om fastpris eller pristak",
@@ -276,7 +276,7 @@ const SwitchCheckDialog = ({ open, onOpenChange }: Props) => {
             {sent ? (
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 text-center">
                 <CheckCircle2 className="w-6 h-6 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium text-foreground">Takk! Vi tar kontakt innen 24 timer.</p>
+                <p className="text-sm font-medium text-foreground">Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
                 <p className="text-xs text-muted-foreground mt-1">Vi har fått resultatet og ringer for en uforpliktende prat.</p>
               </div>
             ) : (

@@ -32,7 +32,7 @@ export interface MetodenOverrides {
 }
 
 const defaultTeam: MetodenTeamMember[] = [
-  { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner bransjen din ut og inn. Én dedikert kontakt — med svar innen 24 timer." },
+  { icon: Headphones, role: "Regnskapsførere", desc: "Statsautoriserte regnskapsførere som kjenner bransjen din ut og inn. Én dedikert kontakt — med rask respons." },
   { icon: Users, role: "HR-spesialister", desc: "Lønnskjøring, arbeidsrett, HMS og personaladministrasjon. Vi tar hele HR-byrden slik at du kan fokusere på menneskene, ikke papirene." },
   { icon: Shield, role: "Strategiske rådgivere", desc: "Vekstplan, kapitalstruktur, fusjon og exit. Senioreksperter som har sett alt — og vet nøyaktig hva som skal til for å ta selskapet neste steg." },
 ];
@@ -41,7 +41,7 @@ const defaultSteps: MetodenStep[] = [
   { num: "I", phase: "Oppdagelse", duration: "Dag 1", title: "Vi lytter. Dypt.", desc: "Ingen standardisert pitch. Ingen salgsscript. Vi setter oss ned med deg og forstår selskapet ditt — historien, ambisjonene og smertepunktene.", note: "45 minutter som kan forandre alt." },
   { num: "II", phase: "Kartlegging", duration: "Dag 1–2", title: "Teamet ditt tar form.", desc: "Vi setter sammen et skreddersydd team basert på hva selskapet ditt faktisk trenger — regnskapsfører, HR-rådgiver og strategisk rådgiver. Presis kompetanse, ingen påkostet hyllevare.", note: "Én kontaktperson. Hele teamet bak." },
   { num: "III", phase: "Innsyn", duration: "Dag 3–5", title: "Du ser alt. I sanntid.", desc: "Din portal aktiveres. Likviditet, resultat, balanse og skatteposisjon — oppdatert minutt for minutt, alltid tilgjengelig.", note: "Full oversikt. Null innsats fra din side." },
-  { num: "IV", phase: "Partnerskap", duration: "Løpende", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Svar innen 24 timer — uten ekstra kostnad." },
+  { num: "IV", phase: "Partnerskap", duration: "Løpende", title: "Vi ringer deg. Du kan ringe oss.", desc: "Vi kontakter deg proaktivt med innsikt, muligheter og varsler — du trenger aldri jage svar selv.", note: "Rask responsimer — uten ekstra kostnad." },
 ];
 
 const StepCard = ({ step, index }: { step: MetodenStep; index: number }) => {
@@ -187,7 +187,7 @@ const MetodenSection = ({ overrides }: { overrides?: MetodenOverrides }) => {
                 <div>
                   <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">{cta.title ?? "Rask respons — hver gang."}</p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                    {cta.desc ?? "Ring, send melding eller e-post — vi svarer innen 24 timer. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om."}
+                    {cta.desc ?? "Ring, send melding eller e-post — vi svarer så raskt vi kan. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om."}
                   </p>
                 </div>
               </div>

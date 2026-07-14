@@ -106,7 +106,7 @@ const GuideTemplate = ({ slug, title, metaTitle, metaDescription, intro, section
                 {cta?.heading || "Klar for et regnskapsbyrå som faktisk svarer?"}
               </h2>
               <p className="text-foreground/70 font-light mb-6">
-                {cta?.body || "Send en uforpliktende henvendelse — vi gir tilbud innen 24 timer."}
+                {cta?.body || "Send en uforpliktende henvendelse — vi gir deg tilbud raskt."}
               </p>
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
                 Få tilbud nå

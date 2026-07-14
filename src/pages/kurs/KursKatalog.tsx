@@ -78,7 +78,7 @@ const BookingModal = ({ course, onClose }: { course: Course | null; onClose: () 
             <div className="text-center py-6">
               <div className="w-14 h-14 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-6"><CheckCircle2 size={24} className="text-secondary" /></div>
               <h3 className="font-heading text-2xl mb-2">Bestilling mottatt!</h3>
-              <p className="text-sm text-muted-foreground font-light mb-2">Vi kontakter deg innen 24 timer.</p>
+              <p className="text-sm text-muted-foreground font-light mb-2">Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
               <button onClick={onClose} className="mt-6 px-6 py-2.5 bg-secondary text-secondary-foreground rounded-full text-sm hover:opacity-90 transition-opacity">Lukk</button>
             </div>
           ) : (

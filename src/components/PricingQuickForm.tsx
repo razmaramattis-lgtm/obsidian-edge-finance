@@ -43,7 +43,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
       });
       if (error) throw error;
       setDone(true);
-      toast.success("Takk! Vi tar kontakt innen 24 timer.");
+      toast.success("Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.");
     } catch (err: any) {
       toast.error(err?.message || "Kunne ikke sende — prøv igjen");
     } finally {
@@ -61,7 +61,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
                 <Check className="text-primary" size={24} />
               </div>
               <DialogTitle className="font-heading text-2xl">Takk, {name.split(" ")[0] || "vi har deg"}!</DialogTitle>
-              <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> innen 24 timer.</p>
+              <p className="text-sm text-foreground/60 font-light">Vi sender deg et uforpliktende tilbud på <span className="text-foreground">{packageName}</span> raskt — som regel samme arbeidsdag.</p>
             </div>
             <div className="border-t border-border/20 pt-4">
               <NextStepsTimeline variant="compact" />
@@ -72,7 +72,7 @@ const PricingQuickForm = ({ open, onOpenChange, packageName }: Props) => {
             <DialogHeader>
               <DialogTitle className="font-heading text-2xl">Få tilbud på {packageName}</DialogTitle>
               <DialogDescription className="font-light">
-                Tre felt — vi tar kontakt innen 24 timer. Helt uforpliktende.
+                Tre felt — vi tar kontakt raskt — som regel samme arbeidsdag. Helt uforpliktende.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-3 mt-2">

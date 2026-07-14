@@ -59,7 +59,7 @@ export const sectionPageCopy: Record<SectionId, {
       headline: "Fortell oss om selskapet ditt.",
       sub: "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt.",
       italic: "Ingen binding. Ingen forpliktelser. Bare en samtale.",
-      bullets: ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Svar innen 24 timer — alltid"],
+      bullets: ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Rask respons — vi vet tiden din er verdifull"],
     },
     omOss: {
       tag: "Om Avargo · Regnskap",
@@ -98,7 +98,7 @@ export const sectionPageCopy: Record<SectionId, {
       headline: "Fortell oss om bedriften og de ansatte.",
       sub: "Du får en dedikert HR-rådgiver som forstår arbeidsrett, lønn og personalledelse.",
       italic: "Vi tar HR-byrden — du tar vare på menneskene.",
-      bullets: ["Spesialisert HR-rådgiver", "Lønnskjøring og arbeidsrett inkludert", "Personalhåndbok tilpasset din bedrift", "Svar innen 24 timer"],
+      bullets: ["Spesialisert HR-rådgiver", "Lønnskjøring og arbeidsrett inkludert", "Personalhåndbok tilpasset din bedrift", "Rask responsimer"],
     },
     omOss: {
       tag: "Om Avargo · HR",
@@ -137,7 +137,7 @@ export const sectionPageCopy: Record<SectionId, {
       headline: "Fortell oss hva du selger og hvem du vil nå.",
       sub: "Vi setter sammen en vekststrategi som er koblet til de faktiske tallene dine.",
       italic: "Datadrevet markedsføring — ingen gjetning.",
-      bullets: ["Dedikert markedsfører", "SEO, SoMe og Google Ads", "Resultater koblet til regnskap", "Svar innen 24 timer"],
+      bullets: ["Dedikert markedsfører", "SEO, SoMe og Google Ads", "Resultater koblet til regnskap", "Rask responsimer"],
     },
     omOss: {
       tag: "Om Avargo · Markedsføring",
@@ -176,7 +176,7 @@ export const sectionPageCopy: Record<SectionId, {
       headline: "Fortell oss hva du trenger digitalt.",
       sub: "Vi bygger nettsider, systemer og AI-løsninger tilpasset din bedrift.",
       italic: "Pragmatisk teknologi — bygget for verdi, ikke for fancy.",
-      bullets: ["Skreddersydde nettsider", "AI og automatisering", "Interne systemer og dashboards", "Svar innen 24 timer"],
+      bullets: ["Skreddersydde nettsider", "AI og automatisering", "Interne systemer og dashboards", "Rask responsimer"],
     },
     omOss: {
       tag: "Om Avargo · IT",

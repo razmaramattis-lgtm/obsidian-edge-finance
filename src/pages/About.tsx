@@ -126,7 +126,7 @@ const About = () => {
                <span className="italic text-gradient-rose">faktisk bryr seg</span>?
              </h2>
              <p className="text-foreground/60 font-light mb-8 md:mb-10 max-w-lg mx-auto text-sm md:text-base">
-               Dedikert. Klar fra dag én. Vi kontakter deg innen 24 timer.
+               Dedikert. Klar fra dag én. Vi tar kontakt raskt — som regel samme arbeidsdag.
              </p>
              <Link
                to={`${sectionPath}/kontakt`}

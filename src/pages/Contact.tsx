@@ -313,7 +313,7 @@ const Contact = () => {
     <>
     <Helmet>
       <title>{contactCopy ? `Kontakt — ${section!.name} | Avargo` : "Kontakt Avargo | Få tilbud på regnskapstjenester"}</title>
-      <meta name="description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud. Vi svarer innen 24 timer."} />
+      <meta name="description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud. Vi svarer så raskt vi kan."} />
       <link rel="canonical" href={`https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt`} />
     </Helmet>
     <section className="py-24 md:py-40 relative">
@@ -328,13 +328,13 @@ const Contact = () => {
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
             <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
-              {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt innen 24 timer med et tilpasset forslag — helt uforpliktende."}
+              {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt raskt — som regel samme arbeidsdag med et tilpasset forslag — helt uforpliktende."}
             </p>
             <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
               {contactCopy?.italic || "Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger."}
             </p>
             <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
-              {(contactCopy?.bullets || ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Svar innen 24 timer — alltid"]).map((item) => (
+              {(contactCopy?.bullets || ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Rask respons — vi vet tiden din er verdifull"]).map((item) => (
                 <div key={item} className="flex items-center gap-3 text-sm text-foreground/70 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
                   {item}
@@ -355,7 +355,7 @@ const Contact = () => {
                     <Shield size={24} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <h3 className="font-heading text-3xl mb-3">Mottatt!</h3>
-                  <p className="text-foreground/60 font-light leading-relaxed mb-2">Vi gjennomgår informasjonen din og kontakter deg innen 24 timer med et tilpasset forslag.</p>
+                  <p className="text-foreground/60 font-light leading-relaxed mb-2">Vi gjennomgår informasjonen din og tar kontakt raskt — som regel samme arbeidsdag med et tilpasset forslag.</p>
                   <p className="text-sm text-primary italic font-light">Takk for at du vurderer Avargo.</p>
                 </div>
                 <div className="border-t border-border/15 mt-8 pt-2">
@@ -624,7 +624,7 @@ const Contact = () => {
                   )}
                 </button>
                 <p className="text-xs text-foreground/40 text-center font-light">
-                  Tar 30 sekunder · Ingen binding · Vi svarer innen 24 timer
+                  Tar 30 sekunder · Ingen binding · Vi svarer så raskt vi kan
                 </p>
               </form>
             )}
