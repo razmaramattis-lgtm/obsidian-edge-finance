@@ -294,11 +294,6 @@ const markedsforingOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulentbransjen selger kompetanse og tillit. Vi hjelper deg å bygge synlighet og troverdighet i riktige kanaler.",
     body: "Konsulenter trenger synlighet som bygger tillit — fagartikler, LinkedIn-strategi og målrettet B2B-annonsering som genererer kvalifiserte leads.",
   },
-  landbruk: {
-    deliverables: ["Lokal SEO og Google Business", "Nettside for gårdsutsalg og opplevelser", "SoMe-markedsføring for lokalmat", "Sesongkampanjer og arrangementer", "E-postmarkedsføring til faste kunder", "Foto og video av gårdsdriften", "Annonsering på relevante plattformer", "Omdømmehåndtering"],
-    intro: "Gårdsutsalg, matopplevelser og direktesalg — vi hjelper deg å nå kundene som setter pris på lokale kvalitetsprodukter.",
-    body: "Landbruket selger stadig mer direkte til forbrukere gjennom gårdsutsalg, REKO-ringer og opplevelser. Vi hjelper deg å bygge synlighet og tiltrekke riktige kunder.",
-  },
   varehandel: {
     deliverables: ["Google Shopping og produktannonsering", "Lokal SEO og Google Business", "Meta/SoMe-kampanjer for butikk", "Kampanjer for salg og sesong", "Kundelojalitetsprogram", "Innholdsstrategi og nyhetsbrev", "Nettside og nettbutikk", "Analyse og omsetningsrapportering"],
     intro: "Varehandelen lever av synlighet, trafikk og lojalitet. Vi hjelper deg å trekke kunder inn — fysisk og digitalt.",
