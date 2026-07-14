@@ -87,6 +87,15 @@ const Pricing = () => {
   const [payslips, setPayslips] = useState<number>(0);
   const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
 
+  // Step 6 form fields
+  const [contactCompany, setContactCompany] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const price = useMemo(() => {
     let p = BASE_PRICE;
     p += companyForms.find((c) => c.key === form)?.addon ?? 0;
@@ -98,13 +107,17 @@ const Pricing = () => {
     return p;
   }, [form, industry, revenue, bilag, payslips, aarsoppgjor]);
 
+  const contactValid =
+    contactCompany.trim().length > 1 &&
+    contactPhone.trim().length > 3 &&
+    /^\S+@\S+\.\S+$/.test(contactEmail.trim());
+
   const canNext =
     (step === 1 && !!form) ||
     (step === 2 && !!industry) ||
     step === 3 ||
     step === 4 ||
-    step === 5 ||
-    step === 6;
+    step === 5;
 
   const goNext = () => setStep((s) => Math.min(6, s + 1));
   const goBack = () => setStep((s) => Math.max(1, s - 1));
@@ -114,15 +127,43 @@ const Pricing = () => {
     "Fastpris på regnskap fra 1 999 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
   const pageUrl = `https://avargo.no${sectionPath}/priser`;
 
-  const summaryParams = new URLSearchParams({
-    selskapsform: form ?? "",
-    bransje: industries.find((i) => i.key === industry)?.label ?? "",
-    omsetning: revenueTiers[revenue]?.label ?? "",
-    bilag: bilagTiers[bilag]?.label ?? "",
-    lonn: String(payslips),
-    aarsoppgjor: aarsoppgjor ? "Ja" : "Nei",
-    estimat: String(price),
-  }).toString();
+  const submitOffer = async () => {
+    if (!contactValid || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const summaryLines = [
+        `Selskapsform: ${form ?? "—"}`,
+        `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
+        `Årlig omsetning: ${revenueTiers[revenue]?.label ?? "—"}`,
+        `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
+        `Lønnsslipper/mnd: ${payslips}`,
+        `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
+        `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`,
+      ].join("\n");
+      const fullMessage =
+        `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
+        `Kundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
+      const { error } = await supabase.functions.invoke("contact-submit", {
+        body: {
+          contact_person: contactCompany.trim().slice(0, 160),
+          company_name: contactCompany.trim().slice(0, 160),
+          email: contactEmail.trim().toLowerCase().slice(0, 255),
+          phone: contactPhone.trim().slice(0, 40),
+          source: `pricing-calculator:${typeof window !== "undefined" ? window.location.pathname : ""}`,
+          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
+          message: fullMessage.slice(0, 2000),
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch (e) {
+      console.error(e);
+      setSubmitError("Noe gikk galt. Prøv igjen eller send e-post til kontakt@avargo.no");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
