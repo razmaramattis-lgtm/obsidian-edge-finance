@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet-async";
 import {
   CalendarClock, ExternalLink, ChevronLeft, ChevronRight,
   AlertTriangle, RefreshCw, Filter, Building2, User, Users,
-  Receipt, Landmark, FileText, Shield, ArrowRight
+  Receipt, Landmark, FileText, Shield, ArrowRight,
+  Download, CalendarPlus, Smartphone, Mail, Copy, Check
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
