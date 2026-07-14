@@ -581,17 +581,17 @@ const SectionHome = () => {
       </section>
 
       {/* ═══ TRUST BAR ═══ */}
-      <section className="py-8 md:py-12 border-y border-border/10">
+      <section className="py-8 md:py-12 bg-secondary border-y border-accent/20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {c.socialProof.map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
-                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <item.icon size={16} className="text-primary" strokeWidth={1.5} />
+                <div className="w-9 h-9 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-accent" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{item.value}</p>
-                  <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                  <p className="text-sm font-semibold text-secondary-foreground">{item.value}</p>
+                  <p className="text-[10px] text-accent/80">{item.label}</p>
                 </div>
               </div>
             ))}
