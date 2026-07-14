@@ -417,6 +417,15 @@ const Protokollgenerator = () => {
           )}
         </div>
       </section>
+
+      {/* Footer credit */}
+      <section className="py-10 border-t border-border/10">
+        <div className="container mx-auto px-4 md:px-6 text-center">
+          <p className="text-xs text-muted-foreground/60">
+            Protokoll- og generalforsamlingsgenerator er produsert av <span className="text-foreground font-medium">Avargo</span>.
+          </p>
+        </div>
+      </section>
     </>
   );
 };
