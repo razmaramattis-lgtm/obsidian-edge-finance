@@ -1,261 +1,299 @@
-import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowRight, Check, MessageCircle, Sparkles, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Check, Calculator, Building2, Users, FileText, Receipt, Shield, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
-import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
-import { sectionPricingCopy } from "@/config/sectionPricing";
-import PricingQuickForm from "@/components/PricingQuickForm";
-import SocialProofBar from "@/components/SocialProofBar";
-import ROIMini from "@/components/ROIMini";
-import LeadMagnetDialog from "@/components/LeadMagnetDialog";
 
-interface PricingPlan {
-  id: string;
-  name: string;
-  price: number;
-  price_suffix: string;
-  description: string;
-  features: string[];
-  highlighted: boolean;
-  active: boolean;
-  sort_order: number;
-  section: string | null;
-}
+const companyForms = [
+  { key: "ENK", label: "ENK", desc: "Enkeltpersonforetak" },
+  { key: "AS", label: "AS", desc: "Aksjeselskap" },
+  { key: "DA", label: "DA", desc: "Delt ansvar" },
+  { key: "ANS", label: "ANS", desc: "Ansvarlig selskap" },
+];
+
+const includedServices = [
+  {
+    icon: Receipt,
+    title: "Daglig bokføring",
+    description: "Automatisk bankintegrasjon, bilagsregistrering og månedlig avstemming — uten tillegg i timen.",
+  },
+  {
+    icon: FileText,
+    title: "MVA & skatt",
+    description: "MVA-melding, skatteberegning og oppfølging mot Skatteetaten og Brønnøysundregistrene.",
+  },
+  {
+    icon: Users,
+    title: "Lønn & HR",
+    description: "Lønnskjøring, a-melding, feriepenger og sykefraværsoppfølging for deg og dine ansatte.",
+  },
+  {
+    icon: Building2,
+    title: "Årsregnskap",
+    description: "Komplett årsavslutning, selvangivelse, næringsoppgave og offentlig rapportering.",
+  },
+  {
+    icon: Calculator,
+    title: "Økonomisk oversikt",
+    description: "Månedsrapporter, nøkkeltall og likviditetsstyring slik at du alltid vet hvor du står.",
+  },
+  {
+    icon: Shield,
+    title: "Rådgivning & support",
+    description: "Dedikert regnskapsfører, skatterådgivning og ubegrenset support — svar innen 24 timer.",
+  },
+];
 
 const Pricing = () => {
-  const [plans, setPlans] = useState<PricingPlan[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [quickFormPackage, setQuickFormPackage] = useState<string | null>(null);
-  const [leadMagnetOpen, setLeadMagnetOpen] = useState(false);
-  const { section, isInSection } = useSection();
+  const [selectedForm, setSelectedForm] = useState<string | null>(null);
+  const [hoverForm, setHoverForm] = useState<string | null>(null);
+  const { isInSection, section } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
-  const copy = isInSection && section ? sectionPricingCopy[section.id] : null;
-
+  // Subtle entrance animation for the price
+  const [displayedPrice, setDisplayedPrice] = useState(0);
   useEffect(() => {
-    const fetchPlans = async () => {
-      let query = supabase
-        .from("pricing_plans")
-        .select("*")
-        .eq("active", true)
-        .order("sort_order");
-
-      // Filter by section — hub shows regnskap prices
-      if (isInSection && section) {
-        query = query.eq("section", section.id);
-      } else {
-        query = query.eq("section", "regnskap");
-      }
-
-      const { data } = await query;
-      setPlans((data as PricingPlan[]) || []);
-      setLoading(false);
+    const target = 1999;
+    const duration = 1200;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayedPrice(Math.round(eased * target));
+      if (progress < 1) requestAnimationFrame(animate);
     };
-    fetchPlans();
-  }, [isInSection, section]);
+    requestAnimationFrame(animate);
+  }, []);
 
-  const comparisons = copy?.comparisons || [
-    { name: "Billigalternativene", body: "Lav inngangsbillett og enkel løsning. Men når selskapet vokser, kommer spørsmålene — hvem følger opp?", us: "Hos Avargo er rådgivning og oppfølging inkludert — uansett pakke.", tag: "Helhet fra dag én." },
-    { name: "De store byråene", body: "Profesjonelle og etablerte. Men du blir én av mange kunder, og hvert spørsmål koster.", us: "Hos oss betaler du fast pris og kan ta kontakt uten å tenke på timebudsjettet.", tag: "Relasjon foran ressursnummer." },
-    { name: "Gjør-det-selv-systemer", body: "Gode verktøy, men de tar ikke ansvar. Du står alene med rapporter, frister og vurderinger.", us: "Med Avargo får du systemet, eksperten og strukturen — satt opp riktig.", tag: "Teknologi med eierskap." },
-  ];
-
-  const lowestPrice = plans.length > 0 ? Math.min(...plans.map(p => p.price)) : null;
-  const lowestPriceFormatted = lowestPrice ? lowestPrice.toLocaleString("nb-NO") : null;
+  const pageTitle = "Priser | Fastpris fra 1 999 kr/mnd — Avargo";
+  const pageDesc = "Fastpris på regnskap fra 1 999 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
+  const pageUrl = `https://avargo.no${sectionPath}/priser`;
 
   return (
     <>
-      {(() => {
-        const pageTitle = copy ? `Priser — ${section!.name} | Avargo` : `Priser | ${lowestPriceFormatted ? `Regnskap fra ${lowestPriceFormatted} kr/mnd` : "Regnskap"} — Avargo`;
-        const pageDesc = copy?.sub || "Fast pris, ingen overraskelser. Regnskapsfører, rådgivning og skatteoptimalisering — alt inkludert.";
-        const pageUrl = `https://avargo.no${sectionPath}/priser`;
-        return (
-          <Helmet>
-            <title>{pageTitle}</title>
-            <meta name="description" content={pageDesc} />
-            <link rel="canonical" href={pageUrl} />
-            <meta property="og:title" content={pageTitle} />
-            <meta property="og:description" content={pageDesc} />
-            <meta property="og:url" content={pageUrl} />
-            <meta name="twitter:title" content={pageTitle} />
-            <meta name="twitter:description" content={pageDesc} />
-          </Helmet>
-        );
-      })()}
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDesc} />
+      </Helmet>
 
-      <section className="py-24 md:py-40 relative">
-        <div className="absolute inset-0 ambient-glow opacity-40" />
+      {/* ── Hero: price + calculator ───────────────────── */}
+      <section className="pt-10 pb-20 md:pt-16 md:pb-32 relative overflow-hidden">
+        <div className="absolute inset-0 ambient-glow opacity-60" />
         <div className="container mx-auto px-4 md:px-6 relative">
-          <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
-              <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-10 leading-snug">
-                {copy ? (
-                  <>{copy.headline.split(".")[0]}.<span className="italic text-gradient-rose"> {copy.headline.split(".").slice(1).join(".")}</span></>
-                ) : (
-                  <>Enkel pris.<span className="italic text-gradient-rose"> Full kontroll.</span></>
-                )}
-              </h1>
-              <p className="text-foreground/70 font-light leading-relaxed max-w-lg mx-auto mb-5 md:mb-6 text-base md:text-lg">
-                {copy?.sub || "Hos Avargo betaler du én fast månedspris. Ingen tillegg for MVA-rapportering, lønnskjøring eller rådgivning. Alt er inkludert fra dag én."}
-              </p>
-              <p className="text-sm text-primary italic font-light">
-                {copy?.italic || "Vi tror på forutsigbarhet — for deg og for oss."}
-              </p>
-            </div>
-          </AnimatedSection>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-7xl mx-auto">
+            {/* Left: copy */}
+            <AnimatedSection>
+              <div className="max-w-xl">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 text-primary text-[11px] font-medium tracking-[0.15em] uppercase mb-6">
+                  Priser
+                </span>
+                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-6">
+                  Fastpris fra <span className="italic text-gradient-rose">{displayedPrice.toLocaleString("nb-NO")} kr/mnd</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-foreground/80 font-light leading-relaxed mb-6">
+                  Forutsigbare kostnader – uten skjulte tillegg.
+                </p>
+                <p className="text-foreground/60 font-light leading-relaxed mb-10 max-w-md">
+                  Hos Avargo betaler du én fast månedspris. Ingen timepriser, ingen overraskelser og ingen ekstra fakturaer for MVA, lønn eller rådgivning. Alt du trenger innen regnskap er inkludert fra dag én.
+                </p>
 
-          <AnimatedSection delay={0.15}>
-            <div className="max-w-5xl mx-auto mb-12 md:mb-16">
-              <SocialProofBar />
-            </div>
-          </AnimatedSection>
+                <div className="p-6 md:p-8 rounded-3xl bg-card/60 border border-border/40">
+                  <h2 className="font-heading text-2xl md:text-3xl mb-3 flex items-center gap-3">
+                    <Calculator size={26} className="text-primary" />
+                    Prisvurderingskalkulator
+                  </h2>
+                  <p className="text-foreground/60 font-light leading-relaxed text-sm md:text-base">
+                    Fyll ut selskapsformen til høyre, så får du et estimat tilpasset bedriften din. Vi kommer tilbake med et endelig, uforpliktende tilbud så snart vi har sett på oversikten.
+                  </p>
+                </div>
+              </div>
+            </AnimatedSection>
 
-          {loading ? (
-            <div className="text-center text-foreground/50 text-sm py-12">Laster prisplaner…</div>
-          ) : plans.length === 0 ? (
-            <div className="text-center text-foreground/50 text-sm py-12">Ingen prisplaner tilgjengelig for denne avdelingen ennå.</div>
-          ) : (
-            <div className={`grid grid-cols-1 sm:grid-cols-2 ${plans.length >= 4 ? "lg:grid-cols-4" : plans.length === 3 ? "lg:grid-cols-3" : ""} gap-5 md:gap-6 max-w-6xl mx-auto`}>
-              {plans.map((plan, i) => (
-                <AnimatedSection key={plan.id} delay={i * 0.15}>
-                  <div className={`relative p-8 md:p-10 rounded-3xl h-full flex flex-col card-lift ${plan.highlighted ? "glass glow-rose border-primary/25" : "glass"}`}>
-                    {plan.highlighted && (
-                      <div className="absolute -top-3 left-8 md:left-10 px-4 py-1.5 bg-primary text-primary-foreground text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">Anbefalt</div>
-                    )}
-                    <h3 className="font-heading text-2xl md:text-3xl mb-2">{plan.name}</h3>
-                    <p className="text-sm text-foreground/60 font-light mb-6 md:mb-8">{plan.description}</p>
-                    <div className="mb-6 md:mb-8">
-                      <span className="text-sm text-foreground/50 font-light mr-1">Fra</span>
-                      <span className="font-heading text-4xl md:text-5xl">{plan.price.toLocaleString("nb-NO")}</span>
-                      <span className="text-foreground/50 text-sm"> kr{plan.price_suffix}</span>
-                    </div>
-                    <ul className="flex flex-col gap-3 mb-8 md:mb-10 flex-1">
-                      {(plan.features || []).map((f) => (
-                        <li key={f} className="flex items-start gap-3 text-sm text-foreground/70 font-light">
-                          <Check size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={() => setQuickFormPackage(plan.name)}
-                      className={`group w-full flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium tracking-wider transition-all duration-500 ${plan.highlighted ? "bg-primary text-primary-foreground hover:scale-[1.02] glow-rose" : "border border-border/40 text-foreground/70 hover:border-primary/30 hover:text-foreground"}`}
-                    >
-                      Få tilbud på {plan.name}
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
-          )}
+            {/* Right: calculator card */}
+            <AnimatedSection delay={0.15}>
+              <motion.div
+                className="relative rounded-[2rem] bg-card/90 backdrop-blur-xl border border-border/60 p-7 md:p-10 shadow-[0_24px_80px_-32px_hsl(20_14%_10%/_0.12)]"
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
-          {/* Custom pricing CTA */}
-          <AnimatedSection delay={0.5}>
-            <div className="max-w-6xl mx-auto mt-16 md:mt-20">
-              <motion.div className="relative overflow-hidden rounded-3xl glass border border-border/20" whileHover={{ scale: 1.005 }} transition={{ duration: 0.4 }}>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 p-8 md:p-12">
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/15 border border-primary/20 flex items-center justify-center">
-                      <Sparkles size={24} className="text-primary" strokeWidth={1.5} />
-                    </div>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-[11px] tracking-[0.25em] uppercase text-foreground/50 font-medium">Kalkulator</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/8 text-secondary text-[11px] font-medium">
+                    <Sparkles size={12} />
+                    Fastpris
+                  </span>
+                </div>
+
+                <p className="text-foreground/60 text-sm mb-2">Prisene starter fra</p>
+                <div className="font-heading text-4xl md:text-5xl text-foreground mb-8">
+                  {displayedPrice.toLocaleString("nb-NO")} kr/mnd
+                </div>
+
+                <div className="mb-8">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-foreground/80 font-medium">Steg 1 / 2</span>
+                    <span className="text-foreground/50 text-xs">Velg selskapsform</span>
                   </div>
-                  <div className="flex-1 text-center md:text-left">
-                    <h3 className="font-heading text-2xl md:text-3xl mb-2">
-                      Trenger du noe{" "}<span className="italic text-gradient-rose">skreddersydd</span>?
-                    </h3>
-                    <p className="text-sm md:text-base text-foreground/60 font-light leading-relaxed max-w-lg">
-                      Ikke alle selskaper passer inn i en ferdig pakke. Fortell oss om ditt behov, så setter vi sammen en løsning som passer deg.
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <button type="button" onClick={() => setQuickFormPackage("Skreddersydd")} className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all duration-500">
-                      <MessageCircle size={15} className="text-primary" />
-                      Ta kontakt
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
+                  <div className="h-1.5 w-full bg-border/40 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-primary to-rose-glow rounded-full"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "50%" }}
+                      transition={{ duration: 1, delay: 0.3 }}
+                    />
                   </div>
                 </div>
+
+                <p className="text-lg font-medium text-foreground mb-4">1. Velg selskapsform</p>
+                <p className="text-sm text-foreground/60 font-light mb-6">
+                  Velg hvilken type selskap du har. Dette påvirker prisen og hvilke tjenester som er aktuelle for deg.
+                </p>
+
+                <div className="grid grid-cols-4 gap-3 mb-8">
+                  {companyForms.map((form) => {
+                    const active = selectedForm === form.key;
+                    const hovered = hoverForm === form.key;
+                    return (
+                      <button
+                        key={form.key}
+                        type="button"
+                        onClick={() => setSelectedForm(form.key)}
+                        onMouseEnter={() => setHoverForm(form.key)}
+                        onMouseLeave={() => setHoverForm(null)}
+                        className={`relative flex flex-col items-center justify-center gap-1 py-4 rounded-2xl border transition-all duration-300 ${
+                          active
+                            ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
+                            : hovered
+                              ? "border-primary/40 bg-primary/5"
+                              : "border-border/60 bg-card/50 hover:border-primary/30"
+                        }`}
+                      >
+                        <span className="text-sm font-semibold tracking-wide">{form.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <Link
+                  to={selectedForm ? `${sectionPath}/kontakt?selskapsform=${selectedForm}` : `${sectionPath}/kontakt`}
+                  className="group w-full inline-flex items-center justify-center gap-2 py-4 rounded-full bg-foreground text-background text-sm font-medium tracking-wider hover:bg-primary hover:text-primary-foreground transition-all duration-500"
+                >
+                  {selectedForm ? "Få tilbud for " + selectedForm : "Neste"}
+                  <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
               </motion.div>
-            </div>
-          </AnimatedSection>
+            </AnimatedSection>
+          </div>
         </div>
       </section>
 
-      <section className="py-24 md:py-32 border-t border-border/15">
+      {/* ── What's included ────────────────────────────── */}
+      <section className="py-20 md:py-32 border-t border-border/30 bg-muted/20">
         <div className="container mx-auto px-4 md:px-6">
           <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-6">
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 md:mb-6">
-                Hva skiller Avargo{" "}<span className="italic text-gradient-rose">fra resten</span>?
+            <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/8 text-secondary text-[11px] font-medium tracking-[0.15em] uppercase mb-6">
+                Inkludert i fastprisen
+              </span>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5">
+                Alt innen regnskap — <span className="italic text-gradient-rose">i én pris</span>
               </h2>
-              <p className="text-foreground/60 font-light leading-relaxed max-w-lg mx-auto text-sm md:text-base">
-                {copy?.comparison || "De fleste regnskapstilbydere gir deg enten en billig minimumsløsning eller en dyr helhetspakke. Vi gir deg alt du trenger — til en pris som gir mening."}
+              <p className="text-foreground/60 font-light leading-relaxed">
+                Ingen moduler å kjøpe til, ingen timepriser og ingen skjulte gebyrer. Dette følger med uansett pakke.
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mt-12 md:mt-16">
-            {comparisons.map((comp, i) => (
-              <AnimatedSection key={comp.name} delay={i * 0.1}>
-                <div className="p-7 md:p-8 glass rounded-3xl card-lift text-left h-full flex flex-col">
-                  <h3 className="font-heading text-xl md:text-2xl mb-4 md:mb-5">{comp.name}</h3>
-                  <p className="text-sm text-foreground/55 font-light leading-relaxed mb-4 flex-1">{comp.body}</p>
-                  <div className="h-px bg-border/20 my-4 md:my-5" />
-                  <p className="text-sm text-foreground/80 font-light leading-relaxed mb-3">{comp.us}</p>
-                  <p className="text-xs text-primary italic font-light">{comp.tag}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+            {includedServices.map((service, i) => (
+              <AnimatedSection key={service.title} delay={i * 0.08}>
+                <div className="group h-full p-7 md:p-8 rounded-3xl bg-card/70 border border-border/40 card-lift">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/8 border border-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/12 transition-colors">
+                    <service.icon size={22} className="text-primary" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-heading text-xl md:text-2xl mb-3">{service.title}</h3>
+                  <p className="text-sm text-foreground/60 font-light leading-relaxed">{service.description}</p>
                 </div>
               </AnimatedSection>
             ))}
           </div>
 
           <AnimatedSection delay={0.4}>
-            <div className="max-w-xl mx-auto text-center mt-16 md:mt-20">
-              <p className="text-foreground/60 font-light leading-relaxed mb-2 text-sm md:text-base whitespace-pre-line">
-                {copy?.bottomText || "Å bytte leverandør handler sjelden om pris.\nDet handler om kontroll, tilgjengelighet og tillit."}
-              </p>
-              <p className="text-foreground/50 italic font-light text-sm mb-8 md:mb-10">{copy?.bottomItalic || "Når det først fungerer, blir du."}</p>
-              <Link
-                to={`${sectionPath}/kontakt`}
-                className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
-              >
-                Få et uforpliktende tilbud
-                <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-              </Link>
+            <div className="max-w-3xl mx-auto mt-16 md:mt-20">
+              <div className="p-6 md:p-8 rounded-3xl bg-card/60 border border-border/40">
+                <h3 className="font-heading text-2xl mb-5">Detaljert oversikt over det som er inkludert</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                  {[
+                    "Daglig bokføring og bilagsregistrering",
+                    "Bank- og kredittkortavstemming",
+                    "Kunde- og leverandørgjeld",
+                    "Fakturering og purring",
+                    "MVA-beregning og MVA-melding",
+                    "Lønnskjøring og a-melding",
+                    "Feriepenger og sykefraværsoppfølging",
+                    "Årsregnskap og selvangivelse",
+                    "Næringsoppgave og offentlig rapportering",
+                    "Månedsrapporter og nøkkeltall",
+                    "Skatterådgivning og planlegging",
+                    "Dedikert regnskapsfører",
+                    "Ubegrenset support på telefon og e-post",
+                    "Tilgang til kundeportalen",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3 text-sm text-foreground/70 font-light">
+                      <Check size={16} className="text-secondary mt-0.5 shrink-0" strokeWidth={2} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </AnimatedSection>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 border-t border-border/15">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* ── CTA ────────────────────────────────────────── */}
+      <section className="py-20 md:py-28 relative overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="font-heading text-3xl md:text-4xl mb-4">Regn ut din <span className="italic text-gradient-rose">besparelse</span></h2>
-              <p className="text-foreground/60 font-light text-sm md:text-base">Se hvor mye tid og penger du sparer ved å outsource til Avargo.</p>
-            </div>
-            <ROIMini />
-            <div className="text-center mt-10">
-              <button type="button" onClick={() => setLeadMagnetOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-primary/30 text-foreground/80 hover:text-foreground hover:border-primary/60 hover:bg-primary/5 text-sm font-medium tracking-wider transition-all">
-                <FileText size={14} className="text-primary" /> Last ned full prisguide (PDF)
-              </button>
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6">
+                Klar for <span className="italic text-gradient-rose">forutsigbart regnskap</span>?
+              </h2>
+              <p className="text-foreground/60 font-light leading-relaxed max-w-xl mx-auto mb-10">
+                Få et uforpliktende tilbud, eller book en gratis gjennomgang av dagens regnskapssituasjon.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  to={`${sectionPath}/kontakt`}
+                  className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                >
+                  Bli kunde
+                  <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                </Link>
+                <Link
+                  to={`${sectionPath}/book-mote`}
+                  className="group inline-flex items-center gap-3 px-8 py-4 border border-border/60 text-foreground/80 hover:text-foreground hover:border-primary/40 hover:bg-primary/5 text-sm font-medium tracking-wider rounded-full transition-all duration-500"
+                >
+                  <MessageCircle size={15} className="text-primary" />
+                  Book møte
+                </Link>
+              </div>
             </div>
           </AnimatedSection>
         </div>
       </section>
-
-      <PricingQuickForm
-        open={!!quickFormPackage}
-        onOpenChange={(v) => { if (!v) setQuickFormPackage(null); }}
-        packageName={quickFormPackage || ""}
-      />
-      <LeadMagnetDialog open={leadMagnetOpen} onOpenChange={setLeadMagnetOpen} />
     </>
   );
 };
