@@ -246,19 +246,25 @@ const Pricing = () => {
                 </div>
 
                 <p className="text-foreground/60 text-sm mb-2">
-                  {step === 1 ? "Prisene starter fra" : "Din pris så langt"}
+                  {isCustomOffer ? "Skreddersydd tilbud" : step === 1 ? "Prisene starter fra" : "Din pris så langt"}
                 </p>
-                <div className="font-heading text-4xl md:text-5xl text-foreground mb-8 flex items-baseline gap-3">
-                  <motion.span
-                    key={price}
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    {price.toLocaleString("nb-NO")}
-                  </motion.span>
-                  <span className="text-lg md:text-xl text-foreground/50 font-light">kr/mnd</span>
-                </div>
+                {isCustomOffer ? (
+                  <div className="font-heading text-3xl md:text-4xl text-foreground mb-8">
+                    Tilpasset tilbud
+                  </div>
+                ) : (
+                  <div className="font-heading text-4xl md:text-5xl text-foreground mb-8 flex items-baseline gap-3">
+                    <motion.span
+                      key={price}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      {price.toLocaleString("nb-NO")}
+                    </motion.span>
+                    <span className="text-lg md:text-xl text-foreground/50 font-light">kr/mnd</span>
+                  </div>
+                )}
 
                 {/* Progress */}
                 <div className="mb-8">
