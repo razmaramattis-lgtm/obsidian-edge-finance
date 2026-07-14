@@ -258,10 +258,10 @@ const Tjenester = () => {
               {copy?.tag || "Avargo · Tjenester"}
             </p>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-              {copy?.headline || <>Alt du trenger.{" "}<span className="italic text-gradient-rose">Samlet på ett sted.</span></>}
+              {copy?.headline || <>En pålitelig rådgiver{" "}<span className="italic text-gradient-rose">ved din side.</span></>}
             </h1>
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-5 md:mb-6">
-              {copy?.sub || "Regnskap, CFO-rådgivning, HR og fullskala digital markedsføring — koordinert av ett team, levert under ett tak. Du fokuserer på å bygge. Vi tar resten."}
+              {copy?.sub || "Regnskap, CFO-rådgivning og HR — levert av ett dedikert team som investerer seg i bedriften din. Du fokuserer på det du kan best. Vi sørger for at resten er i orden."}
             </p>
             <p className="text-sm text-primary/80 italic font-light mb-10 md:mb-14">
               {copy?.cta || "Strukturen som gjør vekst mulig."}
