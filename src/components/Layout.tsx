@@ -257,8 +257,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         >
           <div className="flex flex-col p-5 pb-10 gap-0.5">
-            <MobileNavLink to="/" label="Hjem" onClick={() => setMenuOpen(false)} />
-
             <MobileGroup label="Tjenester" open={mobileTjenesterOpen} setOpen={setMobileTjenesterOpen} listHref="/tjenester" onNavigate={() => setMenuOpen(false)}>
               {tjenesterCore.map((item) => (
                 <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
@@ -287,11 +285,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </MobileGroup>
 
             <MobileNavLink to="/priser" label="Priser" onClick={() => setMenuOpen(false)} />
-            <MobileNavLink to="/om-oss" label="Om Avargo" onClick={() => setMenuOpen(false)} />
 
-            <MobileGroup label="Mer" open={mobileMerOpen} setOpen={setMobileMerOpen} onNavigate={() => setMenuOpen(false)}>
-              {[...ressurserLinks, ...selskapetLinks.filter(l => l.href !== "/om-oss")].map((item: any) => (
-                <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileMerOpen(false); }}
+            <MobileGroup label="Ressurser" open={mobileRessurserOpen} setOpen={setMobileRessurserOpen} listHref="/ressurser" onNavigate={() => setMenuOpen(false)}>
+              {ressurserLinks.map((item) => (
+                <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileRessurserOpen(false); }}
                   className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
                   <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
                 </Link>
