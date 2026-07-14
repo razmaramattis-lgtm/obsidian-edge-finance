@@ -80,7 +80,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: Users, title: "Lønn & Personal", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift — inkludert i fastprisen.", href: "/regnskap/tjenester/lonn" },
       { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om.", href: "/regnskap/tjenester/cfo" },
       { icon: Sparkles, title: "AI-drevet innsikt", desc: "Vi bruker AI til å oppdage fradrag, risiko og muligheter du ikke ser selv.", href: "/regnskap/tjenester/ai-innsikt" },
-      { icon: BarChart3, title: "Rapportering & dashboards", desc: "Månedlig resultat, likviditetsoversikt og prognoser — levert til deg automatisk.", href: "/regnskap/tjenester/dashboard" },
+      
       { icon: Crown, title: "Rådgivning inkludert", desc: "Utbytte, kapitalforhøyelse, fusjoner — spør oss om hva som helst. Rådgivning er standard.", href: "/regnskap/tjenester/cfo" },
       { icon: Calculator, title: "MVA & rapportering", desc: "Vi håndterer alle MVA-oppgaver, termin for termin, med full kontroll og dokumentasjon.", href: "/regnskap/tjenester/regnskapsforer" },
       { icon: Target, title: "Frister? Vårt ansvar.", desc: "MVA-frist, skattemelding, årsregnskap — vi leverer alt i tide, hver gang.", href: "/regnskap/tjenester/regnskapsforer" },
@@ -253,7 +253,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: ShoppingCart, title: "Nettbutikk", desc: "Moderne butikk som selger — med betaling, frakt og lager.", href: "/markedsforing/tjenester/nettbutikk" },
       { icon: Palette, title: "Nettsider", desc: "Konverterende nettsider som bygger tillit og driver leads.", href: "/markedsforing/tjenester/nettsider" },
       { icon: Mail, title: "E-postmarkedsføring", desc: "Automatiserte kampanjer som pleier leads og driver gjenkjøp.", href: "/markedsforing/tjenester/ai-automatisering" },
-      { icon: BarChart3, title: "Datadrevet rapportering", desc: "Hver krone spores fra klikk til kundeforhold — koblet til regnskapet.", href: "/markedsforing/tjenester/dashboard" },
+      
       { icon: Video, title: "Innholdsproduksjon", desc: "Tekst, bilder og video som engasjerer målgruppen din og bygger autoritet.", href: "/markedsforing/tjenester/nettsider" },
       { icon: Megaphone, title: "Strategi & rådgivning", desc: "Helhetlig vekststrategi tilpasset din bransje, dine mål og ditt budsjett.", href: "/markedsforing/tjenester/google-ads" },
     ],
@@ -356,7 +356,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { icon: Database, title: "Integrasjoner", desc: "Vi kobler systemene dine sammen — regnskap, CRM, e-post og lagerstyring.", href: "/it/tjenester/ai-automatisering" },
       { icon: Search, title: "SEO-oppsett", desc: "Teknisk SEO-grunnlag slik at nettsiden din blir funnet på Google.", href: "/it/tjenester/seo" },
       { icon: Shield, title: "Sikkerhet & backup", desc: "Overvåking, oppdateringer og backup — vi holder systemene dine trygge.", href: "/it/tjenester/internsystemer" },
-      { icon: BarChart3, title: "Dashboard & rapportering", desc: "Visualiser dataene dine med sanntids-dashboards tilpasset dine behov.", href: "/it/tjenester/dashboard" },
+      
     ],
     industries: [
       { icon: Briefcase, name: "Consulting", slug: "consulting", tagline: "Digitale verktøy som imponerer", desc: "Kundeportaler, booking-systemer og automatisert rapportering for rådgivere." },

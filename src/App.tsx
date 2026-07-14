@@ -338,7 +338,7 @@ const App = () => (
                             <Route path="/:sectionId/tjenester/arsregnskap" element={<Arsregnskap />} />
                             <Route path="/:sectionId/tjenester/fakturering" element={<Fakturering />} />
                             <Route path="/:sectionId/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
-                            <Route path="/:sectionId/tjenester/dashboard" element={<Navigate to="/tjenester" replace />} />
+                            
                             <Route path="/:sectionId/tjenester/ansettelse" element={<Ansettelse />} />
                             <Route path="/:sectionId/tjenester/personalhandbok" element={<Personalhandbok />} />
                             <Route path="/:sectionId/tjenester/arbeidsrett" element={<Arbeidsrett />} />
@@ -407,7 +407,7 @@ const App = () => (
                             <Route path="/tjenester/arsregnskap" element={<Arsregnskap />} />
                             <Route path="/tjenester/fakturering" element={<Fakturering />} />
                             <Route path="/tjenester/skatteplanlegging" element={<Skatteplanlegging />} />
-                            <Route path="/tjenester/dashboard" element={<Navigate to="/tjenester" replace />} />
+                            
                             <Route path="/tjenester/ansettelse" element={<Ansettelse />} />
                             <Route path="/tjenester/personalhandbok" element={<Personalhandbok />} />
                             <Route path="/tjenester/arbeidsrett" element={<Arbeidsrett />} />
