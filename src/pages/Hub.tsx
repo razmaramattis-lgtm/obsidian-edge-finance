@@ -299,8 +299,8 @@ const Hub = () => {
         </div>
       </section>
 
-      {/* ═══ COMPARISON ═══ */}
-      <ComparisonSection />
+      {/* ═══ SWITCH CHECK ═══ */}
+      <SwitchCheckSection />
 
       {/* ═══ FAQ ═══ */}
       <HubFAQ />
