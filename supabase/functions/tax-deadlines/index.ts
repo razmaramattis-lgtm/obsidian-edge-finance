@@ -621,11 +621,22 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json().catch(() => ({}));
-    const limit = body.limit || 10;
-    const filterTypes: string[] = body.types || [];
-    const filterCategories: string[] = body.categories || [];
-    const allDeadlines = body.all === true;
+    const url = new URL(req.url);
+    const isGet = req.method === "GET";
+
+    const body = isGet ? {} : await req.json().catch(() => ({}));
+    const getParam = (name: string) => url.searchParams.get(name);
+    const getArray = (name: string): string[] => {
+      const raw = getParam(name);
+      if (!raw) return [];
+      return raw.split(",").map(s => s.trim()).filter(Boolean);
+    };
+
+    const limit = isGet ? Number(getParam("limit") || "10") : (body.limit || 10);
+    const filterTypes: string[] = isGet ? getArray("types") : (body.types || []);
+    const filterCategories: string[] = isGet ? getArray("categories") : (body.categories || []);
+    const allDeadlines = isGet ? getParam("all") === "true" : body.all === true;
+    const format = isGet ? getParam("format") : body.format;
 
     let deadlines = generateDeadlines(allDeadlines ? 12 : 6);
 
@@ -637,6 +648,20 @@ serve(async (req) => {
 
     if (filterCategories.length > 0) {
       deadlines = deadlines.filter(d => filterCategories.includes(d.category));
+    }
+
+    if (format === "ics") {
+      const ics = generateIcs(deadlines, filterTypes as CompanyType[]);
+      const fileName = filterTypes.length > 0
+        ? `avargo-skattefrister-${filterTypes.join("-")}.ics`
+        : "avargo-skattefrister.ics";
+      return new Response(ics, {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "text/calendar; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${fileName}"`,
+        },
+      });
     }
 
     return new Response(JSON.stringify({
