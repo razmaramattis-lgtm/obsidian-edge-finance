@@ -211,7 +211,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </button>
       <p className="mt-4 text-[12px] text-foreground/45">
-        Rask responsimer · Uforpliktende · Ingen automatisert salgssekvens
+        Rask respons · Uforpliktende · Ingen automatisert salgssekvens
       </p>
     </form>
   );

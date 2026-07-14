@@ -13,11 +13,13 @@ import {
   MessageCircle,
   Sparkles,
   Send,
+  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
+import { supabase } from "@/integrations/supabase/client";
 
 // ── Pricing model ────────────────────────────────────────────
 const BASE_PRICE = 1999;
@@ -85,6 +87,15 @@ const Pricing = () => {
   const [payslips, setPayslips] = useState<number>(0);
   const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
 
+  // Step 6 form fields
+  const [contactCompany, setContactCompany] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const price = useMemo(() => {
     let p = BASE_PRICE;
     p += companyForms.find((c) => c.key === form)?.addon ?? 0;
@@ -96,13 +107,17 @@ const Pricing = () => {
     return p;
   }, [form, industry, revenue, bilag, payslips, aarsoppgjor]);
 
+  const contactValid =
+    contactCompany.trim().length > 1 &&
+    contactPhone.trim().length > 3 &&
+    /^\S+@\S+\.\S+$/.test(contactEmail.trim());
+
   const canNext =
     (step === 1 && !!form) ||
     (step === 2 && !!industry) ||
     step === 3 ||
     step === 4 ||
-    step === 5 ||
-    step === 6;
+    step === 5;
 
   const goNext = () => setStep((s) => Math.min(6, s + 1));
   const goBack = () => setStep((s) => Math.max(1, s - 1));
@@ -112,15 +127,43 @@ const Pricing = () => {
     "Fastpris på regnskap fra 1 999 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
   const pageUrl = `https://avargo.no${sectionPath}/priser`;
 
-  const summaryParams = new URLSearchParams({
-    selskapsform: form ?? "",
-    bransje: industries.find((i) => i.key === industry)?.label ?? "",
-    omsetning: revenueTiers[revenue]?.label ?? "",
-    bilag: bilagTiers[bilag]?.label ?? "",
-    lonn: String(payslips),
-    aarsoppgjor: aarsoppgjor ? "Ja" : "Nei",
-    estimat: String(price),
-  }).toString();
+  const submitOffer = async () => {
+    if (!contactValid || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const summaryLines = [
+        `Selskapsform: ${form ?? "—"}`,
+        `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
+        `Årlig omsetning: ${revenueTiers[revenue]?.label ?? "—"}`,
+        `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
+        `Lønnsslipper/mnd: ${payslips}`,
+        `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
+        `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`,
+      ].join("\n");
+      const fullMessage =
+        `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
+        `Kundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
+      const { error } = await supabase.functions.invoke("contact-submit", {
+        body: {
+          contact_person: contactCompany.trim().slice(0, 160),
+          company_name: contactCompany.trim().slice(0, 160),
+          email: contactEmail.trim().toLowerCase().slice(0, 255),
+          phone: contactPhone.trim().slice(0, 40),
+          source: `pricing-calculator:${typeof window !== "undefined" ? window.location.pathname : ""}`,
+          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
+          message: fullMessage.slice(0, 2000),
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch (e) {
+      console.error(e);
+      setSubmitError("Noe gikk galt. Prøv igjen eller send e-post til kontakt@avargo.no");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -415,15 +458,15 @@ const Pricing = () => {
                       </>
                     )}
 
-                    {/* Step 6: summary */}
-                    {step === 6 && (
+                    {/* Step 6: summary + kontaktskjema */}
+                    {step === 6 && !submitted && (
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">6. Oppsummering</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Sjekk over og send oss en henvendelse — vi kommer tilbake med et nøyaktig tilbud.
+                          Fyll inn kontaktinfo, så sender vi deg et <span className="text-foreground">bekreftet, midlertidig tilbud</span> direkte fra Avargo. Prisen kan justeres <span className="text-foreground">ned</span> etter en gjennomgang ved onboarding.
                         </p>
 
-                        <dl className="rounded-2xl border border-border/50 bg-card/40 divide-y divide-border/40 text-sm mb-6">
+                        <dl className="rounded-2xl border border-border/50 bg-card/40 divide-y divide-border/40 text-sm mb-5">
                           {[
                             ["Selskapsform", form ?? "—"],
                             ["Bransje", industries.find((i) => i.key === industry)?.label ?? "—"],
@@ -439,25 +482,108 @@ const Pricing = () => {
                           ))}
                         </dl>
 
-                        <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-2">
+                        <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-6">
                           <p className="text-xs uppercase tracking-[0.15em] text-primary/80 font-medium mb-1">
-                            Ditt estimat
+                            Midlertidig estimat
                           </p>
                           <p className="font-heading text-3xl md:text-4xl text-foreground">
-                            {price.toLocaleString("nb-NO")} <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
+                            {price.toLocaleString("nb-NO")}{" "}
+                            <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
                           </p>
-                          <p className="text-xs text-foreground/50 font-light mt-2">
-                            Endelig tilbud justeres etter en kort gjennomgang.
+                          <p className="text-xs text-foreground/60 font-light mt-2 leading-relaxed">
+                            Endelig tilbud sendes fra <span className="text-foreground">kontakt@avargo.no</span> og kan justeres ned ved onboarding.
                           </p>
                         </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              Firmanavn *
+                            </label>
+                            <input
+                              type="text"
+                              value={contactCompany}
+                              onChange={(e) => setContactCompany(e.target.value)}
+                              maxLength={160}
+                              placeholder="F.eks. Bakeri AS"
+                              className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                                Telefon *
+                              </label>
+                              <input
+                                type="tel"
+                                value={contactPhone}
+                                onChange={(e) => setContactPhone(e.target.value)}
+                                maxLength={40}
+                                placeholder="+47 ..."
+                                className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                                E-post *
+                              </label>
+                              <input
+                                type="email"
+                                value={contactEmail}
+                                onChange={(e) => setContactEmail(e.target.value)}
+                                maxLength={255}
+                                placeholder="deg@firma.no"
+                                className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              Melding (valgfri)
+                            </label>
+                            <textarea
+                              value={contactMessage}
+                              onChange={(e) => setContactMessage(e.target.value)}
+                              maxLength={1000}
+                              rows={3}
+                              placeholder="Kort om selskapet, når du ønsker å bytte, eller spørsmål du lurer på …"
+                              className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors resize-none"
+                            />
+                          </div>
+                        </div>
+
+                        {submitError && (
+                          <p className="mt-3 text-xs text-destructive">{submitError}</p>
+                        )}
                       </>
+                    )}
+
+                    {step === 6 && submitted && (
+                      <div className="py-4">
+                        <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mb-5">
+                          <CheckCircle2 size={26} className="text-primary" strokeWidth={1.5} />
+                        </div>
+                        <p className="font-heading text-2xl md:text-3xl mb-3">
+                          Takk! Vi har mottatt forespørselen din.
+                        </p>
+                        <p className="text-sm text-foreground/70 font-light leading-relaxed mb-4">
+                          Vi sender et <span className="text-foreground">bekreftet, midlertidig tilbud</span> til <span className="text-foreground">{contactEmail}</span> direkte fra <span className="text-foreground">kontakt@avargo.no</span>. Under onboardingen ser vi over volum og omfang sammen med deg, og prisen kan justeres <span className="text-foreground">ned</span> hvis det er grunnlag for det.
+                        </p>
+                        <div className="p-4 rounded-2xl border border-border/50 bg-card/40 text-sm">
+                          <p className="text-foreground/60 font-light mb-1">Ditt midlertidige estimat</p>
+                          <p className="font-heading text-2xl text-foreground">
+                            {price.toLocaleString("nb-NO")}{" "}
+                            <span className="text-base text-foreground/50 font-light">kr/mnd</span>
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </motion.div>
                 </AnimatePresence>
 
                 {/* Nav */}
                 <div className="flex items-center gap-3 mt-8">
-                  {step > 1 && (
+                  {step > 1 && !submitted && (
                     <button
                       type="button"
                       onClick={goBack}
@@ -477,13 +603,22 @@ const Pricing = () => {
                       Neste
                       <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
                     </button>
-                  ) : (
-                    <Link
-                      to={`${sectionPath}/kontakt?${summaryParams}`}
-                      className="group flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium tracking-wider glow-rose hover:scale-[1.01] transition-all duration-500"
+                  ) : !submitted ? (
+                    <button
+                      type="button"
+                      onClick={submitOffer}
+                      disabled={!contactValid || submitting}
+                      className="group flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium tracking-wider glow-rose hover:scale-[1.01] transition-all duration-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
                       <Send size={14} />
-                      Send oversikt
+                      {submitting ? "Sender …" : "Send forespørsel"}
+                    </button>
+                  ) : (
+                    <Link
+                      to={`${sectionPath}/`}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-full border border-border/60 text-sm text-foreground/70 hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-all"
+                    >
+                      Til forsiden
                     </Link>
                   )}
                 </div>
