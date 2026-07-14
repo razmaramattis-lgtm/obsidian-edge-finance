@@ -219,14 +219,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* CTAs */}
             <div className="ml-4 flex items-center gap-2 pl-4 border-l border-border/70">
-              <Link to="/logg-inn" className="px-3 py-2 text-[12.5px] font-medium text-foreground/70 hover:text-foreground transition-colors tracking-wide">
-                Logg inn
+              <Link
+                to="/book-mote"
+                className="px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground transition-all duration-300 tracking-wide"
+              >
+                Book møte
               </Link>
               <Link
                 to="/kontakt"
                 className="px-5 py-2.5 text-[12.5px] font-medium bg-foreground text-background rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide"
               >
-                Få tilbud
+                Bli kunde
               </Link>
             </div>
           </div>
