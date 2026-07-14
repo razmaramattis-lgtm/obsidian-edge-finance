@@ -328,7 +328,7 @@ const Contact = () => {
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
             <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
-              {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt raskt — som regel samme arbeidsdag med et tilpasset forslag — helt uforpliktende."}
+              {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt raskt — som regel samme arbeidsdag — med et tilpasset og helt uforpliktende forslag."}
             </p>
             <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
               {contactCopy?.italic || "Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger."}
