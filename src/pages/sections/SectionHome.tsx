@@ -549,10 +549,11 @@ const SectionHome = () => {
         </div>
         <div className="relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24">
           <div className="max-w-3xl">
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-              className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-5 md:mb-8 font-medium">
-              {c.hero.tagline}
-            </motion.p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-5 md:mb-8">
+              <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary font-semibold px-3.5 py-1.5 rounded-full border border-background/70 bg-secondary/5">
+                {c.hero.tagline}
+              </span>
+            </motion.div>
             <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }}
               className="text-3xl sm:text-5xl md:text-7xl font-bold leading-[1.05] mb-5 md:mb-8">
               {c.hero.h1}
