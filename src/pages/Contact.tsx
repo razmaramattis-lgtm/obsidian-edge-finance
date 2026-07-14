@@ -145,7 +145,6 @@ const Contact = () => {
     if (d.includes("eiendom") || d.includes("utleie av eigen")) return "Eiendom & Utvikling";
     if (d.includes("holding") || d.includes("invest") || d.includes("egeninvestering")) return "Holding & Investering";
     if (d.includes("konsulent") || d.includes("rådgiv") || d.includes("bedriftsrådgivning")) return "Consulting & Rådgivning";
-    if (d.includes("landbruk") || d.includes("jord") || d.includes("fiske") || d.includes("skogbruk")) return "Landbruk";
     if (d.includes("detaljhandel") || d.includes("butikk") || d.includes("engroshandel")) return "Varehandel";
     if (d.includes("bygg") || d.includes("anlegg") || d.includes("oppføring")) return "Bygg & Anlegg";
     if (d.includes("netthandel") || d.includes("nettbutikk") || d.includes("postordre")) return "Nettbutikk & E-commerce";
@@ -572,7 +571,6 @@ const Contact = () => {
                               <option>Eiendom & Utvikling</option>
                               <option>Holding & Investering</option>
                               <option>Consulting & Rådgivning</option>
-                              <option>Landbruk</option>
                               <option>Varehandel</option>
                               <option>Bygg & Anlegg</option>
                               <option>Nettbutikk & E-commerce</option>
