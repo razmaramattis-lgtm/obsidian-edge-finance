@@ -244,6 +244,60 @@ const Protokollgenerator = () => {
     }
   };
 
+  // Steg som kan hoppes over (kun for å komme raskt til fritt valg av saker)
+  const canSkipCurrent = currentSteg?.id === "vedtak" || currentSteg?.id === "regnskap";
+
+  // ---- Live PDF change tracker ------------------------------------------
+  // Sporer hvilke sak-moduler og hovedområder som er oppdatert siden forrige render.
+  const prevSnapshotRef = useRef<{ profile: string; saker: Record<string, string>; answers: string } | null>(null);
+  const [changeTick, setChangeTick] = useState(0);
+  const [lastChangeLabel, setLastChangeLabel] = useState<string>("");
+  const [changedSaker, setChangedSaker] = useState<Set<string>>(new Set());
+  const changedProfileRef = useRef(false);
+  const [profilePulseTick, setProfilePulseTick] = useState(0);
+
+  useEffect(() => {
+    if (!activeDoc) return;
+    const profileHash = JSON.stringify(profile);
+    const answersHash = JSON.stringify(activeDoc.answers);
+    const sakerHash: Record<string, string> = {};
+    activeDoc.sub_sections.forEach(s => { sakerHash[`${s.id}-${activeDoc.sub_sections.indexOf(s)}`] = JSON.stringify(s.data); });
+
+    const prev = prevSnapshotRef.current;
+    if (prev) {
+      const newChanged = new Set<string>();
+      let label = "";
+      if (prev.profile !== profileHash) { label = "Selskapsprofil"; setProfilePulseTick(t => t + 1); }
+      if (prev.answers !== answersHash) label = label || "Dokumentvalg";
+      activeDoc.sub_sections.forEach((s, idx) => {
+        const key = `${s.id}-${idx}`;
+        if (prev.saker[key] !== sakerHash[key]) {
+          newChanged.add(s.id);
+          const def = sakModuler.find(m => m.id === s.id);
+          label = def?.tittel || label;
+        }
+      });
+      // Sjekk om sak lagt til/fjernet
+      const prevIds = Object.keys(prev.saker);
+      const currIds = Object.keys(sakerHash);
+      if (prevIds.length !== currIds.length) label = label || "Sakslisten";
+
+      if (label) {
+        setLastChangeLabel(label);
+        setChangedSaker(newChanged);
+        setChangeTick(t => t + 1);
+      }
+    }
+    prevSnapshotRef.current = { profile: profileHash, saker: sakerHash, answers: answersHash };
+  }, [profile, activeDoc]);
+
+  // Fjern sak-pulse etter 1.4s
+  useEffect(() => {
+    if (changedSaker.size === 0) return;
+    const t = setTimeout(() => setChangedSaker(new Set()), 1400);
+    return () => clearTimeout(t);
+  }, [changeTick]);
+
   const applyBrreg = (data: {
     navn?: string; organisasjonsnummer?: string;
     forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
