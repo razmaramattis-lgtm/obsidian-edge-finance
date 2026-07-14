@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SwitchCheckDialog from "./SwitchCheckDialog";
-import switchCheckImage from "@/assets/switch-check.jpg";
+import switchCheckImage from "@/assets/switch-check.jpg.asset.json";
 
 const benefits = [
   "Få en tydelig plan for overtagelse og ansvar",
