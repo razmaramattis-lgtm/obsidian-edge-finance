@@ -342,10 +342,7 @@ const Contact = () => {
               ))}
             </div>
             <div className="space-y-3 text-sm text-foreground/60 font-light">
-              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Oscars gate 2B, 3714 Skien</span></div>
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Åpent man–fre 08:00–16:00</span></div>
-              
-              <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><a href="mailto:kontakt@avargo.no" className="hover:text-foreground transition-colors">kontakt@avargo.no</a></div>
             </div>
           </AnimatedSection>
 
@@ -645,6 +642,14 @@ const Contact = () => {
         </div>
       </section>
     )}
+
+    <section className="py-8 md:py-12 border-t border-border/15">
+      <div className="container mx-auto px-4 md:px-6 text-center">
+        <p className="text-xs text-foreground/40 font-light tracking-wide">
+          Avargo AS · Org.nr 938 076 669
+        </p>
+      </div>
+    </section>
     </>
   );
 };
