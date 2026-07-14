@@ -59,6 +59,16 @@ export default {
           DEFAULT: "hsl(var(--teal))",
           glow: "hsl(var(--teal-glow))",
         },
+        copper: {
+          DEFAULT: "hsl(var(--copper))",
+          glow: "hsl(var(--copper-glow))",
+        },
+        forest: {
+          DEFAULT: "hsl(var(--forest))",
+          deep: "hsl(var(--forest-deep))",
+        },
+        sage: "hsl(var(--sage))",
+        cream: "hsl(var(--cream))",
         warm: "hsl(var(--warm))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
