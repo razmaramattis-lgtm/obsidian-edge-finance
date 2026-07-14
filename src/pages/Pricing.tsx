@@ -420,7 +420,7 @@ const Pricing = () => {
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">5. Lønn og årsoppgjør</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Skriv inn hvor mange lønnsslipper du har per måned. Vi legger til {PER_PAYSLIP} kr per slipp.
+                          Hvor mange lønnsslipper kjører du per måned, og skal årsoppgjøret være inkludert?
                         </p>
 
                         <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
@@ -450,23 +450,36 @@ const Pricing = () => {
                           </button>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setAarsoppgjor((v) => !v)}
-                          className={`w-full flex items-center justify-between px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
-                            aarsoppgjor
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                          }`}
-                        >
-                          <span className="text-left">
-                            Ja, inkluder årsoppgjør
-                            <span className={`block text-xs mt-0.5 ${aarsoppgjor ? "text-primary-foreground/70" : "text-foreground/50"}`}>
-                              Årsregnskap, næringsoppgave og skattemelding
-                            </span>
-                          </span>
-                          <span className="text-xs shrink-0">+{AARSOPPGJOR} kr/mnd</span>
-                        </button>
+                        <p className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium mb-2">
+                          Skal årsoppgjør inkluderes?
+                        </p>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setAarsoppgjor(true)}
+                            className={`px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
+                              aarsoppgjor
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
+                            }`}
+                          >
+                            Ja
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAarsoppgjor(false)}
+                            className={`px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
+                              !aarsoppgjor
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
+                            }`}
+                          >
+                            Nei
+                          </button>
+                        </div>
+                        <p className="text-xs text-foreground/50 font-light mt-3">
+                          Årsregnskap, næringsoppgave og skattemelding.
+                        </p>
                       </>
                     )}
 
