@@ -233,9 +233,9 @@ function MoteInfo({ profile, includeMotenr }: { profile: CompanyProfile; include
 
 function Footer() {
   return (
-    <View style={styles.footer} fixed>
+    <View style={styles.footer}>
       <Text>Protokoll- og generalforsamlingsgenerator er produsert av Avargo.</Text>
-      <Text>Side 1 av 1</Text>
+      <Text render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
     </View>
   );
 }
