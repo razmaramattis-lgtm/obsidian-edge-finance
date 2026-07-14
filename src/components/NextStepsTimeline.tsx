@@ -7,7 +7,7 @@ interface Props {
 const NextStepsTimeline = ({ variant = "default" }: Props) => {
   const steps = [
     { icon: CheckCircle2, title: "Mottatt", desc: "Vi har registrert henvendelsen din. Du får bekreftelse på e-post.", time: "Nå" },
-    { icon: Mail, title: "Personlig svar", desc: "En dedikert rådgiver leser gjennom og kontakter deg direkte — ikke et automatisk svar.", time: "Innen 24 timer" },
+    { icon: Mail, title: "Personlig svar", desc: "En dedikert rådgiver leser gjennom og kontakter deg direkte — ikke et automatisk svar.", time: "Så raskt vi kan" },
     { icon: Calendar, title: "Uforpliktende prat", desc: "Vi avtaler en kort prat (Teams eller telefon) der vi blir kjent med behovet ditt.", time: "Når det passer deg" },
     { icon: Sparkles, title: "Skreddersydd tilbud", desc: "Du får et konkret forslag med fast pris — ingen overraskelser, ingen skjulte tillegg.", time: "Etter samtalen" },
   ];

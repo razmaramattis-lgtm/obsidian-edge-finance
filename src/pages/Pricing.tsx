@@ -69,7 +69,7 @@ const includedServices = [
   { icon: Users, title: "Lønn & HR", description: "Lønnskjøring, a-melding, feriepenger og sykefraværsoppfølging for deg og dine ansatte." },
   { icon: Building2, title: "Årsregnskap", description: "Komplett årsavslutning, selvangivelse, næringsoppgave og offentlig rapportering." },
   { icon: Calculator, title: "Økonomisk oversikt", description: "Månedsrapporter, nøkkeltall og likviditetsstyring slik at du alltid vet hvor du står." },
-  { icon: Shield, title: "Rådgivning & support", description: "Dedikert regnskapsfører, skatterådgivning og ubegrenset support — svar innen 24 timer." },
+  { icon: Shield, title: "Rådgivning & support", description: "Dedikert regnskapsfører, skatterådgivning og ubegrenset support — rask respons på hverdager." },
 ];
 
 // ── Component ─────────────────────────────────────────────────

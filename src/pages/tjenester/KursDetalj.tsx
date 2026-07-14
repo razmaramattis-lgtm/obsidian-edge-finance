@@ -258,7 +258,7 @@ const KursDetalj = () => {
               Klar for å booke?
             </h2>
             <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-              Bestill kurset direkte og vi kontakter deg innen 24 timer.
+              Bestill kurset direkte, så tar vi kontakt raskt.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -301,7 +301,7 @@ const KursDetalj = () => {
                   <CheckCircle2 size={24} className="text-primary" />
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Vi har mottatt forespørselen!</h3>
-                <p className="text-sm text-muted-foreground font-light mb-2">Vi kontakter deg innen 24 timer.</p>
+                <p className="text-sm text-muted-foreground font-light mb-2">Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
                 <p className="text-xs text-muted-foreground">Kurs: <span className="text-foreground">{course.name}</span></p>
                 <button onClick={() => setShowContact(false)} className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm hover:opacity-90">Lukk</button>
               </div>
@@ -397,7 +397,7 @@ const KursDetalj = () => {
                   <CheckCircle2 size={24} className="text-primary" />
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Bestilling mottatt!</h3>
-                <p className="text-sm text-muted-foreground font-light mb-2">Vi kontakter deg innen 24 timer for å avtale tid.</p>
+                <p className="text-sm text-muted-foreground font-light mb-2">Vi tar kontakt raskt — som regel samme arbeidsdag for å avtale tid.</p>
                 <p className="text-xs text-muted-foreground">Kurs: <span className="text-foreground">{course.name}</span></p>
                 <button onClick={() => setShowBooking(false)} className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm hover:opacity-90">Lukk</button>
               </div>

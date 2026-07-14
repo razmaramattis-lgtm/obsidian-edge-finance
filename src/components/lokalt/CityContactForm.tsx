@@ -79,7 +79,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
           <CheckCircle2 className="w-7 h-7 text-primary" />
         </div>
         <h3 className="font-serif text-2xl md:text-3xl font-light text-foreground mb-3">
-          Takk! Vi tar kontakt innen 24 timer.
+          Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.
         </h3>
         <p className="text-foreground/65 font-light">
           Vi går gjennom situasjonen din i {cityName} og sender et tilpasset tilbud direkte til {email}.
@@ -101,7 +101,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
         Få tilbud for din bedrift i {cityName}
       </h3>
       <p className="text-foreground/60 font-light text-[14px] mb-8">
-        Fortell oss kort om omsetningsmål og største flaskehals — så får du et treffsikkert tilbud innen 24 timer.
+        Fortell oss kort om omsetningsmål og største flaskehals — så får du et treffsikkert tilbud raskt.
       </p>
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -211,7 +211,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </button>
       <p className="mt-4 text-[12px] text-foreground/45">
-        Svar innen 24 timer · Uforpliktende · Ingen automatisert salgssekvens
+        Rask responsimer · Uforpliktende · Ingen automatisert salgssekvens
       </p>
     </form>
   );

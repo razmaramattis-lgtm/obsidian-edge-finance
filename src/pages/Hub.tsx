@@ -23,7 +23,7 @@ const Hub = () => {
     <>
       <Helmet>
         <title>Regnskapsfører for små og mellomstore bedrifter | Avargo</title>
-        <meta name="description" content="Autorisert regnskapsbyrå med dedikert regnskapsfører, fast månedspris og svar innen 24 timer. Bytt regnskapsfører uten friksjon — vi tar hele overføringen." />
+        <meta name="description" content="Autorisert regnskapsbyrå med dedikert regnskapsfører, fast månedspris og rask respons på hverdager. Bytt regnskapsfører uten friksjon — vi tar hele overføringen." />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -126,7 +126,7 @@ const Hub = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
               { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
-              { icon: Clock, label: "Svar innen 24 timer", sub: "Garantert responstid" },
+              { icon: Clock, label: "Rask respons", sub: "Vi vet tiden din er verdifull" },
               { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">

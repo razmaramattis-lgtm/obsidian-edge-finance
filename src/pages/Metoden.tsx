@@ -17,7 +17,7 @@ const team = [
   {
     icon: Headphones,
     role: "Regnskapsførere",
-    desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med svar innen 24 timer.",
+    desc: "Statsautoriserte regnskapsførere som kjenner din bransje ut og inn. Din dedikerte kontakt — med rask respons.",
   },
   {
     icon: Users,
@@ -339,7 +339,7 @@ const Metoden = () => {
                 <div>
                   <p className="font-heading text-lg md:text-xl mb-1.5 md:mb-2">Rask respons — hver gang.</p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                    Ring, send melding eller e-post — vi svarer innen 24 timer. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om.
+                    Ring, send melding eller e-post — vi svarer så raskt vi kan. Ingen timespris. Du er ikke et saksnummer — du er en partner vi bryr oss om.
                   </p>
                 </div>
               </div>
@@ -387,8 +387,8 @@ const Metoden = () => {
 
               <div className="mt-12 md:mt-16 flex flex-wrap gap-6 md:gap-10 justify-center">
                 {(isInSection && section && section.id !== "regnskap"
-                  ? [`Dedikerte ${section.shortName.toLowerCase()}-spesialister`, "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"]
-                  : ["Statsautoriserte regnskapsførere", "Svar innen 24 timer", "Ring oss når du vil — inkludert i prisen"]
+                  ? [`Dedikerte ${section.shortName.toLowerCase()}-spesialister`, "Rask responsimer", "Ring oss når du vil — inkludert i prisen"]
+                  : ["Statsautoriserte regnskapsførere", "Rask responsimer", "Ring oss når du vil — inkludert i prisen"]
                 ).map((signal) => (
                   <div key={signal} className="flex items-center gap-2 text-xs text-muted-foreground/60 font-light">
                     <span className="w-1 h-1 rounded-full bg-primary/40 shrink-0" />

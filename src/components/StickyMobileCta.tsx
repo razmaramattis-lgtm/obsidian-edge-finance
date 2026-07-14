@@ -62,7 +62,7 @@ const StickyMobileCta = () => {
       >
         <span className="flex flex-col leading-tight">
           <span className="text-[14px] font-medium">Få et uforpliktende tilbud</span>
-          <span className="text-[11px] opacity-75 font-light">Tar 30 sek · Svar innen 24 t</span>
+          <span className="text-[11px] opacity-75 font-light">Tar 30 sek · Rask respons</span>
         </span>
         <ArrowRight
           size={16}

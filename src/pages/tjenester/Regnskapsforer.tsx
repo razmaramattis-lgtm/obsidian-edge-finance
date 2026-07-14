@@ -35,7 +35,7 @@ const why = [
   {
     num: "04",
     title: "Rask respons — ingen ventetid.",
-    desc: "Ring, send melding eller still spørsmål. Svar innen 24 timer. Du er ikke et saksnummer — du er en klient vi bryr oss om.",
+    desc: "Ring, send melding eller still spørsmål. Rask responsimer. Du er ikke et saksnummer — du er en klient vi bryr oss om.",
   },
 ];
 

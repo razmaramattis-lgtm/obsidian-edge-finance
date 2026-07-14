@@ -49,7 +49,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         <div className="flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-medium text-foreground mb-1">Takk! Vi tar kontakt innen 24 timer.</p>
+            <p className="text-sm font-medium text-foreground mb-1">Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
             <p className="text-xs text-foreground/60 font-light">
               Bekreftelse er sendt til {email}. Vil du allerede nå dele mer? <a href="/kontakt" className="text-primary hover:underline">Fyll ut detaljer</a>.
             </p>
@@ -71,7 +71,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         Be oss ringe deg
       </p>
       <p className="text-xs text-muted-foreground mb-5 font-light">
-        Svar innen 24 timer. Ingen binding.
+        Rask responsimer. Ingen binding.
       </p>
 
       <div className="space-y-2.5">
@@ -138,7 +138,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
 
       {err && <p className="mt-3 text-xs text-destructive">{err}</p>}
       <p className="mt-4 text-[11px] text-foreground/45 font-light text-center">
-        Tar 20 sekunder · Ingen binding · Svar innen 24 timer
+        Tar 20 sekunder · Ingen binding · Rask responsimer
       </p>
     </form>
   );

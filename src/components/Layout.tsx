@@ -119,7 +119,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <p className="text-[10px] tracking-[0.35em] uppercase text-primary/80 font-semibold mb-3">Kjerneleveranse</p>
                     <h3 className="font-heading text-2xl leading-tight mb-4 text-foreground">Regnskap, levert med presisjon.</h3>
                     <p className="text-[12.5px] text-muted-foreground font-light leading-relaxed mb-6">
-                      Autorisert regnskapsbyrå for små og mellomstore bedrifter. Fast pris, dedikert team og svar innen 24 timer.
+                      Autorisert regnskapsbyrå for små og mellomstore bedrifter. Fast pris, dedikert team og rask respons på hverdager.
                     </p>
                     <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className="inline-flex items-center gap-1.5 text-[12px] text-primary font-medium hover:gap-2.5 transition-all">
                       Se alle tjenester <ArrowRight size={11} />
@@ -327,7 +327,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
               </p>
               <p className="text-[13.5px] text-muted-foreground font-light leading-relaxed max-w-md mb-8">
-                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og svar innen 24 timer — bygget for små og mellomstore bedrifter i Norge.
+                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager — bygget for små og mellomstore bedrifter i Norge.
               </p>
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background text-[12.5px] font-medium rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide">
                 Få et uforpliktende tilbud <ArrowRight size={13} />

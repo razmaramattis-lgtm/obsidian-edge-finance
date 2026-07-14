@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "Hvor raskt svarer dere?",
-    a: "Vi garanterer svar innen 24 timer på alle henvendelser — i praksis er det som regel raskere. Du får en dedikert kontaktperson som kjenner bedriften din, ikke et generisk saksnummer.",
+    a: "Vi prioriterer å svare deg raskt på alle henvendelser — i praksis er det som regel raskere. Du får en dedikert kontaktperson som kjenner bedriften din, ikke et generisk saksnummer.",
   },
   {
     q: "Kan jeg bare bruke én avdeling?",

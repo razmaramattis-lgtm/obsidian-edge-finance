@@ -12,7 +12,7 @@ const objections = [
   },
   {
     q: "Hvor lang tid tar det fra kontakt til ferdig oppsett?",
-    a: "Vanligvis 1–2 uker. Vi tar en uforpliktende prat innen 24 timer, sender tilbud, og er i gang så snart du gir grønt lys.",
+    a: "Vanligvis 1–2 uker. Vi tar en uforpliktende prat raskt — som regel samme arbeidsdag, sender tilbud, og er i gang så snart du gir grønt lys.",
   },
   {
     q: "Hva er den faktiske månedsprisen for min bedrift?",
