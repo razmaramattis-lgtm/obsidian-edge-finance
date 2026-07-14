@@ -590,12 +590,16 @@ function generateIcs(deadlines: Deadline[], filterTypes: CompanyType[]): string 
 
   for (const d of deadlines) {
     const [year, month, day] = d.date.split("-").map(Number);
-    const dateStamp = `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}`;
+    const startDate = new Date(year, month - 1, day);
+    const nextDate = new Date(startDate);
+    nextDate.setDate(startDate.getDate() + 1);
+    const dateStamp = startDate.toISOString().split("T")[0].replace(/-/g, "");
+    const endStamp = nextDate.toISOString().split("T")[0].replace(/-/g, "");
     const typesText = d.types.map(t => TYPE_LABELS[t]).join(", ");
 
     lines.push("BEGIN:VEVENT");
     lines.push(`DTSTART;VALUE=DATE:${dateStamp}`);
-    lines.push(`DTEND;VALUE=DATE:${dateStamp}`);
+    lines.push(`DTEND;VALUE=DATE:${endStamp}`);
     lines.push(icsLine("SUMMARY", d.title));
     const descriptionParts = [
       d.description,
