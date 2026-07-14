@@ -22,37 +22,45 @@ import { useSection } from "@/contexts/SectionContext";
 import { supabase } from "@/integrations/supabase/client";
 
 // ── Pricing model ────────────────────────────────────────────
-const BASE_PRICE = 1999;
+const BASE_PRICE = 1950;
 
 const companyForms = [
+  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 0 },
   { key: "ENK", label: "ENK", desc: "Enkeltpersonforetak", addon: 0 },
-  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 600 },
-  { key: "DA", label: "DA", desc: "Delt ansvar", addon: 400 },
-  { key: "ANS", label: "ANS", desc: "Ansvarlig selskap", addon: 400 },
 ];
 
 const industries = [
-  { key: "tjeneste", label: "Tjenesteyting", addon: 0 },
-  { key: "varehandel", label: "Varehandel", addon: 400 },
-  { key: "nettbutikk", label: "Nettbutikk", addon: 600 },
-  { key: "bygg", label: "Bygg og anlegg", addon: 500 },
-  { key: "industri", label: "Industri", addon: 600 },
-  { key: "eiendom", label: "Eiendom", addon: 400 },
-  { key: "it", label: "IT og teknologi", addon: 200 },
-  { key: "bruktbil", label: "Bruktbil", addon: 800 },
-  { key: "helse", label: "Helse", addon: 300 },
-  { key: "restaurant", label: "Restaurant og kafé", addon: 700 },
-  { key: "transport", label: "Transport", addon: 500 },
-  { key: "annet", label: "Annet", addon: 200 },
+  { key: "tjeneste", label: "Tjenesteyting" },
+  { key: "varehandel", label: "Varehandel" },
+  { key: "nettbutikk", label: "Nettbutikk" },
+  { key: "bygg", label: "Bygg og anlegg" },
+  { key: "industri", label: "Industri" },
+  { key: "eiendom", label: "Eiendom" },
+  { key: "it", label: "IT og teknologi" },
+  { key: "bruktbil", label: "Bruktbil" },
+  { key: "helse", label: "Helse" },
+  { key: "restaurant", label: "Restaurant og kafé" },
+  { key: "transport", label: "Transport" },
+  { key: "landbruk", label: "Landbruk" },
+  { key: "kultur", label: "Kultur og media" },
+  { key: "utdanning", label: "Utdanning og kurs" },
+  { key: "annet", label: "Annet" },
 ];
 
-const revenueTiers = [
-  { key: "0", label: "0 – 500 000 kr", addon: 0 },
-  { key: "1", label: "500 000 – 2 mill.", addon: 400 },
-  { key: "2", label: "2 – 5 mill.", addon: 900 },
-  { key: "3", label: "5 – 10 mill.", addon: 1500 },
-  { key: "4", label: "10 mill.+", addon: 2500 },
-];
+// Revenue as a continuous slider. Values in NOK. > 5 000 000 triggers "custom offer" flow.
+const REVENUE_MIN = 0;
+const REVENUE_MAX = 5_000_000;
+const REVENUE_STEP = 100_000;
+const REVENUE_CUSTOM = REVENUE_MAX + REVENUE_STEP; // 5,1 mill = custom-tilbud flagg
+
+// Continuous pricing based on revenue (only counts up to 5 mill.)
+const priceFromRevenue = (nok: number) => {
+  const v = Math.min(nok, REVENUE_MAX);
+  if (v <= 500_000) return 0;
+  if (v <= 2_000_000) return 400;
+  if (v <= 3_500_000) return 900;
+  return 1400;
+};
 
 const bilagTiers = [
   { key: "0", label: "0 – 20 bilag", addon: 0 },
@@ -82,7 +90,7 @@ const Pricing = () => {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<string | null>(null);
   const [industry, setIndustry] = useState<string>("");
-  const [revenue, setRevenue] = useState<number>(0);
+  const [revenue, setRevenue] = useState<number>(500_000); // NOK
   const [bilag, setBilag] = useState<number>(0);
   const [payslips, setPayslips] = useState<number>(0);
   const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
@@ -96,16 +104,21 @@ const Pricing = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const isCustomOffer = revenue >= REVENUE_CUSTOM;
+
+  const revenueLabel = useMemo(() => {
+    if (isCustomOffer) return "5 mill.+ (skreddersydd tilbud)";
+    return `${revenue.toLocaleString("nb-NO")} kr`;
+  }, [revenue, isCustomOffer]);
+
   const price = useMemo(() => {
     let p = BASE_PRICE;
-    p += companyForms.find((c) => c.key === form)?.addon ?? 0;
-    p += industries.find((i) => i.key === industry)?.addon ?? 0;
-    p += revenueTiers[revenue]?.addon ?? 0;
+    p += priceFromRevenue(revenue);
     p += bilagTiers[bilag]?.addon ?? 0;
     p += payslips * PER_PAYSLIP;
     if (aarsoppgjor) p += AARSOPPGJOR;
     return p;
-  }, [form, industry, revenue, bilag, payslips, aarsoppgjor]);
+  }, [revenue, bilag, payslips, aarsoppgjor]);
 
   const contactValid =
     contactCompany.trim().length > 1 &&
@@ -122,9 +135,9 @@ const Pricing = () => {
   const goNext = () => setStep((s) => Math.min(6, s + 1));
   const goBack = () => setStep((s) => Math.max(1, s - 1));
 
-  const pageTitle = "Priser | Fastpris fra 1 999 kr/mnd — Avargo";
+  const pageTitle = "Priser | Fastpris fra 1 950 kr/mnd — Avargo";
   const pageDesc =
-    "Fastpris på regnskap fra 1 999 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
+    "Fastpris på regnskap fra 1 950 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
   const pageUrl = `https://avargo.no${sectionPath}/priser`;
 
   const submitOffer = async () => {
@@ -135,11 +148,11 @@ const Pricing = () => {
       const summaryLines = [
         `Selskapsform: ${form ?? "—"}`,
         `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
-        `Årlig omsetning: ${revenueTiers[revenue]?.label ?? "—"}`,
+        `Årlig omsetning: ${revenueLabel}`,
         `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
         `Lønnsslipper/mnd: ${payslips}`,
         `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-        `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`,
+        `${isCustomOffer ? "Kunde ønsker skreddersydd tilbud (omsetning > 5 mill.)" : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
       ].join("\n");
       const fullMessage =
         `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
@@ -193,7 +206,7 @@ const Pricing = () => {
                 </span>
                 <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-6">
                   Fastpris fra{" "}
-                  <span className="italic text-gradient-rose">1 999 kr/mnd</span>
+                  <span className="italic text-gradient-rose">1 950 kr/mnd</span>
                 </h1>
                 <p className="text-xl md:text-2xl text-foreground/80 font-light leading-relaxed mb-6">
                   Forutsigbare kostnader – uten skjulte tillegg.
@@ -233,19 +246,25 @@ const Pricing = () => {
                 </div>
 
                 <p className="text-foreground/60 text-sm mb-2">
-                  {step === 1 ? "Prisene starter fra" : "Din pris så langt"}
+                  {isCustomOffer ? "Skreddersydd tilbud" : step === 1 ? "Prisene starter fra" : "Din pris så langt"}
                 </p>
-                <div className="font-heading text-4xl md:text-5xl text-foreground mb-8 flex items-baseline gap-3">
-                  <motion.span
-                    key={price}
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    {price.toLocaleString("nb-NO")}
-                  </motion.span>
-                  <span className="text-lg md:text-xl text-foreground/50 font-light">kr/mnd</span>
-                </div>
+                {isCustomOffer ? (
+                  <div className="font-heading text-3xl md:text-4xl text-foreground mb-8">
+                    Tilpasset tilbud
+                  </div>
+                ) : (
+                  <div className="font-heading text-4xl md:text-5xl text-foreground mb-8 flex items-baseline gap-3">
+                    <motion.span
+                      key={price}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      {price.toLocaleString("nb-NO")}
+                    </motion.span>
+                    <span className="text-lg md:text-xl text-foreground/50 font-light">kr/mnd</span>
+                  </div>
+                )}
 
                 {/* Progress */}
                 <div className="mb-8">
@@ -306,66 +325,70 @@ const Pricing = () => {
                       </>
                     )}
 
-                    {/* Step 2: industry */}
+                    {/* Step 2: industry (dropdown) */}
                     {step === 2 && (
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">2. Velg bransje</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Velg hvilken bransje virksomheten din tilhører. Dette hjelper oss å gi deg en mer nøyaktig pris.
+                          Velg hvilken bransje virksomheten din tilhører. Dette hjelper oss å tilpasse tilbudet.
                         </p>
-                        <div className="grid grid-cols-2 gap-2.5">
-                          {industries.map((it) => {
-                            const active = industry === it.key;
-                            return (
-                              <button
-                                key={it.key}
-                                type="button"
-                                onClick={() => setIndustry(it.key)}
-                                className={`text-left px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
-                                  active
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                                }`}
-                              >
-                                {it.label}
-                              </button>
-                            );
-                          })}
-                        </div>
+                        <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                          Bransje
+                        </label>
+                        <select
+                          value={industry}
+                          onChange={(e) => setIndustry(e.target.value)}
+                          className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                        >
+                          <option value="">Velg bransje …</option>
+                          {industries.map((it) => (
+                            <option key={it.key} value={it.key}>
+                              {it.label}
+                            </option>
+                          ))}
+                        </select>
                       </>
                     )}
 
-                    {/* Step 3: revenue */}
+                    {/* Step 3: revenue slider */}
                     {step === 3 && (
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">3. Årlig omsetning</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Velg hvor mye virksomheten din omsetter for i året. Dette påvirker prisen.
+                          Dra prikken frem eller tilbake for å angi omtrentlig årlig omsetning.
                         </p>
-                        <div className="space-y-2.5">
-                          {revenueTiers.map((t, i) => {
-                            const active = revenue === i;
-                            return (
-                              <button
-                                key={t.key}
-                                type="button"
-                                onClick={() => setRevenue(i)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
-                                  active
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                                }`}
-                              >
-                                <span>{t.label}</span>
-                                {t.addon > 0 && (
-                                  <span className={`text-xs ${active ? "text-primary-foreground/80" : "text-foreground/50"}`}>
-                                    +{t.addon.toLocaleString("nb-NO")} kr
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
+
+                        <div className="flex items-baseline justify-between mb-3">
+                          <span className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            Omsetning
+                          </span>
+                          <span className="font-heading text-2xl text-foreground">
+                            {isCustomOffer ? "5 mill.+" : `${(revenue / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`}
+                          </span>
                         </div>
+
+                        <input
+                          type="range"
+                          min={REVENUE_MIN}
+                          max={REVENUE_CUSTOM}
+                          step={REVENUE_STEP}
+                          value={revenue}
+                          onChange={(e) => setRevenue(Number(e.target.value))}
+                          className="w-full accent-primary cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[11px] text-foreground/50 font-light mt-2">
+                          <span>0 kr</span>
+                          <span>2,5 mill.</span>
+                          <span>5 mill.+</span>
+                        </div>
+
+                        {isCustomOffer && (
+                          <div className="mt-6 p-4 rounded-2xl bg-primary/8 border border-primary/25">
+                            <p className="text-sm text-foreground leading-relaxed">
+                              Omsetning over 5 mill. gir stor variasjon i behov. Trykk deg videre — så gir vi deg et <span className="font-medium">skreddersydd tilbud</span> basert på hva du faktisk trenger.
+                            </p>
+                          </div>
+                        )}
                       </>
                     )}
 
@@ -384,18 +407,13 @@ const Pricing = () => {
                                 key={t.key}
                                 type="button"
                                 onClick={() => setBilag(i)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
+                                className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all duration-300 ${
                                   active
                                     ? "bg-primary text-primary-foreground border-primary"
                                     : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
                                 }`}
                               >
-                                <span>{t.label}</span>
-                                {t.addon > 0 && (
-                                  <span className={`text-xs ${active ? "text-primary-foreground/80" : "text-foreground/50"}`}>
-                                    +{t.addon.toLocaleString("nb-NO")} kr
-                                  </span>
-                                )}
+                                {t.label}
                               </button>
                             );
                           })}
@@ -408,7 +426,7 @@ const Pricing = () => {
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">5. Lønn og årsoppgjør</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Skriv inn hvor mange lønnsslipper du har per måned. Vi legger til {PER_PAYSLIP} kr per slipp.
+                          Hvor mange lønnsslipper kjører du per måned, og skal årsoppgjøret være inkludert?
                         </p>
 
                         <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
@@ -438,23 +456,36 @@ const Pricing = () => {
                           </button>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setAarsoppgjor((v) => !v)}
-                          className={`w-full flex items-center justify-between px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
-                            aarsoppgjor
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
-                          }`}
-                        >
-                          <span className="text-left">
-                            Ja, inkluder årsoppgjør
-                            <span className={`block text-xs mt-0.5 ${aarsoppgjor ? "text-primary-foreground/70" : "text-foreground/50"}`}>
-                              Årsregnskap, næringsoppgave og skattemelding
-                            </span>
-                          </span>
-                          <span className="text-xs shrink-0">+{AARSOPPGJOR} kr/mnd</span>
-                        </button>
+                        <p className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium mb-2">
+                          Skal årsoppgjør inkluderes?
+                        </p>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setAarsoppgjor(true)}
+                            className={`px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
+                              aarsoppgjor
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
+                            }`}
+                          >
+                            Ja
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAarsoppgjor(false)}
+                            className={`px-4 py-4 rounded-xl border text-sm transition-all duration-300 ${
+                              !aarsoppgjor
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
+                            }`}
+                          >
+                            Nei
+                          </button>
+                        </div>
+                        <p className="text-xs text-foreground/50 font-light mt-3">
+                          Årsregnskap, næringsoppgave og skattemelding.
+                        </p>
                       </>
                     )}
 
@@ -470,7 +501,7 @@ const Pricing = () => {
                           {[
                             ["Selskapsform", form ?? "—"],
                             ["Bransje", industries.find((i) => i.key === industry)?.label ?? "—"],
-                            ["Årlig omsetning", revenueTiers[revenue]?.label ?? "—"],
+                            ["Årlig omsetning", revenueLabel],
                             ["Bilag / mnd", bilagTiers[bilag]?.label ?? "—"],
                             ["Lønnsslipper / mnd", String(payslips)],
                             ["Årsoppgjør", aarsoppgjor ? "Ja" : "Nei"],
@@ -484,12 +515,18 @@ const Pricing = () => {
 
                         <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-6">
                           <p className="text-xs uppercase tracking-[0.15em] text-primary/80 font-medium mb-1">
-                            Midlertidig estimat
+                            {isCustomOffer ? "Skreddersydd tilbud" : "Midlertidig estimat"}
                           </p>
-                          <p className="font-heading text-3xl md:text-4xl text-foreground">
-                            {price.toLocaleString("nb-NO")}{" "}
-                            <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
-                          </p>
+                          {isCustomOffer ? (
+                            <p className="font-heading text-2xl md:text-3xl text-foreground">
+                              Tilpasset tilbud
+                            </p>
+                          ) : (
+                            <p className="font-heading text-3xl md:text-4xl text-foreground">
+                              {price.toLocaleString("nb-NO")}{" "}
+                              <span className="text-lg text-foreground/50 font-light">kr/mnd</span>
+                            </p>
+                          )}
                           <p className="text-xs text-foreground/60 font-light mt-2 leading-relaxed">
                             Endelig tilbud sendes fra <span className="text-foreground">kontakt@avargo.no</span> og kan justeres ned ved onboarding.
                           </p>
@@ -570,11 +607,17 @@ const Pricing = () => {
                           Vi sender et <span className="text-foreground">bekreftet, midlertidig tilbud</span> til <span className="text-foreground">{contactEmail}</span> direkte fra <span className="text-foreground">kontakt@avargo.no</span>. Under onboardingen ser vi over volum og omfang sammen med deg, og prisen kan justeres <span className="text-foreground">ned</span> hvis det er grunnlag for det.
                         </p>
                         <div className="p-4 rounded-2xl border border-border/50 bg-card/40 text-sm">
-                          <p className="text-foreground/60 font-light mb-1">Ditt midlertidige estimat</p>
-                          <p className="font-heading text-2xl text-foreground">
-                            {price.toLocaleString("nb-NO")}{" "}
-                            <span className="text-base text-foreground/50 font-light">kr/mnd</span>
+                          <p className="text-foreground/60 font-light mb-1">
+                            {isCustomOffer ? "Ditt tilbud" : "Ditt midlertidige estimat"}
                           </p>
+                          {isCustomOffer ? (
+                            <p className="font-heading text-2xl text-foreground">Skreddersydd tilbud</p>
+                          ) : (
+                            <p className="font-heading text-2xl text-foreground">
+                              {price.toLocaleString("nb-NO")}{" "}
+                              <span className="text-base text-foreground/50 font-light">kr/mnd</span>
+                            </p>
+                          )}
                         </div>
                       </div>
                     )}
