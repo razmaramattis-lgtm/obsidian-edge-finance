@@ -243,33 +243,26 @@ const Protokollgenerator = () => {
     }
   };
 
-  const handleOrgSlagOpp = async () => {
-    if (!orgSearchVal || orgSearchVal.replace(/\s/g, "").length < 9) {
-      toast.error("Skriv inn et gyldig org.nr");
-      return;
-    }
-    setOrgLoading(true);
-    try {
-      const data = await slaOppOrgnr(orgSearchVal);
-      oppdaterProfile(p => ({
-        ...p,
-        selskap: {
-          ...p.selskap,
-          navn: data.navn || p.selskap.navn,
-          orgnummer: data.organisasjonsnummer || p.selskap.orgnummer,
-          adresse: data.forretningsadresse?.adresse?.join(", ") || p.selskap.adresse,
-          postnummer: data.forretningsadresse?.postnummer || p.selskap.postnummer,
-          poststed: data.forretningsadresse?.poststed || p.selskap.poststed,
-          stiftelsesdato: data.stiftelsesdato || p.selskap.stiftelsesdato,
-        },
-      }));
-      toast.success("Selskapsdata hentet fra Brønnøysund");
-    } catch {
-      toast.error("Fant ikke selskapet. Skriv inn manuelt.");
-    } finally {
-      setOrgLoading(false);
-    }
+  const applyBrreg = (data: {
+    navn?: string; organisasjonsnummer?: string;
+    forretningsadresse?: { adresse?: string[]; postnummer?: string; poststed?: string };
+    stiftelsesdato?: string;
+  }) => {
+    oppdaterProfile(p => ({
+      ...p,
+      selskap: {
+        ...p.selskap,
+        navn: data.navn || p.selskap.navn,
+        orgnummer: data.organisasjonsnummer || p.selskap.orgnummer,
+        adresse: data.forretningsadresse?.adresse?.join(", ") || p.selskap.adresse,
+        postnummer: data.forretningsadresse?.postnummer || p.selskap.postnummer,
+        poststed: data.forretningsadresse?.poststed || p.selskap.poststed,
+        stiftelsesdato: data.stiftelsesdato || p.selskap.stiftelsesdato,
+      },
+    }));
+    toast.success("Selskapsdata hentet fra Brønnøysund");
   };
+
 
   const resetAll = () => {
     if (!confirm("Vil du starte på nytt? Alle data slettes.")) return;
