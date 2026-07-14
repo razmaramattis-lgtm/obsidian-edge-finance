@@ -525,6 +525,83 @@ const Skattekalender = () => {
                 </div>
               </AnimatedSection>
 
+              {/* Add to calendar */}
+              <AnimatedSection delay={0.35}>
+                <div className="glass rounded-2xl border border-border/20 p-5">
+                  <h3 className="text-xs font-medium tracking-wider uppercase mb-1 flex items-center gap-2">
+                    <CalendarPlus size={13} className="text-primary" />
+                    Legg til i kalenderen
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground/60 mb-4 leading-relaxed">
+                    Last ned fristene som en kalenderfil, eller abonner så du aldri går glipp av en frist.
+                  </p>
+
+                  <div className="space-y-2">
+                    <button
+                      onClick={downloadIcs}
+                      className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 bg-primary/10 hover:bg-primary/15 border border-primary/20 transition-all group text-left"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Download size={14} className="text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium group-hover:text-primary transition-colors">Last ned .ics-fil</p>
+                        <p className="text-[9px] text-muted-foreground/50">Outlook, iPhone, Apple Kalender</p>
+                      </div>
+                    </button>
+
+                    <a
+                      href={googleCalendarUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-muted/40 border border-border/20 transition-all group text-left"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                        <Mail size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium group-hover:text-primary transition-colors">Legg til i Google Kalender</p>
+                        <p className="text-[9px] text-muted-foreground/50">Gmail / Google Workspace</p>
+                      </div>
+                    </a>
+
+                    <a
+                      href={outlookUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-muted/40 border border-border/20 transition-all group text-left"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                        <Smartphone size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium group-hover:text-primary transition-colors">Åpne i Outlook</p>
+                        <p className="text-[9px] text-muted-foreground/50">Outlook på web / Microsoft 365</p>
+                      </div>
+                    </a>
+
+                    <button
+                      onClick={copyFeedUrl}
+                      className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-muted/40 border border-border/20 transition-all group text-left"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                        {copiedUrl ? (
+                          <Check size={14} className="text-emerald-400" />
+                        ) : (
+                          <Copy size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium group-hover:text-primary transition-colors">
+                          {copiedUrl ? "Kopiert!" : "Kopier abonnementslenke"}
+                        </p>
+                        <p className="text-[9px] text-muted-foreground/50">Bruk i andre kalenderapper</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </AnimatedSection>
+
               {/* Source */}
               <AnimatedSection delay={0.4}>
                 <a
