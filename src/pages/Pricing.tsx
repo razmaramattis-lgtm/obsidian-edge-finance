@@ -13,11 +13,13 @@ import {
   MessageCircle,
   Sparkles,
   Send,
+  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
+import { supabase } from "@/integrations/supabase/client";
 
 // ── Pricing model ────────────────────────────────────────────
 const BASE_PRICE = 1999;
