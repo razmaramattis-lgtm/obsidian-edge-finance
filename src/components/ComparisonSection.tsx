@@ -2,11 +2,6 @@ import { motion } from "framer-motion";
 import { Check, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const traditional = [
-  { label: "Regnskapsfører", color: "hsl(var(--muted-foreground))" },
-  { label: "HR-konsulent", color: "hsl(var(--muted-foreground))" },
-];
-
 const rows: { label: string; traditional: string; avargo: string }[] = [
   { label: "Antall leverandører", traditional: "Flere separate avtaler", avargo: "Én partner" },
   { label: "Kontaktpersoner", traditional: "Flere kontaktpunkter", avargo: "Ett dedikert team" },
