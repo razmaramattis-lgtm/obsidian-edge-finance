@@ -148,11 +148,11 @@ const Pricing = () => {
       const summaryLines = [
         `Selskapsform: ${form ?? "—"}`,
         `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
-        `Årlig omsetning: ${revenueTiers[revenue]?.label ?? "—"}`,
+        `Årlig omsetning: ${revenueLabel}`,
         `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
         `Lønnsslipper/mnd: ${payslips}`,
         `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-        `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`,
+        `${isCustomOffer ? "Kunde ønsker skreddersydd tilbud (omsetning > 5 mill.)" : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
       ].join("\n");
       const fullMessage =
         `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
