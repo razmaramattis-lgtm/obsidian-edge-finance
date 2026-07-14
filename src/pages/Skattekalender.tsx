@@ -150,6 +150,59 @@ const Skattekalender = () => {
   // Selected day deadlines
   const selectedDeadlines = selectedDate ? (deadlinesByDate[selectedDate] || []) : [];
 
+  // Calendar feed URL for subscriptions (Google/Outlook/phone)
+  const feedUrl = useMemo(() => {
+    const base = `${supabase.supabaseUrl}/functions/v1/tax-deadlines`;
+    const params = new URLSearchParams();
+    params.set("format", "ics");
+    params.set("all", "true");
+    if (activeTypes.length > 0) params.set("types", activeTypes.join(","));
+    if (activeCategories.length > 0) params.set("categories", activeCategories.join(","));
+    return `${base}?${params.toString()}`;
+  }, [activeTypes, activeCategories]);
+
+  const webcalUrl = useMemo(() => feedUrl.replace(/^https?:\/\//, "webcal://"), [feedUrl]);
+
+  const googleCalendarUrl = useMemo(() => {
+    return `https://calendar.google.com/calendar/u/0/r?cid=${encodeURIComponent(webcalUrl)}`;
+  }, [webcalUrl]);
+
+  const outlookUrl = useMemo(() => {
+    return `https://outlook.office.com/calendar/0/addfromweb?url=${encodeURIComponent(feedUrl)}`;
+  }, [feedUrl]);
+
+  const downloadIcs = async () => {
+    try {
+      const response = await fetch(feedUrl, { method: "GET" });
+      if (!response.ok) throw new Error("Kunne ikke laste ned kalenderfil");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = activeTypes.length > 0
+        ? `avargo-skattefrister-${activeTypes.join("-")}.ics`
+        : "avargo-skattefrister.ics";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download ICS error:", err);
+      setError("Kunne ikke laste ned kalenderfil. Prøv igjen.");
+      setTimeout(() => setError(null), 4000);
+    }
+  };
+
+  const copyFeedUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(webcalUrl);
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2500);
+    } catch (err) {
+      console.error("Copy feed URL error:", err);
+    }
+  };
+
   return (
     <>
       <Helmet>
