@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, Badge
 import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
-import ComparisonSection from "@/components/ComparisonSection";
+import SwitchCheckSection from "@/components/SwitchCheckSection";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
