@@ -228,7 +228,20 @@ const App = () => (
               <SubdomainRedirect />
               <Suspense fallback={<PageFallback />}>
                 <Routes>
-                  {/* Hidden sections & portals — redirect to hub */}
+                  {/* Section paths collapsed — Avargo is now one unified site. */}
+                  <Route path="/regnskap" element={<Navigate to="/" replace />} />
+                  <Route path="/regnskap/tjenester" element={<Navigate to="/tjenester" replace />} />
+                  <Route path="/regnskap/bransjer" element={<Navigate to="/bransjer" replace />} />
+                  <Route path="/regnskap/priser" element={<Navigate to="/priser" replace />} />
+                  <Route path="/regnskap/kontakt" element={<Navigate to="/kontakt" replace />} />
+                  <Route path="/regnskap/om-oss" element={<Navigate to="/om-oss" replace />} />
+                  <Route path="/regnskap/faq" element={<Navigate to="/faq" replace />} />
+                  <Route path="/hr" element={<Navigate to="/" replace />} />
+                  <Route path="/hr/tjenester" element={<Navigate to="/tjenester" replace />} />
+                  <Route path="/hr/priser" element={<Navigate to="/priser" replace />} />
+                  <Route path="/hr/kontakt" element={<Navigate to="/kontakt" replace />} />
+                  <Route path="/hr/om-oss" element={<Navigate to="/om-oss" replace />} />
+                  <Route path="/hr/faq" element={<Navigate to="/faq" replace />} />
                   <Route path="/markedsforing/*" element={<Navigate to="/" replace />} />
                   <Route path="/it/*" element={<Navigate to="/" replace />} />
                   <Route path="/kurs/*" element={<Navigate to="/" replace />} />
