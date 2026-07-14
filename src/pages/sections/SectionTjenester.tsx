@@ -25,7 +25,7 @@ const sectionServices: Record<SectionId, {
       { title: "Fakturering & innkreving", desc: "Vi sender fakturaer og følger opp betaling.", href: "/tjenester/fakturering" },
       { title: "Skatteplanlegging", desc: "Betal riktig skatt — ikke for mye.", href: "/tjenester/skatteplanlegging" },
       { title: "1-1 Regnskapsgjennomgang", desc: "Personlig møte med gjennomgang av tallene dine.", href: "/tjenester/1-1-regnskap" },
-      { title: "Avargo Dashboard", desc: "Se økonomien din, rapporter og snakk med rådgiveren.", href: "/tjenester/dashboard" },
+      
     ],
   },
   hr: {
