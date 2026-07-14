@@ -12,7 +12,7 @@ const SocialProofBar = () => {
     { icon: Users, value: "8", label: "rådgivere", sub: "i teamet" },
     { icon: Building2, value: "2", label: "fagavdelinger", sub: "Regnskap · HR" },
 
-    { icon: Clock, value: "24t", label: "responstid", sub: "rask respons" },
+    { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
     { icon: Sparkles, value: "0 kr", label: "binding", sub: "ingen oppstartskostnad" },
   ];
 

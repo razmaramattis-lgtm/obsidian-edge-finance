@@ -126,7 +126,7 @@ const Hub = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
               { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
-              { icon: Clock, label: "Rask responsimer", sub: "Garantert responstid" },
+              { icon: Clock, label: "Rask respons", sub: "Vi vet tiden din er verdifull" },
               { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">

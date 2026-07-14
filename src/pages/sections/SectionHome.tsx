@@ -66,7 +66,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Award, value: "Godkjent", label: "regnskapsførerselskap", sub: "Finanstilsynet" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
+      { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen skjulte kostnader" },
     ],
     hookSlides: [
@@ -102,7 +102,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Shield, metric: "100%", label: "fastpris — ingen tillegg", text: "Bokføring, MVA, lønn, årsregnskap, skattemelding og rådgivning inkludert i én fast månedspris. Ingen timefakturering." },
         { icon: Handshake, metric: "1 person", label: "din statsautoriserte regnskapsfører", text: "Du får én navngitt, statsautorisert regnskapsfører som lærer seg selskapet ditt, bransjen din og målene dine." },
         { icon: Sparkles, metric: "25+", label: "bransjer vi dekker", text: "Uansett om du driver restaurant, eiendom, tech eller bygg — regnskapsføreren din forstår bransjen." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Når du sender en melding eller ringer, svarer vi så raskt vi kan." },
+        { icon: Zap, metric: "Raskt", label: "svar — vi vet tiden din er verdifull", text: "Når du sender en melding eller ringer, svarer vi så raskt vi kan." },
       ],
     },
     cta: {
@@ -137,7 +137,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: UserCheck, value: "Spesialisert", label: "HR-rådgivning", sub: "Norsk arbeidsrett" },
       { icon: Users, value: "25+", label: "bransjer dekket", sub: "Hele Norge" },
-      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
+      { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: Shield, value: "Trygt", label: "lønn og personal", sub: "Alt inkludert" },
     ],
     hookSlides: [
@@ -173,7 +173,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Shield, metric: "Trygt", label: "arbeidsrett dekket", text: "Vi sørger for at du følger alle lover og regler — fra kontrakter til oppsigelser. Du slipper risikoen." },
         { icon: Handshake, metric: "1 person", label: "din faste HR-rådgiver", text: "Du får én navngitt HR-rådgiver som kjenner bedriften din, bransjen din og de ansatte." },
         { icon: Sparkles, metric: "Alt inkl.", label: "lønn, rett og håndbok", text: "Lønnskjøring, arbeidskontrakter, personalhåndbok og HMS — alt er inkludert i fastprisen." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Står du i en vanskelig personalsak? Vi svarer så raskt vi kan." },
+        { icon: Zap, metric: "Raskt", label: "svar — vi vet tiden din er verdifull", text: "Står du i en vanskelig personalsak? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
@@ -238,7 +238,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: TrendingUp, value: "Datadrevet", label: "markedsføring", sub: "Koblet til regnskap" },
       { icon: Eye, value: "Full", label: "synlighet", sub: "Google & SoMe" },
-      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
+      { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: CheckCircle2, value: "100%", label: "fast pris", sub: "Ingen timefakturering" },
     ],
     hookSlides: [
@@ -274,7 +274,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: BarChart3, metric: "100%", label: "sporbart — fra klikk til kunde", text: "Hver krone du bruker på markedsføring spores helt til bunnlinjen. Du ser nøyaktig hva som gir resultater." },
         { icon: Handshake, metric: "1 person", label: "din dedikerte markedsfører", text: "Du får én navngitt markedsfører som kjenner bedriften, bransjen og målgruppen din." },
         { icon: Sparkles, metric: "Helhet", label: "SEO + Ads + innhold", text: "Vi kjører ikke bare annonser — vi bygger en helhetlig strategi som vokser over tid." },
-        { icon: Zap, metric: "24 timer", label: "svar — alltid", text: "Trenger du en rask justering eller har et spørsmål? Vi svarer så raskt vi kan." },
+        { icon: Zap, metric: "Raskt", label: "svar — vi vet tiden din er verdifull", text: "Trenger du en rask justering eller har et spørsmål? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
@@ -339,7 +339,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
     socialProof: [
       { icon: Code, value: "Skreddersydd", label: "utvikling", sub: "Ingen hyllevare" },
       { icon: Bot, value: "AI", label: "integrert", sub: "Chatbot & automatisering" },
-      { icon: Clock, value: "24 timer", label: "rask respons", sub: "Rask respons" },
+      { icon: Clock, value: "Raskt", label: "respons", sub: "Vi vet tiden din er verdifull" },
       { icon: CheckCircle2, value: "Fast pris", label: "ingen timefakturering", sub: "Forutsigbart" },
     ],
     hookSlides: [
@@ -375,7 +375,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
         { icon: Code, metric: "Skreddersydd", label: "bygget for din bedrift", text: "Vi bygger løsninger som passer din bedrift — ikke en generisk mal alle andre også bruker." },
         { icon: Handshake, metric: "1 team", label: "ditt dedikerte utviklerteam", text: "Du får et navngitt team som kjenner systemene dine, bransjen din og behovene dine." },
         { icon: Sparkles, metric: "AI integrert", label: "smartere systemer", text: "Vi bygger inn AI og automatisering der det gir verdi — ikke for å være fancy, men for å spare deg tid." },
-        { icon: Zap, metric: "24 timer", label: "support — alltid", text: "Trenger du hjelp med noe teknisk? Vi svarer så raskt vi kan." },
+        { icon: Zap, metric: "Raskt", label: "support — vi vet tiden din er verdifull", text: "Trenger du hjelp med noe teknisk? Vi svarer så raskt vi kan." },
       ],
     },
     cta: {
