@@ -9,7 +9,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  BookMarked, Newspaper, CalendarClock,
+  BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe,
 } from "lucide-react";
 
@@ -47,6 +47,7 @@ const ressurserLinks = [
   { icon: Newspaper,    title: "Nyheter & artikler", desc: "Fagartikler om skatt, lovendringer og praktisk drift for norske SMB.", href: "/ressurser?tab=nyheter" },
   { icon: BookMarked,   title: "Guider & maler",     desc: "Sjekklister, kontrakter og steg-for-steg guider til nedlasting.",       href: "/ressurser?tab=guider" },
   { icon: CalendarClock,title: "Skattekalender",     desc: "Alle frister for MVA, årsregnskap og a-melding gjennom året.",          href: "/ressurser/skattekalender" },
+  { icon: FileSignature,title: "Protokollgenerator", desc: "Lag juridisk korrekte styreprotokoller og generalforsamlingsdokumenter.", href: "/ressurser/protokollgenerator" },
 ];
 
 /* ── Editorial dropdown panel ── */
