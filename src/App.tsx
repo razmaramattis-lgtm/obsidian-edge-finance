@@ -29,6 +29,7 @@ const Ressurser = lazy(() => import("./pages/Ressurser"));
 const Skattekalender = lazy(() => import("./pages/Skattekalender"));
 const Kontohjelp = lazy(() => import("./pages/Kontohjelp"));
 const KontohjelpDetalj = lazy(() => import("./pages/KontohjelpDetalj"));
+const Protokollgenerator = lazy(() => import("./pages/ressurser/Protokollgenerator"));
 const Regnskapsord = lazy(() => import("./pages/Regnskapsord"));
 const RegnskapsordDetalj = lazy(() => import("./pages/RegnskapsordDetalj"));
 const BookMote = lazy(() => import("./pages/BookMote"));
