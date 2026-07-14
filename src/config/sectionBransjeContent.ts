@@ -7,15 +7,15 @@ import type { SectionId } from "@/contexts/SectionContext";
 export const hiddenIndustriesPerSection: Record<SectionId, string[]> = {
   regnskap: [],
   hr: [
-    "bemanning", "landbruk", "nettbutikk", "arkitektur", "markedsforing",
+    "bemanning", "nettbutikk", "arkitektur", "markedsforing",
     "energi", "kultur", "reiseliv", "bil",
   ],
   markedsforing: [
-    "markedsforing", "holding", "landbruk", "juridisk",
+    "markedsforing", "holding", "juridisk",
     "energi", "industri", "transport", "bemanning",
   ],
   it: [
-    "tech-saas", "holding", "landbruk", "juridisk",
+    "tech-saas", "holding", "juridisk",
     "bemanning", "bil", "energi", "renhold",
   ],
 };
