@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import {
   ArrowLeft, ArrowRight, FileText, Search, Plus, Trash2, Check,
   ChevronRight, Download, Building2, Users, Calendar, ClipboardCheck,
+  Sparkles, SkipForward,
 } from "lucide-react";
 import {
   emptyProfile, emptyDocument, documentTypes, sakModuler,
