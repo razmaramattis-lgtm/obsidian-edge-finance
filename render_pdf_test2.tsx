@@ -9,7 +9,7 @@ const TestDoc = () => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text>Hello</Text>
-      <Text style={styles.footer} render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+      <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
     </Page>
   </Document>
 );
