@@ -8,7 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SectionProvider } from "@/contexts/SectionContext";
 import Layout from "./components/Layout";
-import { SplashScreen } from "./components/SplashScreen";
+// SplashScreen removed — no loading overlay on entry
 import SectionTheme from "./components/SectionTheme";
 import ScrollToTop from "./components/ScrollToTop";
 import { useSubdomainRedirect } from "./hooks/useSubdomainRedirect";
@@ -214,13 +214,22 @@ const SectionBransjerRoute = () => {
   return <Suspense fallback={<PageFallback />}><Bransjer /></Suspense>;
 };
 
+const InstallPromptSuppressor = () => {
+  useEffect(() => {
+    const block = (e: Event) => { e.preventDefault(); return false; };
+    window.addEventListener("beforeinstallprompt", block);
+    return () => window.removeEventListener("beforeinstallprompt", block);
+  }, []);
+  return null;
+};
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SplashScreen />
+        <InstallPromptSuppressor />
         <BrowserRouter>
           <AuthProvider>
             <SectionProvider>
