@@ -8,6 +8,9 @@ import SwitchCheckSection from "@/components/SwitchCheckSection";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
+import hubPartner from "@/assets/hub-partner.jpg";
+import hubFastpris from "@/assets/hub-fastpris.jpg";
+import hubTeam from "@/assets/hub-team.jpg";
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
   regnskap: BookOpen,
