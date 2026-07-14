@@ -1,15 +1,25 @@
-import { Document, Page, Text, View, StyleSheet, renderToFile } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, renderToFile, Fragment } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: { padding: 50, fontSize: 12 },
-  footer: { position: "absolute", bottom: 24, left: 50, right: 50, fontSize: 8, color: "#666" },
+  footerLeft: { position: "absolute", bottom: 24, left: 50, fontSize: 8, color: "#666" },
+  footerRight: { position: "absolute", bottom: 24, right: 50, fontSize: 8, color: "#666" },
 });
+
+function Footer() {
+  return (
+    <>
+      <Text style={styles.footerLeft} fixed>Protokoll- og generalforsamlingsgenerator er produsert av Avargo.</Text>
+      <Text style={styles.footerRight} fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+    </>
+  );
+}
 
 const TestDoc = () => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text>Hello</Text>
-      <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+      <Footer />
     </Page>
   </Document>
 );
