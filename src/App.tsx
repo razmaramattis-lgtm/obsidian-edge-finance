@@ -8,7 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SectionProvider } from "@/contexts/SectionContext";
 import Layout from "./components/Layout";
-import { SplashScreen } from "./components/SplashScreen";
+// SplashScreen removed — no loading overlay on entry
 import SectionTheme from "./components/SectionTheme";
 import ScrollToTop from "./components/ScrollToTop";
 import { useSubdomainRedirect } from "./hooks/useSubdomainRedirect";
@@ -220,7 +220,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SplashScreen />
+        
         <BrowserRouter>
           <AuthProvider>
             <SectionProvider>
