@@ -61,6 +61,7 @@ const Skattekalender = () => {
   const [activeTypes, setActiveTypes] = useState<CompanyType[]>([]);
   const [activeCategories, setActiveCategories] = useState<Category[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState(false);
 
   const now = new Date();
   const [viewMonth, setViewMonth] = useState(now.getMonth());
