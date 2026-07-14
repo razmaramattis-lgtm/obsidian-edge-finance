@@ -233,14 +233,10 @@ function MoteInfo({ profile, includeMotenr }: { profile: CompanyProfile; include
 
 function Footer() {
   return (
-    <>
-      <View style={[styles.footer, { justifyContent: "flex-start" }]} fixed>
-        <Text>Protokoll- og generalforsamlingsgenerator er produsert av Avargo.</Text>
-      </View>
-      <View style={[styles.footer, { justifyContent: "flex-end" }]} fixed>
-        <Text render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
-      </View>
-    </>
+    <View style={styles.footer} fixed>
+      <Text>Protokoll- og generalforsamlingsgenerator er produsert av Avargo.</Text>
+      <Text fixed render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+    </View>
   );
 }
 
