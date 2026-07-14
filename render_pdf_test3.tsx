@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     paddingBottom: 56,
     paddingLeft: 71,
     paddingRight: 56,
+    fontSize: 10.5,
   },
   footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF" },
 });
