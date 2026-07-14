@@ -75,7 +75,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       { heading: <>Samme trygghet som de store.{" "}<span className="italic text-gradient-teal">Uten byråkratiet.</span></>, body: "Storkonsern har egne økonomiavdelinger og rådgivere. Du har Avargo. Samme kompetanse, samme tilgjengelighet — men uten faste ansatte og millionbudsjetter.", tagline: "Laget for bedrifter som tenker stort — uansett størrelse." },
     ],
     services: [
-      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Rask responsimer.", href: "/regnskap/tjenester/regnskapsforer" },
+      { icon: Handshake, title: "Dedikert regnskapsfører", desc: "Du får én fast person som kjenner selskapet ditt godt. Rask respons.", href: "/regnskap/tjenester/regnskapsforer" },
       { icon: Gem, title: "Alt inkludert i regnskapet", desc: "Bokføring, årsregnskap, skattemelding, MVA-rapportering og aksjonærregisteroppgave. Ingenting er «ekstra».", href: "/regnskap/tjenester/1-1-regnskap" },
       { icon: Users, title: "Lønn & Personal", desc: "Full lønnskjøring, feriepenger, A-melding og arbeidsgiveravgift — inkludert i fastprisen.", href: "/regnskap/tjenester/lonn" },
       { icon: PiggyBank, title: "Skatteoptimalisering", desc: "Kvartalsvis gjennomgang av skatteposisjonen din. Vi finner fradragene du ikke visste om.", href: "/regnskap/tjenester/cfo" },

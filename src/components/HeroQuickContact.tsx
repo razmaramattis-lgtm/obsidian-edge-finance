@@ -71,7 +71,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         Be oss ringe deg
       </p>
       <p className="text-xs text-muted-foreground mb-5 font-light">
-        Rask responsimer. Ingen binding.
+        Rask respons. Ingen binding.
       </p>
 
       <div className="space-y-2.5">
@@ -138,7 +138,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
 
       {err && <p className="mt-3 text-xs text-destructive">{err}</p>}
       <p className="mt-4 text-[11px] text-foreground/45 font-light text-center">
-        Tar 20 sekunder · Ingen binding · Rask responsimer
+        Tar 20 sekunder · Ingen binding · Rask respons
       </p>
     </form>
   );
