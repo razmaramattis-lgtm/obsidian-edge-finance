@@ -69,7 +69,7 @@ const About = () => {
               { icon: Handshake, num: "01", title: "Menneske først, alltid", desc: "Du får en navngitt ekspert som lærer selskapet ditt å kjenne. Ingen callsenter — et menneske som jobber for deg." },
               { icon: Sparkles, num: "02", title: "Teknologi som stille superkraft", desc: "Smarte verktøy som gjennomgår tusenvis av datapunkter. Du får innsikt du ikke visste om og muligheter du ikke hadde oppdaget." },
               { icon: Gem, num: "03", title: "Alt inkludert — virkelig alt", desc: "Ingen tillegg, ingen overraskelser. Alt du trenger er inkludert fra dag én." },
-              { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Erfaring med over 25 bransjer. Din rådgiver forstår hverdagen din, ikke bare tallene." },
+              { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Erfaring med over 24 bransjer. Din rådgiver forstår hverdagen din, ikke bare tallene." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.12}>
                 <div className="group p-8 md:p-10 glass rounded-3xl card-lift h-full relative overflow-hidden">

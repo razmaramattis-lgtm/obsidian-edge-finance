@@ -8,7 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
-  Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
+  Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
 } from "lucide-react";
@@ -37,7 +37,6 @@ const bransjerItems = [
   { icon: Store,      title: "Nettbutikk & e-handel", desc: "Varelager, betalingsintegrasjoner og MVA over landegrenser.", href: "/bransjer/nettbutikk" },
   { icon: Heart,      title: "Helse & velvære",       desc: "Klinikker og terapeuter — konsesjoner og MVA-tilpasning.", href: "/bransjer/helse" },
   { icon: TrendingUp, title: "Restaurant & servering", desc: "Kassaoppgjør, varekostkontroll og personaladministrasjon.", href: "/bransjer/restaurant" },
-  { icon: Tractor,    title: "Landbruk",              desc: "Jordbruksfradrag, tilskudd og MVA i landbruket.", href: "/bransjer/landbruk" },
   { icon: Users,      title: "Frisør & skjønnhet",    desc: "Stolleie, MVA på tjenester og enkel driftsøkonomi.", href: "/bransjer/frisor" },
   { icon: Zap,        title: "Håndverkere & fagfolk", desc: "Fakturering, prosjekt­oppfølging og skatteplanlegging.", href: "/bransjer/handverkere" },
 ];

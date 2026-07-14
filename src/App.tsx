@@ -112,7 +112,6 @@ const TechSaas = lazy(() => import("./pages/bransjer/TechSaas"));
 const Eiendom = lazy(() => import("./pages/bransjer/Eiendom"));
 const Holding = lazy(() => import("./pages/bransjer/Holding"));
 const Consulting = lazy(() => import("./pages/bransjer/Consulting"));
-const Landbruk = lazy(() => import("./pages/bransjer/Landbruk"));
 const Varehandel = lazy(() => import("./pages/bransjer/Varehandel"));
 const ByggAnlegg = lazy(() => import("./pages/bransjer/ByggAnlegg"));
 const NettbutikkBransje = lazy(() => import("./pages/bransjer/NettbutikkBransje"));
@@ -363,7 +362,6 @@ const App = () => (
                             <Route path="/regnskap/bransjer/eiendom" element={<Eiendom />} />
                             <Route path="/regnskap/bransjer/holding" element={<Holding />} />
                             <Route path="/regnskap/bransjer/consulting" element={<Consulting />} />
-                            <Route path="/regnskap/bransjer/landbruk" element={<Landbruk />} />
                             <Route path="/regnskap/bransjer/varehandel" element={<Varehandel />} />
                             <Route path="/regnskap/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
                             <Route path="/regnskap/bransjer/nettbutikk" element={<NettbutikkBransje />} />
@@ -431,7 +429,6 @@ const App = () => (
                             <Route path="/bransjer/eiendom" element={<Eiendom />} />
                             <Route path="/bransjer/holding" element={<Holding />} />
                             <Route path="/bransjer/consulting" element={<Consulting />} />
-                            <Route path="/bransjer/landbruk" element={<Landbruk />} />
                             <Route path="/bransjer/varehandel" element={<Varehandel />} />
                             <Route path="/bransjer/bygg-anlegg" element={<ByggAnlegg />} />
                             <Route path="/bransjer/nettbutikk" element={<NettbutikkBransje />} />

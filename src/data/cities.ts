@@ -49,7 +49,7 @@ export const CITIES: City[] = [
     county: "Telemark",
     intro: "Avargo er regnskapsbyrået for Telemark — fra Grenland til indre Telemark. Lokalt forankret, digitalt levert.",
     nearby: ["Skien", "Porsgrunn", "Notodden", "Bø", "Kragerø"],
-    industries: ["Industri", "Reiseliv", "Landbruk", "Tjenesteyting"],
+    industries: ["Industri", "Reiseliv", "Tjenesteyting"],
   },
   {
     slug: "kragero",
@@ -79,7 +79,7 @@ export const CITIES: City[] = [
     population: "7 000",
     intro: "Bø er et knutepunkt for studenter, småbedrifter og reiseliv. Avargo leverer regnskap for hele Midt-Telemark.",
     nearby: ["Notodden", "Seljord"],
-    industries: ["Reiseliv", "Tjenesteyting", "Handel", "Landbruk"],
+    industries: ["Reiseliv", "Tjenesteyting", "Handel"],
   },
 
   // Større byer i Norge
@@ -241,7 +241,7 @@ export const CITIES: City[] = [
     population: "18 000",
     intro: "Kongsvinger-bedrifter får regnskap og lønn levert av et team — ikke bare én regnskapsfører som er på ferie.",
     nearby: ["Eidskog", "Sør-Odal"],
-    industries: ["Handel", "Bygg", "Logistikk", "Landbruk"],
+    industries: ["Handel", "Bygg", "Logistikk"],
   },
   {
     slug: "kongsberg",
@@ -261,7 +261,7 @@ export const CITIES: City[] = [
     population: "32 000",
     intro: "Hamar-bedrifter velger Avargo for forutsigbar regnskapsføring og strategisk rådgivning.",
     nearby: ["Stange", "Brumunddal"],
-    industries: ["Landbruk", "Handel", "Tjenesteyting", "Industri"],
+    industries: ["Handel", "Tjenesteyting", "Industri"],
   },
   {
     slug: "gjovik",

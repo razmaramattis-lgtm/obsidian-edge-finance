@@ -7,15 +7,15 @@ import type { SectionId } from "@/contexts/SectionContext";
 export const hiddenIndustriesPerSection: Record<SectionId, string[]> = {
   regnskap: [],
   hr: [
-    "bemanning", "landbruk", "nettbutikk", "arkitektur", "markedsforing",
+    "bemanning", "nettbutikk", "arkitektur", "markedsforing",
     "energi", "kultur", "reiseliv", "bil",
   ],
   markedsforing: [
-    "markedsforing", "holding", "landbruk", "juridisk",
+    "markedsforing", "holding", "juridisk",
     "energi", "industri", "transport", "bemanning",
   ],
   it: [
-    "tech-saas", "holding", "landbruk", "juridisk",
+    "tech-saas", "holding", "juridisk",
     "bemanning", "bil", "energi", "renhold",
   ],
 };
@@ -51,11 +51,6 @@ const regnskapOverrides: Record<string, SectionBransjeOverride> = {
     deliverables: ["Prosjektøkonomi og lønnsomhet per oppdrag", "Timebasert fakturering og inntektsføring", "Skatteplanlegging for konsulenter", "MVA-oppgjør og innrapportering", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "CFO-rådgivning og budsjett", "Utbyttestrategi og selskapsoptimalisering"],
     intro: "Konsulenter og rådgivere trenger presis prosjektøkonomi og smart skatteplanlegging. Vi sørger for at du fakturerer riktig og beholder mest mulig.",
     body: "Konsulentbransjen handler om å selge timer og kompetanse. Vi hjelper deg med prosjektøkonomi, inntektsføring og skatteoptimalisering — slik at bunnlinjen reflekterer innsatsen din.",
-  },
-  landbruk: {
-    deliverables: ["Jordbruksfradrag og næringsinntekt", "Produksjonstilskudd og rapportering", "Avskrivning av driftsmidler og bygg", "Sesongbasert budsjett og likviditet", "MVA-oppgjør for primærnæring", "Årsregnskap og skattemelding", "Generasjonsskifte og overdragelse", "Investeringsstøtte og tilskudd"],
-    intro: "Landbruket har egne skatteregler, tilskuddsordninger og sesongbasert økonomi. Vi kjenner regelverket og hjelper deg å utnytte alle fradrag.",
-    body: "Primærnæringen har spesielle fradragsregler, avskrivningsregler for driftsbygninger og sesongbasert likviditet. Vi sørger for at du utnytter alle ordninger og leverer riktig rapportering.",
   },
   varehandel: {
     deliverables: ["Varekostanalyse og marginrapportering", "Lagervurdering og svinn", "MVA-oppgjør for varehandel", "Innkjøpsoptimalisering og kontantstrøm", "Løpende bokføring og bilag", "Årsregnskap og skattemelding", "Franchiserapportering", "Budsjett og sesongplanlegging"],
@@ -178,11 +173,6 @@ const hrOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulentselskaper kjemper om de beste hodene. Vi hjelper deg med kontrakter, kompetanseutvikling og en arbeidsgiverprofil som tiltrekker talent.",
     body: "Konsulentbransjen har høy mobilitet blant ansatte, komplekse bonusmodeller og behov for kontinuerlig kompetanseutvikling. Vi tar HR-byrden så du kan fokusere på leveransene.",
   },
-  landbruk: {
-    deliverables: ["Arbeidskontrakter for sesongarbeidere", "Utenlandsk arbeidskraft og dokumentasjon", "HMS på gårdsbruk", "Lønnskjøring med naturalytelser", "Sykefraværsoppfølging", "Bolig for ansatte og pendlere", "Arbeidsrett for primærnæring", "Kompetansekrav og sertifikater"],
-    intro: "Landbruket har sesongarbeidere, utenlandsk arbeidskraft og spesielle HMS-krav. Vi sørger for at alt er i orden som arbeidsgiver.",
-    body: "Gårdsbruk og landbruk har ulike ansettelsesforhold gjennom sesongen, ofte med utenlandsk arbeidskraft som krever spesiell dokumentasjon. Vi håndterer alt.",
-  },
   varehandel: {
     deliverables: ["Arbeidskontrakter for deltid og heltid", "Turnusplanlegging og vaktlister", "Lønnskjøring med kvelds- og helgetillegg", "Personalhåndbok for butikk", "HMS i butikkdrift", "Sykefraværsoppfølging", "Onboarding av butikkmedarbeidere", "Opplæring og kompetanseutvikling"],
     intro: "Varehandelen har mange deltidsansatte, turnus og sesongsvingninger. Vi tar HR-byrden — fra kontrakter til opplæring.",
@@ -304,11 +294,6 @@ const markedsforingOverrides: Record<string, SectionBransjeOverride> = {
     intro: "Konsulentbransjen selger kompetanse og tillit. Vi hjelper deg å bygge synlighet og troverdighet i riktige kanaler.",
     body: "Konsulenter trenger synlighet som bygger tillit — fagartikler, LinkedIn-strategi og målrettet B2B-annonsering som genererer kvalifiserte leads.",
   },
-  landbruk: {
-    deliverables: ["Lokal SEO og Google Business", "Nettside for gårdsutsalg og opplevelser", "SoMe-markedsføring for lokalmat", "Sesongkampanjer og arrangementer", "E-postmarkedsføring til faste kunder", "Foto og video av gårdsdriften", "Annonsering på relevante plattformer", "Omdømmehåndtering"],
-    intro: "Gårdsutsalg, matopplevelser og direktesalg — vi hjelper deg å nå kundene som setter pris på lokale kvalitetsprodukter.",
-    body: "Landbruket selger stadig mer direkte til forbrukere gjennom gårdsutsalg, REKO-ringer og opplevelser. Vi hjelper deg å bygge synlighet og tiltrekke riktige kunder.",
-  },
   varehandel: {
     deliverables: ["Google Shopping og produktannonsering", "Lokal SEO og Google Business", "Meta/SoMe-kampanjer for butikk", "Kampanjer for salg og sesong", "Kundelojalitetsprogram", "Innholdsstrategi og nyhetsbrev", "Nettside og nettbutikk", "Analyse og omsetningsrapportering"],
     intro: "Varehandelen lever av synlighet, trafikk og lojalitet. Vi hjelper deg å trekke kunder inn — fysisk og digitalt.",
@@ -424,11 +409,6 @@ const itOverrides: Record<string, SectionBransjeOverride> = {
     deliverables: ["Nettside med tjenestekatalog", "CRM og kundeoppfølging", "Timeregistrering og prosjektstyring", "Automatisert rapportgenerering", "Kundeportal med tilgang til leveranser", "AI-assistent for research", "Internt kunnskapssystem", "Integrasjon med fakturering"],
     intro: "Konsulentselskaper trenger smarte systemer for prosjekter, kunder og leveranser. Vi bygger verktøy som gjør deg mer effektiv.",
     body: "Prosjektstyring, timeregistrering og kundekommunikasjon — alt kan samles i ett system. Vi bygger løsningene som gjør konsulentarbeidet mer effektivt.",
-  },
-  landbruk: {
-    deliverables: ["Nettside for gårdsutsalg", "Bestillingssystem for REKO-ring", "Produksjonsstyring og sporbarhet", "Værdata og avlingsprognose", "Automatisert tilskuddsrapportering", "Mobilapp for gårdsdrift", "IoT-integrasjon for fjøs og drivhus", "Nettbutikk for lokalmat"],
-    intro: "Moderne landbruk trenger digitale verktøy for produksjon, sporbarhet og direktesalg. Vi bygger løsningene som effektiviserer gårdsdriften.",
-    body: "Fra IoT-sensorer i fjøset til nettbutikk for lokalmat — digitalisering gir landbruket nye muligheter. Vi bygger verktøyene som passer din gård.",
   },
   varehandel: {
     deliverables: ["Nettbutikk med fysisk butikk-integrasjon", "Kassasystem og POS-integrasjon", "Lagerstyring og varetelling", "Kundelojalitetssystem", "CRM for kundekommunikasjon", "Automatisert bestilling og innkjøp", "Dashboard for salgsrapportering", "Mobilapp for kunder"],
