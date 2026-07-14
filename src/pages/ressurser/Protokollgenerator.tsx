@@ -479,57 +479,118 @@ const VelgDokumenter = ({ docs, toggle, start }: { docs: DocumentState[]; toggle
 // Steg: Selskapsprofil
 // ============================================================
 
-const StegProfil = ({ profile, update, orgSearchVal, setOrgSearchVal, orgLoading, onSearch }: {
+const StegProfil = ({ profile, update, applyBrreg }: {
   profile: CompanyProfile;
   update: (u: (p: CompanyProfile) => CompanyProfile) => void;
-  orgSearchVal: string;
-  setOrgSearchVal: (v: string) => void;
-  orgLoading: boolean;
-  onSearch: () => void;
-}) => (
-  <>
-    <div>
-      <Label>Slå opp selskap i Brønnøysund</Label>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={orgSearchVal}
-            onChange={e => setOrgSearchVal(e.target.value)}
-            placeholder="9-sifret org.nr"
-            className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
-        </div>
-        <button onClick={onSearch} disabled={orgLoading} className="px-4 h-10 rounded-xl bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-all disabled:opacity-50">
-          {orgLoading ? "Slår opp…" : "Slå opp"}
-        </button>
-      </div>
-    </div>
+  applyBrreg: (data: BrregTreff & { stiftelsesdato?: string }) => void;
+}) => {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<BrregTreff[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) { setResults([]); return; }
+    setLoading(true);
+    const t = setTimeout(async () => {
+      try {
+        const treff = await sokBrreg(q);
+        setResults(treff);
+        setOpen(true);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  const velg = async (t: BrregTreff) => {
+    setOpen(false);
+    setQuery("");
+    try {
+      // Hent full enhet for stiftelsesdato osv.
+      const full = await slaOppOrgnr(t.organisasjonsnummer);
+      applyBrreg(full);
+    } catch {
+      applyBrreg(t);
+    }
+  };
+
+  return (
+    <>
       <div>
-        <Label>Selskapsnavn</Label>
-        <Input value={profile.selskap.navn} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, navn: v } }))} />
+        <Label>Slå opp selskap i Brønnøysund</Label>
+        <div className="relative">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={query}
+              onChange={e => { setQuery(e.target.value); setOpen(true); }}
+              onFocus={() => results.length > 0 && setOpen(true)}
+              onBlur={() => setTimeout(() => setOpen(false), 150)}
+              placeholder="Søk på firmanavn eller 9-sifret org.nr"
+              className="w-full h-10 rounded-xl border border-border/30 bg-muted/30 pl-9 pr-24 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+            {loading && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">Søker…</span>
+            )}
+          </div>
+          {open && query.trim().length >= 2 && (
+            <div className="absolute left-0 right-0 top-full mt-1 z-20 max-h-72 overflow-auto rounded-xl border border-border/30 bg-card shadow-lg">
+              {results.length === 0 && !loading && (
+                <div className="px-4 py-3 text-xs text-muted-foreground">Ingen treff — prøv annet navn eller skriv inn manuelt.</div>
+              )}
+              {results.map(t => (
+                <button
+                  key={t.organisasjonsnummer}
+                  type="button"
+                  onMouseDown={e => e.preventDefault()}
+                  onClick={() => velg(t)}
+                  className="w-full text-left px-4 py-2.5 hover:bg-muted/40 border-b border-border/20 last:border-b-0"
+                >
+                  <div className="text-sm font-medium truncate">{t.navn}</div>
+                  <div className="text-[11px] text-muted-foreground truncate">
+                    Org.nr {t.organisasjonsnummer}
+                    {t.forretningsadresse?.poststed ? ` · ${t.forretningsadresse.postnummer ?? ""} ${t.forretningsadresse.poststed}` : ""}
+                    {t.organisasjonsform?.kode ? ` · ${t.organisasjonsform.kode}` : ""}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <p className="text-[11px] text-muted-foreground/70 mt-1.5">Skriv minst 2 tegn — vi henter selskapsdata direkte fra Brønnøysundregistrene.</p>
       </div>
-      <div>
-        <Label>Org.nr</Label>
-        <Input value={profile.selskap.orgnummer} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, orgnummer: v } }))} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label>Selskapsnavn</Label>
+          <Input value={profile.selskap.navn} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, navn: v } }))} />
+        </div>
+        <div>
+          <Label>Org.nr</Label>
+          <Input value={profile.selskap.orgnummer} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, orgnummer: v } }))} />
+        </div>
+        <div className="md:col-span-2">
+          <Label>Adresse</Label>
+          <Input value={profile.selskap.adresse} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, adresse: v } }))} />
+        </div>
+        <div>
+          <Label>Postnummer</Label>
+          <Input value={profile.selskap.postnummer} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, postnummer: v } }))} />
+        </div>
+        <div>
+          <Label>Poststed</Label>
+          <Input value={profile.selskap.poststed} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, poststed: v } }))} />
+        </div>
       </div>
-      <div className="md:col-span-2">
-        <Label>Adresse</Label>
-        <Input value={profile.selskap.adresse} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, adresse: v } }))} />
-      </div>
-      <div>
-        <Label>Postnummer</Label>
-        <Input value={profile.selskap.postnummer} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, postnummer: v } }))} />
-      </div>
-      <div>
-        <Label>Poststed</Label>
-        <Input value={profile.selskap.poststed} onChange={v => update(p => ({ ...p, selskap: { ...p.selskap, poststed: v } }))} />
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
+
 
 // ============================================================
 // Steg: Styremedlemmer
