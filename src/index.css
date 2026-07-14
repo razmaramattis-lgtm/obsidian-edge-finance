@@ -6,51 +6,60 @@
 
 @layer base {
   :root {
-    /* Editorial Clarity — warm parchment, deeper contrast for readability */
-    --background: 36 20% 92%;         /* #ECE6DD warm cream */
-    --foreground: 20 14% 10%;         /* deep ink */
+    /* Forest & Copper — deep skoggrønn, copper CTA, sage details, cream ground */
+    --background: 43 33% 93%;         /* #F4F1E9 krem / offwhite */
+    --foreground: 152 31% 12%;        /* dyp skoggrønn tekst */
 
-    --card: 38 22% 96%;               /* softer than pure paper */
-    --card-foreground: 20 14% 10%;
+    --card: 43 40% 96%;               /* lettere krem */
+    --card-foreground: 152 31% 12%;
 
-    --popover: 38 22% 96%;
-    --popover-foreground: 20 14% 10%;
+    --popover: 43 40% 96%;
+    --popover-foreground: 152 31% 12%;
 
-    --primary: 15 62% 38%;            /* deeper terracotta / burnt sienna */
-    --primary-foreground: 40 22% 98%;
+    --primary: 26 46% 45%;            /* #A66A3D kobber — CTA/aksent */
+    --primary-foreground: 43 33% 96%;
 
-    --secondary: 175 38% 22%;         /* deep forest teal */
-    --secondary-foreground: 40 22% 98%;
+    --secondary: 152 31% 16%;         /* #1C3529 skoggrønn */
+    --secondary-foreground: 43 33% 96%;
 
-    --muted: 35 14% 86%;              /* deeper warm neutral */
-    --muted-foreground: 20 10% 32%;
+    --muted: 43 20% 88%;              /* dus krem */
+    --muted-foreground: 152 18% 28%;
 
-    --accent: 35 18% 82%;
-    --accent-foreground: 20 14% 10%;
+    --accent: 137 16% 66%;            /* #9CB6A3 salvie */
+    --accent-foreground: 152 31% 12%;
 
     --destructive: 5 68% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 14% 78%;             /* stronger hairline */
-    --input: 30 14% 82%;
-    --ring: 15 62% 38%;
+    --border: 137 12% 72%;            /* salvie-tonet hårlinje */
+    --input: 43 18% 82%;
+    --ring: 26 46% 45%;
 
     --radius: 0.5rem;
 
-    --rose: 15 62% 38%;
-    --rose-glow: 15 68% 54%;
-    --teal: 175 38% 22%;
-    --teal-glow: 175 42% 34%;
-    --warm: 20 14% 10%;
+    /* Legacy alias-tokens — remapped to den nye paletten så eksisterende komponenter beholder harmoni */
+    --rose: 26 46% 45%;               /* kobber (var terracotta) */
+    --rose-glow: 26 52% 58%;           /* varm kobber-glød */
+    --teal: 152 31% 16%;              /* skoggrønn (var teal) */
+    --teal-glow: 137 16% 66%;         /* salvie */
+    --warm: 152 31% 12%;
 
-    --sidebar-background: 36 18% 88%;
-    --sidebar-foreground: 20 14% 10%;
-    --sidebar-primary: 15 62% 38%;
-    --sidebar-primary-foreground: 40 22% 98%;
-    --sidebar-accent: 35 14% 84%;
-    --sidebar-accent-foreground: 20 14% 10%;
-    --sidebar-border: 30 14% 78%;
-    --sidebar-ring: 15 62% 38%;
+    /* Merkespesifikke tokens */
+    --forest: 152 31% 16%;
+    --forest-deep: 152 34% 10%;
+    --copper: 26 46% 45%;
+    --copper-glow: 26 52% 58%;
+    --sage: 137 16% 66%;
+    --cream: 43 33% 93%;
+
+    --sidebar-background: 152 31% 16%;
+    --sidebar-foreground: 43 33% 93%;
+    --sidebar-primary: 26 46% 45%;
+    --sidebar-primary-foreground: 43 33% 96%;
+    --sidebar-accent: 152 28% 22%;
+    --sidebar-accent-foreground: 137 16% 66%;
+    --sidebar-border: 152 20% 26%;
+    --sidebar-ring: 26 46% 45%;
   }
 }
 
@@ -65,45 +74,65 @@
     font-weight: 300;
     letter-spacing: 0.01em;
     background-image:
-      radial-gradient(ellipse at 8% 12%, hsl(15 55% 46% / 0.05) 0%, transparent 55%),
-      radial-gradient(ellipse at 92% 88%, hsl(170 32% 30% / 0.04) 0%, transparent 55%);
+      radial-gradient(ellipse at 8% 12%, hsl(26 46% 45% / 0.05) 0%, transparent 55%),
+      radial-gradient(ellipse at 92% 88%, hsl(152 31% 16% / 0.05) 0%, transparent 55%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
-    font-weight: 400;
+    font-weight: 500;
+    color: hsl(var(--secondary));
+    letter-spacing: -0.005em;
   }
 }
 
 @layer utilities {
   .text-gradient-rose {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(15 55% 46%), hsl(25 55% 55%));
+    background-image: linear-gradient(135deg, hsl(26 46% 45%), hsl(26 52% 58%));
   }
 
   .text-gradient-teal {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(170 32% 30%), hsl(170 40% 42%));
+    background-image: linear-gradient(135deg, hsl(152 31% 16%), hsl(152 26% 26%));
+  }
+
+  .text-gradient-copper {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(26 46% 45%), hsl(26 52% 58%));
+  }
+
+  .text-gradient-forest {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(152 31% 16%), hsl(137 16% 40%));
   }
 
   .glow-rose {
-    box-shadow: 0 12px 28px -14px hsl(15 55% 46% / 0.28);
+    box-shadow: 0 12px 28px -14px hsl(26 46% 45% / 0.32);
   }
 
   .glow-teal {
-    box-shadow: 0 12px 28px -14px hsl(170 32% 30% / 0.22);
+    box-shadow: 0 12px 28px -14px hsl(152 31% 16% / 0.28);
+  }
+
+  .glow-copper {
+    box-shadow: 0 12px 28px -14px hsl(26 46% 45% / 0.32);
+  }
+
+  .glow-forest {
+    box-shadow: 0 14px 32px -14px hsl(152 34% 10% / 0.35);
   }
 
   .line-accent {
     @apply h-px w-full;
-    background: linear-gradient(90deg, transparent, hsl(20 10% 12% / 0.12), transparent);
+    background: linear-gradient(90deg, transparent, hsl(152 31% 16% / 0.18), transparent);
   }
 
   .ambient-glow {
     background:
-      radial-gradient(ellipse at 20% 80%, hsl(15 55% 46% / 0.05) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 20%, hsl(170 32% 30% / 0.04) 0%, transparent 55%);
+      radial-gradient(ellipse at 20% 80%, hsl(26 46% 45% / 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, hsl(152 31% 16% / 0.05) 0%, transparent 55%);
   }
 
   .glass {
@@ -141,22 +170,22 @@ html {
 }
 
 ::selection {
-  background: hsl(15 55% 46% / 0.18);
-  color: hsl(20 10% 12%);
+  background: hsl(26 46% 45% / 0.22);
+  color: hsl(152 31% 12%);
 }
 
 ::-webkit-scrollbar {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(40 20% 95%);
+  background: hsl(43 30% 94%);
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(35 15% 78%);
+  background: hsl(137 12% 66%);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(15 55% 46% / 0.5);
+  background: hsl(26 46% 45% / 0.6);
 }
 
 /* ─── Article Content — Newspaper-grade typography ─── */
