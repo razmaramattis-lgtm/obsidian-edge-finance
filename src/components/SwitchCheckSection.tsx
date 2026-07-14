@@ -56,13 +56,14 @@ const SwitchCheckSection = () => {
             </ul>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/book-mote"
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
                 className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300"
               >
                 Ta sjekken
                 <ArrowRight size={14} />
-              </Link>
+              </button>
               <Link
                 to="/tjenester"
                 className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
