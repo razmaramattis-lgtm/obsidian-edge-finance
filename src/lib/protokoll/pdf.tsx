@@ -14,8 +14,10 @@ const styles = StyleSheet.create({
     paddingRight: 56,
     fontFamily: "Times-Roman",
     fontSize: 10.5,
-    lineHeight: 1.45,
     color: "#111827",
+  },
+  content: {
+    lineHeight: 1.45,
   },
   title: { fontFamily: "Times-Bold", fontSize: 20, marginBottom: 4 },
   subtitle: { fontSize: 12, marginBottom: 18, color: "#374151" },
