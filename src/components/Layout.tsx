@@ -369,8 +369,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/kontakt"  className="text-muted-foreground hover:text-foreground transition-colors">Kontakt oss</Link>
                   <Link to="/book-mote" className="text-muted-foreground hover:text-foreground transition-colors">Book møte</Link>
                   <Link to="/logg-inn" className="text-muted-foreground hover:text-foreground transition-colors">Logg inn</Link>
-                  <a href="mailto:kontakt@avargo.no" className="text-muted-foreground hover:text-foreground transition-colors">kontakt@avargo.no</a>
-                  <span className="text-muted-foreground/80">Blåbærbakken 17<br/>2100 Skarnes</span>
                 </div>
               </div>
             </div>
