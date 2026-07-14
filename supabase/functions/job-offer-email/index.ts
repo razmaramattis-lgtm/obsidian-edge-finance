@@ -174,7 +174,7 @@ function buildOfferEmail(opts: {
             <p style="margin:0 0 8px 0;font-size:13px;color:#71717a;">
               <a href="https://www.avargo.no" style="color:#1a1a1a;text-decoration:none;font-weight:600;">www.avargo.no</a>
             </p>
-            <p style="margin:0 0 6px 0;font-size:12px;color:#a1a1aa;">Oscars gate 2B, 3714 Skien</p>
+            <p style="margin:0 0 6px 0;font-size:12px;color:#a1a1aa;">Blåbærbakken 17, 2100 Skarnes</p>
             <p style="margin:0;font-size:12px;color:#a1a1aa;">kontakt@avargo.no</p>
           </td>
         </tr>

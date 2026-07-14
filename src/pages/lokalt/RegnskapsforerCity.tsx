@@ -65,9 +65,9 @@ const RegnskapsforerCity = () => {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Oscars gate 2B",
-      addressLocality: "Skien",
-      postalCode: "3714",
+      streetAddress: "Blåbærbakken 17",
+      addressLocality: "Skarnes",
+      postalCode: "2100",
       addressCountry: "NO",
     },
     areaServed: {
@@ -404,7 +404,7 @@ const RegnskapsforerCity = () => {
 
               <div className="mt-8 text-center inline-flex items-center gap-2 text-[13px] text-foreground/50 w-full justify-center">
                 <Building2 className="w-4 h-4" />
-                Avargo · Oscars gate 2B, 3714 Skien · kontakt@avargo.no
+                Avargo · Blåbærbakken 17, 2100 Skarnes · kontakt@avargo.no
               </div>
             </div>
           </div>

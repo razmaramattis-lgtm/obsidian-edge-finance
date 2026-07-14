@@ -28,7 +28,7 @@ export const CITIES: City[] = [
     region: "Grenland",
     county: "Telemark",
     population: "55 000",
-    intro: "Skien er Avargos hjemby — vi sitter i Oscars gate 2B og kjenner det lokale næringslivet bedre enn de fleste.",
+    intro: "Skien er en av byene Avargo kjenner godt — vi kjenner det lokale næringslivet bedre enn de fleste.",
     nearby: ["Porsgrunn", "Siljan", "Bamble"],
     industries: ["Industri & produksjon", "Bygg & anlegg", "Handel", "Tjenesteyting"],
   },

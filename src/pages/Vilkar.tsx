@@ -20,7 +20,7 @@ const Vilkar = () => (
             <div className="prose prose-invert max-w-none space-y-8 text-foreground/80 font-light leading-relaxed text-[15px]">
               <section>
                 <h2 className="font-heading text-xl md:text-2xl text-foreground mb-3">1. Generelt</h2>
-                <p>Disse vilkårene gjelder for bruk av nettsiden avargo.no og tjenestene som tilbys av Avargo AS (heretter «Avargo»), Oscars gate 2B, 3714 Skien.</p>
+                <p>Disse vilkårene gjelder for bruk av nettsiden avargo.no og tjenestene som tilbys av Avargo AS (heretter «Avargo»), Blåbærbakken 17, 2100 Skarnes.</p>
                 <p>Ved å bruke nettsiden og/eller bestille tjenester fra Avargo, aksepterer du disse vilkårene.</p>
               </section>
 

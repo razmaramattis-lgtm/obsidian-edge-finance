@@ -89,7 +89,7 @@ const PrisguidePrint = () => {
           })}
 
           <footer className="mt-12 pt-6 border-t border-black/10 text-xs text-black/50">
-            <p><strong className="text-black/70">Avargo</strong> · Oscars gate 2B, 3714 Skien · kontakt@avargo.no · avargo.no</p>
+            <p><strong className="text-black/70">Avargo</strong> · Blåbærbakken 17, 2100 Skarnes · kontakt@avargo.no · avargo.no</p>
             <p className="mt-1">Prisguide oppdatert {new Date().toLocaleDateString("nb-NO")}. Forbehold om endringer.</p>
           </footer>
         </div>

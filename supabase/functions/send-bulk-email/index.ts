@@ -178,7 +178,7 @@ function wrapInTemplate(body: string, subject: string): string {
 <div style="font-size:14px;line-height:1.7;color:#3f3f46">${body}</div>
 </td></tr>
 <tr><td style="padding:24px 40px;background:#fafafa;border-top:1px solid #e4e4e7">
-<p style="margin:0;font-size:11px;color:#a1a1aa;text-align:center">Avargo · Oscars gate 2B, 3714 Skien · kontakt@avargo.no</p>
+<p style="margin:0;font-size:11px;color:#a1a1aa;text-align:center">Avargo · Blåbærbakken 17, 2100 Skarnes · kontakt@avargo.no</p>
 </td></tr>
 </table>
 </td></tr>
