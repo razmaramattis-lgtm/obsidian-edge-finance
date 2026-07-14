@@ -321,15 +321,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-10">
             {/* Brand column */}
             <div className="md:col-span-5">
-              <Link to="/" className="inline-flex items-baseline gap-2 mb-6">
-                <span className="font-heading text-2xl text-foreground">Avargo</span>
+              <Link to="/" className="inline-flex items-baseline gap-2 mb-4">
+                <span className="font-heading text-xl text-foreground">Avargo</span>
                 <span className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-semibold">Regnskap</span>
               </Link>
-              <p className="font-heading text-3xl md:text-[34px] leading-[1.15] text-foreground mb-5 max-w-md">
+              <p className="font-heading text-2xl md:text-[26px] leading-[1.15] text-foreground mb-4 max-w-md">
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
               </p>
-              <p className="text-[13.5px] text-muted-foreground font-light leading-relaxed max-w-md mb-8">
-                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager — bygget for små og mellomstore bedrifter i Norge.
+              <p className="text-[13px] text-muted-foreground font-light leading-relaxed max-w-md mb-6">
+                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
               </p>
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background text-[12.5px] font-medium rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide">
                 Få et uforpliktende tilbud <ArrowRight size={13} />
