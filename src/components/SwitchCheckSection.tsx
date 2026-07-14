@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import SwitchCheckDialog from "./SwitchCheckDialog";
 
 const benefits = [
   "Få en tydelig plan for overtagelse og ansvar",
@@ -9,8 +11,10 @@ const benefits = [
 ];
 
 const SwitchCheckSection = () => {
+  const [open, setOpen] = useState(false);
   return (
     <section className="py-16 md:py-32 border-t border-border/10">
+      <SwitchCheckDialog open={open} onOpenChange={setOpen} />
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
           {/* Text */}
@@ -52,13 +56,14 @@ const SwitchCheckSection = () => {
             </ul>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/book-mote"
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
                 className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300"
               >
                 Ta sjekken
                 <ArrowRight size={14} />
-              </Link>
+              </button>
               <Link
                 to="/tjenester"
                 className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
