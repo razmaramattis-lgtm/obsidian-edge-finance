@@ -1,11 +1,20 @@
 import { Document, Page, Text, View, StyleSheet, renderToFile } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
-  page: { padding: 50, fontSize: 12 },
-  footerRight: { position: "absolute", bottom: 24, right: 50, fontSize: 8, color: "#666" },
+  page: {
+    paddingTop: 56,
+    paddingBottom: 56,
+    paddingLeft: 71,
+    paddingRight: 56,
+    fontFamily: "Times-Roman",
+    fontSize: 10.5,
+    lineHeight: 1.45,
+    color: "#111827",
+  },
+  footerRight: { position: "absolute", bottom: 24, right: 56, fontSize: 8, color: "#9CA3AF" },
 });
 
-const lotsOfContent = Array.from({ length: 50 }, (_, i) => <Text key={i}>Line {i + 1}: Lorem ipsum dolor sit amet.</Text>);
+const lotsOfContent = Array.from({ length: 50 }, (_, i) => <Text key={i}>Line {i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>);
 
 const TestDoc = () => (
   <Document>
