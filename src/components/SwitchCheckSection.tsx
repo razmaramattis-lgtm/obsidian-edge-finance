@@ -26,17 +26,16 @@ const SwitchCheckSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-[10px] md:text-xs font-medium tracking-wide mb-5 md:mb-6">
-              <Sparkles size={12} strokeWidth={1.5} />
-              Vurderer du å bytte regnskapsfører?
+            <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-5 md:mb-6 font-semibold px-3.5 py-1.5 rounded-full border border-secondary/20 bg-secondary/5">
+              Bytte regnskapsfører
             </span>
 
-            <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-4 md:mb-5">
-              Få en sjekk om vi er <span className="text-gradient-rose">riktig for deg</span>
+            <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-4 md:mb-6">
+              Er vi <span className="italic text-gradient-rose">riktig for deg?</span>
             </h2>
 
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mb-6 md:mb-8">
-              Riktig regnskapsfører er et viktig valg. Svar på fem korte spørsmål, så får du en personlig vurdering og ærlig beskjed hvis vi ikke passer.
+            <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-xl mb-6 md:mb-8">
+              Riktig regnskapsfører er et viktig valg. Svar på fem korte spørsmål, så får du en personlig vurdering — og ærlig beskjed hvis vi ikke passer.
             </p>
 
             <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10">
