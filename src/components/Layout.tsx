@@ -113,8 +113,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           {/* ── Desktop nav ─────────────────────────── */}
           <div className="hidden lg:flex items-center gap-1">
-            <NavButton to="/" label="Hjem" isActive={location.pathname === "/"} />
-
             {/* Tjenester dropdown */}
             <div className="relative" {...makeHandlers(setTjenesterOpen, tjenesterRef)}>
               <Link to="/tjenester" onClick={() => setTjenesterOpen(false)} className={dropBtnClass(tjenesterOpen)}>
@@ -202,29 +200,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <NavButton to="/priser" label="Priser" isActive={location.pathname.startsWith("/priser")} />
-
-            {/* Selskapet dropdown */}
-            <div className="relative" {...makeHandlers(setSelskapetOpen, selskapetRef)}>
-              <button className={dropBtnClass(selskapetOpen)}>
-                Selskapet <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${selskapetOpen ? "rotate-180" : ""}`} />
-              </button>
-              <DropdownPanel open={selskapetOpen} className="absolute top-full right-0 mt-2 w-[560px] bg-card border border-border rounded-xl shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.22)] p-3">
-                <div className="grid grid-cols-2 gap-1">
-                  {selskapetLinks.map((item) => (
-                    <Link key={item.href} to={item.href} onClick={() => setSelskapetOpen(false)}
-                      className="group flex items-start gap-3 py-3 px-3 rounded-lg hover:bg-muted/60 transition-colors">
-                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-primary/8 border border-primary/12 group-hover:bg-primary/14 transition-colors">
-                        <item.icon size={15} className="text-primary" strokeWidth={1.6} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-medium text-foreground leading-tight">{item.title}</p>
-                        <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </DropdownPanel>
-            </div>
 
             {/* Ressurser dropdown */}
             <div className="relative" {...makeHandlers(setRessurserOpen, ressurserRef)}>
