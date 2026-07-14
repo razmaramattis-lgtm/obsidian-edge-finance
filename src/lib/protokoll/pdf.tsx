@@ -40,15 +40,19 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     width: 220,
   },
-  footer: {
+  footerLeft: {
     position: "absolute",
     bottom: 24,
     left: 71,
+    fontSize: 8,
+    color: "#9CA3AF",
+  },
+  footerRight: {
+    position: "absolute",
+    bottom: 24,
     right: 56,
     fontSize: 8,
     color: "#9CA3AF",
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
 });
 
