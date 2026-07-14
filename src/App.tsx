@@ -29,6 +29,7 @@ const Skattekalender = lazy(() => import("./pages/Skattekalender"));
 const Kontohjelp = lazy(() => import("./pages/Kontohjelp"));
 const KontohjelpDetalj = lazy(() => import("./pages/KontohjelpDetalj"));
 const Protokollgenerator = lazy(() => import("./pages/ressurser/Protokollgenerator"));
+const Firmabilkalkulator = lazy(() => import("./pages/ressurser/Firmabilkalkulator"));
 const Regnskapsord = lazy(() => import("./pages/Regnskapsord"));
 const RegnskapsordDetalj = lazy(() => import("./pages/RegnskapsordDetalj"));
 const BookMote = lazy(() => import("./pages/BookMote"));
@@ -450,6 +451,7 @@ const App = () => (
                             <Route path="/ressurser/kontohjelp" element={<Kontohjelp />} />
                             <Route path="/ressurser/kontohjelp/:slug" element={<KontohjelpDetalj />} />
                             <Route path="/ressurser/protokollgenerator" element={<Protokollgenerator />} />
+                            <Route path="/ressurser/firmabilkalkulator" element={<Firmabilkalkulator />} />
                             <Route path="/nyheter" element={<BlogListing />} />
                             <Route path="/faq" element={<FAQ />} />
                             <Route path="/nyhet/:slug" element={<BlogPost />} />

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Search, BookMarked, Newspaper, Archive,
-  Download, FileSpreadsheet, Clock, Pin, Tag, Filter, ClipboardList,
+  Download, FileSpreadsheet, Clock, Pin, Tag, Filter, ClipboardList, Car,
 } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TaxDeadlineWidget from "@/components/TaxDeadlineWidget";
@@ -284,7 +284,7 @@ const Ressurser = () => {
           )}
 
           {/* Verktøy CTA-er */}
-          <AnimatedSection className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <AnimatedSection className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               to="/ressurser/skattekalender"
               className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
@@ -312,6 +312,22 @@ const Ressurser = () => {
                 <div>
                   <h3 className="font-medium text-sm group-hover:text-primary transition-colors">Protokollgenerator</h3>
                   <p className="text-xs text-muted-foreground/60 mt-0.5">Styreprotokoll, innkalling og generalforsamling — som PDF på minutter</p>
+                </div>
+              </div>
+              <ArrowRight size={16} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
+            </Link>
+
+            <Link
+              to="/ressurser/firmabilkalkulator"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Car size={22} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm group-hover:text-primary transition-colors">Firmabilkalkulator</h3>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">Beregn skatt og arbeidsgiveravgift på firmabil — 2026</p>
                 </div>
               </div>
               <ArrowRight size={16} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
