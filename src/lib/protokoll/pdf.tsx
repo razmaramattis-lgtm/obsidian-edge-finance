@@ -235,7 +235,7 @@ function Footer() {
   return (
     <View style={styles.footer} fixed>
       <Text>Protokoll- og generalforsamlingsgenerator er produsert av Avargo.</Text>
-      <Text render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`} />
+      <Text>Side 1 av 1</Text>
     </View>
   );
 }
