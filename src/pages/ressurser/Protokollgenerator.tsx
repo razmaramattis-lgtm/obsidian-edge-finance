@@ -163,8 +163,8 @@ const Protokollgenerator = () => {
   const [activeDocIdx, setActiveDocIdx] = useState<number>(0);
   const [stegIdx, setStegIdx] = useState(0);
   const [phase, setPhase] = useState<"velg" | "utfyll" | "ferdig">("velg");
-  const [orgSearchVal, setOrgSearchVal] = useState("");
-  const [orgLoading, setOrgLoading] = useState(false);
+  // (Brreg-søk håndteres nå inne i StegProfil)
+
 
   // Autosave — load
   useEffect(() => {
