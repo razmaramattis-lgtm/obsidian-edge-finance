@@ -471,7 +471,20 @@ const BookMote = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{quiz?.statusLabel}</p>
+                      {service === "regnskap" && selectedCompany && (
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80 inline-flex items-center gap-1.5">
+                          {checkingAccountant ? (
+                            <><Loader2 size={11} className="animate-spin" /> Sjekker Brønnøysund…</>
+                          ) : hasAccountant === true ? (
+                            <><CheckCircle2 size={11} className="text-primary" /> Registrert regnskapsfører (Brreg)</>
+                          ) : hasAccountant === false ? (
+                            <><CheckCircle2 size={11} className="text-secondary" /> Ingen regnskapsfører registrert (Brreg)</>
+                          ) : null}
+                        </span>
+                      )}
+                    </div>
                     <div className={`grid gap-2 ${(quiz?.statusOptions.length || 3) > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
                       {quiz?.statusOptions.map(o => (
                         <button key={o} onClick={() => setCurrentStatus(o)}
