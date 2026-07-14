@@ -9,7 +9,7 @@ import avargoLogo from "@/assets/avargo-logo.png";
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
   Building2, Landmark, HardHat, Store, Heart, Tractor, Zap,
-  Mail, Info, FileText, BookMarked, Newspaper, Lock, CalendarClock,
+  BookMarked, Newspaper, CalendarClock,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe,
 } from "lucide-react";
 
