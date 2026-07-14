@@ -5,6 +5,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const CAT_LABELS: Record<Category, string> = {
+  mva: "MVA",
+  skatt: "Skatt",
+  arbeidsgiver: "Arbeidsgiver",
+  tredjepartsopplysninger: "Tredjepartsopplysninger",
+  saravgift: "Særavgift",
+  regnskap: "Regnskap",
+};
+
+const TYPE_LABELS: Record<CompanyType, string> = {
+  as: "AS",
+  enk: "ENK",
+  arbeidsgiver: "Arbeidsgiver",
+};
+
 type CompanyType = "as" | "enk" | "arbeidsgiver";
 type Category = "mva" | "skatt" | "arbeidsgiver" | "tredjepartsopplysninger" | "saravgift" | "regnskap";
 
