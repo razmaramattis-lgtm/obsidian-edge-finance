@@ -283,8 +283,8 @@ const Ressurser = () => {
             </div>
           )}
 
-          {/* Skattekalender CTA */}
-          <AnimatedSection className="mt-16">
+          {/* Verktøy CTA-er */}
+          <AnimatedSection className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               to="/ressurser/skattekalender"
               className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
@@ -295,7 +295,23 @@ const Ressurser = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-sm group-hover:text-primary transition-colors">Skattekalender</h3>
-                  <p className="text-xs text-muted-foreground/60 mt-0.5">Se alle frister for AS, ENK og arbeidsgivere i en visuell kalender</p>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">Alle frister for AS, ENK og arbeidsgivere</p>
+                </div>
+              </div>
+              <ArrowRight size={16} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
+            </Link>
+
+            <Link
+              to="/ressurser/protokollgenerator"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <ClipboardList size={22} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm group-hover:text-primary transition-colors">Protokollgenerator</h3>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">Styreprotokoll, innkalling og generalforsamling — som PDF på minutter</p>
                 </div>
               </div>
               <ArrowRight size={16} className="text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors" />
