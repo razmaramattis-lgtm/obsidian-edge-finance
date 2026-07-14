@@ -1166,21 +1166,12 @@ const Ferdigstilling = ({ docs, profile, tilbake, reset }: {
                 <p className="text-xs text-muted-foreground truncate">{profile.selskap.navn || "Utkast"}</p>
               </div>
             </div>
-            <PDFDownloadLink
-              document={<ProtokollDocument profile={profile} doc={d} />}
-              fileName={filename}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs hover:bg-primary/90 transition-all shrink-0"
-            >
-              {({ loading }) => (
-                <>
-                  <Download size={13} /> {loading ? "Genererer…" : "Last ned PDF"}
-                </>
-              )}
-            </PDFDownloadLink>
+            <DownloadButton doc={d} profile={profile} filename={filename} />
           </div>
         );
       })}
     </div>
+
 
     <div className="flex items-center justify-between">
       <button onClick={tilbake} className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-2">
