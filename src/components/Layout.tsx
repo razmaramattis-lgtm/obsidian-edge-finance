@@ -236,8 +236,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           {/* Mobile/tablet toggle */}
           <div className="lg:hidden flex items-center gap-2">
-            <Link to="/logg-inn" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-full border border-border text-foreground/80 active:bg-muted transition-colors flex items-center">
-              Logg inn
+            <Link to="/book-mote" className="min-h-[40px] px-4 py-2 text-[13px] font-medium rounded-full border border-border text-foreground/80 active:bg-muted transition-colors flex items-center">
+              Book møte
             </Link>
             <button onClick={() => setMenuOpen(!menuOpen)} className="text-foreground p-3 -mr-2 rounded-lg active:bg-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={menuOpen ? "Lukk meny" : "Åpne meny"} aria-expanded={menuOpen}>
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
