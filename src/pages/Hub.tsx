@@ -154,7 +154,7 @@ const Hub = () => {
 
 
       {/* ═══ VALUE PROPOSITION ═══ */}
-      <section className="py-16 md:py-32 relative">
+      <section className="py-16 md:py-32 relative bg-card">
         <div className="container mx-auto px-4 md:px-6 relative">
 
           <motion.div
