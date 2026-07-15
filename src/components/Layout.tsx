@@ -221,14 +221,27 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       </Link>
                     ))}
 
-                    {/* HR as understated secondary line */}
-                    <div className="col-span-2 mt-4 pt-4 border-t border-border/60 flex flex-wrap gap-3 items-center">
-                      <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold">Ekstratjenester</span>
-                      {tjenesterHr.map((item) => (
-                        <Link key={item.href} to={item.href} onClick={() => setTjenesterOpen(false)} className="text-[12.5px] text-foreground/70 hover:text-primary transition-colors underline-offset-4 hover:underline">
-                          {item.title}
-                        </Link>
-                      ))}
+                    {/* HR as secondary line — same visual language as core */}
+                    <div className="col-span-2 mt-4 pt-4 border-t border-border/60">
+                      <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold mb-2">Ekstratjenester</p>
+                      <div className="grid grid-cols-2 gap-x-8">
+                        {tjenesterHr.map((item) => (
+                          <Link
+                            key={item.href}
+                            to={item.href}
+                            onClick={() => setTjenesterOpen(false)}
+                            className="group flex items-start gap-3 py-3 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 bg-primary/8 border border-primary/12 group-hover:bg-primary/14 transition-colors">
+                              <item.icon size={15} className="text-primary" strokeWidth={1.6} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[13.5px] font-medium text-foreground leading-tight">{item.title}</p>
+                              <p className="text-[11.5px] text-muted-foreground leading-snug mt-0.5">{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -336,11 +349,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
                 </Link>
               ))}
-              <div className="mt-2 pt-2 border-t border-border/60 flex flex-wrap gap-x-4 gap-y-1 px-3">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold w-full">Ekstratjenester</span>
+              <div className="mt-2 pt-2 border-t border-border/60 px-3">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold block mb-1">Ekstratjenester</span>
                 {tjenesterHr.map((item) => (
                   <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                    className="text-[13px] text-foreground/70 py-1.5">{item.title}</Link>
+                    className="flex items-center gap-2.5 py-2 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
+                    <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
+                  </Link>
                 ))}
               </div>
             </MobileGroup>
