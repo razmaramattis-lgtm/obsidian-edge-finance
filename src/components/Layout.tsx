@@ -411,18 +411,28 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <FloatingActionMenu />
 
       {/* ── Footer — editorial masthead ─────────── */}
-      <footer className="relative border-t border-border/70 bg-secondary text-secondary-foreground mt-16 md:mt-24 overflow-hidden">
-        {/* Ambient glow */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-70"
-             style={{
-               backgroundImage:
-                 "radial-gradient(ellipse at 12% 0%, hsl(26 46% 45% / 0.18) 0%, transparent 55%), radial-gradient(ellipse at 88% 100%, hsl(137 20% 62% / 0.10) 0%, transparent 55%)",
-             }} />
+      <footer ref={footerRef} className="relative border-t border-border/70 bg-secondary text-secondary-foreground mt-16 md:mt-24 overflow-hidden">
+        {/* Ambient glow — subtil parallax */}
+        <div
+          ref={footerGlowRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-70 will-change-transform"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse at 12% 0%, hsl(26 46% 45% / 0.18) 0%, transparent 55%), radial-gradient(ellipse at 88% 100%, hsl(137 20% 62% / 0.10) 0%, transparent 55%)",
+            transition: "opacity 400ms ease-out",
+          }}
+        />
 
-        {/* Giant editorial wordmark backdrop */}
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-8 md:-bottom-16 left-0 right-0 text-center font-heading select-none whitespace-nowrap opacity-[0.045] leading-none">
+        {/* Giant editorial wordmark backdrop — subtil parallax */}
+        <div
+          ref={footerWordmarkRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-8 md:-bottom-16 left-0 right-0 text-center font-heading select-none whitespace-nowrap opacity-[0.045] leading-none will-change-transform"
+        >
           <span className="text-[22vw] md:text-[18vw] tracking-tighter">Avargo</span>
         </div>
+
 
         <div className="relative container mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
           {/* Editorial eyebrow rule */}
