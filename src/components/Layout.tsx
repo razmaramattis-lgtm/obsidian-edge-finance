@@ -80,6 +80,61 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const ressurserRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
 
+  // ── Subtil scroll-reaksjon for header ─────────────
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 24);
+        ticking = false;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // ── Subtil parallax for footer-wordmark ───────────
+  const footerRef = useRef<HTMLElement | null>(null);
+  const footerWordmarkRef = useRef<HTMLDivElement | null>(null);
+  const footerGlowRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let ticking = false;
+    const update = () => {
+      const el = footerRef.current;
+      if (!el) { ticking = false; return; }
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      // progress 0..1 idet footer glir inn i viewport nedenfra
+      const p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height * 0.5)));
+      if (footerWordmarkRef.current) {
+        footerWordmarkRef.current.style.transform = `translate3d(0, ${(1 - p) * 40}px, 0)`;
+      }
+      if (footerGlowRef.current) {
+        footerGlowRef.current.style.transform = `translate3d(0, ${(1 - p) * -20}px, 0)`;
+        footerGlowRef.current.style.opacity = String(0.4 + p * 0.5);
+      }
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   const closeAll = () => { setTjenesterOpen(false); setBransjerOpen(false); setRessurserOpen(false); };
 
   const makeHandlers = (
