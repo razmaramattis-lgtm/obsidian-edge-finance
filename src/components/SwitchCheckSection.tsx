@@ -26,9 +26,9 @@ const SwitchCheckSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-5 md:mb-6 font-semibold px-3.5 py-1.5 rounded-full border border-secondary/20 bg-secondary/5">
+            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-semibold text-foreground mb-5 md:mb-6">
               Bytte regnskapsfører
-            </span>
+            </p>
 
             <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.15] tracking-tight mb-4 md:mb-6">
               Er vi <span className="italic text-gradient-rose inline-block pr-2 pb-1">riktig for deg?</span>
