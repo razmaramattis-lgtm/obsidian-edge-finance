@@ -4202,6 +4202,7 @@ export type Database = {
         }[]
       }
       own_company_id: { Args: { uid?: string }; Returns: string }
+      realtime_topic_allowed: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "employee" | "customer"
