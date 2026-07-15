@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
