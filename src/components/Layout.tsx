@@ -11,6 +11,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
+  Mail, MapPin, ShieldCheck,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
@@ -98,12 +99,31 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground relative">
       {/* ── NAV BAR — editorial ─────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border/60">
+        {/* Thin editorial top strip — kontakt & tillit */}
+        <div className="hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground">
+          <div className="container mx-auto flex items-center justify-between h-8 px-8 text-[10.5px] tracking-[0.14em] uppercase font-medium">
+            <div className="flex items-center gap-6 opacity-90">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck size={11} strokeWidth={1.8} className="text-accent" /> Autorisert regnskapsbyrå</span>
+              <span className="inline-flex items-center gap-1.5 opacity-80"><MapPin size={11} strokeWidth={1.8} /> Oscars gate 2B · Skien</span>
+            </div>
+            <div className="flex items-center gap-5 opacity-90">
+              <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"><Mail size={11} strokeWidth={1.8} /> kontakt@avargo.no</a>
+              <span className="h-3 w-px bg-secondary-foreground/25" />
+              <Link to="/logg-inn" className="hover:text-accent transition-colors">Logg inn</Link>
+            </div>
+          </div>
+        </div>
+
         <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[76px] px-4 md:px-8" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-          {/* Logo — editorial masthead */}
-          <Link to="/" className="flex items-baseline gap-2 group">
-            <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
-            <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">Regnskap</span>
+          {/* Logo — editorial masthead med kobber-monogram */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <span aria-hidden="true" className="hidden sm:flex items-center justify-center h-9 w-9 rounded-full border border-primary/40 bg-primary/5 font-heading text-[15px] leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg]">A</span>
+            <span className="flex items-baseline gap-2">
+              <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
+              <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">— Regnskap</span>
+            </span>
           </Link>
+
 
           {/* ── Desktop nav ─────────────────────────── */}
           <div className="hidden lg:flex items-center gap-1">
@@ -113,7 +133,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Tjenester
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={tjenesterOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={tjenesterOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10 grid grid-cols-12 gap-10">
                   {/* Left column — editorial intro */}
                   <div className="col-span-3 border-r border-border/70 pr-8">
@@ -166,7 +186,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Bransjer
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={bransjerOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={bransjerOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10">
                   <div className="mb-6 flex items-end justify-between border-b border-border/60 pb-4">
                     <div>
@@ -303,7 +323,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* ── Breadcrumbs & main ───────────────────── */}
-      <div className="pt-16 lg:pt-[76px]">
+      <div className="pt-16 lg:pt-[108px]">
         <Breadcrumbs />
       </div>
 
@@ -314,23 +334,59 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <FloatingActionMenu />
 
       {/* ── Footer — editorial masthead ─────────── */}
-      <footer className="relative border-t border-border/70 bg-muted/30 mt-16 md:mt-24">
-        <div className="container mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
+      <footer className="relative border-t border-border/70 bg-secondary text-secondary-foreground mt-16 md:mt-24 overflow-hidden">
+        {/* Ambient glow */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-70"
+             style={{
+               backgroundImage:
+                 "radial-gradient(ellipse at 12% 0%, hsl(26 46% 45% / 0.18) 0%, transparent 55%), radial-gradient(ellipse at 88% 100%, hsl(137 20% 62% / 0.10) 0%, transparent 55%)",
+             }} />
+
+        {/* Giant editorial wordmark backdrop */}
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-8 md:-bottom-16 left-0 right-0 text-center font-heading select-none whitespace-nowrap opacity-[0.045] leading-none">
+          <span className="text-[22vw] md:text-[18vw] tracking-tighter">Avargo</span>
+        </div>
+
+        <div className="relative container mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
+          {/* Editorial eyebrow rule */}
+          <div className="flex items-center gap-4 mb-10">
+            <span className="text-[10px] tracking-[0.45em] uppercase text-accent font-semibold">Est. 2024 — Skien</span>
+            <span className="flex-1 h-px bg-gradient-to-r from-accent/40 via-secondary-foreground/15 to-transparent" />
+            <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">Regnskap · Rådgivning</span>
+          </div>
+
           {/* Masthead */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 mb-12">
             {/* Brand column */}
             <div className="md:col-span-5">
-              <Link to="/" className="inline-flex items-baseline gap-2 mb-4">
-                <span className="font-heading text-xl text-foreground">Avargo</span>
-                <span className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-semibold">Regnskap</span>
+              <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
+                <span aria-hidden="true" className="flex items-center justify-center h-10 w-10 rounded-full border border-primary/50 bg-primary/10 font-heading text-[17px] leading-none text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">A</span>
+                <span className="flex items-baseline gap-2">
+                  <span className="font-heading text-2xl tracking-tight">Avargo</span>
+                  <span className="text-[9px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-semibold">— Regnskap</span>
+                </span>
               </Link>
-              <p className="font-heading text-2xl md:text-[26px] leading-[1.15] text-foreground mb-4 max-w-md">
+              <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
               </p>
-              <p className="text-[13px] text-muted-foreground font-light leading-relaxed max-w-md mb-6">
+              <p className="text-[13px] text-secondary-foreground/70 font-light leading-relaxed max-w-md mb-7">
                 Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
               </p>
-              <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background text-[12.5px] font-medium rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide">
+
+              {/* Kontakt-blokk */}
+              <div className="flex flex-col gap-2 text-[13px] mb-7">
+                <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-2 text-secondary-foreground/85 hover:text-accent transition-colors">
+                  <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
+                </a>
+                <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
+                  <MapPin size={13} strokeWidth={1.7} className="text-accent" /> Oscars gate 2B, 3714 Skien
+                </span>
+                <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
+                  <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> Autorisert regnskapsbyrå · Org.nr 938 076 669
+                </span>
+              </div>
+
+              <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-[12.5px] font-medium rounded-full hover:brightness-110 transition-all duration-300 tracking-wide">
                 Få et uforpliktende tilbud <ArrowRight size={13} />
               </Link>
             </div>
@@ -338,52 +394,62 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Navigation columns */}
             <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
               <div>
-                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Tjenester</p>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                  <span className="h-px w-4 bg-accent/60" /> Tjenester
+                </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/tjenester/regnskapsforer" className="text-muted-foreground hover:text-foreground transition-colors">Dedikert regnskapsfører</Link>
-                  <Link to="/tjenester/arsregnskap"   className="text-muted-foreground hover:text-foreground transition-colors">Årsregnskap</Link>
-                  <Link to="/tjenester/lonn"          className="text-muted-foreground hover:text-foreground transition-colors">Lønn & rapportering</Link>
-                  <Link to="/tjenester/skatteplanlegging" className="text-muted-foreground hover:text-foreground transition-colors">Skatterådgivning</Link>
-                  <Link to="/tjenester/cfo"           className="text-muted-foreground hover:text-foreground transition-colors">CFO-rådgivning</Link>
+                  <Link to="/tjenester/regnskapsforer" className="text-secondary-foreground/75 hover:text-accent transition-colors">Dedikert regnskapsfører</Link>
+                  <Link to="/tjenester/arsregnskap"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Årsregnskap</Link>
+                  <Link to="/tjenester/lonn"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Lønn & rapportering</Link>
+                  <Link to="/tjenester/skatteplanlegging" className="text-secondary-foreground/75 hover:text-accent transition-colors">Skatterådgivning</Link>
+                  <Link to="/tjenester/cfo"           className="text-secondary-foreground/75 hover:text-accent transition-colors">CFO-rådgivning</Link>
                   <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">Alle tjenester →</Link>
                 </div>
               </div>
 
               <div>
-                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Ressurser</p>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                  <span className="h-px w-4 bg-accent/60" /> Ressurser
+                </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/ressurser/kontohjelp"      className="text-muted-foreground hover:text-foreground transition-colors">Kontohjelp</Link>
-                  <Link to="/ressurser/skattekalender"  className="text-muted-foreground hover:text-foreground transition-colors">Skattekalender</Link>
-                  <Link to="/guider/regnskapsforer-pris" className="text-muted-foreground hover:text-foreground transition-colors">Prisguide</Link>
-                  <Link to="/regnskapsforer-i"          className="text-muted-foreground hover:text-foreground transition-colors">Regnskapsfører i din by</Link>
-                  <Link to="/bransjer"                  className="text-muted-foreground hover:text-foreground transition-colors">Bransjer</Link>
-                  <Link to="/faq"                       className="text-muted-foreground hover:text-foreground transition-colors">Vanlige spørsmål</Link>
+                  <Link to="/ressurser/kontohjelp"      className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontohjelp</Link>
+                  <Link to="/ressurser/skattekalender"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Skattekalender</Link>
+                  <Link to="/guider/regnskapsforer-pris" className="text-secondary-foreground/75 hover:text-accent transition-colors">Prisguide</Link>
+                  <Link to="/regnskapsforer-i"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Regnskapsfører i din by</Link>
+                  <Link to="/bransjer"                  className="text-secondary-foreground/75 hover:text-accent transition-colors">Bransjer</Link>
+                  <Link to="/faq"                       className="text-secondary-foreground/75 hover:text-accent transition-colors">Vanlige spørsmål</Link>
                 </div>
               </div>
 
               <div className="col-span-2 md:col-span-1">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-foreground font-semibold mb-5">Kontakt</p>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                  <span className="h-px w-4 bg-accent/60" /> Selskapet
+                </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/om-oss"   className="text-muted-foreground hover:text-foreground transition-colors">Om Avargo</Link>
-                  <Link to="/kontakt"  className="text-muted-foreground hover:text-foreground transition-colors">Kontakt oss</Link>
-                  <Link to="/book-mote" className="text-muted-foreground hover:text-foreground transition-colors">Book møte</Link>
-                  <Link to="/logg-inn" className="text-muted-foreground hover:text-foreground transition-colors">Logg inn</Link>
+                  <Link to="/om-oss"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Om Avargo</Link>
+                  <Link to="/kontakt"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontakt oss</Link>
+                  <Link to="/book-mote" className="text-secondary-foreground/75 hover:text-accent transition-colors">Book møte</Link>
+                  <Link to="/karriere" className="text-secondary-foreground/75 hover:text-accent transition-colors">Karriere</Link>
+                  <Link to="/logg-inn" className="text-secondary-foreground/75 hover:text-accent transition-colors">Logg inn</Link>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="border-t border-border/70 pt-4 flex flex-col md:flex-row justify-between items-center gap-3">
-            <span className="text-[11px] text-muted-foreground font-light">© {new Date().getFullYear()} Avargo Regnskap AS · Autorisert regnskapsbyrå · Org.nr 938 076 669</span>
-            <div className="flex items-center gap-6 text-[11px] text-muted-foreground font-light">
-              <Link to="/personvern" className="hover:text-foreground transition-colors">Personvern</Link>
-              <Link to="/vilkar"     className="hover:text-foreground transition-colors">Vilkår</Link>
-              <Link to="/sikkerhet"  className="hover:text-foreground transition-colors">Sikkerhet</Link>
+          <div className="border-t border-secondary-foreground/15 pt-5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <span className="text-[11px] text-secondary-foreground/55 font-light tracking-wide">
+              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon i Skien.
+            </span>
+            <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
+              <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
+              <Link to="/vilkar"     className="hover:text-accent transition-colors">Vilkår</Link>
+              <Link to="/sikkerhet"  className="hover:text-accent transition-colors">Sikkerhet</Link>
             </div>
           </div>
         </div>
       </footer>
+
       <AdminFloatingBar />
     </div>
   );
