@@ -349,11 +349,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
                 </Link>
               ))}
-              <div className="mt-2 pt-2 border-t border-border/60 flex flex-wrap gap-x-4 gap-y-1 px-3">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold w-full">Ekstratjenester</span>
+              <div className="mt-2 pt-2 border-t border-border/60 px-3">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/80 font-semibold block mb-1">Ekstratjenester</span>
                 {tjenesterHr.map((item) => (
                   <Link key={item.href} to={item.href} onClick={() => { setMenuOpen(false); setMobileTjenesterOpen(false); }}
-                    className="text-[13px] text-foreground/70 py-1.5">{item.title}</Link>
+                    className="flex items-center gap-2.5 py-2 rounded-lg text-[14px] text-foreground/85 active:bg-muted transition-colors">
+                    <item.icon size={13} className="text-primary shrink-0" strokeWidth={1.6} /> {item.title}
+                  </Link>
                 ))}
               </div>
             </MobileGroup>
