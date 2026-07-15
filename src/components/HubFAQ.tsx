@@ -33,7 +33,7 @@ const faqs = [
 
 const HubFAQ = () => {
   return (
-    <section className="py-16 md:py-32 border-t border-border/10 bg-gradient-to-b from-muted/40 via-background to-background">
+    <section className="py-16 md:py-32 border-t border-border/10 bg-background">
       <Helmet>
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
