@@ -187,7 +187,7 @@ const HR = () => (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {engasjementer.map((e, i) => (
             <AnimatedSection key={e.title} delay={i * 0.1}>
-              <div className="p-6 md:p-7 bg-background rounded-2xl border border-border/60 card-lift h-full">
+              <div className="p-6 md:p-7 bg-background rounded-xl border border-border/60 card-lift h-full">
                 <h3 className="font-heading text-lg md:text-xl mb-2.5 text-foreground">{e.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{e.desc}</p>
               </div>
@@ -211,7 +211,7 @@ const HR = () => (
         </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl">
           <AnimatedSection delay={0.1}>
-            <div className="p-8 md:p-10 bg-card rounded-3xl border border-border/60 h-full">
+            <div className="p-8 md:p-10 bg-card rounded-xl border border-border/60 h-full">
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Liten</p>
               <h3 className="font-heading text-2xl md:text-3xl mb-4 text-foreground">Enkel HR-bistand</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
@@ -233,7 +233,7 @@ const HR = () => (
             </div>
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
-            <div className="p-8 md:p-10 bg-card rounded-3xl h-full border-2 border-primary/40 shadow-[0_18px_40px_-22px_hsl(20_10%_12%/0.14)]">
+            <div className="p-8 md:p-10 bg-card rounded-xl h-full border-2 border-primary/40 shadow-[0_18px_40px_-22px_hsl(20_10%_12%/0.14)]">
               <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Medium</p>
               <h3 className="font-heading text-2xl md:text-3xl mb-4 text-foreground">Med HR-system og lederstøtte</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
@@ -270,7 +270,7 @@ const HR = () => (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 max-w-4xl">
           {pillars.map((p, i) => (
             <AnimatedSection key={p.title} delay={i * 0.1}>
-              <div className="p-6 md:p-7 bg-background rounded-2xl border border-border/60 card-lift h-full">
+              <div className="p-6 md:p-7 bg-background rounded-xl border border-border/60 card-lift h-full">
                 <h3 className="font-heading text-lg md:text-xl mb-2.5 text-foreground">{p.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{p.desc}</p>
               </div>
@@ -298,7 +298,7 @@ const HR = () => (
     <section className="py-16 md:py-24 bg-card border-t border-border/40 text-center relative">
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
             <Shield size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-4 leading-snug max-w-2xl mx-auto text-foreground">
