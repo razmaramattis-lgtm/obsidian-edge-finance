@@ -191,7 +191,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Tjenester
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={tjenesterOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={tjenesterOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10 grid grid-cols-12 gap-10">
                   {/* Left column — editorial intro */}
                   <div className="col-span-3 border-r border-border/70 pr-8">
