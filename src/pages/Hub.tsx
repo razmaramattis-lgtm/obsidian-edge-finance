@@ -64,9 +64,9 @@ const Hub = () => {
           <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-                <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-6 md:mb-8 font-semibold px-3.5 py-1.5 rounded-full border border-background/70 bg-secondary/5">
+                <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-semibold text-foreground mb-5 md:mb-6">
                   Autorisert regnskapsbyrå
-                </span>
+                </p>
               </motion.div>
 
               <motion.h1
@@ -232,7 +232,7 @@ const Hub = () => {
       <HubFAQ />
 
       {/* ═══ CTA ═══ */}
-      <section className="py-16 md:py-32 bg-background">
+      <section className="py-16 md:py-32 bg-card">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
