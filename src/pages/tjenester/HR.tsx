@@ -31,6 +31,21 @@ const lopende = [
   "Oppdatering av HR-system",
 ];
 
+const engasjementer = [
+  {
+    title: "Midlertidig oppdrag",
+    desc: "Interim HR-bistand i en periode — f.eks. ved sykefravær, permisjon eller når bedriften står midt i et prosjekt som krever ekstra kapasitet.",
+  },
+  {
+    title: "Oppstartshjelp",
+    desc: "Vi hjelper nystartede bedrifter å få HR-fundamentet på plass fra dag én — rutiner, kontrakter, personalhåndbok og et enkelt HR-system.",
+  },
+  {
+    title: "Langsiktig bistand",
+    desc: "Fast HR-støtte for bedrifter som ikke har egen HR-kompetanse internt. Vi fungerer som en trygg medspiller for ledelsen over tid.",
+  },
+];
+
 const pillars = [
   {
     title: "Praktisk HR — ikke juridisk rådgivning.",
