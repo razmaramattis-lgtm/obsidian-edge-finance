@@ -5,6 +5,7 @@ import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Logo from "@/components/Logo";
 
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
