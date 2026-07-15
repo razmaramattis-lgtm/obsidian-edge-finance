@@ -157,8 +157,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
           scrolled
-            ? "bg-background/95 border-border/80 shadow-[0_10px_30px_-18px_hsl(152_34%_10%/0.22)]"
-            : "bg-background/85 border-border/60 shadow-none"
+            ? "bg-card/95 border-border/80 shadow-[0_10px_30px_-18px_hsl(152_34%_10%/0.22)]"
+            : "bg-card/90 border-border/60 shadow-none"
         }`}
       >
 
