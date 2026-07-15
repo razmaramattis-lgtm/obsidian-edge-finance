@@ -124,7 +124,7 @@ const KursDetalj = () => {
             )}
             <div className="flex flex-wrap gap-3 items-center mb-10">
               {course.coming_soon && (
-                <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">
+                <span className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-medium">
                   Kommer snart
                 </span>
               )}
@@ -358,7 +358,7 @@ const KursDetalj = () => {
                   <div className="glass rounded-xl p-3 border border-border/10">
                     <p className="text-xs text-muted-foreground font-light">
                       <span className="text-foreground font-medium">Kurs:</span> {course.name}
-                      {course.coming_soon && <span className="ml-2 text-amber-400">(Kommer snart)</span>}
+                      {course.coming_soon && <span className="ml-2 text-accent">(Kommer snart)</span>}
                     </p>
                   </div>
                   <button type="submit" disabled={contactSending}
