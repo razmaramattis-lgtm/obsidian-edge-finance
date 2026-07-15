@@ -116,7 +116,7 @@ const BransjePage = ({
               {isInSection && section ? `${section.shortName} · ${name}` : name}
             </p>
           </div>
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-6 md:mb-8">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-[1.1] mb-6 md:mb-8 [overflow-wrap:anywhere] [&_span]:text-lg [&_span]:sm:text-2xl [&_span]:md:text-4xl [&_span]:block [&_span]:mt-1 [&_span]:leading-tight">
             {tagline.split(" ").slice(0, Math.ceil(tagline.split(" ").length / 2)).join(" ")}{" "}
             <span className="italic text-gradient-rose">
               {tagline.split(" ").slice(Math.ceil(tagline.split(" ").length / 2)).join(" ")}
