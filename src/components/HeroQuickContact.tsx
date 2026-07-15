@@ -129,7 +129,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         <button
           type="submit"
           disabled={busy || !name || !email}
-          className="group w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:scale-[1.01] transition-transform disabled:opacity-50 disabled:hover:scale-100 mt-1"
+          className="group w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold tracking-wide shadow-lg shadow-primary/30 hover:brightness-110 hover:scale-[1.01] transition-all disabled:opacity-50 disabled:hover:scale-100 mt-2"
         >
           {busy ? "Sender..." : "Send forespørsel"}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -137,7 +137,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
       </div>
 
       {err && <p className="mt-3 text-xs text-destructive">{err}</p>}
-      <p className="mt-4 text-[11px] text-foreground/45 font-light text-center">
+      <p className="mt-4 text-[11px] text-foreground/60 font-light text-center">
         Tar 20 sekunder · Ingen binding · Rask respons
       </p>
     </form>
