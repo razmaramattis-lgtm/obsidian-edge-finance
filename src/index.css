@@ -84,7 +84,19 @@
     font-weight: 600;
     color: hsl(var(--primary));
     letter-spacing: -0.015em;
+    /* Prevent descender clipping (?, g, y, p) especially with tight leading and bg-clip-text */
+    padding-bottom: 0.12em;
   }
+}
+
+/* Ensure gradient headings (bg-clip-text) don't clip descenders */
+.text-gradient-rose,
+.text-gradient-teal,
+.text-gradient-copper,
+.text-gradient-forest {
+  padding-bottom: 0.15em;
+  display: inline-block;
+  line-height: 1.15;
 }
 
 @layer utilities {
