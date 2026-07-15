@@ -60,17 +60,17 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
   }
 
   const inputCls =
-    "w-full px-3.5 py-3 text-sm rounded-xl bg-background/60 border border-border/30 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors";
+    "w-full px-3.5 py-3 text-sm rounded-xl bg-background border border-primary/20 text-foreground placeholder:text-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
 
   return (
     <form
       onSubmit={submit}
-      className="rounded-3xl border border-border/30 bg-card/50 backdrop-blur-xl p-6 md:p-7"
+      className="rounded-3xl border border-primary/25 bg-card shadow-xl shadow-primary/10 p-6 md:p-7"
     >
-      <p className="inline-block text-[11px] tracking-[0.3em] uppercase text-secondary mb-2 font-semibold px-3 py-1 rounded-full border border-background/70 bg-secondary/5">
+      <p className="inline-block text-[11px] tracking-[0.3em] uppercase text-primary mb-2 font-semibold px-3 py-1 rounded-full border border-primary/30 bg-muted">
         Be oss ringe deg
       </p>
-      <p className="text-xs text-muted-foreground mb-5 font-light">
+      <p className="text-xs text-foreground/70 mb-5 font-light">
         Rask respons. Ingen binding.
       </p>
 
@@ -129,7 +129,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         <button
           type="submit"
           disabled={busy || !name || !email}
-          className="group w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:scale-[1.01] transition-transform disabled:opacity-50 disabled:hover:scale-100 mt-1"
+          className="group w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold tracking-wide shadow-lg shadow-primary/30 hover:brightness-110 hover:scale-[1.01] transition-all disabled:opacity-50 disabled:hover:scale-100 mt-2"
         >
           {busy ? "Sender..." : "Send forespørsel"}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -137,7 +137,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
       </div>
 
       {err && <p className="mt-3 text-xs text-destructive">{err}</p>}
-      <p className="mt-4 text-[11px] text-foreground/45 font-light text-center">
+      <p className="mt-4 text-[11px] text-foreground/60 font-light text-center">
         Tar 20 sekunder · Ingen binding · Rask respons
       </p>
     </form>

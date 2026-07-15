@@ -455,7 +455,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Navigation columns */}
             <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
               <div>
-                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
                   <span className="h-px w-4 bg-accent/60" /> Tjenester
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
@@ -469,7 +469,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               <div>
-                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
                   <span className="h-px w-4 bg-accent/60" /> Ressurser
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
@@ -483,7 +483,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               <div className="col-span-2 md:col-span-1">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-accent font-semibold mb-5 flex items-center gap-2">
+                <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
                   <span className="h-px w-4 bg-accent/60" /> Selskapet
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">

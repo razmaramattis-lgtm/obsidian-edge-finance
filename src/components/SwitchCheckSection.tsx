@@ -15,7 +15,7 @@ const benefits = [
 const SwitchCheckSection = () => {
   const [open, setOpen] = useState(false);
   return (
-    <section className="py-16 md:py-32 border-t border-border/10">
+    <section className="py-16 md:py-32 border-t border-border/10 bg-gradient-to-br from-background via-muted/25 to-background">
       <SwitchCheckDialog open={open} onOpenChange={setOpen} />
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
@@ -30,8 +30,8 @@ const SwitchCheckSection = () => {
               Bytte regnskapsfører
             </span>
 
-            <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-4 md:mb-6">
-              Er vi <span className="italic text-gradient-rose">riktig for deg?</span>
+            <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.15] tracking-tight mb-4 md:mb-6">
+              Er vi <span className="italic text-gradient-rose inline-block pr-2 pb-1">riktig for deg?</span>
             </h2>
 
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-xl mb-6 md:mb-8">
@@ -67,7 +67,7 @@ const SwitchCheckSection = () => {
               </button>
               <Link
                 to="/tjenester"
-                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-background text-primary border border-primary/30 rounded-xl md:rounded-2xl text-sm font-semibold hover:bg-muted hover:border-primary/50 hover:scale-[1.02] transition-all duration-300"
               >
                 Slik bytter du regnskapsfører
               </Link>
