@@ -431,7 +431,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
-                Regnskap for bedrifter som <span className="italic text-primary">vil konsentrere seg om driften</span>.
+                Regnskap for bedrifter som <span className="italic text-secondary-foreground">vil konsentrere seg om driften</span>.
               </p>
               <p className="text-[13px] text-secondary-foreground/70 font-light leading-relaxed max-w-md mb-7">
                 Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
