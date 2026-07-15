@@ -153,9 +153,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       {/* ── NAV BAR — editorial ─────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border/60">
-        {/* Thin editorial top strip — kontakt & tillit */}
-        <div className="hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
+          scrolled
+            ? "bg-background/95 border-border/80 shadow-[0_10px_30px_-18px_hsl(152_34%_10%/0.22)]"
+            : "bg-background/85 border-border/60 shadow-none"
+        }`}
+      >
+        {/* Thin editorial top strip — kontakt & tillit. Kollapser subtilt ved scroll */}
+        <div
+          className={`hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground overflow-hidden transition-[max-height,opacity] duration-500 ease-out ${
+            scrolled ? "max-h-0 opacity-0 border-b-0" : "max-h-10 opacity-100"
+          }`}
+          aria-hidden={scrolled}
+        >
           <div className="container mx-auto flex items-center justify-between h-8 px-8 text-[10.5px] tracking-[0.14em] uppercase font-medium">
             <div className="flex items-center gap-6 opacity-90">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck size={11} strokeWidth={1.8} className="text-accent" /> Autorisert regnskapsbyrå</span>
@@ -169,15 +180,26 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
 
-        <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[76px] px-4 md:px-8" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+        <div
+          className={`container mx-auto flex items-center justify-between px-4 md:px-8 transition-[height] duration-500 ease-out h-[64px] ${
+            scrolled ? "lg:h-[64px]" : "lg:h-[76px]"
+          }`}
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
+        >
           {/* Logo — editorial masthead med kobber-monogram */}
           <Link to="/" className="flex items-center gap-3 group">
-            <span aria-hidden="true" className="hidden sm:flex items-center justify-center h-9 w-9 rounded-full border border-primary/40 bg-primary/5 font-heading text-[15px] leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg]">A</span>
+            <span
+              aria-hidden="true"
+              className={`hidden sm:flex items-center justify-center rounded-full border border-primary/40 bg-primary/5 font-heading leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg] ${
+                scrolled ? "h-8 w-8 text-[13px]" : "h-9 w-9 text-[15px]"
+              }`}
+            >A</span>
             <span className="flex items-baseline gap-2">
-              <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
-              <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">— Regnskap</span>
+              <span className={`font-heading tracking-tight text-foreground group-hover:text-primary transition-all duration-500 ${scrolled ? "text-[22px] md:text-[22px]" : "text-2xl md:text-[26px]"}`}>Avargo</span>
+              <span className={`hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1 transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`}>— Regnskap</span>
             </span>
           </Link>
+
 
 
           {/* ── Desktop nav ─────────────────────────── */}
