@@ -207,10 +207,10 @@ const HR = () => (
             <Shield size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            La de ansatte trives. Vi tar resten.
+            La oss gjøre HR enklere for deg.
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            En samtale er nok til å finne ut hva vi kan hjelpe deg med.
+            En kort samtale er nok til å finne ut hvor vi best kan hjelpe bedriften din.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
             Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
