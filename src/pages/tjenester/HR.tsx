@@ -307,11 +307,11 @@ const HR = () => (
           <p className="text-muted-foreground font-light mb-8 max-w-md mx-auto text-sm">
             En kort samtale er nok til å finne ut hvor vi best kan hjelpe bedriften din.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/kontakt" className="group inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-              Få et uforpliktende tilbud <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+              Få et uforpliktende tilbud <ArrowRight size={12} />
             </Link>
-            <Link to="/tjenester" className="inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
+            <Link to="/tjenester" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300">
               Se våre tjenester
             </Link>
           </div>
