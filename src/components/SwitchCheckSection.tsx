@@ -30,8 +30,8 @@ const SwitchCheckSection = () => {
               Bytte regnskapsfører
             </span>
 
-            <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-4 md:mb-6">
-              Er vi <span className="italic text-gradient-rose">riktig for deg?</span>
+            <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.15] tracking-tight mb-4 md:mb-6">
+              Er vi <span className="italic text-gradient-rose inline-block pr-2 pb-1">riktig for deg?</span>
             </h2>
 
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-xl mb-6 md:mb-8">
