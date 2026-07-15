@@ -33,7 +33,7 @@ const faqs = [
 
 const HubFAQ = () => {
   return (
-    <section className="py-16 md:py-32 border-t border-border/10 bg-gradient-to-b from-muted/40 via-background to-background">
+    <section className="py-16 md:py-32 border-t border-border/10 bg-background">
       <Helmet>
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -83,7 +83,7 @@ const HubFAQ = () => {
                 <AccordionItem
                   key={i}
                   value={`item-${i}`}
-                  className="border border-primary/15 rounded-2xl px-5 md:px-6 bg-card shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
+                  className="border border-primary/15 rounded-xl px-5 md:px-6 bg-card shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
                 >
                   <AccordionTrigger className="text-sm md:text-base font-semibold text-foreground text-left hover:no-underline py-5">
                     {faq.q}

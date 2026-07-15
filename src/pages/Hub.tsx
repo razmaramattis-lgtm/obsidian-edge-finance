@@ -154,7 +154,7 @@ const Hub = () => {
 
 
       {/* ═══ VALUE PROPOSITION ═══ */}
-      <section className="py-16 md:py-32 relative">
+      <section className="py-16 md:py-32 relative bg-card">
         <div className="container mx-auto px-4 md:px-6 relative">
 
           <motion.div
@@ -199,7 +199,7 @@ const Hub = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="rounded-2xl bg-card border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
+                className="rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
               >
                 <div className="aspect-[4/3] w-full overflow-hidden relative">
                   <img
@@ -231,11 +231,6 @@ const Hub = () => {
 
       <HubFAQ />
 
-
-
-      {/* Fade band: cream → white (soft) */}
-      <div aria-hidden className="h-20 md:h-28 w-full bg-gradient-to-b from-background to-card" />
-
       {/* ═══ CTA ═══ */}
       <section className="py-16 md:py-32 bg-card">
         <div className="container mx-auto px-4 md:px-6 text-center">
@@ -262,9 +257,6 @@ const Hub = () => {
           </motion.div>
         </div>
       </section>
-
-      {/* Fade band: white → cream (soft) back to page background */}
-      <div aria-hidden className="h-20 md:h-28 w-full bg-gradient-to-b from-card to-background" />
     </>
   );
 };
