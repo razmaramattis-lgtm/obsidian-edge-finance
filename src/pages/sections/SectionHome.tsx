@@ -562,7 +562,7 @@ const SectionHome = () => {
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-3">
-              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300">
+              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
                 {c.hero.ctaPrimary} <ArrowRight size={14} />
               </Link>
               {c.hero.ctaSecondaryHref.startsWith("#") ? (
@@ -720,7 +720,7 @@ const SectionHome = () => {
 
             <AnimatedSection delay={0.4}>
               <div className="mt-12 text-center">
-                <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+                <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
                   Start samtalen <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </Link>
               </div>
@@ -807,7 +807,7 @@ const SectionHome = () => {
                 {c.cta.sub}
               </p>
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">{c.cta.italic}</p>
-              <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
                 {c.cta.button} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </div>

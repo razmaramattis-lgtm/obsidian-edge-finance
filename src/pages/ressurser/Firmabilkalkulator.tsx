@@ -408,7 +408,7 @@ const Firmabilkalkulator = () => {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-primary text-primary-foreground rounded-xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all">
+              <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
                 Snakk med en regnskapsfører <Wallet size={14} />
               </Link>
               <Link to="/ressurser" className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-border/30 rounded-xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all">

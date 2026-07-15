@@ -143,7 +143,7 @@ const KursDetalj = () => {
               {!course.coming_soon ? (
                 <button
                   onClick={() => setShowBooking(true)}
-                  className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
                 >
                   Bestill kurs
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -151,7 +151,7 @@ const KursDetalj = () => {
               ) : (
                 <button
                   onClick={() => setShowContact(true)}
-                  className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
                 >
                   Få beskjed når kurset er klart
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -263,7 +263,7 @@ const KursDetalj = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setShowBooking(true)}
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
               >
                 Bestill kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

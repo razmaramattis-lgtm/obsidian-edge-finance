@@ -73,7 +73,7 @@ const AiInnsikt = () => (
             AI-drevet finansiell analyse som gir deg full oversikt over selskapet ditt — uten at du trenger å gjøre noe som helst. Avvikene fanges. Mulighetene identifiseres. Du bestemmer.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+            <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
               Snakk med oss <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link to="/priser" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500">
@@ -162,7 +162,7 @@ const AiInnsikt = () => (
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
             En gjennomgang er nok til å vise deg hva du mangler i dag — og hva du kan vinne ved å ha full oversikt.
           </p>
-          <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+          <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
             Book en gjennomgang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>

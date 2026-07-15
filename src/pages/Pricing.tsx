@@ -650,7 +650,7 @@ const Pricing = () => {
                       type="button"
                       onClick={submitOffer}
                       disabled={!contactValid || submitting}
-                      className="group flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-full bg-primary text-primary-foreground text-sm font-medium tracking-wider glow-rose hover:scale-[1.01] transition-all duration-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="group flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
                     >
                       <Send size={14} />
                       {submitting ? "Sender …" : "Send forespørsel"}
@@ -795,7 +795,7 @@ const Pricing = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   to={`${sectionPath}/kontakt`}
-                  className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
                 >
                   Bli kunde
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

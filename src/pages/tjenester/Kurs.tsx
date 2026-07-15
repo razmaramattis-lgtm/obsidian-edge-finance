@@ -248,7 +248,7 @@ const Kurs = () => {
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
               Fra regnskap og skatt til AI, markedsføring og ledelse — velg akkurat det kurset du trenger for å ta neste steg.
             </p>
-            <a href="#kurs" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+            <a href="#kurs" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
               Se alle kurs
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </a>
@@ -526,7 +526,7 @@ const Kurs = () => {
               Velg blant {courses.length}+ kurs og bestill direkte.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#kurs" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+              <a href="#kurs" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
                 Se alle kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </a>
