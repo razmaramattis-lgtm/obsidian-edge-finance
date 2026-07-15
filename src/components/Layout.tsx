@@ -99,12 +99,31 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground relative">
       {/* ── NAV BAR — editorial ─────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border/60">
+        {/* Thin editorial top strip — kontakt & tillit */}
+        <div className="hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground">
+          <div className="container mx-auto flex items-center justify-between h-8 px-8 text-[10.5px] tracking-[0.14em] uppercase font-medium">
+            <div className="flex items-center gap-6 opacity-90">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck size={11} strokeWidth={1.8} className="text-accent" /> Autorisert regnskapsbyrå</span>
+              <span className="inline-flex items-center gap-1.5 opacity-80"><MapPin size={11} strokeWidth={1.8} /> Oscars gate 2B · Skien</span>
+            </div>
+            <div className="flex items-center gap-5 opacity-90">
+              <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"><Mail size={11} strokeWidth={1.8} /> kontakt@avargo.no</a>
+              <span className="h-3 w-px bg-secondary-foreground/25" />
+              <Link to="/logg-inn" className="hover:text-accent transition-colors">Logg inn</Link>
+            </div>
+          </div>
+        </div>
+
         <div className="container mx-auto flex items-center justify-between h-[64px] lg:h-[76px] px-4 md:px-8" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-          {/* Logo — editorial masthead */}
-          <Link to="/" className="flex items-baseline gap-2 group">
-            <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
-            <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">Regnskap</span>
+          {/* Logo — editorial masthead med kobber-monogram */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <span aria-hidden="true" className="hidden sm:flex items-center justify-center h-9 w-9 rounded-full border border-primary/40 bg-primary/5 font-heading text-[15px] leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg]">A</span>
+            <span className="flex items-baseline gap-2">
+              <span className="font-heading text-2xl md:text-[26px] tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">Avargo</span>
+              <span className="hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1">— Regnskap</span>
+            </span>
           </Link>
+
 
           {/* ── Desktop nav ─────────────────────────── */}
           <div className="hidden lg:flex items-center gap-1">
