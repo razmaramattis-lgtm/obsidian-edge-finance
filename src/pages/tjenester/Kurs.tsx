@@ -359,7 +359,7 @@ const Kurs = () => {
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <p className="text-sm font-medium group-hover:text-primary transition-colors">{course.name}</p>
                               {course.coming_soon && (
-                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">Kommer snart</span>
+                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-medium">Kommer snart</span>
                               )}
                               {course.has_certificate && (
                                 <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-medium">Kursbevis</span>
@@ -402,7 +402,7 @@ const Kurs = () => {
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <p className="text-sm font-medium group-hover:text-primary transition-colors">{course.name}</p>
                             {course.coming_soon && (
-                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium">Kommer snart</span>
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-medium">Kommer snart</span>
                             )}
                             {course.has_certificate && (
                               <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-medium">Kursbevis</span>
