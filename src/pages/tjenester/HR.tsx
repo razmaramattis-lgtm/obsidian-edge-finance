@@ -166,12 +166,11 @@ const HR = () => (
             Praktisk hjelp der du trenger den.
           </h2>
         </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 max-w-4xl">
           {pillars.map((p, i) => (
-            <AnimatedSection key={p.num} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
-                <span className="font-heading text-5xl text-primary/8">{p.num}</span>
-                <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{p.title}</h3>
+            <AnimatedSection key={p.title} delay={i * 0.1}>
+              <div className="p-6 md:p-7 glass rounded-2xl card-lift h-full">
+                <h3 className="font-heading text-lg md:text-xl mb-2.5">{p.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{p.desc}</p>
               </div>
             </AnimatedSection>
