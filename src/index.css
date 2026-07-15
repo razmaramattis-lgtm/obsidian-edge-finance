@@ -170,22 +170,22 @@ html {
 }
 
 ::selection {
-  background: hsl(26 46% 45% / 0.22);
-  color: hsl(152 31% 12%);
+  background: hsl(161 55% 24% / 0.22);
+  color: hsl(161 55% 18%);
 }
 
 ::-webkit-scrollbar {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(43 30% 94%);
+  background: hsl(39 43% 94%);
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(137 12% 66%);
+  background: hsl(161 54% 60%);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(26 46% 45% / 0.6);
+  background: hsl(161 55% 24% / 0.7);
 }
 
 /* ─── Article Content — Newspaper-grade typography ─── */
