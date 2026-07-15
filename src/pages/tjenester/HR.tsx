@@ -87,9 +87,10 @@ const HR = () => (
         ]
       })}</script>
     </Helmet>
-    <section className="py-28 md:py-44 relative overflow-hidden">
-      <img src={ambientTexture3} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.08] pointer-events-none select-none" />
-      <div className="absolute inset-0 ambient-glow opacity-30" />
+
+    <section className="py-20 md:py-28 relative overflow-hidden bg-card">
+      <img src={ambientTexture3} alt="" aria-hidden="true" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-[0.05] pointer-events-none select-none" />
+      <div className="absolute inset-0 ambient-glow opacity-20" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -97,22 +98,23 @@ const HR = () => (
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-4xl"
         >
-          <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors mb-8 md:mb-12">
+          <Link to="/tjenester" className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-muted-foreground/60 hover:text-foreground transition-colors mb-6 md:mb-8">
             <ArrowLeft size={12} /> Alle tjenester
           </Link>
-          <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">HR & Personal</p>
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
+          <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-4">HR & Personal</p>
+          <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-6 md:mb-8 text-foreground">
             Praktisk HR for små og mellomstore bedrifter.{" "}
             <span className="italic text-gradient-teal text-3xl sm:text-4xl md:text-5xl block mt-4 md:mt-6">Vi gjør det enkelt å være en god arbeidsgiver.</span>
           </h1>
-          <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
+          <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-8 md:mb-10">
             Vi hjelper deg med å etablere gode HR-rutiner, effektive personalprosesser og moderne HR-systemer — uten å overta rollen som advokat eller juridisk rådgiver.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-              Kom i gang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              Få et uforpliktende tilbud
+              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
-            <Link to="/priser" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500">
+            <Link to="/priser" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
               Se priser
             </Link>
           </div>
@@ -120,25 +122,23 @@ const HR = () => (
       </div>
     </section>
 
-    <div className="container mx-auto px-4 md:px-6"><div className="line-accent" /></div>
-
-    <section className="py-24 md:py-40">
+    <section className="py-14 md:py-20 bg-card">
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Etablering</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Etablering</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-3xl text-foreground">
             Vi bygger HR-fundamentet i bedriften din.{" "}
             <span className="italic text-gradient-teal">Fra bunn av.</span>
           </h2>
-          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-8 md:mb-10">
             Vi kartlegger dagens rutiner og setter opp det du trenger for å drive personalarbeidet strukturert og trygt — tilpasset størrelsen på bedriften.
           </p>
         </AnimatedSection>
         <AnimatedSection delay={0.15}>
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {etablering.map((d) => (
-              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/80">
+                <CheckCircle2 size={14} className="text-foreground mt-0.5 shrink-0" strokeWidth={1.75} />
                 {d}
               </li>
             ))}
@@ -147,23 +147,23 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-24 md:py-40 bg-muted/20">
+    <section className="py-14 md:py-20">
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Løpende lederstøtte</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Løpende lederstøtte</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-3xl text-foreground">
             En trygg medspiller{" "}
             <span className="italic text-gradient-teal">når du trenger den.</span>
           </h2>
-          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-8 md:mb-10">
             Når fundamentet er på plass er vi tilgjengelige for sparring, veiledning og oppdatering av rutiner og systemer i det daglige.
           </p>
         </AnimatedSection>
         <AnimatedSection delay={0.15}>
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {lopende.map((d) => (
-              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/80">
+                <CheckCircle2 size={14} className="text-foreground mt-0.5 shrink-0" strokeWidth={1.75} />
                 {d}
               </li>
             ))}
@@ -172,23 +172,23 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-24 md:py-40">
+    <section className="py-14 md:py-20 bg-card">
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Slik jobber vi sammen</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Slik jobber vi sammen</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-3xl text-foreground">
             Fleksibel HR-bistand{" "}
             <span className="italic text-gradient-teal">tilpasset situasjonen din.</span>
           </h2>
-          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-8 md:mb-10">
             Vi tar både korte og lengre oppdrag — og hjelper deg der bedriften faktisk trenger det.
           </p>
         </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {engasjementer.map((e, i) => (
             <AnimatedSection key={e.title} delay={i * 0.1}>
-              <div className="p-6 md:p-7 glass rounded-2xl card-lift h-full">
-                <h3 className="font-heading text-lg md:text-xl mb-2.5">{e.title}</h3>
+              <div className="p-6 md:p-7 bg-background rounded-2xl border border-border/60 card-lift h-full">
+                <h3 className="font-heading text-lg md:text-xl mb-2.5 text-foreground">{e.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{e.desc}</p>
               </div>
             </AnimatedSection>
@@ -197,24 +197,23 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-24 md:py-40">
-
+    <section className="py-14 md:py-20">
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Nivåer</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Nivåer</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-3xl text-foreground">
             Tilpasset behovet ditt.{" "}
             <span className="italic text-gradient-teal">Liten eller medium.</span>
           </h2>
-          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-8 md:mb-10">
             Vi tilpasser omfanget etter størrelsen på bedriften. Trenger du kun det grunnleggende, eller ønsker du et komplett HR-system i bunn?
           </p>
         </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl">
           <AnimatedSection delay={0.1}>
-            <div className="p-8 md:p-10 glass rounded-3xl h-full">
+            <div className="p-8 md:p-10 bg-card rounded-3xl border border-border/60 h-full">
               <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Liten</p>
-              <h3 className="font-heading text-2xl md:text-3xl mb-4">Enkel HR-bistand</h3>
+              <h3 className="font-heading text-2xl md:text-3xl mb-4 text-foreground">Enkel HR-bistand</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
                 For små bedrifter som trenger et solid grunnlag — uten et eget HR-system.
               </p>
@@ -225,8 +224,8 @@ const HR = () => (
                   "Personalhåndbok",
                   "Ferie- og fraværsrutiner",
                 ].map((d) => (
-                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                    <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/80">
+                    <CheckCircle2 size={14} className="text-foreground mt-0.5 shrink-0" strokeWidth={1.75} />
                     {d}
                   </li>
                 ))}
@@ -234,9 +233,9 @@ const HR = () => (
             </div>
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
-            <div className="p-8 md:p-10 glass rounded-3xl h-full border border-secondary/30">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Medium</p>
-              <h3 className="font-heading text-2xl md:text-3xl mb-4">Med HR-system og lederstøtte</h3>
+            <div className="p-8 md:p-10 bg-card rounded-3xl h-full border-2 border-primary/40 shadow-[0_18px_40px_-22px_hsl(20_10%_12%/0.14)]">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Medium</p>
+              <h3 className="font-heading text-2xl md:text-3xl mb-4 text-foreground">Med HR-system og lederstøtte</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
                 For bedrifter som ønsker et HR-system i bunn og tettere oppfølging i det daglige.
               </p>
@@ -248,8 +247,8 @@ const HR = () => (
                   "Lederstøtte og veiledning",
                   "Onboarding- og offboarding-bistand",
                 ].map((d) => (
-                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                    <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/80">
+                    <CheckCircle2 size={14} className="text-foreground mt-0.5 shrink-0" strokeWidth={1.75} />
                     {d}
                   </li>
                 ))}
@@ -260,20 +259,19 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-24 md:py-40 border-y border-border/10 relative">
-      <div className="absolute inset-0 ambient-glow opacity-15" />
+    <section className="py-14 md:py-20 bg-card border-y border-border/40 relative">
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Hvorfor Avargo</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-10 md:mb-14 max-w-2xl leading-snug text-foreground">
             Praktisk hjelp der du trenger den.
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 max-w-4xl">
           {pillars.map((p, i) => (
             <AnimatedSection key={p.title} delay={i * 0.1}>
-              <div className="p-6 md:p-7 glass rounded-2xl card-lift h-full">
-                <h3 className="font-heading text-lg md:text-xl mb-2.5">{p.title}</h3>
+              <div className="p-6 md:p-7 bg-background rounded-2xl border border-border/60 card-lift h-full">
+                <h3 className="font-heading text-lg md:text-xl mb-2.5 text-foreground">{p.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{p.desc}</p>
               </div>
             </AnimatedSection>
@@ -282,14 +280,14 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-20 md:py-28">
+    <section className="py-12 md:py-16">
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/50 mb-8">Relaterte tjenester</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/60 mb-6">Relaterte tjenester</p>
           <div className="flex flex-wrap gap-3">
             {RelatedServices.map((s) => (
-              <Link key={s.href} to={s.href} className="inline-flex items-center gap-2 px-5 py-2.5 text-[12px] tracking-wide text-muted-foreground border border-border/20 rounded-full hover:border-primary/30 hover:text-foreground transition-all duration-300">
-                {s.label} <ChevronRight size={11} className="text-primary/40" />
+              <Link key={s.href} to={s.href} className="inline-flex items-center gap-2 px-5 py-2.5 text-[12px] tracking-wide text-foreground/70 border border-border/40 bg-card rounded-full hover:border-primary/30 hover:text-foreground transition-all duration-300">
+                {s.label} <ChevronRight size={11} className="text-primary/60" />
               </Link>
             ))}
           </div>
@@ -297,22 +295,26 @@ const HR = () => (
       </div>
     </section>
 
-    <section className="py-24 md:py-32 border-t border-border/10 text-center relative">
-      <div className="absolute inset-0 ambient-glow opacity-25" />
+    <section className="py-16 md:py-24 bg-card border-t border-border/40 text-center relative">
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
             <Shield size={18} className="text-primary" strokeWidth={1.5} />
           </div>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-4 leading-snug max-w-2xl mx-auto text-foreground">
             La oss gjøre HR enklere for deg.
           </h2>
-          <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
+          <p className="text-muted-foreground font-light mb-8 max-w-md mx-auto text-sm">
             En kort samtale er nok til å finne ut hvor vi best kan hjelpe bedriften din.
           </p>
-          <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
-            Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/kontakt" className="group inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
+              Få et uforpliktende tilbud <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            </Link>
+            <Link to="/tjenester" className="inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
+              Se våre tjenester
+            </Link>
+          </div>
         </AnimatedSection>
       </div>
     </section>
