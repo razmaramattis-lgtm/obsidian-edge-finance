@@ -88,7 +88,7 @@ const HR = () => (
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">HR & Personal</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
             Praktisk HR for små og mellomstore bedrifter.{" "}
-            <span className="italic text-gradient-teal">Vi gjør det enkelt å være en god arbeidsgiver.</span>
+            <span className="italic text-gradient-teal text-3xl sm:text-4xl md:text-5xl block mt-4 md:mt-6">Vi gjør det enkelt å være en god arbeidsgiver.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
             Vi hjelper deg med å etablere gode HR-rutiner, effektive personalprosesser og moderne HR-systemer — uten å overta rollen som advokat eller juridisk rådgiver.
