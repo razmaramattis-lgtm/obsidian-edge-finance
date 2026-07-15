@@ -165,9 +165,9 @@ const HR = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor det betyr noe</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
-            Viktigere enn de fleste tror.
+            Praktisk hjelp der du trenger den.
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
