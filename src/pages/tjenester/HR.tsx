@@ -1,41 +1,56 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, ChevronRight, ArrowLeft, CheckCircle2, Shield } from "lucide-react";
+import { ArrowRight, ChevronRight, ArrowLeft, CheckCircle2, Shield } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 
-const deliverables = [
-  "Lønnskjøring og innrapportering",
-  "Feriepenger og skattetrekk",
-  "Arbeidskontrakter og personalregler",
-  "Arbeidsmiljø og sikkerhetsdokumentasjon",
-  "God oppstart og avslutning for ansatte",
-  "Oppfølging av sykefravær",
-  "Personalhåndbok og retningslinjer",
-  "Rådgivning i personalsaker",
+const etablering = [
+  "Kartlegging av dagens HR-rutiner",
+  "Etablering av personalmapper",
+  "Oppsett av HR-system (f.eks. Huma HR)",
+  "Standard arbeidsavtaler",
+  "Personalhåndbok",
+  "Rutiner for ferie",
+  "Rutiner for sykefravær",
+  "Rutiner for onboarding",
+  "Rutiner for offboarding",
+  "Ansvarsfordeling mellom leder og HR",
+];
+
+const lopende = [
+  "Lederstøtte",
+  "Sparring rundt personalsaker",
+  "Hjelp med dokumentasjon",
+  "Veiledning om ferie",
+  "Veiledning om feriepenger",
+  "Veiledning om overtid",
+  "Veiledning om permisjoner",
+  "Veiledning ved sykefravær",
+  "Oppdatering av personalhåndbok",
+  "Oppdatering av HR-system",
 ];
 
 const pillars = [
   {
     num: "01",
-    title: "Alt på riktig side av loven.",
-    desc: "Regler for arbeidsgivere endrer seg ofte. Vi holder oss oppdatert — slik at du slipper å bekymre deg for om bedriften din gjør alt riktig.",
+    title: "Praktisk HR — ikke juridisk rådgivning.",
+    desc: "Vi hjelper deg med rutinene, systemene og dokumentene du trenger for å være en god arbeidsgiver. Vi tar ikke rollen som advokat.",
   },
   {
     num: "02",
-    title: "En arbeidsplass folk vil jobbe i.",
-    desc: "Gode rutiner, klare kontrakter og en ordentlig oppstart for nye ansatte sender et tydelig signal: dette er et bra sted å jobbe.",
+    title: "Tilpasset små og mellomstore bedrifter.",
+    desc: "Enkle, tydelige HR-rutiner som passer størrelsen på bedriften din — uten unødvendig byråkrati eller kompliserte systemer.",
   },
   {
     num: "03",
-    title: "Lønn uten hodepine.",
-    desc: "Lønnskjøring, feriepenger og innrapportering — alt håndtert nøyaktig og til rett tid. Du slipper å ha hodet i regneark mens du prøver å drive bedriften.",
+    title: "Moderne HR-system i bunn.",
+    desc: "Vi setter opp Huma HR eller tilsvarende slik at personalmapper, ferie, sykefravær og dokumenter er samlet på ett sted.",
   },
   {
     num: "04",
-    title: "Rådgivning er inkludert.",
-    desc: "Lurer du på noe om oppsigelse, ansettelse, sykefravær eller noe annet? Ring oss. Det er det vi er her for — og det koster ingenting ekstra.",
+    title: "Lederstøtte når du trenger det.",
+    desc: "Ring oss for sparring rundt personalsaker, veiledning om ferie, overtid, permisjoner eller sykefravær. Vi er en trygg medspiller for lederen.",
   },
 ];
 
