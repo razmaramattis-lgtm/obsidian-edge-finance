@@ -1,41 +1,56 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, ChevronRight, ArrowLeft, CheckCircle2, Shield } from "lucide-react";
+import { ArrowRight, ChevronRight, ArrowLeft, CheckCircle2, Shield } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 
-const deliverables = [
-  "Lønnskjøring og innrapportering",
-  "Feriepenger og skattetrekk",
-  "Arbeidskontrakter og personalregler",
-  "Arbeidsmiljø og sikkerhetsdokumentasjon",
-  "God oppstart og avslutning for ansatte",
-  "Oppfølging av sykefravær",
-  "Personalhåndbok og retningslinjer",
-  "Rådgivning i personalsaker",
+const etablering = [
+  "Kartlegging av dagens HR-rutiner",
+  "Etablering av personalmapper",
+  "Oppsett av HR-system (f.eks. Huma HR)",
+  "Standard arbeidsavtaler",
+  "Personalhåndbok",
+  "Rutiner for ferie",
+  "Rutiner for sykefravær",
+  "Rutiner for onboarding",
+  "Rutiner for offboarding",
+  "Ansvarsfordeling mellom leder og HR",
+];
+
+const lopende = [
+  "Lederstøtte",
+  "Sparring rundt personalsaker",
+  "Hjelp med dokumentasjon",
+  "Veiledning om ferie",
+  "Veiledning om feriepenger",
+  "Veiledning om overtid",
+  "Veiledning om permisjoner",
+  "Veiledning ved sykefravær",
+  "Oppdatering av personalhåndbok",
+  "Oppdatering av HR-system",
 ];
 
 const pillars = [
   {
     num: "01",
-    title: "Alt på riktig side av loven.",
-    desc: "Regler for arbeidsgivere endrer seg ofte. Vi holder oss oppdatert — slik at du slipper å bekymre deg for om bedriften din gjør alt riktig.",
+    title: "Praktisk HR — ikke juridisk rådgivning.",
+    desc: "Vi hjelper deg med rutinene, systemene og dokumentene du trenger for å være en god arbeidsgiver. Vi tar ikke rollen som advokat.",
   },
   {
     num: "02",
-    title: "En arbeidsplass folk vil jobbe i.",
-    desc: "Gode rutiner, klare kontrakter og en ordentlig oppstart for nye ansatte sender et tydelig signal: dette er et bra sted å jobbe.",
+    title: "Tilpasset små og mellomstore bedrifter.",
+    desc: "Enkle, tydelige HR-rutiner som passer størrelsen på bedriften din — uten unødvendig byråkrati eller kompliserte systemer.",
   },
   {
     num: "03",
-    title: "Lønn uten hodepine.",
-    desc: "Lønnskjøring, feriepenger og innrapportering — alt håndtert nøyaktig og til rett tid. Du slipper å ha hodet i regneark mens du prøver å drive bedriften.",
+    title: "Moderne HR-system i bunn.",
+    desc: "Vi setter opp Huma HR eller tilsvarende slik at personalmapper, ferie, sykefravær og dokumenter er samlet på ett sted.",
   },
   {
     num: "04",
-    title: "Rådgivning er inkludert.",
-    desc: "Lurer du på noe om oppsigelse, ansettelse, sykefravær eller noe annet? Ring oss. Det er det vi er her for — og det koster ingenting ekstra.",
+    title: "Lederstøtte når du trenger det.",
+    desc: "Ring oss for sparring rundt personalsaker, veiledning om ferie, overtid, permisjoner eller sykefravær. Vi er en trygg medspiller for lederen.",
   },
 ];
 
@@ -47,17 +62,17 @@ const RelatedServices = [
 const HR = () => (
   <>
     <Helmet>
-      <title>Lønn og personalarbeid for bedrifter | Avargo</title>
-      <meta name="description" content="Vi tar oss av lønn, kontrakter, arbeidsmiljø og rådgivning — slik at du kan fokusere på menneskene i bedriften din." />
+      <title>Praktisk HR-bistand for små og mellomstore bedrifter | Avargo</title>
+      <meta name="description" content="Vi hjelper SMB med å etablere gode HR-rutiner, moderne HR-system og trygg lederstøtte — praktisk hjelp, ikke juridisk rådgivning." />
       <link rel="canonical" href="https://avargo.no/tjenester/hr-og-lonn" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "Hva koster lønnskjøring?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo er lønnskjøring inkludert i HR-pakken. Du betaler én fast månedspris som dekker lønnskjøring, A-melding, feriepengeavregning, skattetrekk, arbeidskontrakter og arbeidsrettslig rådgivning — uten skjulte tillegg." }},
-          { "@type": "Question", "name": "Hva er A-melding?", "acceptedAnswer": { "@type": "Answer", "text": "A-meldingen er en månedlig rapportering til Skatteetaten, NAV og SSB som inneholder opplysninger om lønn, skattetrekk, arbeidsgiveravgift og arbeidsforhold. Avargo håndterer A-meldingen automatisk som del av lønnskjøringen." }},
-          { "@type": "Question", "name": "Trenger bedriften min HMS-dokumentasjon?", "acceptedAnswer": { "@type": "Answer", "text": "Ja, alle norske bedrifter er pålagt å ha HMS-dokumentasjon og internkontroll. Avargo hjelper deg med å opprette og vedlikeholde nødvendig HMS-dokumentasjon slik at bedriften alltid er compliant." }},
-          { "@type": "Question", "name": "Hva bør en arbeidskontrakt inneholde?", "acceptedAnswer": { "@type": "Answer", "text": "En arbeidskontrakt skal inneholde: partenes identitet, arbeidssted, stillingsbeskrivelse, tiltredelsestidspunkt, prøvetid, lønn, arbeidstid, ferie og oppsigelsesfrister. Avargo lager profesjonelle arbeidskontrakter som oppfyller alle krav i arbeidsmiljøloven." }}
+          { "@type": "Question", "name": "Hva slags HR-bistand tilbyr Avargo?", "acceptedAnswer": { "@type": "Answer", "text": "Vi tilbyr praktisk HR-bistand til små og mellomstore bedrifter: etablering av HR-rutiner, personalmapper, oppsett av HR-system som Huma HR, standard arbeidsavtaler, personalhåndbok og rutiner for ferie, sykefravær, onboarding og offboarding." }},
+          { "@type": "Question", "name": "Gir Avargo juridisk rådgivning?", "acceptedAnswer": { "@type": "Answer", "text": "Nei. Vi hjelper deg med praktisk HR-arbeid og lederstøtte, men vi tar ikke rollen som advokat eller juridisk rådgiver. I saker som krever juridisk vurdering henviser vi videre til advokat." }},
+          { "@type": "Question", "name": "Hvilket HR-system bruker dere?", "acceptedAnswer": { "@type": "Answer", "text": "Vi setter typisk opp Huma HR, men kan også bistå med andre moderne HR-systemer tilpasset behovet til bedriften." }},
+          { "@type": "Question", "name": "Hva er lederstøtte?", "acceptedAnswer": { "@type": "Answer", "text": "Lederstøtte er sparring rundt personalsaker, veiledning om ferie, feriepenger, overtid, permisjoner og sykefravær, samt hjelp med dokumentasjon og oppdatering av personalhåndbok og HR-system." }}
         ]
       })}</script>
     </Helmet>
@@ -76,11 +91,11 @@ const HR = () => (
           </Link>
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">HR & Personal</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            Vi tar oss av personalarbeidet.{" "}
-            <span className="italic text-gradient-teal">Du tar deg av folka.</span>
+            Praktisk HR for små og mellomstore bedrifter.{" "}
+            <span className="italic text-gradient-teal">Vi gjør det enkelt å være en god arbeidsgiver.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Lønn, kontrakter, arbeidsmiljø og rådgivning — vi tar hele HR-jobben slik at du kan fokusere på menneskene og bedriften din.
+            Vi hjelper deg med å etablere gode HR-rutiner, effektive personalprosesser og moderne HR-systemer — uten å overta rollen som advokat eller juridisk rådgiver.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
@@ -98,28 +113,51 @@ const HR = () => (
 
     <section className="py-24 md:py-40">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
-          <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Alt du trenger som arbeidsgiver.{" "}
-              <span className="italic text-gradient-teal">På ett sted.</span>
-            </h2>
-            <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Fra lønnskjøring til rådgivning i vanskelige saker — vi tar oss av hele personaladministrasjonen slik at du alltid følger reglene og de ansatte har det bra.
-            </p>
-          </AnimatedSection>
-          <AnimatedSection delay={0.15}>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {deliverables.map((d) => (
-                <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                  <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
-                  {d}
-                </li>
-              ))}
-            </ul>
-          </AnimatedSection>
-        </div>
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Etablering</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            Vi bygger HR-fundamentet i bedriften din.{" "}
+            <span className="italic text-gradient-teal">Fra bunn av.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Vi kartlegger dagens rutiner og setter opp det du trenger for å drive personalarbeidet strukturert og trygt — tilpasset størrelsen på bedriften.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.15}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {etablering.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                {d}
+              </li>
+            ))}
+          </ul>
+        </AnimatedSection>
+      </div>
+    </section>
+
+    <section className="py-24 md:py-40 bg-muted/20">
+      <div className="container mx-auto px-4 md:px-6">
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Løpende lederstøtte</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            En trygg medspiller{" "}
+            <span className="italic text-gradient-teal">når du trenger den.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Når fundamentet er på plass er vi tilgjengelige for sparring, veiledning og oppdatering av rutiner og systemer i det daglige.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.15}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {lopende.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                {d}
+              </li>
+            ))}
+          </ul>
+        </AnimatedSection>
       </div>
     </section>
 
@@ -127,9 +165,9 @@ const HR = () => (
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor det betyr noe</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">Hvorfor Avargo</p>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-14 md:mb-20 max-w-2xl leading-snug">
-            Viktigere enn de fleste tror.
+            Praktisk hjelp der du trenger den.
           </h2>
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
@@ -169,10 +207,10 @@ const HR = () => (
             <Shield size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
-            La de ansatte trives. Vi tar resten.
+            La oss gjøre HR enklere for deg.
           </h2>
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
-            En samtale er nok til å finne ut hva vi kan hjelpe deg med.
+            En kort samtale er nok til å finne ut hvor vi best kan hjelpe bedriften din.
           </p>
           <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
             Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
