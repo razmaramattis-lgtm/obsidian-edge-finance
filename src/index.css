@@ -90,49 +90,49 @@
 @layer utilities {
   .text-gradient-rose {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(152 32% 15%), hsl(152 26% 26%));
+    background-image: linear-gradient(135deg, hsl(161 55% 24%), hsl(161 56% 42%));
   }
 
   .text-gradient-teal {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(152 31% 16%), hsl(152 26% 26%));
+    background-image: linear-gradient(135deg, hsl(161 55% 24%), hsl(161 56% 42%));
   }
 
   .text-gradient-copper {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(26 46% 45%), hsl(26 52% 58%));
+    background-image: linear-gradient(135deg, hsl(161 55% 24%), hsl(161 54% 60%));
   }
 
   .text-gradient-forest {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(152 31% 16%), hsl(137 16% 40%));
+    background-image: linear-gradient(135deg, hsl(161 55% 24%), hsl(161 56% 42%));
   }
 
   .glow-rose {
-    box-shadow: 0 12px 28px -14px hsl(26 46% 45% / 0.32);
+    box-shadow: 0 12px 28px -14px hsl(161 55% 24% / 0.38);
   }
 
   .glow-teal {
-    box-shadow: 0 12px 28px -14px hsl(152 31% 16% / 0.28);
+    box-shadow: 0 12px 28px -14px hsl(161 55% 24% / 0.32);
   }
 
   .glow-copper {
-    box-shadow: 0 12px 28px -14px hsl(26 46% 45% / 0.32);
+    box-shadow: 0 12px 28px -14px hsl(161 56% 42% / 0.34);
   }
 
   .glow-forest {
-    box-shadow: 0 14px 32px -14px hsl(152 34% 10% / 0.35);
+    box-shadow: 0 14px 32px -14px hsl(161 55% 18% / 0.38);
   }
 
   .line-accent {
     @apply h-px w-full;
-    background: linear-gradient(90deg, transparent, hsl(152 31% 16% / 0.18), transparent);
+    background: linear-gradient(90deg, transparent, hsl(161 55% 24% / 0.22), transparent);
   }
 
   .ambient-glow {
     background:
-      radial-gradient(ellipse at 20% 80%, hsl(26 46% 45% / 0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 20%, hsl(152 31% 16% / 0.05) 0%, transparent 55%);
+      radial-gradient(ellipse at 20% 80%, hsl(161 56% 42% / 0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, hsl(161 55% 24% / 0.06) 0%, transparent 55%);
   }
 
   .glass {
