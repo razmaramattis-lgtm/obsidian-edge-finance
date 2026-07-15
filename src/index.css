@@ -80,7 +80,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-weight: 600;
     color: hsl(var(--primary));
     letter-spacing: -0.015em;
@@ -204,7 +204,7 @@ html {
 
 /* Headings — bold, prominent, with generous spacing */
 .article-content h1 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 2.8rem;
   font-weight: 600;
   line-height: 1.1;
@@ -215,7 +215,7 @@ html {
 }
 
 .article-content h2 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 2.2rem;
   font-weight: 600;
   line-height: 1.15;
@@ -228,7 +228,7 @@ html {
 }
 
 .article-content h3 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.7rem;
   font-weight: 600;
   line-height: 1.2;
@@ -238,7 +238,7 @@ html {
 }
 
 .article-content h4 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
   line-height: 1.3;
