@@ -62,17 +62,17 @@ const RelatedServices = [
 const HR = () => (
   <>
     <Helmet>
-      <title>Lønn og personalarbeid for bedrifter | Avargo</title>
-      <meta name="description" content="Vi tar oss av lønn, kontrakter, arbeidsmiljø og rådgivning — slik at du kan fokusere på menneskene i bedriften din." />
+      <title>Praktisk HR-bistand for små og mellomstore bedrifter | Avargo</title>
+      <meta name="description" content="Vi hjelper SMB med å etablere gode HR-rutiner, moderne HR-system og trygg lederstøtte — praktisk hjelp, ikke juridisk rådgivning." />
       <link rel="canonical" href="https://avargo.no/tjenester/hr-og-lonn" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "Hva koster lønnskjøring?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo er lønnskjøring inkludert i HR-pakken. Du betaler én fast månedspris som dekker lønnskjøring, A-melding, feriepengeavregning, skattetrekk, arbeidskontrakter og arbeidsrettslig rådgivning — uten skjulte tillegg." }},
-          { "@type": "Question", "name": "Hva er A-melding?", "acceptedAnswer": { "@type": "Answer", "text": "A-meldingen er en månedlig rapportering til Skatteetaten, NAV og SSB som inneholder opplysninger om lønn, skattetrekk, arbeidsgiveravgift og arbeidsforhold. Avargo håndterer A-meldingen automatisk som del av lønnskjøringen." }},
-          { "@type": "Question", "name": "Trenger bedriften min HMS-dokumentasjon?", "acceptedAnswer": { "@type": "Answer", "text": "Ja, alle norske bedrifter er pålagt å ha HMS-dokumentasjon og internkontroll. Avargo hjelper deg med å opprette og vedlikeholde nødvendig HMS-dokumentasjon slik at bedriften alltid er compliant." }},
-          { "@type": "Question", "name": "Hva bør en arbeidskontrakt inneholde?", "acceptedAnswer": { "@type": "Answer", "text": "En arbeidskontrakt skal inneholde: partenes identitet, arbeidssted, stillingsbeskrivelse, tiltredelsestidspunkt, prøvetid, lønn, arbeidstid, ferie og oppsigelsesfrister. Avargo lager profesjonelle arbeidskontrakter som oppfyller alle krav i arbeidsmiljøloven." }}
+          { "@type": "Question", "name": "Hva slags HR-bistand tilbyr Avargo?", "acceptedAnswer": { "@type": "Answer", "text": "Vi tilbyr praktisk HR-bistand til små og mellomstore bedrifter: etablering av HR-rutiner, personalmapper, oppsett av HR-system som Huma HR, standard arbeidsavtaler, personalhåndbok og rutiner for ferie, sykefravær, onboarding og offboarding." }},
+          { "@type": "Question", "name": "Gir Avargo juridisk rådgivning?", "acceptedAnswer": { "@type": "Answer", "text": "Nei. Vi hjelper deg med praktisk HR-arbeid og lederstøtte, men vi tar ikke rollen som advokat eller juridisk rådgiver. I saker som krever juridisk vurdering henviser vi videre til advokat." }},
+          { "@type": "Question", "name": "Hvilket HR-system bruker dere?", "acceptedAnswer": { "@type": "Answer", "text": "Vi setter typisk opp Huma HR, men kan også bistå med andre moderne HR-systemer tilpasset behovet til bedriften." }},
+          { "@type": "Question", "name": "Hva er lederstøtte?", "acceptedAnswer": { "@type": "Answer", "text": "Lederstøtte er sparring rundt personalsaker, veiledning om ferie, feriepenger, overtid, permisjoner og sykefravær, samt hjelp med dokumentasjon og oppdatering av personalhåndbok og HR-system." }}
         ]
       })}</script>
     </Helmet>
