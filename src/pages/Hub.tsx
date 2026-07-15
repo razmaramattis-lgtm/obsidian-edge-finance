@@ -233,17 +233,18 @@ const Hub = () => {
 
 
 
+      {/* Fade band: beige → mint (soft), then sharp cut to white */}
+      <div aria-hidden className="h-20 md:h-28 w-full bg-gradient-to-b from-background via-sage/30 to-sage/60" />
+
       {/* ═══ CTA ═══ */}
-      <section className="py-16 md:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-muted/40 via-sage/15 to-muted/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--sage)/0.25),transparent_60%)]" />
-        <div className="container mx-auto px-4 md:px-6 text-center relative">
+      <section className="py-16 md:py-32 bg-card">
+        <div className="container mx-auto px-4 md:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="relative mx-auto max-w-2xl rounded-3xl bg-card/80 backdrop-blur-sm border border-primary/10 shadow-xl shadow-primary/5 px-6 py-12 md:px-12 md:py-16"
+            className="max-w-2xl mx-auto"
           >
             <h2 className="text-2xl md:text-5xl font-bold mb-3 md:mb-5 leading-tight max-w-2xl mx-auto">
               Klar for en enklere hverdag?
@@ -253,10 +254,10 @@ const Hub = () => {
             </p>
             <Link
               to="/kontakt"
-              className="group inline-flex items-center gap-3 h-12 md:h-14 px-8 md:px-10 bg-sage text-primary text-sm font-semibold rounded-2xl shadow-lg shadow-primary/15 hover:brightness-105 hover:scale-[1.02] transition-all duration-300"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground tracking-wide transition-all duration-300"
             >
               Snakk med oss
-              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
           </motion.div>
         </div>
