@@ -159,7 +159,7 @@ const KursDetalj = () => {
               )}
               <button
                 onClick={() => setShowContact(true)}
-                className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
               >
                 <Phone size={14} /> Book rådgivningstime
               </button>
@@ -268,7 +268,7 @@ const KursDetalj = () => {
                 Bestill kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
-              <Link to={sp("/tjenester/kurs")} className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all">
+              <Link to={sp("/tjenester/kurs")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300">
                 <BookOpen size={14} /> Se alle kurs
               </Link>
             </div>
