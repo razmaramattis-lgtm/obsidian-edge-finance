@@ -231,11 +231,6 @@ const Hub = () => {
 
       <HubFAQ />
 
-
-
-      {/* Fade band: cream → white (soft) */}
-      <div aria-hidden className="h-20 md:h-28 w-full bg-gradient-to-b from-background to-card" />
-
       {/* ═══ CTA ═══ */}
       <section className="py-16 md:py-32 bg-card">
         <div className="container mx-auto px-4 md:px-6 text-center">
@@ -262,9 +257,6 @@ const Hub = () => {
           </motion.div>
         </div>
       </section>
-
-      {/* Fade band: white → cream (soft) back to page background */}
-      <div aria-hidden className="h-20 md:h-28 w-full bg-gradient-to-b from-card to-background" />
     </>
   );
 };
