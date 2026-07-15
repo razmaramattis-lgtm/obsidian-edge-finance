@@ -157,8 +157,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
           scrolled
-            ? "bg-background/95 border-border/80 shadow-[0_10px_30px_-18px_hsl(152_34%_10%/0.22)]"
-            : "bg-background/85 border-border/60 shadow-none"
+            ? "bg-card/95 border-border/80 shadow-[0_10px_30px_-18px_hsl(152_34%_10%/0.22)]"
+            : "bg-card/90 border-border/60 shadow-none"
         }`}
       >
 
@@ -431,7 +431,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
-                Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
+                Regnskap for bedrifter som <span className="italic text-primary">vil vokse — uten å miste kontrollen</span>.
               </p>
               <p className="text-[13px] text-secondary-foreground/70 font-light leading-relaxed max-w-md mb-7">
                 Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
