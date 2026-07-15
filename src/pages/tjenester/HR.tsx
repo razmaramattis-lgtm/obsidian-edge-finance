@@ -91,11 +91,11 @@ const HR = () => (
           </Link>
           <p className="text-[10px] tracking-[0.45em] uppercase text-secondary mb-5 md:mb-6">HR & Personal</p>
           <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl leading-[1.02] mb-8 md:mb-10">
-            Vi tar oss av personalarbeidet.{" "}
-            <span className="italic text-gradient-teal">Du tar deg av folka.</span>
+            Praktisk HR for små og mellomstore bedrifter.{" "}
+            <span className="italic text-gradient-teal">Vi gjør det enkelt å være en god arbeidsgiver.</span>
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Lønn, kontrakter, arbeidsmiljø og rådgivning — vi tar hele HR-jobben slik at du kan fokusere på menneskene og bedriften din.
+            Vi hjelper deg med å etablere gode HR-rutiner, effektive personalprosesser og moderne HR-systemer — uten å overta rollen som advokat eller juridisk rådgiver.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
