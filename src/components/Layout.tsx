@@ -11,6 +11,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
+  Mail, MapPin, ShieldCheck,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
