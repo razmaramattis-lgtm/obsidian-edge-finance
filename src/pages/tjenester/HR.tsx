@@ -113,28 +113,51 @@ const HR = () => (
 
     <section className="py-24 md:py-40">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid md:grid-cols-2 gap-14 md:gap-24 items-start">
-          <AnimatedSection>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Hva du får</p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug">
-              Alt du trenger som arbeidsgiver.{" "}
-              <span className="italic text-gradient-teal">På ett sted.</span>
-            </h2>
-            <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base">
-              Fra lønnskjøring til rådgivning i vanskelige saker — vi tar oss av hele personaladministrasjonen slik at du alltid følger reglene og de ansatte har det bra.
-            </p>
-          </AnimatedSection>
-          <AnimatedSection delay={0.15}>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {deliverables.map((d) => (
-                <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
-                  <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
-                  {d}
-                </li>
-              ))}
-            </ul>
-          </AnimatedSection>
-        </div>
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Etablering</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            Vi bygger HR-fundamentet i bedriften din.{" "}
+            <span className="italic text-gradient-teal">Fra bunn av.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Vi kartlegger dagens rutiner og setter opp det du trenger for å drive personalarbeidet strukturert og trygt — tilpasset størrelsen på bedriften.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.15}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {etablering.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                {d}
+              </li>
+            ))}
+          </ul>
+        </AnimatedSection>
+      </div>
+    </section>
+
+    <section className="py-24 md:py-40 bg-muted/20">
+      <div className="container mx-auto px-4 md:px-6">
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Løpende lederstøtte</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            En trygg medspiller{" "}
+            <span className="italic text-gradient-teal">når du trenger den.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Når fundamentet er på plass er vi tilgjengelige for sparring, veiledning og oppdatering av rutiner og systemer i det daglige.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.15}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {lopende.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                {d}
+              </li>
+            ))}
+          </ul>
+        </AnimatedSection>
       </div>
     </section>
 
