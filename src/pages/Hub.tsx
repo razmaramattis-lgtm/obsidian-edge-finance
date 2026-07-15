@@ -199,7 +199,7 @@ const Hub = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="rounded-2xl bg-card border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
+                className="rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
               >
                 <div className="aspect-[4/3] w-full overflow-hidden relative">
                   <img
