@@ -32,7 +32,7 @@ const categories = [
     label: "Regnskap & Økonomi",
     tag: "Kjerneleveranse",
     tagColor: "text-primary",
-    accent: "232 176 138",
+    accent: "48 166 132",
     headline: "Vi tar oss av tallene. Du tar deg av bedriften.",
     intro:
       "Godt regnskap handler ikke bare om å følge regler — det handler om å vite hvordan bedriften din faktisk gjør det. Vi gir deg en egen regnskapsfører som kjenner deg og bedriften din, og som sørger for at alt er i orden — hele året.",
@@ -142,7 +142,7 @@ const categories = [
     label: "HR & Personal",
     tag: "Menneskene i selskapet",
     tagColor: "text-accent-foreground",
-    accent: "245 200 122",
+    accent: "125 200 165",
     headline: "Alt du trenger for å ta godt vare på de ansatte.",
     intro:
       "Fra å finne riktig person til å sørge for at alt er på stell med kontrakter, lønn og arbeidsmiljø. Vi tar oss av papirarbeidet og reglene — du tar deg av menneskene.",

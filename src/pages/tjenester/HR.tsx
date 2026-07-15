@@ -31,6 +31,21 @@ const lopende = [
   "Oppdatering av HR-system",
 ];
 
+const engasjementer = [
+  {
+    title: "Midlertidig oppdrag",
+    desc: "Interim HR-bistand i en periode — f.eks. ved sykefravær, permisjon eller når bedriften står midt i et prosjekt som krever ekstra kapasitet.",
+  },
+  {
+    title: "Oppstartshjelp",
+    desc: "Vi hjelper nystartede bedrifter å få HR-fundamentet på plass fra dag én — rutiner, kontrakter, personalhåndbok og et enkelt HR-system.",
+  },
+  {
+    title: "Langsiktig bistand",
+    desc: "Fast HR-støtte for bedrifter som ikke har egen HR-kompetanse internt. Vi fungerer som en trygg medspiller for ledelsen over tid.",
+  },
+];
+
 const pillars = [
   {
     title: "Praktisk HR — ikke juridisk rådgivning.",
@@ -158,6 +173,32 @@ const HR = () => (
     </section>
 
     <section className="py-24 md:py-40">
+      <div className="container mx-auto px-4 md:px-6">
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Slik jobber vi sammen</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            Fleksibel HR-bistand{" "}
+            <span className="italic text-gradient-teal">tilpasset situasjonen din.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Vi tar både korte og lengre oppdrag — og hjelper deg der bedriften faktisk trenger det.
+          </p>
+        </AnimatedSection>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+          {engasjementer.map((e, i) => (
+            <AnimatedSection key={e.title} delay={i * 0.1}>
+              <div className="p-6 md:p-7 glass rounded-2xl card-lift h-full">
+                <h3 className="font-heading text-lg md:text-xl mb-2.5">{e.title}</h3>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">{e.desc}</p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section className="py-24 md:py-40">
+
       <div className="container mx-auto px-4 md:px-6">
         <AnimatedSection>
           <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Nivåer</p>
