@@ -82,7 +82,7 @@ const ServicePageTemplate = ({
           <p className="text-[10px] tracking-[0.45em] uppercase text-primary mb-5 md:mb-6">
             {category}
           </p>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-[1.1] mb-8 md:mb-10 break-words [&_span]:text-xl [&_span]:sm:text-3xl [&_span]:md:text-5xl [&_span]:block [&_span]:mt-1 [&_span]:leading-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl leading-[1.1] mb-8 md:mb-10 [overflow-wrap:anywhere] [&_span]:text-lg [&_span]:sm:text-2xl [&_span]:md:text-4xl [&_span]:block [&_span]:mt-1 [&_span]:leading-tight">
             {heroTitle}
           </h1>
           <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
