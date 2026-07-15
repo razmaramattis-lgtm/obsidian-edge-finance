@@ -381,7 +381,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* ── Breadcrumbs & main ───────────────────── */}
-      <div className="pt-16 lg:pt-[108px]">
+      <div className="pt-16 lg:pt-[76px]">
         <Breadcrumbs />
       </div>
 
