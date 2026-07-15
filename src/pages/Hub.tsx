@@ -139,7 +139,7 @@ const Hub = () => {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-secondary-foreground leading-tight">{item.label}</p>
-                  <p className="text-[10px] text-accent/90">{item.sub}</p>
+                  <p className="text-[10px] text-muted font-medium">{item.sub}</p>
                 </div>
               </div>
             ))}
