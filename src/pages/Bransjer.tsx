@@ -98,14 +98,14 @@ const Bransjer = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               to={`${sectionPath}/kontakt`}
-              className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
             >
               {copy?.ctaButton || "Finn din bransjeekspert"}
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
               to={`${sectionPath}/tjenester`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
             >
               Se alle tjenester
             </Link>
@@ -152,10 +152,10 @@ const Bransjer = () => {
             <AnimatedSection key={ind.slug} delay={i * 0.05}>
               <Link
                 to={`${sectionPath}/bransjer/${ind.slug}`}
-                className="group p-7 md:p-9 glass rounded-3xl card-lift relative overflow-hidden flex flex-col h-full"
+                className="group p-7 md:p-9 glass rounded-xl card-lift relative overflow-hidden flex flex-col h-full"
               >
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center mb-5 md:mb-6 group-hover:from-primary/20 group-hover:to-secondary/15 transition-all duration-500">
+                <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center mb-5 md:mb-6 group-hover:from-primary/20 group-hover:to-secondary/15 transition-all duration-500">
                   <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <h3 className="font-heading text-xl md:text-2xl mb-1.5">{ind.name}</h3>
@@ -177,7 +177,7 @@ const Bransjer = () => {
 
 
         <AnimatedSection delay={0.5}>
-          <div className="mt-10 md:mt-14 p-7 md:p-10 glass rounded-3xl text-center">
+          <div className="mt-10 md:mt-14 p-7 md:p-10 glass rounded-xl text-center">
             <p className="text-muted-foreground font-light text-sm md:text-base">
               Er bransjen din ikke på listen?{" "}
               <span className="text-foreground">Vi tar på oss alle typer bedrifter.</span>{" "}
@@ -209,7 +209,7 @@ const Bransjer = () => {
             { num: "03", title: "Innsikt som faktisk er relevant.", desc: "Ikke generelle råd, men spesifikk innsikt basert på hva som gjelder for din bransje." },
           ].map((p, i) => (
             <AnimatedSection key={p.num} delay={i * 0.12}>
-              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
                 <span className="font-heading text-5xl text-primary/20">{p.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{p.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{p.desc}</p>
@@ -234,7 +234,7 @@ const Bransjer = () => {
           </p>
           <Link
             to={`${sectionPath}/kontakt`}
-            className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
           >
             Book en gjennomgang
             <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

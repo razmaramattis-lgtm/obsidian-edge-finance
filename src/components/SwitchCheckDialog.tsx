@@ -260,7 +260,7 @@ const SwitchCheckDialog = ({ open, onOpenChange }: Props) => {
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">{verdict.desc}</p>
             </div>
 
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 md:p-5 mb-5">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 md:p-5 mb-5">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <Sparkles size={16} className="text-primary" strokeWidth={1.75} />
@@ -274,13 +274,13 @@ const SwitchCheckDialog = ({ open, onOpenChange }: Props) => {
             </div>
 
             {sent ? (
-              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 text-center">
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 text-center">
                 <CheckCircle2 className="w-6 h-6 text-primary mx-auto mb-2" />
                 <p className="text-sm font-medium text-foreground">Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
                 <p className="text-xs text-muted-foreground mt-1">Vi har fått resultatet og ringer for en uforpliktende prat.</p>
               </div>
             ) : (
-              <form onSubmit={submitLead} className="rounded-2xl border border-border/15 bg-muted/20 p-4 md:p-5 space-y-3">
+              <form onSubmit={submitLead} className="rounded-xl border border-border/15 bg-muted/20 p-4 md:p-5 space-y-3">
                 <div>
                   <p className="text-sm font-semibold text-foreground mb-0.5">Vil du at vi tar kontakt?</p>
                   <p className="text-xs text-muted-foreground">Legg igjen kontaktinfo, så tar vi en prat om resultatet ditt.</p>

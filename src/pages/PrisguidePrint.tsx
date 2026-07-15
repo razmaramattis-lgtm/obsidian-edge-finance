@@ -66,7 +66,7 @@ const PrisguidePrint = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {sectionPlans.map((p) => (
-                    <div key={p.id} className={`border rounded-2xl p-5 ${p.highlighted ? "border-black bg-black/5" : "border-black/15"}`}>
+                    <div key={p.id} className={`border rounded-xl p-5 ${p.highlighted ? "border-black bg-black/5" : "border-black/15"}`}>
                       <div className="flex items-baseline justify-between mb-1">
                         <h3 className="text-lg font-medium">{p.name}</h3>
                         {p.highlighted && <span className="text-[9px] uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded-full">Anbefalt</span>}

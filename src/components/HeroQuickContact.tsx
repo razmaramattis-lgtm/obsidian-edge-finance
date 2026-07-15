@@ -45,7 +45,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
 
   if (done) {
     return (
-      <div className="rounded-2xl border border-primary/30 bg-primary/5 backdrop-blur p-6 md:p-8">
+      <div className="rounded-xl border border-primary/30 bg-primary/5 backdrop-blur p-6 md:p-8">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
@@ -65,7 +65,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
   return (
     <form
       onSubmit={submit}
-      className="rounded-3xl border border-primary/25 bg-card shadow-xl shadow-primary/10 p-6 md:p-7"
+      className="rounded-xl border border-primary/25 bg-card shadow-xl shadow-primary/10 p-6 md:p-7"
     >
       <p className="text-[11px] tracking-[0.3em] uppercase text-primary mb-2 font-semibold">
         Be oss ringe deg

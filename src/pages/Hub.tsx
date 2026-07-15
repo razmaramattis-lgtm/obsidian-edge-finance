@@ -232,7 +232,7 @@ const Hub = () => {
       <HubFAQ />
 
       {/* ═══ CTA ═══ */}
-      <section className="py-16 md:py-32 bg-card">
+      <section className="py-16 md:py-32 bg-background">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -249,7 +249,7 @@ const Hub = () => {
             </p>
             <Link
               to="/kontakt"
-              className="group inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground tracking-wide transition-all duration-300"
+              className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
             >
               Snakk med oss
               <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />

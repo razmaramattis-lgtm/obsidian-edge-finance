@@ -93,9 +93,9 @@ const SamarbeidAvdelinger = () => (
         <div className="space-y-10 max-w-4xl mx-auto">
           {DIVISIONS.map((d, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="glass rounded-3xl p-8 md:p-10 border border-border/10 hover:border-primary/20 transition-all">
+              className="glass rounded-xl p-8 md:p-10 border border-border/10 hover:border-primary/20 transition-all">
               <div className="flex items-start gap-5 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <d.icon size={26} className="text-primary" />
                 </div>
                 <div>

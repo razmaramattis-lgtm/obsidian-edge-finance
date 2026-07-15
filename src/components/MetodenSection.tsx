@@ -180,8 +180,8 @@ const MetodenSection = ({ overrides }: { overrides?: MetodenOverrides }) => {
 
           <AnimatedSection delay={0.4}>
             <div className="max-w-2xl mx-auto mt-8">
-              <div className="glass rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5 md:gap-6 text-center sm:text-left">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+              <div className="glass rounded-xl p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5 md:gap-6 text-center sm:text-left">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                   <Phone size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>

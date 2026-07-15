@@ -27,8 +27,8 @@ const AuthBekreft = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md glass rounded-3xl p-8 border border-border/20 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+      <div className="w-full max-w-md glass rounded-xl p-8 border border-border/20 text-center">
+        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
           <ShieldCheck size={26} className="text-primary" />
         </div>
         <h1 className="font-heading text-2xl mb-2">Bekreft tilbakestilling</h1>

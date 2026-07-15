@@ -310,7 +310,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="ml-4 flex items-center gap-2 pl-4 border-l border-border/70">
               <Link
                 to="/book-mote"
-                className="px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground transition-all duration-300 tracking-wide"
+                className="px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:bg-sage hover:border-sage hover:text-secondary transition-all duration-300 tracking-wide"
               >
                 Book møte
               </Link>

@@ -293,7 +293,7 @@ const Intervjutips = () => (
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10"
+          className="text-center p-8 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10"
         >
           <p className="text-lg font-semibold mb-2">Vi gleder oss til å møte deg! 🎉</p>
           <p className="text-sm text-muted-foreground">

@@ -133,7 +133,7 @@ const KontohjelpDetalj = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Søk etter en annen konto…"
-              className="w-full h-12 pl-12 pr-10 rounded-2xl border border-border/30 bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 shadow-sm transition-all"
+              className="w-full h-12 pl-12 pr-10 rounded-xl border border-border/30 bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 shadow-sm transition-all"
             />
             {search && (
               <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -146,7 +146,7 @@ const KontohjelpDetalj = () => {
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
-                  className="absolute left-0 right-0 top-full mt-2 z-50 glass rounded-2xl border border-border/20 shadow-xl overflow-hidden"
+                  className="absolute left-0 right-0 top-full mt-2 z-50 glass rounded-xl border border-border/20 shadow-xl overflow-hidden"
                 >
                   {searchResults.map(r => (
                     <Link
@@ -170,12 +170,12 @@ const KontohjelpDetalj = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="glass rounded-3xl border border-border/20 overflow-hidden"
+            className="glass rounded-xl border border-border/20 overflow-hidden"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 md:p-10 border-b border-border/10">
               <div className="flex items-start gap-5">
-                <span className="text-2xl font-mono bg-primary/15 text-primary px-4 py-2 rounded-2xl shrink-0 border border-primary/20 font-bold">
+                <span className="text-2xl font-mono bg-primary/15 text-primary px-4 py-2 rounded-xl shrink-0 border border-primary/20 font-bold">
                   {entry.account_number}
                 </span>
                 <div>
@@ -216,7 +216,7 @@ const KontohjelpDetalj = () => {
                   <h2 className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
                     <Lightbulb size={15} className="text-primary" /> Eksempler
                   </h2>
-                  <div className="bg-muted/30 rounded-2xl p-5 border border-border/10 space-y-2">
+                  <div className="bg-muted/30 rounded-xl p-5 border border-border/10 space-y-2">
                     {entry.examples.map((ex, i) => (
                       <div key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
                         <span className="text-primary/60 font-mono text-xs mt-0.5 shrink-0">{i + 1}.</span>
@@ -243,7 +243,7 @@ const KontohjelpDetalj = () => {
                   <Link
                     key={r.id}
                     to={`/ressurser/kontohjelp/${r.slug}`}
-                    className="group glass rounded-2xl px-5 py-3.5 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                    className="group glass rounded-xl px-5 py-3.5 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-xs font-mono bg-primary/10 text-primary px-2.5 py-1 rounded-xl shrink-0 border border-primary/10 font-semibold">

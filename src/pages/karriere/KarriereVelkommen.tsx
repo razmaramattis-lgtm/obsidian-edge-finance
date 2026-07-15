@@ -172,9 +172,9 @@ const KarriereVelkommen = () => {
                   )}
 
                   {/* Icon */}
-                  <div className={`relative shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br ${step.accent} flex items-center justify-center shadow-lg`}>
+                  <div className={`relative shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${step.accent} flex items-center justify-center shadow-lg`}>
                     <Icon size={20} className="text-primary-foreground" />
-                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${step.accent} blur-xl opacity-30`} />
+                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${step.accent} blur-xl opacity-30`} />
                   </div>
 
                   {/* Content */}
@@ -198,7 +198,7 @@ const KarriereVelkommen = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative rounded-3xl overflow-hidden aspect-[4/3]"
+              className="relative rounded-xl overflow-hidden aspect-[4/3]"
             >
               <img src={teamImg} alt="Teamet hos Avargo" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
@@ -268,9 +268,9 @@ const KarriereVelkommen = () => {
                   viewport={{ once: true }}
                   custom={i}
                   variants={fadeUp}
-                  className="group relative p-5 rounded-2xl border border-border/10 bg-card/30 backdrop-blur-sm hover:border-primary/20 hover:bg-primary/[0.03] transition-all duration-500"
+                  className="group relative p-5 rounded-xl border border-border/10 bg-card/30 backdrop-blur-sm hover:border-primary/20 hover:bg-primary/[0.03] transition-all duration-500"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
                       <Icon size={18} className="text-primary" />
@@ -289,7 +289,7 @@ const KarriereVelkommen = () => {
             transition={{ delay: 0.3 }}
             className="mt-12 text-center"
           >
-            <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 rounded-2xl bg-muted/20 border border-border/10 backdrop-blur-sm">
+            <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 rounded-xl bg-muted/20 border border-border/10 backdrop-blur-sm">
               <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center shrink-0">
                 <Gift size={22} className="text-secondary" />
               </div>
@@ -316,7 +316,7 @@ const KarriereVelkommen = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative rounded-3xl overflow-hidden aspect-[21/9] max-w-5xl mx-auto"
+            className="relative rounded-xl overflow-hidden aspect-[21/9] max-w-5xl mx-auto"
           >
             <img src={cultureImg} alt="Arbeidsmiljø hos Avargo" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
@@ -348,7 +348,7 @@ const KarriereVelkommen = () => {
               href="https://www.avargo.no"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
             >
               Utforsk avargo.no <ArrowRight size={18} />
             </a>

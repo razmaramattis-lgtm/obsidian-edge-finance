@@ -393,7 +393,7 @@ const Protokollgenerator = () => {
           {phase === "utfyll" && activeDoc && (
             <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_1fr] gap-6">
               {/* Sidemeny */}
-              <aside className="glass rounded-2xl border border-border/20 p-5 h-fit lg:sticky lg:top-24">
+              <aside className="glass rounded-xl border border-border/20 p-5 h-fit lg:sticky lg:top-24">
                 <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-3">Din pakke</p>
                 <div className="space-y-1 mb-6">
                   {docs.map((d, i) => {
@@ -430,7 +430,7 @@ const Protokollgenerator = () => {
               </aside>
 
               {/* Skjema */}
-              <div className="glass rounded-2xl border border-border/20 p-6 md:p-8">
+              <div className="glass rounded-xl border border-border/20 p-6 md:p-8">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-[10px] tracking-[0.3em] uppercase text-primary">
                     Steg {stegIdx + 1} av {steg.length}
@@ -518,7 +518,7 @@ const VelgDokumenter = ({ docs, toggle, start }: { docs: DocumentState[]; toggle
           <button
             key={t.id}
             onClick={() => toggle(t.id)}
-            className={`text-left p-6 rounded-2xl border transition-all ${
+            className={`text-left p-6 rounded-xl border transition-all ${
               selected ? "border-primary bg-primary/5" : "border-border/20 glass hover:border-primary/30"
             }`}
           >
@@ -1013,7 +1013,7 @@ const LivePreviewPanel = ({ profile, doc, changeTick, lastChangeLabel, changedSa
   }, [changeTick]);
 
   return (
-    <div className="hidden lg:flex flex-col h-[80vh] rounded-2xl overflow-hidden border border-border/20 bg-white">
+    <div className="hidden lg:flex flex-col h-[80vh] rounded-xl overflow-hidden border border-border/20 bg-white">
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-neutral-950 text-white/90 border-b border-white/10">
         <div className="flex items-center gap-2 min-w-0">
           <span className="relative flex h-2 w-2 shrink-0">
@@ -1180,7 +1180,7 @@ const Ferdigstilling = ({ docs, profile, tilbake, reset }: {
 }) => (
   <div className="max-w-3xl mx-auto">
     <div className="text-center mb-10">
-      <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+      <div className="w-14 h-14 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-4">
         <ClipboardCheck size={26} className="text-primary" />
       </div>
       <h2 className="font-heading text-3xl md:text-4xl mb-3">Pakken er klar</h2>
@@ -1192,7 +1192,7 @@ const Ferdigstilling = ({ docs, profile, tilbake, reset }: {
         const dt = documentTypes.find(t => t.id === d.type);
         const filename = `${(dt?.navn || "dokument").toLowerCase().replace(/\s+/g, "-")}-${profile.selskap.orgnummer || "utkast"}.pdf`;
         return (
-          <div key={i} className="glass rounded-2xl border border-border/20 p-5 flex items-center justify-between gap-4">
+          <div key={i} className="glass rounded-xl border border-border/20 p-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                 <FileText size={18} className="text-primary" />

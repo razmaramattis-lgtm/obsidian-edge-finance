@@ -140,7 +140,7 @@ const KarriereStillinger = () => {
                 {filtered.map((job, i) => (
                   <motion.div key={job.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.5 }}>
                     <Link to={`/karriere/${job.slug}`}
-                      className="group block glass rounded-2xl border border-border/10 hover:border-primary/25 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+                      className="group block glass rounded-xl border border-border/10 hover:border-primary/25 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
                       <div className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -187,7 +187,7 @@ const KarriereStillinger = () => {
 
             <AnimatePresence mode="wait">
               {openSubmitted ? (
-                <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass rounded-3xl border border-border/10 p-12 text-center">
+                <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass rounded-xl border border-border/10 p-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
                     <Sparkles size={24} className="text-primary" />
                   </div>
@@ -195,7 +195,7 @@ const KarriereStillinger = () => {
                   <p className="text-sm text-muted-foreground">Takk for interessen. Vi gjennomgår søknaden din og tar kontakt.</p>
                 </motion.div>
               ) : (
-                <motion.form key="form" onSubmit={submitOpenApplication} className="glass rounded-3xl border border-border/10 p-7 md:p-10 space-y-4">
+                <motion.form key="form" onSubmit={submitOpenApplication} className="glass rounded-xl border border-border/10 p-7 md:p-10 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="relative">
                       <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/40" />

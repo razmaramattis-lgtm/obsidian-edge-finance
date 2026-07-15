@@ -102,9 +102,9 @@ const SamarbeidModeller = () => (
         <div className="space-y-8 max-w-4xl mx-auto">
           {MODELS.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className={`glass rounded-3xl p-8 md:p-10 border ${m.highlight ? "border-primary/30 ring-1 ring-primary/10" : "border-border/10"}`}>
+              className={`glass rounded-xl p-8 md:p-10 border ${m.highlight ? "border-primary/30 ring-1 ring-primary/10" : "border-border/10"}`}>
               <div className="flex items-start gap-5 mb-6">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${m.highlight ? "bg-primary/20" : "bg-primary/10"}`}>
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${m.highlight ? "bg-primary/20" : "bg-primary/10"}`}>
                   <m.icon size={26} className="text-primary" />
                 </div>
                 <div>
@@ -137,7 +137,7 @@ const SamarbeidModeller = () => (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
           {ADVANTAGES.map((a, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-              className="glass rounded-2xl p-6 border border-border/10">
+              className="glass rounded-xl p-6 border border-border/10">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                 <a.icon size={22} className="text-primary" />
               </div>
