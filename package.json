@@ -12,6 +12,12 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "overrides": {
+    "jspdf": "^4.2.1"
+  },
+  "resolutions": {
+    "jspdf": "^4.2.1"
+  },
   "dependencies": {
     "@capacitor/android": "^8.2.0",
     "@capacitor/cli": "^8.2.0",
