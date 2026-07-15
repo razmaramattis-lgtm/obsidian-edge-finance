@@ -117,7 +117,7 @@ const SectionTjenester = () => {
               <AnimatedSection key={service.title} delay={i * 0.08}>
                 <Link
                   to={sp(service.href)}
-                  className="block p-8 md:p-10 glass rounded-3xl card-lift h-full group"
+                  className="block p-8 md:p-10 glass rounded-xl card-lift h-full group"
                 >
                   <h3 className="font-heading text-xl md:text-2xl mb-3 group-hover:text-primary transition-colors duration-300">
                     {service.title}

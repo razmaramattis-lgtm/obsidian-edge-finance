@@ -326,7 +326,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left transition-all border-2 ${
+      className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-all border-2 ${
         selected
           ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
           : "border-transparent bg-muted/20 hover:bg-muted/40"
@@ -366,7 +366,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 gap-0 bg-background border-border/20 overflow-hidden max-h-[90vh] rounded-3xl">
+      <DialogContent className="sm:max-w-[500px] p-0 gap-0 bg-background border-border/20 overflow-hidden max-h-[90vh] rounded-xl">
         <div className="p-6 md:p-8 overflow-y-auto max-h-[85vh]">
           <AnimatePresence mode="wait">
             {submitted ? (
@@ -383,7 +383,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                 <p className="text-muted-foreground max-w-xs mx-auto mb-8">
                   Vi har mottatt kartleggingen din og tar kontakt innen 48 timer for en uforpliktende samtale.
                 </p>
-                <button onClick={() => onOpenChange(false)} className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity">
+                <button onClick={() => onOpenChange(false)} className="px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity">
                   Lukk
                 </button>
               </motion.div>
@@ -420,7 +420,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                         {(loading || fetchingDetails) && <Loader2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin" />}
                       </div>
                       {results.length > 0 && (
-                        <div className="absolute z-50 left-0 right-0 mt-1 rounded-2xl border border-border bg-popover shadow-2xl max-h-60 overflow-y-auto">
+                        <div className="absolute z-50 left-0 right-0 mt-1 rounded-xl border border-border bg-popover shadow-2xl max-h-60 overflow-y-auto">
                           {results.map(enhet => (
                             <button key={enhet.organisasjonsnummer} type="button" onClick={() => selectCompany(enhet)}
                               className="w-full text-left px-4 py-3 hover:bg-accent transition-colors border-b border-border/50 last:border-0">
@@ -432,7 +432,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                       )}
                     </div>
                     {company && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                             <Building2 size={18} className="text-primary" />
@@ -483,7 +483,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                     <textarea value={message} onChange={e => setMessage(e.target.value)}
                       placeholder="Noe du vil legge til? (helt valgfritt)"
                       rows={3} maxLength={5000}
-                      className="w-full rounded-2xl border border-border bg-muted/30 px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all" />
+                      className="w-full rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-all" />
                   </div>
                 )}
               </motion.div>
@@ -505,7 +505,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                     whileTap={{ scale: 0.97 }}
                     onClick={handleSubmit}
                     disabled={!canNext() || submitting}
-                    className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-all shadow-lg shadow-primary/20"
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-all shadow-lg shadow-primary/20"
                   >
                     {submitting ? "Sender…" : <>Send inn <Rocket size={15} /></>}
                   </motion.button>
@@ -515,7 +515,7 @@ const KartleggingDialog = ({ open, onOpenChange }: Props) => {
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setStep(s => s + 1)}
                     disabled={!canNext()}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-all"
                   >
                     Neste <ArrowRight size={14} />
                   </motion.button>

@@ -237,8 +237,8 @@ const SectionBransjerGenerell = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {c.whyPoints.map((p, i) => (
               <AnimatedSection key={p.title} delay={i * 0.1}>
-                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full flex gap-5">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center shrink-0">
+                <div className="p-8 md:p-10 glass rounded-xl card-lift h-full flex gap-5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center shrink-0">
                     <p.icon size={18} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
@@ -255,7 +255,7 @@ const SectionBransjerGenerell = () => {
       {/* IMAGE BREAK */}
       <section className="py-0 relative">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="rounded-3xl overflow-hidden relative h-[300px] md:h-[450px]">
+          <div className="rounded-xl overflow-hidden relative h-[300px] md:h-[450px]">
             <img src={teamImg} alt="Teamet i Avargo samarbeider" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
           </div>
@@ -274,7 +274,7 @@ const SectionBransjerGenerell = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {c.howSteps.map((s, i) => (
               <AnimatedSection key={s.num} delay={i * 0.1}>
-                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+                <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
                   <span className="font-heading text-5xl text-primary/20">{s.num}</span>
                   <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{s.title}</h3>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">{s.desc}</p>
@@ -305,7 +305,7 @@ const SectionBransjerGenerell = () => {
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <div className="rounded-3xl overflow-hidden h-[350px] md:h-[500px]">
+              <div className="rounded-xl overflow-hidden h-[350px] md:h-[500px]">
                 <img src={processImg} alt="Avargo prosess og verktøy" loading="lazy" className="w-full h-full object-cover" />
               </div>
             </AnimatedSection>

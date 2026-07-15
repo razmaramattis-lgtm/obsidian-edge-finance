@@ -19,7 +19,7 @@ const ROIMini = () => {
   }, [employees, bilag]);
 
   return (
-    <div className="rounded-3xl glass border border-border/20 p-6 md:p-8 max-w-3xl mx-auto">
+    <div className="rounded-xl glass border border-border/20 p-6 md:p-8 max-w-3xl mx-auto">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
           <Calculator size={16} className="text-primary" />
@@ -63,14 +63,14 @@ const ROIMini = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:gap-4 pt-5 border-t border-border/15">
-        <div className="rounded-2xl bg-primary/5 border border-primary/15 p-4 md:p-5">
+        <div className="rounded-xl bg-primary/5 border border-primary/15 p-4 md:p-5">
           <div className="flex items-center gap-2 mb-1.5">
             <Clock size={13} className="text-primary" />
             <p className="text-[10px] uppercase tracking-wider text-foreground/55 font-medium">Spart tid</p>
           </div>
           <p className="font-heading text-3xl md:text-4xl text-foreground">{result.hours}<span className="text-sm text-foreground/50 ml-1 font-sans">t/mnd</span></p>
         </div>
-        <div className="rounded-2xl bg-primary/5 border border-primary/15 p-4 md:p-5">
+        <div className="rounded-xl bg-primary/5 border border-primary/15 p-4 md:p-5">
           <div className="flex items-center gap-2 mb-1.5">
             <TrendingUp size={13} className="text-primary" />
             <p className="text-[10px] uppercase tracking-wider text-foreground/55 font-medium">Spart verdi</p>

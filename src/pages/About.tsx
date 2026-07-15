@@ -72,7 +72,7 @@ const About = () => {
               { icon: Crown, num: "04", title: "Vi kjenner bransjen din", desc: "Erfaring med over 24 bransjer. Din rådgiver forstår hverdagen din, ikke bare tallene." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.12}>
-                <div className="group p-8 md:p-10 glass rounded-3xl card-lift h-full relative overflow-hidden">
+                <div className="group p-8 md:p-10 glass rounded-xl card-lift h-full relative overflow-hidden">
                   <div className="absolute -top-8 -right-8 w-28 h-28 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
                   <div className="relative">
                     <span className="font-heading text-5xl md:text-6xl text-primary/15">{v.num}</span>
@@ -106,7 +106,7 @@ const About = () => {
               { num: "03", title: "Din vekst er målet vårt", desc: "Vi måles ikke på volum. Vi måles på hvor mye verdi vi skaper for deg." },
             ].map((v, i) => (
               <AnimatedSection key={v.num} delay={i * 0.15}>
-                <div className="p-8 md:p-10 glass rounded-3xl card-lift">
+                <div className="p-8 md:p-10 glass rounded-xl card-lift">
                   <span className="font-heading text-5xl md:text-6xl text-primary/25">{v.num}</span>
                   <h3 className="font-heading text-xl md:text-2xl mt-5 md:mt-6 mb-3 md:mb-4">{v.title}</h3>
                   <p className="text-sm text-foreground/60 leading-relaxed font-light">{v.desc}</p>

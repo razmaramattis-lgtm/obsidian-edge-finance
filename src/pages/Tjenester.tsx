@@ -333,7 +333,7 @@ const Tjenester = () => {
                  <AnimatedSection key={service.title} delay={i * 0.1}>
                   <Link
                     to={service.href}
-                    className="relative block p-8 md:p-10 rounded-3xl h-full flex flex-col group border transition-all duration-500"
+                    className="relative block p-8 md:p-10 rounded-xl h-full flex flex-col group border transition-all duration-500"
                     style={{
                       borderColor: `rgb(${cat.accent} / 0.18)`,
                       backgroundImage: `radial-gradient(circle at top left, rgb(${cat.accent} / 0.22), rgb(${cat.accent} / 0.04) 45%, transparent 75%)`,
@@ -348,7 +348,7 @@ const Tjenester = () => {
                     }}
                   >
                     <div
-                      className="w-11 h-11 md:w-12 md:h-12 rounded-2xl border flex items-center justify-center mb-5 md:mb-6 transition-all duration-500"
+                      className="w-11 h-11 md:w-12 md:h-12 rounded-xl border flex items-center justify-center mb-5 md:mb-6 transition-all duration-500"
                       style={{
                         backgroundColor: `rgb(${cat.accent} / 0.22)`,
                         borderColor: `rgb(${cat.accent} / 0.4)`,

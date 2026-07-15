@@ -82,7 +82,7 @@ const KursRegnskap = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="flex items-start gap-3 p-5 rounded-2xl border border-border/10 bg-muted/5"
+                className="flex items-start gap-3 p-5 rounded-xl border border-border/10 bg-muted/5"
               >
                 <CheckCircle2 size={16} className="text-secondary shrink-0 mt-0.5" />
                 <span className="text-sm text-foreground/90 font-light">{h}</span>
@@ -116,7 +116,7 @@ const KursRegnskap = () => {
                 >
                   <Link
                     to={`/kurs/katalog`}
-                    className={`block p-6 rounded-2xl border transition-all duration-300 group ${
+                    className={`block p-6 rounded-xl border transition-all duration-300 group ${
                       hoveredCat === cat.label
                         ? "border-secondary/30 bg-secondary/5 scale-[1.01]"
                         : "border-border/10 bg-muted/5 hover:border-secondary/20"

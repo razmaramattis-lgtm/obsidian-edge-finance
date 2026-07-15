@@ -109,7 +109,7 @@ const BransjePage = ({
             <ArrowLeft size={12} /> Alle bransjer
           </Link>
           <div className="flex items-center gap-4 mb-5 md:mb-6">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
               <Icon size={17} className="text-primary" strokeWidth={1.5} />
             </div>
             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary">
@@ -189,7 +189,7 @@ const BransjePage = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {challenges.map((c, i) => (
             <AnimatedSection key={c.title} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
                 <h3 className="font-heading text-xl md:text-2xl mb-3">{c.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{c.desc}</p>
               </div>
@@ -211,7 +211,7 @@ const BransjePage = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
           {whyAvargo.map((w, i) => (
             <AnimatedSection key={w.num} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
                 <span className="font-heading text-5xl text-primary/20">{w.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{w.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{w.desc}</p>

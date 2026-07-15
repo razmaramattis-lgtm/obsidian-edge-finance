@@ -214,7 +214,7 @@ const Pricing = () => {
                   Hos Avargo betaler du én fast månedspris. Ingen timepriser, ingen overraskelser og ingen ekstra fakturaer for MVA, lønn eller rådgivning. Alt du trenger innen regnskap er inkludert fra dag én.
                 </p>
 
-                <div className="p-6 md:p-8 rounded-3xl bg-card/60 border border-border/40">
+                <div className="p-6 md:p-8 rounded-xl bg-card/60 border border-border/40">
                   <h2 className="font-heading text-2xl md:text-3xl mb-3 flex items-center gap-3">
                     <Calculator size={26} className="text-primary" />
                     Prisvurderingskalkulator
@@ -305,7 +305,7 @@ const Pricing = () => {
                                 key={f.key}
                                 type="button"
                                 onClick={() => setForm(f.key)}
-                                className={`flex flex-col items-center justify-center gap-1 py-4 rounded-2xl border transition-all duration-300 ${
+                                className={`flex flex-col items-center justify-center gap-1 py-4 rounded-xl border transition-all duration-300 ${
                                   active
                                     ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
                                     : "border-border/60 bg-card/50 hover:border-primary/30 hover:bg-primary/5"
@@ -382,7 +382,7 @@ const Pricing = () => {
                         </div>
 
                         {isCustomOffer && (
-                          <div className="mt-6 p-4 rounded-2xl bg-primary/8 border border-primary/25">
+                          <div className="mt-6 p-4 rounded-xl bg-primary/8 border border-primary/25">
                             <p className="text-sm text-foreground leading-relaxed">
                               Omsetning over 5 mill. gir stor variasjon i behov. Trykk deg videre — så gir vi deg et <span className="font-medium">skreddersydd tilbud</span> basert på hva du faktisk trenger.
                             </p>
@@ -496,7 +496,7 @@ const Pricing = () => {
                           Fyll inn kontaktinfo, så sender vi deg et <span className="text-foreground">bekreftet, midlertidig tilbud</span> direkte fra Avargo. Prisen kan justeres <span className="text-foreground">ned</span> etter en gjennomgang ved onboarding.
                         </p>
 
-                        <dl className="rounded-2xl border border-border/50 bg-card/40 divide-y divide-border/40 text-sm mb-5">
+                        <dl className="rounded-xl border border-border/50 bg-card/40 divide-y divide-border/40 text-sm mb-5">
                           {[
                             ["Selskapsform", form ?? "—"],
                             ["Bransje", industries.find((i) => i.key === industry)?.label ?? "—"],
@@ -512,7 +512,7 @@ const Pricing = () => {
                           ))}
                         </dl>
 
-                        <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-6">
+                        <div className="p-5 rounded-xl bg-primary/8 border border-primary/20 mb-6">
                           <p className="text-xs uppercase tracking-[0.15em] text-primary/80 font-medium mb-1">
                             {isCustomOffer ? "Skreddersydd tilbud" : "Midlertidig estimat"}
                           </p>
@@ -605,7 +605,7 @@ const Pricing = () => {
                         <p className="text-sm text-foreground/70 font-light leading-relaxed mb-4">
                           Vi sender et <span className="text-foreground">bekreftet, midlertidig tilbud</span> til <span className="text-foreground">{contactEmail}</span> direkte fra <span className="text-foreground">kontakt@avargo.no</span>. Under onboardingen ser vi over volum og omfang sammen med deg, og prisen kan justeres <span className="text-foreground">ned</span> hvis det er grunnlag for det.
                         </p>
-                        <div className="p-4 rounded-2xl border border-border/50 bg-card/40 text-sm">
+                        <div className="p-4 rounded-xl border border-border/50 bg-card/40 text-sm">
                           <p className="text-foreground/60 font-light mb-1">
                             {isCustomOffer ? "Ditt tilbud" : "Ditt midlertidige estimat"}
                           </p>
@@ -690,8 +690,8 @@ const Pricing = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             {includedServices.map((service, i) => (
               <AnimatedSection key={service.title} delay={i * 0.08}>
-                <div className="group h-full p-7 md:p-8 rounded-3xl bg-card/70 border border-border/40 card-lift">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/8 border border-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/12 transition-colors">
+                <div className="group h-full p-7 md:p-8 rounded-xl bg-card/70 border border-border/40 card-lift">
+                  <div className="w-12 h-12 rounded-xl bg-primary/8 border border-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/12 transition-colors">
                     <service.icon size={22} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <h3 className="font-heading text-xl md:text-2xl mb-3">{service.title}</h3>
@@ -703,7 +703,7 @@ const Pricing = () => {
 
           <AnimatedSection delay={0.4}>
             <div className="max-w-3xl mx-auto mt-16 md:mt-20">
-              <div className="p-6 md:p-8 rounded-3xl bg-card/60 border border-border/40">
+              <div className="p-6 md:p-8 rounded-xl bg-card/60 border border-border/40">
                 <h3 className="font-heading text-2xl mb-5">Detaljert oversikt over det som er inkludert</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                   {[
@@ -746,7 +746,7 @@ const Pricing = () => {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-border/40 bg-card/60 overflow-hidden">
+              <div className="rounded-xl border border-border/40 bg-card/60 overflow-hidden">
                 <div className="hidden sm:grid grid-cols-3 gap-4 px-6 py-4 bg-primary/5 border-b border-border/40 text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                   <span></span>
                   <span className="text-center text-primary">Avargo</span>

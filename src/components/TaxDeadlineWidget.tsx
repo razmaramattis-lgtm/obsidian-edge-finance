@@ -74,7 +74,7 @@ const TaxDeadlineWidget = ({
 
   if (loading) {
     return (
-      <div className={`glass rounded-2xl p-5 border border-border/20 ${className}`}>
+      <div className={`glass rounded-xl p-5 border border-border/20 ${className}`}>
         <div className="flex items-center gap-2 mb-4">
           <CalendarClock size={15} className="text-primary animate-pulse" strokeWidth={1.5} />
           <span className="text-sm text-muted-foreground">Henter frister…</span>
@@ -90,7 +90,7 @@ const TaxDeadlineWidget = ({
 
   if (error) {
     return (
-      <div className={`glass rounded-2xl p-5 border border-border/20 ${className}`}>
+      <div className={`glass rounded-xl p-5 border border-border/20 ${className}`}>
         <div className="flex items-center gap-2 text-muted-foreground">
           <AlertTriangle size={14} />
           <span className="text-xs">{error}</span>
@@ -103,7 +103,7 @@ const TaxDeadlineWidget = ({
   }
 
   return (
-    <div className={`glass rounded-2xl border border-border/20 ${compact ? "p-4" : "p-5"} ${className}`}>
+    <div className={`glass rounded-xl border border-border/20 ${compact ? "p-4" : "p-5"} ${className}`}>
       {showHeader && (
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">

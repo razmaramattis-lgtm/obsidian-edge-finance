@@ -10,9 +10,9 @@ import { sectionPageCopy } from "@/config/sectionContent";
 import NextStepsTimeline from "@/components/NextStepsTimeline";
 import ContactObjections from "@/components/ContactObjections";
 
-const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
+const inputClass = "w-full bg-card/80 backdrop-blur-xl border border-border/40 rounded-xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 transition-all duration-500 font-light";
 const labelClass = "text-[11px] tracking-[0.25em] uppercase text-foreground/60 block mb-2 font-medium";
-const readonlyClass = "w-full bg-card/40 border border-border/20 rounded-2xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground/50 cursor-default font-light";
+const readonlyClass = "w-full bg-card/40 border border-border/20 rounded-xl px-4 md:px-5 py-3.5 md:py-4 text-sm text-foreground/50 cursor-default font-light";
 
 type BrregEnhet = {
   organisasjonsnummer: string;
@@ -365,7 +365,7 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
                 {/* Package indicator */}
                 {valgtPakke && (
-                  <div className="px-4 py-3 rounded-2xl bg-primary/10 border border-primary/20 text-sm text-primary">
+                  <div className="px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 text-sm text-primary">
                     Valgt pakke: <strong>{valgtPakke}</strong>
                   </div>
                 )}
@@ -385,7 +385,7 @@ const Contact = () => {
                     {(searching || loadingRoles) && <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40 animate-spin" />}
                   </div>
                   {showDropdown && (
-                    <div className="absolute z-50 w-full mt-2 bg-card/98 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
+                    <div className="absolute z-50 w-full mt-2 bg-card/98 backdrop-blur-xl border border-border/40 rounded-xl overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
                       {searchResults.map((enhet) => (
                         <button key={enhet.organisasjonsnummer} type="button" onClick={() => selectCompany(enhet)} className="w-full text-left px-4 py-3 hover:bg-primary/8 transition-colors border-b border-border/15 last:border-0">
                           <div className="flex items-center gap-3">
@@ -424,7 +424,7 @@ const Contact = () => {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="rounded-2xl border border-border/20 bg-card/30 p-4 space-y-3">
+                      <div className="rounded-xl border border-border/20 bg-card/30 p-4 space-y-3">
                         <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/30 font-medium">Hentet fra Brønnøysund</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {orgForm && (
@@ -482,7 +482,7 @@ const Contact = () => {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="rounded-2xl border border-border/20 bg-card/30 overflow-hidden">
+                      <div className="rounded-xl border border-border/20 bg-card/30 overflow-hidden">
                         <button
                           type="button"
                           onClick={() => setShowFinancials(v => !v)}
@@ -537,7 +537,7 @@ const Contact = () => {
                 </div>
 
                 {/* Optional details — collapsed by default to reduce friction */}
-                <div className="rounded-2xl border border-border/20 bg-card/20 overflow-hidden">
+                <div className="rounded-xl border border-border/20 bg-card/20 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setShowDetails(v => !v)}

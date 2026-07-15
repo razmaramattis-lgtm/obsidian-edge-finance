@@ -172,9 +172,9 @@ const KursForside = () => {
                 >
                   <Link
                     to="/kurs/katalog"
-                    className="group block p-5 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-500"
+                    className="group block p-5 md:p-8 rounded-xl md:rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-500"
                   >
-                    <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br ${cat.color} border border-border/20 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500`}>
+                    <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-xl bg-gradient-to-br ${cat.color} border border-border/20 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500`}>
                       <Icon size={18} className="text-foreground/70 md:hidden" strokeWidth={1.5} />
                       <Icon size={22} className="text-foreground/70 hidden md:block" strokeWidth={1.5} />
                     </div>
@@ -251,10 +251,10 @@ const KursForside = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="rounded-3xl overflow-hidden">
+              <div className="rounded-xl overflow-hidden">
                 <img src={learningImg} alt="Kursopplevelse" className="w-full h-[300px] md:h-[500px] object-cover" />
               </div>
-              <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 glass rounded-2xl p-4 md:p-6 border border-border/20 max-w-[200px] md:max-w-[240px]">
+              <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 glass rounded-xl p-4 md:p-6 border border-border/20 max-w-[200px] md:max-w-[240px]">
                 <p className="font-heading text-3xl text-secondary mb-1"><AnimatedCounter target={courseCount} suffix="+" /></p>
                 <p className="text-xs text-muted-foreground">kurs tilgjengelig nå</p>
               </div>
@@ -291,7 +291,7 @@ const KursForside = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="group p-5 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 transition-all duration-500"
+                  className="group p-5 md:p-8 rounded-xl md:rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/10 transition-all duration-500"
                 >
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-secondary/10 flex items-center justify-center mb-3 md:mb-5 group-hover:scale-110 transition-transform">
                     <Icon size={18} className="text-secondary" />

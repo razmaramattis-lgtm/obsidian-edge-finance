@@ -435,7 +435,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
             {posts.map(post => {
               const ap = post.profiles as any;
               return (
-                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 overflow-hidden">
+                <article key={post.id} className="rounded-xl border border-border/15 bg-card/50 overflow-hidden">
                   <div className="flex items-start gap-3 p-5 pb-0">
                     <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
                     <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
@@ -461,7 +461,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
             {allGroups.filter(g => memberGroupIds.includes(g.id)).map(g => {
               const grad = getGroupGradient(g.color, g.name);
               return (
-                <div key={g.id} className="text-left rounded-2xl border border-border/15 bg-card/60 overflow-hidden">
+                <div key={g.id} className="text-left rounded-xl border border-border/15 bg-card/60 overflow-hidden">
                   <div className={`h-20 bg-gradient-to-br ${grad} relative`}><div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" /></div>
                   <div className="p-4 -mt-5 relative">
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-background`}>{g.name.charAt(0)}</div>
@@ -477,7 +477,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
         )}
 
         {activeTab === "about" && (
-          <div className="rounded-2xl border border-border/15 bg-card/60 p-6 space-y-5">
+          <div className="rounded-xl border border-border/15 bg-card/60 p-6 space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Briefcase size={9} /> Rolle / Tittel</p>
@@ -675,7 +675,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
             {myPosts.map(post => {
               const ap = post.profiles as any;
               return (
-                <article key={post.id} className="rounded-2xl border border-border/15 bg-card/50 hover:border-border/25 transition-all hover:shadow-md overflow-hidden">
+                <article key={post.id} className="rounded-xl border border-border/15 bg-card/50 hover:border-border/25 transition-all hover:shadow-md overflow-hidden">
                   <div className="flex items-start gap-3 p-5 pb-0">
                     <UserAvatar name={ap?.name} avatarUrl={ap?.avatar_url} size="md" />
                     <div className="flex-1">
@@ -719,7 +719,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
             {allGroups.filter(g => myGroupIds.includes(g.id)).map(g => {
               const grad = getGroupGradient(g.color, g.name);
               return (
-                <button key={g.id} onClick={() => onNavigate("groups")} className="text-left rounded-2xl border border-border/15 bg-card/60 overflow-hidden hover:shadow-md transition-all">
+                <button key={g.id} onClick={() => onNavigate("groups")} className="text-left rounded-xl border border-border/15 bg-card/60 overflow-hidden hover:shadow-md transition-all">
                   <div className={`h-20 bg-gradient-to-br ${grad} relative`}><div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" /></div>
                   <div className="p-4 -mt-5 relative">
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-background`}>{g.name.charAt(0)}</div>

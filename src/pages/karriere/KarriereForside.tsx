@@ -38,7 +38,7 @@ const ImageMarquee = forwardRef<HTMLDivElement, ImageMarqueeProps>(({ images, re
       transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
     >
       {[...images, ...images].map((img, i) => (
-        <div key={i} className="shrink-0 w-96 h-64 rounded-2xl overflow-hidden">
+        <div key={i} className="shrink-0 w-96 h-64 rounded-xl overflow-hidden">
           <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
         </div>
       ))}
@@ -112,10 +112,10 @@ const KarriereForside = () => {
             </p>
 
             <div className="flex gap-3">
-              <Link to="/karriere/stillinger" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-5 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold transition-all">
+              <Link to="/karriere/stillinger" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-5 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-xl text-sm font-semibold transition-all">
                 Se stillinger <ArrowRight size={14} />
               </Link>
-              <Link to="/karriere/avargo-fri" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-5 md:px-8 border border-border/20 text-foreground rounded-xl md:rounded-2xl text-sm font-medium transition-all">
+              <Link to="/karriere/avargo-fri" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-5 md:px-8 border border-border/20 text-foreground rounded-xl md:rounded-xl text-sm font-medium transition-all">
                 <Zap size={14} className="text-primary" /> Avargo Fri
               </Link>
             </div>
@@ -140,7 +140,7 @@ const KarriereForside = () => {
                 </>
               );
               return (
-                <div key={i} className="rounded-xl md:rounded-2xl border border-border/10 p-3 md:p-6 text-center bg-muted/5">
+                <div key={i} className="rounded-xl md:rounded-xl border border-border/10 p-3 md:p-6 text-center bg-muted/5">
                   {s.link ? <Link to={s.link} className="block">{inner}</Link> : inner}
                 </div>
               );
@@ -189,7 +189,7 @@ const KarriereForside = () => {
               const count = deptCounts[dept.name.toLowerCase()] || 0;
               return (
                 <motion.div key={dept.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.7 }}>
-                  <Link to={dept.path} className="group relative block rounded-3xl overflow-hidden aspect-[16/10]">
+                  <Link to={dept.path} className="group relative block rounded-xl overflow-hidden aspect-[16/10]">
                     <motion.img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover" whileHover={{ scale: 1.08 }} transition={{ duration: 0.8 }} />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                     {count > 0 && (
@@ -250,7 +250,7 @@ const KarriereForside = () => {
 
           {/* Desktop: bento grid */}
           <div className="hidden md:grid grid-cols-3 gap-5 max-w-6xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="col-span-2 row-span-2 rounded-3xl overflow-hidden relative group">
+            <motion.div initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="col-span-2 row-span-2 rounded-xl overflow-hidden relative group">
               <img src={loungeImg} alt="Avargo lounge" className="w-full h-full object-cover min-h-[420px]" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-12">
@@ -267,7 +267,7 @@ const KarriereForside = () => {
               { title: "Faglig utvikling", desc: "Kurs, sertifiseringer og sterkt fagmiljø." },
               { title: "Inkluderende kultur", desc: "En trygg arbeidsplass der du blir sett og hørt." },
             ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }} className="glass rounded-2xl p-7 border border-border/10 hover:border-primary/20 transition-all duration-500">
+              <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }} className="glass rounded-xl p-7 border border-border/10 hover:border-primary/20 transition-all duration-500">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><Sparkles size={14} className="text-primary" /></div>
                 <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -322,10 +322,10 @@ const KarriereForside = () => {
           <h2 className="text-xl md:text-6xl font-bold text-foreground mb-3 md:mb-6">Klar for neste steg?</h2>
           <p className="text-xs md:text-lg text-muted-foreground max-w-lg mx-auto mb-5 md:mb-10">Se våre ledige stillinger, eller send en åpen søknad.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Link to="/karriere/stillinger" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-6 md:px-10 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold transition-all">
+            <Link to="/karriere/stillinger" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-6 md:px-10 bg-primary text-primary-foreground rounded-xl md:rounded-xl text-sm font-semibold transition-all">
               Se stillinger <ArrowRight size={14} />
             </Link>
-            <Link to="/karriere/stillinger#apen-soknad" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-6 md:px-10 border border-border/20 text-foreground rounded-xl md:rounded-2xl text-sm font-medium transition-all">
+            <Link to="/karriere/stillinger#apen-soknad" className="inline-flex items-center justify-center gap-2 h-11 md:h-14 px-6 md:px-10 border border-border/20 text-foreground rounded-xl md:rounded-xl text-sm font-medium transition-all">
               Åpen søknad
             </Link>
           </div>

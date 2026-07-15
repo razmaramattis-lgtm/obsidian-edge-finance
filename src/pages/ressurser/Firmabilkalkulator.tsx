@@ -162,9 +162,9 @@ const Firmabilkalkulator = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-12">
             {/* ─── Input ─── */}
-            <div className="glass rounded-3xl border border-border/20 p-6 md:p-8">
+            <div className="glass rounded-xl border border-border/20 p-6 md:p-8">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <Car size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
@@ -267,7 +267,7 @@ const Firmabilkalkulator = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="glass rounded-3xl border border-primary/25 p-6 md:p-8 relative overflow-hidden"
+                className="glass rounded-xl border border-primary/25 p-6 md:p-8 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
                 <div className="relative">
@@ -307,7 +307,7 @@ const Firmabilkalkulator = () => {
               </div>
 
               {/* Nedbryting */}
-              <div className="glass rounded-3xl border border-border/20 p-6 md:p-8">
+              <div className="glass rounded-xl border border-border/20 p-6 md:p-8">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center">
                     <Receipt size={16} className="text-primary" strokeWidth={1.5} />
@@ -339,7 +339,7 @@ const Firmabilkalkulator = () => {
               </div>
 
               {/* Explainer */}
-              <div className="glass rounded-3xl border border-border/20 p-6 md:p-8">
+              <div className="glass rounded-xl border border-border/20 p-6 md:p-8">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-9 h-9 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center">
                     <HelpCircle size={16} className="text-secondary" strokeWidth={1.5} />
@@ -371,7 +371,7 @@ const Firmabilkalkulator = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                 <Info size={18} className="text-primary" strokeWidth={1.5} />
               </div>
               <h2 className="font-heading text-2xl md:text-3xl">Om beregningen</h2>
@@ -408,10 +408,10 @@ const Firmabilkalkulator = () => {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all">
+              <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-primary text-primary-foreground rounded-xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all">
                 Snakk med en regnskapsfører <Wallet size={14} />
               </Link>
-              <Link to="/ressurser" className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-border/30 rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all">
+              <Link to="/ressurser" className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-border/30 rounded-xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all">
                 Se flere ressurser
               </Link>
             </div>
@@ -472,7 +472,7 @@ const Toggle = ({ label, hint, active, onChange }: { label: string; hint?: strin
 const ResultCard = ({ icon: Icon, title, primary, primaryLabel, secondary, detail }: {
   icon: React.ElementType; title: string; primary: string; primaryLabel: string; secondary: string; detail: string;
 }) => (
-  <div className="glass rounded-3xl border border-border/20 p-6">
+  <div className="glass rounded-xl border border-border/20 p-6">
     <div className="flex items-center gap-2 mb-3">
       <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center">
         <Icon size={14} className="text-primary" strokeWidth={1.5} />

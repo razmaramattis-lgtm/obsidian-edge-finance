@@ -123,7 +123,7 @@ const AiInnsikt = () => (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {features.map((f, i) => (
             <AnimatedSection key={f.num} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
                 <span className="font-heading text-5xl text-primary/8">{f.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{f.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{f.desc}</p>
@@ -153,7 +153,7 @@ const AiInnsikt = () => (
       <div className="absolute inset-0 ambient-glow opacity-25" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
             <Zap size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">

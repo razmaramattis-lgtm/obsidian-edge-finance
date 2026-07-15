@@ -187,7 +187,7 @@ const KursDetalj = () => {
               <AnimatedSection delay={0.15}>
                 <ul className="space-y-3">
                   {highlights.map((h, i) => (
-                    <li key={i} className="flex items-start gap-4 p-4 glass rounded-2xl border border-border/10">
+                    <li key={i} className="flex items-start gap-4 p-4 glass rounded-xl border border-border/10">
                       <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                         <CheckCircle2 size={14} className="text-primary" />
                       </div>
@@ -251,7 +251,7 @@ const KursDetalj = () => {
         <div className="absolute inset-0 ambient-glow opacity-25" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
               <GraduationCap size={18} className="text-primary" strokeWidth={1.5} />
             </div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
@@ -289,7 +289,7 @@ const KursDetalj = () => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg glass rounded-3xl border border-border/20 p-8 md:p-10"
+            className="relative w-full max-w-lg glass rounded-xl border border-border/20 p-8 md:p-10"
             onClick={e => e.stopPropagation()}
           >
             <button onClick={() => setShowContact(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
@@ -297,7 +297,7 @@ const KursDetalj = () => {
             </button>
             {contactSubmitted ? (
               <div className="text-center py-6">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+                <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
                   <CheckCircle2 size={24} className="text-primary" />
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Vi har mottatt forespørselen!</h3>
@@ -385,7 +385,7 @@ const KursDetalj = () => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg glass rounded-3xl border border-border/20 p-8 md:p-10"
+            className="relative w-full max-w-lg glass rounded-xl border border-border/20 p-8 md:p-10"
             onClick={e => e.stopPropagation()}
           >
             <button onClick={() => setShowBooking(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
@@ -393,7 +393,7 @@ const KursDetalj = () => {
             </button>
             {submitted ? (
               <div className="text-center py-6">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+                <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
                   <CheckCircle2 size={24} className="text-primary" />
                 </div>
                 <h3 className="font-heading text-2xl mb-2">Bestilling mottatt!</h3>

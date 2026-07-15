@@ -89,7 +89,7 @@ const GuideTemplate = ({ slug, title, metaTitle, metaDescription, intro, section
               <h2 className="font-serif text-3xl md:text-4xl font-light text-foreground mb-8">Vanlige spørsmål</h2>
               <div className="space-y-3">
                 {faq.map((f) => (
-                  <details key={f.q} className="group rounded-2xl border border-border/15 bg-card/30 p-5">
+                  <details key={f.q} className="group rounded-xl border border-border/15 bg-card/30 p-5">
                     <summary className="cursor-pointer flex items-center justify-between gap-4 font-serif text-lg text-foreground">
                       {f.q}
                       <ArrowRight className="w-4 h-4 text-primary group-open:rotate-90 transition-transform shrink-0" />
@@ -101,7 +101,7 @@ const GuideTemplate = ({ slug, title, metaTitle, metaDescription, intro, section
             </section>
 
             {/* CTA */}
-            <section className="mt-16 p-8 md:p-10 rounded-3xl border border-primary/20 bg-primary/5 text-center">
+            <section className="mt-16 p-8 md:p-10 rounded-xl border border-primary/20 bg-primary/5 text-center">
               <h2 className="font-serif text-2xl md:text-3xl font-light text-foreground mb-3">
                 {cta?.heading || "Klar for et regnskapsbyrå som faktisk svarer?"}
               </h2>

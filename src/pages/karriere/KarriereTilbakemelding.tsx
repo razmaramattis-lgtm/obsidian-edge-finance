@@ -90,7 +90,7 @@ const KarriereTilbakemelding = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="p-6 md:p-8 rounded-2xl border border-border/10 bg-card/30 backdrop-blur-sm"
+              className="p-6 md:p-8 rounded-xl border border-border/10 bg-card/30 backdrop-blur-sm"
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -111,7 +111,7 @@ const KarriereTilbakemelding = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="p-6 md:p-8 rounded-2xl border border-border/10 bg-card/30 backdrop-blur-sm"
+              className="p-6 md:p-8 rounded-xl border border-border/10 bg-card/30 backdrop-blur-sm"
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
@@ -135,7 +135,7 @@ const KarriereTilbakemelding = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="p-6 md:p-8 rounded-2xl border border-border/10 bg-card/30 backdrop-blur-sm"
+              className="p-6 md:p-8 rounded-xl border border-border/10 bg-card/30 backdrop-blur-sm"
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -173,13 +173,13 @@ const KarriereTilbakemelding = () => {
                 href="https://www.avargo.no"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
               >
                 Utforsk avargo.no <ArrowRight size={18} />
               </a>
               <Link
                 to="/karriere"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl border border-border/20 text-foreground font-semibold text-base hover:bg-muted/20 transition-all"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl border border-border/20 text-foreground font-semibold text-base hover:bg-muted/20 transition-all"
               >
                 Se ledige stillinger
               </Link>

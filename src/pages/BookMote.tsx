@@ -306,7 +306,7 @@ const BookMote = () => {
           <meta name="robots" content="noindex" />
         </Helmet>
         <section className="min-h-[70vh] flex items-center justify-center px-4">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg w-full text-center glass rounded-3xl border border-border/20 p-10 space-y-5">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg w-full text-center glass rounded-xl border border-border/20 p-10 space-y-5">
             <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
               <CheckCircle2 size={28} className="text-primary" />
             </div>
@@ -359,7 +359,7 @@ const BookMote = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.25 }}
-              className="glass rounded-3xl border border-border/20 p-6 md:p-10"
+              className="glass rounded-xl border border-border/20 p-6 md:p-10"
             >
               {step === 0 && (
                 <div className="space-y-5">
@@ -374,7 +374,7 @@ const BookMote = () => {
                       const active = service === s.id;
                       return (
                         <button key={s.id} onClick={() => pickService(s.id)}
-                          className={`text-left p-5 rounded-2xl border transition-all ${active ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
+                          className={`text-left p-5 rounded-xl border transition-all ${active ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} border border-border/20 flex items-center justify-center mb-3`}>
                             <Icon size={18} className="text-foreground" />
                           </div>
@@ -419,7 +419,7 @@ const BookMote = () => {
                         {showDropdown && searchResults.length > 0 && (
                           <motion.div
                             initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
-                            className="absolute z-20 left-0 right-0 mt-2 rounded-2xl border border-border/30 bg-card shadow-xl overflow-hidden max-h-72 overflow-y-auto"
+                            className="absolute z-20 left-0 right-0 mt-2 rounded-xl border border-border/30 bg-card shadow-xl overflow-hidden max-h-72 overflow-y-auto"
                           >
                             {searchResults.map(enhet => (
                               <button
@@ -508,7 +508,7 @@ const BookMote = () => {
                   <div className="grid sm:grid-cols-2 gap-3">
                     {quiz?.goals.map(g => (
                       <button key={g} onClick={() => setGoal(g)}
-                        className={`text-left p-4 rounded-2xl border transition ${goal === g ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
+                        className={`text-left p-4 rounded-xl border transition ${goal === g ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40"}`}>
                         <p className="text-sm font-medium">{g}</p>
                       </button>
                     ))}

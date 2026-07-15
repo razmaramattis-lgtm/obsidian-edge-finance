@@ -222,7 +222,7 @@ const Kontohjelp = () => {
                 value={search}
                 onChange={e => { setSearch(e.target.value); setActiveClass(null); setShowAll(false); }}
                 placeholder="Søk etter konto, utgift eller begrep..."
-                className="w-full h-16 pl-14 pr-12 rounded-2xl border border-border/30 bg-card text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 shadow-lg shadow-primary/5 transition-all"
+                className="w-full h-16 pl-14 pr-12 rounded-xl border border-border/30 bg-card text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 shadow-lg shadow-primary/5 transition-all"
               />
               {search && (
                 <button
@@ -267,7 +267,7 @@ const Kontohjelp = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { setActiveClass(activeClass === cls ? null : cls); setSearch(""); }}
-                  className={`flex flex-col items-center gap-1 px-2 py-3 rounded-2xl text-center transition-all duration-200 border ${
+                  className={`flex flex-col items-center gap-1 px-2 py-3 rounded-xl text-center transition-all duration-200 border ${
                     activeClass === cls
                       ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 border-primary"
                       : "bg-card border-border/20 text-muted-foreground hover:border-primary/30 hover:shadow-md"
@@ -310,7 +310,7 @@ const Kontohjelp = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-16 space-y-4"
           >
-            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-xl bg-muted/50 flex items-center justify-center mx-auto">
               <Search size={24} className="text-muted-foreground/40" />
             </div>
             <p className="text-muted-foreground text-sm">Ingen treff. Prøv et annet søkeord eller velg en kontoklasse.</p>
@@ -335,7 +335,7 @@ const Kontohjelp = () => {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="max-w-lg mx-auto glass rounded-2xl p-5 border border-primary/20 space-y-3 text-left"
+                      className="max-w-lg mx-auto glass rounded-xl p-5 border border-primary/20 space-y-3 text-left"
                     >
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <AlertTriangle size={14} className="text-primary" />
@@ -392,7 +392,7 @@ const Kontohjelp = () => {
                     >
                       <Link
                         to={`/ressurser/kontohjelp/${item.slug}`}
-                        className="group glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                        className="group glass rounded-xl px-5 py-4 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                       >
                         <div className="flex items-center gap-4 min-w-0">
                           <span className="text-sm font-mono bg-gradient-to-br from-primary/15 to-primary/5 text-primary px-3 py-1.5 rounded-xl shrink-0 border border-primary/10 font-semibold">
@@ -464,7 +464,7 @@ const Kontohjelp = () => {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="max-w-lg mx-auto glass rounded-2xl p-5 border border-primary/20 space-y-3 text-left"
+                    className="max-w-lg mx-auto glass rounded-xl p-5 border border-primary/20 space-y-3 text-left"
                   >
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <AlertTriangle size={14} className="text-primary" />

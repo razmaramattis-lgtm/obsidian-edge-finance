@@ -120,7 +120,7 @@ const BlogListing = () => {
           {featuredPost && (
             <AnimatedSection>
               <Link to={`/nyhet/${featuredPost.slug}`} className="block mb-12 group">
-                <div className="glass rounded-3xl overflow-hidden border border-border/20 card-lift">
+                <div className="glass rounded-xl overflow-hidden border border-border/20 card-lift">
                   <div className="grid grid-cols-1 lg:grid-cols-2">
                     {featuredPost.image_url && (
                       <div className="aspect-[16/10] lg:aspect-auto overflow-hidden relative">
@@ -159,7 +159,7 @@ const BlogListing = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {remainingPosts.map((post, i) => (
               <AnimatedSection key={post.id} delay={i * 0.05}>
-                <Link to={`/nyhet/${post.slug}`} className="glass rounded-2xl overflow-hidden border border-border/20 card-lift group block h-full">
+                <Link to={`/nyhet/${post.slug}`} className="glass rounded-xl overflow-hidden border border-border/20 card-lift group block h-full">
                   {post.image_url && (
                     <div className="aspect-[16/9] overflow-hidden relative">
                       <img src={post.image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
