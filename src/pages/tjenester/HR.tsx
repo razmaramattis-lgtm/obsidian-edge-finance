@@ -8,7 +8,7 @@ import ambientTexture3 from "@/assets/ambient-texture-3.jpg";
 const etablering = [
   "Kartlegging av dagens HR-rutiner",
   "Etablering av personalmapper",
-  "Oppsett av HR-system (f.eks. Huma HR)",
+  "Oppsett av HR-system",
   "Standard arbeidsavtaler",
   "Personalhåndbok",
   "Rutiner for ferie",
