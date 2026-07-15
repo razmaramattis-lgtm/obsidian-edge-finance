@@ -5,6 +5,7 @@ import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Logo from "@/components/Logo";
 
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
@@ -167,18 +168,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }`}
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          {/* Logo — editorial masthead med kobber-monogram */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <span
-              aria-hidden="true"
-              className={`hidden sm:flex items-center justify-center rounded-full border border-primary/40 bg-primary/5 font-heading leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg] ${
-                scrolled ? "h-8 w-8 text-[13px]" : "h-9 w-9 text-[15px]"
+          {/* Logo — offisiell Avargo-logo */}
+          <Link to="/" className="flex items-center group">
+            <Logo
+              variant="full"
+              className={`text-forest group-hover:text-copper transition-colors duration-500 ease-out ${
+                scrolled ? "h-7 lg:h-8" : "h-8 lg:h-9"
               }`}
-            >A</span>
-            <span className="flex items-baseline gap-2">
-              <span className={`font-heading tracking-tight text-foreground group-hover:text-primary transition-all duration-500 ${scrolled ? "text-[22px] md:text-[22px]" : "text-2xl md:text-[26px]"}`}>Avargo</span>
-              <span className={`hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1 transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`}>— Regnskap</span>
-            </span>
+            />
           </Link>
 
 
@@ -427,12 +424,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 mb-12">
             {/* Brand column */}
             <div className="md:col-span-5">
-              <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                <span aria-hidden="true" className="flex items-center justify-center h-10 w-10 rounded-full border border-primary/50 bg-primary/10 font-heading text-[17px] leading-none text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">A</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="font-heading text-2xl tracking-tight">Avargo</span>
-                  <span className="text-[9px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-semibold">— Regnskap</span>
-                </span>
+              <Link to="/" className="inline-flex items-center mb-6 group">
+                <Logo
+                  variant="full"
+                  className="h-9 md:h-10 text-cream group-hover:text-accent transition-colors duration-500"
+                />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
