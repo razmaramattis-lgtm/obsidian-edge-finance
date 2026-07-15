@@ -83,12 +83,12 @@ const HubFAQ = () => {
                 <AccordionItem
                   key={i}
                   value={`item-${i}`}
-                  className="border border-border/10 rounded-2xl px-5 md:px-6 bg-muted/5 hover:bg-muted/10 transition-colors"
+                  className="border border-primary/15 rounded-2xl px-5 md:px-6 bg-background shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
                 >
-                  <AccordionTrigger className="text-sm md:text-base font-semibold text-left hover:no-underline py-5">
+                  <AccordionTrigger className="text-sm md:text-base font-semibold text-foreground text-left hover:no-underline py-5">
                     {faq.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-5">
+                  <AccordionContent className="text-sm text-foreground/75 leading-relaxed pb-5">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>
