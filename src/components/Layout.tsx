@@ -11,7 +11,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
-  Mail, MapPin, ShieldCheck,
+  Mail, ShieldCheck,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
@@ -160,25 +160,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             : "bg-background/85 border-border/60 shadow-none"
         }`}
       >
-        {/* Thin editorial top strip — kontakt & tillit. Kollapser subtilt ved scroll */}
-        <div
-          className={`hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground overflow-hidden transition-[max-height,opacity] duration-500 ease-out ${
-            scrolled ? "max-h-0 opacity-0 border-b-0" : "max-h-10 opacity-100"
-          }`}
-          aria-hidden={scrolled}
-        >
-          <div className="container mx-auto flex items-center justify-between h-8 px-8 text-[10.5px] tracking-[0.14em] uppercase font-medium">
-            <div className="flex items-center gap-6 opacity-90">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck size={11} strokeWidth={1.8} className="text-accent" /> Autorisert regnskapsbyrå</span>
-              <span className="inline-flex items-center gap-1.5 opacity-80"><MapPin size={11} strokeWidth={1.8} /> Oscars gate 2B · Skien</span>
-            </div>
-            <div className="flex items-center gap-5 opacity-90">
-              <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"><Mail size={11} strokeWidth={1.8} /> kontakt@avargo.no</a>
-              <span className="h-3 w-px bg-secondary-foreground/25" />
-              <Link to="/logg-inn" className="hover:text-accent transition-colors">Logg inn</Link>
-            </div>
-          </div>
-        </div>
 
         <div
           className={`container mx-auto flex items-center justify-between px-4 md:px-8 transition-[height] duration-500 ease-out h-[64px] ${
@@ -210,7 +191,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Tjenester
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${tjenesterOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={tjenesterOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={tjenesterOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10 grid grid-cols-12 gap-10">
                   {/* Left column — editorial intro */}
                   <div className="col-span-3 border-r border-border/70 pr-8">
@@ -263,7 +244,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Bransjer
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={bransjerOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={bransjerOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10">
                   <div className="mb-6 flex items-end justify-between border-b border-border/60 pb-4">
                     <div>
@@ -400,7 +381,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* ── Breadcrumbs & main ───────────────────── */}
-      <div className="pt-16 lg:pt-[108px]">
+      <div className="pt-16 lg:pt-[76px]">
         <Breadcrumbs />
       </div>
 
@@ -437,7 +418,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="relative container mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
           {/* Editorial eyebrow rule */}
           <div className="flex items-center gap-4 mb-10">
-            <span className="text-[10px] tracking-[0.45em] uppercase text-accent font-semibold">Est. 2024 — Skien</span>
+            <span className="text-[10px] tracking-[0.45em] uppercase text-accent font-semibold">Est. 2024</span>
             <span className="flex-1 h-px bg-gradient-to-r from-accent/40 via-secondary-foreground/15 to-transparent" />
             <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">Regnskap · Rådgivning</span>
           </div>
@@ -465,9 +446,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-2 text-secondary-foreground/85 hover:text-accent transition-colors">
                   <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
                 </a>
-                <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
-                  <MapPin size={13} strokeWidth={1.7} className="text-accent" /> Oscars gate 2B, 3714 Skien
-                </span>
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
                   <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> Autorisert regnskapsbyrå · Org.nr 938 076 669
                 </span>
@@ -526,7 +504,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Bottom bar */}
           <div className="border-t border-secondary-foreground/15 pt-5 flex flex-col md:flex-row justify-between items-center gap-3">
             <span className="text-[11px] text-secondary-foreground/55 font-light tracking-wide">
-              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon i Skien.
+              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
               <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
