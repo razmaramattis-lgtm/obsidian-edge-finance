@@ -67,7 +67,7 @@ const SwitchCheckSection = () => {
               </button>
               <Link
                 to="/tjenester"
-                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-sage text-primary rounded-xl md:rounded-2xl text-sm font-semibold hover:brightness-105 hover:scale-[1.02] transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-muted text-primary rounded-xl md:rounded-2xl text-sm font-semibold border border-primary/20 hover:bg-muted/80 hover:border-primary/40 hover:scale-[1.02] transition-all duration-300"
               >
                 Slik bytter du regnskapsfører
               </Link>
@@ -103,14 +103,14 @@ const SwitchCheckSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="absolute bottom-5 left-5 right-5 md:bottom-8 md:left-8 md:right-8 glass rounded-2xl p-4 md:p-5 flex items-center gap-4"
+                className="absolute bottom-5 left-5 right-5 md:bottom-8 md:left-8 md:right-8 bg-sage/95 backdrop-blur-sm border border-primary/15 rounded-2xl p-4 md:p-5 flex items-center gap-4 shadow-lg shadow-primary/10"
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center shrink-0">
                   <Sparkles size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base md:text-lg font-semibold text-foreground">5 spørsmål</p>
-                  <div className="flex items-center gap-1.5 text-xs md:text-sm text-muted-foreground">
+                  <p className="text-base md:text-lg font-semibold text-primary">5 spørsmål</p>
+                  <div className="flex items-center gap-1.5 text-xs md:text-sm text-primary/75">
                     <Clock size={12} strokeWidth={1.5} />
                     <span>ca. 60 sekunder</span>
                   </div>
