@@ -157,6 +157,68 @@ const HR = () => (
       </div>
     </section>
 
+    <section className="py-24 md:py-40">
+      <div className="container mx-auto px-4 md:px-6">
+        <AnimatedSection>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-5">Nivåer</p>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-6 leading-snug max-w-3xl">
+            Tilpasset behovet ditt.{" "}
+            <span className="italic text-gradient-teal">Liten eller medium.</span>
+          </h2>
+          <p className="text-muted-foreground font-light leading-relaxed text-sm md:text-base max-w-2xl mb-12 md:mb-16">
+            Vi tilpasser omfanget etter størrelsen på bedriften. Trenger du kun det grunnleggende, eller ønsker du et komplett HR-system i bunn?
+          </p>
+        </AnimatedSection>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl">
+          <AnimatedSection delay={0.1}>
+            <div className="p-8 md:p-10 glass rounded-3xl h-full">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Liten</p>
+              <h3 className="font-heading text-2xl md:text-3xl mb-4">Enkel HR-bistand</h3>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                For små bedrifter som trenger et solid grunnlag — uten et eget HR-system.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "HR-kartlegging",
+                  "Arbeidsavtaler",
+                  "Personalhåndbok",
+                  "Ferie- og fraværsrutiner",
+                ].map((d) => (
+                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                    <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                    {d}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection delay={0.2}>
+            <div className="p-8 md:p-10 glass rounded-3xl h-full border border-secondary/30">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-secondary mb-4">Medium</p>
+              <h3 className="font-heading text-2xl md:text-3xl mb-4">Med HR-system og lederstøtte</h3>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                For bedrifter som ønsker et HR-system i bunn og tettere oppfølging i det daglige.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Alt i Liten",
+                  "Etablering av HR-system (ekstern leverandør)",
+                  "Tilpasning av innholdet til bedriften",
+                  "Lederstøtte og veiledning",
+                  "Onboarding- og offboarding-bistand",
+                ].map((d) => (
+                  <li key={d} className="flex items-start gap-3 text-sm font-light text-foreground/70">
+                    <CheckCircle2 size={14} className="text-secondary mt-0.5 shrink-0" strokeWidth={1.5} />
+                    {d}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </AnimatedSection>
+        </div>
+      </div>
+    </section>
+
     <section className="py-24 md:py-40 border-y border-border/10 relative">
       <div className="absolute inset-0 ambient-glow opacity-15" />
       <div className="container mx-auto px-4 md:px-6 relative">
