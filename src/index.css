@@ -6,60 +6,60 @@
 
 @layer base {
   :root {
-    /* Forest & Copper — deep skoggrønn, copper CTA, sage details, cream ground */
-    --background: 43 33% 93%;         /* #F4F1E9 krem / offwhite */
-    --foreground: 152 34% 9%;         /* dyp skoggrønn tekst — sterkere kontrast */
+    /* Mint Forest — deep grønn CTA, mid + light mint aksenter, beige bakgrunn, hvite kort */
+    --background: 39 43% 94%;         /* #f6f1e8 beige */
+    --foreground: 160 12% 14%;        /* #232d2a dyp nøytral tekst */
 
-    --card: 43 40% 96%;               /* lettere krem */
-    --card-foreground: 152 34% 9%;
+    --card: 0 0% 100%;                /* hvit — for lesbarhet i tekstseksjoner */
+    --card-foreground: 160 12% 14%;
 
-    --popover: 43 40% 96%;
-    --popover-foreground: 152 34% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 12% 14%;
 
-    --primary: 26 46% 45%;            /* #A66A3D kobber — CTA/aksent */
-    --primary-foreground: 43 33% 96%;
+    --primary: 161 55% 24%;           /* #1b5e4b dyp skoggrønn — CTA/logo/footer */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 152 32% 15%;         /* #1C3529 skoggrønn */
-    --secondary-foreground: 137 22% 78%;   /* lys salvie-tekst på grønn */
+    --secondary: 161 55% 24%;         /* #1b5e4b — mørk grønn bånd/footer */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 137 14% 86%;             /* salvie-krem */
-    --muted-foreground: 152 22% 24%;   /* mørkere forest på lys bunn */
+    --muted: 163 60% 92%;             /* #dff5ef pale mint — hover/subtile flater */
+    --muted-foreground: 160 10% 32%;
 
-    --accent: 137 20% 62%;            /* #9CB6A3 salvie — litt mer mettet */
-    --accent-foreground: 152 32% 12%;
+    --accent: 161 56% 42%;            /* #30a684 mid mint — aksent/chips */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 5 68% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 137 18% 66%;            /* tydeligere salvie-hårlinje */
-    --input: 137 14% 78%;
-    --ring: 152 32% 15%;
+    --border: 160 15% 84%;
+    --input: 160 15% 88%;
+    --ring: 161 55% 24%;
 
     --radius: 0.5rem;
 
-    /* Legacy alias-tokens — remapped to den nye paletten så eksisterende komponenter beholder harmoni */
-    --rose: 26 46% 45%;               /* kobber (var terracotta) */
-    --rose-glow: 26 52% 58%;           /* varm kobber-glød */
-    --teal: 152 31% 16%;              /* skoggrønn (var teal) */
-    --teal-glow: 137 16% 66%;         /* salvie */
-    --warm: 152 31% 12%;
+    /* Legacy alias-tokens — remappet til ny palett (grønn/mint) for full harmoni */
+    --rose: 161 55% 24%;              /* CTA-alias */
+    --rose-glow: 161 56% 42%;
+    --teal: 161 55% 24%;
+    --teal-glow: 161 54% 60%;
+    --warm: 161 55% 18%;
 
     /* Merkespesifikke tokens */
-    --forest: 152 31% 16%;
-    --forest-deep: 152 34% 10%;
-    --copper: 26 46% 45%;
-    --copper-glow: 26 52% 58%;
-    --sage: 137 16% 66%;
-    --cream: 43 33% 93%;
+    --forest: 161 55% 24%;            /* #1b5e4b */
+    --forest-deep: 161 55% 18%;
+    --copper: 161 55% 24%;            /* alias → grønn (all kobber-bruk skal se grønn ut) */
+    --copper-glow: 161 56% 42%;
+    --sage: 161 54% 60%;              /* #60d1b1 light mint */
+    --cream: 39 43% 94%;
 
-    --sidebar-background: 152 31% 16%;
-    --sidebar-foreground: 43 33% 93%;
-    --sidebar-primary: 26 46% 45%;
-    --sidebar-primary-foreground: 43 33% 96%;
-    --sidebar-accent: 152 28% 22%;
-    --sidebar-accent-foreground: 137 16% 66%;
-    --sidebar-border: 152 20% 26%;
-    --sidebar-ring: 26 46% 45%;
+    --sidebar-background: 161 55% 24%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 161 56% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 161 55% 30%;
+    --sidebar-accent-foreground: 163 60% 92%;
+    --sidebar-border: 161 50% 34%;
+    --sidebar-ring: 161 56% 42%;
   }
 }
 
@@ -70,20 +70,20 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    letter-spacing: 0.01em;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.005em;
     background-image:
-      radial-gradient(ellipse at 8% 12%, hsl(26 46% 45% / 0.05) 0%, transparent 55%),
-      radial-gradient(ellipse at 92% 88%, hsl(152 31% 16% / 0.05) 0%, transparent 55%);
+      radial-gradient(ellipse at 8% 12%, hsl(161 55% 24% / 0.05) 0%, transparent 55%),
+      radial-gradient(ellipse at 92% 88%, hsl(161 56% 42% / 0.05) 0%, transparent 55%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Outfit', sans-serif;
     font-weight: 600;
-    color: hsl(var(--secondary));
-    letter-spacing: -0.01em;
+    color: hsl(var(--primary));
+    letter-spacing: -0.015em;
   }
 }
 
