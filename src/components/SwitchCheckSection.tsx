@@ -67,7 +67,7 @@ const SwitchCheckSection = () => {
               </button>
               <Link
                 to="/tjenester"
-                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-background text-primary border border-primary/30 rounded-xl md:rounded-2xl text-sm font-semibold hover:bg-muted hover:border-primary/50 hover:scale-[1.02] transition-all duration-300"
               >
                 Slik bytter du regnskapsfører
               </Link>
