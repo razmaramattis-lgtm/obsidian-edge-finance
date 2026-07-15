@@ -244,7 +244,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 Bransjer
                 <ChevronDown size={11} className={`ml-0.5 transition-transform duration-300 ${bransjerOpen ? "rotate-180" : ""}`} />
               </Link>
-              <DropdownPanel open={bransjerOpen} className="fixed top-[108px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
+              <DropdownPanel open={bransjerOpen} className="fixed top-[76px] left-0 right-0 z-50 bg-card border-b border-border shadow-[0_20px_60px_-30px_hsl(20_10%_12%/0.18)]">
                 <div className="container mx-auto px-8 py-10">
                   <div className="mb-6 flex items-end justify-between border-b border-border/60 pb-4">
                     <div>
