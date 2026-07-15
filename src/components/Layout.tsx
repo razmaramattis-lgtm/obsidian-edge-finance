@@ -424,12 +424,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12 mb-12">
             {/* Brand column */}
             <div className="md:col-span-5">
-              <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                <span aria-hidden="true" className="flex items-center justify-center h-10 w-10 rounded-full border border-primary/50 bg-primary/10 font-heading text-[17px] leading-none text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">A</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="font-heading text-2xl tracking-tight">Avargo</span>
-                  <span className="text-[9px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-semibold">— Regnskap</span>
-                </span>
+              <Link to="/" className="inline-flex items-center mb-6 group">
+                <Logo
+                  variant="full"
+                  className="h-9 md:h-10 text-cream group-hover:text-accent transition-colors duration-500"
+                />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
                 Regnskap for bedrifter som <span className="italic text-primary">tar seg selv på alvor</span>.
