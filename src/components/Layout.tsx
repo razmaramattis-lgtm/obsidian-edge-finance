@@ -504,7 +504,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Bottom bar */}
           <div className="border-t border-secondary-foreground/15 pt-5 flex flex-col md:flex-row justify-between items-center gap-3">
             <span className="text-[11px] text-secondary-foreground/55 font-light tracking-wide">
-              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon i Skien.
+              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
               <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
