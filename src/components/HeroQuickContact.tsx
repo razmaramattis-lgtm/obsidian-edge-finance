@@ -60,7 +60,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
   }
 
   const inputCls =
-    "w-full px-3.5 py-3 text-sm rounded-xl bg-background border border-primary/20 text-foreground placeholder:text-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
+    "w-full px-3.5 py-3 text-sm rounded-xl bg-muted border border-primary/20 text-foreground placeholder:text-foreground/55 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
 
   return (
     <form
