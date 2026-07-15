@@ -60,17 +60,17 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
   }
 
   const inputCls =
-    "w-full px-3.5 py-3 text-sm rounded-xl bg-background/60 border border-border/30 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors";
+    "w-full px-3.5 py-3 text-sm rounded-xl bg-background border border-primary/20 text-foreground placeholder:text-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
 
   return (
     <form
       onSubmit={submit}
-      className="rounded-3xl border border-border/30 bg-card/50 backdrop-blur-xl p-6 md:p-7"
+      className="rounded-3xl border border-primary/25 bg-card shadow-xl shadow-primary/10 p-6 md:p-7"
     >
-      <p className="inline-block text-[11px] tracking-[0.3em] uppercase text-secondary mb-2 font-semibold px-3 py-1 rounded-full border border-background/70 bg-secondary/5">
+      <p className="inline-block text-[11px] tracking-[0.3em] uppercase text-primary mb-2 font-semibold px-3 py-1 rounded-full border border-primary/30 bg-muted">
         Be oss ringe deg
       </p>
-      <p className="text-xs text-muted-foreground mb-5 font-light">
+      <p className="text-xs text-foreground/70 mb-5 font-light">
         Rask respons. Ingen binding.
       </p>
 
