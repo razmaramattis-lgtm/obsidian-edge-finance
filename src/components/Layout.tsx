@@ -160,25 +160,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             : "bg-background/85 border-border/60 shadow-none"
         }`}
       >
-        {/* Thin editorial top strip — kontakt & tillit. Kollapser subtilt ved scroll */}
-        <div
-          className={`hidden lg:block border-b border-border/50 bg-secondary text-secondary-foreground overflow-hidden transition-[max-height,opacity] duration-500 ease-out ${
-            scrolled ? "max-h-0 opacity-0 border-b-0" : "max-h-10 opacity-100"
-          }`}
-          aria-hidden={scrolled}
-        >
-          <div className="container mx-auto flex items-center justify-between h-8 px-8 text-[10.5px] tracking-[0.14em] uppercase font-medium">
-            <div className="flex items-center gap-6 opacity-90">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck size={11} strokeWidth={1.8} className="text-accent" /> Autorisert regnskapsbyrå</span>
-              <span className="inline-flex items-center gap-1.5 opacity-80"><MapPin size={11} strokeWidth={1.8} /> Oscars gate 2B · Skien</span>
-            </div>
-            <div className="flex items-center gap-5 opacity-90">
-              <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"><Mail size={11} strokeWidth={1.8} /> kontakt@avargo.no</a>
-              <span className="h-3 w-px bg-secondary-foreground/25" />
-              <Link to="/logg-inn" className="hover:text-accent transition-colors">Logg inn</Link>
-            </div>
-          </div>
-        </div>
 
         <div
           className={`container mx-auto flex items-center justify-between px-4 md:px-8 transition-[height] duration-500 ease-out h-[64px] ${
