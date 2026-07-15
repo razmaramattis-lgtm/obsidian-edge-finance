@@ -447,9 +447,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
                 </a>
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
-                  <MapPin size={13} strokeWidth={1.7} className="text-accent" /> Oscars gate 2B, 3714 Skien
-                </span>
-                <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
                   <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> Autorisert regnskapsbyrå · Org.nr 938 076 669
                 </span>
               </div>
