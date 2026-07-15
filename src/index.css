@@ -47,8 +47,8 @@
     /* Merkespesifikke tokens */
     --forest: 161 55% 24%;            /* #1b5e4b */
     --forest-deep: 161 55% 18%;
-    --copper: 161 55% 24%;            /* alias → grønn (all kobber-bruk skal se grønn ut) */
-    --copper-glow: 161 56% 42%;
+    --copper: 161 56% 42%;            /* alias → mid mint (brukes til hover-aksent) */
+    --copper-glow: 161 54% 60%;
     --sage: 161 54% 60%;              /* #60d1b1 light mint */
     --cream: 39 43% 94%;
 
