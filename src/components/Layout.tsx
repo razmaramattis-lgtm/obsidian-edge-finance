@@ -168,18 +168,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }`}
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          {/* Logo — editorial masthead med kobber-monogram */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <span
-              aria-hidden="true"
-              className={`hidden sm:flex items-center justify-center rounded-full border border-primary/40 bg-primary/5 font-heading leading-none text-primary tracking-tight transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-[-6deg] ${
-                scrolled ? "h-8 w-8 text-[13px]" : "h-9 w-9 text-[15px]"
+          {/* Logo — offisiell Avargo-logo */}
+          <Link to="/" className="flex items-center group">
+            <Logo
+              variant="full"
+              className={`text-forest group-hover:text-copper transition-colors duration-500 ease-out ${
+                scrolled ? "h-7 lg:h-8" : "h-8 lg:h-9"
               }`}
-            >A</span>
-            <span className="flex items-baseline gap-2">
-              <span className={`font-heading tracking-tight text-foreground group-hover:text-primary transition-all duration-500 ${scrolled ? "text-[22px] md:text-[22px]" : "text-2xl md:text-[26px]"}`}>Avargo</span>
-              <span className={`hidden md:inline-block text-[9px] tracking-[0.35em] uppercase text-muted-foreground font-medium mt-1 transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`}>— Regnskap</span>
-            </span>
+            />
           </Link>
 
 
