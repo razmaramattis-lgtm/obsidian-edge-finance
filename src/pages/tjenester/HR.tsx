@@ -33,22 +33,18 @@ const lopende = [
 
 const pillars = [
   {
-    num: "01",
     title: "Praktisk HR — ikke juridisk rådgivning.",
     desc: "Vi hjelper deg med rutinene, systemene og dokumentene du trenger for å være en god arbeidsgiver. Vi tar ikke rollen som advokat.",
   },
   {
-    num: "02",
     title: "Tilpasset små og mellomstore bedrifter.",
     desc: "Enkle, tydelige HR-rutiner som passer størrelsen på bedriften din — uten unødvendig byråkrati eller kompliserte systemer.",
   },
   {
-    num: "03",
     title: "Moderne HR-system i bunn.",
-    desc: "Vi setter opp Huma HR eller tilsvarende slik at personalmapper, ferie, sykefravær og dokumenter er samlet på ett sted.",
+    desc: "Vi setter opp et HR-system slik at personalmapper, ferie, sykefravær og dokumenter er samlet på ett sted.",
   },
   {
-    num: "04",
     title: "Lederstøtte når du trenger det.",
     desc: "Ring oss for sparring rundt personalsaker, veiledning om ferie, overtid, permisjoner eller sykefravær. Vi er en trygg medspiller for lederen.",
   },
