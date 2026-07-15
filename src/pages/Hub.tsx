@@ -103,7 +103,7 @@ const Hub = () => {
                 </Link>
                 <Link
                   to="/tjenester"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground tracking-wide transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
                 >
                   Se våre tjenester
                 </Link>
