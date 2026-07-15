@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "logo.png"],
+      includeAssets: ["favicon.ico", "favicon.png", "apple-touch-icon.png", "android-chrome-192x192.png", "android-chrome-512x512.png"],
       workbox: {
       globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,webp,woff,woff2}"],
         navigateFallback: "/index.html",
