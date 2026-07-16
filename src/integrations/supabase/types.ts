@@ -4174,10 +4174,6 @@ export type Database = {
     }
     Functions: {
       current_profile_id: { Args: { uid?: string }; Returns: string }
-      customer_can_read_advisor: {
-        Args: { _advisor_profile_id: string; uid?: string }
-        Returns: boolean
-      }
       get_advisor_unavailability: {
         Args: { _advisor_ids: string[] }
         Returns: {
@@ -4188,11 +4184,6 @@ export type Database = {
         }[]
       }
       is_admin: { Args: { uid?: string }; Returns: boolean }
-      is_customer: { Args: { uid?: string }; Returns: boolean }
-      is_dm_participant: {
-        Args: { _conversation_id: string; uid?: string }
-        Returns: boolean
-      }
       is_employee_or_admin: { Args: { uid?: string }; Returns: boolean }
       list_public_advisors: {
         Args: never
@@ -4201,8 +4192,6 @@ export type Database = {
           name: string
         }[]
       }
-      own_company_id: { Args: { uid?: string }; Returns: string }
-      realtime_topic_allowed: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "employee" | "customer"
