@@ -4173,6 +4173,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_profile_id: { Args: { uid?: string }; Returns: string }
       get_advisor_unavailability: {
         Args: { _advisor_ids: string[] }
         Returns: {
@@ -4182,6 +4183,8 @@ export type Database = {
           profile_id: string
         }[]
       }
+      is_admin: { Args: { uid?: string }; Returns: boolean }
+      is_employee_or_admin: { Args: { uid?: string }; Returns: boolean }
       list_public_advisors: {
         Args: never
         Returns: {
