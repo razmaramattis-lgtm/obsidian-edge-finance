@@ -59,7 +59,7 @@ const KursOm = () => (
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden">
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="rounded-3xl overflow-hidden">
             <img src={workshopImg} alt="Workshop" className="w-full h-[450px] object-cover" />
           </motion.div>
         </div>
@@ -95,8 +95,8 @@ const KursOm = () => (
             const Icon = f.icon;
             return (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="group p-8 rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
-                <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                className="group p-8 rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                   <Icon size={22} className="text-secondary" />
                 </div>
                 <h3 className="font-heading text-lg mb-2">{f.title}</h3>

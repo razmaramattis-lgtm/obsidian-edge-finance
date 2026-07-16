@@ -164,7 +164,7 @@ const Karriere = () => {
               <AnimatePresence mode="wait">
                 {openSubmitted ? (
                   <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} 
-                    className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl p-8 text-center">
+                    className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl p-8 text-center">
                     <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-5">
                       <Sparkles size={32} className="text-primary" />
                     </div>
@@ -173,7 +173,7 @@ const Karriere = () => {
                   </motion.div>
                 ) : (
                   <motion.form key="form" onSubmit={submitOpenApplication}
-                    className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl p-6 md:p-8 space-y-4">
+                    className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl p-6 md:p-8 space-y-4">
                     <div>
                       <h3 className="text-lg font-bold text-white mb-0.5">Søk åpent hos Avargo</h3>
                       <p className="text-xs text-white/50">Fyll ut det du kan — resten ordner vi.</p>
@@ -263,7 +263,7 @@ const Karriere = () => {
               { label: "Ledige stillinger", value: String(jobs.length) },
             ].map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="glass rounded-xl p-5 border border-border/10 text-center">
+                className="glass rounded-2xl p-5 border border-border/10 text-center">
                 <p className="text-2xl font-bold text-primary">{s.value}</p>
                 <p className="text-[11px] text-muted-foreground mt-1">{s.label}</p>
               </motion.div>
@@ -285,7 +285,7 @@ const Karriere = () => {
             {DEPARTMENTS.map((dept, i) => (
               <motion.div key={dept.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="group relative rounded-xl overflow-hidden aspect-[16/10] cursor-pointer"
+                className="group relative rounded-2xl overflow-hidden aspect-[16/10] cursor-pointer"
                 onClick={() => setActiveCat(dept.name)}
               >
                 <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -349,7 +349,7 @@ const Karriere = () => {
                 {filtered.map((job, i) => (
                   <motion.div key={job.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05, duration: 0.4 }}>
                     <Link to={`/karriere/${job.slug}`}
-                      className="group block glass rounded-xl border border-border/15 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+                      className="group block glass rounded-2xl border border-border/15 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
                       <div className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -396,7 +396,7 @@ const Karriere = () => {
               { title: "Spennende samarbeid", desc: "Du jobber tett med solide kunder og innovative leverandører, som gir faglig variasjon og muligheter." },
             ].map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="glass rounded-xl p-6 border border-border/10 hover:border-primary/20 transition-colors duration-300">
+                className="glass rounded-2xl p-6 border border-border/10 hover:border-primary/20 transition-colors duration-300">
                 <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </motion.div>

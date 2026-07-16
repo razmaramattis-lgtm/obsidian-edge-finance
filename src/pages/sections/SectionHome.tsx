@@ -432,7 +432,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
 const FaqAccordion = ({ question, answer }: { question: string; answer: string }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="glass rounded-xl overflow-hidden">
+    <div className="glass rounded-2xl overflow-hidden">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-6 py-5 text-left">
         <span className="text-sm md:text-base text-foreground/90 font-light pr-4">{question}</span>
         <ChevronDown size={16} className={`text-primary shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
@@ -562,15 +562,15 @@ const SectionHome = () => {
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-3">
-              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 bg-primary text-primary-foreground rounded-xl md:rounded-2xl text-sm font-semibold glow-rose hover:scale-[1.02] transition-all duration-300">
                 {c.hero.ctaPrimary} <ArrowRight size={14} />
               </Link>
               {c.hero.ctaSecondaryHref.startsWith("#") ? (
-                <a href={c.hero.ctaSecondaryHref} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
+                <a href={c.hero.ctaSecondaryHref} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
                   {c.hero.ctaSecondary}
                 </a>
               ) : (
-                <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
+                <Link to={c.hero.ctaSecondaryHref.startsWith("/") && !c.hero.ctaSecondaryHref.startsWith(section.basePath) ? c.hero.ctaSecondaryHref : sp(c.hero.ctaSecondaryHref.replace(section.basePath, ""))} className="inline-flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 border border-border/20 rounded-xl md:rounded-2xl text-sm font-medium hover:border-primary/30 transition-all duration-300">
                   {c.hero.ctaSecondary}
                 </Link>
               )}
@@ -615,7 +615,7 @@ const SectionHome = () => {
               const SIcon = service.icon;
               return (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05, duration: 0.5 }}>
-                  <Link to={service.href} className="group block p-5 md:p-6 rounded-xl border border-border/10 hover:border-primary/15 transition-all duration-300 h-full">
+                  <Link to={service.href} className="group block p-5 md:p-6 rounded-2xl border border-border/10 hover:border-primary/15 transition-all duration-300 h-full">
                     <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
                       <SIcon size={16} className="text-primary" strokeWidth={1.5} />
                     </div>
@@ -653,10 +653,10 @@ const SectionHome = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[320px]">
               {visibleIndustries.map((ind) => (
                 <div key={ind.slug + industryPage} className="css-fade-in">
-                  <Link to={sp(`/bransjer/${ind.slug}`)} className="group p-6 md:p-8 glass rounded-xl card-lift relative overflow-hidden h-full block">
+                  <Link to={sp(`/bransjer/${ind.slug}`)} className="group p-6 md:p-8 glass rounded-3xl card-lift relative overflow-hidden h-full block">
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="absolute -top-8 -right-8 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors duration-700" />
-                    <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-xl inline-block mb-4 md:mb-5">
+                    <div className="p-3 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-2xl inline-block mb-4 md:mb-5">
                       <ind.icon size={18} className="text-primary" strokeWidth={1.5} />
                     </div>
                     <h3 className="font-heading text-lg md:text-xl mb-1">{ind.name}</h3>
@@ -708,7 +708,7 @@ const SectionHome = () => {
                 { step: "03", title: "Du har en partner", desc: "Fra dag én har du en fast kontaktperson som kjenner deg, bransjen din og målene dine." },
               ].map((item, i) => (
                 <AnimatedSection key={i} delay={i * 0.12}>
-                  <div className="group p-8 md:p-10 glass rounded-xl card-lift relative overflow-hidden h-full">
+                  <div className="group p-8 md:p-10 glass rounded-3xl card-lift relative overflow-hidden h-full">
                     <div className="absolute -top-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
                     <span className="font-heading text-6xl md:text-7xl text-primary/10 select-none block mb-4">{item.step}</span>
                     <h3 className="font-heading text-xl md:text-2xl mb-3">{item.title}</h3>
@@ -720,7 +720,7 @@ const SectionHome = () => {
 
             <AnimatedSection delay={0.4}>
               <div className="mt-12 text-center">
-                <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+                <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                   Start samtalen <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </Link>
               </div>
@@ -772,7 +772,7 @@ const SectionHome = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {c.conviction.items.map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.12}>
-                <div className="group p-8 md:p-10 glass rounded-xl h-full flex flex-col card-lift relative overflow-hidden">
+                <div className="group p-8 md:p-10 glass rounded-3xl h-full flex flex-col card-lift relative overflow-hidden">
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700" />
                   <div className="relative">
                     <div className="flex items-center gap-4 mb-5 md:mb-6">
@@ -807,7 +807,7 @@ const SectionHome = () => {
                 {c.cta.sub}
               </p>
               <p className="text-sm text-primary italic font-light mb-10 md:mb-12">{c.cta.italic}</p>
-              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+              <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 {c.cta.button} <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </div>
@@ -860,7 +860,7 @@ const SectionHome = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
             {otherSections.map((s) => (
               <AnimatedSection key={s.id} delay={0.1}>
-                <Link to={s.basePath} className="group block glass rounded-xl p-6 md:p-8 card-lift border border-border/10 hover:border-border/25 transition-all duration-500">
+                <Link to={s.basePath} className="group block glass rounded-2xl p-6 md:p-8 card-lift border border-border/10 hover:border-border/25 transition-all duration-500">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center border transition-colors duration-300"
                       style={{ backgroundColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.1)`, borderColor: `hsl(${s.accent.h} ${s.accent.s}% ${s.accent.l}% / 0.2)` }}>

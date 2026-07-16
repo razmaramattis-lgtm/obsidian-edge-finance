@@ -41,7 +41,7 @@ const KarriereHeader = () => {
             </Link>
 
             <nav className="flex items-center gap-1 relative">
-              <div className="absolute inset-0 rounded-xl bg-muted/15 backdrop-blur-md border border-border/5 -m-1.5" />
+              <div className="absolute inset-0 rounded-2xl bg-muted/15 backdrop-blur-md border border-border/5 -m-1.5" />
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);

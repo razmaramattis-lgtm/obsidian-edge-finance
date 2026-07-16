@@ -78,10 +78,10 @@ const CFO = () => (
             Du får tilgang til en erfaren økonomisk rådgiver som hjelper deg med de store spørsmålene — budsjett, vekst, investorer og viktige veivalg. Uten at du trenger å ansette noen fast.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+            <Link to="/kontakt" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
               Kom i gang <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
-            <Link to="/priser" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300">
+            <Link to="/priser" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all duration-500">
               Se priser
             </Link>
           </div>
@@ -130,7 +130,7 @@ const CFO = () => (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {useCases.map((u, i) => (
             <AnimatedSection key={u.title} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
                 <h3 className="font-heading text-xl md:text-2xl mb-3">{u.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{u.desc}</p>
               </div>
@@ -159,7 +159,7 @@ const CFO = () => (
       <div className="absolute inset-0 ambient-glow opacity-25" />
       <div className="container mx-auto px-4 md:px-6 relative">
         <AnimatedSection>
-          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
             <TrendingUp size={18} className="text-primary" strokeWidth={1.5} />
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
@@ -168,7 +168,7 @@ const CFO = () => (
           <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
             Ta en uforpliktende prat om hva en rådgiver kan bety for bedriften din.
           </p>
-          <Link to="/kontakt" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+          <Link to="/kontakt" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
             Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
         </AnimatedSection>

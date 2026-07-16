@@ -56,7 +56,7 @@ const RegnskapsforerSteder = () => {
                     <Link
                       key={city.slug}
                       to={`/regnskapsforer-i/${city.slug}`}
-                      className="group flex items-center justify-between gap-3 px-5 py-4 rounded-xl border border-border/15 bg-card/20 hover:border-primary/40 hover:bg-card/50 transition-all"
+                      className="group flex items-center justify-between gap-3 px-5 py-4 rounded-2xl border border-border/15 bg-card/20 hover:border-primary/40 hover:bg-card/50 transition-all"
                     >
                       <div>
                         <p className="font-serif text-lg text-foreground group-hover:text-primary transition-colors">

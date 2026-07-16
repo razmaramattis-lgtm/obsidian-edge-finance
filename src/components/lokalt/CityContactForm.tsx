@@ -74,7 +74,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-primary/20 bg-primary/5 p-8 md:p-10 text-center">
+      <div className="rounded-3xl border border-primary/20 bg-primary/5 p-8 md:p-10 text-center">
         <div className="w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center mx-auto mb-5">
           <CheckCircle2 className="w-7 h-7 text-primary" />
         </div>
@@ -91,7 +91,7 @@ const CityContactForm = ({ cityName, citySlug }: CityContactFormProps) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-border/20 bg-card/40 backdrop-blur p-6 md:p-10"
+      className="rounded-3xl border border-border/20 bg-card/40 backdrop-blur p-6 md:p-10"
     >
       <div className="flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-primary/80 mb-3">
         <MapPin className="w-3 h-3" />

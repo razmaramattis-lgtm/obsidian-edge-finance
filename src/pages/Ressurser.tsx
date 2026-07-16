@@ -175,7 +175,7 @@ const Ressurser = () => {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Søk i alle ressurser — artikler, guider, maler…"
-                className="w-full h-12 rounded-xl border border-border/30 bg-muted/30 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                className="w-full h-12 rounded-2xl border border-border/30 bg-muted/30 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
               />
               {search && (
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground/60">
@@ -227,7 +227,7 @@ const Ressurser = () => {
           {showArkiv && Object.keys(grouped).length > 0 && (
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <Archive size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
@@ -246,7 +246,7 @@ const Ressurser = () => {
                           href={file.file_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="glass rounded-xl p-5 border border-border/20 card-lift flex items-start gap-3 group hover:border-primary/30 transition-all"
+                          className="glass rounded-2xl p-5 border border-border/20 card-lift flex items-start gap-3 group hover:border-primary/30 transition-all"
                         >
                           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                             <FileSpreadsheet size={18} className="text-primary" strokeWidth={1.5} />
@@ -287,7 +287,7 @@ const Ressurser = () => {
           <AnimatedSection className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               to="/ressurser/skattekalender"
-              className="glass rounded-xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -303,7 +303,7 @@ const Ressurser = () => {
 
             <Link
               to="/ressurser/protokollgenerator"
-              className="glass rounded-xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -319,7 +319,7 @@ const Ressurser = () => {
 
             <Link
               to="/ressurser/firmabilkalkulator"
-              className="glass rounded-xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+              className="glass rounded-2xl border border-border/20 p-6 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -356,7 +356,7 @@ const PostSection = ({
   return (
     <AnimatedSection>
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
           <Icon size={18} className="text-primary" strokeWidth={1.5} />
         </div>
         <h2 className="font-heading text-2xl md:text-3xl">{title}</h2>
@@ -365,7 +365,7 @@ const PostSection = ({
       {/* Featured pinned post */}
       {featured && (
         <Link to={`/nyhet/${featured.slug}`} className="block mb-6 group">
-          <div className="glass rounded-xl overflow-hidden border border-border/20 card-lift">
+          <div className="glass rounded-3xl overflow-hidden border border-border/20 card-lift">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               {featured.image_url && (
                 <div className="aspect-[16/10] lg:aspect-auto overflow-hidden relative">
@@ -397,7 +397,7 @@ const PostSection = ({
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {grid.map(post => (
-          <Link key={post.id} to={`/nyhet/${post.slug}`} className="glass rounded-xl overflow-hidden border border-border/20 card-lift group block h-full">
+          <Link key={post.id} to={`/nyhet/${post.slug}`} className="glass rounded-2xl overflow-hidden border border-border/20 card-lift group block h-full">
             {post.image_url && (
               <div className="aspect-[16/9] overflow-hidden relative">
                 <img src={post.image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

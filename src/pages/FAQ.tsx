@@ -546,7 +546,7 @@ const FAQ = () => {
                       return (
                         <div
                           key={key}
-                          className="glass rounded-xl border border-border/15 overflow-hidden"
+                          className="glass rounded-2xl border border-border/15 overflow-hidden"
                         >
                           <button
                             onClick={() => setOpenIndex(isOpen ? null : key)}

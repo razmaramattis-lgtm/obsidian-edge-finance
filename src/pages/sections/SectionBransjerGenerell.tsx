@@ -211,11 +211,11 @@ const SectionBransjerGenerell = () => {
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-4">{c.intro}</p>
             <p className="text-sm text-primary/60 italic font-light mb-10 md:mb-14">{c.introSub}</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+              <Link to={sp("/kontakt")} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 {c.ctaButton}
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
-              <Link to={sp("/tjenester")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300">
+              <Link to={sp("/tjenester")} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500">
                 Se alle tjenester
               </Link>
             </div>
@@ -237,8 +237,8 @@ const SectionBransjerGenerell = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {c.whyPoints.map((p, i) => (
               <AnimatedSection key={p.title} delay={i * 0.1}>
-                <div className="p-8 md:p-10 glass rounded-xl card-lift h-full flex gap-5">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center shrink-0">
+                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full flex gap-5">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/10 flex items-center justify-center shrink-0">
                     <p.icon size={18} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
@@ -255,7 +255,7 @@ const SectionBransjerGenerell = () => {
       {/* IMAGE BREAK */}
       <section className="py-0 relative">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="rounded-xl overflow-hidden relative h-[300px] md:h-[450px]">
+          <div className="rounded-3xl overflow-hidden relative h-[300px] md:h-[450px]">
             <img src={teamImg} alt="Teamet i Avargo samarbeider" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
           </div>
@@ -274,7 +274,7 @@ const SectionBransjerGenerell = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {c.howSteps.map((s, i) => (
               <AnimatedSection key={s.num} delay={i * 0.1}>
-                <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
+                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
                   <span className="font-heading text-5xl text-primary/20">{s.num}</span>
                   <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{s.title}</h3>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">{s.desc}</p>
@@ -305,7 +305,7 @@ const SectionBransjerGenerell = () => {
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <div className="rounded-xl overflow-hidden h-[350px] md:h-[500px]">
+              <div className="rounded-3xl overflow-hidden h-[350px] md:h-[500px]">
                 <img src={processImg} alt="Avargo prosess og verktøy" loading="lazy" className="w-full h-full object-cover" />
               </div>
             </AnimatedSection>
@@ -323,7 +323,7 @@ const SectionBransjerGenerell = () => {
               {c.ctaHeadline}<span className="italic text-gradient-rose">{c.ctaItalic}</span>
             </h2>
             <p className="text-muted-foreground font-light mb-10 md:mb-14 max-w-lg mx-auto text-sm md:text-base">{c.ctaSub}</p>
-            <Link to={sp("/kontakt")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+            <Link to={sp("/kontakt")} className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
               {c.ctaButton}
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>

@@ -126,7 +126,7 @@ const KarriereFagomrader = () => {
                     transition={{ duration: 0.8 }}
                     className={!isEven ? "lg:col-start-2" : ""}
                   >
-                    <div className="relative rounded-xl overflow-hidden aspect-[16/10] group">
+                    <div className="relative rounded-3xl overflow-hidden aspect-[16/10] group">
                       <motion.img
                         src={dept.image}
                         alt={dept.name}

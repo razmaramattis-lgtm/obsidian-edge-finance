@@ -26,9 +26,9 @@ const SwitchCheckSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-semibold text-foreground mb-5 md:mb-6">
+            <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-5 md:mb-6 font-semibold px-3.5 py-1.5 rounded-full border border-secondary/20 bg-secondary/5">
               Bytte regnskapsfører
-            </p>
+            </span>
 
             <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.15] tracking-tight mb-4 md:mb-6">
               Er vi <span className="italic text-gradient-rose inline-block pr-2 pb-1">riktig for deg?</span>
@@ -82,7 +82,7 @@ const SwitchCheckSection = () => {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="relative"
           >
-            <div className="relative aspect-[4/3] md:aspect-[16/12] rounded-xl overflow-hidden border border-border/15 bg-gradient-to-br from-muted/30 via-card to-muted/20">
+            <div className="relative aspect-[4/3] md:aspect-[16/12] rounded-3xl overflow-hidden border border-border/15 bg-gradient-to-br from-muted/30 via-card to-muted/20">
               <img
                 src={switchCheckImage}
                 alt="Rådgiver gjennomgår regnskapet for en bedrift"
@@ -103,7 +103,7 @@ const SwitchCheckSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="absolute bottom-5 left-5 right-5 md:bottom-8 md:left-8 md:right-8 bg-sage/95 backdrop-blur-sm border border-primary/15 rounded-xl p-4 md:p-5 flex items-center gap-4 shadow-lg shadow-primary/10"
+                className="absolute bottom-5 left-5 right-5 md:bottom-8 md:left-8 md:right-8 bg-sage/95 backdrop-blur-sm border border-primary/15 rounded-2xl p-4 md:p-5 flex items-center gap-4 shadow-lg shadow-primary/10"
               >
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center shrink-0">
                   <Sparkles size={18} className="text-primary" strokeWidth={1.5} />

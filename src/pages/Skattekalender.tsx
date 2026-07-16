@@ -244,7 +244,7 @@ const Skattekalender = () => {
 
             {/* Left – Calendar */}
             <AnimatedSection delay={0.1}>
-              <div className="glass rounded-xl border border-border/20 p-6 md:p-8">
+              <div className="glass rounded-3xl border border-border/20 p-6 md:p-8">
                 {/* Month nav */}
                 <div className="flex items-center justify-between mb-6">
                   <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground">
@@ -398,7 +398,7 @@ const Skattekalender = () => {
             <div className="space-y-6">
               {/* Filters */}
               <AnimatedSection delay={0.2}>
-                <div className="glass rounded-xl border border-border/20 p-5">
+                <div className="glass rounded-2xl border border-border/20 p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <Filter size={13} className="text-primary" />
                     <h3 className="text-xs font-medium tracking-wider uppercase">Filtre</h3>
@@ -461,7 +461,7 @@ const Skattekalender = () => {
 
               {/* Upcoming list */}
               <AnimatedSection delay={0.3}>
-                <div className="glass rounded-xl border border-border/20 p-5">
+                <div className="glass rounded-2xl border border-border/20 p-5">
                   <h3 className="text-xs font-medium tracking-wider uppercase mb-4 flex items-center gap-2">
                     <CalendarClock size={13} className="text-primary" />
                     Kommende frister
@@ -528,7 +528,7 @@ const Skattekalender = () => {
 
               {/* Add to calendar */}
               <AnimatedSection delay={0.35}>
-                <div className="glass rounded-xl border border-border/20 p-5">
+                <div className="glass rounded-2xl border border-border/20 p-5">
                   <h3 className="text-xs font-medium tracking-wider uppercase mb-1 flex items-center gap-2">
                     <CalendarPlus size={13} className="text-primary" />
                     Legg til i kalenderen
@@ -609,7 +609,7 @@ const Skattekalender = () => {
                   href="https://www.skatteetaten.no/bedrift-og-organisasjon/starte-og-drive/frister-gebyrer-og-tilleggsskatt/frister-og-oppgaver/"
                   target="_blank"
                   rel="noreferrer"
-                  className="glass rounded-xl border border-border/20 p-4 flex items-center gap-3 hover:border-primary/20 transition-all group"
+                  className="glass rounded-2xl border border-border/20 p-4 flex items-center gap-3 hover:border-primary/20 transition-all group"
                 >
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <ExternalLink size={14} className="text-primary" />

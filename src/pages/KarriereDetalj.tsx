@@ -276,7 +276,7 @@ const KarriereDetalj = () => {
           {/* Contact */}
           {job.contact_name && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
-              className="glass rounded-xl border border-border/10 p-6 mb-10">
+              className="glass rounded-2xl border border-border/10 p-6 mb-10">
               <h3 className="text-sm font-semibold text-foreground mb-3">Spørsmål om stillingen?</h3>
               <div className="flex flex-wrap items-center gap-6">
                 <div>

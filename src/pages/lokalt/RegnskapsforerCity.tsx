@@ -209,7 +209,7 @@ const RegnskapsforerCity = () => {
                   desc: `Bytter du fra et eksisterende byrå i ${city.name}? Vi tar over hele regnskapet kostnadsfritt — du betaler ingenting før du er over.`,
                 },
               ].map((item) => (
-                <div key={item.title} className="p-6 rounded-xl border border-border/15 bg-card/30 hover:border-primary/30 transition-colors">
+                <div key={item.title} className="p-6 rounded-2xl border border-border/15 bg-card/30 hover:border-primary/30 transition-colors">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                     <CheckCircle2 className="w-5 h-5 text-primary" />
                   </div>
@@ -293,7 +293,7 @@ const RegnskapsforerCity = () => {
                 { t: "Bytte regnskapsfører", d: `Vi tar over hele regnskapet ditt fra eksisterende byrå i ${city.name} — kostnadsfritt og sømløst.` },
                 { t: "HR og personalhåndbok", d: "Arbeidsavtaler, HMS-håndbok, sykefraværsoppfølging og personalsystem — inkludert i HR-pakken." },
               ].map((s) => (
-                <div key={s.t} className="p-5 rounded-xl border border-border/15 bg-card/20 hover:border-primary/30 transition-colors">
+                <div key={s.t} className="p-5 rounded-2xl border border-border/15 bg-card/20 hover:border-primary/30 transition-colors">
                   <h3 className="font-medium text-foreground mb-2 text-[15px]">{s.t}</h3>
                   <p className="text-foreground/55 text-[13px] leading-relaxed font-light">{s.d}</p>
                 </div>
@@ -319,7 +319,7 @@ const RegnskapsforerCity = () => {
                   { name: "Vekst", price: "fra 2 990 kr", per: "/mnd", desc: "Aktive AS med MVA, lønn til 1–3 ansatte og rapportering." },
                   { name: "Pro", price: "fra 5 490 kr", per: "/mnd", desc: "Etablerte selskaper med større volum, CFO-rådgivning og styrearbeid." },
                 ].map((p) => (
-                  <div key={p.name} className="p-6 rounded-xl border border-border/20 bg-card/30">
+                  <div key={p.name} className="p-6 rounded-2xl border border-border/20 bg-card/30">
                     <p className="text-[11px] tracking-[0.25em] uppercase text-primary/70 mb-3">{p.name}</p>
                     <p className="font-serif text-3xl text-foreground">{p.price}<span className="text-base text-foreground/50 font-light">{p.per}</span></p>
                     <p className="mt-3 text-foreground/60 text-[14px] font-light leading-relaxed">{p.desc}</p>
@@ -351,7 +351,7 @@ const RegnskapsforerCity = () => {
                   { t: "3. Oppsett og overgang", d: "Vi setter opp regnskapssystem (Tripletex, Fiken, Conta osv.), bankkobling og lønnssystem. Tar 1–2 uker." },
                   { t: "4. Du er over — og betaler først nå", d: "Første faktura kommer den måneden vi tar over. Ingen oppsett-kostnad, ingen bindingstid." },
                 ].map((step) => (
-                  <li key={step.t} className="flex gap-5 p-5 rounded-xl border border-border/15 bg-card/20">
+                  <li key={step.t} className="flex gap-5 p-5 rounded-2xl border border-border/15 bg-card/20">
                     <CheckCircle2 className="w-5 h-5 text-primary mt-1 shrink-0" />
                     <div>
                       <p className="font-medium text-foreground mb-1">{step.t}</p>
@@ -374,7 +374,7 @@ const RegnskapsforerCity = () => {
               </h2>
               <div className="space-y-4">
                 {faq.map((f) => (
-                  <details key={f.q} className="group rounded-xl border border-border/15 bg-card/30 p-6">
+                  <details key={f.q} className="group rounded-2xl border border-border/15 bg-card/30 p-6">
                     <summary className="cursor-pointer flex items-center justify-between gap-4 font-serif text-lg text-foreground">
                       {f.q}
                       <ArrowRight className="w-4 h-4 text-primary group-open:rotate-90 transition-transform shrink-0" />

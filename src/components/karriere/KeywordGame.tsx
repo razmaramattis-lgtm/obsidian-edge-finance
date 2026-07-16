@@ -158,7 +158,7 @@ const KeywordGame = ({ keywords }: KeywordGameProps) => {
       </p>
       <div
         ref={containerRef}
-        className="relative rounded-xl border border-border/15 bg-muted/5 overflow-hidden"
+        className="relative rounded-2xl border border-border/15 bg-muted/5 overflow-hidden"
         style={{ minHeight: `${minHeight}px` }}
       >
         {/* Subtle ambient background */}

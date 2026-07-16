@@ -91,7 +91,7 @@ const ExitIntentDialog = () => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md rounded-xl border border-border/30 bg-card/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl shadow-primary/10">
+      <div className="relative w-full max-w-md rounded-3xl border border-border/30 bg-card/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl shadow-primary/10">
         <button
           onClick={() => setOpen(false)}
           aria-label="Lukk"

@@ -78,7 +78,7 @@ const KarriereAvargoFri = () => {
             <p className="text-sm md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-6 md:mb-10">
               Fleksibelt samarbeid — som frilanser eller prosjektbasert.
             </p>
-            <a href="#bli-med" className="inline-flex items-center gap-2 h-11 md:h-14 px-6 md:px-8 bg-secondary text-secondary-foreground rounded-xl md:rounded-xl text-sm font-semibold transition-all">
+            <a href="#bli-med" className="inline-flex items-center gap-2 h-11 md:h-14 px-6 md:px-8 bg-secondary text-secondary-foreground rounded-xl md:rounded-2xl text-sm font-semibold transition-all">
               Bli med <ArrowRight size={14} />
             </a>
           </div>
@@ -113,9 +113,9 @@ const KarriereAvargoFri = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15, duration: 0.7 }}
-                  className="glass rounded-xl border border-border/10 p-8 md:p-10 hover:border-secondary/20 transition-all duration-500 group"
+                  className="glass rounded-3xl border border-border/10 p-8 md:p-10 hover:border-secondary/20 transition-all duration-500 group"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                     <model.icon size={24} className="text-secondary" />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-3">{model.title}</h3>
@@ -183,7 +183,7 @@ const KarriereAvargoFri = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="glass rounded-xl p-7 border border-border/10 text-center hover:border-secondary/20 transition-all duration-500 group"
+                className="glass rounded-2xl p-7 border border-border/10 text-center hover:border-secondary/20 transition-all duration-500 group"
               >
                 <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500">
                   <item.icon size={22} className="text-secondary" />
@@ -213,7 +213,7 @@ const KarriereAvargoFri = () => {
 
             <AnimatePresence mode="wait">
               {submitted ? (
-                <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass rounded-xl border border-border/10 p-12 text-center">
+                <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass rounded-3xl border border-border/10 p-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-5">
                     <Sparkles size={24} className="text-secondary" />
                   </div>
@@ -221,7 +221,7 @@ const KarriereAvargoFri = () => {
                   <p className="text-sm text-muted-foreground">Vi gjennomgår henvendelsen din og tar kontakt.</p>
                 </motion.div>
               ) : (
-                <motion.form key="form" onSubmit={handleSubmit} className="glass rounded-xl border border-border/10 p-7 md:p-10 space-y-4">
+                <motion.form key="form" onSubmit={handleSubmit} className="glass rounded-3xl border border-border/10 p-7 md:p-10 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="relative">
                       <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/40" />

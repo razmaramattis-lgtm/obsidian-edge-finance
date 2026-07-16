@@ -55,7 +55,7 @@ const HubFAQ = () => {
             transition={{ duration: 0.6 }}
             className="md:sticky md:top-28"
           >
-            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase font-semibold text-foreground mb-5 md:mb-6">
+            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-4">
               Vanlige spørsmål
             </p>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 md:mb-6">

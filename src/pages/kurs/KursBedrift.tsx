@@ -125,8 +125,8 @@ const KursBedrift = () => {
               const Icon = f.icon;
               return (
                 <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                  className="group p-6 md:p-8 rounded-xl md:rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
-                  <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                  className="group p-6 md:p-8 rounded-2xl md:rounded-3xl border border-border/10 bg-muted/5 hover:bg-muted/10 hover:border-secondary/20 transition-all duration-500 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                     <Icon size={22} className="text-secondary" />
                   </div>
                   <h3 className="font-heading text-lg mb-2">{f.title}</h3>
@@ -149,13 +149,13 @@ const KursBedrift = () => {
             </motion.div>
 
             {submitted ? (
-              <div className="text-center glass rounded-xl p-10 border border-border/20">
+              <div className="text-center glass rounded-3xl p-10 border border-border/20">
                 <CheckCircle2 size={32} className="text-secondary mx-auto mb-4" />
                 <h3 className="font-heading text-2xl mb-2">Takk for henvendelsen!</h3>
                 <p className="text-sm text-muted-foreground">Vi tar kontakt raskt — som regel samme arbeidsdag for å diskutere kurset.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="glass rounded-xl p-8 md:p-10 border border-border/20 space-y-5">
+              <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 border border-border/20 space-y-5">
                 <div>
                   <label className="text-xs text-muted-foreground mb-1.5 block">Kontaktperson *</label>
                   <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required placeholder="Ola Nordmann" className="w-full h-11 rounded-xl border border-border/30 bg-muted/20 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40 transition-all" />

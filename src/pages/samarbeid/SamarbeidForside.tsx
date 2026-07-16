@@ -80,7 +80,7 @@ const SamarbeidForside = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {BENEFITS.map((b, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className="glass rounded-xl p-6 border border-border/10 hover:border-primary/20 transition-all group">
+                className="glass rounded-2xl p-6 border border-border/10 hover:border-primary/20 transition-all group">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <b.icon size={22} className="text-primary" />
                 </div>
@@ -122,7 +122,7 @@ const SamarbeidForside = () => {
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              className="rounded-xl overflow-hidden aspect-[4/3]">
+              className="rounded-2xl overflow-hidden aspect-[4/3]">
               <img src={teamImg} alt="Avargo samarbeid" className="w-full h-full object-cover" />
             </motion.div>
           </div>
@@ -140,7 +140,7 @@ const SamarbeidForside = () => {
           <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
             {MODELS.map((m, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="glass rounded-xl p-6 border border-border/10 hover:border-primary/20 transition-all relative">
+                className="glass rounded-2xl p-6 border border-border/10 hover:border-primary/20 transition-all relative">
                 {m.badge && (
                   <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">{m.badge}</span>
                 )}

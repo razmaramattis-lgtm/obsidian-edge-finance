@@ -179,7 +179,7 @@ const EnTilEnRegnskap = () => {
                 setShowForm(true);
                 setTimeout(() => document.getElementById("booking-form")?.scrollIntoView({ behavior: "smooth" }), 100);
               }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose"
             >
               Book din time <ChevronDown size={16} />
             </button>
@@ -200,7 +200,7 @@ const EnTilEnRegnskap = () => {
               { icon: FileText, title: "Handlingsplan", desc: "Du får konkrete anbefalinger og neste steg du kan ta for å forbedre økonomien." },
             ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
-                <div className="glass rounded-xl p-6 border border-border/20 text-center h-full">
+                <div className="glass rounded-2xl p-6 border border-border/20 text-center h-full">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     <item.icon className="text-primary" size={22} />
                   </div>
@@ -246,7 +246,7 @@ const EnTilEnRegnskap = () => {
                   <p className="text-muted-foreground mb-6">Velg en ledig tid i kalenderen under, fyll ut skjemaet – og du er klar.</p>
                   <button
                     onClick={() => setShowForm(true)}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose"
+                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose"
                   >
                     Vis kalender <ChevronDown size={16} />
                   </button>
@@ -336,7 +336,7 @@ const EnTilEnRegnskap = () => {
                     {/* Contact form - shown after time selection */}
                     {selectedTime && (
                       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pt-4 border-t border-border/20">
-                        <div className="glass rounded-xl p-4 border border-primary/20 flex items-center gap-3">
+                        <div className="glass rounded-2xl p-4 border border-primary/20 flex items-center gap-3">
                           <CheckCircle2 className="text-primary shrink-0" size={18} />
                           <p className="text-sm">
                             <span className="font-medium">{format(selectedDate!, "EEEE d. MMMM", { locale: nb })}</span> kl. <span className="font-medium">{selectedTime}</span>
@@ -380,7 +380,7 @@ const EnTilEnRegnskap = () => {
                               className="w-full rounded-xl border border-border/30 bg-muted/30 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 placeholder:text-muted-foreground/50 resize-none" />
                           </div>
                           <button type="submit" disabled={submitting}
-                            className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose flex items-center justify-center gap-2 disabled:opacity-50">
+                            className="w-full py-3 rounded-2xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity glow-rose flex items-center justify-center gap-2 disabled:opacity-50">
                             {submitting ? "Sender…" : "Book time"} <Send size={16} />
                           </button>
                         </form>
@@ -398,7 +398,7 @@ const EnTilEnRegnskap = () => {
                 <p className="text-muted-foreground mb-2">
                   {format(selectedDate!, "EEEE d. MMMM", { locale: nb })} kl. {selectedTime}
                 </p>
-                <div className="glass rounded-xl p-5 border border-border/20 mt-6 text-left max-w-sm mx-auto">
+                <div className="glass rounded-2xl p-5 border border-border/20 mt-6 text-left max-w-sm mx-auto">
                   <p className="text-sm font-medium mb-2">Viktig informasjon:</p>
                   <ul className="text-sm text-muted-foreground space-y-1.5">
                     <li className="flex items-start gap-2"><CheckCircle2 size={14} className="text-primary shrink-0 mt-0.5" /> Faktura utstedes når timen er bekreftet</li>

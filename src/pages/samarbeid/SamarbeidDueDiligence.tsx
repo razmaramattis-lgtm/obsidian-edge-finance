@@ -174,7 +174,7 @@ const SamarbeidDueDiligence = () => {
 
             {/* How it works */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="rounded-xl border border-border/30 bg-muted/10 p-6 md:p-8 mb-12">
+              className="rounded-2xl border border-border/30 bg-muted/10 p-6 md:p-8 mb-12">
               <div className="flex items-start gap-4 mb-5">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                   <Info size={18} className="text-primary" />
@@ -221,7 +221,7 @@ const SamarbeidDueDiligence = () => {
                 const catChecked = cat.items.filter(i => checked.has(i.id)).length;
                 return (
                   <motion.div key={cat.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * catIdx }}
-                    className="rounded-xl border border-border/30 bg-background overflow-hidden">
+                    className="rounded-2xl border border-border/30 bg-background overflow-hidden">
                     <button onClick={() => toggleCat(cat.id)}
                       className="w-full flex items-center gap-4 p-5 text-left hover:bg-muted/20 transition-colors">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -267,7 +267,7 @@ const SamarbeidDueDiligence = () => {
 
             {/* Tip */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-              className="mt-10 rounded-xl border border-primary/20 bg-primary/5 p-6">
+              className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6">
               <div className="flex items-start gap-3">
                 <Sparkles size={18} className="text-primary shrink-0 mt-0.5" />
                 <div>

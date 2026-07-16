@@ -103,7 +103,7 @@ const BookingModal = ({ course, onClose }: { course: Course | null; onClose: () 
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-lg glass rounded-xl border border-border/20 p-8 md:p-10"
+          className="relative w-full max-w-lg glass rounded-3xl border border-border/20 p-8 md:p-10"
           onClick={e => e.stopPropagation()}
         >
           <button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
@@ -112,7 +112,7 @@ const BookingModal = ({ course, onClose }: { course: Course | null; onClose: () 
 
           {submitted ? (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 size={24} className="text-primary" />
               </div>
               <h3 className="font-heading text-2xl mb-2">Bestilling mottatt!</h3>
@@ -248,7 +248,7 @@ const Kurs = () => {
             <p className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-10 md:mb-14">
               Fra regnskap og skatt til AI, markedsføring og ledelse — velg akkurat det kurset du trenger for å ta neste steg.
             </p>
-            <a href="#kurs" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+            <a href="#kurs" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
               Se alle kurs
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </a>
@@ -335,7 +335,7 @@ const Kurs = () => {
                 return (
                   <div key={cat}>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center`}>
+                      <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center`}>
                         <CatIcon size={16} className="text-foreground/70" strokeWidth={1.5} />
                       </div>
                       <div>
@@ -354,7 +354,7 @@ const Kurs = () => {
                           <Link
                             to={course.slug ? `/tjenester/kurs/${course.slug}` : "#"}
                             onClick={e => { if (!course.slug) { e.preventDefault(); setSelectedCourse(course); } }}
-                            className="group block text-left glass rounded-xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
+                            className="group block text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
                           >
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <p className="text-sm font-medium group-hover:text-primary transition-colors">{course.name}</p>
@@ -392,7 +392,7 @@ const Kurs = () => {
                     <Link
                       to={course.slug ? `/tjenester/kurs/${course.slug}` : "#"}
                       onClick={e => { if (!course.slug) { e.preventDefault(); setSelectedCourse(course); } }}
-                      className="group block text-left glass rounded-xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
+                      className="group block text-left glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all duration-300 h-full"
                     >
                       <div className="flex items-start gap-3">
                         <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
@@ -444,8 +444,8 @@ const Kurs = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
             {audiences.map((a, i) => (
               <AnimatedSection key={a.title} delay={i * 0.1}>
-                <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
+                <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
+                  <div className="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
                     <a.icon size={18} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <h3 className="font-heading text-xl md:text-2xl mb-3">{a.title}</h3>
@@ -481,7 +481,7 @@ const Kurs = () => {
                   { icon: BarChart3, text: "Fra teori til implementering i eget selskap" },
                   { icon: Users, text: "Nettverksbygging med andre næringsdrivende" },
                 ].map(item => (
-                  <li key={item.text} className="flex items-start gap-4 p-4 glass rounded-xl border border-border/10">
+                  <li key={item.text} className="flex items-start gap-4 p-4 glass rounded-2xl border border-border/10">
                     <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                       <item.icon size={16} className="text-primary" strokeWidth={1.5} />
                     </div>
@@ -516,7 +516,7 @@ const Kurs = () => {
         <div className="absolute inset-0 ambient-glow opacity-25" />
         <div className="container mx-auto px-4 md:px-6 relative">
           <AnimatedSection>
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8">
               <GraduationCap size={18} className="text-primary" strokeWidth={1.5} />
             </div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
@@ -526,11 +526,11 @@ const Kurs = () => {
               Velg blant {courses.length}+ kurs og bestill direkte.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#kurs" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300">
+              <a href="#kurs" className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500">
                 Se alle kurs
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </a>
-              <a href="tel:+4712345678" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300">
+              <a href="tel:+4712345678" className="inline-flex items-center gap-2 px-8 py-4 text-sm text-foreground/50 tracking-wider rounded-full border border-border/20 hover:border-primary/20 hover:text-foreground transition-all">
                 <Phone size={14} /> Ring oss direkte
               </a>
             </div>

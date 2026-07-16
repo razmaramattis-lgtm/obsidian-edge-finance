@@ -218,14 +218,14 @@ const Metoden = () => {
             >
               <Link
                 to={`${sectionPath}/kontakt`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 Få et uforpliktende tilbud
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
               <a
                 href="#reisen"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
               >
                 Se hvordan det fungerer
               </a>
@@ -332,8 +332,8 @@ const Metoden = () => {
           {/* Always available callout */}
           <AnimatedSection delay={0.4}>
             <div className="max-w-2xl mx-auto mt-8">
-              <div className="glass rounded-xl p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5 md:gap-6 text-center sm:text-left">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+              <div className="glass rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5 md:gap-6 text-center sm:text-left">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                   <Phone size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div>
@@ -379,7 +379,7 @@ const Metoden = () => {
 
               <Link
                 to={`${sectionPath}/kontakt`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+                className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
               >
                 {isInSection && section ? `Snakk med en ${section.shortName.toLowerCase()}-ekspert` : "Snakk med en regnskapsfører"}
                 <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />

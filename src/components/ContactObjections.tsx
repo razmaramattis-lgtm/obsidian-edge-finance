@@ -33,7 +33,7 @@ const ContactObjections = () => {
       {objections.map((o, i) => {
         const isOpen = open === i;
         return (
-          <div key={i} className="rounded-xl glass border border-border/20 overflow-hidden transition-all">
+          <div key={i} className="rounded-2xl glass border border-border/20 overflow-hidden transition-all">
             <button
               type="button"
               onClick={() => setOpen(isOpen ? null : i)}

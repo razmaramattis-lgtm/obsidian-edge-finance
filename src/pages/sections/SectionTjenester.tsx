@@ -98,7 +98,7 @@ const SectionTjenester = () => {
             </p>
             <Link
               to={sp("/kontakt")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+              className="group inline-flex items-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Få et uforpliktende tilbud
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -117,7 +117,7 @@ const SectionTjenester = () => {
               <AnimatedSection key={service.title} delay={i * 0.08}>
                 <Link
                   to={sp(service.href)}
-                  className="block p-8 md:p-10 glass rounded-xl card-lift h-full group"
+                  className="block p-8 md:p-10 glass rounded-3xl card-lift h-full group"
                 >
                   <h3 className="font-heading text-xl md:text-2xl mb-3 group-hover:text-primary transition-colors duration-300">
                     {service.title}
@@ -148,7 +148,7 @@ const SectionTjenester = () => {
             </p>
             <Link
               to={sp("/kontakt")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+              className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Book en samtale <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>

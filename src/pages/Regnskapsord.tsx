@@ -114,7 +114,7 @@ const Regnskapsord = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Søk etter et begrep..."
-              className="w-full h-12 pl-11 pr-4 rounded-xl border border-border/30 bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full h-12 pl-11 pr-4 rounded-2xl border border-border/30 bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
           </div>
 
@@ -180,7 +180,7 @@ const Regnskapsord = () => {
                       <Link
                         key={item.id}
                         to={`/ressurser/regnskapsord/${item.slug}`}
-                        className="glass rounded-xl px-5 py-4 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 transition-colors group"
+                        className="glass rounded-2xl px-5 py-4 border border-border/20 flex items-center justify-between gap-4 hover:border-primary/30 transition-colors group"
                       >
                         <div className="min-w-0 flex items-center gap-3">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${cat.dot}`} title={cat.label} />

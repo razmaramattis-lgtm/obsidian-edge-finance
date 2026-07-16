@@ -71,7 +71,7 @@ const LeadMagnetDialog = ({ open, onOpenChange }: Props) => {
         ) : (
           <>
             <DialogHeader>
-              <div className="mx-auto w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
+              <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
                 <FileText size={20} className="text-primary" />
               </div>
               <DialogTitle className="font-heading text-2xl text-center">Last ned prisguide</DialogTitle>

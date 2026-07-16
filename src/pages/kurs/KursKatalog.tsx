@@ -72,11 +72,11 @@ const BookingModal = ({ course, onClose }: { course: Course | null; onClose: () 
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="relative w-full max-w-lg glass rounded-xl border border-border/20 p-8 md:p-10" onClick={e => e.stopPropagation()}>
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="relative w-full max-w-lg glass rounded-3xl border border-border/20 p-8 md:p-10" onClick={e => e.stopPropagation()}>
           <button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
           {submitted ? (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-6"><CheckCircle2 size={24} className="text-secondary" /></div>
+              <div className="w-14 h-14 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-6"><CheckCircle2 size={24} className="text-secondary" /></div>
               <h3 className="font-heading text-2xl mb-2">Bestilling mottatt!</h3>
               <p className="text-sm text-muted-foreground font-light mb-2">Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
               <button onClick={onClose} className="mt-6 px-6 py-2.5 bg-secondary text-secondary-foreground rounded-full text-sm hover:opacity-90 transition-opacity">Lukk</button>
@@ -202,7 +202,7 @@ const KursKatalog = () => {
                 return (
                   <div key={cat}>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center`}>
+                      <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${conf.color} border border-border/20 flex items-center justify-center`}>
                         <CatIcon size={16} className="text-foreground/70" strokeWidth={1.5} />
                       </div>
                       <div>
@@ -213,7 +213,7 @@ const KursKatalog = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {items.map((course) => (
                         <motion.div key={course.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                          <button onClick={() => !course.coming_soon && setSelectedCourse(course)} className={`w-full text-left group p-5 rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-300 ${course.coming_soon ? "opacity-60" : ""}`}>
+                          <button onClick={() => !course.coming_soon && setSelectedCourse(course)} className={`w-full text-left group p-5 rounded-2xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-300 ${course.coming_soon ? "opacity-60" : ""}`}>
                             <div className="flex items-start justify-between gap-2 mb-2">
                               <h4 className="text-sm font-medium leading-snug">{course.name}</h4>
                               <div className="flex gap-1.5 shrink-0">
@@ -240,7 +240,7 @@ const KursKatalog = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filtered.map((course) => (
                 <motion.div key={course.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                  <button onClick={() => !course.coming_soon && setSelectedCourse(course)} className={`w-full text-left group p-5 rounded-xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-300 ${course.coming_soon ? "opacity-60" : ""}`}>
+                  <button onClick={() => !course.coming_soon && setSelectedCourse(course)} className={`w-full text-left group p-5 rounded-2xl border border-border/10 bg-muted/5 hover:bg-muted/15 hover:border-secondary/20 transition-all duration-300 ${course.coming_soon ? "opacity-60" : ""}`}>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="text-sm font-medium leading-snug">{course.name}</h4>
                       <div className="flex gap-1.5 shrink-0">

@@ -69,7 +69,7 @@ const RegnskapsordDetalj = () => {
             <ArrowLeft size={16} /> Tilbake til regnskapsordbok
           </Link>
 
-          <article className="glass rounded-xl border border-border/20 p-8 md:p-12 space-y-6">
+          <article className="glass rounded-3xl border border-border/20 p-8 md:p-12 space-y-6">
             <div className="flex items-center gap-3 flex-wrap">
               <BookMarked size={20} className="text-primary shrink-0" />
               <h1 className="text-2xl md:text-3xl font-bold">{term.term}</h1>

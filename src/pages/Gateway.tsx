@@ -216,14 +216,14 @@ const Gateway = () => {
   if (!apiKey) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-16 h-16 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
           <Smartphone size={28} className="text-emerald-400" />
         </div>
         <h1 className="text-xl font-bold mb-2">SMS Gateway</h1>
         <p className="text-sm text-zinc-400 mb-8 max-w-xs">
           Skann QR-koden fra admin-panelet for å koble denne enheten som SMS-gateway.
         </p>
-        <div className="w-full max-w-xs bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-left">
+        <div className="w-full max-w-xs bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-left">
           <p className="text-xs text-zinc-500 mb-3">Eller lim inn oppsettslenke:</p>
           <input
             type="text"

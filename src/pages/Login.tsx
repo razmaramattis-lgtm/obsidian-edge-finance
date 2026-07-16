@@ -82,9 +82,9 @@ const Login = () => {
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className="relative w-full max-w-md"
       >
-        <div className="glass rounded-xl p-8 md:p-10 border border-border/20 shadow-2xl">
+        <div className="glass rounded-3xl p-8 md:p-10 border border-border/20 shadow-2xl">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
               <Lock size={22} className="text-primary" strokeWidth={1.5} />
             </div>
             <h1 className="font-heading text-3xl md:text-4xl text-center mb-1">Logg inn</h1>

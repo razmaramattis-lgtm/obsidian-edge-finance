@@ -17,7 +17,7 @@ const SocialProofBar = () => {
   ];
 
   return (
-    <div className="rounded-xl glass border border-border/20 px-4 md:px-6 py-4 md:py-5">
+    <div className="rounded-2xl glass border border-border/20 px-4 md:px-6 py-4 md:py-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-2">
         {items.map((it, i) => {
           const Icon = it.icon;

@@ -214,13 +214,13 @@ const BlogPost = () => {
             {(prevPost || nextPost) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10 pt-8 border-t border-border/20">
                 {prevPost ? (
-                  <Link to={`/nyhet/${prevPost.slug}`} className="group glass rounded-xl p-5 border border-border/20 hover:border-primary/30 transition-all">
+                  <Link to={`/nyhet/${prevPost.slug}`} className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all">
                     <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">← Forrige</span>
                     <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2">{prevPost.title}</p>
                   </Link>
                 ) : <div />}
                 {nextPost ? (
-                  <Link to={`/nyhet/${nextPost.slug}`} className="group glass rounded-xl p-5 border border-border/20 hover:border-primary/30 transition-all text-right">
+                  <Link to={`/nyhet/${nextPost.slug}`} className="group glass rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-all text-right">
                     <span className="text-[10px] tracking-widest uppercase text-muted-foreground/60">Neste →</span>
                     <p className="text-sm font-medium mt-1 group-hover:text-primary transition-colors line-clamp-2">{nextPost.title}</p>
                   </Link>
@@ -241,7 +241,7 @@ const BlogPost = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((rp, i) => (
                 <AnimatedSection key={rp.id} delay={i * 0.08}>
-                  <Link to={`/nyhet/${rp.slug}`} className="glass rounded-xl overflow-hidden border border-border/20 card-lift group block h-full">
+                  <Link to={`/nyhet/${rp.slug}`} className="glass rounded-2xl overflow-hidden border border-border/20 card-lift group block h-full">
                     {rp.image_url && (
                       <div className="aspect-[16/9] overflow-hidden relative">
                         <img src={rp.image_url} alt={rp.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

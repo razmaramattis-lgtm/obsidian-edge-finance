@@ -34,7 +34,7 @@ const FloatingActionMenu = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.95 }}
             transition={{ duration: 0.18 }}
-            className="pointer-events-auto mb-3 w-[280px] rounded-xl glass border border-border/30 shadow-2xl overflow-hidden"
+            className="pointer-events-auto mb-3 w-[280px] rounded-2xl glass border border-border/30 shadow-2xl overflow-hidden"
           >
             <div className="px-4 py-3 border-b border-border/15 bg-primary/5">
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary/80 font-medium">Snarvei</p>

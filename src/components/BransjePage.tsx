@@ -109,7 +109,7 @@ const BransjePage = ({
             <ArrowLeft size={12} /> Alle bransjer
           </Link>
           <div className="flex items-center gap-4 mb-5 md:mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
               <Icon size={17} className="text-primary" strokeWidth={1.5} />
             </div>
             <p className="text-[10px] tracking-[0.45em] uppercase text-secondary">
@@ -128,14 +128,14 @@ const BransjePage = ({
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               to={sp("/kontakt")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 md:px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
             >
               Snakk med en {name}-ekspert
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
               to={sp("/priser")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 md:px-10 py-4 text-sm text-foreground/70 tracking-wider rounded-full border border-border/30 hover:border-primary/20 hover:text-foreground transition-all duration-500"
             >
               Se priser
             </Link>
@@ -189,7 +189,7 @@ const BransjePage = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
           {challenges.map((c, i) => (
             <AnimatedSection key={c.title} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
                 <h3 className="font-heading text-xl md:text-2xl mb-3">{c.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{c.desc}</p>
               </div>
@@ -211,7 +211,7 @@ const BransjePage = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
           {whyAvargo.map((w, i) => (
             <AnimatedSection key={w.num} delay={i * 0.1}>
-              <div className="p-8 md:p-10 glass rounded-xl card-lift h-full">
+              <div className="p-8 md:p-10 glass rounded-3xl card-lift h-full">
                 <span className="font-heading text-5xl text-primary/20">{w.num}</span>
                 <h3 className="font-heading text-xl md:text-2xl mt-5 mb-3">{w.title}</h3>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">{w.desc}</p>
@@ -257,7 +257,7 @@ const BransjePage = ({
           </p>
           <Link
             to={sp("/kontakt")}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
+            className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
           >
             Book en gjennomgang
             <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
