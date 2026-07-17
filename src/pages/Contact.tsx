@@ -378,7 +378,24 @@ const Contact = () => {
                     <input
                       type="text"
                       value={companySearch}
-                      onChange={(e) => setCompanySearch(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCompanySearch(val);
+                        setSelskapsnavn(val);
+                        // Clear stale Brreg data when user edits the company name manually
+                        if (fetched && val !== companySearch) {
+                          setOrgnummer("");
+                          setNaering("");
+                          setOrgForm("");
+                          setAddress("");
+                          setStiftelsesdato("");
+                          setDagligLeder("");
+                          setStyreleder("");
+                          setNumEmployees("");
+                          setFinancials(null);
+                          setFetched(false);
+                        }
+                      }}
                       className={`${inputClass} pl-11`}
                       placeholder="Skriv selskapets navn eller org.nr…"
                     />
