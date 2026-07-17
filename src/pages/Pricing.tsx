@@ -203,9 +203,9 @@ const Pricing = () => {
                 <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 text-primary text-[11px] font-medium tracking-[0.15em] uppercase mb-6">
                   Priser
                 </span>
-                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-6">
+                <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1] mb-6 overflow-visible">
                   Fastpris fra{" "}
-                  <span className="italic text-gradient-rose">1 950 kr/mnd</span>
+                  <span className="italic text-gradient-rose pr-3">1 950 kr/mnd</span>
                 </h1>
                 <p className="text-xl md:text-2xl text-foreground/80 font-light leading-relaxed mb-6">
                   Forutsigbare kostnader – uten skjulte tillegg.
