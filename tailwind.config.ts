@@ -115,6 +115,24 @@ export default {
           "0%": { transform: "translateX(-20px)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
+        "drift-x": {
+          "0%, 100%": { transform: "translateX(-10px)" },
+          "50%": { transform: "translateX(10px)" },
+        },
+        "drift-y": {
+          "0%, 100%": { transform: "translateY(-10px)" },
+          "50%": { transform: "translateY(10px)" },
+        },
+        "blob-morph": {
+          "0%, 100%": { borderRadius: "48% 52% 46% 54% / 50% 44% 56% 50%" },
+          "25%": { borderRadius: "54% 46% 52% 48% / 46% 54% 46% 54%" },
+          "50%": { borderRadius: "46% 54% 50% 50% / 56% 48% 52% 44%" },
+          "75%": { borderRadius: "52% 48% 54% 46% / 48% 52% 48% 52%" },
+        },
+        "card-bob": {
+          "0%, 100%": { transform: "translateY(-6px)" },
+          "50%": { transform: "translateY(6px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -124,7 +142,12 @@ export default {
         "counter-tick": "counter-tick 1s ease-in-out infinite",
         "pulse-gold": "pulse-gold 3s ease-in-out infinite",
         "slide-in-left": "slide-in-left 0.5s ease-out forwards",
+        "drift-x": "drift-x 17s ease-in-out infinite",
+        "drift-y": "drift-y 11s ease-in-out infinite",
+        "blob-morph": "blob-morph 14s ease-in-out infinite",
+        "card-bob": "card-bob 6s ease-in-out infinite",
       },
+
     },
   },
   plugins: [require("tailwindcss-animate")],
