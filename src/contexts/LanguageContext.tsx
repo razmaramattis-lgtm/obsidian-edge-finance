@@ -202,9 +202,16 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     } catch {}
   }, [lang]);
 
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const t = (key: keyof typeof translations) => translations[key]?.[lang] ?? String(key);
   return (
-    <LanguageContext.Provider value={{ lang, setLang: setLangState, t }}>
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
       {children}
     </LanguageContext.Provider>
   );
