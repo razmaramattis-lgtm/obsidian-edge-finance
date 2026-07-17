@@ -256,33 +256,48 @@ const Hub = () => {
       </section>
 
       {/* ═══ TRUST BAR ═══ */}
-      <section className="relative -mt-8 md:-mt-14 z-20 pb-8 md:pb-12">
+      <section className="relative -mt-10 md:-mt-20 z-20 pb-10 md:pb-16">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            {[
-              { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
-              { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
-              { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ delay: i * 0.12, duration: 0.6, ease: "easeOut" }}
-                whileHover={{ y: -3 }}
-                className="group flex items-center gap-3 rounded-full bg-card/95 backdrop-blur-sm shadow-lg shadow-primary/5 border border-border/60 pl-2 pr-5 py-2 hover:border-primary/30 hover:shadow-primary/10 transition-all duration-300"
-              >
-                <div className="w-9 h-9 rounded-full bg-accent/30 border border-accent/40 flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
-                  <item.icon size={15} className="text-primary" strokeWidth={1.75} />
-                </div>
-                <div className="leading-tight">
-                  <p className="text-[13px] font-semibold text-foreground">{item.label}</p>
-                  <p className="text-[10.5px] text-muted-foreground font-medium">{item.sub}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            style={{ y: trustY }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-[hsl(155_58%_18%)] shadow-2xl shadow-primary/25 ring-1 ring-primary/40"
+          >
+            {/* Decorative glow */}
+            <div aria-hidden className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-sage/25 blur-3xl" />
+            <div aria-hidden className="absolute -bottom-24 -left-16 w-72 h-72 rounded-full bg-accent/20 blur-3xl" />
+
+            <div className="relative grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-primary-foreground/15">
+              {[
+                { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
+                { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
+                { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ delay: 0.15 + i * 0.12, duration: 0.6, ease: "easeOut" }}
+                  className="group flex items-center gap-4 px-5 md:px-7 py-5 md:py-7"
+                >
+                  <div className="relative shrink-0">
+                    <div className="absolute inset-0 rounded-2xl bg-accent/40 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative w-12 h-12 rounded-2xl bg-primary-foreground/10 backdrop-blur border border-primary-foreground/25 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                      <item.icon size={20} className="text-accent" strokeWidth={2} />
+                    </div>
+                  </div>
+                  <div className="leading-tight">
+                    <p className="text-[15px] md:text-base font-semibold text-primary-foreground">{item.label}</p>
+                    <p className="text-[12px] md:text-[13px] text-primary-foreground/75 font-medium mt-0.5">{item.sub}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
