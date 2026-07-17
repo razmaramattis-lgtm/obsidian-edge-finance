@@ -22,6 +22,7 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
 
 const Hub = () => {
   const sections = SECTION_LIST;
+  const { t } = useLang();
 
   return (
     <>
