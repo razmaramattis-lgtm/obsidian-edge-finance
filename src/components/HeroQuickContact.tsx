@@ -93,8 +93,8 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             maxLength={160}
-            placeholder="Firma"
-            aria-label="Firma"
+            placeholder={t("form.company")}
+            aria-label={t("form.company")}
             className={inputCls}
           />
         </div>
