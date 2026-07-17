@@ -143,6 +143,44 @@ export const translations: Dict = {
     en: "Something went wrong. Please try again or email kontakt@avargo.no",
   },
 
+  // Footer
+  "footer.tagline.a": { no: "Regnskap for bedrifter som", en: "Accounting for businesses that" },
+  "footer.tagline.b": { no: "vil konsentrere seg om driften", en: "want to focus on running the business" },
+  "footer.desc": {
+    no: "Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.",
+    en: "Authorised accounting firm. Fixed monthly price, dedicated accountant and fast response on business days.",
+  },
+  "footer.orgline": { no: "Autorisert regnskapsbyrå · Org.nr 938 076 669", en: "Authorised accounting firm · Org.no 938 076 669" },
+  "footer.cta": { no: "Få et uforpliktende tilbud", en: "Get a no-obligation quote" },
+  "footer.col.services": { no: "Tjenester", en: "Services" },
+  "footer.col.resources": { no: "Ressurser", en: "Resources" },
+  "footer.col.company": { no: "Selskapet", en: "Company" },
+  "footer.link.dedicated": { no: "Dedikert regnskapsfører", en: "Dedicated accountant" },
+  "footer.link.arsregnskap": { no: "Årsregnskap", en: "Annual accounts" },
+  "footer.link.lonn": { no: "Lønn & rapportering", en: "Payroll & reporting" },
+  "footer.link.skatt": { no: "Skatterådgivning", en: "Tax advisory" },
+  "footer.link.cfo": { no: "CFO-rådgivning", en: "CFO advisory" },
+  "footer.link.all": { no: "Alle tjenester →", en: "All services →" },
+  "footer.link.kontohjelp": { no: "Kontohjelp", en: "Account help" },
+  "footer.link.skattekalender": { no: "Skattekalender", en: "Tax calendar" },
+  "footer.link.prisguide": { no: "Prisguide", en: "Pricing guide" },
+  "footer.link.byer": { no: "Regnskapsfører i din by", en: "Accountant in your city" },
+  "footer.link.bransjer": { no: "Bransjer", en: "Industries" },
+  "footer.link.faq": { no: "Vanlige spørsmål", en: "FAQ" },
+  "footer.link.about": { no: "Om Avargo", en: "About Avargo" },
+  "footer.link.contact": { no: "Kontakt oss", en: "Contact us" },
+  "footer.link.book": { no: "Book møte", en: "Book meeting" },
+  "footer.link.career": { no: "Karriere", en: "Careers" },
+  "footer.link.login": { no: "Logg inn", en: "Sign in" },
+  "footer.legal.privacy": { no: "Personvern", en: "Privacy" },
+  "footer.legal.terms": { no: "Vilkår", en: "Terms" },
+  "footer.legal.security": { no: "Sikkerhet", en: "Security" },
+  "footer.copyright": { no: "Bygget med presisjon.", en: "Built with precision." },
+  "footer.eyebrow.right": { no: "Regnskap · Rådgivning", en: "Accounting · Advisory" },
+
+  // Scroll incentive
+  "hero.scroll": { no: "Bla for å utforske", en: "Scroll to explore" },
+
   // Footer toggle label
   "lang.toggle": { no: "English", en: "Norsk" },
 };
