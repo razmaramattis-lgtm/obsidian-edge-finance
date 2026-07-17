@@ -519,6 +519,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
+              {location.pathname === "/" && <LangToggle />}
               <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
               <Link to="/vilkar"     className="hover:text-accent transition-colors">Vilkår</Link>
               <Link to="/sikkerhet"  className="hover:text-accent transition-colors">Sikkerhet</Link>
