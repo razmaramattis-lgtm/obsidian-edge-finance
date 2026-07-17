@@ -232,6 +232,7 @@ const App = () => (
         <InstallPromptSuppressor />
         <BrowserRouter>
           <AuthProvider>
+            <LanguageProvider>
             <SectionProvider>
               <ScrollToTop />
               <PrefetchTrigger />
