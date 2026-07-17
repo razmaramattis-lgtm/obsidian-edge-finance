@@ -81,6 +81,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const bransjerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ressurserRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
+  const { t } = useLang();
 
   // ── Subtil scroll-reaksjon for header ─────────────
   const [scrolled, setScrolled] = useState(false);
