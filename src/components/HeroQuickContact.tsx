@@ -124,8 +124,8 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={600}
           rows={3}
-          placeholder="Melding"
-          aria-label="Melding"
+          placeholder={t("form.message")}
+          aria-label={t("form.message")}
           className={`${inputCls} min-h-24 resize-none`}
         />
         <button
