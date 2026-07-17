@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLang } from "@/contexts/LanguageContext";
 
 /**
  * Inline ekspresskjema for hero/trafikktung side.
  * Felter: navn, firma, e-post, telefon og kort melding — alt over én knapp.
  */
 const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
+  const { t } = useLang();
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
