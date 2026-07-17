@@ -244,16 +244,16 @@ const Hub = () => {
             className="max-w-2xl mx-auto"
           >
             <h2 className="text-2xl md:text-5xl font-bold mb-3 md:mb-5 leading-tight max-w-2xl mx-auto">
-              Klar for en enklere hverdag?
+              {t("cta.title")}
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mb-8 md:mb-12 max-w-md mx-auto">
-              Ta en uforpliktende prat — vi hjelper deg å finne riktig løsning.
+              {t("cta.sub")}
             </p>
             <Link
               to="/kontakt"
               className="group inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground tracking-wide transition-all duration-300"
             >
-              Snakk med oss
+              {t("cta.button")}
               <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
           </motion.div>
