@@ -237,24 +237,30 @@ const Hub = () => {
       {/* ═══ TRUST BAR ═══ */}
       <section className="relative -mt-8 md:-mt-14 z-20 pb-8 md:pb-12">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border/60 px-5 md:px-10 py-5 md:py-7">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
-              {[
-                { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
-                { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
-                { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 py-3 sm:py-1 sm:px-4 first:sm:pl-0 last:sm:pr-0">
-                  <div className="w-10 h-10 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
-                    <item.icon size={17} className="text-primary" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground leading-tight">{item.label}</p>
-                    <p className="text-[11px] text-muted-foreground font-medium">{item.sub}</p>
-                  </div>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {[
+              { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
+              { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
+              { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.12, duration: 0.6, ease: "easeOut" }}
+                whileHover={{ y: -3 }}
+                className="group flex items-center gap-3 rounded-full bg-card/95 backdrop-blur-sm shadow-lg shadow-primary/5 border border-border/60 pl-2 pr-5 py-2 hover:border-primary/30 hover:shadow-primary/10 transition-all duration-300"
+              >
+                <div className="w-9 h-9 rounded-full bg-accent/30 border border-accent/40 flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
+                  <item.icon size={15} className="text-primary" strokeWidth={1.75} />
                 </div>
-              ))}
-            </div>
+                <div className="leading-tight">
+                  <p className="text-[13px] font-semibold text-foreground">{item.label}</p>
+                  <p className="text-[10.5px] text-muted-foreground font-medium">{item.sub}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -310,8 +316,9 @@ const Hub = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
+                transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
+                whileHover={{ y: -6 }}
+                className="group rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 overflow-hidden"
               >
                 <div className="aspect-[4/3] w-full overflow-hidden relative">
                   <img
@@ -320,14 +327,14 @@ const Hub = () => {
                     loading="lazy"
                     width={1024}
                     height={768}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
                     style={{ filter: "saturate(0.7) hue-rotate(-8deg) contrast(0.98)" }}
                   />
                   <div className="absolute inset-0 bg-primary/15 mix-blend-multiply pointer-events-none" />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-sage/10 pointer-events-none" />
                 </div>
                 <div className="p-6 md:p-8">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
                     <item.icon size={18} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-base font-semibold mb-2">{item.title}</h3>
