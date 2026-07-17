@@ -491,6 +491,7 @@ const App = () => (
                 </Routes>
               </Suspense>
             </SectionProvider>
+            </LanguageProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
