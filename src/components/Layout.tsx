@@ -6,6 +6,7 @@ import ExitIntentDialog from "@/components/ExitIntentDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Logo from "@/components/Logo";
+import { useLang } from "@/contexts/LanguageContext";
 
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
