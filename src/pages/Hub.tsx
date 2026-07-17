@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import SwitchCheckSection from "@/components/SwitchCheckSection";
+import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
