@@ -199,7 +199,7 @@ const Pricing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start max-w-7xl mx-auto">
             {/* Left: copy */}
             <AnimatedSection>
-              <div className="max-w-xl lg:sticky lg:top-28">
+              <div className="lg:sticky lg:top-28">
                 <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 text-primary text-[11px] font-medium tracking-[0.15em] uppercase mb-6">
                   Priser
                 </span>
