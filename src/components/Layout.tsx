@@ -434,7 +434,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center gap-4 mb-10">
             <span className="text-[10px] tracking-[0.45em] uppercase text-accent font-semibold">Est. 2026</span>
             <span className="flex-1 h-px bg-gradient-to-r from-accent/40 via-secondary-foreground/15 to-transparent" />
-            <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">Regnskap · Rådgivning</span>
+            <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">{t("footer.eyebrow.right")}</span>
           </div>
 
           {/* Masthead */}
