@@ -219,25 +219,26 @@ const Hub = () => {
       </section>
 
       {/* ═══ TRUST BAR ═══ */}
-      <section className="py-8 md:py-12 bg-secondary border-y border-accent/20">
-
+      <section className="relative -mt-8 md:-mt-14 z-20 pb-8 md:pb-12">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-            {[
-              { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
-              { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
-              { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
-                <div className="w-9 h-9 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
-                  <item.icon size={16} className="text-accent" strokeWidth={1.5} />
+          <div className="rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border/60 px-5 md:px-10 py-5 md:py-7">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+              {[
+                { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
+                { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
+                { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 py-3 sm:py-1 sm:px-4 first:sm:pl-0 last:sm:pr-0">
+                  <div className="w-10 h-10 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
+                    <item.icon size={17} className="text-primary" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground leading-tight">{item.label}</p>
+                    <p className="text-[11px] text-muted-foreground font-medium">{item.sub}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-secondary-foreground leading-tight">{item.label}</p>
-                  <p className="text-[10px] text-muted font-medium">{item.sub}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
