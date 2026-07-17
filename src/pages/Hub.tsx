@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
+import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake, TrendingUp, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
-import HeroQuickContact from "@/components/HeroQuickContact";
 import SwitchCheckSection from "@/components/SwitchCheckSection";
 import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
+import heroPortrait from "@/assets/hero-portrait.png";
 import hubPartner from "@/assets/hub-partner.jpg";
 import hubFastpris from "@/assets/hub-fastpris.jpg";
 import hubTeam from "@/assets/hub-team.jpg";
+
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
   regnskap: BookOpen,
