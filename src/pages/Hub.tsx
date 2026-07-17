@@ -14,6 +14,10 @@ const heroPortrait = heroPortraitAsset.url;
 import hubPartner from "@/assets/hub-partner.jpg";
 import hubFastpris from "@/assets/hub-fastpris.jpg";
 import hubTeam from "@/assets/hub-team.jpg";
+import reviewer1 from "@/assets/reviewer-1.jpg";
+import reviewer2 from "@/assets/reviewer-2.jpg";
+import reviewer3 from "@/assets/reviewer-3.jpg";
+import { Star } from "lucide-react";
 
 
 const sectionIcons: Record<SectionId, React.ElementType> = {
