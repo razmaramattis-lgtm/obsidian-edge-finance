@@ -378,7 +378,24 @@ const Contact = () => {
                     <input
                       type="text"
                       value={companySearch}
-                      onChange={(e) => setCompanySearch(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCompanySearch(val);
+                        setSelskapsnavn(val);
+                        // Clear stale Brreg data when user edits the company name manually
+                        if (fetched && val !== companySearch) {
+                          setOrgnummer("");
+                          setNaering("");
+                          setOrgForm("");
+                          setAddress("");
+                          setStiftelsesdato("");
+                          setDagligLeder("");
+                          setStyreleder("");
+                          setNumEmployees("");
+                          setFinancials(null);
+                          setFetched(false);
+                        }
+                      }}
                       className={`${inputClass} pl-11`}
                       placeholder="Skriv selskapets navn eller org.nr…"
                     />
@@ -404,15 +421,9 @@ const Contact = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Selskapsnavn <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
-                    <input type="text" value={selskapsnavn} onChange={(e) => setSelskapsnavn(e.target.value)} className={inputClass} placeholder="Selskapets navn" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Org.nummer <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
-                    <input type="text" value={orgnummer} onChange={(e) => setOrgnummer(e.target.value)} className={inputClass} placeholder="9 siffer" />
-                  </div>
+                <div>
+                  <label className={labelClass}>Org.nummer <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
+                  <input type="text" value={orgnummer} onChange={(e) => setOrgnummer(e.target.value)} className={inputClass} placeholder="9 siffer" />
                 </div>
 
                 {/* Fetched company details — hidden until Brreg lookup */}
