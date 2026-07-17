@@ -30,6 +30,15 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
 const Hub = () => {
   const sections = SECTION_LIST;
   const { t, lang } = useLang();
+  const prefersReducedMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+  // Subtle parallax: background drifts down slower, foreground glow drifts up faster
+  const bgY = useTransform(scrollY, [0, 800], [0, prefersReducedMotion ? 0 : 120]);
+  const bgScale = useTransform(scrollY, [0, 800], [1, prefersReducedMotion ? 1 : 1.08]);
+  const bgOpacity = useTransform(scrollY, [0, 600], [1, 0.35]);
+  const glowY = useTransform(scrollY, [0, 800], [0, prefersReducedMotion ? 0 : -80]);
+  const portraitY = useTransform(scrollY, [0, 800], [0, prefersReducedMotion ? 0 : -40]);
+  const trustY = useTransform(scrollY, [0, 400], [0, prefersReducedMotion ? 0 : -18]);
 
   return (
     <>
