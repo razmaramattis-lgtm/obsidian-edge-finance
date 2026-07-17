@@ -316,8 +316,9 @@ const Hub = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-500 overflow-hidden"
+                transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
+                whileHover={{ y: -6 }}
+                className="group rounded-xl bg-background border border-border/20 shadow-sm hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 overflow-hidden"
               >
                 <div className="aspect-[4/3] w-full overflow-hidden relative">
                   <img
@@ -326,14 +327,14 @@ const Hub = () => {
                     loading="lazy"
                     width={1024}
                     height={768}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
                     style={{ filter: "saturate(0.7) hue-rotate(-8deg) contrast(0.98)" }}
                   />
                   <div className="absolute inset-0 bg-primary/15 mix-blend-multiply pointer-events-none" />
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-sage/10 pointer-events-none" />
                 </div>
                 <div className="p-6 md:p-8">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
                     <item.icon size={18} className="text-primary" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-base font-semibold mb-2">{item.title}</h3>
