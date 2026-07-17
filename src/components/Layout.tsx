@@ -6,6 +6,7 @@ import ExitIntentDialog from "@/components/ExitIntentDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Logo from "@/components/Logo";
+import { useLang } from "@/contexts/LanguageContext";
 
 import {
   Menu, X, ChevronDown, BookOpen, TrendingUp, Briefcase,
@@ -518,6 +519,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
+              {location.pathname === "/" && <LangToggle />}
               <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
               <Link to="/vilkar"     className="hover:text-accent transition-colors">Vilkår</Link>
               <Link to="/sikkerhet"  className="hover:text-accent transition-colors">Sikkerhet</Link>
@@ -532,6 +534,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 /* ── Helper components ─────────────────────────── */
+const LangToggle = () => {
+  const { lang, setLang } = useLang();
+  return (
+    <button
+      type="button"
+      onClick={() => setLang(lang === "no" ? "en" : "no")}
+      aria-label="Toggle language"
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-secondary-foreground/25 hover:border-accent hover:text-accent transition-colors uppercase tracking-[0.15em] text-[10px] font-semibold"
+    >
+      <span className={lang === "no" ? "text-accent" : "text-secondary-foreground/60"}>NO</span>
+      <span className="text-secondary-foreground/30">/</span>
+      <span className={lang === "en" ? "text-accent" : "text-secondary-foreground/60"}>EN</span>
+    </button>
+  );
+};
+
 const NavButton = ({ to, label, isActive }: { to: string; label: string; isActive?: boolean }) => (
   <Link
     to={to}

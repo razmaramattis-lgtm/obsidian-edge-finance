@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SectionProvider } from "@/contexts/SectionContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Layout from "./components/Layout";
 // SplashScreen removed — no loading overlay on entry
 import SectionTheme from "./components/SectionTheme";
@@ -231,6 +232,7 @@ const App = () => (
         <InstallPromptSuppressor />
         <BrowserRouter>
           <AuthProvider>
+            <LanguageProvider>
             <SectionProvider>
               <ScrollToTop />
               <PrefetchTrigger />
@@ -489,6 +491,7 @@ const App = () => (
                 </Routes>
               </Suspense>
             </SectionProvider>
+            </LanguageProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

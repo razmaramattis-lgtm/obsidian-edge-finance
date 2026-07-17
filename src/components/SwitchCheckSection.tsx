@@ -4,16 +4,13 @@ import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SwitchCheckDialog from "./SwitchCheckDialog";
 import switchCheckImageAsset from "@/assets/switch-check.png.asset.json";
+import { useLang } from "@/contexts/LanguageContext";
 const switchCheckImage = switchCheckImageAsset.url;
-
-const benefits = [
-  "Få en tydelig plan for overtagelse og ansvar",
-  "Avklar behov for system, rapportering og rådgivning",
-  "Sikre god flyt uten stopp i drift og frister",
-];
 
 const SwitchCheckSection = () => {
   const [open, setOpen] = useState(false);
+  const { t } = useLang();
+  const benefits = [t("switch.benefit.1"), t("switch.benefit.2"), t("switch.benefit.3")];
   return (
     <section className="py-16 md:py-32 border-t border-border/10 bg-gradient-to-br from-background via-muted/25 to-background">
       <SwitchCheckDialog open={open} onOpenChange={setOpen} />
@@ -27,15 +24,15 @@ const SwitchCheckSection = () => {
             transition={{ duration: 0.7 }}
           >
             <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-5 md:mb-6 font-semibold px-3.5 py-1.5 rounded-full border border-secondary/20 bg-secondary/5">
-              Bytte regnskapsfører
+              {t("switch.eyebrow")}
             </span>
 
             <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl leading-[1.15] tracking-tight mb-4 md:mb-6">
-              Er vi <span className="italic text-gradient-rose inline-block pr-2 pb-1">riktig for deg?</span>
+              {t("switch.title.a")} <span className="italic text-gradient-rose inline-block pr-2 pb-1">{t("switch.title.b")}</span>
             </h2>
 
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed max-w-xl mb-6 md:mb-8">
-              Riktig regnskapsfører er et viktig valg. Svar på fem korte spørsmål, så får du en personlig vurdering — og ærlig beskjed hvis vi ikke passer.
+              {t("switch.body")}
             </p>
 
             <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10">
@@ -62,14 +59,14 @@ const SwitchCheckSection = () => {
                 onClick={() => setOpen(true)}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
               >
-                Ta sjekken
+                {t("switch.cta.primary")}
                 <ArrowRight size={12} />
               </button>
               <Link
                 to="/tjenester"
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
               >
-                Slik bytter du regnskapsfører
+                {t("switch.cta.secondary")}
               </Link>
             </div>
           </motion.div>
@@ -109,10 +106,10 @@ const SwitchCheckSection = () => {
                   <Sparkles size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base md:text-lg font-semibold text-primary">5 spørsmål</p>
+                  <p className="text-base md:text-lg font-semibold text-primary">{t("switch.card.title")}</p>
                   <div className="flex items-center gap-1.5 text-xs md:text-sm text-primary/75">
                     <Clock size={12} strokeWidth={1.5} />
-                    <span>ca. 60 sekunder</span>
+                    <span>{t("switch.card.sub")}</span>
                   </div>
                 </div>
               </motion.div>

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import HeroQuickContact from "@/components/HeroQuickContact";
 import SwitchCheckSection from "@/components/SwitchCheckSection";
+import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
@@ -21,12 +22,13 @@ const sectionIcons: Record<SectionId, React.ElementType> = {
 
 const Hub = () => {
   const sections = SECTION_LIST;
+  const { t } = useLang();
 
   return (
     <>
       <Helmet>
-        <title>Regnskapsfører for små og mellomstore bedrifter | Avargo</title>
-        <meta name="description" content="Autorisert regnskapsbyrå med dedikert regnskapsfører, fast månedspris og rask respons på hverdager. Bytt regnskapsfører uten friksjon — vi tar hele overføringen." />
+        <title>{t("seo.title")}</title>
+        <meta name="description" content={t("seo.description")} />
         <link rel="canonical" href="https://avargo.no" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -65,7 +67,7 @@ const Hub = () => {
             <div className="max-w-2xl">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
                 <span className="inline-block text-[10px] md:text-xs tracking-[0.35em] uppercase text-secondary mb-6 md:mb-8 font-semibold px-3.5 py-1.5 rounded-full border border-background/70 bg-secondary/5">
-                  Autorisert regnskapsbyrå
+                  {t("hero.eyebrow")}
                 </span>
               </motion.div>
 
@@ -75,9 +77,9 @@ const Hub = () => {
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[92px] leading-[0.95] tracking-tight mb-6 md:mb-8"
               >
-                Regnskap som
+                {t("hero.title.a")}
                 <br />
-                <span className="italic text-gradient-rose">frigjør tid.</span>
+                <span className="italic text-gradient-rose">{t("hero.title.b")}</span>
               </motion.h1>
 
               <motion.p
@@ -86,7 +88,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Vi er regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Dedikert autorisert regnskapsfører, fast månedspris uten overraskelser, og reell rådgivning når du trenger den. Vi tar hele byttet fra din nåværende regnskapsfører.
+                {t("hero.body")}
               </motion.p>
 
               <motion.div
@@ -99,13 +101,13 @@ const Hub = () => {
                   to="/kontakt"
                   className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
                 >
-                  Få et uforpliktende tilbud <ArrowRight size={12} />
+                  {t("hero.cta.primary")} <ArrowRight size={12} />
                 </Link>
                 <Link
                   to="/tjenester"
                   className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
                 >
-                  Se våre tjenester
+                  {t("hero.cta.secondary")}
                 </Link>
               </motion.div>
             </div>
@@ -129,9 +131,9 @@ const Hub = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
-              { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
-              { icon: Clock, label: "Rask respons", sub: "Vi vet tiden din er verdifull" },
-              { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
+              { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
+              { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
+              { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
                 <div className="w-9 h-9 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
@@ -165,10 +167,10 @@ const Hub = () => {
             className="max-w-3xl mx-auto text-center mb-10 md:mb-16"
           >
             <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3 md:mb-4">
-              Hvorfor velge <span className="text-gradient-rose">Avargo</span>?
+              {t("value.title.a")} <span className="text-gradient-rose">Avargo</span>{t("value.title.b")}
             </h2>
             <p className="text-sm md:text-base text-muted-foreground">
-              Vi gjør det enkelt å drive bedrift i Norge.
+              {t("value.sub")}
             </p>
           </motion.div>
 
@@ -176,20 +178,20 @@ const Hub = () => {
             {[
               {
                 icon: Layers,
-                title: "Én partner for regnskap og HR",
-                desc: "Slutt med å koordinere mellom regnskapsfører og HR-konsulent. Ett team, én kontaktperson, én faktura.",
+                title: t("value.1.title"),
+                desc: t("value.1.desc"),
                 image: hubPartner,
               },
               {
                 icon: BadgeCheck,
-                title: "Fast pris, ingen overraskelser",
-                desc: "Du vet nøyaktig hva du betaler hver måned. Rådgivning, rapportering og support er alltid inkludert.",
+                title: t("value.2.title"),
+                desc: t("value.2.desc"),
                 image: hubFastpris,
               },
               {
                 icon: HeartHandshake,
-                title: "Dedikert team som kjenner deg",
-                desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny saksbehandler hver gang.",
+                title: t("value.3.title"),
+                desc: t("value.3.desc"),
                 image: hubTeam,
               },
             ].map((item, i) => (
@@ -242,16 +244,16 @@ const Hub = () => {
             className="max-w-2xl mx-auto"
           >
             <h2 className="text-2xl md:text-5xl font-bold mb-3 md:mb-5 leading-tight max-w-2xl mx-auto">
-              Klar for en enklere hverdag?
+              {t("cta.title")}
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mb-8 md:mb-12 max-w-md mx-auto">
-              Ta en uforpliktende prat — vi hjelper deg å finne riktig løsning.
+              {t("cta.sub")}
             </p>
             <Link
               to="/kontakt"
               className="group inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-border text-foreground/85 hover:border-foreground hover:text-foreground tracking-wide transition-all duration-300"
             >
-              Snakk med oss
+              {t("cta.button")}
               <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
           </motion.div>
