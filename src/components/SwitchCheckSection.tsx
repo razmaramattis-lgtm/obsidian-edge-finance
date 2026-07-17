@@ -106,10 +106,10 @@ const SwitchCheckSection = () => {
                   <Sparkles size={18} className="text-primary" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base md:text-lg font-semibold text-primary">5 spørsmål</p>
+                  <p className="text-base md:text-lg font-semibold text-primary">{t("switch.card.title")}</p>
                   <div className="flex items-center gap-1.5 text-xs md:text-sm text-primary/75">
                     <Clock size={12} strokeWidth={1.5} />
-                    <span>ca. 60 sekunder</span>
+                    <span>{t("switch.card.sub")}</span>
                   </div>
                 </div>
               </motion.div>
