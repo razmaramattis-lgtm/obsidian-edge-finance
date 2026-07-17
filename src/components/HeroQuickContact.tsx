@@ -105,8 +105,8 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             maxLength={255}
-            placeholder="E-post *"
-            aria-label="E-post"
+            placeholder={t("form.email")}
+            aria-label={t("form.email")}
             className={inputCls}
           />
           <input
