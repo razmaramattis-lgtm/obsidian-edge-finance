@@ -181,8 +181,8 @@ const SwitchCheckDialog = ({ open, onOpenChange }: Props) => {
     <Dialog open={open} onOpenChange={(v) => { if (!v) close(); else onOpenChange(v); }}>
       <DialogContent className="max-w-lg p-0 gap-0 border-border/20 bg-background">
         {/* Header */}
-        <div className="px-6 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-3">
+        <div className="px-6 pt-8 pb-4">
+          <div className="flex items-center justify-between mb-3 pr-10">
             <span className="text-xs font-medium text-muted-foreground">
               {showResult ? "Resultat" : `Spørsmål ${step + 1} av ${total}`}
             </span>
