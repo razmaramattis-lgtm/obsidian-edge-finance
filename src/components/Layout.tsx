@@ -517,13 +517,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Bottom bar */}
           <div className="border-t border-secondary-foreground/15 pt-5 flex flex-col md:flex-row justify-between items-center gap-3">
             <span className="text-[11px] text-secondary-foreground/55 font-light tracking-wide">
-              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
+              © {new Date().getFullYear()} Avargo Regnskap AS · {t("footer.copyright")}
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
               {location.pathname === "/" && <LangToggle />}
-              <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
-              <Link to="/vilkar"     className="hover:text-accent transition-colors">Vilkår</Link>
-              <Link to="/sikkerhet"  className="hover:text-accent transition-colors">Sikkerhet</Link>
+              <Link to="/personvern" className="hover:text-accent transition-colors">{t("footer.legal.privacy")}</Link>
+              <Link to="/vilkar"     className="hover:text-accent transition-colors">{t("footer.legal.terms")}</Link>
+              <Link to="/sikkerhet"  className="hover:text-accent transition-colors">{t("footer.legal.security")}</Link>
             </div>
           </div>
         </div>
