@@ -473,42 +473,42 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
               <div>
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Tjenester
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.services")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/tjenester/regnskapsforer" className="text-secondary-foreground/75 hover:text-accent transition-colors">Dedikert regnskapsfører</Link>
-                  <Link to="/tjenester/arsregnskap"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Årsregnskap</Link>
-                  <Link to="/tjenester/lonn"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Lønn & rapportering</Link>
-                  <Link to="/tjenester/skatteplanlegging" className="text-secondary-foreground/75 hover:text-accent transition-colors">Skatterådgivning</Link>
-                  <Link to="/tjenester/cfo"           className="text-secondary-foreground/75 hover:text-accent transition-colors">CFO-rådgivning</Link>
-                  <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">Alle tjenester →</Link>
+                  <Link to="/tjenester/regnskapsforer" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.dedicated")}</Link>
+                  <Link to="/tjenester/arsregnskap"   className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.arsregnskap")}</Link>
+                  <Link to="/tjenester/lonn"          className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.lonn")}</Link>
+                  <Link to="/tjenester/skatteplanlegging" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.skatt")}</Link>
+                  <Link to="/tjenester/cfo"           className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.cfo")}</Link>
+                  <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">{t("footer.link.all")}</Link>
                 </div>
               </div>
 
               <div>
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Ressurser
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.resources")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/ressurser/kontohjelp"      className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontohjelp</Link>
-                  <Link to="/ressurser/skattekalender"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Skattekalender</Link>
-                  <Link to="/guider/regnskapsforer-pris" className="text-secondary-foreground/75 hover:text-accent transition-colors">Prisguide</Link>
-                  <Link to="/regnskapsforer-i"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Regnskapsfører i din by</Link>
-                  <Link to="/bransjer"                  className="text-secondary-foreground/75 hover:text-accent transition-colors">Bransjer</Link>
-                  <Link to="/faq"                       className="text-secondary-foreground/75 hover:text-accent transition-colors">Vanlige spørsmål</Link>
+                  <Link to="/ressurser/kontohjelp"      className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.kontohjelp")}</Link>
+                  <Link to="/ressurser/skattekalender"  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.skattekalender")}</Link>
+                  <Link to="/guider/regnskapsforer-pris" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.prisguide")}</Link>
+                  <Link to="/regnskapsforer-i"          className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.byer")}</Link>
+                  <Link to="/bransjer"                  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.bransjer")}</Link>
+                  <Link to="/faq"                       className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.faq")}</Link>
                 </div>
               </div>
 
               <div className="col-span-2 md:col-span-1">
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Selskapet
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.company")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/om-oss"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Om Avargo</Link>
-                  <Link to="/kontakt"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontakt oss</Link>
-                  <Link to="/book-mote" className="text-secondary-foreground/75 hover:text-accent transition-colors">Book møte</Link>
-                  <Link to="/karriere" className="text-secondary-foreground/75 hover:text-accent transition-colors">Karriere</Link>
-                  <Link to="/logg-inn" className="text-secondary-foreground/75 hover:text-accent transition-colors">Logg inn</Link>
+                  <Link to="/om-oss"   className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.about")}</Link>
+                  <Link to="/kontakt"  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.contact")}</Link>
+                  <Link to="/book-mote" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.book")}</Link>
+                  <Link to="/karriere" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.career")}</Link>
+                  <Link to="/logg-inn" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.login")}</Link>
                 </div>
               </div>
             </div>
