@@ -88,7 +88,7 @@ const Hub = () => {
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="text-base md:text-xl text-muted-foreground font-light leading-relaxed max-w-xl mb-8 md:mb-10"
               >
-                Vi er regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Dedikert autorisert regnskapsfører, fast månedspris uten overraskelser, og reell rådgivning når du trenger den. Vi tar hele byttet fra din nåværende regnskapsfører.
+                {t("hero.body")}
               </motion.p>
 
               <motion.div
