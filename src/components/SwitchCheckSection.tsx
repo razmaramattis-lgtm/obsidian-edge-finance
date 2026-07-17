@@ -59,14 +59,14 @@ const SwitchCheckSection = () => {
                 onClick={() => setOpen(true)}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 tracking-wide transition-all duration-300"
               >
-                Ta sjekken
+                {t("switch.cta.primary")}
                 <ArrowRight size={12} />
               </button>
               <Link
                 to="/tjenester"
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12.5px] font-medium rounded-full border border-primary/20 bg-muted text-primary hover:bg-muted/80 tracking-wide transition-all duration-300"
               >
-                Slik bytter du regnskapsfører
+                {t("switch.cta.secondary")}
               </Link>
             </div>
           </motion.div>
