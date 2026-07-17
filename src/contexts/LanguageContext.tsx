@@ -22,8 +22,8 @@ export const translations: Dict = {
   "hero.title.a": { no: "Regnskap som", en: "Accounting that" },
   "hero.title.b": { no: "frigjør tid.", en: "frees up time." },
   "hero.body": {
-    no: "Vi er regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Dedikert autorisert regnskapsfører, fast månedspris uten overraskelser, og reell rådgivning når du trenger den. Vi tar hele byttet fra din nåværende regnskapsfører.",
-    en: "We are the accounting firm for founders and managers who want to grow — not drown in paperwork. A dedicated authorised accountant, a fixed monthly price without surprises, and real advice when you need it. We handle the entire switch from your current accountant.",
+    no: "Regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Fast månedspris, dedikert regnskapsfører og reell rådgivning. Vi tar hele byttet.",
+    en: "The accounting firm for founders and managers who want to grow — not drown in paperwork. Fixed monthly price, a dedicated accountant and real advice. We handle the entire switch.",
   },
   "hero.cta.primary": { no: "Få et uforpliktende tilbud", en: "Get a no-obligation quote" },
   "hero.cta.secondary": { no: "Se våre tjenester", en: "See our services" },
