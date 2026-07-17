@@ -70,10 +70,10 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
       className="rounded-3xl border border-primary/25 bg-card shadow-xl shadow-primary/10 p-6 md:p-7"
     >
       <p className="text-[11px] tracking-[0.3em] uppercase text-primary mb-2 font-semibold">
-        Be oss ringe deg
+        {t("form.eyebrow")}
       </p>
       <p className="text-xs text-foreground/70 mb-5 font-light">
-        Rask respons. Ingen binding.
+        {t("form.sub")}
       </p>
 
       <div className="space-y-2.5">
