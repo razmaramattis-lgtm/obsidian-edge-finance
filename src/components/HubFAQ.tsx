@@ -3,35 +3,19 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Helmet } from "react-helmet-async";
-
-const faqs = [
-  {
-    q: "Hva koster det å bruke Avargo?",
-    a: "Regnskap starter på 1 499 kr i måneden, og HR har egne fastprispakker. Alt er inkludert i prisen — ingen timefakturering, ingen skjulte tillegg. Kombinerer du regnskap og HR får du bedre totalpris og ett samlet team.",
-  },
-  {
-    q: "Må jeg binde meg?",
-    a: "Nei. Vi jobber uten lange bindingstider. Du kan oppgradere, nedgradere eller avslutte med én måneds varsel. Vi tror vi må fortjene deg hver måned — ikke låse deg inne i en kontrakt.",
-  },
-  {
-    q: "Hvor raskt svarer dere?",
-    a: "Vi prioriterer å svare deg raskt på alle henvendelser — i praksis er det som regel raskere. Du får en dedikert kontaktperson som kjenner bedriften din, ikke et generisk saksnummer.",
-  },
-  {
-    q: "Kan jeg bare bruke én avdeling?",
-    a: "Ja. Du velger fritt om du kun trenger regnskap, kun HR — eller begge deler. Mange starter med regnskap og legger til HR når bedriften vokser.",
-  },
-  {
-    q: "Hvordan bytter jeg fra dagens leverandør?",
-    a: "Vi tar hele jobben. Vi henter ut data, koordinerer med din nåværende leverandør og setter opp alt sømløst — uten avbrudd i driften eller ekstra arbeid for deg.",
-  },
-  {
-    q: "Hvilke selskaper passer for Avargo?",
-    a: "Vi jobber primært med små og mellomstore bedrifter i Norge — fra nyetablerte AS til selskaper i sterk vekst. Vi tar ikke oppdrag innen sport og fritid.",
-  },
-];
+import { useLang } from "@/contexts/LanguageContext";
 
 const HubFAQ = () => {
+  const { t } = useLang();
+  const faqs = [
+    { q: t("faq.q1"), a: t("faq.a1") },
+    { q: t("faq.q2"), a: t("faq.a2") },
+    { q: t("faq.q3"), a: t("faq.a3") },
+    { q: t("faq.q4"), a: t("faq.a4") },
+    { q: t("faq.q5"), a: t("faq.a5") },
+    { q: t("faq.q6"), a: t("faq.a6") },
+  ];
+
   return (
     <section className="py-16 md:py-32 border-t border-border/10 bg-background">
       <Helmet>
@@ -56,19 +40,19 @@ const HubFAQ = () => {
             className="md:sticky md:top-28"
           >
             <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-primary/80 mb-4">
-              Vanlige spørsmål
+              {t("faq.eyebrow")}
             </p>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 md:mb-6">
-              Det folk lurer på <span className="text-gradient-rose">før de bytter</span>
+              {t("faq.title.a")} <span className="text-gradient-rose">{t("faq.title.b")}</span>
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-              Får du ikke svar her? Ta en uforpliktende prat — vi svarer ærlig, også på det vanskelige.
+              {t("faq.body")}
             </p>
             <Link
               to="/faq"
               className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3 transition-all"
             >
-              Se alle 120+ spørsmål <ArrowRight size={14} />
+              {t("faq.link")} <ArrowRight size={14} />
             </Link>
           </motion.div>
 
