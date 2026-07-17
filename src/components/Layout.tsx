@@ -448,10 +448,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
-                Regnskap for bedrifter som <span className="italic text-secondary-foreground">vil konsentrere seg om driften</span>.
+                {t("footer.tagline.a")} <span className="italic text-secondary-foreground">{t("footer.tagline.b")}</span>.
               </p>
               <p className="text-[13px] text-secondary-foreground/70 font-light leading-relaxed max-w-md mb-7">
-                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
+                {t("footer.desc")}
               </p>
 
               {/* Kontakt-blokk */}
@@ -460,12 +460,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
                 </a>
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
-                  <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> Autorisert regnskapsbyrå · Org.nr 938 076 669
+                  <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> {t("footer.orgline")}
                 </span>
               </div>
 
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-[12.5px] font-medium rounded-full hover:brightness-110 transition-all duration-300 tracking-wide">
-                Få et uforpliktende tilbud <ArrowRight size={13} />
+                {t("footer.cta")} <ArrowRight size={13} />
               </Link>
             </div>
 
