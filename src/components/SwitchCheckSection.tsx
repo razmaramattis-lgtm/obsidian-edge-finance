@@ -4,16 +4,13 @@ import { Check, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SwitchCheckDialog from "./SwitchCheckDialog";
 import switchCheckImageAsset from "@/assets/switch-check.png.asset.json";
+import { useLang } from "@/contexts/LanguageContext";
 const switchCheckImage = switchCheckImageAsset.url;
-
-const benefits = [
-  "Få en tydelig plan for overtagelse og ansvar",
-  "Avklar behov for system, rapportering og rådgivning",
-  "Sikre god flyt uten stopp i drift og frister",
-];
 
 const SwitchCheckSection = () => {
   const [open, setOpen] = useState(false);
+  const { t } = useLang();
+  const benefits = [t("switch.benefit.1"), t("switch.benefit.2"), t("switch.benefit.3")];
   return (
     <section className="py-16 md:py-32 border-t border-border/10 bg-gradient-to-br from-background via-muted/25 to-background">
       <SwitchCheckDialog open={open} onOpenChange={setOpen} />
