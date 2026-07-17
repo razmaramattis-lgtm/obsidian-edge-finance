@@ -167,10 +167,10 @@ const Hub = () => {
             className="max-w-3xl mx-auto text-center mb-10 md:mb-16"
           >
             <h2 className="text-2xl md:text-5xl font-bold leading-tight mb-3 md:mb-4">
-              Hvorfor velge <span className="text-gradient-rose">Avargo</span>?
+              {t("value.title.a")} <span className="text-gradient-rose">Avargo</span>{t("value.title.b")}
             </h2>
             <p className="text-sm md:text-base text-muted-foreground">
-              Vi gjør det enkelt å drive bedrift i Norge.
+              {t("value.sub")}
             </p>
           </motion.div>
 
