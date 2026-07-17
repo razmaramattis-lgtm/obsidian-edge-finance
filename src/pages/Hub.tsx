@@ -118,22 +118,6 @@ const Hub = () => {
                 </Link>
               </motion.div>
 
-              {/* Scroll incentive */}
-              <motion.button
-                type="button"
-                onClick={() => window.scrollTo({ top: window.innerHeight * 0.85, behavior: "smooth" })}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                aria-label={t("hero.scroll")}
-                className="hidden md:flex flex-col items-center mx-auto mt-4 text-[10px] tracking-[0.25em] uppercase text-muted-foreground hover:text-primary transition-colors group"
-              >
-                <span className="relative flex h-6 w-3.5 items-start justify-center rounded-full border border-primary/40 group-hover:border-primary transition-colors mb-2">
-                  <span className="mt-1 block h-1 w-1 rounded-full bg-primary animate-scroll-dot" />
-                </span>
-                <span className="font-semibold">{t("hero.scroll")}</span>
-              </motion.button>
-
               {/* Review preview */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
