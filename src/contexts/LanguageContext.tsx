@@ -22,8 +22,8 @@ export const translations: Dict = {
   "hero.title.a": { no: "Regnskap som", en: "Accounting that" },
   "hero.title.b": { no: "frigjør tid.", en: "frees up time." },
   "hero.body": {
-    no: "Vi er regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Dedikert autorisert regnskapsfører, fast månedspris uten overraskelser, og reell rådgivning når du trenger den. Vi tar hele byttet fra din nåværende regnskapsfører.",
-    en: "We are the accounting firm for founders and managers who want to grow — not drown in paperwork. A dedicated authorised accountant, a fixed monthly price without surprises, and real advice when you need it. We handle the entire switch from your current accountant.",
+    no: "Regnskapsbyrået for gründere og daglige ledere som vil vokse — ikke drukne i bilag. Fast månedspris, dedikert regnskapsfører og reell rådgivning. Vi tar hele byttet.",
+    en: "The accounting firm for founders and managers who want to grow — not drown in paperwork. Fixed monthly price, a dedicated accountant and real advice. We handle the entire switch.",
   },
   "hero.cta.primary": { no: "Få et uforpliktende tilbud", en: "Get a no-obligation quote" },
   "hero.cta.secondary": { no: "Se våre tjenester", en: "See our services" },
@@ -143,6 +143,44 @@ export const translations: Dict = {
     en: "Something went wrong. Please try again or email kontakt@avargo.no",
   },
 
+  // Footer
+  "footer.tagline.a": { no: "Regnskap for bedrifter som", en: "Accounting for businesses that" },
+  "footer.tagline.b": { no: "vil konsentrere seg om driften", en: "want to focus on running the business" },
+  "footer.desc": {
+    no: "Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.",
+    en: "Authorised accounting firm. Fixed monthly price, dedicated accountant and fast response on business days.",
+  },
+  "footer.orgline": { no: "Autorisert regnskapsbyrå · Org.nr 938 076 669", en: "Authorised accounting firm · Org.no 938 076 669" },
+  "footer.cta": { no: "Få et uforpliktende tilbud", en: "Get a no-obligation quote" },
+  "footer.col.services": { no: "Tjenester", en: "Services" },
+  "footer.col.resources": { no: "Ressurser", en: "Resources" },
+  "footer.col.company": { no: "Selskapet", en: "Company" },
+  "footer.link.dedicated": { no: "Dedikert regnskapsfører", en: "Dedicated accountant" },
+  "footer.link.arsregnskap": { no: "Årsregnskap", en: "Annual accounts" },
+  "footer.link.lonn": { no: "Lønn & rapportering", en: "Payroll & reporting" },
+  "footer.link.skatt": { no: "Skatterådgivning", en: "Tax advisory" },
+  "footer.link.cfo": { no: "CFO-rådgivning", en: "CFO advisory" },
+  "footer.link.all": { no: "Alle tjenester →", en: "All services →" },
+  "footer.link.kontohjelp": { no: "Kontohjelp", en: "Account help" },
+  "footer.link.skattekalender": { no: "Skattekalender", en: "Tax calendar" },
+  "footer.link.prisguide": { no: "Prisguide", en: "Pricing guide" },
+  "footer.link.byer": { no: "Regnskapsfører i din by", en: "Accountant in your city" },
+  "footer.link.bransjer": { no: "Bransjer", en: "Industries" },
+  "footer.link.faq": { no: "Vanlige spørsmål", en: "FAQ" },
+  "footer.link.about": { no: "Om Avargo", en: "About Avargo" },
+  "footer.link.contact": { no: "Kontakt oss", en: "Contact us" },
+  "footer.link.book": { no: "Book møte", en: "Book meeting" },
+  "footer.link.career": { no: "Karriere", en: "Careers" },
+  "footer.link.login": { no: "Logg inn", en: "Sign in" },
+  "footer.legal.privacy": { no: "Personvern", en: "Privacy" },
+  "footer.legal.terms": { no: "Vilkår", en: "Terms" },
+  "footer.legal.security": { no: "Sikkerhet", en: "Security" },
+  "footer.copyright": { no: "Bygget med presisjon.", en: "Built with precision." },
+  "footer.eyebrow.right": { no: "Regnskap · Rådgivning", en: "Accounting · Advisory" },
+
+  // Scroll incentive
+  "hero.scroll": { no: "Bla for å utforske", en: "Scroll to explore" },
+
   // Footer toggle label
   "lang.toggle": { no: "English", en: "Norsk" },
 };
@@ -164,9 +202,16 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     } catch {}
   }, [lang]);
 
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const t = (key: keyof typeof translations) => translations[key]?.[lang] ?? String(key);
   return (
-    <LanguageContext.Provider value={{ lang, setLang: setLangState, t }}>
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
       {children}
     </LanguageContext.Provider>
   );

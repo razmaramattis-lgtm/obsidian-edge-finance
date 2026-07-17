@@ -81,6 +81,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const bransjerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ressurserRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
+  const { t } = useLang();
 
   // ── Subtil scroll-reaksjon for header ─────────────
   const [scrolled, setScrolled] = useState(false);
@@ -433,7 +434,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center gap-4 mb-10">
             <span className="text-[10px] tracking-[0.45em] uppercase text-accent font-semibold">Est. 2026</span>
             <span className="flex-1 h-px bg-gradient-to-r from-accent/40 via-secondary-foreground/15 to-transparent" />
-            <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">Regnskap · Rådgivning</span>
+            <span className="text-[10px] tracking-[0.35em] uppercase text-secondary-foreground/60 font-medium hidden md:inline">{t("footer.eyebrow.right")}</span>
           </div>
 
           {/* Masthead */}
@@ -447,10 +448,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
-                Regnskap for bedrifter som <span className="italic text-secondary-foreground">vil konsentrere seg om driften</span>.
+                {t("footer.tagline.a")} <span className="italic text-secondary-foreground">{t("footer.tagline.b")}</span>.
               </p>
               <p className="text-[13px] text-secondary-foreground/70 font-light leading-relaxed max-w-md mb-7">
-                Autorisert regnskapsbyrå. Fast månedspris, dedikert regnskapsfører og rask respons på hverdager.
+                {t("footer.desc")}
               </p>
 
               {/* Kontakt-blokk */}
@@ -459,12 +460,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
                 </a>
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
-                  <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> Autorisert regnskapsbyrå · Org.nr 938 076 669
+                  <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> {t("footer.orgline")}
                 </span>
               </div>
 
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-[12.5px] font-medium rounded-full hover:brightness-110 transition-all duration-300 tracking-wide">
-                Få et uforpliktende tilbud <ArrowRight size={13} />
+                {t("footer.cta")} <ArrowRight size={13} />
               </Link>
             </div>
 
@@ -472,42 +473,42 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
               <div>
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Tjenester
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.services")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/tjenester/regnskapsforer" className="text-secondary-foreground/75 hover:text-accent transition-colors">Dedikert regnskapsfører</Link>
-                  <Link to="/tjenester/arsregnskap"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Årsregnskap</Link>
-                  <Link to="/tjenester/lonn"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Lønn & rapportering</Link>
-                  <Link to="/tjenester/skatteplanlegging" className="text-secondary-foreground/75 hover:text-accent transition-colors">Skatterådgivning</Link>
-                  <Link to="/tjenester/cfo"           className="text-secondary-foreground/75 hover:text-accent transition-colors">CFO-rådgivning</Link>
-                  <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">Alle tjenester →</Link>
+                  <Link to="/tjenester/regnskapsforer" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.dedicated")}</Link>
+                  <Link to="/tjenester/arsregnskap"   className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.arsregnskap")}</Link>
+                  <Link to="/tjenester/lonn"          className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.lonn")}</Link>
+                  <Link to="/tjenester/skatteplanlegging" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.skatt")}</Link>
+                  <Link to="/tjenester/cfo"           className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.cfo")}</Link>
+                  <Link to="/tjenester" className="text-primary font-medium hover:opacity-80 transition-opacity">{t("footer.link.all")}</Link>
                 </div>
               </div>
 
               <div>
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Ressurser
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.resources")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/ressurser/kontohjelp"      className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontohjelp</Link>
-                  <Link to="/ressurser/skattekalender"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Skattekalender</Link>
-                  <Link to="/guider/regnskapsforer-pris" className="text-secondary-foreground/75 hover:text-accent transition-colors">Prisguide</Link>
-                  <Link to="/regnskapsforer-i"          className="text-secondary-foreground/75 hover:text-accent transition-colors">Regnskapsfører i din by</Link>
-                  <Link to="/bransjer"                  className="text-secondary-foreground/75 hover:text-accent transition-colors">Bransjer</Link>
-                  <Link to="/faq"                       className="text-secondary-foreground/75 hover:text-accent transition-colors">Vanlige spørsmål</Link>
+                  <Link to="/ressurser/kontohjelp"      className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.kontohjelp")}</Link>
+                  <Link to="/ressurser/skattekalender"  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.skattekalender")}</Link>
+                  <Link to="/guider/regnskapsforer-pris" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.prisguide")}</Link>
+                  <Link to="/regnskapsforer-i"          className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.byer")}</Link>
+                  <Link to="/bransjer"                  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.bransjer")}</Link>
+                  <Link to="/faq"                       className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.faq")}</Link>
                 </div>
               </div>
 
               <div className="col-span-2 md:col-span-1">
                 <p className="text-[13px] tracking-[0.28em] uppercase text-accent font-bold mb-5 flex items-center gap-2">
-                  <span className="h-px w-4 bg-accent/60" /> Selskapet
+                  <span className="h-px w-4 bg-accent/60" /> {t("footer.col.company")}
                 </p>
                 <div className="flex flex-col gap-3 text-[13px] font-light">
-                  <Link to="/om-oss"   className="text-secondary-foreground/75 hover:text-accent transition-colors">Om Avargo</Link>
-                  <Link to="/kontakt"  className="text-secondary-foreground/75 hover:text-accent transition-colors">Kontakt oss</Link>
-                  <Link to="/book-mote" className="text-secondary-foreground/75 hover:text-accent transition-colors">Book møte</Link>
-                  <Link to="/karriere" className="text-secondary-foreground/75 hover:text-accent transition-colors">Karriere</Link>
-                  <Link to="/logg-inn" className="text-secondary-foreground/75 hover:text-accent transition-colors">Logg inn</Link>
+                  <Link to="/om-oss"   className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.about")}</Link>
+                  <Link to="/kontakt"  className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.contact")}</Link>
+                  <Link to="/book-mote" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.book")}</Link>
+                  <Link to="/karriere" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.career")}</Link>
+                  <Link to="/logg-inn" className="text-secondary-foreground/75 hover:text-accent transition-colors">{t("footer.link.login")}</Link>
                 </div>
               </div>
             </div>
@@ -516,13 +517,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Bottom bar */}
           <div className="border-t border-secondary-foreground/15 pt-5 flex flex-col md:flex-row justify-between items-center gap-3">
             <span className="text-[11px] text-secondary-foreground/55 font-light tracking-wide">
-              © {new Date().getFullYear()} Avargo Regnskap AS · Bygget med presisjon.
+              © {new Date().getFullYear()} Avargo Regnskap AS · {t("footer.copyright")}
             </span>
             <div className="flex items-center gap-6 text-[11px] text-secondary-foreground/60 font-light">
               {location.pathname === "/" && <LangToggle />}
-              <Link to="/personvern" className="hover:text-accent transition-colors">Personvern</Link>
-              <Link to="/vilkar"     className="hover:text-accent transition-colors">Vilkår</Link>
-              <Link to="/sikkerhet"  className="hover:text-accent transition-colors">Sikkerhet</Link>
+              <Link to="/personvern" className="hover:text-accent transition-colors">{t("footer.legal.privacy")}</Link>
+              <Link to="/vilkar"     className="hover:text-accent transition-colors">{t("footer.legal.terms")}</Link>
+              <Link to="/sikkerhet"  className="hover:text-accent transition-colors">{t("footer.legal.security")}</Link>
             </div>
           </div>
         </div>

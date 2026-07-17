@@ -134,6 +134,12 @@ export default {
           "0%, 100%": { transform: "translateY(-6px)" },
           "50%": { transform: "translateY(6px)" },
         },
+        "scroll-dot": {
+          "0%": { transform: "translateY(0)", opacity: "0" },
+          "30%": { opacity: "1" },
+          "80%": { transform: "translateY(14px)", opacity: "0" },
+          "100%": { transform: "translateY(14px)", opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -147,6 +153,7 @@ export default {
         "drift-y": "drift-y 11s ease-in-out infinite",
         "blob-morph": "blob-morph 14s ease-in-out infinite",
         "card-bob": "card-bob 6s ease-in-out infinite",
+        "scroll-dot": "scroll-dot 1.8s ease-in-out infinite",
       },
 
     },
