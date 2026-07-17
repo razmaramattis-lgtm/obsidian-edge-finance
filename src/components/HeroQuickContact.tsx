@@ -39,7 +39,7 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
       setDone(true);
     } catch (e2) {
       console.error(e2);
-      setErr("Noe gikk galt. Prøv på nytt eller send e-post til kontakt@avargo.no");
+      setErr(t("form.error"));
     } finally {
       setBusy(false);
     }
