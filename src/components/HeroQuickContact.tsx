@@ -51,9 +51,9 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
         <div className="flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-medium text-foreground mb-1">Takk! Vi tar kontakt raskt — som regel samme arbeidsdag.</p>
+            <p className="text-sm font-medium text-foreground mb-1">{t("form.done")}</p>
             <p className="text-xs text-foreground/60 font-light">
-              Bekreftelse er sendt til {email}. Vil du allerede nå dele mer? <a href="/kontakt" className="text-primary hover:underline">Fyll ut detaljer</a>.
+              {t("form.done.sub.a")} {email}. {t("form.done.sub.b")} <a href="/kontakt" className="text-primary hover:underline">{t("form.done.sub.link")}</a>.
             </p>
           </div>
         </div>
