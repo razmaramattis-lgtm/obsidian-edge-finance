@@ -72,11 +72,22 @@ const Hub = () => {
 
       {/* ═══ HERO ═══ */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
+        <motion.div className="absolute inset-0" style={{ y: bgY, scale: bgScale, opacity: bgOpacity }}>
           <img src={heroBg} alt="" className="w-full h-full object-cover opacity-35" width={1920} height={1080} fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
-        </div>
+        </motion.div>
+        {/* Decorative parallax orbs */}
+        <motion.div
+          aria-hidden
+          style={{ y: glowY }}
+          className="pointer-events-none absolute -top-24 -right-20 w-[520px] h-[520px] rounded-full bg-primary/15 blur-[120px]"
+        />
+        <motion.div
+          aria-hidden
+          style={{ y: bgY }}
+          className="pointer-events-none absolute bottom-[-140px] -left-24 w-[420px] h-[420px] rounded-full bg-sage/20 blur-[120px]"
+        />
 
         <div className="relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24">
           <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
