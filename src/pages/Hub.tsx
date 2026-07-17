@@ -213,7 +213,7 @@ const Hub = () => {
                     </div>
                     <div className="leading-tight">
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Skatt spart</p>
-                      <p className="text-sm font-bold text-foreground">kr 127K</p>
+                      <p className="text-sm font-bold text-foreground">kr 50K</p>
                     </div>
                   </div>
 
