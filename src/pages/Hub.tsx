@@ -77,9 +77,9 @@ const Hub = () => {
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[92px] leading-[0.95] tracking-tight mb-6 md:mb-8"
               >
-                Regnskap som
+                {t("hero.title.a")}
                 <br />
-                <span className="italic text-gradient-rose">frigjør tid.</span>
+                <span className="italic text-gradient-rose">{t("hero.title.b")}</span>
               </motion.h1>
 
               <motion.p
