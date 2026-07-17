@@ -131,9 +131,9 @@ const Hub = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {[
-              { icon: Shield, label: "Godkjent regnskapsførerselskap", sub: "Finanstilsynet" },
-              { icon: Clock, label: "Rask respons", sub: "Vi vet tiden din er verdifull" },
-              { icon: CheckCircle2, label: "Fast pris — alt inkludert", sub: "Ingen skjulte kostnader" },
+              { icon: Shield, label: t("trust.1.label"), sub: t("trust.1.sub") },
+              { icon: Clock, label: t("trust.2.label"), sub: t("trust.2.sub") },
+              { icon: CheckCircle2, label: t("trust.3.label"), sub: t("trust.3.sub") },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 py-2">
                 <div className="w-9 h-9 rounded-xl bg-accent/25 border border-accent/30 flex items-center justify-center shrink-0">
