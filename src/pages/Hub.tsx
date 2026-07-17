@@ -117,6 +117,42 @@ const Hub = () => {
                   {t("hero.cta.secondary")}
                 </Link>
               </motion.div>
+
+              {/* Review preview */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-6 flex items-center gap-3"
+              >
+                <div className="flex -space-x-2">
+                  {[reviewer1, reviewer2, reviewer3].map((src, i) => (
+                    <img
+                      key={i}
+                      src={src}
+                      alt=""
+                      width={40}
+                      height={40}
+                      loading="lazy"
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-background"
+                    />
+                  ))}
+                </div>
+                <div className="leading-tight">
+                  <div className="flex items-center gap-0.5 text-amber-500" aria-label="5 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={13} fill="currentColor" strokeWidth={0} />
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {lang === "en" ? (
+                      <>Trusted by <span className="font-semibold text-foreground">500+ businesses</span></>
+                    ) : (
+                      <>Betrodd av <span className="font-semibold text-foreground">500+ bedrifter</span></>
+                    )}
+                  </p>
+                </div>
+              </motion.div>
             </div>
 
             <motion.div
