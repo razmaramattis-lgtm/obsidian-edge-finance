@@ -178,20 +178,20 @@ const Hub = () => {
             {[
               {
                 icon: Layers,
-                title: "Én partner for regnskap og HR",
-                desc: "Slutt med å koordinere mellom regnskapsfører og HR-konsulent. Ett team, én kontaktperson, én faktura.",
+                title: t("value.1.title"),
+                desc: t("value.1.desc"),
                 image: hubPartner,
               },
               {
                 icon: BadgeCheck,
-                title: "Fast pris, ingen overraskelser",
-                desc: "Du vet nøyaktig hva du betaler hver måned. Rådgivning, rapportering og support er alltid inkludert.",
+                title: t("value.2.title"),
+                desc: t("value.2.desc"),
                 image: hubFastpris,
               },
               {
                 icon: HeartHandshake,
-                title: "Dedikert team som kjenner deg",
-                desc: "Du får faste kontaktpersoner som lærer bedriften din å kjenne — ikke en ny saksbehandler hver gang.",
+                title: t("value.3.title"),
+                desc: t("value.3.desc"),
                 image: hubTeam,
               },
             ].map((item, i) => (
