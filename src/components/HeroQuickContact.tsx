@@ -84,8 +84,8 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={120}
-            placeholder="Navn *"
-            aria-label="Navn"
+            placeholder={t("form.name")}
+            aria-label={t("form.name")}
             className={inputCls}
           />
           <input
