@@ -245,7 +245,7 @@ const Hub = () => {
             role="button"
             tabIndex={0}
             aria-label={t("hero.scroll")}
-            className="hidden md:flex flex-col items-center justify-center w-full mt-10 text-[10px] tracking-[0.25em] uppercase text-muted-foreground hover:text-primary transition-colors group cursor-pointer"
+            className="hidden md:flex flex-col items-center justify-center w-full mt-10 pb-5 text-[10px] tracking-[0.25em] uppercase text-muted-foreground hover:text-primary transition-colors group cursor-pointer"
           >
             <span className="relative flex h-6 w-3.5 items-start justify-center rounded-full border border-primary/40 group-hover:border-primary transition-colors mb-2">
               <span className="mt-1 block h-1 w-1 rounded-full bg-primary animate-scroll-dot" />
