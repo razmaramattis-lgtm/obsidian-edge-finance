@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake, TrendingUp, Wallet } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import SwitchCheckSection from "@/components/SwitchCheckSection";
 import { useLang } from "@/contexts/LanguageContext";
