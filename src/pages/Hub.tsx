@@ -227,7 +227,7 @@ const Hub = () => {
                     </div>
                     <div className="leading-tight">
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vekst</p>
-                      <p className="text-sm font-bold text-foreground">+42%</p>
+                      <p className="text-sm font-bold text-foreground">+26%</p>
                     </div>
                   </div>
                 </div>
