@@ -114,8 +114,8 @@ const HeroQuickContact = ({ source = "hero" }: { source?: string }) => {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             maxLength={40}
-            placeholder="Telefon"
-            aria-label="Telefon"
+            placeholder={t("form.phone")}
+            aria-label={t("form.phone")}
             className={inputCls}
           />
         </div>
