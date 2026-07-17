@@ -179,6 +179,7 @@ const Hub = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              style={{ y: portraitY }}
               className="w-full lg:max-w-md lg:ml-auto"
             >
               {/* Animated portrait bubble with floating stat cards */}
