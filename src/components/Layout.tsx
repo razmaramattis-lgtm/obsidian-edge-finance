@@ -534,6 +534,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 /* ── Helper components ─────────────────────────── */
+const LangToggle = () => {
+  const { lang, setLang } = useLang();
+  return (
+    <button
+      type="button"
+      onClick={() => setLang(lang === "no" ? "en" : "no")}
+      aria-label="Toggle language"
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-secondary-foreground/25 hover:border-accent hover:text-accent transition-colors uppercase tracking-[0.15em] text-[10px] font-semibold"
+    >
+      <span className={lang === "no" ? "text-accent" : "text-secondary-foreground/60"}>NO</span>
+      <span className="text-secondary-foreground/30">/</span>
+      <span className={lang === "en" ? "text-accent" : "text-secondary-foreground/60"}>EN</span>
+    </button>
+  );
+};
+
 const NavButton = ({ to, label, isActive }: { to: string; label: string; isActive?: boolean }) => (
   <Link
     to={to}
