@@ -143,7 +143,7 @@ const Hub = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-5 flex items-center gap-3"
+                className="mt-5 flex items-center gap-3 hidden"
               >
                 <div className="flex -space-x-2">
                   {[reviewer1, reviewer2, reviewer3].map((src, i) => (
