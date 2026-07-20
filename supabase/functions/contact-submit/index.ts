@@ -208,64 +208,34 @@ serve(async (req) => {
 
     if (dbError) console.error("DB error:", dbError);
 
-    const smtpUser = Deno.env.get("SMTP_USER");
-    const smtpPass = Deno.env.get("SMTP_PASS");
-
     let emailSent = false;
-
-    if (smtpUser && smtpPass) {
-      try {
-        const now = new Date().toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-        const sectionBadge = sectionLabel
-          ? `<div style="display:inline-block;background:#f0fdf4;color:#166534;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:12px;margin-right:8px;">📍 ${sectionLabel}</div>`
-          : "";
-
-        const htmlBody = `
-          <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;">
-            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:28px 32px;border-radius:12px 12px 0 0;">
-              <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:-0.3px;">📬 Ny henvendelse</h1>
-              <p style="color:#94a3b8;margin:6px 0 0;font-size:13px;">${now}${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p>
-            </div>
-            <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
-              ${sectionBadge}
-              ${safePackage ? `<div style="display:inline-block;background:#eef2ff;color:#4338ca;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px;">🏷️ ${safePackage}</div>` : ""}
-              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
-                <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">🏢 Selskap</h2>
-                <div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:4px;">${safeCompany || "Ikke oppgitt"}</div>
-                ${safeOrg ? `<div style="font-size:13px;color:#64748b;">Org.nr: ${safeOrg}</div>` : ""}
-                ${safeIndustry ? `<div style="margin-top:8px;"><span style="display:inline-block;background:#f1f5f9;color:#475569;padding:3px 10px;border-radius:12px;font-size:12px;">${safeIndustry}</span></div>` : ""}
-                ${safeIndustryCode ? `<div style="margin-top:4px;font-size:12px;color:#94a3b8;">Næringskode: ${safeIndustryCode}</div>` : ""}
-              </div>
-              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
-                <h2 style="margin:0 0 14px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">👤 Kontaktperson</h2>
-                <div style="font-size:16px;font-weight:600;color:#0f172a;margin-bottom:10px;">${safeContact || "Ikke oppgitt"}</div>
-                <table style="border-collapse:collapse;">
-                  ${safeEmail ? `<tr><td style="padding:4px 12px 4px 0;color:#64748b;font-size:13px;">📧</td><td style="padding:4px 0;"><a href="mailto:${safeEmail}" style="color:#2563eb;text-decoration:none;font-size:14px;">${safeEmail}</a></td></tr>` : ""}
-                  ${safePhone ? `<tr><td style="padding:4px 12px 4px 0;color:#64748b;font-size:13px;">📱</td><td style="padding:4px 0;"><a href="tel:${safePhone}" style="color:#2563eb;text-decoration:none;font-size:14px;">${safePhone}</a></td></tr>` : ""}
-                </table>
-              </div>
-              ${safeRevenue ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:20px;"><span style="font-size:13px;color:#92400e;font-weight:600;">💰 Omsetningsmål:</span><span style="font-size:14px;color:#78350f;margin-left:6px;">${safeRevenue}</span></div>` : ""}
-              ${safeMessage ? `<div style="margin-bottom:20px;"><h2 style="margin:0 0 10px;font-size:15px;color:#475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">💬 Melding fra kunden</h2><div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.7;color:#1e293b;white-space:pre-wrap;">${safeMessage}</div></div>` : ""}
-              ${safeSource || safeReferrer ? `<div style="margin-bottom:20px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 18px;font-size:12px;color:#1e3a8a;">${safeSource ? `<div><strong>📊 Kilde:</strong> ${safeSource}</div>` : ""}${safeReferrer ? `<div style="margin-top:4px;"><strong>↗️ Referrer:</strong> ${safeReferrer}</div>` : ""}</div>` : ""}
-              <div style="margin-top:28px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;"><p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra kontaktskjemaet på <strong>avargo.no</strong>${sectionLabel ? ` · Avdeling: ${sectionLabel}` : ""}</p></div>
-            </div>
-          </div>`;
-
-        await sendEmail({
-          hostname: "smtp.domeneshop.no",
-          port: 465,
-          username: smtpUser,
-          password: smtpPass,
-          from: "kontakt@avargo.no",
-          to: "kontakt@avargo.no",
-          subject: `${sectionLabel ? `[${sectionLabel}] ` : ""}Ny henvendelse: ${safeCompany || safeContact || "Ukjent"}`,
-          html: htmlBody,
-        });
-        emailSent = true;
-      } catch (emailErr) {
-        console.error("Email error:", emailErr);
-      }
+    try {
+      const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "admin-contact-notification",
+          recipientEmail: "kontakt@avargo.no",
+          idempotencyKey: `contact-${crypto.randomUUID()}`,
+          templateData: {
+            company_name: safeCompany,
+            org_number: safeOrg,
+            contact_person: safeContact,
+            email: safeEmail || null,
+            phone: safePhone,
+            industry: safeIndustry,
+            revenue_target: safeRevenue,
+            message: safeMessage,
+            section_label: sectionLabel,
+            package_name: safePackage,
+            source: safeSource,
+          },
+        },
+      });
+      if (emailErr) console.error("Email invoke error:", emailErr);
+      else emailSent = true;
+    } catch (emailErr) {
+      console.error("Email error:", emailErr);
     }
+
 
     return new Response(
       JSON.stringify({ success: true, email_sent: emailSent }),
