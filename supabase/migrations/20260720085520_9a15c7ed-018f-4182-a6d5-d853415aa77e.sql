@@ -1,0 +1,1 @@
+UPDATE public.email_messages SET status='queued', error_message=NULL WHERE status='failed' AND error_message LIKE '%unsubscribe%';

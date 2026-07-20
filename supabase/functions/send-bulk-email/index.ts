@@ -59,6 +59,31 @@ Deno.serve(async (req) => {
           const html = wrapInTemplate(email.body, subject);
           const text = email.body.replace(/<[^>]*>/g, "");
 
+          // Get or create unsubscribe token for this recipient
+          const normalizedEmail = email.recipient_email.toLowerCase();
+          let unsubscribeToken: string;
+          const { data: existingToken } = await adminSb
+            .from("email_unsubscribe_tokens")
+            .select("token")
+            .eq("email", normalizedEmail)
+            .maybeSingle();
+          if (existingToken?.token) {
+            unsubscribeToken = existingToken.token;
+          } else {
+            const bytes = new Uint8Array(32);
+            crypto.getRandomValues(bytes);
+            unsubscribeToken = Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
+            await adminSb
+              .from("email_unsubscribe_tokens")
+              .upsert({ token: unsubscribeToken, email: normalizedEmail }, { onConflict: "email", ignoreDuplicates: true });
+            const { data: stored } = await adminSb
+              .from("email_unsubscribe_tokens")
+              .select("token")
+              .eq("email", normalizedEmail)
+              .maybeSingle();
+            if (stored?.token) unsubscribeToken = stored.token;
+          }
+
           const { error } = await adminSb.rpc("enqueue_email", {
             queue_name: "transactional_emails",
             payload: {
@@ -72,6 +97,7 @@ Deno.serve(async (req) => {
               purpose: "transactional",
               label: "bulk-broadcast",
               idempotency_key: `bulk-${email.id}-${messageId}`,
+              unsubscribe_token: unsubscribeToken,
               queued_at: new Date().toISOString(),
             },
           });
