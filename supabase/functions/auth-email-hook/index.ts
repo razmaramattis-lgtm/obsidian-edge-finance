@@ -37,9 +37,9 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 
 // Configuration
 const SITE_NAME = "Avargo"
-const SENDER_DOMAIN = "notify.avargo.no"
+const SENDER_DOMAIN = "avargo.no"
 const ROOT_DOMAIN = "avargo.no"
-const FROM_DOMAIN = "notify.avargo.no" // Aligned with DKIM/SPF sending subdomain (removes "on behalf of")
+const FROM_DOMAIN = "avargo.no" // Resend sends directly from the root domain once verified there
 const REPLY_TO = "kontakt@avargo.no"
 
 // Sample data for preview mode ONLY (not used in actual email sending).
