@@ -7,7 +7,7 @@ const corsHeaders = {
 
 const SITE_NAME = "Avargo";
 const SENDER_DOMAIN = "notify.avargo.no";
-const FROM_DOMAIN = "notify.avargo.no";
+const FROM_DOMAIN = "avargo.no";
 const FROM_ADDRESS = `${SITE_NAME} <kontakt@${FROM_DOMAIN}>`;
 const REPLY_TO = "kontakt@avargo.no";
 
