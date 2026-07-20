@@ -59,8 +59,8 @@ const Login = () => {
     setForgotLoading(true);
     setError("");
     try {
-      const { error: fnError } = await supabase.functions.invoke("reset-password", {
-        body: { email: forgotEmail.trim() },
+      const { error: fnError } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+        redirectTo: `${window.location.origin}/auth/bekreft`,
       });
       if (fnError) throw fnError;
       setForgotSent(true);

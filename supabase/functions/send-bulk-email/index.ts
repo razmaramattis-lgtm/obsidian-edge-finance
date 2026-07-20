@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
               text,
               purpose: "transactional",
               label: "bulk-broadcast",
-              idempotency_key: `bulk-${email.id}`,
+              idempotency_key: `bulk-${email.id}-${messageId}`,
               queued_at: new Date().toISOString(),
             },
           });

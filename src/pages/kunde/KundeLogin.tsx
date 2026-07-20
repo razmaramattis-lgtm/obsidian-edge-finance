@@ -37,8 +37,8 @@ const KundeLogin = () => {
     setForgotLoading(true);
     setError("");
     try {
-      const { error } = await supabase.functions.invoke("reset-password", {
-        body: { email: forgotEmail.trim() },
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+        redirectTo: `${window.location.origin}/auth/bekreft`,
       });
       if (error) throw error;
       setForgotSent(true);
