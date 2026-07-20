@@ -91,6 +91,7 @@ Deno.serve(async (req) => {
               message_id: messageId,
               to: email.recipient_email,
               from: FROM_ADDRESS,
+              reply_to: REPLY_TO,
               sender_domain: SENDER_DOMAIN,
               subject,
               html,
