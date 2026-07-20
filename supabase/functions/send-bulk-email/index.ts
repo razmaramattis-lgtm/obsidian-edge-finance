@@ -32,83 +32,93 @@ Deno.serve(async (req) => {
     return json({ error: "Forbidden" }, 403);
   }
 
+  const startedAt = Date.now();
+  const MAX_MS = 50_000; // stay under edge function timeout
+  let totalProcessed = 0;
+  let totalQueued = 0;
+  let totalFailed = 0;
+
   try {
-    const { data: emails } = await adminSb
-      .from("email_messages")
-      .select("*")
-      .eq("status", "queued")
-      .order("created_at", { ascending: true })
-      .limit(100);
+    while (Date.now() - startedAt < MAX_MS) {
+      const { data: emails } = await adminSb
+        .from("email_messages")
+        .select("*")
+        .eq("status", "queued")
+        .order("created_at", { ascending: true })
+        .limit(200);
 
-    if (!emails || emails.length === 0) {
-      return json({ processed: 0, queued: 0 });
-    }
+      if (!emails || emails.length === 0) break;
 
-    const ids = emails.map((e: any) => e.id);
-    await adminSb.from("email_messages").update({ status: "sending" }).in("id", ids);
+      const ids = emails.map((e: any) => e.id);
+      await adminSb.from("email_messages").update({ status: "sending" }).in("id", ids);
 
-    let queued = 0;
-    let failed = 0;
+      for (const email of emails) {
+        try {
+          const messageId = crypto.randomUUID();
+          const subject = email.subject;
+          const html = wrapInTemplate(email.body, subject);
+          const text = email.body.replace(/<[^>]*>/g, "");
 
-    for (const email of emails) {
-      try {
-        const messageId = crypto.randomUUID();
-        const subject = email.subject;
-        const html = wrapInTemplate(email.body, subject);
-        const text = email.body.replace(/<[^>]*>/g, "");
+          const { error } = await adminSb.rpc("enqueue_email", {
+            queue_name: "transactional_emails",
+            payload: {
+              message_id: messageId,
+              to: email.recipient_email,
+              from: FROM_ADDRESS,
+              sender_domain: SENDER_DOMAIN,
+              subject,
+              html,
+              text,
+              purpose: "transactional",
+              label: "bulk-broadcast",
+              idempotency_key: `bulk-${email.id}`,
+              queued_at: new Date().toISOString(),
+            },
+          });
 
-        const { error } = await adminSb.rpc("enqueue_email", {
-          queue_name: "transactional_emails",
-          payload: {
+          if (error) throw error;
+
+          await adminSb.from("email_send_log").insert({
             message_id: messageId,
-            to: email.recipient_email,
-            from: FROM_ADDRESS,
-            sender_domain: SENDER_DOMAIN,
-            subject,
-            html,
-            text,
-            purpose: "transactional",
-            label: "bulk-broadcast",
-            idempotency_key: `bulk-${email.id}`,
-            queued_at: new Date().toISOString(),
-          },
-        });
+            template_name: "bulk-broadcast",
+            recipient_email: email.recipient_email,
+            status: "pending",
+          });
 
-        if (error) throw error;
+          await adminSb.from("email_messages").update({
+            status: "sent",
+            sent_at: new Date().toISOString(),
+          }).eq("id", email.id);
 
-        await adminSb.from("email_send_log").insert({
-          message_id: messageId,
-          template_name: "bulk-broadcast",
-          recipient_email: email.recipient_email,
-          status: "pending",
-        });
-
-        await adminSb.from("email_messages").update({
-          status: "sent",
-          sent_at: new Date().toISOString(),
-        }).eq("id", email.id);
-
-        if (email.campaign_id) {
-          const { data: camp } = await adminSb.from("email_campaigns").select("sent_count").eq("id", email.campaign_id).single();
-          if (camp) await adminSb.from("email_campaigns").update({ sent_count: (camp.sent_count || 0) + 1 }).eq("id", email.campaign_id);
+          if (email.campaign_id) {
+            const { data: camp } = await adminSb.from("email_campaigns").select("sent_count").eq("id", email.campaign_id).single();
+            if (camp) await adminSb.from("email_campaigns").update({ sent_count: (camp.sent_count || 0) + 1 }).eq("id", email.campaign_id);
+          }
+          totalQueued++;
+        } catch (err) {
+          totalFailed++;
+          await adminSb.from("email_messages").update({
+            status: "failed",
+            error_message: String(err),
+          }).eq("id", email.id);
+          if (email.campaign_id) {
+            const { data: camp } = await adminSb.from("email_campaigns").select("failed_count").eq("id", email.campaign_id).single();
+            if (camp) await adminSb.from("email_campaigns").update({ failed_count: (camp.failed_count || 0) + 1 }).eq("id", email.campaign_id);
+          }
         }
-        queued++;
-      } catch (err) {
-        failed++;
-        await adminSb.from("email_messages").update({
-          status: "failed",
-          error_message: String(err),
-        }).eq("id", email.id);
-        if (email.campaign_id) {
-          const { data: camp } = await adminSb.from("email_campaigns").select("failed_count").eq("id", email.campaign_id).single();
-          if (camp) await adminSb.from("email_campaigns").update({ failed_count: (camp.failed_count || 0) + 1 }).eq("id", email.campaign_id);
-        }
+        totalProcessed++;
       }
     }
 
-    return json({ processed: emails.length, queued, failed });
+    // Check if more remain so caller can invoke again
+    const { count: remaining } = await adminSb
+      .from("email_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "queued");
+
+    return json({ processed: totalProcessed, queued: totalQueued, failed: totalFailed, remaining: remaining ?? 0 });
   } catch (e) {
-    return json({ error: String(e) }, 500);
+    return json({ error: String(e), processed: totalProcessed }, 500);
   }
 });
 

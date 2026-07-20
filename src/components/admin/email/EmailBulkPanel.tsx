@@ -44,7 +44,10 @@ const EmailBulkPanel = () => {
 
   const triggerSend = async () => {
     try {
-      await supabase.functions.invoke("send-bulk-email");
+      for (let i = 0; i < 20; i++) {
+        const { data } = await supabase.functions.invoke("send-bulk-email");
+        if (!data || (data as any).remaining === 0 || (data as any).processed === 0) break;
+      }
     } catch { /* silent */ }
   };
 
