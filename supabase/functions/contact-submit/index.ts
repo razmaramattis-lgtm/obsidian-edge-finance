@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,37 +15,6 @@ const SECTION_LABELS: Record<string, string> = {
   samarbeid: "Samarbeid",
 };
 
-async function sendEmail(opts: {
-  hostname: string;
-  port: number;
-  username: string;
-  password: string;
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-}) {
-  const client = new SMTPClient({
-    connection: {
-      hostname: opts.hostname,
-      port: opts.port,
-      tls: true,
-      auth: { username: opts.username, password: opts.password },
-    },
-  });
-  try {
-    await client.send({
-      from: `Avargo <${opts.from}>`,
-      to: opts.to,
-      replyTo: "kontakt@avargo.no",
-      subject: opts.subject,
-      content: "auto",
-      html: opts.html,
-    });
-  } finally {
-    try { await client.close(); } catch { /* ignore */ }
-  }
-}
 
 function asString(value: unknown, max = 5000) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
