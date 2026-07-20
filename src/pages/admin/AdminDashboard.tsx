@@ -51,9 +51,10 @@ import AuditLogPanel from "@/components/admin/AuditLogPanel";
 import MarketingPanel from "@/components/admin/MarketingPanel";
 import DigitalJobPanel from "@/components/admin/DigitalJobPanel";
 import ConversionInsightsPanel from "@/components/admin/ConversionInsightsPanel";
+import EmailStatusPanel from "@/components/admin/EmailStatusPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "audit_log" | "marketing" | "digital_job" | "conversion_insights";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "email_status" | "audit_log" | "marketing" | "digital_job" | "conversion_insights";
 
 interface NavItem {
   id: Panel;
@@ -96,6 +97,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Markedsføring
   { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "email_status", label: "E-poststatus", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   
 
   // Digital jobb
@@ -304,6 +306,7 @@ const AdminDashboard = () => {
       case "job_listings": return <JobListingsPanel />;
       case "org_resources": return <OrgResourcesPanel onStatusChange={refreshNotifications} initialSearch={panelContext?.search} initialTab={panelContext?.tab} badgeCounts={{ account_feedback: notifications.accountFeedback }} />;
       case "sms_center": return <SmsCenterPanel />;
+      case "email_status": return <EmailStatusPanel />;
       case "marketing": return <MarketingPanel isFullscreen={marketingFullscreen} onToggleFullscreen={() => setMarketingFullscreen(f => !f)} />;
       case "audit_log": return <AuditLogPanel />;
       case "digital_job": return <DigitalJobPanel />;
