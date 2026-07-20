@@ -299,6 +299,14 @@ Deno.serve(async (req) => {
     status: 'pending',
   })
 
+  // Note: unsubscribe token is generated + stored for suppression bookkeeping,
+  // but intentionally NOT attached to the payload for 1:1 transactional sends.
+  // Including unsubscribe footers / List-Unsubscribe headers on transactional
+  // receipts (contact confirmations, password reminders, etc.) makes Gmail /
+  // Outlook classify them as bulk mail and route them to spam. Only bulk sends
+  // (send-bulk-email) include unsubscribe_token in the payload.
+  void unsubscribeToken
+
   const { error: enqueueError } = await supabase.rpc('enqueue_email', {
     queue_name: 'transactional_emails',
     payload: {
@@ -313,7 +321,6 @@ Deno.serve(async (req) => {
       purpose: 'transactional',
       label: templateName,
       idempotency_key: idempotencyKey,
-      unsubscribe_token: unsubscribeToken,
       queued_at: new Date().toISOString(),
     },
   })
