@@ -97,6 +97,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 
   // Markedsføring
   { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
+  { id: "email_status", label: "E-poststatus", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   
 
   // Digital jobb
