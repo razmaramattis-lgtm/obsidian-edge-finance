@@ -44,6 +44,7 @@ const Vilkar = lazy(() => import("./pages/Vilkar"));
 const Gateway = lazy(() => import("./pages/Gateway"));
 const Login = lazy(() => import("./pages/Login"));
 const AuthBekreft = lazy(() => import("./pages/AuthBekreft"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const KundeDashboard = lazy(() => import("./pages/kunde/KundeDashboard"));
 
@@ -262,6 +263,7 @@ const App = () => (
                   {/* Unified login */}
                   <Route path="/logg-inn" element={<Login />} />
                   <Route path="/auth/bekreft" element={<AuthBekreft />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
                   {/* Legacy login redirects */}
                   <Route path="/admin/logg-inn" element={<Navigate to="/logg-inn" replace />} />
                   <Route path="/kunde/logg-inn" element={<Navigate to="/logg-inn" replace />} />
