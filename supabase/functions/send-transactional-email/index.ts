@@ -7,14 +7,9 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 // Configuration baked in at scaffold time — do NOT change these manually.
 // To update, re-run the email domain setup flow.
 const SITE_NAME = "Avargo"
-// SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
-// It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
-// The email API looks up this exact domain; a mismatch causes "No email domain record found".
-const SENDER_DOMAIN = "notify.avargo.no"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// When display_from_root is enabled, this can be the root domain for cleaner branding,
-// even though actual sending uses the subdomain above.
-const FROM_DOMAIN = "notify.avargo.no"
+// Resend sends directly from the root domain once avargo.no is verified there.
+const SENDER_DOMAIN = "avargo.no"
+const FROM_DOMAIN = "avargo.no"
 const REPLY_TO = "kontakt@avargo.no"
 
 // Generate a cryptographically random 32-byte hex token
