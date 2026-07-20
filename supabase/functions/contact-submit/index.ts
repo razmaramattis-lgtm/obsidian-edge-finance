@@ -26,59 +26,25 @@ async function sendEmail(opts: {
   subject: string;
   html: string;
 }) {
-  const conn = await Deno.connectTls({ hostname: opts.hostname, port: opts.port });
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-
-  async function readResponse(): Promise<string> {
-    let result = "";
-    const buf = new Uint8Array(4096);
-    while (true) {
-      const n = await conn.read(buf);
-      if (!n) break;
-      result += decoder.decode(buf.subarray(0, n));
-      const lines = result.trim().split("\r\n");
-      const lastLine = lines[lines.length - 1];
-      if (/^\d{3} /.test(lastLine) || !/^\d{3}/.test(lastLine)) break;
-    }
-    return result;
-  }
-
-  async function send(cmd: string): Promise<string> {
-    await conn.write(encoder.encode(cmd + "\r\n"));
-    return await readResponse();
-  }
-
+  const client = new SMTPClient({
+    connection: {
+      hostname: opts.hostname,
+      port: opts.port,
+      tls: true,
+      auth: { username: opts.username, password: opts.password },
+    },
+  });
   try {
-    await readResponse();
-    await send("EHLO localhost");
-    const authResp = await send("AUTH LOGIN");
-    if (!authResp.startsWith("334")) throw new Error("AUTH LOGIN failed: " + authResp);
-    const userResp = await send(btoa(opts.username));
-    if (!userResp.startsWith("334")) throw new Error("AUTH user failed: " + userResp);
-    const passResp = await send(btoa(opts.password));
-    if (!passResp.startsWith("235")) throw new Error("AUTH pass failed: " + passResp);
-    await send(`MAIL FROM:<${opts.from}>`);
-    await send(`RCPT TO:<${opts.to}>`);
-    await send("DATA");
-
-    const message = [
-      `From: Avargo <${opts.from}>`,
-      `Reply-To: kontakt@avargo.no`,
-      `To: ${opts.to}`,
-      `Subject: ${opts.subject}`,
-      `MIME-Version: 1.0`,
-      `Content-Type: text/html; charset=UTF-8`,
-      ``,
-      opts.html,
-      `.`,
-    ].join("\r\n");
-
-    const sendResp = await send(message);
-    if (sendResp.startsWith("5")) throw new Error("SMTP send rejected: " + sendResp.trim());
-    await send("QUIT");
+    await client.send({
+      from: `Avargo <${opts.from}>`,
+      to: opts.to,
+      replyTo: "kontakt@avargo.no",
+      subject: opts.subject,
+      content: "auto",
+      html: opts.html,
+    });
   } finally {
-    try { conn.close(); } catch { /* ignore */ }
+    try { await client.close(); } catch { /* ignore */ }
   }
 }
 
