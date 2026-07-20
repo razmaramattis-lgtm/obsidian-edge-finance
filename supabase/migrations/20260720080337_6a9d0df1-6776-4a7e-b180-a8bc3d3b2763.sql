@@ -1,0 +1,1 @@
+UPDATE public.sms_devices SET messages_sent_today = 0, status = CASE WHEN last_seen > now() - interval '2 minutes' THEN 'online' ELSE 'offline' END;
