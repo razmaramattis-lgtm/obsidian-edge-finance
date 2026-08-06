@@ -25,8 +25,8 @@ const CvUpload = ({ onUploaded, cvUrl, cvFileName, onRemove }: CvUploadProps) =>
       return;
     }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
+    const ext = (file.name.split(".").pop() || "pdf").toLowerCase();
+    const path = `applications/${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from("cv-uploads").upload(path, file);
     if (error) {
       toast.error("Kunne ikke laste opp filen.");

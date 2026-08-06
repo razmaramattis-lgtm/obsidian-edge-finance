@@ -1,3 +1,4 @@
+import { requireStaff, isKnownApplicant } from "../_shared/auth.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -166,6 +167,9 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const auth = await requireStaff(req, { cors: corsHeaders });
+  if ("response" in auth) return auth.response;
+
   try {
     const {
       applicant_name,
@@ -179,6 +183,13 @@ Deno.serve(async (req) => {
     if (!applicant_email || !applicant_name) {
       return new Response(JSON.stringify({ error: "Mangler navn eller e-post" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!(await isKnownApplicant(applicant_email))) {
+      return new Response(JSON.stringify({ error: "Ukjent søker" }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

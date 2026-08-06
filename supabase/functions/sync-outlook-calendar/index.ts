@@ -1,3 +1,4 @@
+import { getCaller } from "../_shared/auth.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -53,6 +54,13 @@ Deno.serve(async (req) => {
   try {
     const { profile_id } = await req.json();
     if (!profile_id) return new Response(JSON.stringify({ error: "Missing profile_id" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+    // Only the advisor themselves or an admin may sync/modify that calendar.
+    const result = await getCaller(req, corsHeaders);
+    if ("response" in result) return result.response;
+    if (!result.caller.isAdmin && result.caller.profileId !== profile_id) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     // Get the profile's outlook_calendar_url
     const { data: profile } = await sb.from("profiles").select("outlook_calendar_url").eq("id", profile_id).single();
