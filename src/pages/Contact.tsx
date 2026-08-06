@@ -498,6 +498,7 @@ const Contact = () => {
                         <button
                           type="button"
                           onClick={() => setShowFinancials(v => !v)}
+                          aria-label={showFinancials ? "Skjul regnskapsdetaljer" : "Vis regnskapsdetaljer"}
                           className="w-full flex items-center justify-between px-4 py-3 text-xs text-foreground/50 hover:text-foreground/70 transition-colors"
                         >
                           <span className="flex items-center gap-2">
@@ -533,18 +534,18 @@ const Contact = () => {
                 </AnimatePresence>
 
                 <div>
-                  <label className={labelClass}>Navn</label>
-                  <input required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt navn" />
+                  <label htmlFor="kontaktperson" className={labelClass}>Navn</label>
+                  <input id="kontaktperson" required type="text" value={kontaktperson} onChange={(e) => setKontaktperson(e.target.value)} className={inputClass} placeholder="Ditt navn" />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>E-post</label>
-                    <input required type="email" value={epost} onChange={(e) => setEpost(e.target.value)} className={inputClass} placeholder="din@epost.no" />
+                    <label htmlFor="epost" className={labelClass}>E-post</label>
+                    <input id="epost" required type="email" value={epost} onChange={(e) => setEpost(e.target.value)} className={inputClass} placeholder="din@epost.no" />
                   </div>
                   <div>
-                    <label className={labelClass}>Telefon <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
-                    <input type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)} className={inputClass} placeholder="+47 000 00 000" />
+                    <label htmlFor="telefon" className={labelClass}>Telefon <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
+                    <input id="telefon" type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)} className={inputClass} placeholder="+47 000 00 000" />
                   </div>
                 </div>
 
@@ -553,6 +554,7 @@ const Contact = () => {
                   <button
                     type="button"
                     onClick={() => setShowDetails(v => !v)}
+                    aria-label={showDetails ? "Skjul valgfrie detaljer" : "Vis valgfrie detaljer"}
                     className="w-full flex items-center justify-between px-4 py-3 text-xs text-foreground/50 hover:text-foreground/80 transition-colors"
                   >
                     <span className="uppercase tracking-[0.25em] font-medium text-[11px]">
@@ -571,13 +573,13 @@ const Contact = () => {
                         <div className="px-4 pb-5 space-y-4">
                           {naering && (
                             <div>
-                              <label className={labelClass}>Næringsområde</label>
-                              <input type="text" value={naering} onChange={(e) => setNaering(e.target.value)} className={inputClass} />
+                              <label htmlFor="naering" className={labelClass}>Næringsområde</label>
+                              <input id="naering" type="text" value={naering} onChange={(e) => setNaering(e.target.value)} className={inputClass} />
                             </div>
                           )}
                           <div>
-                            <label className={labelClass}>Bransje</label>
-                            <select value={bransje} onChange={(e) => setBransje(e.target.value)} className={inputClass}>
+                            <label htmlFor="bransje" className={labelClass}>Bransje</label>
+                            <select id="bransje" value={bransje} onChange={(e) => setBransje(e.target.value)} className={inputClass}>
                               <option value="">Velg bransje</option>
                               <option>Tech & SaaS</option>
                               <option>Eiendom & Utvikling</option>
@@ -606,8 +608,8 @@ const Contact = () => {
                             </select>
                           </div>
                           <div>
-                            <label className={labelClass}>Omsetningsmål neste 12 mnd</label>
-                            <select value={omsetning} onChange={(e) => setOmsetning(e.target.value)} className={inputClass}>
+                            <label htmlFor="omsetning" className={labelClass}>Omsetningsmål neste 12 mnd</label>
+                            <select id="omsetning" value={omsetning} onChange={(e) => setOmsetning(e.target.value)} className={inputClass}>
                               <option value="">Velg omsetningsnivå</option>
                               <option>Under 1 million</option>
                               <option>1–5 millioner</option>
@@ -617,8 +619,8 @@ const Contact = () => {
                             </select>
                           </div>
                           <div>
-                            <label className={labelClass}>Hva er viktigst for deg?</label>
-                            <textarea rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
+                            <label htmlFor="frustrasjon" className={labelClass}>Hva er viktigst for deg?</label>
+                            <textarea id="frustrasjon" rows={3} value={frustrasjon} onChange={(e) => setFrustrasjon(e.target.value)} className={`${inputClass} resize-none`} placeholder="F.eks. god oppfølging, lave kostnader, noen som forstår bransjen min..." />
                           </div>
                         </div>
                       </motion.div>
