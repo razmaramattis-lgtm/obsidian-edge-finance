@@ -350,7 +350,7 @@ const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId 
         <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
           {/* Cover header */}
           {(() => {
-            const coverUrl = (active as any).cover_url;
+            const coverUrl = signedCover;
             const avatarUrl = (active as any).avatar_url;
             const isGradient = coverUrl?.startsWith("linear-gradient");
             const gradient = getGroupGradient(active.color, active.name);

@@ -362,9 +362,9 @@ const MiniChatWindow = ({
                   {msg.file_url && (
                     <div className="mt-1">
                       {isImage(msg.file_url) ? (
-                        <a href={msg.file_url} target="_blank" rel="noopener noreferrer"><img src={msg.file_url} alt="" className="max-h-32 rounded-xl" loading="lazy" /></a>
+                        <SignedLink href={msg.file_url} target="_blank" rel="noopener noreferrer"><SignedImg src={msg.file_url} alt="" className="max-h-32 rounded-xl" loading="lazy" /></SignedLink>
                       ) : (
-                        <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-[9px]">📎 {msg.file_name || "Fil"}</a>
+                        <SignedLink href={msg.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/10 text-primary text-[9px]">📎 {msg.file_name || "Fil"}</SignedLink>
                       )}
                     </div>
                   )}

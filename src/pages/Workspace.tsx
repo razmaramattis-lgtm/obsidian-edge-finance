@@ -441,7 +441,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                     <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
                   </div>
                   {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
-                  {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
+                  {post.image_url && <div className="px-5 pb-3"><SignedImg src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
                   <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
                   <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
                     <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
@@ -695,7 +695,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
                   )}
                   {post.image_url && (
                     <div className="px-5 pb-3">
-                      <img src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
+                      <SignedImg src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
                     </div>
                   )}
                   <div className="px-5 pb-3">
