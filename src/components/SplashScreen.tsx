@@ -40,7 +40,7 @@ export const SplashScreen = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
           >
-            <img src={creamLogoAsset.url} alt="Avargo" className="w-20 h-20 rounded-2xl" />
+            <img src="/logo-cream.png" alt="Avargo" className="w-20 h-20 rounded-2xl" />
           </motion.div>
 
           {/* Brand name */}
