@@ -362,10 +362,6 @@ const Hub = () => {
               {t("cta.button")}
               <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
-
-            <div className="mt-10 md:mt-14 text-left">
-              <HeroQuickContact source="hub-cta" />
-            </div>
           </motion.div>
 
         </div>
