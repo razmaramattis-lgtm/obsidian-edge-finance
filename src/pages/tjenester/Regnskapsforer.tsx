@@ -206,9 +206,12 @@ const Regnskapsforer = () => (
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-snug max-w-2xl mx-auto">
             Regnskapsføreren din venter.
           </h2>
-          <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto text-sm">
+          <p className="text-muted-foreground font-light mb-6 max-w-md mx-auto text-sm">
             Dedikert. Autorisert. Spesialisert i din bransje. En samtale er nok til å komme i gang.
           </p>
+          <a href="tel:+4798642391" className="inline-flex items-center gap-2 text-primary font-medium hover:underline mb-10">
+            <Phone size={14} /> 98 64 23 91
+          </a>
           <Link
             to="/kontakt"
             className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground text-sm font-medium tracking-wider rounded-full glow-rose hover:scale-[1.02] transition-all duration-500"
