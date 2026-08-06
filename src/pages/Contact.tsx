@@ -342,6 +342,10 @@ const Contact = () => {
             </div>
             <div className="space-y-3 text-sm text-foreground/60 font-light">
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Åpent man–fre 08:00–16:00</span></div>
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                <span>Ring oss på <a href="tel:+4798642391" className="text-primary hover:underline">98 64 23 91</a></span>
+              </div>
             </div>
           </AnimatedSection>
 
