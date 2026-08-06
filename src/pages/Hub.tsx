@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake, TrendingUp, Wallet } from "lucide-react";
+import { ArrowRight, BookOpen, Users, CheckCircle2, Shield, Clock, Layers, BadgeCheck, HeartHandshake } from "lucide-react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { SECTION_LIST, type SectionId } from "@/contexts/SectionContext";
 import SwitchCheckSection from "@/components/SwitchCheckSection";
@@ -10,7 +10,6 @@ import HubFAQ from "@/components/HubFAQ";
 import HeroQuickContact from "@/components/HeroQuickContact";
 
 import heroBg from "@/assets/hero-bg.jpg";
-const heroPortrait = "/hero-portrait.jpg";
 
 import hubPartner from "@/assets/hub-partner.jpg";
 import hubFastpris from "@/assets/hub-fastpris.jpg";
