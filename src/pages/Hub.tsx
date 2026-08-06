@@ -8,8 +8,7 @@ import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
 import heroBg from "@/assets/hero-bg.jpg";
-import heroPortraitAsset from "@/assets/avargo-hero2.png.asset.json";
-const heroPortrait = heroPortraitAsset.url;
+const heroPortrait = "/hero-portrait.jpg";
 
 import hubPartner from "@/assets/hub-partner.jpg";
 import hubFastpris from "@/assets/hub-fastpris.jpg";
