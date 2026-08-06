@@ -1,3 +1,4 @@
+import { requireStaff } from "../_shared/auth.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -8,6 +9,9 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const auth = await requireStaff(req, { cors: corsHeaders });
+  if ("response" in auth) return auth.response;
 
   try {
     const { platform, topic, tone, include_image, custom_instructions, strategy_plan_id, scheduled_at, auto_schedule } = await req.json();

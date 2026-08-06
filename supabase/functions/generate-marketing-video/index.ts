@@ -1,3 +1,4 @@
+import { requireStaff } from "../_shared/auth.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -13,6 +14,9 @@ const FALLBACK_VIDEO_PATHS = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const auth = await requireStaff(req, { cors: corsHeaders });
+  if ("response" in auth) return auth.response;
 
   try {
     const { request_id, prompt, title, aspect_ratio } = await req.json();
