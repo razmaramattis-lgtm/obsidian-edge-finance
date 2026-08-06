@@ -13,7 +13,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
-  Mail, ShieldCheck,
+  Mail, Phone, ShieldCheck,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
@@ -448,6 +448,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <div className="flex flex-col gap-2 text-[13px] mb-7">
                 <a href="mailto:kontakt@avargo.no" className="inline-flex items-center gap-2 text-secondary-foreground/85 hover:text-accent transition-colors">
                   <Mail size={13} strokeWidth={1.7} className="text-accent" /> kontakt@avargo.no
+                </a>
+                <a href="tel:+4798642391" className="inline-flex items-center gap-2 text-secondary-foreground/85 hover:text-accent transition-colors">
+                  <Phone size={13} strokeWidth={1.7} className="text-accent" /> 98 64 23 91
                 </a>
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
                   <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> {t("footer.orgline")}
