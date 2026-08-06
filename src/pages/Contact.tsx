@@ -312,8 +312,32 @@ const Contact = () => {
     <>
     <Helmet>
       <title>{contactCopy ? `Kontakt — ${section!.name} | Avargo` : "Kontakt Avargo | Få tilbud på regnskapstjenester"}</title>
-      <meta name="description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud. Vi svarer så raskt vi kan."} />
+      <meta name="description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud på regnskap, lønn og HR. Ring 98 64 23 91 eller send skjema — vi svarer så raskt vi kan."} />
       <link rel="canonical" href={`https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt`} />
+      <meta property="og:title" content={contactCopy ? `Kontakt — ${section!.name} | Avargo` : "Kontakt Avargo | Få tilbud på regnskapstjenester"} />
+      <meta property="og:description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud på regnskap, lønn og HR. Ring 98 64 23 91 eller send skjema."} />
+      <meta property="og:url" content={`https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt`} />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={contactCopy ? `Kontakt — ${section!.name} | Avargo` : "Kontakt Avargo | Få tilbud på regnskapstjenester"} />
+      <meta name="twitter:description" content={contactCopy?.sub || "Ta kontakt med Avargo for et uforpliktende tilbud på regnskap, lønn og HR."} />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "AccountingService",
+        "name": "Avargo Regnskap AS",
+        "url": "https://avargo.no/kontakt",
+        "logo": "https://avargo.no/logo.png",
+        "telephone": "+4798642391",
+        "email": "kontakt@avargo.no",
+        "areaServed": { "@type": "Country", "name": "Norway" },
+        "priceRange": "$$",
+        "openingHoursSpecification": [{
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "16:00",
+        }],
+      })}</script>
     </Helmet>
     <section className="py-24 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />

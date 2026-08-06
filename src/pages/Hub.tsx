@@ -45,7 +45,14 @@ const Hub = () => {
       <Helmet>
         <title>{t("seo.title")}</title>
         <meta name="description" content={t("seo.description")} />
-        <link rel="canonical" href="https://avargo.no" />
+        <link rel="canonical" href="https://avargo.no/" />
+        <meta property="og:title" content={t("seo.title")} />
+        <meta property="og:description" content={t("seo.description")} />
+        <meta property="og:url" content="https://avargo.no/" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t("seo.title")} />
+        <meta name="twitter:description" content={t("seo.description")} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "AccountingService",
