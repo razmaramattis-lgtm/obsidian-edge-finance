@@ -25,7 +25,7 @@ import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
-import { SignedImg } from "@/components/workspace/SignedMedia";
+import { SignedImg, useSignedUrl } from "@/components/workspace/SignedMedia";
 
 // ─── Main ───
 const Workspace = () => {
@@ -303,6 +303,7 @@ const Workspace = () => {
 
 // ─── View Other Profile Page ───
 const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: Profile; myProfile: Profile; onBack: () => void; onNavigate: (v: View) => void }) => {
+  const signedBg = useSignedUrl(profile.background_url);
   const [posts, setPosts] = useState<Post[]>([]);
   const [friendCount, setFriendCount] = useState(0);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
@@ -539,6 +540,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
 // ─── Profile View ───
 const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile; onNavigate: (v: View) => void }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile);
+  const signedBg = useSignedUrl(profile.background_url);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [myGroupIds, setMyGroupIds] = useState<string[]>([]);
