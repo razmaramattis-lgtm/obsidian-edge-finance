@@ -331,10 +331,11 @@ const Pricing = () => {
                         <p className="text-sm text-foreground/60 font-light mb-6">
                           Velg hvilken bransje virksomheten din tilhører. Dette hjelper oss å tilpasse tilbudet.
                         </p>
-                        <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                        <label htmlFor="industry" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                           Bransje
                         </label>
                         <select
+                          id="industry"
                           value={industry}
                           onChange={(e) => setIndustry(e.target.value)}
                           className="mt-1.5 w-full px-4 py-3 text-sm rounded-xl bg-background/60 border border-border/50 text-foreground focus:outline-none focus:border-primary/60 transition-colors"
@@ -367,12 +368,14 @@ const Pricing = () => {
                         </div>
 
                         <input
+                          id="revenue"
                           type="range"
                           min={REVENUE_MIN}
                           max={REVENUE_CUSTOM}
                           step={REVENUE_STEP}
                           value={revenue}
                           onChange={(e) => setRevenue(Number(e.target.value))}
+                          aria-label="Årlig omsetning"
                           className="w-full accent-primary cursor-pointer"
                         />
                         <div className="flex justify-between text-[11px] text-foreground/50 font-light mt-2">
@@ -428,27 +431,31 @@ const Pricing = () => {
                           Hvor mange lønnsslipper kjører du per måned, og skal årsoppgjøret være inkludert?
                         </p>
 
-                        <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                        <label htmlFor="payslips" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                           Lønnsslipper per måned
                         </label>
                         <div className="flex items-center gap-3 mt-2 mb-6">
                           <button
                             type="button"
                             onClick={() => setPayslips((n) => Math.max(0, n - 1))}
+                            aria-label="Reduser antall lønnsslipper"
                             className="w-11 h-11 rounded-full border border-border/60 bg-card/50 hover:border-primary/40 hover:bg-primary/5 flex items-center justify-center text-lg"
                           >
                             −
                           </button>
                           <input
+                            id="payslips"
                             type="number"
                             min={0}
                             value={payslips}
                             onChange={(e) => setPayslips(Math.max(0, Number(e.target.value) || 0))}
+                            aria-label="Antall lønnsslipper per måned"
                             className="flex-1 text-center text-xl font-medium bg-card/50 border border-border/60 rounded-xl py-2.5 focus:outline-none focus:border-primary/50"
                           />
                           <button
                             type="button"
                             onClick={() => setPayslips((n) => n + 1)}
+                            aria-label="Øk antall lønnsslipper"
                             className="w-11 h-11 rounded-full border border-border/60 bg-card/50 hover:border-primary/40 hover:bg-primary/5 flex items-center justify-center text-lg"
                           >
                             +
@@ -533,10 +540,11 @@ const Pricing = () => {
 
                         <div className="space-y-3">
                           <div>
-                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            <label htmlFor="contactCompany" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                               Firmanavn *
                             </label>
                             <input
+                              id="contactCompany"
                               type="text"
                               value={contactCompany}
                               onChange={(e) => setContactCompany(e.target.value)}
@@ -547,10 +555,11 @@ const Pricing = () => {
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              <label htmlFor="contactPhone" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                                 Telefon *
                               </label>
                               <input
+                                id="contactPhone"
                                 type="tel"
                                 value={contactPhone}
                                 onChange={(e) => setContactPhone(e.target.value)}
@@ -560,10 +569,11 @@ const Pricing = () => {
                               />
                             </div>
                             <div>
-                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              <label htmlFor="contactEmail" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                                 E-post *
                               </label>
                               <input
+                                id="contactEmail"
                                 type="email"
                                 value={contactEmail}
                                 onChange={(e) => setContactEmail(e.target.value)}
@@ -574,10 +584,11 @@ const Pricing = () => {
                             </div>
                           </div>
                           <div>
-                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            <label htmlFor="contactMessage" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                               Melding (valgfri)
                             </label>
                             <textarea
+                              id="contactMessage"
                               value={contactMessage}
                               onChange={(e) => setContactMessage(e.target.value)}
                               maxLength={1000}
