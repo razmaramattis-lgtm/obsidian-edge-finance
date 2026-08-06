@@ -100,9 +100,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Subtil parallax for footer-wordmark ───────────
+  // ── Subtil parallax for footer-glow ───────────────
   const footerRef = useRef<HTMLElement | null>(null);
-  const footerWordmarkRef = useRef<HTMLDivElement | null>(null);
   const footerGlowRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -115,9 +114,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       const vh = window.innerHeight || 1;
       // progress 0..1 idet footer glir inn i viewport nedenfra
       const p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height * 0.5)));
-      if (footerWordmarkRef.current) {
-        footerWordmarkRef.current.style.transform = `translate3d(0, ${(1 - p) * 40}px, 0)`;
-      }
       if (footerGlowRef.current) {
         footerGlowRef.current.style.transform = `translate3d(0, ${(1 - p) * -20}px, 0)`;
         footerGlowRef.current.style.opacity = String(0.4 + p * 0.5);
@@ -174,7 +170,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <Link to="/" className="flex items-center group">
             <Logo
               variant="full"
-              className={`text-forest group-hover:text-copper transition-colors duration-500 ease-out ${
+              theme="light"
+              className={`transition-all duration-500 ease-out ${
                 scrolled ? "h-7 lg:h-8" : "h-8 lg:h-9"
               }`}
             />
@@ -419,14 +416,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }}
         />
 
-        {/* Giant editorial wordmark backdrop — subtil parallax */}
-        <div
-          ref={footerWordmarkRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-8 md:-bottom-16 left-0 right-0 text-center font-heading select-none whitespace-nowrap opacity-[0.045] leading-none will-change-transform"
-        >
-          <span className="text-[22vw] md:text-[18vw] tracking-tighter">Avargo</span>
-        </div>
 
 
         <div className="relative container mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
@@ -444,7 +433,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <Link to="/" className="inline-flex items-center mb-6 group">
                 <Logo
                   variant="full"
-                  className="h-9 md:h-10 text-cream group-hover:text-accent transition-colors duration-500"
+                  theme="dark"
+                  className="h-9 md:h-10 group-hover:opacity-90 transition-opacity duration-500"
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
