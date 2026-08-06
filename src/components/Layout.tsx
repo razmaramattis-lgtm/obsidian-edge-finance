@@ -437,7 +437,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <Link to="/" className="inline-flex items-center mb-6 group">
                 <Logo
                   variant="full"
-                  className="h-9 md:h-10 text-cream group-hover:text-accent transition-colors duration-500"
+                  theme="dark"
+                  className="h-9 md:h-10 group-hover:opacity-90 transition-opacity duration-500"
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
