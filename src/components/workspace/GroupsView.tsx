@@ -21,6 +21,7 @@ const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId 
   const { isAdmin } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
+  const signedCover = useSignedUrl((active as any)?.cover_url);
   const [messages, setMessages] = useState<GroupMsg[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", color: "#6366f1", is_private: false });
