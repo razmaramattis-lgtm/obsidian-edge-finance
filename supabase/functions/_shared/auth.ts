@@ -84,3 +84,20 @@ export async function requireStaff(
   if (!allowed) return { response: deny(403, "Forbidden", cors) };
   return result;
 }
+
+/**
+ * Confirms the email belongs to an existing applicant record so recruiting
+ * emails cannot be aimed at arbitrary third parties.
+ */
+export async function isKnownApplicant(email: string): Promise<boolean> {
+  const admin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const normalized = email.trim().toLowerCase();
+  const [job, open] = await Promise.all([
+    admin.from("job_applications").select("id").ilike("email", normalized).limit(1),
+    admin.from("open_applications").select("id").ilike("email", normalized).limit(1),
+  ]);
+  return !!(job.data?.length || open.data?.length);
+}
