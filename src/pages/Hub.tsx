@@ -7,6 +7,8 @@ import SwitchCheckSection from "@/components/SwitchCheckSection";
 import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
+import HeroQuickContact from "@/components/HeroQuickContact";
+
 import heroBg from "@/assets/hero-bg.jpg";
 const heroPortrait = "/hero-portrait.jpg";
 
@@ -408,7 +410,12 @@ const Hub = () => {
               {t("cta.button")}
               <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
+
+            <div className="mt-10 md:mt-14 text-left">
+              <HeroQuickContact source="hub-cta" />
+            </div>
           </motion.div>
+
         </div>
       </section>
     </>
