@@ -372,10 +372,11 @@ const Contact = () => {
 
                 {/* Company Search */}
                 <div ref={dropdownRef} className="relative">
-                  <label className={labelClass}>Søk opp selskap</label>
+                  <label htmlFor="companySearch" className={labelClass}>Søk opp selskap</label>
                   <div className="relative">
                     <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40" />
                     <input
+                      id="companySearch"
                       type="text"
                       value={companySearch}
                       onChange={(e) => {
@@ -422,8 +423,8 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className={labelClass}>Org.nummer <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
-                  <input type="text" value={orgnummer} onChange={(e) => setOrgnummer(e.target.value)} className={inputClass} placeholder="9 siffer" />
+                  <label htmlFor="orgnummer" className={labelClass}>Org.nummer <span className="text-foreground/30 normal-case tracking-normal">(valgfritt)</span></label>
+                  <input id="orgnummer" type="text" value={orgnummer} onChange={(e) => setOrgnummer(e.target.value)} className={inputClass} placeholder="9 siffer" />
                 </div>
 
                 {/* Fetched company details — hidden until Brreg lookup */}
@@ -440,42 +441,42 @@ const Contact = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {orgForm && (
                             <div>
-                              <label className={labelClass}>Organisasjonsform</label>
-                              <input value={orgForm} readOnly tabIndex={-1} className={readonlyClass} />
+                              <label htmlFor="orgForm" className={labelClass}>Organisasjonsform</label>
+                              <input id="orgForm" value={orgForm} readOnly tabIndex={-1} className={readonlyClass} />
                             </div>
                           )}
                           {stiftelsesdato && (
                             <div>
-                              <label className={labelClass}>Stiftelsesdato</label>
-                              <input value={stiftelsesdato} readOnly tabIndex={-1} className={readonlyClass} />
+                              <label htmlFor="stiftelsesdato" className={labelClass}>Stiftelsesdato</label>
+                              <input id="stiftelsesdato" value={stiftelsesdato} readOnly tabIndex={-1} className={readonlyClass} />
                             </div>
                           )}
                         </div>
                         {address && (
                           <div>
-                            <label className={labelClass}>Adresse</label>
-                            <input value={address} readOnly tabIndex={-1} className={readonlyClass} />
+                            <label htmlFor="address" className={labelClass}>Adresse</label>
+                            <input id="address" value={address} readOnly tabIndex={-1} className={readonlyClass} />
                           </div>
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {dagligLeder && (
                             <div>
-                              <label className={labelClass}>Daglig leder</label>
-                              <input value={dagligLeder} readOnly tabIndex={-1} className={readonlyClass} />
+                              <label htmlFor="dagligLeder" className={labelClass}>Daglig leder</label>
+                              <input id="dagligLeder" value={dagligLeder} readOnly tabIndex={-1} className={readonlyClass} />
                             </div>
                           )}
                           {styreleder && (
                             <div>
-                              <label className={labelClass}>Styreleder</label>
-                              <input value={styreleder} readOnly tabIndex={-1} className={readonlyClass} />
+                              <label htmlFor="styreleder" className={labelClass}>Styreleder</label>
+                              <input id="styreleder" value={styreleder} readOnly tabIndex={-1} className={readonlyClass} />
                             </div>
                           )}
                         </div>
                         {numEmployees && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className={labelClass}>Antall ansatte</label>
-                              <input value={numEmployees} readOnly tabIndex={-1} className={readonlyClass} />
+                              <label htmlFor="numEmployees" className={labelClass}>Antall ansatte</label>
+                              <input id="numEmployees" value={numEmployees} readOnly tabIndex={-1} className={readonlyClass} />
                             </div>
                           </div>
                         )}
