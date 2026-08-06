@@ -9,8 +9,8 @@ type Dict = Record<string, { no: string; en: string }>;
 export const translations: Dict = {
   // SEO
   "seo.title": {
-    no: "Regnskapsfører for små og mellomstore bedrifter | Avargo",
-    en: "Accountant for small and medium-sized businesses | Avargo",
+    no: "Regnskapsfører for små og mellomstore selskap | Avargo",
+    en: "Accountant for small and medium-sized companies | Avargo",
   },
   "seo.description": {
     no: "Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.",
