@@ -183,56 +183,8 @@ const Hub = () => {
               style={{ y: portraitY }}
               className="w-full lg:max-w-md lg:ml-auto"
             >
-              {/* Animated portrait bubble with floating stat cards */}
-              <div className="relative mx-auto aspect-square w-full max-w-[420px] animate-drift-x will-change-transform motion-reduce:animate-none">
-                <div className="relative w-full h-full animate-drift-y will-change-transform motion-reduce:animate-none">
-                  {/* Ambient glow */}
-                  <div className="absolute inset-4 rounded-full bg-primary/20 blur-3xl -z-10" aria-hidden />
+              <HeroQuickContact source="hub-hero" />
 
-                  {/* Image with blob morph — clipped only on the image */}
-                  <div
-                    className="absolute inset-0 overflow-hidden animate-blob-morph motion-reduce:animate-none shadow-2xl shadow-primary/20"
-                    style={{ borderRadius: "50%" }}
-                  >
-                    <img
-                      src={heroPortrait}
-                      alt={t("hero.title.a")}
-                      className="w-full h-full object-cover"
-                      width={1024}
-                      height={1024}
-                      fetchPriority="high"
-                    />
-                  </div>
-
-                  {/* Stat card — top right */}
-                  <div
-                    className="absolute -top-2 -right-2 md:-right-6 flex items-center gap-3 rounded-2xl bg-card/95 backdrop-blur px-4 py-3 shadow-xl shadow-primary/10 border border-primary/10 animate-card-bob motion-reduce:animate-none"
-                    style={{ animationDelay: "-2s" }}
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-accent/40 flex items-center justify-center">
-                      <Wallet size={16} className="text-primary" strokeWidth={2} />
-                    </div>
-                    <div className="leading-tight">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Skatt spart</p>
-                      <p className="text-sm font-bold text-foreground">kr 50K</p>
-                    </div>
-                  </div>
-
-                  {/* Stat card — bottom left */}
-                  <div
-                    className="absolute -bottom-2 -left-2 md:-left-6 flex items-center gap-3 rounded-2xl bg-card/95 backdrop-blur px-4 py-3 shadow-xl shadow-primary/10 border border-primary/10 animate-card-bob motion-reduce:animate-none"
-                    style={{ animationDelay: "-4.5s" }}
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-accent/40 flex items-center justify-center">
-                      <TrendingUp size={16} className="text-primary" strokeWidth={2} />
-                    </div>
-                    <div className="leading-tight">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Vekst</p>
-                      <p className="text-sm font-bold text-foreground">+26%</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </motion.div>
 
           </div>
