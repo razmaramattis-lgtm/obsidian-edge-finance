@@ -420,14 +420,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }}
         />
 
-        {/* Giant editorial wordmark backdrop — subtil parallax */}
-        <div
-          ref={footerWordmarkRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-8 md:-bottom-16 left-0 right-0 text-center font-heading select-none whitespace-nowrap opacity-[0.045] leading-none will-change-transform"
-        >
-          <span className="text-[22vw] md:text-[18vw] tracking-tighter">Avargo</span>
-        </div>
 
 
         <div className="relative container mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
