@@ -236,13 +236,11 @@ const AvailabilityTab = () => {
     if (!profile) return;
     setSyncingOutlook(true); setSyncError(""); setSyncResult(null);
     try {
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-outlook-calendar`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile_id: profile.id }),
+      const { data, error } = await supabase.functions.invoke("sync-outlook-calendar", {
+        body: { profile_id: profile.id },
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Synkronisering feilet");
+      if (error) throw new Error(error.message || "Synkronisering feilet");
+      if (data?.error) throw new Error(data.error);
       setSyncResult({ added: data.added, removed: data.removed });
       loadData();
     } catch (err: any) {
