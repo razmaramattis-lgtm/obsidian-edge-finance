@@ -100,9 +100,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Subtil parallax for footer-wordmark ───────────
+  // ── Subtil parallax for footer-glow ───────────────
   const footerRef = useRef<HTMLElement | null>(null);
-  const footerWordmarkRef = useRef<HTMLDivElement | null>(null);
   const footerGlowRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -115,9 +114,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       const vh = window.innerHeight || 1;
       // progress 0..1 idet footer glir inn i viewport nedenfra
       const p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height * 0.5)));
-      if (footerWordmarkRef.current) {
-        footerWordmarkRef.current.style.transform = `translate3d(0, ${(1 - p) * 40}px, 0)`;
-      }
       if (footerGlowRef.current) {
         footerGlowRef.current.style.transform = `translate3d(0, ${(1 - p) * -20}px, 0)`;
         footerGlowRef.current.style.opacity = String(0.4 + p * 0.5);
