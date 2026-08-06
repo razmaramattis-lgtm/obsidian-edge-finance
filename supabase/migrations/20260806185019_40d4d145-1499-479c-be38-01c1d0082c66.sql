@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.enforce_dm_recipient_read_only() FROM PUBLIC, anon, authenticated;
