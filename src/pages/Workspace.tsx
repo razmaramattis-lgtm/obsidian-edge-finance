@@ -25,6 +25,7 @@ import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
+import { SignedImg } from "@/components/workspace/SignedMedia";
 
 // ─── Main ───
 const Workspace = () => {

@@ -12,6 +12,7 @@ import VideoCall from "./VideoCall";
 import type { Profile, DmConv, DmMsg } from "./types";
 import { formatTime, uploadFile, isGifUrl } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
+import { SignedImg, SignedLink } from "./SignedMedia";
 
 interface FloatingChatProps {
   profile: Profile;

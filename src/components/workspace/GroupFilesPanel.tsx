@@ -4,6 +4,7 @@ import { Upload, Trash2, FileText, Image as ImageIcon, FolderOpen, Plus, Downloa
 import UserAvatar from "./UserAvatar";
 import { uploadFile } from "./helpers";
 import { formatDate } from "./helpers";
+import { SignedImg, SignedLink } from "./SignedMedia";
 
 interface GroupFile {
   id: string;

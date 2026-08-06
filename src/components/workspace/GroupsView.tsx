@@ -15,6 +15,7 @@ import GroupCoverPicker from "./GroupCoverPicker";
 import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
+import { useSignedUrl } from "./SignedMedia";
 
 const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void; initialGroupId?: string }) => {
   const { isAdmin } = useAuth();

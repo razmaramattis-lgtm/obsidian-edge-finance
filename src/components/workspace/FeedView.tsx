@@ -13,6 +13,7 @@ import type { Profile, Post, PostComment } from "./types";
 import { timeAgo, isGifContent, extractGifUrl } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SignedImg } from "./SignedMedia";
 
 // ─── Comment Reactions ───
 const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];

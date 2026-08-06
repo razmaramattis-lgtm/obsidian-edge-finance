@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import UserAvatar from "./UserAvatar";
 import MessageReactions from "./MessageReactions";
 import { Paperclip, Check, CheckCheck } from "lucide-react";
+import { SignedImg, SignedLink } from "./SignedMedia";
 
 interface MessageBubbleProps {
   content: string;
