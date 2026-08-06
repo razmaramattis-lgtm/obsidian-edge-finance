@@ -1,0 +1,1 @@
+UPDATE public.blog_posts SET meta_description = 'Kontoplan NS 4102 forklart enkelt: de 8 kontoklassene, de mest brukte kontonumrene, MVA-koder og eksempler. Guide fra autorisert regnskapsbyrå.' WHERE slug = 'kontoplan-ns-4102-oppbygging';
