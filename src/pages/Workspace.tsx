@@ -368,7 +368,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
   return (
     <div className="h-full overflow-y-auto">
       <div className="relative">
-        <div className="h-32 md:h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
+        <div className="h-32 md:h-48" style={signedBg ? { backgroundImage: `url(${signedBg})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
         <div className="max-w-3xl mx-auto px-4 md:px-6 relative">
           <button onClick={onBack} className="absolute top-4 left-4 md:left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
           <div className="absolute -top-12 md:-top-16">
@@ -614,7 +614,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
         {/* Background - clickable to change */}
         <div
           className="h-32 md:h-48 relative group cursor-pointer"
-          style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
+          style={signedBg ? { backgroundImage: `url(${signedBg})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
           onClick={() => bgRef.current?.click()}
         >
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">

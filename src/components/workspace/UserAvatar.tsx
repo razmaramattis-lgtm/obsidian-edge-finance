@@ -1,4 +1,5 @@
 import { usePresenceContext } from "@/contexts/PresenceContext";
+import { useSignedUrl } from "./SignedMedia";
 
 interface UserAvatarProps {
   name?: string;
@@ -45,6 +46,7 @@ const getColorFromName = (name: string) => {
 
 const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, isActive = true, className = "" }: UserAvatarProps) => {
   const { isOnline } = usePresenceContext();
+  const signedAvatar = useSignedUrl(avatarUrl);
   const resolved = online !== undefined ? online : profileId ? isOnline(profileId) : undefined;
   const initial = name.charAt(0).toUpperCase();
   const gradient = getColorFromName(name);
@@ -52,9 +54,9 @@ const UserAvatar = ({ name = "?", avatarUrl, size = "sm", online, profileId, isA
 
   return (
     <div className={`relative shrink-0 ${className}`}>
-      {avatarUrl ? (
+      {signedAvatar ? (
         <img
-          src={avatarUrl}
+          src={signedAvatar}
           alt={name}
           className={`${sizeMap[size]} rounded-full object-cover ring-2 ring-background ${inactiveClass}`}
         />
