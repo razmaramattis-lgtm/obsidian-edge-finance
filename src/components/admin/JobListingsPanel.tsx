@@ -432,7 +432,7 @@ const JobListingsPanel = () => {
   const downloadCv = async (cvUrl: string | null, fileName: string | null) => {
     if (!cvUrl) { toast.error("Ingen CV lastet opp"); return; }
     try {
-      const match = cvUrl.match(/cv-uploads\/([a-f0-9-]+\.\w+)/);
+      const match = cvUrl.match(/cv-uploads\/((?:applications\/)?[a-f0-9-]+\.\w+)/);
       if (!match) { toast.error("Ugyldig CV-lenke"); return; }
       const { data, error } = await supabase.storage.from("cv-uploads").download(match[1]);
       if (error || !data) { toast.error("Kunne ikke laste ned CV"); return; }
