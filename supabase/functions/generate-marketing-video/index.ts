@@ -172,7 +172,7 @@ function pickFallbackVideoPath(prompt: string, title: string | null): string {
 }
 
 function getPublicStorageUrl(supabase: any, path: string): string {
-  const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+  const { data } = supabase.storage.from("resources").getPublicUrl(path);
   return data.publicUrl;
 }
 
@@ -188,7 +188,7 @@ async function uploadBase64Image(
     const bytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
 
     const { error: uploadError } = await supabase.storage
-      .from("workspace-uploads")
+      .from("resources")
       .upload(`marketing/video-thumbnails/${fileName}`, bytes, {
         contentType: mimeType,
         upsert: true,
@@ -200,7 +200,7 @@ async function uploadBase64Image(
     }
 
     const { data: urlData } = supabase.storage
-      .from("workspace-uploads")
+      .from("resources")
       .getPublicUrl(`marketing/video-thumbnails/${fileName}`);
 
     return urlData.publicUrl;

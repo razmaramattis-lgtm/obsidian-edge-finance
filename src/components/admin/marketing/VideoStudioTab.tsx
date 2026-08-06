@@ -212,12 +212,12 @@ const VideoStudioTab = () => {
       const path = `marketing/videos/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("workspace-uploads")
+        .from("resources")
         .upload(path, file, { contentType: file.type, upsert: true });
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
-        .from("workspace-uploads")
+        .from("resources")
         .getPublicUrl(path);
 
       await supabase.from("marketing_video_requests").update({
@@ -242,12 +242,12 @@ const VideoStudioTab = () => {
       const path = `marketing/videos/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("workspace-uploads")
+        .from("resources")
         .upload(path, file, { contentType: file.type, upsert: true });
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
-        .from("workspace-uploads")
+        .from("resources")
         .getPublicUrl(path);
 
       const { error: insertError } = await supabase.from("marketing_video_requests").insert({
