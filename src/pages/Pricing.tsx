@@ -540,10 +540,11 @@ const Pricing = () => {
 
                         <div className="space-y-3">
                           <div>
-                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            <label htmlFor="contactCompany" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                               Firmanavn *
                             </label>
                             <input
+                              id="contactCompany"
                               type="text"
                               value={contactCompany}
                               onChange={(e) => setContactCompany(e.target.value)}
@@ -554,10 +555,11 @@ const Pricing = () => {
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              <label htmlFor="contactPhone" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                                 Telefon *
                               </label>
                               <input
+                                id="contactPhone"
                                 type="tel"
                                 value={contactPhone}
                                 onChange={(e) => setContactPhone(e.target.value)}
@@ -567,10 +569,11 @@ const Pricing = () => {
                               />
                             </div>
                             <div>
-                              <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                              <label htmlFor="contactEmail" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                                 E-post *
                               </label>
                               <input
+                                id="contactEmail"
                                 type="email"
                                 value={contactEmail}
                                 onChange={(e) => setContactEmail(e.target.value)}
@@ -581,10 +584,11 @@ const Pricing = () => {
                             </div>
                           </div>
                           <div>
-                            <label className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
+                            <label htmlFor="contactMessage" className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
                               Melding (valgfri)
                             </label>
                             <textarea
+                              id="contactMessage"
                               value={contactMessage}
                               onChange={(e) => setContactMessage(e.target.value)}
                               maxLength={1000}
