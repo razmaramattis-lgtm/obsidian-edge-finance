@@ -4,6 +4,7 @@ import { Upload, Trash2, FileText, Image as ImageIcon, FolderOpen, Plus, Downloa
 import UserAvatar from "./UserAvatar";
 import { uploadFile } from "./helpers";
 import { formatDate } from "./helpers";
+import { SignedImg, SignedLink } from "./SignedMedia";
 
 interface GroupFile {
   id: string;
@@ -127,9 +128,9 @@ const GroupFilesPanel = ({ groupId, profileId, isAdmin, tab }: Props) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {visibleFiles.map(f => (
             <div key={f.id} className="group/file relative rounded-xl overflow-hidden border border-border/15 bg-muted/10 hover:border-primary/20 transition-all">
-              <a href={f.file_url} target="_blank" rel="noopener noreferrer">
-                <img src={f.file_url} alt={f.file_name} className="w-full aspect-square object-cover" loading="lazy" />
-              </a>
+              <SignedLink href={f.file_url} target="_blank" rel="noopener noreferrer">
+                <SignedImg src={f.file_url} alt={f.file_name} className="w-full aspect-square object-cover" loading="lazy" />
+              </SignedLink>
               <div className="p-2">
                 <p className="text-[10px] text-muted-foreground truncate">{f.file_name}</p>
                 <p className="text-[9px] text-muted-foreground/60">{formatDate(f.created_at)}</p>
@@ -156,7 +157,7 @@ const GroupFilesPanel = ({ groupId, profileId, isAdmin, tab }: Props) => {
                 </p>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover/file:opacity-100 transition-all">
-                <a href={f.file_url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Download size={14} /></a>
+                <SignedLink href={f.file_url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Download size={14} /></SignedLink>
                 {(f.uploaded_by === profileId || isAdmin) && (
                   <button onClick={() => deleteFile(f.id)} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={14} /></button>
                 )}

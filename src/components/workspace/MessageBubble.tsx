@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import UserAvatar from "./UserAvatar";
 import MessageReactions from "./MessageReactions";
 import { Paperclip, Check, CheckCheck } from "lucide-react";
+import { SignedImg, SignedLink } from "./SignedMedia";
 
 interface MessageBubbleProps {
   content: string;
@@ -122,13 +123,13 @@ const MessageBubble = ({ content, senderName, senderAvatar, time, isOwn, showAva
             onContextMenu={canLongPress ? (e) => e.preventDefault() : undefined}
           >
             {isImage(fileUrl) ? (
-              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="block max-w-[240px] rounded-xl overflow-hidden border border-border/20 hover:border-primary/30 transition-all">
-                <img src={fileUrl} alt={fileName || "Bilde"} className="w-full rounded-xl select-none" loading="lazy" draggable={false} />
-              </a>
+              <SignedLink href={fileUrl} target="_blank" rel="noopener noreferrer" className="block max-w-[240px] rounded-xl overflow-hidden border border-border/20 hover:border-primary/30 transition-all">
+                <SignedImg src={fileUrl} alt={fileName || "Bilde"} className="w-full rounded-xl select-none" loading="lazy" draggable={false} />
+              </SignedLink>
             ) : (
-              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">
+              <SignedLink href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/20 transition-all">
                 <Paperclip size={10} /> {fileName || "Vedlegg"}
-              </a>
+              </SignedLink>
             )}
           </div>
         )}

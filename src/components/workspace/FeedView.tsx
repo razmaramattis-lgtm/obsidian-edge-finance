@@ -13,6 +13,7 @@ import type { Profile, Post, PostComment } from "./types";
 import { timeAgo, isGifContent, extractGifUrl } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SignedImg } from "./SignedMedia";
 
 // ─── Comment Reactions ───
 const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "🎉", "🔥", "💯", "🤔"];
@@ -518,7 +519,7 @@ const FeedView = ({ profile, onViewProfile, onComposingChange, highlightPostId }
                     )}
                     {post.image_url && (
                       <div className="px-5 pb-3">
-                        <img src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
+                        <SignedImg src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
                       </div>
                     )}
                   </>

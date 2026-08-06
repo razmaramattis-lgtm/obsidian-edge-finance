@@ -200,9 +200,9 @@ const JobListingsPanel = () => {
     setUploading(true);
     const ext = file.name.split(".").pop();
     const path = `job-images/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("workspace-uploads").upload(path, file);
+    const { error } = await supabase.storage.from("resources").upload(path, file);
     if (error) { toast.error("Kunne ikke laste opp bilde"); setUploading(false); return; }
-    const { data } = supabase.storage.from("workspace-uploads").getPublicUrl(path);
+    const { data } = supabase.storage.from("resources").getPublicUrl(path);
     setForm(prev => ({ ...prev, images: [...prev.images, data.publicUrl] }));
     setUploading(false);
   };

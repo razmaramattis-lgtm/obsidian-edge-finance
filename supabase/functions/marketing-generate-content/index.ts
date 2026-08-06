@@ -162,11 +162,11 @@ Returner KUN gyldig JSON.`,
             const imageBytes = Uint8Array.from(atob(base64.split(",")[1] || base64), c => c.charCodeAt(0));
             const fileName = `marketing/${Date.now()}-${platform}.png`;
             const { error: uploadError } = await supabase.storage
-              .from("workspace-uploads")
+              .from("resources")
               .upload(fileName, imageBytes, { contentType: "image/png" });
 
             if (!uploadError) {
-              const { data: urlData } = supabase.storage.from("workspace-uploads").getPublicUrl(fileName);
+              const { data: urlData } = supabase.storage.from("resources").getPublicUrl(fileName);
               imageUrl = urlData.publicUrl;
             }
           }

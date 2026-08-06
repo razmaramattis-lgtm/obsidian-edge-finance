@@ -25,6 +25,7 @@ import { PresenceContext } from "@/contexts/PresenceContext";
 import type { Profile, Post, Group, View } from "@/components/workspace/types";
 import { timeAgo, getGroupGradient, roleLabel } from "@/components/workspace/helpers";
 import ReactMarkdown from "react-markdown";
+import { SignedImg, useSignedUrl } from "@/components/workspace/SignedMedia";
 
 // ─── Main ───
 const Workspace = () => {
@@ -302,6 +303,7 @@ const Workspace = () => {
 
 // ─── View Other Profile Page ───
 const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: Profile; myProfile: Profile; onBack: () => void; onNavigate: (v: View) => void }) => {
+  const signedBg = useSignedUrl(profile.background_url);
   const [posts, setPosts] = useState<Post[]>([]);
   const [friendCount, setFriendCount] = useState(0);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
@@ -367,7 +369,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
   return (
     <div className="h-full overflow-y-auto">
       <div className="relative">
-        <div className="h-32 md:h-48" style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
+        <div className="h-32 md:h-48" style={signedBg ? { backgroundImage: `url(${signedBg})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }} />
         <div className="max-w-3xl mx-auto px-4 md:px-6 relative">
           <button onClick={onBack} className="absolute top-4 left-4 md:left-6 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm text-white text-xs flex items-center gap-1.5 hover:bg-black/50 transition-all"><ArrowLeft size={12} /> Tilbake</button>
           <div className="absolute -top-12 md:-top-16">
@@ -441,7 +443,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
                     <div><span className="text-sm font-semibold">{ap?.name}</span><p className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)} · <Globe size={9} className="inline" /> Alle</p></div>
                   </div>
                   {post.content && <div className="px-5 pt-3 pb-2 text-sm prose prose-sm max-w-none"><ReactMarkdown>{post.content}</ReactMarkdown></div>}
-                  {post.image_url && <div className="px-5 pb-3"><img src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
+                  {post.image_url && <div className="px-5 pb-3"><SignedImg src={post.image_url} alt="" className="w-full max-h-96 object-cover rounded-xl" loading="lazy" /></div>}
                   <div className="px-5 pb-3"><PostReactions postId={post.id} profileId={myProfile.id} /></div>
                   <div className="flex items-center gap-1 px-3 py-2 border-t border-border/10">
                     <button onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
@@ -538,6 +540,7 @@ const ViewProfilePage = ({ profile, myProfile, onBack, onNavigate }: { profile: 
 // ─── Profile View ───
 const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile; onNavigate: (v: View) => void }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile);
+  const signedBg = useSignedUrl(profile.background_url);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allGroups, setAllGroups] = useState<Group[]>([]);
   const [myGroupIds, setMyGroupIds] = useState<string[]>([]);
@@ -613,7 +616,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
         {/* Background - clickable to change */}
         <div
           className="h-32 md:h-48 relative group cursor-pointer"
-          style={profile.background_url ? { backgroundImage: `url(${profile.background_url})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
+          style={signedBg ? { backgroundImage: `url(${signedBg})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: "linear-gradient(to right, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.2), hsl(var(--primary) / 0.1))" }}
           onClick={() => bgRef.current?.click()}
         >
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
@@ -695,7 +698,7 @@ const ProfileView = ({ profile: initialProfile, onNavigate }: { profile: Profile
                   )}
                   {post.image_url && (
                     <div className="px-5 pb-3">
-                      <img src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
+                      <SignedImg src={post.image_url} alt="Post media" className="w-full max-h-96 object-cover rounded-xl border border-border/10" loading="lazy" />
                     </div>
                   )}
                   <div className="px-5 pb-3">

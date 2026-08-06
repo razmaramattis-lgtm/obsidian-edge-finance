@@ -15,11 +15,13 @@ import GroupCoverPicker from "./GroupCoverPicker";
 import type { Profile, Group, GroupMsg } from "./types";
 import { formatTime, getGroupGradient, uploadFile } from "./helpers";
 import { createNotification } from "@/hooks/useWorkspaceNotifications";
+import { useSignedUrl } from "./SignedMedia";
 
 const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId }: { profile: Profile; onViewProfile?: (p: Profile) => void; onComposingChange?: (c: boolean) => void; initialGroupId?: string }) => {
   const { isAdmin } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [active, setActive] = useState<Group | null>(null);
+  const signedCover = useSignedUrl((active as any)?.cover_url);
   const [messages, setMessages] = useState<GroupMsg[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", color: "#6366f1", is_private: false });
@@ -350,7 +352,7 @@ const GroupsView = ({ profile, onViewProfile, onComposingChange, initialGroupId 
         <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
           {/* Cover header */}
           {(() => {
-            const coverUrl = (active as any).cover_url;
+            const coverUrl = signedCover;
             const avatarUrl = (active as any).avatar_url;
             const isGradient = coverUrl?.startsWith("linear-gradient");
             const gradient = getGroupGradient(active.color, active.name);
