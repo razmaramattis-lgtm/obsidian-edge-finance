@@ -88,7 +88,7 @@ const BlogPost = () => {
   return (
     <>
       <Helmet>
-        <title>{post.meta_title || post.title} | Avargo</title>
+        <title>{/Avargo/i.test(post.meta_title || "") ? post.meta_title : `${post.meta_title || post.title} | Avargo`}</title>
         <meta name="description" content={post.meta_description || post.excerpt || ""} />
         <meta property="og:title" content={post.meta_title || post.title} />
         <meta property="og:description" content={post.meta_description || post.excerpt || ""} />
