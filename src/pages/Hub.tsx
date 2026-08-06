@@ -7,6 +7,8 @@ import SwitchCheckSection from "@/components/SwitchCheckSection";
 import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
+import HeroQuickContact from "@/components/HeroQuickContact";
+
 import heroBg from "@/assets/hero-bg.jpg";
 const heroPortrait = "/hero-portrait.jpg";
 
