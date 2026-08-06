@@ -1,3 +1,4 @@
+import { isInternalCall, getCaller } from "../_shared/auth.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -233,6 +234,20 @@ Deno.serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Only internal callers (DB trigger with service-role key), staff, or the
+    // recipient themselves may push a notification to a device.
+    if (!isInternalCall(req)) {
+      const result = await getCaller(req, corsHeaders);
+      if ("response" in result) return result.response;
+      const { caller } = result;
+      if (!caller.isEmployeeOrAdmin && caller.profileId !== recipient_id) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
