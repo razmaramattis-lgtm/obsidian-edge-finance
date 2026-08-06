@@ -13,8 +13,8 @@ export const translations: Dict = {
     en: "Accountant for small and medium-sized businesses | Avargo",
   },
   "seo.description": {
-    no: "Autorisert regnskapsbyrå for små og mellomstore bedrifter. Fast månedspris, dedikert regnskapsfører, rådgivning og skatterådgivning — svar innen 24 timer.",
-    en: "Authorised accounting firm for small and medium-sized businesses. Fixed monthly price, dedicated accountant, advisory and tax advice — reply within 24 hours.",
+    no: "Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.",
+    en: "Authorised accounting firm for small and medium-sized businesses. Accounting, HR, payroll and advisory at a fixed monthly price — reply within 24 hours.",
   },
 
   // Hero
