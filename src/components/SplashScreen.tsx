@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import creamLogoAsset from "@/assets/avargo-logo-krem-1000px.png.asset.json";
 
 const SPLASH_SHOWN_KEY = "avargo-splash-shown";
 
