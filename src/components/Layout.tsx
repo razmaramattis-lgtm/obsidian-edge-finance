@@ -174,7 +174,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <Link to="/" className="flex items-center group">
             <Logo
               variant="full"
-              className={`text-forest group-hover:text-copper transition-colors duration-500 ease-out ${
+              theme="light"
+              className={`transition-all duration-500 ease-out ${
                 scrolled ? "h-7 lg:h-8" : "h-8 lg:h-9"
               }`}
             />
