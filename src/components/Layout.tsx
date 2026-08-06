@@ -172,7 +172,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               variant="full"
               theme="light"
               className={`transition-all duration-500 ease-out ${
-                scrolled ? "h-7 lg:h-8" : "h-8 lg:h-9"
+                scrolled ? "h-8 lg:h-9" : "h-9 lg:h-11"
               }`}
             />
           </Link>
@@ -434,7 +434,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Logo
                   variant="full"
                   theme="dark"
-                  className="h-9 md:h-10 group-hover:opacity-90 transition-opacity duration-500"
+                  className="h-11 md:h-12 group-hover:opacity-90 transition-opacity duration-500"
                 />
               </Link>
               <p className="font-heading text-2xl md:text-[28px] leading-[1.15] mb-5 max-w-md">
