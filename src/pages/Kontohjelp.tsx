@@ -168,21 +168,69 @@ const Kontohjelp = () => {
     return counts;
   }, [entries]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: "Kontohjelp – Finn riktig regnskapskonto | Avargo",
-    description: "Søk i norsk kontoplan og finn riktig konto for ditt regnskap.",
-    url: "https://avargo.no/ressurser/kontohjelp",
-    publisher: { "@type": "Organization", name: "Avargo" },
-  };
+  const FAQS = [
+    {
+      q: "Hva er NS 4102?",
+      a: "NS 4102 er den norske standard kontoplanen. Den deler regnskapet inn i åtte kontoklasser (1–8), der klasse 1 og 2 er balansen (eiendeler, egenkapital og gjeld) og klasse 3 til 8 er resultatet (inntekter, kostnader og finansposter).",
+    },
+    {
+      q: "Hvordan er kontonumrene bygget opp?",
+      a: "Første siffer angir kontoklassen, andre siffer kontogruppen og tredje siffer selve kontoen. Fjerde siffer brukes til egne underkontoer. Konto 6340 er for eksempel klasse 6 (driftskostnader), gruppe 63 (kostnader lokaler) og konto 6340 lys og varme.",
+    },
+    {
+      q: "Hvilke kontoer må jeg bruke?",
+      a: "Du står fritt til å tilpasse kontoplanen, men næringsoppgaven og momsoppgaven bygger på NS 4102. Holder du deg til standarden, blir rapportering til Skatteetaten og Altinn langt enklere.",
+    },
+    {
+      q: "Hva er forskjellen på balansekonto og resultatkonto?",
+      a: "Balansekontoer (klasse 1 og 2) viser hva selskapet eier og skylder på et gitt tidspunkt og nullstilles ikke ved årsslutt. Resultatkontoer (klasse 3–8) viser inntekter og kostnader i perioden og nullstilles mot egenkapitalen ved årsavslutning.",
+    },
+    {
+      q: "Hvilken konto skal jeg føre en utgift på?",
+      a: "Søk på utgiften i søkefeltet over — for eksempel «husleie», «mobiltelefon» eller «drivstoff» — så viser vi riktig konto etter NS 4102 med eksempler og MVA-behandling.",
+    },
+  ];
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Kontoplan NS 4102 – søk og finn riktig konto",
+      description: "Søkbar norsk kontoplan etter NS 4102 med alle kontoklasser, eksempler og MVA-behandling.",
+      url: "https://avargo.no/ressurser/kontohjelp",
+      inLanguage: "nb-NO",
+      publisher: { "@type": "Organization", name: "Avargo" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map(f => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Hjem", item: "https://avargo.no/" },
+        { "@type": "ListItem", position: 2, name: "Ressurser", item: "https://avargo.no/ressurser" },
+        { "@type": "ListItem", position: 3, name: "Kontoplan NS 4102", item: "https://avargo.no/ressurser/kontohjelp" },
+      ],
+    },
+  ];
 
   return (
     <>
       <Helmet>
-        <title>Kontohjelp – Finn riktig regnskapskonto | Avargo</title>
-        <meta name="description" content="Søk i norsk kontoplan og finn riktig konto for regnskapet ditt. Komplett veiledning med eksempler og søkbare tags." />
+        <title>Kontoplan NS 4102 – søk og finn riktig konto | Avargo</title>
+        <meta name="description" content="Søk i hele den norske kontoplanen (NS 4102). Finn riktig kontonummer for utgifter, inntekter og balanseposter — med eksempler og MVA-behandling." />
         <link rel="canonical" href="https://avargo.no/ressurser/kontohjelp" />
+        <meta property="og:title" content="Kontoplan NS 4102 – søk og finn riktig konto" />
+        <meta property="og:description" content="Søkbar norsk kontoplan med alle kontoklasser, eksempler og MVA-behandling." />
+        <meta property="og:url" content="https://avargo.no/ressurser/kontohjelp" />
+        <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
@@ -199,18 +247,19 @@ const Kontohjelp = () => {
                 transition={{ duration: 0.5 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20"
               >
-                <BookOpen size={14} /> Norsk kontoplan
+                <BookOpen size={14} /> Norsk kontoplan · NS 4102
               </motion.div>
               <h1 className="text-4xl md:text-6xl font-heading leading-tight">
-                Finn riktig <span className="text-gradient-rose italic">konto</span>
+                Kontoplan <span className="text-gradient-rose italic">NS 4102</span>
               </h1>
               <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto font-light">
-                Søk etter en utgift, et begrep eller et kontonummer — vi viser deg hvor det hører hjemme i regnskapet.
+                Søk etter en utgift, et begrep eller et kontonummer — vi viser deg hvilken konto det hører hjemme på, med eksempler og MVA-behandling.
               </p>
             </div>
           </AnimatedSection>
         </div>
       </section>
+
 
       <section className="container mx-auto px-4 pb-24 space-y-8">
         <div className="max-w-3xl mx-auto space-y-6">
@@ -506,7 +555,82 @@ const Kontohjelp = () => {
           </div>
         )}
       </section>
+
+      {/* Explainer: how NS 4102 is built */}
+      <section className="bg-white/60 border-t border-border/20">
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-3xl mx-auto space-y-10">
+            <AnimatedSection>
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-heading">Slik er kontoplanen bygget opp</h2>
+                <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed">
+                  NS 4102 er den norske standard kontoplanen. Den deler regnskapet inn i åtte kontoklasser.
+                  Klasse 1 og 2 utgjør balansen — hva selskapet eier og skylder. Klasse 3 til 8 utgjør
+                  resultatet — inntekter, kostnader og finansposter i perioden. Første siffer i kontonummeret
+                  angir klassen, andre siffer kontogruppen, tredje siffer selve kontoen og fjerde siffer
+                  eventuelle egne underkontoer.
+                </p>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.1}>
+              <div className="overflow-hidden rounded-xl border border-border/20 bg-card">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-muted/40 text-left">
+                      <th className="px-4 py-3 font-medium w-20">Klasse</th>
+                      <th className="px-4 py-3 font-medium">Innhold</th>
+                      <th className="px-4 py-3 font-medium w-28 text-right">Kontoer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(CLASS_LABELS).map(([cls, label]) => (
+                      <tr key={cls} className="border-t border-border/15">
+                        <td className="px-4 py-3 font-mono text-primary font-semibold">{cls}000</td>
+                        <td className="px-4 py-3 font-light">{label}</td>
+                        <td className="px-4 py-3 text-right text-muted-foreground">{classCounts[cls] || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.15}>
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-heading">Vanlige spørsmål om kontoplanen</h2>
+                <div className="space-y-3">
+                  {FAQS.map(f => (
+                    <div key={f.q} className="rounded-xl border border-border/20 bg-card px-5 py-4">
+                      <h3 className="text-sm font-medium mb-1.5">{f.q}</h3>
+                      <p className="text-sm text-muted-foreground font-light leading-relaxed">{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.2}>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 px-6 py-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <div>
+                  <p className="font-heading text-lg">Slipp å tenke på kontoplanen</p>
+                  <p className="text-sm text-muted-foreground font-light">
+                    Vi fører regnskapet for deg til fastpris — svar innen 24 timer.
+                  </p>
+                </div>
+                <Link
+                  to="/kontakt"
+                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm hover:opacity-90 transition-opacity"
+                >
+                  Snakk med en regnskapsfører <ChevronRight size={15} />
+                </Link>
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
     </>
+
   );
 };
 

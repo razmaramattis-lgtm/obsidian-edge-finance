@@ -198,6 +198,26 @@ const BlogPost = () => {
             <div className="article-content mb-12"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }} />
 
+            {/* Contextual tool link */}
+            {/kontoplan|konto|ns 4102|bilag|bokfør/i.test(`${post.title} ${post.tags?.join(" ") || ""}`) && (
+              <div className="mb-12 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <div>
+                  <p className="font-heading text-base">Søk i hele kontoplanen (NS 4102)</p>
+                  <p className="text-sm text-muted-foreground font-light">
+                    Finn riktig kontonummer for utgiften din — med eksempler og MVA-behandling.
+                  </p>
+                </div>
+                <Link
+                  to="/ressurser/kontohjelp"
+                  className="shrink-0 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm hover:opacity-90 transition-opacity"
+                >
+                  Åpne kontoplanen
+                </Link>
+              </div>
+            )}
+
+
+
             {/* Tags */}
             {(post.tags || []).length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-8 pt-6 border-t border-border/20">
