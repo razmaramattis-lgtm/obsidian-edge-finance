@@ -45,6 +45,76 @@
   <meta name="twitter:description" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
   <meta property="og:locale" content="nb_NO">
   <meta property="og:site_name" content="Avargo">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "AccountingService",
+          "@id": "https://avargo.no/#organization",
+          "name": "Avargo Regnskap AS",
+          "alternateName": "Avargo",
+          "url": "https://avargo.no/",
+          "logo": "https://avargo.no/logo.png",
+          "image": "https://avargo.no/og-image.jpg",
+          "description": "Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn, rådgivning og skatterådgivning til fast månedspris.",
+          "email": "kontakt@avargo.no",
+          "telephone": "+4798642391",
+          "vatID": "NO938076669MVA",
+          "taxID": "938076669",
+          "foundingDate": "2026",
+          "priceRange": "$$",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "NO",
+            "addressRegion": "Telemark"
+          },
+          "areaServed": { "@type": "Country", "name": "Norge" },
+          "knowsLanguage": ["no", "en"],
+          "sameAs": ["https://avargo.no/"],
+          "contactPoint": [{
+            "@type": "ContactPoint",
+            "telephone": "+4798642391",
+            "email": "kontakt@avargo.no",
+            "contactType": "customer service",
+            "availableLanguage": ["Norwegian", "English"],
+            "areaServed": "NO"
+          }],
+          "openingHoursSpecification": [{
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+            "opens": "08:00",
+            "closes": "16:00"
+          }],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Tjenester",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Regnskapsføring", "url": "https://avargo.no/tjenester/regnskapsforer" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Lønn og HR", "url": "https://avargo.no/tjenester/hr-og-lonn" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Årsregnskap", "url": "https://avargo.no/tjenester/arsregnskap" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Skatteplanlegging", "url": "https://avargo.no/tjenester/skatteplanlegging" } }
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://avargo.no/#website",
+          "url": "https://avargo.no/",
+          "name": "Avargo",
+          "inLanguage": "nb-NO",
+          "publisher": { "@id": "https://avargo.no/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": { "@type": "EntryPoint", "urlTemplate": "https://avargo.no/ressurser/regnskapsord?q={search_term_string}" },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
 </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
