@@ -173,7 +173,7 @@ const Kontohjelp = () => {
     "@type": "WebPage",
     name: "Kontohjelp – Finn riktig regnskapskonto | Avargo",
     description: "Søk i norsk kontoplan og finn riktig konto for ditt regnskap.",
-    url: "https://www.avargo.no/ressurser/kontohjelp",
+    url: "https://avargo.no/ressurser/kontohjelp",
     publisher: { "@type": "Organization", name: "Avargo" },
   };
 
@@ -182,7 +182,7 @@ const Kontohjelp = () => {
       <Helmet>
         <title>Kontohjelp – Finn riktig regnskapskonto | Avargo</title>
         <meta name="description" content="Søk i norsk kontoplan og finn riktig konto for regnskapet ditt. Komplett veiledning med eksempler og søkbare tags." />
-        <link rel="canonical" href="https://www.avargo.no/ressurser/kontohjelp" />
+        <link rel="canonical" href="https://avargo.no/ressurser/kontohjelp" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 

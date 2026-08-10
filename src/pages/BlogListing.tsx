@@ -56,9 +56,14 @@ const BlogListing = () => {
   return (
     <>
       <Helmet>
-        <title>Blogg | Artikler om regnskap, skatt og bedriftsdrift — Avargo</title>
-        <meta name="description" content="Les Avargos fagartikler om regnskap, skatteoptimalisering, MVA, likviditetsstyring og tips for norske bedrifter. Oppdatert og praktisk." />
-        <link rel="canonical" href="https://avargo.no/blogg" />
+        <title>Nyheter og fagartikler om regnskap og skatt | Avargo</title>
+        <meta name="description" content="Fagartikler om regnskap, skatt, MVA og likviditet for norske bedrifter. Praktiske råd fra autoriserte regnskapsførere." />
+        <link rel="canonical" href="https://avargo.no/nyheter" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Nyheter og fagartikler om regnskap og skatt | Avargo" />
+        <meta property="og:description" content="Fagartikler om regnskap, skatt, MVA og likviditet for norske bedrifter." />
+        <meta property="og:url" content="https://avargo.no/nyheter" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       <section className="py-28 md:py-44 relative overflow-hidden">
         <div className="absolute inset-0 ambient-glow opacity-30" />

@@ -73,7 +73,7 @@ const Regnskapsord = () => {
     name: "Fagordbok – Regnskap, HR, Marked & IT | Avargo",
     description:
       "Komplett ordbok med begreper innen regnskap, HR, digital markedsføring og IT — forklart på enkel norsk.",
-    url: "https://www.avargo.no/ressurser/regnskapsord",
+    url: "https://avargo.no/ressurser/regnskapsord",
     publisher: { "@type": "Organization", name: "Avargo" },
   };
 
@@ -85,7 +85,7 @@ const Regnskapsord = () => {
           name="description"
           content="Komplett ordbok med begreper innen regnskap, HR, markedsføring og IT. Søk og lær — forklart på enkel norsk."
         />
-        <link rel="canonical" href="https://www.avargo.no/ressurser/regnskapsord" />
+        <link rel="canonical" href="https://avargo.no/ressurser/regnskapsord" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 

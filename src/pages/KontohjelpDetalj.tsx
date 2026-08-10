@@ -101,7 +101,7 @@ const KontohjelpDetalj = () => {
     "@type": "Article",
     headline: `Konto ${entry.account_number} – ${entry.name}`,
     description: entry.description || `Veiledning for konto ${entry.account_number} i norsk kontoplan.`,
-    url: `https://www.avargo.no/ressurser/kontohjelp/${entry.slug}`,
+    url: `https://avargo.no/ressurser/kontohjelp/${entry.slug}`,
     publisher: { "@type": "Organization", name: "Avargo" },
   };
 
@@ -110,10 +110,10 @@ const KontohjelpDetalj = () => {
       <Helmet>
         <title>{`Konto ${entry.account_number} – ${entry.name} | Avargo`}</title>
         <meta name="description" content={entry.description || `Veiledning for konto ${entry.account_number} – ${entry.name}. Lær hvor du fører denne utgiften i regnskapet.`} />
-        <link rel="canonical" href={`https://www.avargo.no/ressurser/kontohjelp/${entry.slug}`} />
+        <link rel="canonical" href={`https://avargo.no/ressurser/kontohjelp/${entry.slug}`} />
         <meta property="og:title" content={`Konto ${entry.account_number} – ${entry.name} | Avargo`} />
         <meta property="og:description" content={entry.description || `Veiledning for konto ${entry.account_number} – ${entry.name}.`} />
-        <meta property="og:url" content={`https://www.avargo.no/ressurser/kontohjelp/${entry.slug}`} />
+        <meta property="og:url" content={`https://avargo.no/ressurser/kontohjelp/${entry.slug}`} />
         <meta property="og:type" content="article" />
         <meta name="twitter:title" content={`Konto ${entry.account_number} – ${entry.name} | Avargo`} />
         <meta name="twitter:description" content={entry.description || `Veiledning for konto ${entry.account_number} – ${entry.name}.`} />

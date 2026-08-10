@@ -329,10 +329,10 @@ const BookMote = () => {
       <Helmet>
         <title>Book møte – uforpliktende rådgivning | Avargo</title>
         <meta name="description" content="Book et 30-minutters møte med en Avargo-rådgiver. Svar på fire korte spørsmål, så finner vi rett person og passende tid." />
-        <link rel="canonical" href="https://www.avargo.no/book-mote" />
+        <link rel="canonical" href="https://avargo.no/book-mote" />
         <meta property="og:title" content="Book møte – Avargo" />
         <meta property="og:description" content="Uforpliktende 30-min rådgivning. Svar på fire korte spørsmål og velg tidspunkt." />
-        <meta property="og:url" content="https://www.avargo.no/book-mote" />
+        <meta property="og:url" content="https://avargo.no/book-mote" />
       </Helmet>
 
       <section className="pt-28 pb-20 min-h-[80vh]">

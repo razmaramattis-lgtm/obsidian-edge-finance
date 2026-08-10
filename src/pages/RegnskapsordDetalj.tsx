@@ -46,11 +46,11 @@ const RegnskapsordDetalj = () => {
     "@type": "DefinedTerm",
     name: term.term,
     description: term.description || `Forklaring av begrepet ${term.term} i regnskap og økonomi.`,
-    url: `https://www.avargo.no/ressurser/regnskapsord/${term.slug}`,
+    url: `https://avargo.no/ressurser/regnskapsord/${term.slug}`,
     inDefinedTermSet: {
       "@type": "DefinedTermSet",
       name: "Avargo Regnskapsordbok",
-      url: "https://www.avargo.no/ressurser/regnskapsord",
+      url: "https://avargo.no/ressurser/regnskapsord",
     },
   };
 
@@ -59,7 +59,7 @@ const RegnskapsordDetalj = () => {
       <Helmet>
         <title>{`${term.term} – Regnskapsordbok | Avargo`}</title>
         <meta name="description" content={term.description?.substring(0, 155) || `Hva betyr ${term.term}? Les en klar og enkel forklaring av begrepet.`} />
-        <link rel="canonical" href={`https://www.avargo.no/ressurser/regnskapsord/${term.slug}`} />
+        <link rel="canonical" href={`https://avargo.no/ressurser/regnskapsord/${term.slug}`} />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
