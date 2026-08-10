@@ -51,6 +51,16 @@ const Regnskapsforer = () => (
       <title>Dedikert regnskapsfører for din bedrift | Avargo</title>
       <meta name="description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 499 kr/mnd." />
       <link rel="canonical" href="https://avargo.no/tjenester/regnskapsforer" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Dedikert regnskapsfører for din bedrift | Avargo" />
+      <meta property="og:description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 499 kr/mnd." />
+      <meta property="og:url" content="https://avargo.no/tjenester/regnskapsforer" />
+      <meta property="og:image" content="https://avargo.no/og-image.jpg" />
+      <meta property="og:locale" content="nb_NO" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Dedikert regnskapsfører for din bedrift | Avargo" />
+      <meta name="twitter:description" content="Fast regnskapsfører, fastpris fra 1 499 kr/mnd og rådgivning inkludert." />
+      <meta name="twitter:image" content="https://avargo.no/og-image.jpg" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
