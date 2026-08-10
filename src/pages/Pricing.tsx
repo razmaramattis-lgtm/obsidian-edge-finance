@@ -190,6 +190,51 @@ const Pricing = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDesc} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Regnskapsføring til fast månedspris",
+          "serviceType": "Regnskapsføring",
+          "provider": { "@type": "AccountingService", "name": "Avargo Regnskap AS", "url": "https://avargo.no/", "telephone": "+4798642391", "email": "kontakt@avargo.no" },
+          "areaServed": { "@type": "Country", "name": "Norge" },
+          "url": "https://avargo.no/priser",
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "NOK",
+            "lowPrice": "1950",
+            "highPrice": "9950",
+            "offerCount": "4",
+            "availability": "https://schema.org/InStock",
+            "url": "https://avargo.no/priser",
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "priceCurrency": "NOK",
+              "price": "1950",
+              "unitCode": "MON",
+              "billingIncrement": 1,
+              "description": "Fast månedspris fra 1 950 kr. Bokføring, MVA, årsregnskap og rådgivning inkludert."
+            }
+          }
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            { "@type": "Question", "name": "Hva koster en regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo starter fast månedspris på 1 950 kr. Prisen avhenger av selskapsform, omsetning, antall bilag og ansatte. Bruk priskalkulatoren på siden for et estimat på sekunder." } },
+            { "@type": "Question", "name": "Er det bindingstid?", "acceptedAnswer": { "@type": "Answer", "text": "Nei. Du står fritt til å avslutte samarbeidet, og vi overleverer alle data ved en eventuell avslutning." } },
+            { "@type": "Question", "name": "Hva er inkludert i fastprisen?", "acceptedAnswer": { "@type": "Answer", "text": "Løpende bokføring, MVA-rapportering, årsregnskap, skattemelding og rådgivning underveis. Ingen timepris på vanlige spørsmål." } },
+            { "@type": "Question", "name": "Kommer det tillegg?", "acceptedAnswer": { "@type": "Answer", "text": "Kun hvis du bestiller tjenester utenfor avtalen, som lønnskjøring for flere ansatte eller ekstra rapportering. Alt avtales på forhånd." } }
+          ]
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Hjem", "item": "https://avargo.no/" },
+            { "@type": "ListItem", "position": 2, "name": "Priser", "item": "https://avargo.no/priser" }
+          ]
+        })}</script>
+
       </Helmet>
 
       {/* ── Hero + calculator ─────────────────────────── */}
