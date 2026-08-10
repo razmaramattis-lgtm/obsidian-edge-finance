@@ -555,7 +555,82 @@ const Kontohjelp = () => {
           </div>
         )}
       </section>
+
+      {/* Explainer: how NS 4102 is built */}
+      <section className="bg-white/60 border-t border-border/20">
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-3xl mx-auto space-y-10">
+            <AnimatedSection>
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-heading">Slik er kontoplanen bygget opp</h2>
+                <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed">
+                  NS 4102 er den norske standard kontoplanen. Den deler regnskapet inn i åtte kontoklasser.
+                  Klasse 1 og 2 utgjør balansen — hva selskapet eier og skylder. Klasse 3 til 8 utgjør
+                  resultatet — inntekter, kostnader og finansposter i perioden. Første siffer i kontonummeret
+                  angir klassen, andre siffer kontogruppen, tredje siffer selve kontoen og fjerde siffer
+                  eventuelle egne underkontoer.
+                </p>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.1}>
+              <div className="overflow-hidden rounded-xl border border-border/20 bg-card">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-muted/40 text-left">
+                      <th className="px-4 py-3 font-medium w-20">Klasse</th>
+                      <th className="px-4 py-3 font-medium">Innhold</th>
+                      <th className="px-4 py-3 font-medium w-28 text-right">Kontoer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(CLASS_LABELS).map(([cls, label]) => (
+                      <tr key={cls} className="border-t border-border/15">
+                        <td className="px-4 py-3 font-mono text-primary font-semibold">{cls}000</td>
+                        <td className="px-4 py-3 font-light">{label}</td>
+                        <td className="px-4 py-3 text-right text-muted-foreground">{classCounts[cls] || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.15}>
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-heading">Vanlige spørsmål om kontoplanen</h2>
+                <div className="space-y-3">
+                  {FAQS.map(f => (
+                    <div key={f.q} className="rounded-xl border border-border/20 bg-card px-5 py-4">
+                      <h3 className="text-sm font-medium mb-1.5">{f.q}</h3>
+                      <p className="text-sm text-muted-foreground font-light leading-relaxed">{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.2}>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 px-6 py-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <div>
+                  <p className="font-heading text-lg">Slipp å tenke på kontoplanen</p>
+                  <p className="text-sm text-muted-foreground font-light">
+                    Vi fører regnskapet for deg til fastpris — svar innen 24 timer.
+                  </p>
+                </div>
+                <Link
+                  to="/kontakt"
+                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm hover:opacity-90 transition-opacity"
+                >
+                  Snakk med en regnskapsfører <ChevronRight size={15} />
+                </Link>
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
     </>
+
   );
 };
 
