@@ -222,6 +222,46 @@ const Tjenester = () => {
         <title>{copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, CFO-rådgivning & HR — Avargo"}</title>
         <meta name="description" content={copy?.sub || "Utforsk Avargos tjenester: dedikert regnskapsfører, CFO-rådgivning og HR for norske bedrifter. En økonomisk støttespiller som lar deg fokusere på det du kan best."} />
         <link rel="canonical" href={`https://avargo.no${sectionPath}/tjenester`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://avargo.no${sectionPath}/tjenester`} />
+        <meta property="og:title" content={copy ? `Tjenester — ${section!.name} | Avargo` : "Tjenester | Regnskap, CFO-rådgivning & HR — Avargo"} />
+        <meta property="og:description" content={copy?.sub || "Regnskap, lønn, HR og rådgivning til fast månedspris. Se alle tjenester fra Avargo."} />
+        <meta name="twitter:card" content="summary_large_image" />
+        {!isInSection && (
+          <script type="application/ld+json">{JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Tjenester fra Avargo",
+            "itemListElement": [
+              { name: "Dedikert regnskapsfører", url: "https://avargo.no/tjenester/regnskapsforer", description: "Fast regnskapsfører som kjenner selskapet ditt — bokføring, MVA og rapportering." },
+              { name: "Årsregnskap", url: "https://avargo.no/tjenester/arsregnskap", description: "Årsregnskap, næringsoppgave og skattemelding levert i tide." },
+              { name: "Lønn & HR", url: "https://avargo.no/tjenester/hr-og-lonn", description: "Lønnskjøring, a-melding, personalhåndbok og praktisk HR-bistand." },
+              { name: "Skatteplanlegging", url: "https://avargo.no/tjenester/skatteplanlegging", description: "Rådgivning om utbytte, lønn og fradrag gjennom hele året." },
+              { name: "Fakturering", url: "https://avargo.no/tjenester/fakturering", description: "Fakturering, purring og oppfølging av kundefordringer." },
+              { name: "CFO-as-a-Service", url: "https://avargo.no/tjenester/cfo", description: "Budsjett, likviditet og styringsdata uten å ansette egen økonomisjef." },
+            ].map((s, i) => ({
+              "@type": "ListItem",
+              "position": i + 1,
+              "item": {
+                "@type": "Service",
+                "name": s.name,
+                "url": s.url,
+                "description": s.description,
+                "provider": { "@type": "AccountingService", "name": "Avargo Regnskap AS", "url": "https://avargo.no/" },
+                "areaServed": { "@type": "Country", "name": "Norge" },
+              },
+            })),
+          })}</script>
+        )}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Hjem", "item": `https://avargo.no${sectionPath || "/"}` },
+            { "@type": "ListItem", "position": 2, "name": "Tjenester", "item": `https://avargo.no${sectionPath}/tjenester` },
+          ],
+        })}</script>
+
       </Helmet>
       {/* HERO */}
       <section className="py-28 md:py-44 relative overflow-hidden">
