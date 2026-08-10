@@ -345,7 +345,7 @@ const KarriereVelkommen = () => {
               Vi kan knapt vente. Utforsk gjerne nettsiden vår for å bli enda bedre kjent med oss.
             </p>
             <a
-              href="https://www.avargo.no"
+              href="https://avargo.no"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30"
