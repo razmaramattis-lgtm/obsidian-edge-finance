@@ -338,6 +338,29 @@ const Contact = () => {
           "closes": "16:00",
         }],
       })}</script>
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Kontakt Avargo",
+        "url": `https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt`,
+        "description": "Kontakt Avargo Regnskap AS for et uforpliktende tilbud på regnskap, lønn og HR. Ring 98 64 23 91 eller send skjema.",
+        "mainEntity": {
+          "@type": "AccountingService",
+          "name": "Avargo Regnskap AS",
+          "telephone": "+4798642391",
+          "email": "kontakt@avargo.no",
+          "url": "https://avargo.no/",
+        },
+      })}</script>
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Hjem", "item": "https://avargo.no/" },
+          { "@type": "ListItem", "position": 2, "name": "Kontakt", "item": `https://avargo.no${isInSection && section ? section.basePath : ""}/kontakt` },
+        ],
+      })}</script>
+
     </Helmet>
     <section className="py-24 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />

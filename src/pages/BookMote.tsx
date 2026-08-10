@@ -333,6 +333,34 @@ const BookMote = () => {
         <meta property="og:title" content="Book møte – Avargo" />
         <meta property="og:description" content="Uforpliktende 30-min rådgivning. Svar på fire korte spørsmål og velg tidspunkt." />
         <meta property="og:url" content="https://avargo.no/book-mote" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Uforpliktende rådgivningsmøte",
+          "serviceType": "Rådgivningsmøte",
+          "description": "30 minutters uforpliktende møte med en autorisert rådgiver om regnskap, lønn eller HR. Digitalt via Teams.",
+          "url": "https://avargo.no/book-mote",
+          "provider": { "@type": "AccountingService", "name": "Avargo Regnskap AS", "url": "https://avargo.no/", "telephone": "+4798642391", "email": "kontakt@avargo.no" },
+          "areaServed": { "@type": "Country", "name": "Norge" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NOK", "availability": "https://schema.org/InStock", "url": "https://avargo.no/book-mote" },
+          "potentialAction": {
+            "@type": "ReserveAction",
+            "name": "Book møte",
+            "target": { "@type": "EntryPoint", "urlTemplate": "https://avargo.no/book-mote", "actionPlatform": ["https://schema.org/DesktopWebPlatform", "https://schema.org/MobileWebPlatform"] },
+            "result": { "@type": "Reservation", "name": "Rådgivningsmøte" },
+          },
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Hjem", "item": "https://avargo.no/" },
+            { "@type": "ListItem", "position": 2, "name": "Book møte", "item": "https://avargo.no/book-mote" },
+          ],
+        })}</script>
+
       </Helmet>
 
       <section className="pt-28 pb-20 min-h-[80vh]">
