@@ -381,7 +381,7 @@ const Contact = () => {
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/15 flex items-center justify-center">
                     <Shield size={24} className="text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-heading text-3xl mb-3">Mottatt!</h3>
+                  <h2 className="font-heading text-3xl mb-3">Mottatt!</h2>
                   <p className="text-foreground/60 font-light leading-relaxed mb-2">Vi gjennomgår informasjonen din og tar kontakt raskt — som regel samme arbeidsdag med et tilpasset forslag.</p>
                   <p className="text-sm text-primary italic font-light">Takk for at du vurderer Avargo.</p>
                 </div>
