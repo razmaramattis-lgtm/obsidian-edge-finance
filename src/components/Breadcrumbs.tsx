@@ -91,8 +91,9 @@ const Breadcrumbs = () => {
               <span key={crumb.href} className="flex items-center gap-1.5 shrink-0">
                 {i > 0 && <ChevronRight size={10} className="text-foreground/25" />}
                 {i === 0 ? (
-                  <Link to={crumb.href} className="text-foreground/40 hover:text-foreground/70 transition-colors">
-                    <Home size={12} />
+                  <Link to={crumb.href} aria-label="Hjem" className="text-foreground/40 hover:text-foreground/70 transition-colors">
+                    <Home size={12} aria-hidden="true" />
+                    <span className="sr-only">Hjem</span>
                   </Link>
                 ) : isLast ? (
                   <span className="text-[11px] text-foreground/70 font-medium tracking-wide">{crumb.label}</span>
