@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const DOWNLOAD_URL = "https://data.brreg.no/enhetsregisteret/api/enheter/lastned";
 const ORG_FORMS = ["AS", "ENK"];
-const TIME_BUDGET_MS = 220_000;
+const TIME_BUDGET_MS = 90_000;
 const BATCH = 500;
 
 const json = (body: unknown, status = 200) =>
@@ -138,6 +138,9 @@ Deno.serve(async (req) => {
       if (error) throw new Error(error.message || JSON.stringify(error));
       imported += batch.length;
       batch = [];
+      // persist progress on every batch so a hard timeout never loses work
+      await admin.from("crm_import_state").update({ processed, imported, last_run_at: new Date().toISOString() }).eq("id", 1);
+      console.log(`bulk-import progress: seen=${processed} imported=${imported}`);
     };
 
     outer:
