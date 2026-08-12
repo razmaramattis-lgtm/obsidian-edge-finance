@@ -222,7 +222,7 @@ Deno.serve(async (req) => {
         website,
         email,
         email_verified: !!email,
-        phone: (e.telefon || e.mobil || "").trim() || null,
+        phone: (e.telefon || e.mobil || detail.telefon || detail.mobil || "").trim() || null,
         contact_name: roleInfo?.contact || null,
         roles: roleInfo?.roles || [],
         has_accountant: hasAccountant,
