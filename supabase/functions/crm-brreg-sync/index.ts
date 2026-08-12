@@ -294,6 +294,36 @@ Deno.serve(async (req) => {
       for (const r of chunk) existing.has(r.orgnr) ? updated++ : inserted++;
     }
 
+    // Etterfyll roller (regnskapsfører/revisor/kontaktperson) på leads som mangler det.
+    let rolesFilled = 0;
+    const roleBudget = Math.min(Number(body.roleBudget) || 400, 1000);
+    if (roleBudget > 0) {
+      const { data: pending } = await admin
+        .from("crm_leads")
+        .select("id, orgnr, registered_at, category")
+        .eq("roles", "[]")
+        .order("registered_at", { ascending: false, nullsFirst: false })
+        .limit(roleBudget);
+
+      await mapLimit(pending || [], 5, async (lead: any) => {
+        const info = await fetchRoles(lead.orgnr);
+        if (!info) return;
+        const hasAccountant = !!info.accountant;
+        const patch: Record<string, unknown> = {
+          roles: info.roles,
+          has_accountant: hasAccountant,
+          accountant_name: info.accountant,
+          has_auditor: !!info.hasAuditor,
+        };
+        if (info.contact) patch.contact_name = info.contact;
+        if (lead.category === "ukjent" || lead.category === "ingen_regnskapsforer" || lead.category === "har_regnskapsforer") {
+          patch.category = categorize(lead.registered_at, hasAccountant);
+        }
+        const { error } = await admin.from("crm_leads").update(patch).eq("id", lead.id);
+        if (!error) rolesFilled++;
+      });
+    }
+
 
     await admin.from("crm_automation_settings").update({ last_sync_at: new Date().toISOString() }).eq("id", 1);
     await admin.from("crm_sync_log").insert({
