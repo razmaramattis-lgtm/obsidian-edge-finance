@@ -245,7 +245,7 @@ Deno.serve(async (req) => {
 
     return json({ success: true, fetched, inserted, updated, from, to });
   } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
+    const message = e instanceof Error ? e.message : typeof e === "string" ? e : JSON.stringify(e);
     await admin.from("crm_sync_log").insert({ mode, fetched, inserted, updated, status: "error", error_message: message });
     return json({ error: message }, 500);
   }
