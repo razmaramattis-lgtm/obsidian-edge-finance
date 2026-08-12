@@ -108,15 +108,17 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const toggleAll = () => setSelected(allSelected ? [] : leads.map((l) => l.id));
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
-  const runSync = async () => {
+  const runSync = async (backfill = false) => {
     setSyncing(true);
     try {
       const { data, error } = await supabase.functions.invoke("crm-brreg-sync", {
-        body: { mode: "manual", from: syncFrom, to: syncTo, municipalities: syncKommuner, orgForms: syncOrgForms },
+        body: backfill
+          ? { mode: "backfill", windowDays: 90, maxPages: 30, municipalities: syncKommuner, orgForms: syncOrgForms }
+          : { mode: "manual", from: syncFrom, to: syncTo, municipalities: syncKommuner, orgForms: syncOrgForms },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success(`Hentet ${data.fetched} selskaper – ${data.inserted} nye, ${data.updated} oppdatert`);
+      toast.success(`Hentet ${data.fetched} selskaper – ${data.inserted} nye, ${data.updated} oppdatert${backfill ? ` (${data.from} – ${data.to})` : ""}`);
       setSyncOpen(false);
       fetchLeads();
       fetchMunicipalities();
@@ -126,6 +128,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       setSyncing(false);
     }
   };
+
 
   const runEnrich = async () => {
     setEnriching(true);
