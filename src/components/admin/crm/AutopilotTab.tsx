@@ -159,8 +159,8 @@ const AutopilotTab = () => {
             <Select value={(s.template_map || {})[c.id] || ""} onValueChange={(v) => setS({ ...s, template_map: { ...(s.template_map || {}), [c.id]: v } })}>
               <SelectTrigger className="flex-1" aria-label={`Mal for ${c.label}`}><SelectValue placeholder="Velg mal" /></SelectTrigger>
               <SelectContent>
-                {templates.filter((t) => t.category === c.id || t.category === "alle").map((t) => (
-                  <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                {templates.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>{t.name}{t.category && t.category !== "alle" ? ` · ${categoryMeta(t.category).label}` : ""}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

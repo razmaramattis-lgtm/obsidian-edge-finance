@@ -314,6 +314,9 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                         <span className="text-muted-foreground/60">ingen e-post{l.enrich_status ? ` · ${l.enrich_status}` : ""}</span>
                       )}
                       <span className="text-muted-foreground truncate block">{[l.phone, l.contact_name].filter(Boolean).join(" · ") || "—"}</span>
+                      <span className={`truncate block ${l.has_accountant ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                        {l.has_accountant ? `Regnskapsfører: ${l.accountant_name || "ukjent"}` : "Ingen regnskapsfører registrert"}
+                      </span>
                     </div>
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
                     <span className="text-[10px] text-muted-foreground">
