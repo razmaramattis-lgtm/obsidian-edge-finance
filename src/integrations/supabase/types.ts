@@ -1272,6 +1272,42 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_import_state: {
+        Row: {
+          error_message: string | null
+          finished_at: string | null
+          id: number
+          imported: number
+          last_run_at: string | null
+          processed: number
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          error_message?: string | null
+          finished_at?: string | null
+          id?: number
+          imported?: number
+          last_run_at?: string | null
+          processed?: number
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          error_message?: string | null
+          finished_at?: string | null
+          id?: number
+          imported?: number
+          last_run_at?: string | null
+          processed?: number
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_leads: {
         Row: {
           accountant_name: string | null
