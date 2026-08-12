@@ -379,9 +379,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
               Alle selskaper blir liggende permanent i basen. Kontaktinfo du har fylt inn selv, kategori og kontaktstatus blir aldri overskrevet av nye henteoperasjoner.
             </p>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
-            <Button onClick={runSync} disabled={syncing}>
+            <Button variant="secondary" onClick={() => runSync(true)} disabled={syncing} title="Fortsetter bakover i tid fra det eldste selskapet du har – gir alltid nye selskaper">
+              {syncing ? <Loader2 size={14} className="mr-2 animate-spin" /> : <RefreshCw size={14} className="mr-2" />}Hent flere (eldre)
+            </Button>
+            <Button onClick={() => runSync(false)} disabled={syncing}>
               {syncing ? <Loader2 size={14} className="mr-2 animate-spin" /> : <RefreshCw size={14} className="mr-2" />}Hent
             </Button>
           </DialogFooter>
