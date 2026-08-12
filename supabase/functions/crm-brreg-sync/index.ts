@@ -180,7 +180,7 @@ Deno.serve(async (req) => {
     for (let i = 0; i < orgnrs.length; i += 500) {
       const { data: rows } = await admin
         .from("crm_leads")
-        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source")
+        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source, email_verified")
         .in("orgnr", orgnrs.slice(i, i + 500));
       for (const r of rows || []) {
         existing.add(r.orgnr as string);
