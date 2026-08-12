@@ -59,11 +59,38 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [syncKommuner, setSyncKommuner] = useState<string[]>([]);
   const [syncOrgForms, setSyncOrgForms] = useState<string[]>(["AS", "ENK"]);
 
+  const [importState, setImportState] = useState<any>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   const [templates, setTemplates] = useState<CrmTemplate[]>([]);
   const [mailOpen, setMailOpen] = useState(false);
   const [mailTemplate, setMailTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
+
+  const fetchImportState = async () => {
+    const { data } = await supabase.from("crm_import_state" as any).select("*").eq("id", 1).maybeSingle();
+    setImportState(data);
+  };
+
+  const bulkImport = async (action: "start" | "stop") => {
+    setBulkBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-brreg-bulk-import", { body: { action } });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast.success(action === "start"
+        ? `Full import startet – ${(data as any)?.imported ?? 0} nye selskaper hittil. Fortsetter automatisk hvert 5. minutt.`
+        : "Full import satt på pause");
+      fetchImportState();
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke starte full import");
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
 
   const fetchMunicipalities = async () => {
     const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(2000);
@@ -97,7 +124,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchMunicipalities(); fetchTemplates(); }, []);
+  useEffect(() => {
+    fetchMunicipalities(); fetchTemplates(); fetchImportState();
+    const t = setInterval(fetchImportState, 20000);
+    return () => clearInterval(t);
+  }, []);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -381,7 +413,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <p className="text-[11px] text-muted-foreground">
               Alle selskaper blir liggende permanent i basen. Kontaktinfo du har fylt inn selv, kategori og kontaktstatus blir aldri overskrevet av nye henteoperasjoner.
             </p>
+
+            <div className="rounded-xl border border-border p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-xs font-semibold">Full import – alle AS og ENK i Norge</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Laster ned hele Enhetsregisteret fra oppstart til i dag (kommune, navn, telefon, e-post, næring m.m.) og fortsetter automatisk hvert 5. minutt til den er ferdig.
+                  </p>
+                </div>
+                <Button size="sm" variant={importState?.status === "running" ? "outline" : "default"} disabled={bulkBusy}
+                  onClick={() => bulkImport(importState?.status === "running" ? "stop" : "start")}>
+                  {bulkBusy ? <Loader2 size={14} className="mr-2 animate-spin" /> : <Download size={14} className="mr-2" />}
+                  {importState?.status === "running" ? "Pause" : "Start full import"}
+                </Button>
+              </div>
+              {importState && (
+                <p className="text-[11px] text-muted-foreground">
+                  Status: <b className="text-foreground">{importState.status}</b> · {Number(importState.processed || 0).toLocaleString("nb-NO")} enheter lest · {Number(importState.imported || 0).toLocaleString("nb-NO")} nye lagret
+                  {importState.error_message ? ` · Feil: ${importState.error_message}` : ""}
+                </p>
+              )}
+            </div>
           </div>
+
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
             <Button variant="secondary" onClick={() => runSync(true)} disabled={syncing} title="Fortsetter bakover i tid fra det eldste selskapet du har – gir alltid nye selskaper">

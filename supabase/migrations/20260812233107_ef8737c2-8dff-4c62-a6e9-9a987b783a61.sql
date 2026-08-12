@@ -1,0 +1,1 @@
+ALTER TABLE public.crm_import_state ADD COLUMN IF NOT EXISTS cursor_date date;
