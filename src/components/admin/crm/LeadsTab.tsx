@@ -124,7 +124,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchMunicipalities(); fetchTemplates(); }, []);
+  useEffect(() => {
+    fetchMunicipalities(); fetchTemplates(); fetchImportState();
+    const t = setInterval(fetchImportState, 20000);
+    return () => clearInterval(t);
+  }, []);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
