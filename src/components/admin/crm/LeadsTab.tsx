@@ -413,7 +413,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <p className="text-[11px] text-muted-foreground">
               Alle selskaper blir liggende permanent i basen. Kontaktinfo du har fylt inn selv, kategori og kontaktstatus blir aldri overskrevet av nye henteoperasjoner.
             </p>
+
+            <div className="rounded-xl border border-border p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-xs font-semibold">Full import – alle AS og ENK i Norge</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Laster ned hele Enhetsregisteret fra oppstart til i dag (kommune, navn, telefon, e-post, næring m.m.) og fortsetter automatisk hvert 5. minutt til den er ferdig.
+                  </p>
+                </div>
+                <Button size="sm" variant={importState?.status === "running" ? "outline" : "default"} disabled={bulkBusy}
+                  onClick={() => bulkImport(importState?.status === "running" ? "stop" : "start")}>
+                  {bulkBusy ? <Loader2 size={14} className="mr-2 animate-spin" /> : <Download size={14} className="mr-2" />}
+                  {importState?.status === "running" ? "Pause" : "Start full import"}
+                </Button>
+              </div>
+              {importState && (
+                <p className="text-[11px] text-muted-foreground">
+                  Status: <b className="text-foreground">{importState.status}</b> · {Number(importState.processed || 0).toLocaleString("nb-NO")} enheter lest · {Number(importState.imported || 0).toLocaleString("nb-NO")} nye lagret
+                  {importState.error_message ? ` · Feil: ${importState.error_message}` : ""}
+                </p>
+              )}
+            </div>
           </div>
+
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
             <Button variant="secondary" onClick={() => runSync(true)} disabled={syncing} title="Fortsetter bakover i tid fra det eldste selskapet du har – gir alltid nye selskaper">
