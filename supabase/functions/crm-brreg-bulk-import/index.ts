@@ -1,5 +1,6 @@
-// Full import of every AS and ENK from Brønnøysundregistrene's bulk download.
-// Runs time-boxed and resumable: each invocation continues where the last stopped.
+// Full historical import of every AS and ENK from Brønnøysundregistrene.
+// Walks the Enhetsregisteret API backwards in date windows, resumable and time-boxed:
+// each invocation continues from the stored cursor until the whole register is covered.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -7,20 +8,23 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const DOWNLOAD_URL = "https://data.brreg.no/enhetsregisteret/api/enheter/lastned";
+const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
 const ORG_FORMS = ["AS", "ENK"];
-const TIME_BUDGET_MS = 90_000;
-const BATCH = 500;
+const OLDEST = "1900-01-01";
+const TIME_BUDGET_MS = 100_000;
+const WINDOW_DAYS = 20;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-function categorize(registeredAt: string | null, hasAccountant: boolean): string {
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+function categorize(registeredAt: string | null): string {
   if (registeredAt) {
     const days = (Date.now() - new Date(registeredAt).getTime()) / 86_400_000;
     if (days <= 60) return "ny_bedrift";
   }
-  return hasAccountant ? "har_regnskapsforer" : "ingen_regnskapsforer";
+  return "ingen_regnskapsforer";
 }
 
 function mapRow(e: any) {
@@ -49,37 +53,24 @@ function mapRow(e: any) {
     phone: (e.telefon || e.mobil || "").trim() || null,
     roles: [],
     has_accountant: false,
-    has_auditor: !!e.registrertIForetaksregisteret && false,
-    category: categorize(registered, false),
+    has_auditor: false,
+    category: categorize(registered),
     source: "brreg_bulk",
     raw: e,
     synced_at: new Date().toISOString(),
   };
 }
 
-/** Peek the first bytes so we can gunzip only when the payload really is gzipped. */
-async function openStream(): Promise<ReadableStream<Uint8Array>> {
-  const res = await fetch(DOWNLOAD_URL, {
-    headers: { Accept: "application/vnd.brreg.enhetsregisteret.enhet.v2+gzip" },
-  });
-  if (!res.ok || !res.body) throw new Error(`Brreg lastned svarte ${res.status}`);
-  const reader = res.body.getReader();
-  const first = await reader.read();
-  const head = first.value ?? new Uint8Array();
-  const gzipped = head.length > 1 && head[0] === 0x1f && head[1] === 0x8b;
-  const raw = new ReadableStream<Uint8Array>({
-    start(c) {
-      if (head.length) c.enqueue(head);
-      if (first.done) c.close();
-    },
-    async pull(c) {
-      const { done, value } = await reader.read();
-      if (done) c.close();
-      else if (value) c.enqueue(value);
-    },
-    cancel() { reader.cancel(); },
-  });
-  return gzipped ? raw.pipeThrough(new DecompressionStream("gzip")) : raw;
+async function fetchPage(from: string, to: string, page: number) {
+  const p = new URLSearchParams();
+  p.set("fraRegistreringsdatoEnhetsregisteret", from);
+  p.set("tilRegistreringsdatoEnhetsregisteret", to);
+  p.set("size", "500");
+  p.set("page", String(page));
+  for (const f of ORG_FORMS) p.append("organisasjonsform", f);
+  const res = await fetch(`${BRREG}?${p.toString()}`, { headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error(`Brreg svarte ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return await res.json();
 }
 
 Deno.serve(async (req) => {
@@ -103,10 +94,14 @@ Deno.serve(async (req) => {
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch { /* cron */ }
 
-  const { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
+  let { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
 
   if (body.action === "start") {
-    await admin.from("crm_import_state").upsert({ id: 1, status: "running", processed: 0, imported: 0, error_message: null, started_at: new Date().toISOString(), finished_at: null });
+    await admin.from("crm_import_state").upsert({
+      id: 1, status: "running", processed: 0, imported: 0, error_message: null,
+      cursor_date: iso(new Date()), started_at: new Date().toISOString(), finished_at: null,
+    });
+    state = { ...(state || {}), status: "running", processed: 0, imported: 0, cursor_date: iso(new Date()) } as any;
   } else if (body.action === "stop") {
     await admin.from("crm_import_state").update({ status: "paused" }).eq("id", 1);
     return json({ stopped: true });
@@ -114,110 +109,64 @@ Deno.serve(async (req) => {
     return json({ skipped: true, status: state?.status ?? "idle" });
   }
 
-  const startSkip = body.action === "start" ? 0 : Number(state?.processed || 0);
-  let processed = startSkip;
-  let imported = Number((body.action === "start" ? 0 : state?.imported) || 0);
+  let cursor = (state?.cursor_date as string) || iso(new Date());
+  let processed = Number(state?.processed || 0);
+  let imported = Number(state?.imported || 0);
   const startedAt = Date.now();
 
   try {
-    const stream = await openStream();
-    const reader = stream.pipeThrough(new TextDecoderStream()).getReader();
+    let done = false;
 
-    let buf = "";
-    let depth = 0, start = -1, inStr = false, esc = false;
-    let seen = 0;
-    let batch: Record<string, unknown>[] = [];
-    let finished = false;
-    let timedOut = false;
+    while (Date.now() - startedAt < TIME_BUDGET_MS) {
+      const to = cursor;
+      const fromDate = new Date(new Date(to).getTime() - WINDOW_DAYS * 86_400_000);
+      const from = iso(fromDate);
 
-    const flush = async () => {
-      if (!batch.length) return;
-      // Bulk import only adds companies that are not already in the CRM –
-      // existing cards (with manual edits, status, category) are never touched.
-      const { error } = await admin.from("crm_leads").upsert(batch, { onConflict: "orgnr", ignoreDuplicates: true });
-      if (error) throw new Error(error.message || JSON.stringify(error));
-      imported += batch.length;
-      batch = [];
-      // persist progress on every batch so a hard timeout never loses work
-      await admin.from("crm_import_state").update({ processed, imported, last_run_at: new Date().toISOString() }).eq("id", 1);
-      console.log(`bulk-import progress: seen=${processed} imported=${imported}`);
-    };
-
-    outer:
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) { finished = true; break; }
-      buf += value;
-
-      for (let i = 0; i < buf.length; i++) {
-        const ch = buf[i];
-        if (inStr) {
-          if (esc) esc = false;
-          else if (ch === "\\") esc = true;
-          else if (ch === '"') inStr = false;
-          continue;
-        }
-        if (ch === '"') { inStr = true; continue; }
-        if (ch === "{") { if (depth === 0) start = i; depth++; continue; }
-        if (ch === "}") {
-          depth--;
-          if (depth === 0 && start >= 0) {
-            seen++;
-            if (seen > startSkip) {
-              const chunk = buf.slice(start, i + 1);
-              try {
-                const e = JSON.parse(chunk);
-                const kode = e?.organisasjonsform?.kode;
-                if (ORG_FORMS.includes(kode) && e?.organisasjonsnummer) batch.push(mapRow(e));
-              } catch { /* ignore malformed entry */ }
-              processed = seen;
-              if (batch.length >= BATCH) {
-                buf = buf.slice(i + 1); i = -1; start = -1;
-                await flush();
-                if (Date.now() - startedAt > TIME_BUDGET_MS) { timedOut = true; break outer; }
-                continue;
-              }
-            } else {
-              processed = seen;
-            }
-            start = -1;
+      for (let page = 0; page < 20; page++) {
+        const data = await fetchPage(from, to, page);
+        const enheter = data?._embedded?.enheter || [];
+        if (enheter.length) {
+          const rows = Array.from(
+            enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
+          );
+          for (let i = 0; i < rows.length; i += 500) {
+            const chunk = rows.slice(i, i + 500);
+            // Only brand new companies are inserted – existing cards keep their
+            // manual edits, category and contact status.
+            const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: true });
+            if (error) throw new Error(error.message || JSON.stringify(error));
           }
+          processed += enheter.length;
+          imported += rows.length;
         }
+        const totalPages = data?.page?.totalPages ?? 1;
+        if (page + 1 >= totalPages || enheter.length === 0) break;
       }
-      // keep only the tail of an unfinished object
-      if (depth > 0 && start >= 0) { buf = buf.slice(start); start = 0; }
-      else { buf = ""; start = -1; }
 
-      if (Date.now() - startedAt > TIME_BUDGET_MS) { timedOut = true; break; }
+      cursor = iso(new Date(fromDate.getTime() - 86_400_000));
+      await admin.from("crm_import_state").update({
+        processed, imported, cursor_date: cursor, last_run_at: new Date().toISOString(), error_message: null,
+      }).eq("id", 1);
+
+      if (new Date(cursor) <= new Date(OLDEST)) { done = true; break; }
     }
 
-    await flush();
-    try { await reader.cancel(); } catch { /* noop */ }
-
-    const done = finished && !timedOut;
-    await admin.from("crm_import_state").update({
-      processed,
-      imported,
-      status: done ? "done" : "running",
-      last_run_at: new Date().toISOString(),
-      finished_at: done ? new Date().toISOString() : null,
-      error_message: null,
-    }).eq("id", 1);
+    if (done) {
+      await admin.from("crm_import_state").update({ status: "done", finished_at: new Date().toISOString() }).eq("id", 1);
+    }
 
     await admin.from("crm_sync_log").insert({
-      mode: "bulk_import",
-      fetched: processed - startSkip,
-      inserted: imported,
-      updated: 0,
-      status: "ok",
-      details: { processed, done },
+      mode: "bulk_import", fetched: processed, inserted: imported, updated: 0,
+      status: "ok", details: { cursor, done },
     });
 
-    return json({ success: true, processed, imported, done });
+    return json({ success: true, processed, imported, cursor, done });
   } catch (e) {
     const message = e instanceof Error ? e.message : JSON.stringify(e);
-    await admin.from("crm_import_state").update({ status: "error", error_message: message, processed, last_run_at: new Date().toISOString() }).eq("id", 1);
-    await admin.from("crm_sync_log").insert({ mode: "bulk_import", fetched: 0, inserted: 0, updated: 0, status: "error", error_message: message });
+    await admin.from("crm_import_state").update({
+      status: "error", error_message: message, processed, imported, cursor_date: cursor, last_run_at: new Date().toISOString(),
+    }).eq("id", 1);
+    await admin.from("crm_sync_log").insert({ mode: "bulk_import", fetched: processed, inserted: imported, updated: 0, status: "error", error_message: message });
     return json({ error: message }, 500);
   }
 });
