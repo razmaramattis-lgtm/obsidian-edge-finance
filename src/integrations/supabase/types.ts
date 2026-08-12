@@ -1242,6 +1242,7 @@ export type Database = {
           id: string
           is_default: boolean
           name: string
+          reason: string | null
           subject: string
           updated_at: string
         }
@@ -1253,6 +1254,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           name: string
+          reason?: string | null
           subject: string
           updated_at?: string
         }
@@ -1264,6 +1266,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           name?: string
+          reason?: string | null
           subject?: string
           updated_at?: string
         }
