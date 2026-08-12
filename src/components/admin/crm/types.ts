@@ -28,6 +28,11 @@ export interface CrmLead {
   last_emailed_at: string | null;
   email_count: number;
   unsubscribed: boolean;
+  contacted_at?: string | null;
+  email_source?: string | null;
+  enriched_at?: string | null;
+  enrich_status?: string | null;
+  manual_lock?: boolean;
 }
 
 export interface CrmTemplate {
