@@ -52,9 +52,10 @@ import MarketingPanel from "@/components/admin/MarketingPanel";
 import DigitalJobPanel from "@/components/admin/DigitalJobPanel";
 import ConversionInsightsPanel from "@/components/admin/ConversionInsightsPanel";
 import EmailStatusPanel from "@/components/admin/EmailStatusPanel";
+import CrmPanel from "@/components/admin/CrmPanel";
 
 type Panel = "overview" | "chat" | "blog" | "services" | "industries" | "pricing"
-  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "email_status" | "audit_log" | "marketing" | "digital_job" | "conversion_insights";
+  | "archive" | "resources" | "hms" | "internal" | "collab" | "settings" | "hr" | "knowledge" | "courses" | "bookings" | "datacenter" | "customers" | "partner_requests" | "advisor_requests" | "employee_invitations" | "doc_templates" | "benefit_applications" | "account_entries" | "glossary" | "account_feedback" | "pending_tasks" | "contact_submissions" | "page_changes" | "org_resources" | "job_listings" | "sms_center" | "email_status" | "audit_log" | "marketing" | "digital_job" | "conversion_insights" | "crm";
 
 interface NavItem {
   id: Panel;
@@ -96,6 +97,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "internal", label: "Interne ressurser", icon: FolderOpen, employeeHidden: true, group: "Internt" },
 
   // Markedsføring
+  { id: "crm", label: "CRM – bedriftsregister", icon: Building2, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   { id: "sms_center", label: "Utsendelser", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   { id: "email_status", label: "E-poststatus", icon: Mail, adminOnly: true, employeeHidden: true, group: "Markedsføring" },
   
@@ -276,6 +278,7 @@ const AdminDashboard = () => {
   const renderPanel = () => {
     switch (activePanel) {
       case "chat": navigate("/workspace"); return null;
+      case "crm": return <CrmPanel />;
       case "blog": return <BlogPanel />;
       case "services": return <ServicesPanel />;
       case "industries": return <IndustriesPanel />;
