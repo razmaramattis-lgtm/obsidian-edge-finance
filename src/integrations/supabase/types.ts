@@ -1274,6 +1274,7 @@ export type Database = {
       }
       crm_import_state: {
         Row: {
+          cursor_date: string | null
           error_message: string | null
           finished_at: string | null
           id: number
@@ -1285,6 +1286,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cursor_date?: string | null
           error_message?: string | null
           finished_at?: string | null
           id?: number
@@ -1296,6 +1298,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cursor_date?: string | null
           error_message?: string | null
           finished_at?: string | null
           id?: number
