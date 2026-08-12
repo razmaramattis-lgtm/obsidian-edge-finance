@@ -131,12 +131,31 @@ Deno.serve(async (req) => {
     return json({ skipped: true, reason: "sync_disabled" });
   }
 
-  const from = (body.from as string) || iso(new Date(Date.now() - s.lookback_days * 86_400_000));
-  const to = (body.to as string) || iso(new Date());
+  // "backfill" = fortsett bakover i tid fra det eldste selskapet vi allerede har,
+  // slik at hver kjøring legger til NYE selskaper i stedet for å hente samme vindu på nytt.
+  let from = (body.from as string) || iso(new Date(Date.now() - s.lookback_days * 86_400_000));
+  let to = (body.to as string) || iso(new Date());
+
+  if (mode === "backfill" && !body.from) {
+    const windowDays = Number(body.windowDays) || 60;
+    const { data: oldest } = await admin
+      .from("crm_leads")
+      .select("registered_at")
+      .not("registered_at", "is", null)
+      .order("registered_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    const end = oldest?.registered_at
+      ? new Date(new Date(oldest.registered_at as string).getTime() - 86_400_000)
+      : new Date();
+    to = iso(end);
+    from = iso(new Date(end.getTime() - windowDays * 86_400_000));
+  }
+
   const municipalities = (body.municipalities as string[]) ?? s.municipality_numbers;
   const orgForms = (body.orgForms as string[]) ?? s.org_forms;
   const industryPrefixes = (body.industryPrefixes as string[]) ?? s.industry_prefixes;
-  const maxPages = Math.min(Number(body.maxPages) || 10, 30);
+  const maxPages = Math.min(Number(body.maxPages) || (mode === "backfill" ? 30 : 10), 30);
 
   let fetched = 0;
   let inserted = 0;
