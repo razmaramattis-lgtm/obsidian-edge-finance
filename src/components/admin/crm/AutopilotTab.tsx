@@ -12,17 +12,17 @@ import { toast } from "sonner";
 import { CATEGORIES, categoryMeta, type CrmTemplate } from "./types";
 
 interface Settings {
-  id: string;
+  id: number;
   sync_enabled: boolean;
   autopilot_enabled: boolean;
-  daily_email_limit: number;
+  daily_limit: number;
   send_hour: number;
-  municipalities: string[] | null;
+  municipality_numbers: string[] | null;
   org_forms: string[] | null;
-  industry_codes: string[] | null;
+  industry_prefixes: string[] | null;
   categories: string[] | null;
   template_map: Record<string, string> | null;
-  min_days_between_emails: number;
+  lookback_days: number;
 }
 
 const AutopilotTab = () => {
@@ -47,13 +47,13 @@ const AutopilotTab = () => {
     const { error } = await supabase.from("crm_automation_settings").update({
       sync_enabled: s.sync_enabled,
       autopilot_enabled: s.autopilot_enabled,
-      daily_email_limit: s.daily_email_limit,
+      daily_limit: s.daily_limit,
       send_hour: s.send_hour,
-      municipalities: s.municipalities,
+      municipality_numbers: s.municipality_numbers,
       org_forms: s.org_forms,
       categories: s.categories,
       template_map: s.template_map,
-      min_days_between_emails: s.min_days_between_emails,
+      lookback_days: s.lookback_days,
     } as any).eq("id", s.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -63,7 +63,7 @@ const AutopilotTab = () => {
   const runNow = async (fn: "crm-brreg-sync" | "crm-send-email") => {
     setRunning(true);
     try {
-      const { data, error } = await supabase.functions.invoke(fn, { body: { mode: "auto" } });
+      const { data, error } = await supabase.functions.invoke(fn, { body: { mode: fn === "crm-brreg-sync" ? "daily" : "autopilot" } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       toast.success(fn === "crm-brreg-sync"
@@ -107,15 +107,15 @@ const AutopilotTab = () => {
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
             <Label className="text-xs">Maks e-post per dag</Label>
-            <Input type="number" min={1} max={500} value={s.daily_email_limit} onChange={(e) => setS({ ...s, daily_email_limit: Number(e.target.value) })} />
+            <Input type="number" min={1} max={500} value={s.daily_limit} onChange={(e) => setS({ ...s, daily_limit: Number(e.target.value) })} />
           </div>
           <div>
             <Label className="text-xs">Sendetidspunkt (time)</Label>
             <Input type="number" min={0} max={23} value={s.send_hour} onChange={(e) => setS({ ...s, send_hour: Number(e.target.value) })} />
           </div>
           <div>
-            <Label className="text-xs">Min. dager mellom e-post</Label>
-            <Input type="number" min={0} value={s.min_days_between_emails} onChange={(e) => setS({ ...s, min_days_between_emails: Number(e.target.value) })} />
+            <Label className="text-xs">Hent selskaper siste X dager</Label>
+            <Input type="number" min={1} value={s.lookback_days} onChange={(e) => setS({ ...s, lookback_days: Number(e.target.value) })} />
           </div>
         </div>
 
@@ -133,8 +133,8 @@ const AutopilotTab = () => {
 
         <div>
           <Label className="text-xs">Kommunenummer (tomt = hele landet)</Label>
-          <Input className="mt-1.5" value={(s.municipalities || []).join(",")}
-            onChange={(e) => setS({ ...s, municipalities: e.target.value.split(",").map((v) => v.trim()).filter(Boolean) })}
+          <Input className="mt-1.5" value={(s.municipality_numbers || []).join(",")}
+            onChange={(e) => setS({ ...s, municipality_numbers: e.target.value.split(",").map((v) => v.trim()).filter(Boolean) })}
             placeholder="3401,3415,3228" />
         </div>
 
