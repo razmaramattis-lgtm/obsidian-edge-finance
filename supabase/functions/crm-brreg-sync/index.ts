@@ -31,7 +31,18 @@ function categorize(registeredAt: string | null, hasAccountant: boolean): string
   return hasAccountant ? "har_regnskapsforer" : "ingen_regnskapsforer";
 }
 
+async function fetchDetails(orgnr: string) {
+  try {
+    const res = await fetch(`${BRREG}/${orgnr}`, { headers: { Accept: "application/json" } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 async function fetchRoles(orgnr: string) {
+
   try {
     const res = await fetch(`${BRREG}/${orgnr}/roller`);
     if (!res.ok) return null;
@@ -173,21 +184,26 @@ Deno.serve(async (req) => {
       for (const r of rows || []) existing.add(r.orgnr as string);
     }
 
-    // Role lookups (accountant detection + contact person) for the newest entries first
+    // Role + contact-detail lookups for the newest entries first
     const needRoles = filtered.filter((e: any) => !existing.has(e.organisasjonsnummer)).slice(0, MAX_ROLE_LOOKUPS);
     const roleMap = new Map<string, Awaited<ReturnType<typeof fetchRoles>>>();
+    const detailMap = new Map<string, any>();
     await mapLimit(needRoles, 5, async (e: any) => {
-      const r = await fetchRoles(e.organisasjonsnummer);
-      if (r) roleMap.set(e.organisasjonsnummer, r);
+      const orgnr = e.organisasjonsnummer;
+      const [r, d] = await Promise.all([fetchRoles(orgnr), fetchDetails(orgnr)]);
+      if (r) roleMap.set(orgnr, r);
+      if (d) detailMap.set(orgnr, d);
     });
 
     const rows = filtered.map((e: any) => {
       const roleInfo = roleMap.get(e.organisasjonsnummer);
+      const detail = detailMap.get(e.organisasjonsnummer) || {};
       const registered = e.registreringsdatoEnhetsregisteret || null;
       const hasAccountant = !!roleInfo?.accountant;
-      const addr = e.forretningsadresse || e.postadresse || {};
-      const website = (e.hjemmeside || "").trim() || null;
-      const email = (e.epostadresse || "").trim() || null;
+      const addr = e.forretningsadresse || e.postadresse || detail.forretningsadresse || {};
+      const website = (e.hjemmeside || detail.hjemmeside || "").trim() || null;
+      const email = (e.epostadresse || detail.epostadresse || "").trim() || null;
+
       return {
         orgnr: e.organisasjonsnummer,
         name: e.navn,
@@ -206,7 +222,7 @@ Deno.serve(async (req) => {
         website,
         email,
         email_verified: !!email,
-        phone: (e.telefon || e.mobil || "").trim() || null,
+        phone: (e.telefon || e.mobil || detail.telefon || detail.mobil || "").trim() || null,
         contact_name: roleInfo?.contact || null,
         roles: roleInfo?.roles || [],
         has_accountant: hasAccountant,
