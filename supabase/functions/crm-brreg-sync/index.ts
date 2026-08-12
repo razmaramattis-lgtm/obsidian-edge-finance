@@ -300,7 +300,7 @@ Deno.serve(async (req) => {
     if (roleBudget > 0) {
       const { data: pending } = await admin
         .from("crm_leads")
-        .select("id, orgnr, registered_at, category")
+        .select("id, orgnr, registered_at, category, manual_lock")
         .eq("roles", "[]")
         .order("registered_at", { ascending: false, nullsFirst: false })
         .limit(roleBudget);
@@ -315,7 +315,7 @@ Deno.serve(async (req) => {
           accountant_name: info.accountant,
           has_auditor: !!info.hasAuditor,
         };
-        if (info.contact) patch.contact_name = info.contact;
+        if (info.contact && !lead.manual_lock) patch.contact_name = info.contact;
         if (lead.category === "ukjent" || lead.category === "ingen_regnskapsforer" || lead.category === "har_regnskapsforer") {
           patch.category = categorize(lead.registered_at, hasAccountant);
         }
@@ -332,10 +332,10 @@ Deno.serve(async (req) => {
       inserted,
       updated,
       status: "ok",
-      details: { from, to, municipalities, orgForms, industryPrefixes },
+      details: { from, to, municipalities, orgForms, industryPrefixes, roles_filled: rolesFilled },
     });
 
-    return json({ success: true, fetched, inserted, updated, from, to });
+    return json({ success: true, fetched, inserted, updated, rolesFilled, from, to });
   } catch (e) {
     const message = e instanceof Error ? e.message : typeof e === "string" ? e : JSON.stringify(e);
     await admin.from("crm_sync_log").insert({ mode, fetched, inserted, updated, status: "error", error_message: message });
