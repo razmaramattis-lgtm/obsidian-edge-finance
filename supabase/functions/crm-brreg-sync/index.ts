@@ -219,12 +219,19 @@ Deno.serve(async (req) => {
       };
     });
 
-    for (let i = 0; i < rows.length; i += 200) {
-      const chunk = rows.slice(i, i + 200);
+    // Brreg pagination can return the same company twice; a single upsert
+    // cannot touch the same conflict target twice -> dedupe by orgnr.
+    const deduped = Array.from(
+      rows.reduce((m, r) => (r.orgnr ? m.set(r.orgnr as string, r) : m), new Map<string, typeof rows[number]>()).values(),
+    );
+
+    for (let i = 0; i < deduped.length; i += 200) {
+      const chunk = deduped.slice(i, i + 200);
       const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: false });
-      if (error) throw error;
+      if (error) throw new Error(error.message || JSON.stringify(error));
       for (const r of chunk) existing.has(r.orgnr) ? updated++ : inserted++;
     }
+
 
     await admin.from("crm_automation_settings").update({ last_sync_at: new Date().toISOString() }).eq("id", 1);
     await admin.from("crm_sync_log").insert({
