@@ -1,0 +1,427 @@
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
+  CheckCircle2, Filter, Send, Loader2, Trash2, ExternalLink,
+} from "lucide-react";
+import { toast } from "sonner";
+import { CATEGORIES, STATUSES, categoryMeta, type CrmLead, type CrmTemplate } from "./types";
+
+const PAGE_SIZE = 50;
+
+const KOMMUNE_PRESETS = [
+  { label: "Kongsvinger", nr: "3401" },
+  { label: "Nord-Odal", nr: "3414" },
+  { label: "Sør-Odal", nr: "3415" },
+  { label: "Nes (Årnes)", nr: "3228" },
+  { label: "Ullensaker (Jessheim)", nr: "3209" },
+  { label: "Skien", nr: "4003" },
+  { label: "Hamar", nr: "3403" },
+  { label: "Elverum", nr: "3420" },
+  { label: "Lillehammer", nr: "3405" },
+  { label: "Gjøvik", nr: "3407" },
+];
+
+const LeadsTab = () => {
+  const [leads, setLeads] = useState<CrmLead[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("alle");
+  const [status, setStatus] = useState("alle");
+  const [municipality, setMunicipality] = useState("alle");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [onlyEmail, setOnlyEmail] = useState(false);
+  const [municipalities, setMunicipalities] = useState<string[]>([]);
+
+  const [selected, setSelected] = useState<string[]>([]);
+  const [detail, setDetail] = useState<CrmLead | null>(null);
+
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncFrom, setSyncFrom] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10));
+  const [syncTo, setSyncTo] = useState(() => new Date().toISOString().slice(0, 10));
+  const [syncKommuner, setSyncKommuner] = useState<string[]>([]);
+  const [syncOrgForms, setSyncOrgForms] = useState<string[]>(["AS", "ENK"]);
+
+  const [templates, setTemplates] = useState<CrmTemplate[]>([]);
+  const [mailOpen, setMailOpen] = useState(false);
+  const [mailTemplate, setMailTemplate] = useState("");
+  const [testEmail, setTestEmail] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const fetchMunicipalities = async () => {
+    const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(2000);
+    const set = new Set((data || []).map((r: any) => r.municipality).filter(Boolean));
+    setMunicipalities(Array.from(set).sort());
+  };
+
+  const fetchTemplates = async () => {
+    const { data } = await supabase.from("crm_email_templates").select("*").eq("active", true).order("name");
+    setTemplates((data as CrmTemplate[]) || []);
+  };
+
+  const fetchLeads = async () => {
+    setLoading(true);
+    let q = supabase.from("crm_leads").select("*", { count: "exact" });
+    if (search.trim()) q = q.or(`name.ilike.%${search.trim()}%,orgnr.ilike.%${search.trim()}%`);
+    if (category !== "alle") q = q.eq("category", category);
+    if (status !== "alle") q = q.eq("status", status);
+    if (municipality !== "alle") q = q.eq("municipality", municipality);
+    if (fromDate) q = q.gte("registered_at", fromDate);
+    if (toDate) q = q.lte("registered_at", toDate);
+    if (onlyEmail) q = q.not("email", "is", null);
+    const { data, count } = await q
+      .order("registered_at", { ascending: false, nullsFirst: false })
+      .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+    setLeads(((data as unknown) as CrmLead[]) || []);
+    setTotal(count || 0);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchMunicipalities(); fetchTemplates(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchLeads(); }, [page]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 250); return () => clearTimeout(t); },
+    [search, category, status, municipality, fromDate, toDate, onlyEmail]);
+
+  const allSelected = leads.length > 0 && selected.length === leads.length;
+  const toggleAll = () => setSelected(allSelected ? [] : leads.map((l) => l.id));
+  const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
+  const runSync = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-brreg-sync", {
+        body: { mode: "manual", from: syncFrom, to: syncTo, municipalities: syncKommuner, orgForms: syncOrgForms },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`Hentet ${data.fetched} selskaper – ${data.inserted} nye, ${data.updated} oppdatert`);
+      setSyncOpen(false);
+      fetchLeads();
+      fetchMunicipalities();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke hente fra Brønnøysund");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const sendEmails = async () => {
+    if (!mailTemplate) return toast.error("Velg en mal");
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-send-email", {
+        body: { mode: "manual", leadIds: selected, templateId: mailTemplate, testEmail: testEmail || undefined },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${data.sent} e-post lagt i kø · ${data.skipped} hoppet over · ${data.failed} feilet`);
+      setMailOpen(false);
+      setSelected([]);
+      setTestEmail("");
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Utsending feilet");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const updateLead = async (id: string, patch: Partial<CrmLead>) => {
+    const { error } = await supabase.from("crm_leads").update(patch as any).eq("id", id);
+    if (error) return toast.error(error.message);
+    setLeads((ls) => ls.map((l) => (l.id === id ? { ...l, ...patch } as CrmLead : l)));
+    setDetail((d) => (d && d.id === id ? { ...d, ...patch } as CrmLead : d));
+  };
+
+  const removeSelected = async () => {
+    if (!selected.length) return;
+    const { error } = await supabase.from("crm_leads").delete().in("id", selected);
+    if (error) return toast.error(error.message);
+    toast.success(`${selected.length} slettet`);
+    setSelected([]);
+    fetchLeads();
+  };
+
+  const exportCsv = () => {
+    const rows = leads.map((l) => [
+      l.orgnr, l.name, l.org_form || "", l.industry_text || "", l.municipality || "",
+      l.registered_at || "", l.employees ?? "", l.email || "", l.phone || "", l.contact_name || "",
+      l.accountant_name || "", categoryMeta(l.category).label, l.status,
+    ]);
+    const header = ["Orgnr", "Navn", "Form", "Bransje", "Kommune", "Registrert", "Ansatte", "E-post", "Telefon", "Kontakt", "Regnskapsfører", "Kategori", "Status"];
+    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `avargo-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  const withEmail = useMemo(() => selected.filter((id) => leads.find((l) => l.id === id)?.email).length, [selected, leads]);
+
+  return (
+    <div className="space-y-4">
+      {/* toolbar */}
+      <Card className="p-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-[220px]">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Søk firma eller org.nr" className="pl-9" aria-label="Søk i leads" />
+          </div>
+          <Button onClick={() => setSyncOpen(true)}><RefreshCw size={14} className="mr-2" />Hent fra Brønnøysund</Button>
+          <Button variant="outline" onClick={exportCsv}><Download size={14} className="mr-2" />Eksporter</Button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Filter size={14} className="text-muted-foreground" />
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-[200px]" aria-label="Kategori"><SelectValue placeholder="Kategori" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="alle">Alle kategorier</SelectItem>
+              {CATEGORIES.map((c) => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="w-[150px]" aria-label="Status"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="alle">Alle statuser</SelectItem>
+              {STATUSES.map((s) => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={municipality} onValueChange={setMunicipality}>
+            <SelectTrigger className="w-[170px]" aria-label="Kommune"><SelectValue placeholder="Kommune" /></SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="alle">Alle kommuner</SelectItem>
+              {municipalities.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <div className="flex items-center gap-1">
+            <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-[145px]" aria-label="Registrert fra" />
+            <span className="text-xs text-muted-foreground">–</span>
+            <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-[145px]" aria-label="Registrert til" />
+          </div>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+            <Checkbox checked={onlyEmail} onCheckedChange={(v) => setOnlyEmail(!!v)} /> Kun med e-post
+          </label>
+        </div>
+      </Card>
+
+      {/* selection bar */}
+      {selected.length > 0 && (
+        <Card className="p-3 flex flex-wrap items-center gap-3 border-primary/30 bg-primary/5">
+          <span className="text-sm">{selected.length} valgt · {withEmail} med e-postadresse</span>
+          <div className="flex-1" />
+          <Button size="sm" onClick={() => setMailOpen(true)}><Mail size={14} className="mr-2" />Send e-post</Button>
+          <Button size="sm" variant="outline" onClick={() => setSelected([])}>Nullstill</Button>
+          <Button size="sm" variant="ghost" className="text-destructive" onClick={removeSelected}><Trash2 size={14} /></Button>
+        </Card>
+      )}
+
+      {/* list */}
+      <Card className="overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border/50 bg-muted/30 text-xs text-muted-foreground">
+          <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
+          <span>{total} selskaper</span>
+        </div>
+        {loading ? (
+          <div className="p-8 text-center text-sm text-muted-foreground"><Loader2 className="animate-spin mx-auto mb-2" size={18} />Laster…</div>
+        ) : leads.length === 0 ? (
+          <div className="p-10 text-center">
+            <Building2 size={28} className="mx-auto mb-3 text-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground">Ingen selskaper enda. Trykk «Hent fra Brønnøysund» for å starte.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border/40">
+            {leads.map((l) => {
+              const meta = categoryMeta(l.category);
+              return (
+                <div key={l.id} className="flex items-start gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                  <Checkbox className="mt-1" checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
+                  <button className="flex-1 min-w-0 text-left" onClick={() => setDetail(l)}>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium truncate">{l.name}</span>
+                      <Badge variant="outline" className={`text-[10px] ${meta.color}`}>{meta.label}</Badge>
+                      {l.unsubscribed && <Badge variant="outline" className="text-[10px]">Avmeldt</Badge>}
+                      {l.email_count > 0 && <Badge variant="secondary" className="text-[10px]">{l.email_count} e-post sendt</Badge>}
+                    </div>
+                    <div className="flex items-center gap-3 flex-wrap mt-1 text-[11px] text-muted-foreground">
+                      <span>{l.orgnr}</span>
+                      {l.org_form && <span>{l.org_form}</span>}
+                      {l.municipality && <span className="flex items-center gap-1"><MapPin size={10} />{l.municipality}</span>}
+                      {l.registered_at && <span className="flex items-center gap-1"><Calendar size={10} />{l.registered_at}</span>}
+                      {l.email ? <span className="flex items-center gap-1 text-primary"><Mail size={10} />{l.email}</span> : <span className="opacity-60">ingen e-post</span>}
+                      {l.phone && <span className="flex items-center gap-1"><Phone size={10} />{l.phone}</span>}
+                      {l.accountant_name && <span className="flex items-center gap-1"><CheckCircle2 size={10} />{l.accountant_name}</span>}
+                    </div>
+                  </button>
+                  <Select value={l.status} onValueChange={(v) => updateLead(l.id, { status: v })}>
+                    <SelectTrigger className="w-[130px] h-8 text-xs shrink-0" aria-label={`Status for ${l.name}`}><SelectValue /></SelectTrigger>
+                    <SelectContent>{STATUSES.map((s) => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {total > PAGE_SIZE && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border/50">
+            <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>Forrige</Button>
+            <span className="text-xs text-muted-foreground">Side {page + 1} av {Math.ceil(total / PAGE_SIZE)}</span>
+            <Button size="sm" variant="outline" disabled={(page + 1) * PAGE_SIZE >= total} onClick={() => setPage((p) => p + 1)}>Neste</Button>
+          </div>
+        )}
+      </Card>
+
+      {/* sync dialog */}
+      <Dialog open={syncOpen} onOpenChange={setSyncOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Hent selskaper fra Brønnøysund</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Registrert fra</Label><Input type="date" value={syncFrom} onChange={(e) => setSyncFrom(e.target.value)} /></div>
+              <div><Label className="text-xs">Registrert til</Label><Input type="date" value={syncTo} onChange={(e) => setSyncTo(e.target.value)} /></div>
+            </div>
+            <div>
+              <Label className="text-xs">Kommuner (tomt = hele landet)</Label>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {KOMMUNE_PRESETS.map((k) => (
+                  <button key={k.nr} type="button"
+                    onClick={() => setSyncKommuner((s) => s.includes(k.nr) ? s.filter((x) => x !== k.nr) : [...s, k.nr])}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${syncKommuner.includes(k.nr) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {k.label}
+                  </button>
+                ))}
+              </div>
+              <Input className="mt-2" placeholder="Egne kommunenummer, komma-separert (f.eks. 3401,3415)"
+                value={syncKommuner.join(",")} onChange={(e) => setSyncKommuner(e.target.value.split(",").map((v) => v.trim()).filter(Boolean))} />
+            </div>
+            <div>
+              <Label className="text-xs">Organisasjonsformer</Label>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {["AS", "ENK", "ANS", "DA", "NUF", "SA"].map((f) => (
+                  <button key={f} type="button"
+                    onClick={() => setSyncOrgForms((s) => s.includes(f) ? s.filter((x) => x !== f) : [...s, f])}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${syncOrgForms.includes(f) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Systemet henter offentlige data fra Enhetsregisteret, slår opp roller for å finne daglig leder/eier og om selskapet allerede har regnskapsfører, og kategoriserer automatisk.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
+            <Button onClick={runSync} disabled={syncing}>
+              {syncing ? <Loader2 size={14} className="mr-2 animate-spin" /> : <RefreshCw size={14} className="mr-2" />}Hent
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* send email dialog */}
+      <Dialog open={mailOpen} onOpenChange={setMailOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Send e-post til {selected.length} selskaper</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-xs">Mal</Label>
+              <Select value={mailTemplate} onValueChange={setMailTemplate}>
+                <SelectTrigger aria-label="Velg mal"><SelectValue placeholder="Velg mal" /></SelectTrigger>
+                <SelectContent>
+                  {templates.map((t) => <SelectItem key={t.id} value={t.id}>{t.name} · {categoryMeta(t.category).label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Testadresse (valgfritt – sender alt hit i stedet)</Label>
+              <Input value={testEmail} onChange={(e) => setTestEmail(e.target.value)} placeholder="kontakt@avargo.no" />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Kun mottakere med e-postadresse får e-post. Avmeldte og blokkerte adresser hoppes over automatisk, og alle e-poster får bunntekst med hvorfor de mottar den samt avmeldingslenke.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMailOpen(false)}>Avbryt</Button>
+            <Button onClick={sendEmails} disabled={sending}>
+              {sending ? <Loader2 size={14} className="mr-2 animate-spin" /> : <Send size={14} className="mr-2" />}Send
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* detail sheet */}
+      <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+          {detail && (
+            <>
+              <SheetHeader><SheetTitle className="pr-6">{detail.name}</SheetTitle></SheetHeader>
+              <div className="space-y-4 mt-4 text-sm">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className={categoryMeta(detail.category).color}>{categoryMeta(detail.category).label}</Badge>
+                  {detail.org_form_text && <Badge variant="secondary">{detail.org_form_text}</Badge>}
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                  <span>Org.nr</span><span className="text-foreground">{detail.orgnr}</span>
+                  <span>Registrert</span><span className="text-foreground">{detail.registered_at || "–"}</span>
+                  <span>Bransje</span><span className="text-foreground">{detail.industry_text || "–"}</span>
+                  <span>Adresse</span><span className="text-foreground">{[detail.address, detail.postal_code, detail.postal_area].filter(Boolean).join(", ") || "–"}</span>
+                  <span>Ansatte</span><span className="text-foreground flex items-center gap-1"><Users size={11} />{detail.employees ?? "–"}</span>
+                  <span>Regnskapsfører</span><span className="text-foreground">{detail.accountant_name || "Ingen registrert"}</span>
+                  <span>Revisor</span><span className="text-foreground">{detail.has_auditor ? "Ja" : "Nei"}</span>
+                </div>
+                {detail.website && (
+                  <a href={detail.website.startsWith("http") ? detail.website : `https://${detail.website}`} target="_blank" rel="noopener"
+                    className="flex items-center gap-2 text-xs text-primary"><Globe size={12} />{detail.website}<ExternalLink size={10} /></a>
+                )}
+                {!!detail.roles?.length && (
+                  <div>
+                    <Label className="text-xs">Roller</Label>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {detail.roles.map((r, i) => <Badge key={i} variant="outline" className="text-[10px]">{r.type}: {r.name}</Badge>)}
+                    </div>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <div><Label className="text-xs">Kontaktperson</Label><Input value={detail.contact_name || ""} onChange={(e) => setDetail({ ...detail, contact_name: e.target.value })} onBlur={(e) => updateLead(detail.id, { contact_name: e.target.value })} /></div>
+                  <div><Label className="text-xs">E-post</Label><Input value={detail.email || ""} onChange={(e) => setDetail({ ...detail, email: e.target.value })} onBlur={(e) => updateLead(detail.id, { email: e.target.value || null, email_verified: true })} /></div>
+                  <div><Label className="text-xs">Telefon</Label><Input value={detail.phone || ""} onChange={(e) => setDetail({ ...detail, phone: e.target.value })} onBlur={(e) => updateLead(detail.id, { phone: e.target.value || null })} /></div>
+                  <div><Label className="text-xs">Notater</Label><Textarea rows={4} value={detail.notes || ""} onChange={(e) => setDetail({ ...detail, notes: e.target.value })} onBlur={(e) => updateLead(detail.id, { notes: e.target.value })} /></div>
+                  <div>
+                    <Label className="text-xs">Kategori</Label>
+                    <Select value={detail.category} onValueChange={(v) => updateLead(detail.id, { category: v })}>
+                      <SelectTrigger aria-label="Kategori"><SelectValue /></SelectTrigger>
+                      <SelectContent>{CATEGORIES.map((c) => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <a href={`https://virksomhet.brreg.no/nb/oppslag/enheter/${detail.orgnr}`} target="_blank" rel="noopener"
+                  className="inline-flex items-center gap-1.5 text-xs text-primary">Se i Brønnøysundregistrene <ExternalLink size={10} /></a>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+};
+
+export default LeadsTab;

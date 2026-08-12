@@ -1122,6 +1122,306 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_automation_settings: {
+        Row: {
+          autopilot_enabled: boolean
+          categories: string[]
+          created_at: string
+          daily_limit: number
+          id: number
+          industry_prefixes: string[]
+          last_autopilot_at: string | null
+          last_sync_at: string | null
+          lookback_days: number
+          municipality_numbers: string[]
+          org_forms: string[]
+          send_hour: number
+          sync_enabled: boolean
+          template_map: Json
+          updated_at: string
+        }
+        Insert: {
+          autopilot_enabled?: boolean
+          categories?: string[]
+          created_at?: string
+          daily_limit?: number
+          id?: number
+          industry_prefixes?: string[]
+          last_autopilot_at?: string | null
+          last_sync_at?: string | null
+          lookback_days?: number
+          municipality_numbers?: string[]
+          org_forms?: string[]
+          send_hour?: number
+          sync_enabled?: boolean
+          template_map?: Json
+          updated_at?: string
+        }
+        Update: {
+          autopilot_enabled?: boolean
+          categories?: string[]
+          created_at?: string
+          daily_limit?: number
+          id?: number
+          industry_prefixes?: string[]
+          last_autopilot_at?: string | null
+          last_sync_at?: string | null
+          lookback_days?: number
+          municipality_numbers?: string[]
+          org_forms?: string[]
+          send_hour?: number
+          sync_enabled?: boolean
+          template_map?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_email_events: {
+        Row: {
+          automated: boolean
+          created_at: string
+          error_message: string | null
+          id: string
+          lead_id: string | null
+          message_id: string | null
+          recipient_email: string
+          sent_by: string | null
+          status: string
+          subject: string
+          template_id: string | null
+        }
+        Insert: {
+          automated?: boolean
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          message_id?: string | null
+          recipient_email: string
+          sent_by?: string | null
+          status?: string
+          subject: string
+          template_id?: string | null
+        }
+        Update: {
+          automated?: boolean
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          message_id?: string | null
+          recipient_email?: string
+          sent_by?: string | null
+          status?: string
+          subject?: string
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_email_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_events_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "crm_email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_email_templates: {
+        Row: {
+          active: boolean
+          body_html: string
+          category: string
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          reason: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body_html: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          reason?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body_html?: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          reason?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_leads: {
+        Row: {
+          accountant_name: string | null
+          address: string | null
+          category: string
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          email_count: number
+          email_verified: boolean
+          employees: number | null
+          founded_at: string | null
+          has_accountant: boolean
+          has_auditor: boolean
+          id: string
+          industry_code: string | null
+          industry_text: string | null
+          last_emailed_at: string | null
+          municipality: string | null
+          municipality_number: string | null
+          name: string
+          notes: string | null
+          org_form: string | null
+          org_form_text: string | null
+          orgnr: string
+          phone: string | null
+          postal_area: string | null
+          postal_code: string | null
+          raw: Json | null
+          registered_at: string | null
+          roles: Json
+          source: string
+          status: string
+          synced_at: string
+          unsubscribed: boolean
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          accountant_name?: string | null
+          address?: string | null
+          category?: string
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          email_count?: number
+          email_verified?: boolean
+          employees?: number | null
+          founded_at?: string | null
+          has_accountant?: boolean
+          has_auditor?: boolean
+          id?: string
+          industry_code?: string | null
+          industry_text?: string | null
+          last_emailed_at?: string | null
+          municipality?: string | null
+          municipality_number?: string | null
+          name: string
+          notes?: string | null
+          org_form?: string | null
+          org_form_text?: string | null
+          orgnr: string
+          phone?: string | null
+          postal_area?: string | null
+          postal_code?: string | null
+          raw?: Json | null
+          registered_at?: string | null
+          roles?: Json
+          source?: string
+          status?: string
+          synced_at?: string
+          unsubscribed?: boolean
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          accountant_name?: string | null
+          address?: string | null
+          category?: string
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          email_count?: number
+          email_verified?: boolean
+          employees?: number | null
+          founded_at?: string | null
+          has_accountant?: boolean
+          has_auditor?: boolean
+          id?: string
+          industry_code?: string | null
+          industry_text?: string | null
+          last_emailed_at?: string | null
+          municipality?: string | null
+          municipality_number?: string | null
+          name?: string
+          notes?: string | null
+          org_form?: string | null
+          org_form_text?: string | null
+          orgnr?: string
+          phone?: string | null
+          postal_area?: string | null
+          postal_code?: string | null
+          raw?: Json | null
+          registered_at?: string | null
+          roles?: Json
+          source?: string
+          status?: string
+          synced_at?: string
+          unsubscribed?: boolean
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      crm_sync_log: {
+        Row: {
+          details: Json | null
+          error_message: string | null
+          fetched: number
+          id: string
+          inserted: number
+          mode: string
+          run_at: string
+          status: string
+          updated: number
+        }
+        Insert: {
+          details?: Json | null
+          error_message?: string | null
+          fetched?: number
+          id?: string
+          inserted?: number
+          mode?: string
+          run_at?: string
+          status?: string
+          updated?: number
+        }
+        Update: {
+          details?: Json | null
+          error_message?: string | null
+          fetched?: number
+          id?: string
+          inserted?: number
+          mode?: string
+          run_at?: string
+          status?: string
+          updated?: number
+        }
+        Relationships: []
+      }
       customer_companies: {
         Row: {
           accounting_system: string | null
