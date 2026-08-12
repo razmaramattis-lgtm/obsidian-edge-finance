@@ -1,83 +1,80 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Mail, Zap, History, Sparkles } from "lucide-react";
+import { Building2, Mail, Zap, History, Sparkles, Maximize2, Minimize2 } from "lucide-react";
 import LeadsTab from "./crm/LeadsTab";
 import TemplatesTab from "./crm/TemplatesTab";
 import AutopilotTab from "./crm/AutopilotTab";
 import LogTab from "./crm/LogTab";
-import { CATEGORIES, categoryMeta } from "./crm/types";
 
 const CrmPanel = () => {
-  const [stats, setStats] = useState<{ total: number; byCategory: Record<string, number>; emailed: number; withEmail: number }>({
-    total: 0, byCategory: {}, emailed: 0, withEmail: 0,
-  });
+  const [fullscreen, setFullscreen] = useState(false);
+  const [stats, setStats] = useState({ total: 0, withEmail: 0, contacted: 0, nye: 0 });
 
   useEffect(() => {
     (async () => {
-      const [{ count: total }, { data: cats }, { count: emailed }, { count: withEmail }] = await Promise.all([
+      const [{ count: total }, { count: withEmail }, { count: contacted }, { count: nye }] = await Promise.all([
         supabase.from("crm_leads").select("id", { count: "exact", head: true }),
-        supabase.from("crm_leads").select("category").limit(5000),
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }).gt("email_count", 0),
         supabase.from("crm_leads").select("id", { count: "exact", head: true }).not("email", "is", null),
+        supabase.from("crm_leads").select("id", { count: "exact", head: true }).gt("email_count", 0),
+        supabase.from("crm_leads").select("id", { count: "exact", head: true }).eq("category", "ny_bedrift"),
       ]);
-      const byCategory: Record<string, number> = {};
-      (cats || []).forEach((r: any) => { byCategory[r.category] = (byCategory[r.category] || 0) + 1; });
-      setStats({ total: total || 0, byCategory, emailed: emailed || 0, withEmail: withEmail || 0 });
+      setStats({ total: total || 0, withEmail: withEmail || 0, contacted: contacted || 0, nye: nye || 0 });
     })();
   }, []);
 
-  return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-xl font-semibold flex items-center gap-2"><Sparkles size={18} className="text-primary" />CRM – bedriftsregister</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Henter selskaper fra Brønnøysundregistrene, kategoriserer dem og sender ut målrettede e-poster – manuelt eller på autopilot.
-        </p>
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFullscreen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const body = (
+    <div className={fullscreen ? "h-full flex flex-col" : "space-y-4"}>
+      <div className="flex items-center gap-3 flex-wrap">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setFullscreen((f) => !f)}
+          className="shrink-0 rounded-full"
+          aria-label={fullscreen ? "Avslutt fullskjerm" : "Fullskjerm"}
+        >
+          {fullscreen ? <Minimize2 size={14} className="mr-1.5" /> : <Maximize2 size={14} className="mr-1.5" />}
+          {fullscreen ? "Lukk fullskjerm" : "Fullskjerm"}
+        </Button>
+        <h1 className="text-base font-semibold flex items-center gap-2">
+          <Sparkles size={16} className="text-primary" />CRM
+        </h1>
+        <div className="flex items-center gap-4 text-[11px] text-muted-foreground ml-auto">
+          <span><b className="text-foreground text-sm">{stats.total}</b> selskaper</span>
+          <span><b className="text-foreground text-sm">{stats.withEmail}</b> med e-post</span>
+          <span><b className="text-foreground text-sm">{stats.contacted}</b> kontaktet</span>
+          <span><b className="text-foreground text-sm">{stats.nye}</b> nyetablerte</span>
+        </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Selskaper i basen</p>
-          <p className="text-2xl font-semibold">{stats.total}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Med e-postadresse</p>
-          <p className="text-2xl font-semibold">{stats.withEmail}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Kontaktet</p>
-          <p className="text-2xl font-semibold">{stats.emailed}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground mb-1.5">Fordeling</p>
-          <div className="space-y-1">
-            {CATEGORIES.filter((c) => stats.byCategory[c.id]).map((c) => (
-              <div key={c.id} className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground truncate">{categoryMeta(c.id).label}</span>
-                <span className="font-medium">{stats.byCategory[c.id]}</span>
-              </div>
-            ))}
-            {!Object.keys(stats.byCategory).length && <p className="text-[11px] text-muted-foreground">Ingen data</p>}
-          </div>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="leads">
+      <Tabs defaultValue="leads" className={fullscreen ? "flex-1 min-h-0 flex flex-col mt-3" : ""}>
         <TabsList>
           <TabsTrigger value="leads"><Building2 size={14} className="mr-1.5" />Selskaper</TabsTrigger>
           <TabsTrigger value="templates"><Mail size={14} className="mr-1.5" />Maler</TabsTrigger>
           <TabsTrigger value="autopilot"><Zap size={14} className="mr-1.5" />Autopilot</TabsTrigger>
           <TabsTrigger value="log"><History size={14} className="mr-1.5" />Logg</TabsTrigger>
         </TabsList>
-        <TabsContent value="leads" className="mt-4"><LeadsTab /></TabsContent>
-        <TabsContent value="templates" className="mt-4"><TemplatesTab /></TabsContent>
-        <TabsContent value="autopilot" className="mt-4"><AutopilotTab /></TabsContent>
-        <TabsContent value="log" className="mt-4"><LogTab /></TabsContent>
+        <TabsContent value="leads" className={fullscreen ? "flex-1 min-h-0 overflow-hidden mt-3" : "mt-4"}>
+          <LeadsTab fullscreen={fullscreen} />
+        </TabsContent>
+        <TabsContent value="templates" className={fullscreen ? "flex-1 min-h-0 overflow-y-auto mt-3" : "mt-4"}><TemplatesTab /></TabsContent>
+        <TabsContent value="autopilot" className={fullscreen ? "flex-1 min-h-0 overflow-y-auto mt-3" : "mt-4"}><AutopilotTab /></TabsContent>
+        <TabsContent value="log" className={fullscreen ? "flex-1 min-h-0 overflow-y-auto mt-3" : "mt-4"}><LogTab /></TabsContent>
       </Tabs>
     </div>
   );
+
+  if (fullscreen) {
+    return <div className="fixed inset-0 z-[100] bg-background p-4 overflow-hidden">{body}</div>;
+  }
+  return body;
 };
 
 export default CrmPanel;

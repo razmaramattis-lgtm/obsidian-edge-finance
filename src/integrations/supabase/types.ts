@@ -1278,11 +1278,15 @@ export type Database = {
           address: string | null
           category: string
           contact_name: string | null
+          contacted_at: string | null
           created_at: string
           email: string | null
           email_count: number
+          email_source: string | null
           email_verified: boolean
           employees: number | null
+          enrich_status: string | null
+          enriched_at: string | null
           founded_at: string | null
           has_accountant: boolean
           has_auditor: boolean
@@ -1290,6 +1294,7 @@ export type Database = {
           industry_code: string | null
           industry_text: string | null
           last_emailed_at: string | null
+          manual_lock: boolean
           municipality: string | null
           municipality_number: string | null
           name: string
@@ -1315,11 +1320,15 @@ export type Database = {
           address?: string | null
           category?: string
           contact_name?: string | null
+          contacted_at?: string | null
           created_at?: string
           email?: string | null
           email_count?: number
+          email_source?: string | null
           email_verified?: boolean
           employees?: number | null
+          enrich_status?: string | null
+          enriched_at?: string | null
           founded_at?: string | null
           has_accountant?: boolean
           has_auditor?: boolean
@@ -1327,6 +1336,7 @@ export type Database = {
           industry_code?: string | null
           industry_text?: string | null
           last_emailed_at?: string | null
+          manual_lock?: boolean
           municipality?: string | null
           municipality_number?: string | null
           name: string
@@ -1352,11 +1362,15 @@ export type Database = {
           address?: string | null
           category?: string
           contact_name?: string | null
+          contacted_at?: string | null
           created_at?: string
           email?: string | null
           email_count?: number
+          email_source?: string | null
           email_verified?: boolean
           employees?: number | null
+          enrich_status?: string | null
+          enriched_at?: string | null
           founded_at?: string | null
           has_accountant?: boolean
           has_auditor?: boolean
@@ -1364,6 +1378,7 @@ export type Database = {
           industry_code?: string | null
           industry_text?: string | null
           last_emailed_at?: string | null
+          manual_lock?: boolean
           municipality?: string | null
           municipality_number?: string | null
           name?: string

@@ -173,15 +173,19 @@ Deno.serve(async (req) => {
       })
       : collected;
 
-    // Which of these already exist?
+    // Which of these already exist? (existing leads are never wiped – manual edits win)
     const orgnrs = filtered.map((e: any) => e.organisasjonsnummer).filter(Boolean);
     const existing = new Set<string>();
+    const existingRows = new Map<string, any>();
     for (let i = 0; i < orgnrs.length; i += 500) {
       const { data: rows } = await admin
         .from("crm_leads")
-        .select("orgnr")
+        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source")
         .in("orgnr", orgnrs.slice(i, i + 500));
-      for (const r of rows || []) existing.add(r.orgnr as string);
+      for (const r of rows || []) {
+        existing.add(r.orgnr as string);
+        existingRows.set(r.orgnr as string, r);
+      }
     }
 
     // Role + contact-detail lookups for the newest entries first
@@ -239,7 +243,28 @@ Deno.serve(async (req) => {
     // cannot touch the same conflict target twice -> dedupe by orgnr.
     const deduped = Array.from(
       rows.reduce((m, r) => (r.orgnr ? m.set(r.orgnr as string, r) : m), new Map<string, typeof rows[number]>()).values(),
-    );
+    ).map((r: any) => {
+      const prev = existingRows.get(r.orgnr);
+      if (!prev) return r;
+      // Never destroy data we already have: manual edits and enriched contact info win.
+      const merged: any = { ...r };
+      if (prev.manual_lock) {
+        merged.email = prev.email;
+        merged.phone = prev.phone;
+        merged.contact_name = prev.contact_name;
+        merged.website = prev.website;
+      } else {
+        merged.email = r.email ?? prev.email ?? null;
+        merged.phone = r.phone ?? prev.phone ?? null;
+        merged.contact_name = r.contact_name ?? prev.contact_name ?? null;
+        merged.website = r.website ?? prev.website ?? null;
+      }
+      merged.email_verified = merged.email ? (prev.email === merged.email ? undefined : r.email_verified) : false;
+      if (merged.email_verified === undefined) delete merged.email_verified;
+      merged.email_source = prev.email_source ?? (merged.email ? "brreg" : null);
+      merged.category = prev.category ?? r.category; // beholder manuell kategorisering
+      return merged;
+    });
 
     for (let i = 0; i < deduped.length; i += 200) {
       const chunk = deduped.slice(i, i + 200);
