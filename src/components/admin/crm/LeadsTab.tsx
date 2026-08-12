@@ -59,11 +59,38 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [syncKommuner, setSyncKommuner] = useState<string[]>([]);
   const [syncOrgForms, setSyncOrgForms] = useState<string[]>(["AS", "ENK"]);
 
+  const [importState, setImportState] = useState<any>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   const [templates, setTemplates] = useState<CrmTemplate[]>([]);
   const [mailOpen, setMailOpen] = useState(false);
   const [mailTemplate, setMailTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
+
+  const fetchImportState = async () => {
+    const { data } = await supabase.from("crm_import_state" as any).select("*").eq("id", 1).maybeSingle();
+    setImportState(data);
+  };
+
+  const bulkImport = async (action: "start" | "stop") => {
+    setBulkBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-brreg-bulk-import", { body: { action } });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast.success(action === "start"
+        ? `Full import startet – ${(data as any)?.imported ?? 0} nye selskaper hittil. Fortsetter automatisk hvert 5. minutt.`
+        : "Full import satt på pause");
+      fetchImportState();
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke starte full import");
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
 
   const fetchMunicipalities = async () => {
     const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(2000);
