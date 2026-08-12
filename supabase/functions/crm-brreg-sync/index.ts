@@ -180,7 +180,7 @@ Deno.serve(async (req) => {
     for (let i = 0; i < orgnrs.length; i += 500) {
       const { data: rows } = await admin
         .from("crm_leads")
-        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source")
+        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source, email_verified")
         .in("orgnr", orgnrs.slice(i, i + 500));
       for (const r of rows || []) {
         existing.add(r.orgnr as string);
@@ -259,8 +259,10 @@ Deno.serve(async (req) => {
         merged.contact_name = r.contact_name ?? prev.contact_name ?? null;
         merged.website = r.website ?? prev.website ?? null;
       }
-      merged.email_verified = merged.email ? (prev.email === merged.email ? undefined : r.email_verified) : false;
-      if (merged.email_verified === undefined) delete merged.email_verified;
+      // må alltid være boolean (NOT NULL) – bulk upsert fyller manglende nøkler med null
+      merged.email_verified = merged.email
+        ? (prev.email === merged.email ? !!prev.email_verified : !!r.email_verified)
+        : false;
       merged.email_source = prev.email_source ?? (merged.email ? "brreg" : null);
       merged.category = prev.category ?? r.category; // beholder manuell kategorisering
       return merged;
