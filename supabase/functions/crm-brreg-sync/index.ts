@@ -173,15 +173,19 @@ Deno.serve(async (req) => {
       })
       : collected;
 
-    // Which of these already exist?
+    // Which of these already exist? (existing leads are never wiped – manual edits win)
     const orgnrs = filtered.map((e: any) => e.organisasjonsnummer).filter(Boolean);
     const existing = new Set<string>();
+    const existingRows = new Map<string, any>();
     for (let i = 0; i < orgnrs.length; i += 500) {
       const { data: rows } = await admin
         .from("crm_leads")
-        .select("orgnr")
+        .select("orgnr, email, phone, contact_name, website, category, manual_lock, email_source")
         .in("orgnr", orgnrs.slice(i, i + 500));
-      for (const r of rows || []) existing.add(r.orgnr as string);
+      for (const r of rows || []) {
+        existing.add(r.orgnr as string);
+        existingRows.set(r.orgnr as string, r);
+      }
     }
 
     // Role + contact-detail lookups for the newest entries first
