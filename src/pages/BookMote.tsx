@@ -66,8 +66,11 @@ function generateSlots(startTime: string, endTime: string): string[] {
 
 const STEPS = ["Tjeneste", "Situasjon", "Mål", "Tidspunkt", "Kontakt"] as const;
 
-// Microsoft Bookings – Avargo Regnskap
-const MS_BOOKINGS_URL = "https://outlook.office.com/book/AvargoRegnskap@avargo.no/?ismsaljsauthenabled";
+// Microsoft Bookings – per tjeneste
+const MS_BOOKINGS_URLS: Record<string, string> = {
+  regnskap: "https://outlook.office.com/book/AvargoRegnskap@avargo.no/?ismsaljsauthenabled",
+  hr: "https://outlook.office.com/book/AvargoHR@avargo.no/?ismsaljsauthenabled",
+};
 
 
 const BookMote = () => {
@@ -111,7 +114,7 @@ const BookMote = () => {
   const [loadingCal, setLoadingCal] = useState(false);
 
   useEffect(() => {
-    if (step !== 3 || service === "regnskap" || availability.length > 0) return;
+    if (step !== 3 || !service || MS_BOOKINGS_URLS[service] || availability.length > 0) return;
     setLoadingCal(true);
     (async () => {
       const [{ data: avail }, { data: blocked }, { data: bookings }, { data: profiles }] = await Promise.all([
@@ -548,7 +551,7 @@ const BookMote = () => {
                 </div>
               )}
 
-              {step === 3 && service === "regnskap" && (
+              {step === 3 && service && MS_BOOKINGS_URLS[service] && (
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Siste steg</p>
@@ -558,8 +561,8 @@ const BookMote = () => {
 
                   <div className="rounded-2xl overflow-hidden border border-border/20 bg-white">
                     <iframe
-                      src={MS_BOOKINGS_URL}
-                      title="Book møte med Avargo Regnskap"
+                      src={MS_BOOKINGS_URLS[service!]}
+                      title="Book møte med Avargo"
                       className="w-full h-[820px] border-0"
                       loading="lazy"
                     />
@@ -567,14 +570,14 @@ const BookMote = () => {
 
                   <p className="text-[11px] text-muted-foreground text-center">
                     Får du ikke opp kalenderen?{" "}
-                    <a href={MS_BOOKINGS_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                    <a href={MS_BOOKINGS_URLS[service!]} target="_blank" rel="noopener noreferrer" className="text-primary underline">
                       Planlegg på nett i et nytt vindu
                     </a>
                   </p>
                 </div>
               )}
 
-              {step === 3 && service !== "regnskap" && (
+              {step === 3 && service && !MS_BOOKINGS_URLS[service] && (
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Spørsmål 4 av 4</p>
@@ -674,7 +677,7 @@ const BookMote = () => {
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition">
                 <ChevronLeft size={16} /> {step === 0 ? "Avbryt" : "Tilbake"}
               </button>
-              {!(step === 3 && service === "regnskap") && (
+              {!(step === 3 && service && MS_BOOKINGS_URLS[service]) && (
                 <button onClick={() => setStep(step + 1)} disabled={!canNext()}
                   className="flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition disabled:opacity-40">
                   Neste <ChevronRight size={16} />
