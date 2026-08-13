@@ -11,8 +11,8 @@ const corsHeaders = {
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
 const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
-const TIME_BUDGET_MS = 100_000;
-const WINDOW_DAYS = 20;
+const TIME_BUDGET_MS = 60_000;
+const WINDOW_DAYS = 10;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -121,6 +121,7 @@ Deno.serve(async (req) => {
       const to = cursor;
       const fromDate = new Date(new Date(to).getTime() - WINDOW_DAYS * 86_400_000);
       const from = iso(fromDate);
+      let windowComplete = true;
 
       for (let page = 0; page < 20; page++) {
         const data = await fetchPage(from, to, page);
@@ -138,10 +139,18 @@ Deno.serve(async (req) => {
           }
           processed += enheter.length;
           imported += rows.length;
+          // Persist after every page so progress survives a hard shutdown.
+          await admin.from("crm_import_state").update({
+            processed, imported, last_run_at: new Date().toISOString(), error_message: null,
+          }).eq("id", 1);
+          console.log(`window ${from}..${to} page ${page}: +${enheter.length} (total ${processed})`);
         }
         const totalPages = data?.page?.totalPages ?? 1;
         if (page + 1 >= totalPages || enheter.length === 0) break;
+        if (Date.now() - startedAt >= TIME_BUDGET_MS) { windowComplete = false; break; }
       }
+
+      if (!windowComplete) break;
 
       cursor = iso(new Date(fromDate.getTime() - 86_400_000));
       await admin.from("crm_import_state").update({
