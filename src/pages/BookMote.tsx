@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Calculator, Users, ArrowRight, Clock, ShieldCheck, Video, ExternalLink } from "lucide-react";
 
 type ServiceId = "regnskap" | "hr";
@@ -24,15 +25,16 @@ const services = [
 ];
 
 const BookMote = () => {
+  const isMobile = useIsMobile();
   const [service, setService] = useState<ServiceId | null>(null);
   const bookingRef = useRef<HTMLDivElement>(null);
   const active = services.find(s => s.id === service);
 
   useEffect(() => {
-    if (service && bookingRef.current) {
+    if (service && !isMobile && bookingRef.current) {
       bookingRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [service]);
+  }, [service, isMobile]);
 
   return (
     <>
