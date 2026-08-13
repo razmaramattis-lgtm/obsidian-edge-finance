@@ -135,14 +135,18 @@ const BookMote = () => {
                       Åpne i nytt vindu <ExternalLink size={12} />
                     </a>
                   </div>
-                  <iframe
-                    key={active.url}
-                    src={active.url}
-                    title={`Book møte – ${active.label}`}
-                    className="w-full h-[1000px] bg-white"
-                    frameBorder={0}
-                    scrolling="yes"
-                  />
+                  <div className="h-[1000px] bg-white">
+                    <iframe
+                      key={active.url}
+                      src={active.url}
+                      title={`Book møte – ${active.label}`}
+                      width="100%"
+                      height="100%"
+                      scrolling="yes"
+                      style={{ border: 0 }}
+                    />
+                  </div>
+
                 </motion.div>
               )}
             </AnimatePresence>
