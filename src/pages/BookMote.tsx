@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Calculator, Users, ArrowRight, Clock, ShieldCheck, Video, ExternalLink } from "lucide-react";
 
 type ServiceId = "regnskap" | "hr";
@@ -24,15 +25,16 @@ const services = [
 ];
 
 const BookMote = () => {
+  const isMobile = useIsMobile();
   const [service, setService] = useState<ServiceId | null>(null);
   const bookingRef = useRef<HTMLDivElement>(null);
   const active = services.find(s => s.id === service);
 
   useEffect(() => {
-    if (service && bookingRef.current) {
+    if (service && !isMobile && bookingRef.current) {
       bookingRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [service]);
+  }, [service, isMobile]);
 
   return (
     <>
@@ -85,20 +87,27 @@ const BookMote = () => {
             {services.map(s => {
               const Icon = s.icon;
               const isActive = service === s.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setService(s.id)}
-                  className={`text-left p-5 rounded-2xl border transition-all ${isActive ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40 hover:bg-muted/20"}`}
-                >
+              const cardClass = `text-left p-5 rounded-2xl border transition-all block ${isActive && !isMobile ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary/40 hover:bg-muted/20"}`;
+              const inner = (
+                <>
                   <div className="w-10 h-10 rounded-xl bg-primary/10 border border-border/20 flex items-center justify-center mb-3">
                     <Icon size={18} className="text-primary" />
                   </div>
                   <p className="text-sm font-medium">{s.label}</p>
                   <p className="text-xs text-muted-foreground mt-1">{s.desc}</p>
                   <span className="inline-flex items-center gap-1.5 text-xs text-primary mt-3">
-                    Book tid <ArrowRight size={13} />
+                    Book tid {isMobile ? <ExternalLink size={13} /> : <ArrowRight size={13} />}
                   </span>
+                </>
+              );
+
+              return isMobile ? (
+                <a key={s.id} href={s.url} target="_blank" rel="noopener noreferrer" className={cardClass}>
+                  {inner}
+                </a>
+              ) : (
+                <button key={s.id} onClick={() => setService(s.id)} className={cardClass}>
+                  {inner}
                 </button>
               );
             })}
@@ -106,7 +115,7 @@ const BookMote = () => {
 
           <div ref={bookingRef} className="scroll-mt-28">
             <AnimatePresence mode="wait">
-              {active && (
+              {active && !isMobile && (
                 <motion.div
                   key={active.id}
                   initial={{ opacity: 0, y: 16 }}
@@ -130,7 +139,7 @@ const BookMote = () => {
                     key={active.url}
                     src={active.url}
                     title={`Book møte – ${active.label}`}
-                    className="w-full h-[1100px] md:h-[1000px] bg-white"
+                    className="w-full h-[1000px] bg-white"
                     frameBorder={0}
                     scrolling="yes"
                   />
@@ -138,6 +147,7 @@ const BookMote = () => {
               )}
             </AnimatePresence>
           </div>
+
 
           {!active && (
             <p className="text-center text-xs text-muted-foreground mt-8">
