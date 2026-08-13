@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
             Åpne Workspace
           </a>
           <div style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-            <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong> · kontakt@avargo.no</p>
+            <img src="https://avargo.no/logo.png" alt="Avargo Regnskap AS" width="120" style="display:inline-block;border:0;margin-bottom:10px;" /><p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.6;">Avargo Regnskap AS · tlf. 98 64 23 91 · <a href="mailto:kontakt@avargo.no" style="color:#94a3b8;">kontakt@avargo.no</a></p>
           </div>
         </div>
       </div>`;

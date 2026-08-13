@@ -65,7 +65,10 @@ const Email = (p: Props) => (
         ) : null}
 
         <Hr style={hr} />
-        <Text style={footer}>Sendt fra kontaktskjemaet på avargo.no{p.source ? ` · Kilde: ${p.source}` : ''}</Text>
+        <Text style={footer}>
+          Sendt fra kontaktskjemaet på avargo.no{p.source ? ` · Kilde: ${p.source}` : ''}
+          <br />Avargo Regnskap AS · tlf. 98 64 23 91 · kontakt@avargo.no
+        </Text>
       </Container>
     </Body>
   </Html>

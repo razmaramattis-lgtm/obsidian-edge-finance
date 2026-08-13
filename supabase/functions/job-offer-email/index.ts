@@ -53,7 +53,7 @@ async function sendEmail(opts: {
 
     const message = [
       `From: Avargo <${opts.from}>`,
-      `Reply-To: ${opts.from}`,
+      `Reply-To: kontakt@avargo.no`,
       `To: ${opts.to}`,
       `Subject: ${opts.subject}`,
       `MIME-Version: 1.0`,
@@ -100,7 +100,7 @@ function buildOfferEmail(opts: {
 
         <tr>
           <td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;">
-            <img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" />
+            <img src="https://avargo.no/logo-cream.png" alt="Avargo" width="120" style="display:inline-block;" />
           </td>
         </tr>
 
@@ -159,7 +159,9 @@ function buildOfferEmail(opts: {
               Varm hilsen<br/>
               <strong>${sigName}</strong>${sigTitle}<br/>
               <a href="mailto:${opts.senderEmail}" style="color:#1a1a1a;text-decoration:none;">${opts.senderEmail}</a>${sigPhone}<br/>
-              Avargo
+              Avargo Regnskap AS<br/>
+              tlf. 98 64 23 91<br/>
+              <a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none;">kontakt@avargo.no</a>
             </p>
           </td>
         </tr>
