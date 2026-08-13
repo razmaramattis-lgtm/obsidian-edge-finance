@@ -111,7 +111,7 @@ const BookMote = () => {
   const [loadingCal, setLoadingCal] = useState(false);
 
   useEffect(() => {
-    if (step !== 3 || availability.length > 0) return;
+    if (step !== 3 || service === "regnskap" || availability.length > 0) return;
     setLoadingCal(true);
     (async () => {
       const [{ data: avail }, { data: blocked }, { data: bookings }, { data: profiles }] = await Promise.all([
