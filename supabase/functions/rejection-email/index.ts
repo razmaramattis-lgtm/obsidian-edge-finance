@@ -107,7 +107,7 @@ function buildRejectionEmail(
 
         <tr>
           <td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;">
-            <img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" />
+            <img src="https://avargo.no/logo-cream.png" alt="Avargo" width="120" style="display:inline-block;" />
           </td>
         </tr>
 

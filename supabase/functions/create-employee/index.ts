@@ -66,7 +66,8 @@ async function sendEmail(opts: {
     await send("DATA");
 
     const message = [
-      `From: Avargo <${opts.from}>`,
+      `From: Avargo Regnskap AS <${opts.from}>`,
+      `Reply-To: kontakt@avargo.no`,
       `To: ${opts.to}`,
       `Subject: ${opts.subject}`,
       `MIME-Version: 1.0`,
@@ -97,7 +98,7 @@ function buildSetPasswordEmail(name: string, email: string, actionLink: string, 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 20px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-        <tr><td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;"><img src="https://obsidian-edge-finance.lovable.app/logo.png" alt="Avargo" width="120" style="display:inline-block;" /></td></tr>
+        <tr><td style="background-color:#1a1a1a;padding:32px 40px;text-align:center;"><img src="https://avargo.no/logo-cream.png" alt="Avargo" width="120" style="display:inline-block;" /></td></tr>
         <tr>
           <td style="padding:40px 40px 20px 40px;">
             <p style="margin:0 0 24px 0;font-size:20px;font-weight:600;color:#1a1a1a;">Velkommen til Avargo, ${escapeHtml(firstName)}</p>
@@ -118,7 +119,7 @@ function buildSetPasswordEmail(name: string, email: string, actionLink: string, 
             <div style="text-align:center;margin-bottom:24px;">
               <a href="${actionLink}" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">Åpne sikker innlogging</a>
             </div>
-            <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Med vennlig hilsen<br/><strong>${escapeHtml(sigName)}</strong>${sigTitle}<br/>Avargo</p>
+            <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">Med vennlig hilsen<br/><strong>${escapeHtml(sigName)}</strong>${sigTitle}<br/>Avargo Regnskap AS<br/>tlf. 98 64 23 91<br/><a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none;">kontakt@avargo.no</a></p>
           </td>
         </tr>
       </table>

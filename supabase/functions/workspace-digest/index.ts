@@ -43,7 +43,8 @@ async function sendEmail(opts: {
     await send(`RCPT TO:<${opts.to}>`);
     await send("DATA");
     const sendResp = await send([
-      `From: Avargo <${opts.from}>`,
+      `From: Avargo Regnskap AS <${opts.from}>`,
+      `Reply-To: kontakt@avargo.no`,
       `To: ${opts.to}`,
       `Subject: ${opts.subject}`,
       `MIME-Version: 1.0`,
@@ -119,7 +120,7 @@ serve(async (req) => {
             <a href="https://obsidian-edge-finance.lovable.app/workspace" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:12px 28px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;">Åpne Workspace</a>
           </div>
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-            <p style="font-size:12px;color:#94a3b8;margin:0;">Sendt fra <strong>Avargo</strong></p>
+            <img src="https://avargo.no/logo.png" alt="Avargo Regnskap AS" width="120" style="display:inline-block;border:0;margin-bottom:10px;" /><p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.6;">Avargo Regnskap AS · tlf. 98 64 23 91 · <a href="mailto:kontakt@avargo.no" style="color:#94a3b8;">kontakt@avargo.no</a></p>
           </div>
         </div>
       </div>`;
