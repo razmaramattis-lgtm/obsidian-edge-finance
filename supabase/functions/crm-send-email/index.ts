@@ -36,8 +36,10 @@ function wrap(bodyHtml: string, reason: string, unsubscribeUrl: string) {
   return `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#232d2a;">
   <div style="max-width:600px;margin:0 auto;padding:32px 24px;">
-    <div style="font-size:22px;font-weight:700;color:#1b5e4b;margin-bottom:24px;">Avargo</div>
+    <img src="https://avargo.no/logo.png" alt="Avargo Regnskap AS" width="150" style="display:block;border:0;margin-bottom:24px;" />
     <div style="font-size:15px;line-height:1.7;">${bodyHtml}</div>
+    <p style="font-size:15px;line-height:1.7;margin:28px 0 0;color:#232d2a;">Hilsen<br><strong>Avargo Regnskap AS</strong><br>tlf. 98 64 23 91<br><a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none;">kontakt@avargo.no</a></p>
+    <p style="font-size:12px;color:#6b7a75;margin:14px 0 0;">Du kan svare direkte på denne e-posten – den går rett til kontakt@avargo.no.</p>
     <div style="margin-top:32px;padding-top:20px;border-top:1px solid #dff5ef;font-size:12px;line-height:1.6;color:#6b7a75;">
       <p style="margin:0 0 8px;"><strong>Hvorfor får du denne e-posten?</strong><br>${esc(reason)}</p>
       <p style="margin:0 0 8px;">Avargo Regnskap AS · Org.nr 938 076 669 · tlf. 98 64 23 91 · <a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;">kontakt@avargo.no</a></p>

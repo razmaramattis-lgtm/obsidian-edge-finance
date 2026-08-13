@@ -166,14 +166,16 @@ function wrapInTemplate(body: string, subject: string): string {
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
 <tr><td style="padding:28px 40px 20px;border-bottom:1px solid #e4e4e7">
-<span style="font-size:20px;font-weight:700;color:#1b5e4b">Avargo</span>
+<img src="https://avargo.no/logo.png" alt="Avargo Regnskap AS" width="150" style="display:block;border:0" />
 </td></tr>
 <tr><td style="padding:32px 40px">
 <h1 style="margin:0 0 16px;font-size:18px;color:#232d2a">${escapeHtml(subject)}</h1>
 <div style="font-size:14px;line-height:1.7;color:#3f3f46">${body}</div>
+<p style="margin:28px 0 0;font-size:14px;line-height:1.7;color:#232d2a">Hilsen<br><strong>Avargo Regnskap AS</strong><br>tlf. 98 64 23 91<br><a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none">kontakt@avargo.no</a></p>
+<p style="margin:14px 0 0;font-size:12px;color:#6b7a75">Du kan svare direkte på denne e-posten – den går rett til kontakt@avargo.no.</p>
 </td></tr>
 <tr><td style="padding:20px 40px;background:#f6f1e8;border-top:1px solid #e4e4e7">
-<p style="margin:0;font-size:11px;color:#94a3b8;text-align:center">Avargo Regnskap AS · kontakt@avargo.no</p>
+<p style="margin:0;font-size:11px;color:#94a3b8;text-align:center">Avargo Regnskap AS · Org.nr 938 076 669 · tlf. 98 64 23 91 · kontakt@avargo.no</p>
 </td></tr>
 </table>
 </td></tr>
