@@ -11,8 +11,8 @@ const corsHeaders = {
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
 const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
-const TIME_BUDGET_MS = 100_000;
-const WINDOW_DAYS = 20;
+const TIME_BUDGET_MS = 60_000;
+const WINDOW_DAYS = 10;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
