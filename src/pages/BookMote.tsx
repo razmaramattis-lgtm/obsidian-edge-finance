@@ -66,6 +66,10 @@ function generateSlots(startTime: string, endTime: string): string[] {
 
 const STEPS = ["Tjeneste", "Situasjon", "Mål", "Tidspunkt", "Kontakt"] as const;
 
+// Microsoft Bookings – Avargo Regnskap
+const MS_BOOKINGS_URL = "https://outlook.office.com/book/AvargoRegnskap@avargo.no/?ismsaljsauthenabled";
+
+
 const BookMote = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
