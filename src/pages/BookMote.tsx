@@ -674,10 +674,13 @@ const BookMote = () => {
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition">
                 <ChevronLeft size={16} /> {step === 0 ? "Avbryt" : "Tilbake"}
               </button>
-              <button onClick={() => setStep(step + 1)} disabled={!canNext()}
-                className="flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition disabled:opacity-40">
-                Neste <ChevronRight size={16} />
-              </button>
+              {!(step === 3 && service === "regnskap") && (
+                <button onClick={() => setStep(step + 1)} disabled={!canNext()}
+                  className="flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition disabled:opacity-40">
+                  Neste <ChevronRight size={16} />
+                </button>
+              )}
+
             </div>
           )}
         </div>
