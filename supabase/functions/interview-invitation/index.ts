@@ -225,7 +225,9 @@ function buildInterviewEmail(opts: {
             <p style="margin:28px 0 0 0;font-size:15px;line-height:1.7;color:#3a3a3a;">
               Med vennlig hilsen<br/>
               <strong>${opts.senderName}</strong>${opts.senderTitle ? `<br/>${opts.senderTitle}` : ""}<br/>
-              Avargo
+              Avargo Regnskap AS<br/>
+              tlf. 98 64 23 91<br/>
+              <a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none;">kontakt@avargo.no</a>
             </p>
           </td>
         </tr>

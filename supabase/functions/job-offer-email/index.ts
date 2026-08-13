@@ -159,7 +159,9 @@ function buildOfferEmail(opts: {
               Varm hilsen<br/>
               <strong>${sigName}</strong>${sigTitle}<br/>
               <a href="mailto:${opts.senderEmail}" style="color:#1a1a1a;text-decoration:none;">${opts.senderEmail}</a>${sigPhone}<br/>
-              Avargo
+              Avargo Regnskap AS<br/>
+              tlf. 98 64 23 91<br/>
+              <a href="mailto:kontakt@avargo.no" style="color:#1b5e4b;text-decoration:none;">kontakt@avargo.no</a>
             </p>
           </td>
         </tr>
