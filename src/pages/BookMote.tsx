@@ -544,13 +544,40 @@ const BookMote = () => {
                 </div>
               )}
 
-              {step === 3 && (
+              {step === 3 && service === "regnskap" && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <p className="text-xs uppercase tracking-widest text-primary">Siste steg</p>
+                    <h1 className="text-2xl md:text-3xl font-semibold">Velg tidspunkt</h1>
+                    <p className="text-sm text-muted-foreground">30 minutter på Teams – uforpliktende. Velg en ledig tid i kalenderen under, så får du bekreftelse på e-post med det samme.</p>
+                  </div>
+
+                  <div className="rounded-2xl overflow-hidden border border-border/20 bg-white">
+                    <iframe
+                      src={MS_BOOKINGS_URL}
+                      title="Book møte med Avargo Regnskap"
+                      className="w-full h-[820px] border-0"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    Får du ikke opp kalenderen?{" "}
+                    <a href={MS_BOOKINGS_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                      Planlegg på nett i et nytt vindu
+                    </a>
+                  </p>
+                </div>
+              )}
+
+              {step === 3 && service !== "regnskap" && (
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <p className="text-xs uppercase tracking-widest text-primary">Spørsmål 4 av 4</p>
                     <h1 className="text-2xl md:text-3xl font-semibold">Velg tidspunkt</h1>
                     <p className="text-sm text-muted-foreground">30 minutter på Teams – uforpliktende.</p>
                   </div>
+
 
                   {loadingCal ? (
                     <div className="text-center text-sm text-muted-foreground py-10">Laster ledige tider…</div>
