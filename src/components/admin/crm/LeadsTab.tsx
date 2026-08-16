@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
   CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
+  FolderOpen, FolderPlus, UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
@@ -84,6 +85,101 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
 
+  // ── mapper ──
+  const [folders, setFolders] = useState<{ id: string; name: string; description: string | null; count?: number }[]>([]);
+  const [activeFolder, setActiveFolder] = useState("alle");
+  const [folderDialog, setFolderDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [newFolderDesc, setNewFolderDesc] = useState("");
+  const [rolesBusy, setRolesBusy] = useState(false);
+
+  const fetchFolders = async () => {
+    const { data } = await supabase.from("crm_lead_folders").select("id, name, description").order("name");
+    const list = (data as any[]) || [];
+    const withCounts = await Promise.all(
+      list.map(async (f) => {
+        const { count } = await supabase
+          .from("crm_lead_folder_members")
+          .select("lead_id", { count: "exact", head: true })
+          .eq("folder_id", f.id);
+        return { ...f, count: count || 0 };
+      }),
+    );
+    setFolders(withCounts);
+  };
+
+  const createFolder = async () => {
+    if (!newFolderName.trim()) return;
+    const { data, error } = await supabase
+      .from("crm_lead_folders")
+      .insert({ name: newFolderName.trim(), description: newFolderDesc.trim() || null })
+      .select("id, name, description")
+      .single();
+    if (error) return toast.error(error.message);
+    // legg til de valgte selskapene med én gang, hvis noen er valgt
+    if (selected.length && data) {
+      await supabase.from("crm_lead_folder_members").upsert(
+        selected.map((lead_id) => ({ folder_id: (data as any).id, lead_id })),
+        { onConflict: "folder_id,lead_id", ignoreDuplicates: true },
+      );
+    }
+    toast.success(`Mappen «${newFolderName.trim()}» er opprettet`);
+    setNewFolderName(""); setNewFolderDesc(""); setFolderDialog(false);
+    fetchFolders();
+  };
+
+  const deleteFolder = async (id: string) => {
+    const { error } = await supabase.from("crm_lead_folders").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    if (activeFolder === id) setActiveFolder("alle");
+    toast.success("Mappe slettet");
+    fetchFolders();
+  };
+
+  const addSelectedToFolder = async (folderId: string) => {
+    if (!selected.length) return;
+    const { error } = await supabase.from("crm_lead_folder_members").upsert(
+      selected.map((lead_id) => ({ folder_id: folderId, lead_id })),
+      { onConflict: "folder_id,lead_id", ignoreDuplicates: true },
+    );
+    if (error) return toast.error(error.message);
+    toast.success(`${selected.length} lagt i mappen`);
+    setSelected([]);
+    fetchFolders();
+  };
+
+  const removeSelectedFromFolder = async () => {
+    if (!selected.length || activeFolder === "alle") return;
+    const { error } = await supabase
+      .from("crm_lead_folder_members")
+      .delete()
+      .eq("folder_id", activeFolder)
+      .in("lead_id", selected);
+    if (error) return toast.error(error.message);
+    toast.success("Fjernet fra mappen");
+    setSelected([]);
+    fetchFolders();
+    fetchLeads();
+  };
+
+  const runRoles = async () => {
+    setRolesBusy(true);
+    toast.info("Henter daglig leder fra Brønnøysund …");
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-fetch-roles", {
+        body: selected.length ? { leadIds: selected } : { limit: 100 },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast.success(`Sjekket ${(data as any).processed} selskaper – fant ${(data as any).found} navn`);
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke hente roller");
+    } finally {
+      setRolesBusy(false);
+    }
+  };
+
   const fetchImportState = async () => {
     const { data } = await supabase.from("crm_import_state" as any).select("*").eq("id", 1).maybeSingle();
     setImportState(data);
@@ -121,7 +217,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
   const fetchLeads = async () => {
     setLoading(true);
+    let folderIds: string[] | null = null;
+    if (activeFolder !== "alle") {
+      const { data: mem } = await supabase
+        .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
+      folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
+      if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    }
     let q = supabase.from("crm_leads").select("*", { count: "exact" });
+    if (folderIds) q = q.in("id", folderIds);
     if (search.trim()) q = q.or(`name.ilike.%${search.trim()}%,orgnr.ilike.%${search.trim()}%`);
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
@@ -181,7 +285,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setter((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
 
   useEffect(() => {
-    fetchMunicipalities(); fetchTemplates(); fetchImportState();
+    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders();
     const t = setInterval(fetchImportState, 20000);
     return () => clearInterval(t);
   }, []);
@@ -191,7 +295,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 250); return () => clearTimeout(t); },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
-     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter]);
+     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter, activeFolder]);
 
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
@@ -301,8 +405,37 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           {enriching ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Radar size={14} className="mr-1.5" />}
           Finn e-post
         </Button>
+        <Button size="sm" variant="outline" onClick={runRoles} disabled={rolesBusy}>
+          {rolesBusy ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <UserRound size={14} className="mr-1.5" />}
+          Hent daglig leder
+        </Button>
         <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
       </div>
+
+      {/* mapper */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <FolderOpen size={13} className="text-muted-foreground" />
+        <button type="button" onClick={() => setActiveFolder("alle")}
+          className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === "alle" ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+          Alle selskaper
+        </button>
+        {folders.map((f) => (
+          <span key={f.id} className="group inline-flex items-center">
+            <button type="button" onClick={() => setActiveFolder(f.id)}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === f.id ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+              {f.name}{typeof f.count === "number" ? ` (${f.count})` : ""}
+            </button>
+            <button type="button" onClick={() => deleteFolder(f.id)} aria-label={`Slett mappen ${f.name}`}
+              className="ml-0.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity">
+              <X size={11} />
+            </button>
+          </span>
+        ))}
+        <Button size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setFolderDialog(true)}>
+          <FolderPlus size={13} className="mr-1" />Ny mappe
+        </Button>
+      </div>
+
 
       <div className="flex flex-wrap items-center gap-1.5">
         {quickFilters.map((f) => (
@@ -489,6 +622,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <SelectTrigger className="w-[150px] h-8 text-xs" aria-label="Sett kategori"><SelectValue placeholder="Sett kategori" /></SelectTrigger>
             <SelectContent>{CATEGORIES.map((c) => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}</SelectContent>
           </Select>
+          <Select onValueChange={(v) => (v === "__ny" ? setFolderDialog(true) : addSelectedToFolder(v))}>
+            <SelectTrigger className="w-[150px] h-8 text-xs" aria-label="Legg i mappe"><SelectValue placeholder="Legg i mappe" /></SelectTrigger>
+            <SelectContent>
+              {folders.map((f) => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
+              <SelectItem value="__ny">+ Ny mappe …</SelectItem>
+            </SelectContent>
+          </Select>
+          {activeFolder !== "alle" && (
+            <Button size="sm" variant="outline" onClick={removeSelectedFromFolder}>Fjern fra mappe</Button>
+          )}
           <Button size="sm" variant="outline" onClick={() => setSelected([])}>Nullstill</Button>
           <Button size="sm" variant="ghost" className="text-destructive" onClick={removeSelected} aria-label="Slett valgte"><Trash2 size={14} /></Button>
         </div>
@@ -566,6 +709,32 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           </div>
         )}
       </Card>
+
+      {/* ny mappe */}
+      <Dialog open={folderDialog} onOpenChange={setFolderDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Ny mappe</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Navn</Label>
+              <Input value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)}
+                placeholder="F.eks. Potensielle kunder Kongsvinger" className="mt-1.5 h-9 text-sm" />
+            </div>
+            <div>
+              <Label className="text-xs">Beskrivelse (valgfritt)</Label>
+              <Textarea value={newFolderDesc} onChange={(e) => setNewFolderDesc(e.target.value)}
+                placeholder="Hva samler du i denne mappen?" className="mt-1.5 text-sm" rows={2} />
+            </div>
+            {selected.length > 0 && (
+              <p className="text-[11px] text-muted-foreground">{selected.length} valgte selskaper legges rett i mappen.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFolderDialog(false)}>Avbryt</Button>
+            <Button onClick={createFolder} disabled={!newFolderName.trim()}>Opprett mappe</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* sync dialog */}
       <Dialog open={syncOpen} onOpenChange={setSyncOpen}>

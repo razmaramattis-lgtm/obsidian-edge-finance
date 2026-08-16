@@ -26,7 +26,7 @@ export const TEMPLATE_LIBRARY: LibraryTemplate[] = [
     reason: "Du får denne e-posten fordi {{ firma }} nylig ble registrert i Brønnøysundregistrene med offentlig kontaktinformasjon.",
     blocks: [
       b("heading", { text: "Gratulerer med {{ firma }}!" }),
-      b("text", { text: "Hei!\n\nVi så at {{ firma }} nylig ble registrert i Enhetsregisteret. Det er en stor dag – og samtidig starten på en del papirarbeid som må på plass fra første bilag." }),
+      b("text", { text: "{{ hilsen }}\n\nGratulerer med selskapet {{ firma }}! Vi så at det nylig ble registrert i Enhetsregisteret. Det er en stor dag – og samtidig starten på en del papirarbeid som må på plass fra første bilag." }),
       b("text", { text: "Vi i Avargo Regnskap hjelper små og mellomstore bedrifter med regnskap, lønn og rapportering til fast pris, uten bindingstid." }),
       b("bullets", { items: ["Fast rådgiver du kan ringe direkte", "Fast månedspris – ingen overraskelser", "Vi tar oss av MVA, lønn og frister", "Gratis oppstartsmøte"] }),
       CTA("Book gratis oppstartsmøte"),
