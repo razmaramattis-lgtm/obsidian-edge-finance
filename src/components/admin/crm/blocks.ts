@@ -41,6 +41,8 @@ export const MERGE_FIELDS: { key: string; label: string; sample: string }[] = [
   { key: "firma", label: "Firmanavn", sample: "Eksempel AS" },
   { key: "navn", label: "Navn (kontakt/firma)", sample: "Ola Nordmann" },
   { key: "kontaktperson", label: "Kontaktperson", sample: "Ola Nordmann" },
+  { key: "fornavn", label: "Fornavn (daglig leder)", sample: "Ola" },
+  { key: "leder", label: "Daglig leder / eier", sample: "Ola Nordmann" },
   { key: "orgnr", label: "Org.nr", sample: "999 888 777" },
   { key: "kommune", label: "Kommune", sample: "Kongsvinger" },
   { key: "poststed", label: "Poststed", sample: "Kongsvinger" },
