@@ -330,16 +330,150 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             {STATUSES.map((s) => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Select value={municipality} onValueChange={setMunicipality}>
-          <SelectTrigger className="w-[150px] h-8 text-xs" aria-label="Kommune"><SelectValue placeholder="Kommune" /></SelectTrigger>
-          <SelectContent className="max-h-72">
-            <SelectItem value="alle">Alle kommuner</SelectItem>
-            {municipalities.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-          </SelectContent>
-        </Select>
         <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-[135px] h-8 text-xs" aria-label="Registrert fra" />
         <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-[135px] h-8 text-xs" aria-label="Registrert til" />
+        <Button size="sm" variant={showFilters ? "default" : "outline"} className="h-8 text-xs" onClick={() => setShowFilters((v) => !v)}>
+          <SlidersHorizontal size={13} className="mr-1.5" />Filter{activeFilterCount ? ` (${activeFilterCount})` : ""}
+        </Button>
+        {activeFilterCount > 0 && (
+          <Button size="sm" variant="ghost" className="h-8 text-xs text-muted-foreground" onClick={resetFilters}>
+            <X size={13} className="mr-1" />Nullstill
+          </Button>
+        )}
       </div>
+
+      {/* avansert filterpanel */}
+      {showFilters && (
+        <Card className="p-3 space-y-3">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {/* Selskapsform */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Selskapsform</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {ORG_FORMS.map((f) => (
+                  <button key={f} type="button" onClick={() => toggleIn(setOrgFormFilter, f)}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${orgFormFilter.includes(f) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ansatte */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Antall ansatte</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {EMPLOYEE_BANDS.map((b) => (
+                  <button key={b.id} type="button" onClick={() => toggleIn(setEmployeeBands, b.id)}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${employeeBands.includes(b.id) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Kontaktinfo */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-[11px] text-muted-foreground">E-post</Label>
+                <Select value={hasEmail} onValueChange={setHasEmail}>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Har e-post"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alle">Alle</SelectItem>
+                    <SelectItem value="ja">Har e-post</SelectItem>
+                    <SelectItem value="nei">Mangler e-post</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-[11px] text-muted-foreground">Telefon</Label>
+                <Select value={hasPhone} onValueChange={setHasPhone}>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Har telefon"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alle">Alle</SelectItem>
+                    <SelectItem value="ja">Har telefon</SelectItem>
+                    <SelectItem value="nei">Mangler telefon</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-[11px] text-muted-foreground">Nettside</Label>
+                <Select value={hasWebsite} onValueChange={setHasWebsite}>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Har nettside"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alle">Alle</SelectItem>
+                    <SelectItem value="ja">Har nettside</SelectItem>
+                    <SelectItem value="nei">Mangler nettside</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-[11px] text-muted-foreground">Nyhetsbrev</Label>
+                <Select value={unsubFilter} onValueChange={setUnsubFilter}>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Avmeldt"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alle">Alle</SelectItem>
+                    <SelectItem value="aktive">Kan kontaktes</SelectItem>
+                    <SelectItem value="avmeldte">Avmeldt</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Regnskapsfører */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Regnskapsfører</Label>
+              <Select value={accountantFilter} onValueChange={setAccountantFilter}>
+                <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Regnskapsfører"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="alle">Alle</SelectItem>
+                  <SelectItem value="ja">Har regnskapsfører</SelectItem>
+                  <SelectItem value="nei">Uten regnskapsfører</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input value={accountantName} onChange={(e) => setAccountantName(e.target.value)}
+                placeholder="Søk på byrånavn" className="h-8 text-xs mt-2" aria-label="Søk regnskapsfører" />
+            </div>
+
+            {/* Næring */}
+            <div className="xl:col-span-2">
+              <Label className="text-[11px] text-muted-foreground">Type næring</Label>
+              <Input value={industryText} onChange={(e) => setIndustryText(e.target.value)}
+                placeholder="Søk i næringstekst (f.eks. frisør, bygg, transport)" className="h-8 text-xs mt-1.5" aria-label="Søk næring" />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {INDUSTRY_GROUPS.map((g) => (
+                  <button key={g.id} type="button" onClick={() => toggleIn(setIndustryGroups, g.id)}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${industryGroups.includes(g.id) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Kommune */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">
+                Kommune {municipalityMulti.length ? `(${municipalityMulti.length} valgt)` : ""}
+              </Label>
+              <Input value={municipalitySearch} onChange={(e) => setMunicipalitySearch(e.target.value)}
+                placeholder="Søk kommune" className="h-8 text-xs mt-1.5" aria-label="Søk kommune" />
+              <div className="mt-2 max-h-40 overflow-y-auto rounded-lg border border-border/60 p-2 flex flex-wrap gap-1.5">
+                {municipalities
+                  .filter((m) => m.toLowerCase().includes(municipalitySearch.toLowerCase()))
+                  .slice(0, 200)
+                  .map((m) => (
+                    <button key={m} type="button" onClick={() => toggleIn(setMunicipalityMulti, m)}
+                      className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${municipalityMulti.includes(m) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                      {m}
+                    </button>
+                  ))}
+                {municipalities.length === 0 && <span className="text-[11px] text-muted-foreground">Ingen kommuner enda</span>}
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
 
       {/* selection bar */}
       {selected.length > 0 && (
