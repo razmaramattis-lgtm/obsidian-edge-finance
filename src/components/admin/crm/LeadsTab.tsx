@@ -13,10 +13,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
-  CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock,
+  CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { CATEGORIES, STATUSES, categoryMeta, type CrmLead, type CrmTemplate } from "./types";
+import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
 
 const PAGE_SIZE = 50;
 
