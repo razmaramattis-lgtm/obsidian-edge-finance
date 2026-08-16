@@ -301,8 +301,37 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           {enriching ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Radar size={14} className="mr-1.5" />}
           Finn e-post
         </Button>
+        <Button size="sm" variant="outline" onClick={runRoles} disabled={rolesBusy}>
+          {rolesBusy ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <UserRound size={14} className="mr-1.5" />}
+          Hent daglig leder
+        </Button>
         <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
       </div>
+
+      {/* mapper */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <FolderOpen size={13} className="text-muted-foreground" />
+        <button type="button" onClick={() => setActiveFolder("alle")}
+          className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === "alle" ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+          Alle selskaper
+        </button>
+        {folders.map((f) => (
+          <span key={f.id} className="group inline-flex items-center">
+            <button type="button" onClick={() => setActiveFolder(f.id)}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === f.id ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+              {f.name}{typeof f.count === "number" ? ` (${f.count})` : ""}
+            </button>
+            <button type="button" onClick={() => deleteFolder(f.id)} aria-label={`Slett mappen ${f.name}`}
+              className="ml-0.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity">
+              <X size={11} />
+            </button>
+          </span>
+        ))}
+        <Button size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setFolderDialog(true)}>
+          <FolderPlus size={13} className="mr-1" />Ny mappe
+        </Button>
+      </div>
+
 
       <div className="flex flex-wrap items-center gap-1.5">
         {quickFilters.map((f) => (
