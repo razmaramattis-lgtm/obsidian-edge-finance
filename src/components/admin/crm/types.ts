@@ -62,3 +62,32 @@ export const STATUSES = [
 ];
 
 export const categoryMeta = (id: string) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[3];
+
+/* ── Næringsgrupper (SN2007 hovedområder) ── */
+export const INDUSTRY_GROUPS: { id: string; label: string; prefixes: string[] }[] = [
+  { id: "jordbruk", label: "Jordbruk, skogbruk og fiske", prefixes: ["01", "02", "03"] },
+  { id: "industri", label: "Industri og produksjon", prefixes: ["10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33"] },
+  { id: "bygg", label: "Bygg og anlegg", prefixes: ["41", "42", "43"] },
+  { id: "handel", label: "Varehandel og verksted", prefixes: ["45", "46", "47"] },
+  { id: "transport", label: "Transport og lagring", prefixes: ["49", "50", "51", "52", "53"] },
+  { id: "servering", label: "Overnatting og servering", prefixes: ["55", "56"] },
+  { id: "it", label: "IT, media og kommunikasjon", prefixes: ["58", "59", "60", "61", "62", "63"] },
+  { id: "finans", label: "Finans og forsikring", prefixes: ["64", "65", "66"] },
+  { id: "eiendom", label: "Eiendom", prefixes: ["68"] },
+  { id: "tjenester", label: "Faglig og teknisk tjenesteyting", prefixes: ["69", "70", "71", "72", "73", "74", "75"] },
+  { id: "forretning", label: "Forretningsmessig tjenesteyting", prefixes: ["77", "78", "79", "80", "81", "82"] },
+  { id: "offentlig", label: "Offentlig, undervisning og helse", prefixes: ["84", "85", "86", "87", "88"] },
+  { id: "kultur", label: "Kultur, underholdning og fritid", prefixes: ["90", "91", "92", "93"] },
+  { id: "personlig", label: "Personlig tjenesteyting", prefixes: ["94", "95", "96"] },
+];
+
+export const ORG_FORMS = ["AS", "ENK", "ASA", "ANS", "DA", "NUF", "SA", "BA", "STI", "FLI", "KS", "BRL", "ESEK"];
+
+export const EMPLOYEE_BANDS: { id: string; label: string; min: number | null; max: number | null }[] = [
+  { id: "0", label: "0 ansatte", min: 0, max: 0 },
+  { id: "1-4", label: "1–4", min: 1, max: 4 },
+  { id: "5-9", label: "5–9", min: 5, max: 9 },
+  { id: "10-19", label: "10–19", min: 10, max: 19 },
+  { id: "20-49", label: "20–49", min: 20, max: 49 },
+  { id: "50+", label: "50+", min: 50, max: null },
+];
