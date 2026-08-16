@@ -217,7 +217,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
   const fetchLeads = async () => {
     setLoading(true);
+    let folderIds: string[] | null = null;
+    if (activeFolder !== "alle") {
+      const { data: mem } = await supabase
+        .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
+      folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
+      if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    }
     let q = supabase.from("crm_leads").select("*", { count: "exact" });
+    if (folderIds) q = q.in("id", folderIds);
     if (search.trim()) q = q.or(`name.ilike.%${search.trim()}%,orgnr.ilike.%${search.trim()}%`);
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
