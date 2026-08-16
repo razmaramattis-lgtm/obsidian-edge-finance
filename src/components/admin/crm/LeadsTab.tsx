@@ -285,7 +285,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setter((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
 
   useEffect(() => {
-    fetchMunicipalities(); fetchTemplates(); fetchImportState();
+    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders();
     const t = setInterval(fetchImportState, 20000);
     return () => clearInterval(t);
   }, []);
