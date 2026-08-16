@@ -1236,36 +1236,45 @@ export type Database = {
       crm_email_templates: {
         Row: {
           active: boolean
+          blocks: Json | null
           body_html: string
           category: string
           created_at: string
+          design: Json
           id: string
           is_default: boolean
           name: string
+          preheader: string | null
           reason: string | null
           subject: string
           updated_at: string
         }
         Insert: {
           active?: boolean
+          blocks?: Json | null
           body_html: string
           category?: string
           created_at?: string
+          design?: Json
           id?: string
           is_default?: boolean
           name: string
+          preheader?: string | null
           reason?: string | null
           subject: string
           updated_at?: string
         }
         Update: {
           active?: boolean
+          blocks?: Json | null
           body_html?: string
           category?: string
           created_at?: string
+          design?: Json
           id?: string
           is_default?: boolean
           name?: string
+          preheader?: string | null
           reason?: string | null
           subject?: string
           updated_at?: string

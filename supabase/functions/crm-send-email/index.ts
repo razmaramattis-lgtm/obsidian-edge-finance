@@ -28,13 +28,17 @@ function render(tpl: string, lead: Record<string, any>) {
     bransje: esc(lead.industry_text || ""),
     regnskapsforer: esc(lead.accountant_name || ""),
     registrert: esc(lead.registered_at || ""),
+    poststed: esc(lead.postal_area || lead.municipality || ""),
+    selskapsform: esc(lead.org_form_text || lead.org_form || "selskap"),
+    ansatte: esc(lead.employees ?? ""),
   };
   return tpl.replace(/\{\{\s*([a-zA-ZæøåÆØÅ_]+)\s*\}\}/g, (m, key) => vars[key.toLowerCase()] ?? m);
 }
 
-function wrap(bodyHtml: string, reason: string, unsubscribeUrl: string) {
+function wrap(bodyHtml: string, reason: string, unsubscribeUrl: string, preheader = "") {
   return `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#232d2a;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>
   <div style="max-width:600px;margin:0 auto;padding:32px 24px;">
     <img src="https://avargo.no/logo.png" alt="Avargo Regnskap AS" width="150" style="display:block;border:0;margin-bottom:24px;" />
     <div style="font-size:15px;line-height:1.7;">${bodyHtml}</div>
@@ -164,7 +168,7 @@ Deno.serve(async (req) => {
       const rendered = render(tpl.body_html, lead);
       const unsubToken = await unsubscribeToken(admin, recipient);
       const unsubUrl = `${SITE_URL}/unsubscribe?token=${unsubToken}`;
-      const html = wrap(rendered, tpl.reason || DEFAULT_REASON, unsubUrl);
+      const html = wrap(rendered, render(tpl.reason || DEFAULT_REASON, lead), unsubUrl, render(tpl.preheader || "", lead));
       const text = rendered.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
       const { error } = await admin.rpc("enqueue_email", {

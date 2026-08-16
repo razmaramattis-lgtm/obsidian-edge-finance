@@ -61,7 +61,16 @@ export const STATUSES = [
   { id: "ikke_aktuell", label: "Ikke aktuell" },
 ];
 
-export const categoryMeta = (id: string) => CATEGORIES.find((c) => c.id === id) || CATEGORIES[3];
+export const TEMPLATE_CATEGORIES: { id: string; label: string; hint: string; color: string }[] = [
+  ...CATEGORIES.filter((c) => c.id !== "ukjent"),
+  { id: "oppfolging", label: "Oppfølging", hint: "Sendes etter en tidligere e-post uten svar", color: "bg-violet-500/10 text-violet-600 border-violet-500/20" },
+  { id: "lokal", label: "Lokal / nærområde", hint: "Geografisk vinkling – bruk {{ kommune }} aktivt", color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20" },
+  { id: "generell", label: "Generell", hint: "Passer alle kategorier", color: "bg-muted text-muted-foreground border-border" },
+  { id: "ukjent", label: "Ukjent", hint: "Ikke kategorisert enda", color: "bg-muted text-muted-foreground border-border" },
+];
+
+export const categoryMeta = (id: string) =>
+  TEMPLATE_CATEGORIES.find((c) => c.id === id) || CATEGORIES[3];
 
 /* ── Næringsgrupper (SN2007 hovedområder) ── */
 export const INDUSTRY_GROUPS: { id: string; label: string; prefixes: string[] }[] = [
