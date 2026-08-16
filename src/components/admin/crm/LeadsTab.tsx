@@ -75,6 +75,10 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [syncTo, setSyncTo] = useState(() => new Date().toISOString().slice(0, 10));
   const [syncKommuner, setSyncKommuner] = useState<string[]>([]);
   const [syncOrgForms, setSyncOrgForms] = useState<string[]>(["AS", "ENK"]);
+  const [syncIndustryGroups, setSyncIndustryGroups] = useState<string[]>([]);
+  const [syncIndustryCodes, setSyncIndustryCodes] = useState("");
+  const [syncFolderTarget, setSyncFolderTarget] = useState("ingen"); // ingen | <folderId> | __ny
+  const [syncFolderName, setSyncFolderName] = useState("");
 
   const [importState, setImportState] = useState<any>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -302,17 +306,52 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const toggleAll = () => setSelected(allSelected ? [] : leads.map((l) => l.id));
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
+  const syncPrefixes = () => {
+    const fromGroups = INDUSTRY_GROUPS.filter((g) => syncIndustryGroups.includes(g.id)).flatMap((g) => g.prefixes);
+    const manual = syncIndustryCodes.split(",").map((v) => v.trim()).filter(Boolean);
+    return Array.from(new Set([...fromGroups, ...manual]));
+  };
+
+  const putOrgnrsInFolder = async (orgnrs: string[]) => {
+    if (!orgnrs.length || syncFolderTarget === "ingen") return;
+    let folderId = syncFolderTarget;
+    if (syncFolderTarget === "__ny") {
+      const name = syncFolderName.trim();
+      if (!name) return;
+      const { data, error } = await supabase
+        .from("crm_lead_folders").insert({ name }).select("id").single();
+      if (error) { toast.error(error.message); return; }
+      folderId = (data as any).id;
+    }
+    let added = 0;
+    for (let i = 0; i < orgnrs.length; i += 500) {
+      const chunk = orgnrs.slice(i, i + 500);
+      const { data: rows } = await supabase.from("crm_leads").select("id").in("orgnr", chunk);
+      const members = ((rows as any[]) || []).map((r) => ({ folder_id: folderId, lead_id: r.id }));
+      if (!members.length) continue;
+      const { error } = await supabase
+        .from("crm_lead_folder_members").upsert(members, { onConflict: "folder_id,lead_id", ignoreDuplicates: true });
+      if (error) { toast.error(error.message); return; }
+      added += members.length;
+    }
+    toast.success(`${added} selskaper lagt i mappen`);
+    setSyncFolderName("");
+    fetchFolders();
+  };
+
   const runSync = async (backfill = false) => {
     setSyncing(true);
     try {
+      const industryPrefixes = syncPrefixes();
       const { data, error } = await supabase.functions.invoke("crm-brreg-sync", {
         body: backfill
-          ? { mode: "backfill", windowDays: 90, maxPages: 30, municipalities: syncKommuner, orgForms: syncOrgForms }
-          : { mode: "manual", from: syncFrom, to: syncTo, municipalities: syncKommuner, orgForms: syncOrgForms },
+          ? { mode: "backfill", windowDays: 90, maxPages: 30, municipalities: syncKommuner, orgForms: syncOrgForms, industryPrefixes }
+          : { mode: "manual", from: syncFrom, to: syncTo, municipalities: syncKommuner, orgForms: syncOrgForms, industryPrefixes },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       toast.success(`Hentet ${data.fetched} selskaper – ${data.inserted} nye, ${data.updated} oppdatert${backfill ? ` (${data.from} – ${data.to})` : ""}`);
+      await putOrgnrsInFolder((data?.orgnrs as string[]) || []);
       setSyncOpen(false);
       fetchLeads();
       fetchMunicipalities();
@@ -771,6 +810,37 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                 ))}
               </div>
             </div>
+            <div>
+              <Label className="text-xs">Næringsområder (tomt = alle bransjer)</Label>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {INDUSTRY_GROUPS.map((g) => (
+                  <button key={g.id} type="button"
+                    onClick={() => setSyncIndustryGroups((s) => s.includes(g.id) ? s.filter((x) => x !== g.id) : [...s, g.id])}
+                    className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${syncIndustryGroups.includes(g.id) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+              <Input className="mt-2" placeholder="Egne næringskoder, komma-separert (f.eks. 43.32, 56.10)"
+                value={syncIndustryCodes} onChange={(e) => setSyncIndustryCodes(e.target.value)} />
+            </div>
+
+            <div>
+              <Label className="text-xs">Legg resultatet i mappe</Label>
+              <Select value={syncFolderTarget} onValueChange={setSyncFolderTarget}>
+                <SelectTrigger className="mt-2 h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ingen">Ingen mappe</SelectItem>
+                  {folders.map((f) => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
+                  <SelectItem value="__ny">+ Ny mappe …</SelectItem>
+                </SelectContent>
+              </Select>
+              {syncFolderTarget === "__ny" && (
+                <Input className="mt-2" placeholder="Navn på ny mappe (f.eks. Bygg og anlegg Kongsvinger)"
+                  value={syncFolderName} onChange={(e) => setSyncFolderName(e.target.value)} />
+              )}
+            </div>
+
             <p className="text-[11px] text-muted-foreground">
               Alle selskaper blir liggende permanent i basen. Kontaktinfo du har fylt inn selv, kategori og kontaktstatus blir aldri overskrevet av nye henteoperasjoner.
             </p>
