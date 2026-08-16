@@ -335,7 +335,8 @@ Deno.serve(async (req) => {
       details: { from, to, municipalities, orgForms, industryPrefixes, roles_filled: rolesFilled },
     });
 
-    return json({ success: true, fetched, inserted, updated, rolesFilled, from, to });
+    const orgnrs_out = deduped.map((r: any) => r.orgnr).filter(Boolean).slice(0, 5000);
+    return json({ success: true, fetched, inserted, updated, rolesFilled, from, to, orgnrs: orgnrs_out });
   } catch (e) {
     const message = e instanceof Error ? e.message : typeof e === "string" ? e : JSON.stringify(e);
     await admin.from("crm_sync_log").insert({ mode, fetched, inserted, updated, status: "error", error_message: message });
