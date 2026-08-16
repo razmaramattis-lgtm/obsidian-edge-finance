@@ -1320,6 +1320,69 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_lead_folder_members: {
+        Row: {
+          added_at: string
+          folder_id: string
+          lead_id: string
+        }
+        Insert: {
+          added_at?: string
+          folder_id: string
+          lead_id: string
+        }
+        Update: {
+          added_at?: string
+          folder_id?: string
+          lead_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_lead_folder_members_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "crm_lead_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_lead_folder_members_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_lead_folders: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_leads: {
         Row: {
           accountant_name: string | null
