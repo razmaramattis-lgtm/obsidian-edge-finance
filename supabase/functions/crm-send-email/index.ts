@@ -23,6 +23,8 @@ function render(tpl: string, lead: Record<string, any>) {
     firma: esc(lead.name),
     navn: esc(lead.contact_name || lead.name),
     kontaktperson: esc(lead.contact_name || ""),
+    leder: esc(lead.contact_name || ""),
+    fornavn: esc(String(lead.contact_name || "").trim().split(/\s+/)[0] || ""),
     orgnr: esc(lead.orgnr),
     kommune: esc(lead.municipality || ""),
     bransje: esc(lead.industry_text || ""),
