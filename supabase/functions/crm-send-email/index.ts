@@ -25,6 +25,7 @@ function render(tpl: string, lead: Record<string, any>) {
     kontaktperson: esc(lead.contact_name || ""),
     leder: esc(lead.contact_name || ""),
     fornavn: esc(String(lead.contact_name || "").trim().split(/\s+/)[0] || ""),
+    hilsen: lead.contact_name ? `Hei, ${esc(lead.contact_name)}` : "Hei",
     orgnr: esc(lead.orgnr),
     kommune: esc(lead.municipality || ""),
     bransje: esc(lead.industry_text || ""),
