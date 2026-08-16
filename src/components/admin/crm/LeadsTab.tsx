@@ -710,6 +710,32 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         )}
       </Card>
 
+      {/* ny mappe */}
+      <Dialog open={folderDialog} onOpenChange={setFolderDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Ny mappe</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Navn</Label>
+              <Input value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)}
+                placeholder="F.eks. Potensielle kunder Kongsvinger" className="mt-1.5 h-9 text-sm" />
+            </div>
+            <div>
+              <Label className="text-xs">Beskrivelse (valgfritt)</Label>
+              <Textarea value={newFolderDesc} onChange={(e) => setNewFolderDesc(e.target.value)}
+                placeholder="Hva samler du i denne mappen?" className="mt-1.5 text-sm" rows={2} />
+            </div>
+            {selected.length > 0 && (
+              <p className="text-[11px] text-muted-foreground">{selected.length} valgte selskaper legges rett i mappen.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFolderDialog(false)}>Avbryt</Button>
+            <Button onClick={createFolder} disabled={!newFolderName.trim()}>Opprett mappe</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* sync dialog */}
       <Dialog open={syncOpen} onOpenChange={setSyncOpen}>
         <DialogContent className="max-w-lg">
