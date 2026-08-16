@@ -109,7 +109,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
 
   const fetchMunicipalities = async () => {
-    const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(2000);
+    const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).order("municipality").limit(20000);
     const set = new Set((data || []).map((r: any) => r.municipality).filter(Boolean));
     setMunicipalities(Array.from(set).sort());
   };
