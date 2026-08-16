@@ -126,6 +126,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
     if (municipality !== "alle") q = q.eq("municipality", municipality);
+    if (municipalityMulti.length) q = q.in("municipality", municipalityMulti);
+    if (orgFormFilter.length) q = q.in("org_form", orgFormFilter);
+    if (industryGroups.length) {
+      const prefixes = INDUSTRY_GROUPS.filter((g) => industryGroups.includes(g.id)).flatMap((g) => g.prefixes);
+      q = q.or(prefixes.map((p) => `industry_code.like.${p}%`).join(","));
+    }
+    if (industryText.trim()) q = q.ilike("industry_text", `%${industryText.trim()}%`);
+    if (employeeBands.length) {
+      const parts = EMPLOYEE_BANDS.filter((b) => employeeBands.includes(b.id)).map((b) =>
+        b.max === null ? `employees.gte.${b.min}` : `and(employees.gte.${b.min},employees.lte.${b.max})`
+      );
+      q = q.or(parts.join(","));
+    }
+    if (hasEmail === "ja") q = q.not("email", "is", null);
+    if (hasEmail === "nei") q = q.is("email", null);
+    if (hasPhone === "ja") q = q.not("phone", "is", null);
+    if (hasPhone === "nei") q = q.is("phone", null);
+    if (hasWebsite === "ja") q = q.not("website", "is", null);
+    if (hasWebsite === "nei") q = q.is("website", null);
+    if (accountantFilter === "ja") q = q.eq("has_accountant", true);
+    if (accountantFilter === "nei") q = q.eq("has_accountant", false);
+    if (accountantName.trim()) q = q.ilike("accountant_name", `%${accountantName.trim()}%`);
+    if (unsubFilter === "aktive") q = q.eq("unsubscribed", false);
+    if (unsubFilter === "avmeldte") q = q.eq("unsubscribed", true);
     if (fromDate) q = q.gte("registered_at", fromDate);
     if (toDate) q = q.lte("registered_at", toDate);
     if (contactFilter === "med_epost") q = q.not("email", "is", null);
@@ -140,6 +164,22 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setLoading(false);
   };
 
+  const activeFilterCount =
+    orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
+    (industryText.trim() ? 1 : 0) + (accountantName.trim() ? 1 : 0) +
+    [hasEmail, hasPhone, hasWebsite, accountantFilter, unsubFilter].filter((v) => v !== "alle").length +
+    (fromDate ? 1 : 0) + (toDate ? 1 : 0);
+
+  const resetFilters = () => {
+    setOrgFormFilter([]); setMunicipalityMulti([]); setMunicipalitySearch(""); setIndustryGroups([]);
+    setIndustryText(""); setEmployeeBands([]); setHasEmail("alle"); setHasPhone("alle");
+    setHasWebsite("alle"); setAccountantFilter("alle"); setAccountantName("");
+    setUnsubFilter("alle"); setFromDate(""); setToDate(""); setMunicipality("alle");
+  };
+
+  const toggleIn = (setter: (fn: (s: string[]) => string[]) => void, v: string) =>
+    setter((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
+
   useEffect(() => {
     fetchMunicipalities(); fetchTemplates(); fetchImportState();
     const t = setInterval(fetchImportState, 20000);
@@ -150,7 +190,9 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 250); return () => clearTimeout(t); },
-    [search, category, status, municipality, fromDate, toDate, contactFilter]);
+    [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
+     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter]);
+
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
   const toggleAll = () => setSelected(allSelected ? [] : leads.map((l) => l.id));
