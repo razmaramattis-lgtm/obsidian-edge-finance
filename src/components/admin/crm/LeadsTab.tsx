@@ -85,6 +85,101 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
 
+  // ── mapper ──
+  const [folders, setFolders] = useState<{ id: string; name: string; description: string | null; count?: number }[]>([]);
+  const [activeFolder, setActiveFolder] = useState("alle");
+  const [folderDialog, setFolderDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [newFolderDesc, setNewFolderDesc] = useState("");
+  const [rolesBusy, setRolesBusy] = useState(false);
+
+  const fetchFolders = async () => {
+    const { data } = await supabase.from("crm_lead_folders").select("id, name, description").order("name");
+    const list = (data as any[]) || [];
+    const withCounts = await Promise.all(
+      list.map(async (f) => {
+        const { count } = await supabase
+          .from("crm_lead_folder_members")
+          .select("lead_id", { count: "exact", head: true })
+          .eq("folder_id", f.id);
+        return { ...f, count: count || 0 };
+      }),
+    );
+    setFolders(withCounts);
+  };
+
+  const createFolder = async () => {
+    if (!newFolderName.trim()) return;
+    const { data, error } = await supabase
+      .from("crm_lead_folders")
+      .insert({ name: newFolderName.trim(), description: newFolderDesc.trim() || null })
+      .select("id, name, description")
+      .single();
+    if (error) return toast.error(error.message);
+    // legg til de valgte selskapene med én gang, hvis noen er valgt
+    if (selected.length && data) {
+      await supabase.from("crm_lead_folder_members").upsert(
+        selected.map((lead_id) => ({ folder_id: (data as any).id, lead_id })),
+        { onConflict: "folder_id,lead_id", ignoreDuplicates: true },
+      );
+    }
+    toast.success(`Mappen «${newFolderName.trim()}» er opprettet`);
+    setNewFolderName(""); setNewFolderDesc(""); setFolderDialog(false);
+    fetchFolders();
+  };
+
+  const deleteFolder = async (id: string) => {
+    const { error } = await supabase.from("crm_lead_folders").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    if (activeFolder === id) setActiveFolder("alle");
+    toast.success("Mappe slettet");
+    fetchFolders();
+  };
+
+  const addSelectedToFolder = async (folderId: string) => {
+    if (!selected.length) return;
+    const { error } = await supabase.from("crm_lead_folder_members").upsert(
+      selected.map((lead_id) => ({ folder_id: folderId, lead_id })),
+      { onConflict: "folder_id,lead_id", ignoreDuplicates: true },
+    );
+    if (error) return toast.error(error.message);
+    toast.success(`${selected.length} lagt i mappen`);
+    setSelected([]);
+    fetchFolders();
+  };
+
+  const removeSelectedFromFolder = async () => {
+    if (!selected.length || activeFolder === "alle") return;
+    const { error } = await supabase
+      .from("crm_lead_folder_members")
+      .delete()
+      .eq("folder_id", activeFolder)
+      .in("lead_id", selected);
+    if (error) return toast.error(error.message);
+    toast.success("Fjernet fra mappen");
+    setSelected([]);
+    fetchFolders();
+    fetchLeads();
+  };
+
+  const runRoles = async () => {
+    setRolesBusy(true);
+    toast.info("Henter daglig leder fra Brønnøysund …");
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-fetch-roles", {
+        body: selected.length ? { leadIds: selected } : { limit: 100 },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast.success(`Sjekket ${(data as any).processed} selskaper – fant ${(data as any).found} navn`);
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke hente roller");
+    } finally {
+      setRolesBusy(false);
+    }
+  };
+
   const fetchImportState = async () => {
     const { data } = await supabase.from("crm_import_state" as any).select("*").eq("id", 1).maybeSingle();
     setImportState(data);
