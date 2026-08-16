@@ -48,6 +48,22 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [contactFilter, setContactFilter] = useState("alle"); // alle | med_epost | uten_epost | kontaktet | ikke_kontaktet
   const [municipalities, setMunicipalities] = useState<string[]>([]);
 
+  // ── avanserte filtre ──
+  const [showFilters, setShowFilters] = useState(false);
+  const [orgFormFilter, setOrgFormFilter] = useState<string[]>([]);
+  const [municipalityMulti, setMunicipalityMulti] = useState<string[]>([]);
+  const [municipalitySearch, setMunicipalitySearch] = useState("");
+  const [industryGroups, setIndustryGroups] = useState<string[]>([]);
+  const [industryText, setIndustryText] = useState("");
+  const [employeeBands, setEmployeeBands] = useState<string[]>([]);
+  const [hasEmail, setHasEmail] = useState("alle"); // alle | ja | nei
+  const [hasPhone, setHasPhone] = useState("alle");
+  const [hasWebsite, setHasWebsite] = useState("alle");
+  const [accountantFilter, setAccountantFilter] = useState("alle"); // alle | ja | nei
+  const [accountantName, setAccountantName] = useState("");
+  const [unsubFilter, setUnsubFilter] = useState("alle"); // alle | aktive | avmeldte
+
+
   const [selected, setSelected] = useState<string[]>([]);
   const [detail, setDetail] = useState<CrmLead | null>(null);
 
