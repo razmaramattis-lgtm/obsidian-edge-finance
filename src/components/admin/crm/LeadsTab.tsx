@@ -622,6 +622,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <SelectTrigger className="w-[150px] h-8 text-xs" aria-label="Sett kategori"><SelectValue placeholder="Sett kategori" /></SelectTrigger>
             <SelectContent>{CATEGORIES.map((c) => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}</SelectContent>
           </Select>
+          <Select onValueChange={(v) => (v === "__ny" ? setFolderDialog(true) : addSelectedToFolder(v))}>
+            <SelectTrigger className="w-[150px] h-8 text-xs" aria-label="Legg i mappe"><SelectValue placeholder="Legg i mappe" /></SelectTrigger>
+            <SelectContent>
+              {folders.map((f) => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
+              <SelectItem value="__ny">+ Ny mappe …</SelectItem>
+            </SelectContent>
+          </Select>
+          {activeFolder !== "alle" && (
+            <Button size="sm" variant="outline" onClick={removeSelectedFromFolder}>Fjern fra mappe</Button>
+          )}
           <Button size="sm" variant="outline" onClick={() => setSelected([])}>Nullstill</Button>
           <Button size="sm" variant="ghost" className="text-destructive" onClick={removeSelected} aria-label="Slett valgte"><Trash2 size={14} /></Button>
         </div>
