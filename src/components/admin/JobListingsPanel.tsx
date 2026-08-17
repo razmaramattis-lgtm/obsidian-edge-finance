@@ -93,8 +93,8 @@ const emptyForm = {
   work_language: "Norsk eller engelsk", work_location: "Hybridkontor",
   num_positions: 1, start_date: "Etter avtale", deadline: "",
   intro: "", description: "", qualifications: "", tasks: "", we_offer: WE_OFFER,
-  about_company: ABOUT_AVARGO, contact_name: "Emil Follaug", contact_title: "Daglig leder",
-  contact_email: "Emil@avargo.no", contact_phone: "464 25 354",
+  about_company: ABOUT_AVARGO, contact_name: "Avargo Regnskap AS", contact_title: "Rekruttering",
+  contact_email: "kontakt@avargo.no", contact_phone: "98 64 23 91",
   published: false, active: true, images: [] as string[], highlights: [] as string[],
 };
 
