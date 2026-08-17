@@ -1,0 +1,1 @@
+UPDATE public.job_listings SET contact_email = 'kontakt@avargo.no', contact_name = 'Avargo Regnskap AS', contact_title = 'Rekruttering', contact_phone = '98 64 23 91' WHERE contact_email ILIKE '%emil%';
