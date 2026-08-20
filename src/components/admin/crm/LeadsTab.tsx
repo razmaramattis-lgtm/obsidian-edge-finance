@@ -219,10 +219,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
 
   const fetchMunicipalities = async () => {
-    const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).order("municipality").limit(20000);
-    const set = new Set((data || []).map((r: any) => r.municipality).filter(Boolean));
-    setMunicipalities(Array.from(set).sort());
+    // Rask indeksbasert uthenting – leser ikke gjennom 300 000+ rader
+    const { data, error } = await supabase.rpc("crm_municipalities" as any);
+    if (!error && data) {
+      setMunicipalities(((data as any[]) || []).map((r: any) => (typeof r === "string" ? r : r.municipality)).filter(Boolean));
+      return;
+    }
+    const { data: fb } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(5000);
+    setMunicipalities(Array.from(new Set(((fb as any[]) || []).map((r) => r.municipality).filter(Boolean))).sort());
   };
+
 
   const fetchTemplates = async () => {
     const { data } = await supabase.from("crm_email_templates").select("*").eq("active", true).order("name");
