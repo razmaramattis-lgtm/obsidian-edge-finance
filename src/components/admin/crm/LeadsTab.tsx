@@ -592,7 +592,27 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     }
   };
 
+  // Kun regnskapstall fra Regnskapsregisteret (uten nettskanning) – går mye raskere
+  const runFinancials = async () => {
+    setFinBusy(true);
+    toast.info("Henter regnskapstall …");
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-enrich-company", {
+        body: selected.length ? { leadIds: selected, skipWeb: true } : { limit: 60, skipWeb: true },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${data.processed} selskaper sjekket – ${data.withFinancials} med regnskapstall`);
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke hente regnskapstall");
+    } finally {
+      setFinBusy(false);
+    }
+  };
+
   const runFullEnrich = async () => {
+
     setFullEnriching(true);
     toast.info("Henter eiere, regnskapstall og selskapsinfo …");
     try {
