@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { Send, Upload, Mail } from "lucide-react";
+import SendPacingControl, { DEFAULT_PACING, SendPacing } from "./SendPacingControl";
 
 const EmailBulkPanel = () => {
   const [emails, setEmails] = useState("");
@@ -17,6 +18,7 @@ const EmailBulkPanel = () => {
   const [groups, setGroups] = useState<any[]>([]);
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [pacing, setPacing] = useState<SendPacing>(DEFAULT_PACING);
 
   useEffect(() => {
     supabase.from("sms_contact_groups").select("*").order("name").then(({ data }) => setGroups(data || []));
@@ -45,7 +47,9 @@ const EmailBulkPanel = () => {
   const triggerSend = async () => {
     try {
       for (let i = 0; i < 20; i++) {
-        const { data } = await supabase.functions.invoke("send-bulk-email");
+        const { data } = await supabase.functions.invoke("send-bulk-email", {
+          body: { minDelayMinutes: pacing.min, maxDelayMinutes: pacing.max },
+        });
         if (!data || (data as any).remaining === 0 || (data as any).processed === 0) break;
       }
     } catch { /* silent */ }
@@ -87,7 +91,11 @@ const EmailBulkPanel = () => {
     triggerSend();
 
     setSending(false);
-    toast.success(`${emailList.length} e-poster lagt i kø – sendes med 5–10 min mellomrom`);
+    toast.success(
+      pacing.max === 0
+        ? `${emailList.length} e-poster sendes nå`
+        : `${emailList.length} e-poster lagt i kø – sendes med ${pacing.min}–${pacing.max} min mellomrom`
+    );
     setEmails(""); setSubject(""); setBody(""); setGroupId(""); setProgress(0);
   };
 
@@ -115,6 +123,8 @@ const EmailBulkPanel = () => {
           <input type="file" accept=".csv,.txt,.xlsx" className="hidden" onChange={handleFileUpload} />
         </label>
       </div>
+
+      <SendPacingControl value={pacing} onChange={setPacing} recipients={parseEmails(emails).length} />
 
       <div className="space-y-2">
         <Label>Kontaktgruppe (valgfri)</Label>
