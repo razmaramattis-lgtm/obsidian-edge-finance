@@ -333,7 +333,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // Fritekstsøk kjøres via en indeksert databasefunksjon som returnerer id-ene.
   // Direkte `ilike` i listespørringen fikk planleggeren til å droppe trigram-indeksen
   // (RLS + ORDER BY) og skanne 590 000 rader = statement timeout.
-  const SEARCH_ID_CAP = 1000;
+  const SEARCH_ID_CAP = 400;
   const searchMode = (): "none" | "orgnr" | "text" => {
     const esc = search.trim().replace(/[%,()]/g, " ").trim();
     if (!esc) return "none";
