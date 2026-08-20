@@ -1124,10 +1124,13 @@ export type Database = {
       }
       crm_automation_settings: {
         Row: {
+          accountant_filter: string
           autopilot_enabled: boolean
           categories: string[]
           created_at: string
           daily_limit: number
+          employees_max: number | null
+          employees_min: number | null
           id: number
           industry_prefixes: string[]
           last_autopilot_at: string | null
@@ -1137,16 +1140,20 @@ export type Database = {
           min_delay_minutes: number
           municipality_numbers: string[]
           org_forms: string[]
+          require_phone: boolean
           send_hour: number
           sync_enabled: boolean
           template_map: Json
           updated_at: string
         }
         Insert: {
+          accountant_filter?: string
           autopilot_enabled?: boolean
           categories?: string[]
           created_at?: string
           daily_limit?: number
+          employees_max?: number | null
+          employees_min?: number | null
           id?: number
           industry_prefixes?: string[]
           last_autopilot_at?: string | null
@@ -1156,16 +1163,20 @@ export type Database = {
           min_delay_minutes?: number
           municipality_numbers?: string[]
           org_forms?: string[]
+          require_phone?: boolean
           send_hour?: number
           sync_enabled?: boolean
           template_map?: Json
           updated_at?: string
         }
         Update: {
+          accountant_filter?: string
           autopilot_enabled?: boolean
           categories?: string[]
           created_at?: string
           daily_limit?: number
+          employees_max?: number | null
+          employees_min?: number | null
           id?: number
           industry_prefixes?: string[]
           last_autopilot_at?: string | null
@@ -1175,6 +1186,7 @@ export type Database = {
           min_delay_minutes?: number
           municipality_numbers?: string[]
           org_forms?: string[]
+          require_phone?: boolean
           send_hour?: number
           sync_enabled?: boolean
           template_map?: Json

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Save, Zap, Send } from "lucide-react";
 import { toast } from "sonner";
-import { CATEGORIES, categoryMeta, type CrmTemplate } from "./types";
+import { CATEGORIES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmTemplate } from "./types";
 
 interface Settings {
   id: number;
@@ -25,6 +25,10 @@ interface Settings {
   lookback_days: number;
   min_delay_minutes: number;
   max_delay_minutes: number;
+  employees_min: number | null;
+  employees_max: number | null;
+  require_phone: boolean;
+  accountant_filter: string;
 }
 
 const AutopilotTab = () => {
@@ -53,11 +57,16 @@ const AutopilotTab = () => {
       send_hour: s.send_hour,
       municipality_numbers: s.municipality_numbers,
       org_forms: s.org_forms,
+      industry_prefixes: s.industry_prefixes,
       categories: s.categories,
       template_map: s.template_map,
       lookback_days: s.lookback_days,
       min_delay_minutes: s.min_delay_minutes,
       max_delay_minutes: s.max_delay_minutes,
+      employees_min: s.employees_min,
+      employees_max: s.employees_max,
+      require_phone: s.require_phone,
+      accountant_filter: s.accountant_filter || "alle",
     } as any).eq("id", s.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -164,7 +173,7 @@ const AutopilotTab = () => {
         <div>
           <Label className="text-xs">Organisasjonsformer</Label>
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {["AS", "ENK", "ANS", "DA", "NUF", "SA"].map((f) => (
+            {ORG_FORMS.map((f) => (
               <button key={f} type="button" onClick={() => toggleList("org_forms", f)}
                 className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${(s.org_forms || []).includes(f) ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
                 {f}
@@ -172,6 +181,80 @@ const AutopilotTab = () => {
             ))}
           </div>
         </div>
+
+        <div>
+          <Label className="text-xs">Bransjer (tomt = alle)</Label>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {INDUSTRY_GROUPS.map((g) => {
+              const on = g.prefixes.every((p) => (s.industry_prefixes || []).includes(p));
+              return (
+                <button key={g.id} type="button"
+                  onClick={() => {
+                    const cur = s.industry_prefixes || [];
+                    setS({
+                      ...s,
+                      industry_prefixes: on
+                        ? cur.filter((p) => !g.prefixes.includes(p))
+                        : Array.from(new Set([...cur, ...g.prefixes])),
+                    });
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${on ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                  {g.label}
+                </button>
+              );
+            })}
+          </div>
+          <Input className="mt-2" value={(s.industry_prefixes || []).join(",")}
+            onChange={(e) => setS({ ...s, industry_prefixes: e.target.value.split(",").map((v) => v.trim()).filter(Boolean) })}
+            placeholder="Egne næringskoder, f.eks. 43.2,62.01" />
+        </div>
+
+        <div>
+          <Label className="text-xs">Antall ansatte</Label>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {EMPLOYEE_BANDS.map((b) => {
+              const on = s.employees_min === b.min && (s.employees_max ?? null) === b.max;
+              return (
+                <button key={b.id} type="button"
+                  onClick={() => setS({ ...s, employees_min: on ? null : b.min, employees_max: on ? null : b.max })}
+                  className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${on ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                  {b.label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 mt-2">
+            <Input type="number" min={0} placeholder="Fra" value={s.employees_min ?? ""}
+              onChange={(e) => setS({ ...s, employees_min: e.target.value === "" ? null : Number(e.target.value) })} />
+            <Input type="number" min={0} placeholder="Til" value={s.employees_max ?? ""}
+              onChange={(e) => setS({ ...s, employees_max: e.target.value === "" ? null : Number(e.target.value) })} />
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <Label className="text-xs">Regnskapsfører</Label>
+            <Select value={s.accountant_filter || "alle"} onValueChange={(v) => setS({ ...s, accountant_filter: v })}>
+              <SelectTrigger className="mt-1.5" aria-label="Filter på regnskapsfører"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="alle">Alle selskaper</SelectItem>
+                <SelectItem value="med">Har regnskapsfører i dag</SelectItem>
+                <SelectItem value="uten">Uten regnskapsfører</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-border/60 px-3 mt-1.5">
+            <div>
+              <p className="text-xs font-medium">Krev telefonnummer</p>
+              <p className="text-[11px] text-muted-foreground">Send kun til leads med telefon registrert.</p>
+            </div>
+            <Switch checked={!!s.require_phone} onCheckedChange={(v) => setS({ ...s, require_phone: v })} />
+          </div>
+        </div>
+
+        <p className="text-[11px] text-muted-foreground">
+          Autopilot sender kun til leads med e-post som ikke har mottatt e-post fra før.
+        </p>
       </Card>
 
       <Card className="p-5 space-y-3">
