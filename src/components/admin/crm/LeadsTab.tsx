@@ -36,6 +36,16 @@ const LIST_COLUMNS =
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
 
+// Kort tallformat for lista: 1,2 mill. / 850 t
+const nokShort = (v: number | null | undefined) => {
+  if (typeof v !== "number") return "–";
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${(v / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`;
+  if (abs >= 1000) return `${Math.round(v / 1000).toLocaleString("nb-NO")} t`;
+  return v.toLocaleString("nb-NO");
+};
+
+
 // Felt som kan velges i CSV-eksporten (kun kolonner listespørringen henter)
 const EXPORT_FIELDS: { key: string; label: string; group: string; get: (l: CrmLead) => string | number }[] = [
   { key: "orgnr", label: "Orgnr", group: "Selskap", get: (l) => l.orgnr || "" },
