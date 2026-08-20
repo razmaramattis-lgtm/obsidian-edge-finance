@@ -79,6 +79,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [accountantName, setAccountantName] = useState("");
   const [unsubFilter, setUnsubFilter] = useState("alle"); // alle | aktive | avmeldte
 
+  // ── lagrede visninger og nylige søk ──
+  const [savedViews, setSavedViews] = useState<any[]>([]);
+  const [saveViewOpen, setSaveViewOpen] = useState(false);
+  const [saveViewName, setSaveViewName] = useState("");
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("crm_recent_searches") || "[]"); } catch { return []; }
+  });
+
+
+
 
   const [selected, setSelected] = useState<string[]>([]);
   const [detail, setDetail] = useState<CrmLead | null>(null);
