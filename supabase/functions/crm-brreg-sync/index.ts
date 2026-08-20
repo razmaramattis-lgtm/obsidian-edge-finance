@@ -1,5 +1,6 @@
 // Daily sync of companies from Brønnøysundregistrene (Enhetsregisteret) into the CRM.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isServiceRoleToken } from "../_shared/crm-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,7 +98,7 @@ Deno.serve(async (req) => {
 
   const authHeader = req.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "").trim();
-  const internal = !!token && token === serviceKey;
+  const internal = isServiceRoleToken(token, serviceKey);
 
   if (!internal) {
     if (!token) return json({ error: "Unauthorized" }, 401);
