@@ -171,7 +171,7 @@ Deno.serve(async (req) => {
 
   const { data: state } = await supabase
     .from('email_send_state')
-    .select('retry_after_until, batch_size, send_delay_ms, auth_email_ttl_minutes, transactional_email_ttl_minutes')
+    .select('retry_after_until, batch_size, send_delay_ms, auth_email_ttl_minutes, transactional_email_ttl_minutes, bulk_min_delay_seconds')
     .single()
 
   if (state?.retry_after_until && new Date(state.retry_after_until) > new Date()) {
@@ -187,6 +187,26 @@ Deno.serve(async (req) => {
     auth_emails: state?.auth_email_ttl_minutes ?? DEFAULT_AUTH_TTL_MINUTES,
     transactional_emails: state?.transactional_email_ttl_minutes ?? DEFAULT_TRANSACTIONAL_TTL_MINUTES,
   }
+
+  // --- Global sikkerhetsnett for masseutsendinger ---
+  // Uansett hva som er planlagt: aldri mer enn én markedsførings-/CRM-e-post
+  // per kjøring, og aldri raskere enn innstilt minimumspause.
+  const BULK_LABELS = new Set(['crm-outreach', 'bulk-broadcast'])
+  const bulkMinGapMs = Math.max(60, Number(state?.bulk_min_delay_seconds ?? 300)) * 1000
+  let bulkSentThisRun = 0
+  let lastBulkSentMs: number | null = null
+  {
+    const { data: lastBulk } = await supabase
+      .from('email_send_log')
+      .select('created_at')
+      .in('template_name', Array.from(BULK_LABELS))
+      .eq('status', 'sent')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (lastBulk?.created_at) lastBulkSentMs = new Date(lastBulk.created_at).getTime()
+  }
+
 
   // Pausede masseutsendinger: meldinger utsettes i stedet for å sendes
   const pausedBatches = new Set<string>()
