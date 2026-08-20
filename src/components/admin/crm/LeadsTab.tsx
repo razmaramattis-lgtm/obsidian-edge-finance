@@ -427,6 +427,19 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
   const withEmail = useMemo(() => selected.filter((id) => leads.find((l) => l.id === id)?.email).length, [selected, leads]);
 
+  // Mottakerne som faktisk får e-post – i samme rekkefølge som de sendes ut.
+  const mailRecipients = useMemo(
+    () => leads.filter((l) => selected.includes(l.id) && !!l.email && !l.unsubscribed),
+    [leads, selected],
+  );
+  const previewLead = mailRecipients[Math.min(previewIdx, Math.max(0, mailRecipients.length - 1))] || null;
+  const previewTemplate = templates.find((t) => t.id === mailTemplate) || null;
+  const previewMail = useMemo(
+    () => buildLeadEmail(previewTemplate, previewLead),
+    [previewTemplate, previewLead],
+  );
+
+
   const quickFilters = [
     { id: "alle", label: "Alle" },
     { id: "uten_epost", label: "Mangler e-post" },
