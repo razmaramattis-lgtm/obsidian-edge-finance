@@ -544,12 +544,17 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setPage(0);
-    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, 400);
+    // Lengre debounce på fritekstsøk: hvert tastetrykk startet før en ny tung
+    // spørring mot 590 000 rader, og køen ga «statement timeout».
+    const delay = search.trim() ? 700 : 250;
+    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, delay);
     return () => clearTimeout(t);
   },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
      unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
+
+
 
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
