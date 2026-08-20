@@ -151,6 +151,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [syncing, setSyncing] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [fullEnriching, setFullEnriching] = useState(false);
+  const [finBusy, setFinBusy] = useState(false);
+
 
   const [syncFrom, setSyncFrom] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10));
   const [syncTo, setSyncTo] = useState(() => new Date().toISOString().slice(0, 10));
