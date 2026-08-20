@@ -2,6 +2,7 @@
 // Walks the Enhetsregisteret API backwards in date windows, resumable and time-boxed:
 // each invocation continues from the stored cursor until the whole register is covered.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isServiceRoleToken } from "../_shared/crm-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +14,9 @@ const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
 const TIME_BUDGET_MS = 60_000;
 const WINDOW_DAYS = 10;
+const MAX_WINDOW_DAYS = 730;
+const LOCK_MS = 90_000;
+
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
