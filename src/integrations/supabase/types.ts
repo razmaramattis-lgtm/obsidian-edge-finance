@@ -1440,6 +1440,7 @@ export type Database = {
           roles: Json
           scan_status: string | null
           scanned_at: string | null
+          search_text: string | null
           social_links: Json | null
           source: string
           status: string
@@ -1500,6 +1501,7 @@ export type Database = {
           roles?: Json
           scan_status?: string | null
           scanned_at?: string | null
+          search_text?: string | null
           social_links?: Json | null
           source?: string
           status?: string
@@ -1560,6 +1562,7 @@ export type Database = {
           roles?: Json
           scan_status?: string | null
           scanned_at?: string | null
+          search_text?: string | null
           social_links?: Json | null
           source?: string
           status?: string
