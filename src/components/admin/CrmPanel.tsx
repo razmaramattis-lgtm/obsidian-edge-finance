@@ -14,18 +14,19 @@ const CrmPanel = () => {
 
   useEffect(() => {
     (async () => {
-      // "planned"/"estimated" = planleggerens estimat. Eksakt telling av ~590 000 rader
-      // tar 10–30 s og gir timeout (HTTP 500), så tallene ble stående på 0.
-      const [{ count: total }, { count: withEmail }, { count: contacted }, { count: nye }] = await Promise.all([
-        supabase.from("crm_leads").select("id", { count: "estimated", head: true }),
-        supabase.from("crm_leads").select("id", { count: "planned", head: true }).not("email", "is", null),
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }).gt("email_count", 0),
-        supabase.from("crm_leads").select("id", { count: "planned", head: true }).eq("category", "ny_bedrift"),
-      ]);
-      setStats({ total: total || 0, withEmail: withEmail || 0, contacted: contacted || 0, nye: nye || 0 });
+      // Eksakt telling av ~590 000 rader gir timeout, og PostgREST-estimatet blir
+      // feil (RLS-funksjonen gjør at planleggeren gjetter 1/3 av tabellen).
+      // Derfor leses ferdig utregnede tall fra crm_stats_cache (oppdateres hvert 10. min).
+      const { data } = await supabase.from("crm_stats_cache").select("key,value");
+      const m = Object.fromEntries(((data as { key: string; value: number }[]) || []).map((r) => [r.key, Number(r.value)]));
+      setStats({
+        total: m.total || 0,
+        withEmail: m.with_email || 0,
+        contacted: m.contacted || 0,
+        nye: m.new_business || 0,
+      });
     })();
   }, []);
-
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFullscreen(false); };
