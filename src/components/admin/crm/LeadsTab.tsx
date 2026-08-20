@@ -101,6 +101,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
+  const [cachedTotal, setCachedTotal] = useState(0); // eksakt totalt antall (crm_stats_cache)
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -384,6 +385,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return q;
   };
 
+  useEffect(() => {
+    supabase.from("crm_stats_cache").select("value").eq("key", "total").maybeSingle()
+      .then(({ data }) => { if (data) setCachedTotal(Number((data as any).value) || 0); });
+  }, []);
+
   const fetchSeq = useRef(0);
   // Keyset-markører: cursors[n] = startpunkt for side n (null = første side).
   // Offset-paginering kollapser på ~590 000 rader (60 s+), keyset er millisekunder.
@@ -425,7 +431,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     const last = rows[rows.length - 1];
     cursorsRef.current[page + 1] = last ? { r: last.registered_at, id: last.id } : null;
     setHasNext(rows.length === PAGE_SIZE);
-    if (withCount) setTotal(count || 0);
+    if (withCount) {
+      const noFilters = !search.trim() && activeFolder === "alle" && category === "alle" && status === "alle" &&
+        municipality === "alle" && !municipalityMulti.length && !orgFormFilter.length && !industryGroups.length &&
+        !employeeBands.length && !industryText.trim() && hasEmail === "alle" && hasPhone === "alle" &&
+        hasWebsite === "alle" && accountantFilter === "alle" && !accountantName.trim() && unsubFilter === "alle" &&
+        contactFilter === "alle" && !orgnrFilter.trim() && !empMin.trim() && !empMax.trim() && !fromDate && !toDate;
+      // Uten filtre bruker vi det eksakte, hurtigbufrede totalen (estimatet blir feil pga. RLS)
+      setTotal(noFilters && cachedTotal ? cachedTotal : count || 0);
+    }
     setLoading(false);
   };
 
