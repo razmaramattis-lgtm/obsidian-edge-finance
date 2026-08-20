@@ -996,6 +996,27 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         )}
       </Card>
 
+      {/* lagre visning */}
+      <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Lagre søkevisning</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Navn på visningen</Label>
+              <Input value={saveViewName} onChange={(e) => setSaveViewName(e.target.value)}
+                placeholder="F.eks. AS uten regnskapsfører i Kongsvinger" className="mt-1.5 h-9 text-sm" />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Lagrer søkeord, kategori, status, mappe og alle aktive filtre slik de står nå ({activeFilterCount} aktive filtre).
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveViewOpen(false)}>Avbryt</Button>
+            <Button onClick={saveView} disabled={!saveViewName.trim()}>Lagre visning</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* ny mappe */}
       <Dialog open={folderDialog} onOpenChange={setFolderDialog}>
         <DialogContent className="max-w-md">
