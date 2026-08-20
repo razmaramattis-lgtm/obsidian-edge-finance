@@ -240,7 +240,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setTemplates((data as CrmTemplate[]) || []);
   };
 
+  // Åpner kundekortet med lettvekts-raden først, og etterfyller de tunge feltene
+  const openDetail = async (l: CrmLead) => {
+    setDetail(l);
+    const { data } = await supabase.from("crm_leads").select("*").eq("id", l.id).maybeSingle();
+    if (data) setDetail((d) => (d && d.id === (data as any).id ? (data as any) : d));
+  };
+
   const fetchLeads = async () => {
+
     setLoading(true);
     let folderIds: string[] | null = null;
     if (activeFolder !== "alle") {
