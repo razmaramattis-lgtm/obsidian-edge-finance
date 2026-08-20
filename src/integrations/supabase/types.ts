@@ -1605,6 +1605,24 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_stats_cache: {
+        Row: {
+          key: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       crm_sync_log: {
         Row: {
           details: Json | null
@@ -4951,6 +4969,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      refresh_crm_stats: { Args: never; Returns: undefined }
       requeue_failed_batch: {
         Args: { _batch_id: string; _limit?: number }
         Returns: number

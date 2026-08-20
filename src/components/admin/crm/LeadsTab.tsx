@@ -101,6 +101,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
+  const [cachedTotal, setCachedTotal] = useState(0); // eksakt totalt antall (crm_stats_cache)
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -384,6 +385,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return q;
   };
 
+  useEffect(() => {
+    supabase.from("crm_stats_cache").select("value").eq("key", "total").maybeSingle()
+      .then(({ data }) => { if (data) setCachedTotal(Number((data as any).value) || 0); });
+  }, []);
+
   const fetchSeq = useRef(0);
   // Keyset-markører: cursors[n] = startpunkt for side n (null = første side).
   // Offset-paginering kollapser på ~590 000 rader (60 s+), keyset er millisekunder.
@@ -430,6 +436,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   };
 
 
+
+  // Uten filtre viser vi det eksakte, hurtigbufrede totalet – PostgREST-estimatet
+  // blir systematisk feil fordi planleggeren gjetter på RLS-filteret.
+  const noFilters =
+    !search.trim() && activeFolder === "alle" && category === "alle" && status === "alle" &&
+    municipality === "alle" && !municipalityMulti.length && !orgFormFilter.length && !industryGroups.length &&
+    !employeeBands.length && !industryText.trim() && hasEmail === "alle" && hasPhone === "alle" &&
+    hasWebsite === "alle" && accountantFilter === "alle" && !accountantName.trim() && unsubFilter === "alle" &&
+    contactFilter === "alle" && !orgnrFilter.trim() && !empMin.trim() && !empMax.trim() && !fromDate && !toDate;
+  const displayTotal = noFilters && cachedTotal ? cachedTotal : total;
 
   const activeFilterCount =
     orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
@@ -1080,7 +1096,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
         <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
-          <span>Selskap ({total > 1000 ? `ca. ${total.toLocaleString("nb-NO")}` : total})</span>
+          <span>Selskap ({displayTotal > 1000 ? `ca. ${displayTotal.toLocaleString("nb-NO")}` : displayTotal})</span>
           <span>Kontakt</span>
           <span>Regnskapstall</span>
           <span>Kategori</span>
@@ -1185,7 +1201,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           <div className="flex items-center justify-between px-3 py-2 border-t border-border/50">
             <Button size="sm" variant="outline" disabled={page === 0 || loading} onClick={() => setPage((p) => p - 1)}>Forrige</Button>
             <span className="text-[11px] text-muted-foreground">
-              Side {page + 1}{total > 0 ? ` av ca. ${Math.ceil(total / PAGE_SIZE).toLocaleString("nb-NO")}` : ""} · {total.toLocaleString("nb-NO")} selskaper
+              Side {page + 1}{displayTotal > 0 ? ` av ca. ${Math.ceil(displayTotal / PAGE_SIZE).toLocaleString("nb-NO")}` : ""} · {displayTotal.toLocaleString("nb-NO")} selskaper
             </span>
             <Button size="sm" variant="outline" disabled={!hasNext || loading} onClick={() => setPage((p) => p + 1)}>Neste</Button>
           </div>
@@ -1214,7 +1230,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                   <Label className="text-xs">Maks antall rader</Label>
                   <Input type="number" min={1} max={50000} value={exportLimit}
                     onChange={(e) => setExportLimit(e.target.value)} className="mt-1.5 h-9 text-sm" />
-                  <p className="text-[11px] text-muted-foreground mt-1">Ca. {total.toLocaleString("nb-NO")} treff i filteret nå.</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Ca. {displayTotal.toLocaleString("nb-NO")} treff i filteret nå.</p>
                 </div>
               )}
             </div>

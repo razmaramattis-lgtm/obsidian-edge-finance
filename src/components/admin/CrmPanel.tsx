@@ -14,13 +14,17 @@ const CrmPanel = () => {
 
   useEffect(() => {
     (async () => {
-      const [{ count: total }, { count: withEmail }, { count: contacted }, { count: nye }] = await Promise.all([
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }),
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }).not("email", "is", null),
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }).gt("email_count", 0),
-        supabase.from("crm_leads").select("id", { count: "exact", head: true }).eq("category", "ny_bedrift"),
-      ]);
-      setStats({ total: total || 0, withEmail: withEmail || 0, contacted: contacted || 0, nye: nye || 0 });
+      // Eksakt telling av ~590 000 rader gir timeout, og PostgREST-estimatet blir
+      // feil (RLS-funksjonen gjør at planleggeren gjetter 1/3 av tabellen).
+      // Derfor leses ferdig utregnede tall fra crm_stats_cache (oppdateres hvert 10. min).
+      const { data } = await supabase.from("crm_stats_cache").select("key,value");
+      const m = Object.fromEntries(((data as { key: string; value: number }[]) || []).map((r) => [r.key, Number(r.value)]));
+      setStats({
+        total: m.total || 0,
+        withEmail: m.with_email || 0,
+        contacted: m.contacted || 0,
+        nye: m.new_business || 0,
+      });
     })();
   }, []);
 
@@ -47,10 +51,10 @@ const CrmPanel = () => {
           <Sparkles size={16} className="text-primary" />CRM
         </h1>
         <div className="flex items-center gap-4 text-[11px] text-muted-foreground ml-auto">
-          <span><b className="text-foreground text-sm">{stats.total}</b> selskaper</span>
-          <span><b className="text-foreground text-sm">{stats.withEmail}</b> med e-post</span>
-          <span><b className="text-foreground text-sm">{stats.contacted}</b> kontaktet</span>
-          <span><b className="text-foreground text-sm">{stats.nye}</b> nyetablerte</span>
+          <span><b className="text-foreground text-sm">{stats.total.toLocaleString("nb-NO")}</b> selskaper</span>
+          <span><b className="text-foreground text-sm">{stats.withEmail.toLocaleString("nb-NO")}</b> med e-post</span>
+          <span><b className="text-foreground text-sm">{stats.contacted.toLocaleString("nb-NO")}</b> kontaktet</span>
+          <span><b className="text-foreground text-sm">{stats.nye.toLocaleString("nb-NO")}</b> nyetablerte</span>
         </div>
       </div>
 
