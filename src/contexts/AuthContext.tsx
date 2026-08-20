@@ -24,6 +24,21 @@ interface AuthContextType {
   isCustomer: boolean;
 }
 
+const AUTH_TIMEOUT_MS = 15_000;
+
+const withTimeout = async <T,>(promise: PromiseLike<T>, message: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), AUTH_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([Promise.resolve(promise), timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
@@ -73,8 +88,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    try {
+      const { error } = await withTimeout(
+        supabase.auth.signInWithPassword({ email: email.trim(), password }),
+        "Innloggingen tok for lang tid. Vent litt og prøv igjen.",
+      );
+      return { error: error as Error | null };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error : new Error("Kunne ikke kontakte innloggingstjenesten."),
+      };
+    }
   };
 
   const signOut = async () => {
