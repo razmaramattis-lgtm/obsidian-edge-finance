@@ -14,10 +14,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
   CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
-  FolderOpen, FolderPlus, UserRound,
+  FolderOpen, FolderPlus, UserRound, Eye, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
+import { buildLeadEmail } from "./emailPreview";
+
 
 const PAGE_SIZE = 50;
 
