@@ -198,13 +198,15 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { /* ignore */ }
 
   const leadIds = (body.leadIds as string[]) || [];
-  const limit = Math.min(Number(body.limit) || 25, 60);
+  const skipWebEarly = body.skipWeb === true;
+  // Uten nettskanning er kallene raske – da kan vi ta mange flere per kjøring
+  const limit = Math.min(Number(body.limit) || 25, skipWebEarly ? 400 : 60);
   const skipWeb = body.skipWeb === true;
 
   const cols = "id, orgnr, name, website, email, phone, contact_name, manual_lock";
   let q = leadIds.length
     ? admin.from("crm_leads").select(cols).in("id", leadIds).limit(Math.max(limit, leadIds.length))
-    : admin.from("crm_leads").select(cols).is("financials_fetched_at", null).order("registered_at", { ascending: false, nullsFirst: false }).limit(limit);
+    : admin.from("crm_leads").select(cols).is("financials_fetched_at", null).order("registered_at", { ascending: true, nullsFirst: false }).limit(limit);
 
   const { data: leads, error } = await q;
   if (error) return json({ error: error.message }, 500);
@@ -212,7 +214,7 @@ Deno.serve(async (req) => {
 
   let withFinancials = 0, withEmail = 0, withOwner = 0;
 
-  await mapLimit(leads as any[], 4, async (l: any) => {
+  await mapLimit(leads as any[], skipWeb ? 16 : 4, async (l: any) => {
     const [enhet, roleInfo, fin] = await Promise.all([
       getJson(`${BRREG}/${l.orgnr}`),
       fetchRoles(l.orgnr),

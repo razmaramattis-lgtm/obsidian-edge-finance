@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,16 @@ const LIST_COLUMNS =
 
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
+
+// Kort tallformat for lista: 1,2 mill. / 850 t
+const nokShort = (v: number | null | undefined) => {
+  if (typeof v !== "number") return "–";
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${(v / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`;
+  if (abs >= 1000) return `${Math.round(v / 1000).toLocaleString("nb-NO")} t`;
+  return v.toLocaleString("nb-NO");
+};
+
 
 // Felt som kan velges i CSV-eksporten (kun kolonner listespørringen henter)
 const EXPORT_FIELDS: { key: string; label: string; group: string; get: (l: CrmLead) => string | number }[] = [
@@ -141,6 +151,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [syncing, setSyncing] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [fullEnriching, setFullEnriching] = useState(false);
+  const [finBusy, setFinBusy] = useState(false);
+
 
   const [syncFrom, setSyncFrom] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10));
   const [syncTo, setSyncTo] = useState(() => new Date().toISOString().slice(0, 10));
@@ -321,10 +333,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (term) {
       const esc = term.replace(/[%,()]/g, " ").trim();
       const digits = esc.replace(/\s/g, "");
+      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret
       q = /^\d{6,9}$/.test(digits)
         ? q.like("orgnr", `${digits}%`)
-        : q.or(`name.ilike.%${esc}%,orgnr.ilike.%${esc}%,email.ilike.%${esc}%,contact_name.ilike.%${esc}%,municipality.ilike.%${esc}%`);
+        : q.ilike("search_text", `%${esc}%`);
     }
+
 
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
@@ -367,23 +381,33 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return q;
   };
 
+  const fetchSeq = useRef(0);
+
   const fetchLeads = async () => {
+    const seq = ++fetchSeq.current;
     setLoading(true);
     const folderIds = await resolveFolderIds();
     if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
-    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
-    const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" }), folderIds);
+    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten.
+    // Antall telles kun på første side (estimat), resten av sidene gjenbruker tallet = mye raskere bla.
+    const withCount = page === 0;
+    const q = applyLeadFilters(
+      supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: "estimated" } : undefined),
+      folderIds,
+    );
     const { data, count, error } = await q
       .order("registered_at", { ascending: false, nullsFirst: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+    if (seq !== fetchSeq.current) return; // eldre svar – ignorer
     if (error) {
       toast.error("Kunne ikke hente selskaper: " + error.message);
       setLeads([]); setTotal(0); setLoading(false); return;
     }
     setLeads(((data as unknown) as CrmLead[]) || []);
-    setTotal(count || 0);
+    if (withCount) setTotal(count || 0);
     setLoading(false);
   };
+
 
 
   const activeFilterCount =
@@ -568,7 +592,27 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     }
   };
 
+  // Kun regnskapstall fra Regnskapsregisteret (uten nettskanning) – går mye raskere
+  const runFinancials = async () => {
+    setFinBusy(true);
+    toast.info("Henter regnskapstall …");
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-enrich-company", {
+        body: selected.length ? { leadIds: selected, skipWeb: true } : { limit: 60, skipWeb: true },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${data.processed} selskaper sjekket – ${data.withFinancials} med regnskapstall`);
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Kunne ikke hente regnskapstall");
+    } finally {
+      setFinBusy(false);
+    }
+  };
+
   const runFullEnrich = async () => {
+
     setFullEnriching(true);
     toast.info("Henter eiere, regnskapstall og selskapsinfo …");
     try {
@@ -701,10 +745,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           {rolesBusy ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <UserRound size={14} className="mr-1.5" />}
           Hent daglig leder
         </Button>
+        <Button size="sm" variant="outline" onClick={runFinancials} disabled={finBusy}>
+          {finBusy ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <TrendingUp size={14} className="mr-1.5" />}
+          Hent regnskapstall
+        </Button>
         <Button size="sm" variant="outline" onClick={runFullEnrich} disabled={fullEnriching}>
           {fullEnriching ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Sparkles size={14} className="mr-1.5" />}
           Full selskapsinfo
         </Button>
+
 
         <Button size="sm" variant="outline" onClick={() => setExportOpen(true)}><Download size={14} className="mr-1.5" />Eksporter CSV</Button>
       </div>
@@ -1008,14 +1057,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
       {/* dense list */}
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
-        <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
+        <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
           <span>Selskap ({total > 1000 ? `ca. ${total.toLocaleString("nb-NO")}` : total})</span>
           <span>Kontakt</span>
+          <span>Regnskapstall</span>
           <span>Kategori</span>
           <span>Kontaktet</span>
           <span>Status</span>
         </div>
+
         <div className={fullscreen ? "flex-1 min-h-0 overflow-y-auto" : ""}>
           {loading ? (
             <div className="p-8 text-center text-sm text-muted-foreground"><Loader2 className="animate-spin mx-auto mb-2" size={18} />Laster…</div>
@@ -1030,7 +1081,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                 const meta = categoryMeta(l.category);
                 const reasons = matchReasons(l, search);
                 return (
-                  <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
+                  <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
                     <Checkbox checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
                     <button className="min-w-0 text-left" onClick={() => openDetail(l)}>
                       <div className="flex items-center gap-1.5 min-w-0">
@@ -1066,7 +1117,23 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                       </span>
                     </div>
 
+                    {/* regnskapstall */}
+                    <div className="min-w-0 text-[10px] leading-tight">
+                      {l.fiscal_year ? (
+                        <>
+                          <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
+                          <span className="block font-medium">{nokShort(l.revenue)}</span>
+                          <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
+                            Res. {nokShort(l.net_result)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground/60">ikke hentet</span>
+                      )}
+                    </div>
+
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
+
                     <span className="text-[10px] text-muted-foreground">
                       {l.email_count > 0
                         ? <span className="text-primary flex items-center gap-1"><CheckCircle2 size={10} />{l.email_count}x</span>
