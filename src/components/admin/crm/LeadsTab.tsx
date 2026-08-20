@@ -625,6 +625,47 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
       </div>
 
+      {/* lagrede visninger og nylige søk */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Bookmark size={13} className="text-muted-foreground" />
+        <span className="text-[11px] text-muted-foreground">Lagrede visninger:</span>
+        {savedViews.length === 0 && <span className="text-[11px] text-muted-foreground/70">ingen enda</span>}
+        {savedViews.map((v) => (
+          <span key={v.id} className="group inline-flex items-center">
+            <button type="button" onClick={() => applyView(v)} title="Bruk denne visningen"
+              className="px-2.5 py-1 rounded-full text-[11px] border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors">
+              {v.name}
+            </button>
+            <button type="button" onClick={() => deleteView(v.id)} aria-label={`Slett visningen ${v.name}`}
+              className="ml-0.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity">
+              <X size={11} />
+            </button>
+          </span>
+        ))}
+        <Button size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setSaveViewOpen(true)}>
+          <BookmarkPlus size={13} className="mr-1" />Lagre dagens filter
+        </Button>
+
+        {recentSearches.length > 0 && (
+          <>
+            <span className="w-px h-4 bg-border mx-1" />
+            <History size={13} className="text-muted-foreground" />
+            <span className="text-[11px] text-muted-foreground">Nylige søk:</span>
+            {recentSearches.map((t) => (
+              <button key={t} type="button" onClick={() => setSearch(t)}
+                className="px-2.5 py-1 rounded-full text-[11px] border border-border/70 bg-muted/40 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                {t}
+              </button>
+            ))}
+            <Button size="sm" variant="ghost" className="h-7 text-[11px] text-muted-foreground" onClick={clearRecentSearches}>
+              Tøm
+            </Button>
+          </>
+        )}
+      </div>
+
+
+
       {/* mapper */}
       <div className="flex flex-wrap items-center gap-1.5">
         <FolderOpen size={13} className="text-muted-foreground" />
