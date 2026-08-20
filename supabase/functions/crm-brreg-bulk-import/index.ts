@@ -10,7 +10,8 @@ const corsHeaders = {
 };
 
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
-const ORG_FORMS = ["AS", "ENK"];
+// Fase 1: hent hele AS-registeret (ca. 431 000 selskaper). ENK hentes i en senere fase.
+const ORG_FORMS = (Deno.env.get("CRM_IMPORT_ORG_FORMS") || "AS").split(",").map((s) => s.trim()).filter(Boolean);
 const OLDEST = "1900-01-01";
 const TIME_BUDGET_MS = 110_000;
 const WINDOW_DAYS = 20;
@@ -146,11 +147,19 @@ Deno.serve(async (req) => {
       const from = iso(fromDate);
       let windowComplete = true;
       let windowCount = 0;
+      let tooBig = false;
 
       for (let page = 0; page < 20; page++) {
         const data = await fetchPage(from, to, page);
+        // Brreg gir maks 10 000 treff per søk. Er vinduet større må det deles,
+        // ellers hopper vi over selskaper uten å merke det.
+        if (page === 0 && (data?.page?.totalElements ?? 0) > 10_000 && windowDays > 1) {
+          tooBig = true;
+          break;
+        }
         const enheter = data?._embedded?.enheter || [];
         if (enheter.length) {
+
           windowCount += enheter.length;
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
@@ -183,13 +192,15 @@ Deno.serve(async (req) => {
         if (Date.now() - startedAt >= TIME_BUDGET_MS) { windowComplete = false; break; }
       }
 
+      if (tooBig) { windowDays = Math.max(1, Math.floor(windowDays / 3)); continue; }
       if (!windowComplete) break;
 
       // Adaptive window: sparse/empty periods (older years) are skipped much faster,
       // dense periods stay small so we never hit the API's 10 000-result page cap.
       if (windowCount === 0) windowDays = Math.min(MAX_WINDOW_DAYS, windowDays * 4);
       else if (windowCount < 1500) windowDays = Math.min(MAX_WINDOW_DAYS, Math.ceil(windowDays * 1.5));
-      else if (windowCount > 8000) windowDays = Math.max(2, Math.floor(windowDays / 2));
+      else if (windowCount > 6000) windowDays = Math.max(1, Math.floor(windowDays / 2));
+
 
       cursor = iso(new Date(fromDate.getTime() - 86_400_000));
       await admin.from("crm_import_state").update({
