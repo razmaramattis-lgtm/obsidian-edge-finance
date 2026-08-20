@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
   let delaySeconds = 0;
 
   const batchId = crypto.randomUUID();
+  await adminSb.from("email_batches").insert({ batch_id: batchId, label: "Masseutsending", status: "running" });
   const startedAt = Date.now();
   const MAX_MS = 50_000; // stay under edge function timeout
   let totalProcessed = 0;
@@ -130,6 +131,7 @@ Deno.serve(async (req) => {
               purpose: "transactional",
               label: "bulk-broadcast",
               idempotency_key: `bulk-${email.id}-${messageId}`,
+              batch_id: batchId,
               unsubscribe_token: unsubscribeToken,
               // TTL regnes fra planlagt sendetidspunkt
               queued_at: scheduledAt,
