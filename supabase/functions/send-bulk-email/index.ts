@@ -11,6 +11,10 @@ const FROM_DOMAIN = "avargo.no";
 const FROM_ADDRESS = `${SITE_NAME} <kontakt@${FROM_DOMAIN}>`;
 const REPLY_TO = "kontakt@avargo.no";
 
+// Utsendingstempo: 5-10 minutter mellom hver e-post ved masseutsending
+const DEFAULT_MIN_DELAY_SECONDS = 300;
+const DEFAULT_MAX_DELAY_SECONDS = 600;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -32,6 +36,17 @@ Deno.serve(async (req) => {
   if (!profile || !["admin", "employee"].includes(profile.role)) {
     return json({ error: "Forbidden" }, 403);
   }
+
+  const { data: sendState } = await adminSb
+    .from("email_send_state")
+    .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
+    .maybeSingle();
+  const minDelay = Math.max(0, sendState?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS);
+  const maxDelay = Math.max(minDelay, sendState?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS);
+  const nextGap = () => minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
+
+  // Første e-post går ut med én gang, deretter spres resten 5-10 min fra hverandre.
+  let delaySeconds = 0;
 
   const startedAt = Date.now();
   const MAX_MS = 50_000; // stay under edge function timeout
@@ -85,8 +100,10 @@ Deno.serve(async (req) => {
             if (stored?.token) unsubscribeToken = stored.token;
           }
 
-          const { error } = await adminSb.rpc("enqueue_email", {
+          const scheduledAt = new Date(Date.now() + delaySeconds * 1000).toISOString();
+          const { error } = await adminSb.rpc("enqueue_email_delayed", {
             queue_name: "transactional_emails",
+            delay_seconds: delaySeconds,
             payload: {
               message_id: messageId,
               to: email.recipient_email,
@@ -100,11 +117,14 @@ Deno.serve(async (req) => {
               label: "bulk-broadcast",
               idempotency_key: `bulk-${email.id}-${messageId}`,
               unsubscribe_token: unsubscribeToken,
-              queued_at: new Date().toISOString(),
+              // TTL regnes fra planlagt sendetidspunkt
+              queued_at: scheduledAt,
+              scheduled_at: scheduledAt,
             },
           });
 
           if (error) throw error;
+          delaySeconds += nextGap();
 
           await adminSb.from("email_send_log").insert({
             message_id: messageId,
@@ -144,7 +164,14 @@ Deno.serve(async (req) => {
       .select("*", { count: "exact", head: true })
       .eq("status", "queued");
 
-    return json({ processed: totalProcessed, queued: totalQueued, failed: totalFailed, remaining: remaining ?? 0 });
+    return json({
+      processed: totalProcessed,
+      queued: totalQueued,
+      failed: totalFailed,
+      remaining: remaining ?? 0,
+      pacing: { min_seconds: minDelay, max_seconds: maxDelay },
+      spread_minutes: Math.round(delaySeconds / 60),
+    });
   } catch (e) {
     return json({ error: String(e), processed: totalProcessed }, 500);
   }
