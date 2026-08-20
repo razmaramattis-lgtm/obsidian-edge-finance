@@ -330,18 +330,31 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return ((mem as any[]) || []).map((m) => m.lead_id);
   };
 
+  // Fritekstsøk kjøres via en indeksert databasefunksjon som returnerer id-ene.
+  // Direkte `ilike` i listespørringen fikk planleggeren til å droppe trigram-indeksen
+  // (RLS + ORDER BY) og skanne 590 000 rader = statement timeout.
+  const SEARCH_ID_CAP = 400;
+  const searchMode = (): "none" | "orgnr" | "text" => {
+    const esc = search.trim().replace(/[%,()]/g, " ").trim();
+    if (!esc) return "none";
+    if (/^\d{6,9}$/.test(esc.replace(/\s/g, ""))) return "orgnr";
+    return esc.length >= 3 ? "text" : "none";
+  };
+  const resolveSearchIds = async (): Promise<string[] | null> => {
+    if (searchMode() !== "text") return null;
+    const term = search.trim().replace(/[%,()]/g, " ").trim();
+    const { data, error } = await supabase.rpc("crm_search_lead_ids" as any, { _q: term, _limit: SEARCH_ID_CAP });
+    if (error) throw error;
+    return ((data as any[]) || []).map((r) => (typeof r === "string" ? r : r.id));
+  };
+
   // Bygger spørringen med alle aktive filtre – brukes både av listen og CSV-eksporten
-  const applyLeadFilters = (q: any, folderIds: string[] | null) => {
+  const applyLeadFilters = (q: any, folderIds: string[] | null, searchIds?: string[] | null) => {
     if (folderIds) q = q.in("id", folderIds);
-    const term = search.trim();
-    if (term) {
-      const esc = term.replace(/[%,()]/g, " ").trim();
-      const digits = esc.replace(/\s/g, "");
-      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret
-      q = /^\d{6,9}$/.test(digits)
-        ? q.like("orgnr", `${digits}%`)
-        : q.ilike("search_text", `%${esc}%`);
-    }
+    if (searchIds) q = q.in("id", searchIds);
+    if (searchMode() === "orgnr") q = q.like("orgnr", `${search.trim().replace(/\D/g, "")}%`);
+
+
 
 
     if (category !== "alle") q = q.eq("category", category);
@@ -398,20 +411,34 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const fetchLeads = async () => {
     const seq = ++fetchSeq.current;
     setLoading(true);
-    const folderIds = await resolveFolderIds();
-    if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    let folderIds: string[] | null = null;
+    let searchIds: string[] | null = null;
+    try {
+      folderIds = await resolveFolderIds();
+      searchIds = await resolveSearchIds();
+    } catch (e: any) {
+      if (seq !== fetchSeq.current) return;
+      toast.error("Kunne ikke søke: " + (e.message || "ukjent feil"));
+      setLeads([]); setTotal(0); setLoading(false); return;
+    }
+    if ((folderIds && !folderIds.length) || (searchIds && !searchIds.length)) {
+      if (seq !== fetchSeq.current) return;
+      setLeads([]); setTotal(0); setHasNext(false); setLoading(false); return;
+    }
     // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten.
-    // Antall telles kun på første side (estimat), resten av sidene gjenbruker tallet = mye raskere bla.
+    const searching = !!searchIds || searchMode() === "orgnr";
+    // Ved søk er treffmengden liten, da teller vi eksakt. Ellers estimat på første side.
     const withCount = page === 0;
     const q = applyLeadFilters(
-      supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: "estimated" } : undefined),
+      supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: searching ? "exact" : "estimated" } : undefined),
       folderIds,
+      searchIds,
     );
-    let q2 = q
+    let q2: any = q
       .order("registered_at", { ascending: false, nullsFirst: false })
       .order("id", { ascending: false });
     const cursor = page > 0 ? cursorsRef.current[page] : null;
-    if (cursor?.r) {
+    if (!searching && cursor?.r) {
       q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
       q2 = q2.limit(PAGE_SIZE);
     } else if (page > 0) {
@@ -419,12 +446,23 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     } else {
       q2 = q2.limit(PAGE_SIZE);
     }
-    const { data, count, error } = await q2;
+
+    let { data, count, error } = await q2;
+    // 57014 = statement timeout (kald cache på 590 000 rader). Prøv én gang til –
+    // andre forsøk går normalt på under 100 ms fordi indeksen da ligger i minnet.
+    if (error && (error as any).code === "57014" && seq === fetchSeq.current) {
+      ({ data, count, error } = await q2);
+    }
     if (seq !== fetchSeq.current) return; // eldre svar – ignorer
     if (error) {
-      toast.error("Kunne ikke hente selskaper: " + error.message);
+      toast.error(
+        (error as any).code === "57014"
+          ? "Søket tok for lang tid. Prøv et mer spesifikt søk eller færre filtre."
+          : "Kunne ikke hente selskaper: " + error.message,
+      );
       setLeads([]); setTotal(0); setLoading(false); return;
     }
+
     const rows = ((data as unknown) as CrmLead[]) || [];
     setLeads(rows);
     if (page === 0) cursorsRef.current = [null];
@@ -434,6 +472,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (withCount) setTotal(count || 0);
     setLoading(false);
   };
+
+
 
 
 
@@ -542,12 +582,17 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setPage(0);
-    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, 400);
+    // Lengre debounce på fritekstsøk: hvert tastetrykk startet før en ny tung
+    // spørring mot 590 000 rader, og køen ga «statement timeout».
+    const delay = search.trim() ? 700 : 250;
+    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, delay);
     return () => clearTimeout(t);
   },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
      unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
+
+
 
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
@@ -706,11 +751,13 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         rows = leads;
       } else {
         const folderIds = await resolveFolderIds();
-        if (folderIds && !folderIds.length) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
+        const searchIds = await resolveSearchIds();
+        if ((folderIds && !folderIds.length) || (searchIds && !searchIds.length)) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
         const max = Math.max(1, Math.min(Number(exportLimit) || 5000, 50000));
         const CHUNK = 1000;
         for (let from = 0; from < max; from += CHUNK) {
-          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds);
+          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds, searchIds);
+
           const { data, error } = await q
             .order("registered_at", { ascending: false, nullsFirst: false })
             .range(from, Math.min(from + CHUNK, max) - 1);
@@ -1096,7 +1143,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
         <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
-          <span>Selskap ({displayTotal > 1000 ? `ca. ${displayTotal.toLocaleString("nb-NO")}` : displayTotal})</span>
+          <span>Selskap ({displayTotal > 1000 ? `ca. ${displayTotal.toLocaleString("nb-NO")}` : displayTotal}){searchMode() === "text" && total >= 400 ? " · viser de 400 første treffene – snevre inn søket" : ""}</span>
           <span>Kontakt</span>
           <span>Regnskapstall</span>
           <span>Kategori</span>

@@ -4884,6 +4884,12 @@ export type Database = {
           municipality: string
         }[]
       }
+      crm_search_lead_ids: {
+        Args: { _limit?: number; _q: string }
+        Returns: {
+          id: string
+        }[]
+      }
       current_profile_id: { Args: { uid?: string }; Returns: string }
       defer_email: {
         Args: { message_id: number; queue_name: string; vt_seconds: number }
