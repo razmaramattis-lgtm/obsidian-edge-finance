@@ -337,7 +337,25 @@ Deno.serve(async (req) => {
         }
       }
 
+      // Throttle: masseutsendinger sendes én om gangen med minimumspause
+      const isBulk = BULK_LABELS.has(String(payload.label ?? ''))
+      if (isBulk) {
+        const sinceLast = lastBulkSentMs === null ? Number.POSITIVE_INFINITY : Date.now() - lastBulkSentMs
+        if (bulkSentThisRun >= 1 || sinceLast < bulkMinGapMs) {
+          const waitSeconds = Number.isFinite(sinceLast)
+            ? Math.max(15, Math.ceil((bulkMinGapMs - sinceLast) / 1000))
+            : 30
+          await supabase.rpc('defer_email', {
+            queue_name: queue,
+            message_id: msg.msg_id,
+            vt_seconds: Math.min(600, waitSeconds),
+          })
+          continue
+        }
+      }
+
       try {
+
         const { status, body } = await sendViaResend(payload, apiKey, resendApiKey)
 
         if (status < 200 || status >= 300) {
