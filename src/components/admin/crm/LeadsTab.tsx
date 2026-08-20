@@ -33,6 +33,41 @@ const LIST_COLUMNS =
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
 
+// Felt som kan velges i CSV-eksporten (kun kolonner listespørringen henter)
+const EXPORT_FIELDS: { key: string; label: string; group: string; get: (l: CrmLead) => string | number }[] = [
+  { key: "orgnr", label: "Orgnr", group: "Selskap", get: (l) => l.orgnr || "" },
+  { key: "name", label: "Navn", group: "Selskap", get: (l) => l.name || "" },
+  { key: "org_form", label: "Selskapsform", group: "Selskap", get: (l) => l.org_form || "" },
+  { key: "industry_code", label: "Næringskode", group: "Selskap", get: (l) => l.industry_code || "" },
+  { key: "industry_text", label: "Bransje", group: "Selskap", get: (l) => l.industry_text || "" },
+  { key: "registered_at", label: "Registrert", group: "Selskap", get: (l) => l.registered_at || "" },
+  { key: "employees", label: "Ansatte", group: "Selskap", get: (l) => l.employees ?? "" },
+  { key: "website", label: "Nettside", group: "Kontakt", get: (l) => l.website || "" },
+  { key: "email", label: "E-post", group: "Kontakt", get: (l) => l.email || "" },
+  { key: "email_verified", label: "E-post verifisert", group: "Kontakt", get: (l) => (l.email_verified ? "ja" : "nei") },
+  { key: "phone", label: "Telefon", group: "Kontakt", get: (l) => l.phone || "" },
+  { key: "contact_name", label: "Kontaktperson", group: "Kontakt", get: (l) => l.contact_name || "" },
+  { key: "ceo_name", label: "Daglig leder", group: "Kontakt", get: (l) => l.ceo_name || "" },
+  { key: "address", label: "Adresse", group: "Adresse", get: (l) => l.address || "" },
+  { key: "postal_code", label: "Postnr", group: "Adresse", get: (l) => l.postal_code || "" },
+  { key: "postal_area", label: "Poststed", group: "Adresse", get: (l) => l.postal_area || "" },
+  { key: "municipality", label: "Kommune", group: "Adresse", get: (l) => l.municipality || "" },
+  { key: "municipality_number", label: "Kommunenr", group: "Adresse", get: (l) => l.municipality_number || "" },
+  { key: "has_accountant", label: "Har regnskapsfører", group: "Status", get: (l) => (l.has_accountant ? "ja" : "nei") },
+  { key: "accountant_name", label: "Regnskapsfører", group: "Status", get: (l) => l.accountant_name || "" },
+  { key: "category", label: "Kategori", group: "Status", get: (l) => categoryMeta(l.category).label },
+  { key: "status", label: "Status", group: "Status", get: (l) => l.status || "" },
+  { key: "email_count", label: "Antall e-poster sendt", group: "Status", get: (l) => l.email_count ?? 0 },
+  { key: "last_emailed_at", label: "Sist kontaktet", group: "Status", get: (l) => l.last_emailed_at || "" },
+  { key: "unsubscribed", label: "Avmeldt", group: "Status", get: (l) => (l.unsubscribed ? "ja" : "nei") },
+  { key: "notes", label: "Notater", group: "Status", get: (l) => l.notes || "" },
+  { key: "fiscal_year", label: "Regnskapsår", group: "Økonomi", get: (l) => l.fiscal_year ?? "" },
+  { key: "revenue", label: "Driftsinntekter", group: "Økonomi", get: (l) => l.revenue ?? "" },
+  { key: "net_result", label: "Årsresultat", group: "Økonomi", get: (l) => l.net_result ?? "" },
+];
+const DEFAULT_EXPORT_FIELDS = ["orgnr", "name", "org_form", "industry_text", "municipality", "employees", "email", "phone", "contact_name", "accountant_name", "category", "status"];
+
+
 
 const KOMMUNE_PRESETS = [
   { label: "Kongsvinger", nr: "3401" },
