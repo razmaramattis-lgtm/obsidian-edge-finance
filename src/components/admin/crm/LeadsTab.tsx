@@ -513,7 +513,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Søk firma eller org.nr" className="pl-9 h-9" aria-label="Søk i leads" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Søk i hele databasen: firma, org.nr, e-post, kontaktperson eller kommune" className="pl-9 h-9" aria-label="Søk i leads" />
         </div>
         <Button size="sm" onClick={() => setSyncOpen(true)}><RefreshCw size={14} className="mr-1.5" />Hent nye</Button>
         <Button size="sm" variant="outline" onClick={runEnrich} disabled={enriching}>
