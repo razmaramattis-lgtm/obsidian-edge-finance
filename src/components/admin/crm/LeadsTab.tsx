@@ -23,6 +23,11 @@ import { buildLeadEmail } from "./emailPreview";
 
 const PAGE_SIZE = 50;
 
+// Kolonner listen faktisk trenger – utelater tunge felt (raw, financials, roles, owners)
+const LIST_COLUMNS =
+  "id,orgnr,name,org_form,org_form_text,industry_code,industry_text,municipality,municipality_number,postal_code,postal_area,address,registered_at,employees,website,email,email_verified,phone,contact_name,ceo_name,has_accountant,accountant_name,has_auditor,category,status,notes,last_emailed_at,email_count,unsubscribed,contacted_at,email_source,enriched_at,enrich_status,manual_lock,fiscal_year,revenue,net_result";
+
+
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
 
@@ -219,17 +224,31 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
 
   const fetchMunicipalities = async () => {
-    const { data } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).order("municipality").limit(20000);
-    const set = new Set((data || []).map((r: any) => r.municipality).filter(Boolean));
-    setMunicipalities(Array.from(set).sort());
+    // Rask indeksbasert uthenting – leser ikke gjennom 300 000+ rader
+    const { data, error } = await supabase.rpc("crm_municipalities" as any);
+    if (!error && data) {
+      setMunicipalities(((data as any[]) || []).map((r: any) => (typeof r === "string" ? r : r.municipality)).filter(Boolean));
+      return;
+    }
+    const { data: fb } = await supabase.from("crm_leads").select("municipality").not("municipality", "is", null).limit(5000);
+    setMunicipalities(Array.from(new Set(((fb as any[]) || []).map((r) => r.municipality).filter(Boolean))).sort());
   };
+
 
   const fetchTemplates = async () => {
     const { data } = await supabase.from("crm_email_templates").select("*").eq("active", true).order("name");
     setTemplates((data as CrmTemplate[]) || []);
   };
 
+  // Åpner kundekortet med lettvekts-raden først, og etterfyller de tunge feltene
+  const openDetail = async (l: CrmLead) => {
+    setDetail(l);
+    const { data } = await supabase.from("crm_leads").select("*").eq("id", l.id).maybeSingle();
+    if (data) setDetail((d) => (d && d.id === (data as any).id ? (data as any) : d));
+  };
+
   const fetchLeads = async () => {
+
     setLoading(true);
     let folderIds: string[] | null = null;
     if (activeFolder !== "alle") {
@@ -238,9 +257,18 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
       if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
     }
-    let q = supabase.from("crm_leads").select("*", { count: "exact" });
+    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
+    let q = supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" });
     if (folderIds) q = q.in("id", folderIds);
-    if (search.trim()) q = q.or(`name.ilike.%${search.trim()}%,orgnr.ilike.%${search.trim()}%`);
+    const term = search.trim();
+    if (term) {
+      const esc = term.replace(/[%,()]/g, " ").trim();
+      const digits = esc.replace(/\s/g, "");
+      q = /^\d{6,9}$/.test(digits)
+        ? q.like("orgnr", `${digits}%`)
+        : q.or(`name.ilike.%${esc}%,orgnr.ilike.%${esc}%,email.ilike.%${esc}%,contact_name.ilike.%${esc}%,municipality.ilike.%${esc}%`);
+    }
+
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
     if (municipality !== "alle") q = q.eq("municipality", municipality);
@@ -307,7 +335,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 250); return () => clearTimeout(t); },
+  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter, activeFolder]);
 
@@ -485,7 +513,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Søk firma eller org.nr" className="pl-9 h-9" aria-label="Søk i leads" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Søk i hele databasen: firma, org.nr, e-post, kontaktperson eller kommune" className="pl-9 h-9" aria-label="Søk i leads" />
         </div>
         <Button size="sm" onClick={() => setSyncOpen(true)}><RefreshCw size={14} className="mr-1.5" />Hent nye</Button>
         <Button size="sm" variant="outline" onClick={runEnrich} disabled={enriching}>
@@ -748,7 +776,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
         <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
-          <span>Selskap ({total})</span>
+          <span>Selskap ({total > 1000 ? `ca. ${total.toLocaleString("nb-NO")}` : total})</span>
           <span>Kontakt</span>
           <span>Kategori</span>
           <span>Kontaktet</span>
@@ -769,7 +797,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                 return (
                   <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
                     <Checkbox checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
-                    <button className="min-w-0 text-left" onClick={() => setDetail(l)}>
+                    <button className="min-w-0 text-left" onClick={() => openDetail(l)}>
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className="font-medium truncate">{l.name}</span>
                         {l.manual_lock && <Lock size={10} className="text-muted-foreground shrink-0" />}

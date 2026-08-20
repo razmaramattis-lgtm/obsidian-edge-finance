@@ -12,10 +12,11 @@ const corsHeaders = {
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
 const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
-const TIME_BUDGET_MS = 60_000;
-const WINDOW_DAYS = 10;
+const TIME_BUDGET_MS = 110_000;
+const WINDOW_DAYS = 20;
 const MAX_WINDOW_DAYS = 730;
-const LOCK_MS = 90_000;
+const LOCK_MS = 150_000;
+
 
 
 const json = (body: unknown, status = 200) =>
@@ -101,11 +102,18 @@ Deno.serve(async (req) => {
   let { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
 
   if (body.action === "start") {
+    // Fortsetter der importen sto sist – nullstiller BARE hvis man ber om det eksplisitt
+    // (ellers begynner man forfra på dagens dato og henter de samme selskapene om igjen).
+    const restart = body.restart === true || !state?.cursor_date;
+    const cursor_date = restart ? iso(new Date()) : (state!.cursor_date as string);
     await admin.from("crm_import_state").upsert({
-      id: 1, status: "running", processed: 0, imported: 0, error_message: null,
-      cursor_date: iso(new Date()), started_at: new Date().toISOString(), finished_at: null,
+      id: 1, status: "running", error_message: null,
+      processed: restart ? 0 : Number(state?.processed || 0),
+      imported: restart ? 0 : Number(state?.imported || 0),
+      cursor_date, started_at: new Date().toISOString(), finished_at: null,
     });
-    state = { ...(state || {}), status: "running", processed: 0, imported: 0, cursor_date: iso(new Date()) } as any;
+    state = { ...(state || {}), status: "running", cursor_date } as any;
+
   } else if (body.action === "stop") {
     await admin.from("crm_import_state").update({ status: "paused" }).eq("id", 1);
     return json({ stopped: true });
@@ -147,13 +155,21 @@ Deno.serve(async (req) => {
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
           );
-          for (let i = 0; i < rows.length; i += 500) {
-            const chunk = rows.slice(i, i + 500);
+          // Mindre bolker + retry: store bolker kan treffe databasens statement timeout.
+          for (let i = 0; i < rows.length; i += 150) {
+            const chunk = rows.slice(i, i + 150);
             // Only brand new companies are inserted – existing cards keep their
             // manual edits, category and contact status.
-            const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: true });
-            if (error) throw new Error(error.message || JSON.stringify(error));
+            let lastErr: string | null = null;
+            for (let attempt = 0; attempt < 3; attempt++) {
+              const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: true });
+              if (!error) { lastErr = null; break; }
+              lastErr = error.message || JSON.stringify(error);
+              await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+            }
+            if (lastErr) throw new Error(lastErr);
           }
+
           processed += enheter.length;
           imported += rows.length;
           // Persist after every page so progress survives a hard shutdown.
@@ -196,9 +212,13 @@ Deno.serve(async (req) => {
     return json({ success: true, processed, imported, cursor, done });
   } catch (e) {
     const message = e instanceof Error ? e.message : JSON.stringify(e);
+    // Importen skal aldri stoppe helt av en midlertidig feil – vi beholder "running"
+    // slik at neste kjøring (hvert minutt) fortsetter fra samme punkt.
     await admin.from("crm_import_state").update({
-      status: "error", error_message: message, processed, imported, cursor_date: cursor, last_run_at: new Date().toISOString(),
+      status: "running", error_message: message, processed, imported, cursor_date: cursor,
+      last_run_at: new Date(Date.now() - LOCK_MS).toISOString(),
     }).eq("id", 1);
+
     await admin.from("crm_sync_log").insert({ mode: "bulk_import", fetched: processed, inserted: imported, updated: 0, status: "error", error_message: message });
     return json({ error: message }, 500);
   }
