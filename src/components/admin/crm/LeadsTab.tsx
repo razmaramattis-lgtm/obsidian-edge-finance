@@ -322,6 +322,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
     (industryText.trim() ? 1 : 0) + (accountantName.trim() ? 1 : 0) +
     [hasEmail, hasPhone, hasWebsite, accountantFilter, unsubFilter].filter((v) => v !== "alle").length +
+    (orgnrFilter.trim() ? 1 : 0) + (empMin.trim() ? 1 : 0) + (empMax.trim() ? 1 : 0) +
     (fromDate ? 1 : 0) + (toDate ? 1 : 0);
 
   const resetFilters = () => {
@@ -329,6 +330,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setIndustryText(""); setEmployeeBands([]); setHasEmail("alle"); setHasPhone("alle");
     setHasWebsite("alle"); setAccountantFilter("alle"); setAccountantName("");
     setUnsubFilter("alle"); setFromDate(""); setToDate(""); setMunicipality("alle");
+    setOrgnrFilter(""); setEmpMin(""); setEmpMax("");
   };
 
   const toggleIn = (setter: (fn: (s: string[]) => string[]) => void, v: string) =>
