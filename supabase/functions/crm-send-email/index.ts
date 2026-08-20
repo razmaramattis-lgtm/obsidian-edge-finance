@@ -77,7 +77,18 @@ async function unsubscribeToken(admin: any, email: string) {
 const DEFAULT_MIN_DELAY_SECONDS = 300; // 5 min
 const DEFAULT_MAX_DELAY_SECONDS = 600; // 10 min
 
-async function loadPacing(admin: any) {
+async function loadPacing(admin: any, override?: { min?: unknown; max?: unknown }) {
+  const asSeconds = (v: unknown) =>
+    typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.round(v * 60) : null;
+
+  const minOverride = asSeconds(override?.min);
+  const maxOverride = asSeconds(override?.max);
+  if (minOverride !== null || maxOverride !== null) {
+    const min = minOverride ?? maxOverride ?? DEFAULT_MIN_DELAY_SECONDS;
+    const max = Math.max(min, maxOverride ?? min);
+    return { min, max };
+  }
+
   const { data } = await admin
     .from("email_send_state")
     .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
@@ -164,7 +175,12 @@ Deno.serve(async (req) => {
   const results = { sent: 0, skipped: 0, failed: 0, details: [] as any[] };
 
   // Sprer utsendingen: første e-post går med én gang, deretter 5-10 min mellom hver.
-  const pacing = await loadPacing(admin);
+  const pacing = await loadPacing(
+    admin,
+    mode === "manual"
+      ? { min: body.minDelayMinutes, max: body.maxDelayMinutes }
+      : { min: settings?.min_delay_minutes, max: settings?.max_delay_minutes },
+  );
   let delaySeconds = 0;
 
   for (const lead of leads) {

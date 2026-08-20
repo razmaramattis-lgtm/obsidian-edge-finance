@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { Send, Mail, Users, Search, X, UserPlus } from "lucide-react";
+import SendPacingControl, { DEFAULT_PACING, SendPacing } from "./SendPacingControl";
 
 const EmailSendPanel = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ const EmailSendPanel = () => {
   const [templates, setTemplates] = useState<any[]>([]);
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [pacing, setPacing] = useState<SendPacing>(DEFAULT_PACING);
 
   const [contacts, setContacts] = useState<any[]>([]);
   const [contactSearch, setContactSearch] = useState("");
@@ -78,7 +80,9 @@ const EmailSendPanel = () => {
 
   const triggerSend = async () => {
     try {
-      await supabase.functions.invoke("send-bulk-email");
+      await supabase.functions.invoke("send-bulk-email", {
+        body: { minDelayMinutes: pacing.min, maxDelayMinutes: pacing.max },
+      });
     } catch { /* silent – emails stay queued for next trigger */ }
   };
 
@@ -109,7 +113,11 @@ const EmailSendPanel = () => {
     triggerSend();
 
     setSending(false);
-    toast.success(`${allRecipients.length} e-post(er) lagt i kø – sendes med 5–10 min mellomrom`);
+    toast.success(
+      pacing.max === 0
+        ? `${allRecipients.length} e-post(er) sendes nå`
+        : `${allRecipients.length} e-post(er) lagt i kø – sendes med ${pacing.min}–${pacing.max} min mellomrom`
+    );
     setEmail(""); setName(""); setSubject(""); setBody(""); setTemplateId("");
     clearSelection();
     setProgress(0);
@@ -215,7 +223,10 @@ const EmailSendPanel = () => {
         <Textarea rows={6} placeholder="Skriv e-postinnhold her... HTML støttes." value={body} onChange={e => setBody(e.target.value)} />
       </div>
 
+      <SendPacingControl value={pacing} onChange={setPacing} recipients={allRecipients.length} />
+
       {sending && <Progress value={progress} className="h-2" />}
+
 
       <Button onClick={handleSend} disabled={sending || allRecipients.length === 0} className="gap-2">
         <Send size={14} />

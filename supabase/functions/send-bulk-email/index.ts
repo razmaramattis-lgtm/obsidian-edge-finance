@@ -37,12 +37,25 @@ Deno.serve(async (req) => {
     return json({ error: "Forbidden" }, 403);
   }
 
+  let reqBody: Record<string, any> = {};
+  try { reqBody = await req.json(); } catch { /* no body */ }
+  const asSeconds = (v: unknown) =>
+    typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.round(v * 60) : null;
+  const minOverride = asSeconds(reqBody.minDelayMinutes);
+  const maxOverride = asSeconds(reqBody.maxDelayMinutes);
+
   const { data: sendState } = await adminSb
     .from("email_send_state")
     .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
     .maybeSingle();
-  const minDelay = Math.max(0, sendState?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS);
-  const maxDelay = Math.max(minDelay, sendState?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS);
+  const minDelay = Math.max(
+    0,
+    minOverride ?? maxOverride ?? sendState?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS,
+  );
+  const maxDelay = Math.max(
+    minDelay,
+    maxOverride ?? (minOverride !== null ? minDelay : (sendState?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS)),
+  );
   const nextGap = () => minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
 
   // Første e-post går ut med én gang, deretter spres resten 5-10 min fra hverandre.

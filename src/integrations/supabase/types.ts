@@ -1133,6 +1133,8 @@ export type Database = {
           last_autopilot_at: string | null
           last_sync_at: string | null
           lookback_days: number
+          max_delay_minutes: number
+          min_delay_minutes: number
           municipality_numbers: string[]
           org_forms: string[]
           send_hour: number
@@ -1150,6 +1152,8 @@ export type Database = {
           last_autopilot_at?: string | null
           last_sync_at?: string | null
           lookback_days?: number
+          max_delay_minutes?: number
+          min_delay_minutes?: number
           municipality_numbers?: string[]
           org_forms?: string[]
           send_hour?: number
@@ -1167,6 +1171,8 @@ export type Database = {
           last_autopilot_at?: string | null
           last_sync_at?: string | null
           lookback_days?: number
+          max_delay_minutes?: number
+          min_delay_minutes?: number
           municipality_numbers?: string[]
           org_forms?: string[]
           send_hour?: number
