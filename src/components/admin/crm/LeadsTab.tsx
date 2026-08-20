@@ -564,26 +564,52 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     fetchLeads();
   };
 
-  const exportCsv = () => {
-    const rows = leads.map((l) => [
-      l.orgnr, l.name, l.org_form || "", l.industry_text || "", l.municipality || "",
-      l.registered_at || "", l.employees ?? "", l.email || "", l.phone || "", l.contact_name || "",
-      l.ceo_name || "", l.owners?.map((o) => o.name).join(" / ") || "",
-      l.accountant_name || "", categoryMeta(l.category).label, l.status,
-      l.fiscal_year ?? "", l.revenue ?? "", l.operating_result ?? "", l.net_result ?? "", l.equity ?? "",
-      l.website || "",
-    ]);
-    const header = ["Orgnr", "Navn", "Form", "Bransje", "Kommune", "Registrert", "Ansatte", "E-post", "Telefon", "Kontakt",
-      "Daglig leder", "Eiere", "Regnskapsfører", "Kategori", "Status",
-      "Regnskapsår", "Driftsinntekter", "Driftsresultat", "Årsresultat", "Egenkapital", "Nettside"];
+  // Kjører eksporten med valgt omfang og valgte felter
+  const runExport = async () => {
+    const fields = EXPORT_FIELDS.filter((f) => exportFields.includes(f.key));
+    if (!fields.length) { toast.error("Velg minst ett felt"); return; }
+    setExporting(true);
+    try {
+      let rows: CrmLead[] = [];
+      if (exportScope === "valgte") {
+        rows = leads.filter((l) => selected.includes(l.id));
+      } else if (exportScope === "side") {
+        rows = leads;
+      } else {
+        const folderIds = await resolveFolderIds();
+        if (folderIds && !folderIds.length) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
+        const max = Math.max(1, Math.min(Number(exportLimit) || 5000, 50000));
+        const CHUNK = 1000;
+        for (let from = 0; from < max; from += CHUNK) {
+          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds);
+          const { data, error } = await q
+            .order("registered_at", { ascending: false, nullsFirst: false })
+            .range(from, Math.min(from + CHUNK, max) - 1);
+          if (error) throw error;
+          const batch = ((data as unknown) as CrmLead[]) || [];
+          rows = rows.concat(batch);
+          if (batch.length < CHUNK) break;
+        }
+      }
+      if (!rows.length) { toast.error("Ingen rader å eksportere"); setExporting(false); return; }
 
-    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `avargo-leads-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
+      const csv = [fields.map((f) => f.label), ...rows.map((l) => fields.map((f) => f.get(l)))]
+        .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `avargo-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast.success(`Eksporterte ${rows.length} rader`);
+      setExportOpen(false);
+    } catch (e: any) {
+      toast.error(e?.message || "Kunne ikke eksportere");
+    } finally {
+      setExporting(false);
+    }
   };
+
 
   const withEmail = useMemo(() => selected.filter((id) => leads.find((l) => l.id === id)?.email).length, [selected, leads]);
 
