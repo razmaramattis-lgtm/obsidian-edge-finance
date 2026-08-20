@@ -127,6 +127,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
 
   const [selected, setSelected] = useState<string[]>([]);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportScope, setExportScope] = useState<"side" | "valgte" | "treff">("treff");
+  const [exportLimit, setExportLimit] = useState("5000");
+  const [exportFields, setExportFields] = useState<string[]>(DEFAULT_EXPORT_FIELDS);
   const [detail, setDetail] = useState<CrmLead | null>(null);
 
   const [syncOpen, setSyncOpen] = useState(false);
