@@ -1044,7 +1044,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                 const meta = categoryMeta(l.category);
                 const reasons = matchReasons(l, search);
                 return (
-                  <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
+                  <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
                     <Checkbox checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
                     <button className="min-w-0 text-left" onClick={() => openDetail(l)}>
                       <div className="flex items-center gap-1.5 min-w-0">
