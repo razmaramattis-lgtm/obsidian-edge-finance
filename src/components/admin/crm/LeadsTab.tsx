@@ -1080,7 +1080,23 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                       </span>
                     </div>
 
+                    {/* regnskapstall */}
+                    <div className="min-w-0 text-[10px] leading-tight">
+                      {l.fiscal_year ? (
+                        <>
+                          <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
+                          <span className="block font-medium">{nokShort(l.revenue)}</span>
+                          <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
+                            Res. {nokShort(l.net_result)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground/60">ikke hentet</span>
+                      )}
+                    </div>
+
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
+
                     <span className="text-[10px] text-muted-foreground">
                       {l.email_count > 0
                         ? <span className="text-primary flex items-center gap-1"><CheckCircle2 size={10} />{l.email_count}x</span>
