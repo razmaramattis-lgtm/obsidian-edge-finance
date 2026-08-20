@@ -776,7 +776,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
         <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
-          <span>Selskap ({total})</span>
+          <span>Selskap ({total > 1000 ? `ca. ${total.toLocaleString("nb-NO")}` : total})</span>
           <span>Kontakt</span>
           <span>Kategori</span>
           <span>Kontaktet</span>
