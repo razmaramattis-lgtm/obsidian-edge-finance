@@ -1118,19 +1118,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                     </div>
 
                     {/* regnskapstall */}
-                    <div className="min-w-0 text-[10px] leading-tight">
-                      {l.fiscal_year ? (
-                        <>
-                          <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
-                          <span className="block font-medium">{nokShort(l.revenue)}</span>
-                          <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
-                            Res. {nokShort(l.net_result)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground/60">ikke hentet</span>
-                      )}
+                    <div className="min-w-0 text-[10px] leading-tight flex items-start gap-1">
+                      <div className="min-w-0 flex-1">
+                        {l.fiscal_year ? (
+                          <>
+                            <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
+                            <span className="block font-medium">{nokShort(l.revenue)}</span>
+                            <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
+                              Res. {nokShort(l.net_result)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground/60">ikke hentet</span>
+                        )}
+                      </div>
+                      <Button
+                        size="icon" variant="ghost" className="h-6 w-6 shrink-0"
+                        title="Hent regnskapstall og lønnsomhetsanalyse"
+                        aria-label={`Hent regnskapstall for ${l.name}`}
+                        onClick={(e) => { e.stopPropagation(); setFinLead({ id: l.id, orgnr: l.orgnr, name: l.name }); }}
+                      >
+                        <BarChart3 size={12} />
+                      </Button>
                     </div>
+
 
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
 
