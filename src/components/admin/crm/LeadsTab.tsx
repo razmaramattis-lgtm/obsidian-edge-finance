@@ -321,10 +321,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (term) {
       const esc = term.replace(/[%,()]/g, " ").trim();
       const digits = esc.replace(/\s/g, "");
+      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret
       q = /^\d{6,9}$/.test(digits)
         ? q.like("orgnr", `${digits}%`)
-        : q.or(`name.ilike.%${esc}%,orgnr.ilike.%${esc}%,email.ilike.%${esc}%,contact_name.ilike.%${esc}%,municipality.ilike.%${esc}%`);
+        : q.ilike("search_text", `%${esc}%`);
     }
+
 
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
