@@ -33,7 +33,31 @@ export interface CrmLead {
   enriched_at?: string | null;
   enrich_status?: string | null;
   manual_lock?: boolean;
+  /* utvidet selskapsinfo */
+  fiscal_year?: number | null;
+  revenue?: number | null;
+  operating_result?: number | null;
+  profit_before_tax?: number | null;
+  net_result?: number | null;
+  equity?: number | null;
+  total_assets?: number | null;
+  total_debt?: number | null;
+  currency?: string | null;
+  financials?: {
+    year: number | null; revenue: number | null; operating_result: number | null;
+    profit_before_tax: number | null; net_result: number | null; equity: number | null;
+    total_assets: number | null; total_debt: number | null; currency?: string | null;
+  }[] | null;
+  financials_fetched_at?: string | null;
+  ceo_name?: string | null;
+  chair_name?: string | null;
+  owners?: { type: string; name: string }[] | null;
+  company_summary?: string | null;
+  social_links?: Record<string, string> | null;
+  scan_status?: string | null;
+  scanned_at?: string | null;
 }
+
 
 export interface CrmTemplate {
   id: string;
