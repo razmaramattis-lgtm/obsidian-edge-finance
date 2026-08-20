@@ -330,19 +330,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return ((mem as any[]) || []).map((m) => m.lead_id);
   };
 
+  // Fritekstsøk kjøres via en indeksert databasefunksjon som returnerer id-ene.
+  // Direkte `ilike` i listespørringen fikk planleggeren til å droppe trigram-indeksen
+  // (RLS + ORDER BY) og skanne 590 000 rader = statement timeout.
+  const SEARCH_ID_CAP = 1000;
+  const searchMode = (): "none" | "orgnr" | "text" => {
+    const esc = search.trim().replace(/[%,()]/g, " ").trim();
+    if (!esc) return "none";
+    if (/^\d{6,9}$/.test(esc.replace(/\s/g, ""))) return "orgnr";
+    return esc.length >= 3 ? "text" : "none";
+  };
+  const resolveSearchIds = async (): Promise<string[] | null> => {
+    if (searchMode() !== "text") return null;
+    const term = search.trim().replace(/[%,()]/g, " ").trim();
+    const { data, error } = await supabase.rpc("crm_search_lead_ids" as any, { _q: term, _limit: SEARCH_ID_CAP });
+    if (error) throw error;
+    return ((data as any[]) || []).map((r) => (typeof r === "string" ? r : r.id));
+  };
+
   // Bygger spørringen med alle aktive filtre – brukes både av listen og CSV-eksporten
-  const applyLeadFilters = (q: any, folderIds: string[] | null) => {
+  const applyLeadFilters = (q: any, folderIds: string[] | null, searchIds?: string[] | null) => {
     if (folderIds) q = q.in("id", folderIds);
-    const term = search.trim();
-    if (term) {
-      const esc = term.replace(/[%,()]/g, " ").trim();
-      const digits = esc.replace(/\s/g, "");
-      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret.
-      // Færre enn 3 tegn kan ikke bruke trigram-indeksen og vil skanne 590 000 rader
-      // (statement timeout), så da søker vi ikke før brukeren har skrevet nok.
-      if (/^\d{6,9}$/.test(digits)) q = q.like("orgnr", `${digits}%`);
-      else if (esc.length >= 3) q = q.ilike("search_text", `%${esc}%`);
-    }
+    if (searchIds) q = q.in("id", searchIds);
+    if (searchMode() === "orgnr") q = q.like("orgnr", `${search.trim().replace(/\D/g, "")}%`);
+
 
 
 
