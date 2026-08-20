@@ -188,7 +188,26 @@ Deno.serve(async (req) => {
     transactional_emails: state?.transactional_email_ttl_minutes ?? DEFAULT_TRANSACTIONAL_TTL_MINUTES,
   }
 
+  // Pausede masseutsendinger: meldinger utsettes i stedet for å sendes
+  const pausedBatches = new Set<string>()
+  const pausedSecondsByBatch = new Map<string, number>()
+  {
+    const { data: batchRows } = await supabase
+      .from('email_batches')
+      .select('batch_id, status, paused_at, paused_seconds')
+    for (const row of batchRows ?? []) {
+      const id = String(row.batch_id)
+      let extra = Number(row.paused_seconds ?? 0)
+      if (row.status === 'paused') {
+        pausedBatches.add(id)
+        if (row.paused_at) extra += Math.max(0, (Date.now() - new Date(row.paused_at).getTime()) / 1000)
+      }
+      pausedSecondsByBatch.set(id, extra)
+    }
+  }
+
   let totalProcessed = 0
+
 
   for (const queue of ['auth_emails', 'transactional_emails']) {
     const { data: messages, error: readError } = await supabase.rpc('read_email_batch', {
