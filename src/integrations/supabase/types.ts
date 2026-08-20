@@ -1388,9 +1388,13 @@ export type Database = {
           accountant_name: string | null
           address: string | null
           category: string
+          ceo_name: string | null
+          chair_name: string | null
+          company_summary: string | null
           contact_name: string | null
           contacted_at: string | null
           created_at: string
+          currency: string | null
           email: string | null
           email_count: number
           email_source: string | null
@@ -1398,6 +1402,10 @@ export type Database = {
           employees: number | null
           enrich_status: string | null
           enriched_at: string | null
+          equity: number | null
+          financials: Json | null
+          financials_fetched_at: string | null
+          fiscal_year: number | null
           founded_at: string | null
           has_accountant: boolean
           has_auditor: boolean
@@ -1409,19 +1417,29 @@ export type Database = {
           municipality: string | null
           municipality_number: string | null
           name: string
+          net_result: number | null
           notes: string | null
+          operating_result: number | null
           org_form: string | null
           org_form_text: string | null
           orgnr: string
+          owners: Json | null
           phone: string | null
           postal_area: string | null
           postal_code: string | null
+          profit_before_tax: number | null
           raw: Json | null
           registered_at: string | null
+          revenue: number | null
           roles: Json
+          scan_status: string | null
+          scanned_at: string | null
+          social_links: Json | null
           source: string
           status: string
           synced_at: string
+          total_assets: number | null
+          total_debt: number | null
           unsubscribed: boolean
           updated_at: string
           website: string | null
@@ -1430,9 +1448,13 @@ export type Database = {
           accountant_name?: string | null
           address?: string | null
           category?: string
+          ceo_name?: string | null
+          chair_name?: string | null
+          company_summary?: string | null
           contact_name?: string | null
           contacted_at?: string | null
           created_at?: string
+          currency?: string | null
           email?: string | null
           email_count?: number
           email_source?: string | null
@@ -1440,6 +1462,10 @@ export type Database = {
           employees?: number | null
           enrich_status?: string | null
           enriched_at?: string | null
+          equity?: number | null
+          financials?: Json | null
+          financials_fetched_at?: string | null
+          fiscal_year?: number | null
           founded_at?: string | null
           has_accountant?: boolean
           has_auditor?: boolean
@@ -1451,19 +1477,29 @@ export type Database = {
           municipality?: string | null
           municipality_number?: string | null
           name: string
+          net_result?: number | null
           notes?: string | null
+          operating_result?: number | null
           org_form?: string | null
           org_form_text?: string | null
           orgnr: string
+          owners?: Json | null
           phone?: string | null
           postal_area?: string | null
           postal_code?: string | null
+          profit_before_tax?: number | null
           raw?: Json | null
           registered_at?: string | null
+          revenue?: number | null
           roles?: Json
+          scan_status?: string | null
+          scanned_at?: string | null
+          social_links?: Json | null
           source?: string
           status?: string
           synced_at?: string
+          total_assets?: number | null
+          total_debt?: number | null
           unsubscribed?: boolean
           updated_at?: string
           website?: string | null
@@ -1472,9 +1508,13 @@ export type Database = {
           accountant_name?: string | null
           address?: string | null
           category?: string
+          ceo_name?: string | null
+          chair_name?: string | null
+          company_summary?: string | null
           contact_name?: string | null
           contacted_at?: string | null
           created_at?: string
+          currency?: string | null
           email?: string | null
           email_count?: number
           email_source?: string | null
@@ -1482,6 +1522,10 @@ export type Database = {
           employees?: number | null
           enrich_status?: string | null
           enriched_at?: string | null
+          equity?: number | null
+          financials?: Json | null
+          financials_fetched_at?: string | null
+          fiscal_year?: number | null
           founded_at?: string | null
           has_accountant?: boolean
           has_auditor?: boolean
@@ -1493,19 +1537,29 @@ export type Database = {
           municipality?: string | null
           municipality_number?: string | null
           name?: string
+          net_result?: number | null
           notes?: string | null
+          operating_result?: number | null
           org_form?: string | null
           org_form_text?: string | null
           orgnr?: string
+          owners?: Json | null
           phone?: string | null
           postal_area?: string | null
           postal_code?: string | null
+          profit_before_tax?: number | null
           raw?: Json | null
           registered_at?: string | null
+          revenue?: number | null
           roles?: Json
+          scan_status?: string | null
+          scanned_at?: string | null
+          social_links?: Json | null
           source?: string
           status?: string
           synced_at?: string
+          total_assets?: number | null
+          total_debt?: number | null
           unsubscribed?: boolean
           updated_at?: string
           website?: string | null
