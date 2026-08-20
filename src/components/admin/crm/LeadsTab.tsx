@@ -649,18 +649,34 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                   </button>
                 ))}
               </div>
+              <div className="flex items-center gap-2 mt-2">
+                <Input type="number" min={0} value={empMin} onChange={(e) => setEmpMin(e.target.value)}
+                  placeholder="Fra" className="h-8 text-xs" aria-label="Ansatte fra" />
+                <span className="text-[11px] text-muted-foreground">–</span>
+                <Input type="number" min={0} value={empMax} onChange={(e) => setEmpMax(e.target.value)}
+                  placeholder="Til" className="h-8 text-xs" aria-label="Ansatte til" />
+              </div>
+            </div>
+
+            {/* Org.nr */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Org.nr</Label>
+              <Input value={orgnrFilter} onChange={(e) => setOrgnrFilter(e.target.value)}
+                placeholder="Hele eller starten av org.nr (f.eks. 938)" className="h-8 text-xs mt-1.5" aria-label="Org.nr" />
             </div>
 
             {/* Kontaktinfo */}
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <Label className="text-[11px] text-muted-foreground">E-post</Label>
+                <Label className="text-[11px] text-muted-foreground">E-poststatus</Label>
                 <Select value={hasEmail} onValueChange={setHasEmail}>
-                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Har e-post"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="E-poststatus"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="alle">Alle</SelectItem>
                     <SelectItem value="ja">Har e-post</SelectItem>
                     <SelectItem value="nei">Mangler e-post</SelectItem>
+                    <SelectItem value="verifisert">Verifisert e-post</SelectItem>
+                    <SelectItem value="uverifisert">Uverifisert e-post</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
