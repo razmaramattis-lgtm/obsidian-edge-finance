@@ -408,43 +408,43 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // Offset-paginering kollapser på ~590 000 rader (60 s+), keyset er millisekunder.
   const cursorsRef = useRef<({ r: string | null; id: string } | null)[]>([null]);
 
-  const SEARCH_CAP = 500;
-  const searchTerm = () => {
-    const esc = search.trim().replace(/[%,()]/g, " ").trim();
-    return esc.length >= 3 || /^\d{6,9}$/.test(esc.replace(/\s/g, "")) ? esc : "";
-  };
-
   const fetchLeads = async () => {
     const seq = ++fetchSeq.current;
     setLoading(true);
-    const folderIds = await resolveFolderIds();
-    if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    let folderIds: string[] | null = null;
+    let searchIds: string[] | null = null;
+    try {
+      folderIds = await resolveFolderIds();
+      searchIds = await resolveSearchIds();
+    } catch (e: any) {
+      if (seq !== fetchSeq.current) return;
+      toast.error("Kunne ikke søke: " + (e.message || "ukjent feil"));
+      setLeads([]); setTotal(0); setLoading(false); return;
+    }
+    if ((folderIds && !folderIds.length) || (searchIds && !searchIds.length)) {
+      if (seq !== fetchSeq.current) return;
+      setLeads([]); setTotal(0); setHasNext(false); setLoading(false); return;
+    }
     // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten.
-    // Antall telles kun på første side (estimat), resten av sidene gjenbruker tallet = mye raskere bla.
-    const searching = !!searchTerm();
-    const withCount = page === 0 && !searching;
+    const searching = !!searchIds || searchMode() === "orgnr";
+    // Ved søk er treffmengden liten, da teller vi eksakt. Ellers estimat på første side.
+    const withCount = page === 0;
     const q = applyLeadFilters(
-      supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: "estimated" } : undefined),
+      supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: searching ? "exact" : "estimated" } : undefined),
       folderIds,
+      searchIds,
     );
-
-    // Ved fritekstsøk sorterer vi IKKE i databasen: ORDER BY registered_at får planleggeren
-    // til å droppe trigram-indeksen og skanne 590 000 rader (statement timeout).
-    // I stedet henter vi inntil 500 treff usortert (~0,5 s) og sorterer/paginerer i nettleseren.
-    let q2: any = q;
-    if (!searching) {
-      q2 = q2.order("registered_at", { ascending: false, nullsFirst: false }).order("id", { ascending: false });
-      const cursor = page > 0 ? cursorsRef.current[page] : null;
-      if (cursor?.r) {
-        q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
-        q2 = q2.limit(PAGE_SIZE);
-      } else if (page > 0) {
-        q2 = q2.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
-      } else {
-        q2 = q2.limit(PAGE_SIZE);
-      }
+    let q2: any = q
+      .order("registered_at", { ascending: false, nullsFirst: false })
+      .order("id", { ascending: false });
+    const cursor = page > 0 ? cursorsRef.current[page] : null;
+    if (!searching && cursor?.r) {
+      q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
+      q2 = q2.limit(PAGE_SIZE);
+    } else if (page > 0) {
+      q2 = q2.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
     } else {
-      q2 = q2.limit(SEARCH_CAP);
+      q2 = q2.limit(PAGE_SIZE);
     }
 
     let { data, count, error } = await q2;
@@ -463,19 +463,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       setLeads([]); setTotal(0); setLoading(false); return;
     }
 
-    let rows = ((data as unknown) as CrmLead[]) || [];
-
-    if (searching) {
-      rows = [...rows].sort((a, b) =>
-        (b.registered_at || "").localeCompare(a.registered_at || "") || b.id.localeCompare(a.id));
-      setTotal(rows.length);
-      const slice = rows.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
-      setLeads(slice);
-      setHasNext((page + 1) * PAGE_SIZE < rows.length);
-      setLoading(false);
-      return;
-    }
-
+    const rows = ((data as unknown) as CrmLead[]) || [];
     setLeads(rows);
     if (page === 0) cursorsRef.current = [null];
     const last = rows[rows.length - 1];
@@ -484,6 +472,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (withCount) setTotal(count || 0);
     setLoading(false);
   };
+
 
 
 
