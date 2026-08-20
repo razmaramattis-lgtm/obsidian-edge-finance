@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { Send, Upload, Mail } from "lucide-react";
 import SendPacingControl, { DEFAULT_PACING, SendPacing } from "./SendPacingControl";
+import SendProgressPanel from "./SendProgressPanel";
 
 const EmailBulkPanel = () => {
   const [emails, setEmails] = useState("");
@@ -101,6 +102,8 @@ const EmailBulkPanel = () => {
 
   return (
     <div className="max-w-2xl space-y-5">
+      <SendProgressPanel />
+
       <div className="rounded-md bg-muted/50 p-3 flex items-center gap-2 text-xs text-muted-foreground">
         <Mail size={14} className="text-primary shrink-0" />
         Sendes fra <strong className="text-foreground">kontakt@avargo.no</strong>

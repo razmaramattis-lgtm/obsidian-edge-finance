@@ -61,6 +61,7 @@ Deno.serve(async (req) => {
   // Første e-post går ut med én gang, deretter spres resten 5-10 min fra hverandre.
   let delaySeconds = 0;
 
+  const batchId = crypto.randomUUID();
   const startedAt = Date.now();
   const MAX_MS = 50_000; // stay under edge function timeout
   let totalProcessed = 0;
@@ -144,6 +145,9 @@ Deno.serve(async (req) => {
             template_name: "bulk-broadcast",
             recipient_email: email.recipient_email,
             status: "pending",
+            batch_id: batchId,
+            batch_label: "Masseutsending",
+            scheduled_at: scheduledAt,
           });
 
           await adminSb.from("email_messages").update({
@@ -178,6 +182,7 @@ Deno.serve(async (req) => {
       .eq("status", "queued");
 
     return json({
+      batch_id: batchId,
       processed: totalProcessed,
       queued: totalQueued,
       failed: totalFailed,

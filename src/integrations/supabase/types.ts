@@ -2369,32 +2369,41 @@ export type Database = {
       }
       email_send_log: {
         Row: {
+          batch_id: string | null
+          batch_label: string | null
           created_at: string
           error_message: string | null
           id: string
           message_id: string | null
           metadata: Json | null
           recipient_email: string
+          scheduled_at: string | null
           status: string
           template_name: string
         }
         Insert: {
+          batch_id?: string | null
+          batch_label?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
           message_id?: string | null
           metadata?: Json | null
           recipient_email: string
+          scheduled_at?: string | null
           status: string
           template_name: string
         }
         Update: {
+          batch_id?: string | null
+          batch_label?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
           message_id?: string | null
           metadata?: Json | null
           recipient_email?: string
+          scheduled_at?: string | null
           status?: string
           template_name?: string
         }
@@ -4816,6 +4825,20 @@ export type Database = {
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
+      }
+      email_batch_progress: {
+        Args: { _limit?: number }
+        Returns: {
+          batch_id: string
+          batch_label: string
+          failed: number
+          last_scheduled_at: string
+          next_scheduled_at: string
+          pending: number
+          sent: number
+          started_at: string
+          total: number
+        }[]
       }
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {

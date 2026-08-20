@@ -172,6 +172,7 @@ Deno.serve(async (req) => {
     if (t.is_default && !tplDefaultByCategory.has(t.category)) tplDefaultByCategory.set(t.category, t);
   }
 
+  const batchId = crypto.randomUUID();
   const results = { sent: 0, skipped: 0, failed: 0, details: [] as any[] };
 
   // Sprer utsendingen: første e-post går med én gang, deretter 5-10 min mellom hver.
@@ -244,6 +245,9 @@ Deno.serve(async (req) => {
         template_name: `crm:${tpl.name}`,
         recipient_email: recipient,
         status: "pending",
+        batch_id: batchId,
+        batch_label: mode === "autopilot" ? "CRM autopilot" : `CRM: ${tpl.name}`,
+        scheduled_at: scheduledAt,
       });
 
       await admin.from("crm_email_events").insert({
@@ -284,5 +288,5 @@ Deno.serve(async (req) => {
     await admin.from("crm_automation_settings").update({ last_autopilot_at: new Date().toISOString() }).eq("id", 1);
   }
 
-  return json({ success: true, ...results, pacing_seconds: pacing, spread_minutes: Math.round(delaySeconds / 60) });
+  return json({ success: true, batch_id: batchId, ...results, pacing_seconds: pacing, spread_minutes: Math.round(delaySeconds / 60) });
 });

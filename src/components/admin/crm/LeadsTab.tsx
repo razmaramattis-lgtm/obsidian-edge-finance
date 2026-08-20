@@ -23,6 +23,7 @@ import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYE
 import { buildLeadEmail } from "./emailPreview";
 import { Highlight as Hl, matchReasons } from "./Highlight";
 import ImportStatusPanel from "./ImportStatusPanel";
+import SendProgressPanel from "../email/SendProgressPanel";
 
 
 const PAGE_SIZE = 50;
@@ -684,6 +685,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   return (
     <div className={fullscreen ? "h-full flex flex-col gap-3" : "space-y-3"}>
       <ImportStatusPanel onChanged={() => { fetchImportState(); fetchLeads(); }} />
+      <SendProgressPanel />
       {/* toolbar */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
