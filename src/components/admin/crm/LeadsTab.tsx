@@ -1143,7 +1143,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       <Card className={`overflow-hidden ${fullscreen ? "flex-1 min-h-0 flex flex-col" : ""}`}>
         <div className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_130px_110px_90px_130px] items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/40 text-[10px] uppercase tracking-wide text-muted-foreground">
           <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Velg alle" />
-          <span>Selskap ({displayTotal > 1000 ? `ca. ${displayTotal.toLocaleString("nb-NO")}` : displayTotal})</span>
+          <span>Selskap ({displayTotal > 1000 ? `ca. ${displayTotal.toLocaleString("nb-NO")}` : displayTotal}){searchMode() === "text" && total >= 400 ? " · viser de 400 første treffene – snevre inn søket" : ""}</span>
           <span>Kontakt</span>
           <span>Regnskapstall</span>
           <span>Kategori</span>
