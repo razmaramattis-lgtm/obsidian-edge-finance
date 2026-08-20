@@ -335,7 +335,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 250); return () => clearTimeout(t); },
+  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter, activeFolder]);
 
