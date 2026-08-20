@@ -155,13 +155,21 @@ Deno.serve(async (req) => {
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
           );
-          for (let i = 0; i < rows.length; i += 500) {
-            const chunk = rows.slice(i, i + 500);
+          // Mindre bolker + retry: store bolker kan treffe databasens statement timeout.
+          for (let i = 0; i < rows.length; i += 150) {
+            const chunk = rows.slice(i, i + 150);
             // Only brand new companies are inserted – existing cards keep their
             // manual edits, category and contact status.
-            const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: true });
-            if (error) throw new Error(error.message || JSON.stringify(error));
+            let lastErr: string | null = null;
+            for (let attempt = 0; attempt < 3; attempt++) {
+              const { error } = await admin.from("crm_leads").upsert(chunk, { onConflict: "orgnr", ignoreDuplicates: true });
+              if (!error) { lastErr = null; break; }
+              lastErr = error.message || JSON.stringify(error);
+              await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+            }
+            if (lastErr) throw new Error(lastErr);
           }
+
           processed += enheter.length;
           imported += rows.length;
           // Persist after every page so progress survives a hard shutdown.
