@@ -147,11 +147,19 @@ Deno.serve(async (req) => {
       const from = iso(fromDate);
       let windowComplete = true;
       let windowCount = 0;
+      let tooBig = false;
 
       for (let page = 0; page < 20; page++) {
         const data = await fetchPage(from, to, page);
+        // Brreg gir maks 10 000 treff per søk. Er vinduet større må det deles,
+        // ellers hopper vi over selskaper uten å merke det.
+        if (page === 0 && (data?.page?.totalElements ?? 0) > 10_000 && windowDays > 1) {
+          tooBig = true;
+          break;
+        }
         const enheter = data?._embedded?.enheter || [];
         if (enheter.length) {
+
           windowCount += enheter.length;
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
