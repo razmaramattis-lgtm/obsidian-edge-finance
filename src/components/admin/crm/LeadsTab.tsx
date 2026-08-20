@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
 import { buildLeadEmail } from "./emailPreview";
+import ImportStatusPanel from "./ImportStatusPanel";
 
 
 const PAGE_SIZE = 50;
@@ -520,6 +521,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
   return (
     <div className={fullscreen ? "h-full flex flex-col gap-3" : "space-y-3"}>
+      <ImportStatusPanel onChanged={() => { fetchImportState(); fetchLeads(); }} />
       {/* toolbar */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
