@@ -244,6 +244,9 @@ Deno.serve(async (req) => {
         template_name: `crm:${tpl.name}`,
         recipient_email: recipient,
         status: "pending",
+        batch_id: batchId,
+        batch_label: mode === "autopilot" ? "CRM autopilot" : `CRM: ${tpl.name}`,
+        scheduled_at: scheduledAt,
       });
 
       await admin.from("crm_email_events").insert({
