@@ -23,6 +23,10 @@ import { buildLeadEmail } from "./emailPreview";
 
 const PAGE_SIZE = 50;
 
+const nok = (v: number | null | undefined) =>
+  typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
+
+
 const KOMMUNE_PRESETS = [
   { label: "Kongsvinger", nr: "3401" },
   { label: "Nord-Odal", nr: "3414" },
