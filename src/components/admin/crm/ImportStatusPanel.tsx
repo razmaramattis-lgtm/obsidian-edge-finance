@@ -60,15 +60,17 @@ const ImportStatusPanel = ({ onChanged }: { onChanged?: () => void }) => {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
-    const [{ data: st }, { data: errs }, { count }] = await Promise.all([
+    const [{ data: st }, { data: errs }, { data: statRow }] = await Promise.all([
       supabase.from("crm_import_state" as any).select("*").eq("id", 1).maybeSingle(),
       supabase.from("crm_sync_log").select("id,run_at,mode,status,error_message")
         .neq("status", "ok").order("run_at", { ascending: false }).limit(5),
-      supabase.from("crm_leads").select("id", { count: "estimated", head: true }),
+      // Eksakt total fra hurtigbuffer – estimatet fra PostgREST blir feil pga. RLS-filteret
+      supabase.from("crm_stats_cache").select("value").eq("key", "total").maybeSingle(),
     ]);
     setState((st as unknown as ImportState) || null);
     setErrors((errs as unknown as SyncErrorRow[]) || []);
-    setTotalLeads(count ?? null);
+    setTotalLeads(statRow ? Number((statRow as any).value) : null);
+
     setLoading(false);
   }, []);
 
