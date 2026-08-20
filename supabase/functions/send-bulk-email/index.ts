@@ -61,6 +61,7 @@ Deno.serve(async (req) => {
   // Første e-post går ut med én gang, deretter spres resten 5-10 min fra hverandre.
   let delaySeconds = 0;
 
+  const batchId = crypto.randomUUID();
   const startedAt = Date.now();
   const MAX_MS = 50_000; // stay under edge function timeout
   let totalProcessed = 0;
