@@ -347,7 +347,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
-     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter, activeFolder]);
+     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
+     unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
 
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
