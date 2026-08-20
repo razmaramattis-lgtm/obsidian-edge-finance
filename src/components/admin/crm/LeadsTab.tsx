@@ -385,6 +385,25 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     }
   };
 
+  const runFullEnrich = async () => {
+    setFullEnriching(true);
+    toast.info("Henter eiere, regnskapstall og selskapsinfo …");
+    try {
+      const { data, error } = await supabase.functions.invoke("crm-enrich-company", {
+        body: selected.length ? { leadIds: selected } : { limit: 25 },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(`${data.processed} selskaper oppdatert – ${data.withFinancials} med regnskapstall`);
+      fetchLeads();
+    } catch (e: any) {
+      toast.error(e.message || "Berikelse feilet");
+    } finally {
+      setFullEnriching(false);
+    }
+  };
+
+
   const updateLead = async (id: string, patch: Partial<CrmLead>) => {
     const { error } = await supabase.from("crm_leads").update(patch as any).eq("id", id);
     if (error) return toast.error(error.message);
