@@ -372,9 +372,13 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
     // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
     const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" }), folderIds);
-    const { data, count } = await q
+    const { data, count, error } = await q
       .order("registered_at", { ascending: false, nullsFirst: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+    if (error) {
+      toast.error("Kunne ikke hente selskaper: " + error.message);
+      setLeads([]); setTotal(0); setLoading(false); return;
+    }
     setLeads(((data as unknown) as CrmLead[]) || []);
     setTotal(count || 0);
     setLoading(false);
