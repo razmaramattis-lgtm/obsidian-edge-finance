@@ -223,7 +223,10 @@ const EmailSendPanel = () => {
         <Textarea rows={6} placeholder="Skriv e-postinnhold her... HTML støttes." value={body} onChange={e => setBody(e.target.value)} />
       </div>
 
+      <SendPacingControl value={pacing} onChange={setPacing} recipients={allRecipients.length} />
+
       {sending && <Progress value={progress} className="h-2" />}
+
 
       <Button onClick={handleSend} disabled={sending || allRecipients.length === 0} className="gap-2">
         <Send size={14} />
