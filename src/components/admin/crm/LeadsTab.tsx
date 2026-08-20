@@ -15,7 +15,7 @@ import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
   CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
   FolderOpen, FolderPlus, UserRound, Eye, ChevronLeft, ChevronRight, Sparkles, TrendingUp,
-  Bookmark, BookmarkPlus, History as HistoryIcon,
+  Bookmark, BookmarkPlus, History as HistoryIcon, BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 import SendPacingControl, { DEFAULT_PACING, SendPacing } from "@/components/admin/email/SendPacingControl";
@@ -24,6 +24,7 @@ import { buildLeadEmail } from "./emailPreview";
 import { Highlight as Hl, matchReasons } from "./Highlight";
 import ImportStatusPanel from "./ImportStatusPanel";
 import SendProgressPanel from "../email/SendProgressPanel";
+import FinancialsDialog from "./FinancialsDialog";
 
 
 const PAGE_SIZE = 50;
@@ -146,6 +147,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [exportLimit, setExportLimit] = useState("5000");
   const [exportFields, setExportFields] = useState<string[]>(DEFAULT_EXPORT_FIELDS);
   const [detail, setDetail] = useState<CrmLead | null>(null);
+  const [finLead, setFinLead] = useState<{ id: string; orgnr: string; name: string } | null>(null);
 
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -1118,19 +1120,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                     </div>
 
                     {/* regnskapstall */}
-                    <div className="min-w-0 text-[10px] leading-tight">
-                      {l.fiscal_year ? (
-                        <>
-                          <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
-                          <span className="block font-medium">{nokShort(l.revenue)}</span>
-                          <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
-                            Res. {nokShort(l.net_result)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground/60">ikke hentet</span>
-                      )}
+                    <div className="min-w-0 text-[10px] leading-tight flex items-start gap-1">
+                      <div className="min-w-0 flex-1">
+                        {l.fiscal_year ? (
+                          <>
+                            <span className="block text-muted-foreground">Omsetn. {l.fiscal_year}</span>
+                            <span className="block font-medium">{nokShort(l.revenue)}</span>
+                            <span className={`block ${(l.net_result ?? 0) < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
+                              Res. {nokShort(l.net_result)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground/60">ikke hentet</span>
+                        )}
+                      </div>
+                      <Button
+                        size="icon" variant="ghost" className="h-6 w-6 shrink-0"
+                        title="Hent regnskapstall og lønnsomhetsanalyse"
+                        aria-label={`Hent regnskapstall for ${l.name}`}
+                        onClick={(e) => { e.stopPropagation(); setFinLead({ id: l.id, orgnr: l.orgnr, name: l.name }); }}
+                      >
+                        <BarChart3 size={12} />
+                      </Button>
                     </div>
+
 
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
 
@@ -1610,6 +1623,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           )}
         </SheetContent>
       </Sheet>
+      {finLead && (
+        <FinancialsDialog
+          open={!!finLead}
+          onOpenChange={(v) => !v && setFinLead(null)}
+          orgnr={finLead.orgnr}
+          leadId={finLead.id}
+          name={finLead.name}
+          onSaved={fetchLeads}
+        />
+      )}
     </div>
   );
 };
