@@ -1019,32 +1019,44 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <div className="divide-y divide-border/40">
               {leads.map((l) => {
                 const meta = categoryMeta(l.category);
+                const reasons = matchReasons(l, search);
                 return (
                   <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
                     <Checkbox checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
                     <button className="min-w-0 text-left" onClick={() => openDetail(l)}>
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="font-medium truncate">{l.name}</span>
+                        <span className="font-medium truncate"><Highlight text={l.name} term={search} /></span>
                         {l.manual_lock && <Lock size={10} className="text-muted-foreground shrink-0" />}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-muted-foreground truncate">
-                        <span>{l.orgnr}</span>
+                        <span><Highlight text={l.orgnr} term={search} /></span>
                         {l.org_form && <span>{l.org_form}</span>}
-                        {l.municipality && <span className="flex items-center gap-0.5"><MapPin size={9} />{l.municipality}</span>}
+                        {l.municipality && <span className="flex items-center gap-0.5"><MapPin size={9} /><Highlight text={l.municipality} term={search} /></span>}
                         {l.registered_at && <span className="flex items-center gap-0.5"><Calendar size={9} />{l.registered_at}</span>}
                       </div>
+                      {!!reasons.length && (
+                        <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                          <span className="text-[9px] text-muted-foreground">Treff i:</span>
+                          {reasons.map((r) => (
+                            <span key={r} className="text-[9px] px-1.5 py-px rounded-full bg-primary/10 text-primary">{r}</span>
+                          ))}
+                        </div>
+                      )}
                     </button>
                     <div className="min-w-0 text-[10px]">
                       {l.email ? (
-                        <a href={`mailto:${l.email}`} className="text-primary truncate block">{l.email}</a>
+                        <a href={`mailto:${l.email}`} className="text-primary truncate block"><Highlight text={l.email} term={search} /></a>
                       ) : (
                         <span className="text-muted-foreground/60">ingen e-post{l.enrich_status ? ` · ${l.enrich_status}` : ""}</span>
                       )}
-                      <span className="text-muted-foreground truncate block">{[l.phone, l.contact_name].filter(Boolean).join(" · ") || "—"}</span>
+                      <span className="text-muted-foreground truncate block">
+                        <Highlight text={[l.phone, l.contact_name].filter(Boolean).join(" · ") || "—"} term={search} />
+                      </span>
                       <span className={`truncate block ${l.has_accountant ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
-                        {l.has_accountant ? `Regnskapsfører: ${l.accountant_name || "ukjent"}` : "Ingen regnskapsfører registrert"}
+                        {l.has_accountant ? <>Regnskapsfører: <Highlight text={l.accountant_name || "ukjent"} term={search} /></> : "Ingen regnskapsfører registrert"}
                       </span>
                     </div>
+
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
                     <span className="text-[10px] text-muted-foreground">
                       {l.email_count > 0
