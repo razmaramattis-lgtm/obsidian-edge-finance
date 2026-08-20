@@ -262,18 +262,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (data) setDetail((d) => (d && d.id === (data as any).id ? (data as any) : d));
   };
 
-  const fetchLeads = async () => {
+  // Henter id-ene i valgt mappe (null = ingen mappebegrensning)
+  const resolveFolderIds = async (): Promise<string[] | null> => {
+    if (activeFolder === "alle") return null;
+    const { data: mem } = await supabase
+      .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
+    return ((mem as any[]) || []).map((m) => m.lead_id);
+  };
 
-    setLoading(true);
-    let folderIds: string[] | null = null;
-    if (activeFolder !== "alle") {
-      const { data: mem } = await supabase
-        .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
-      folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
-      if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
-    }
-    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
-    let q = supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" });
+  // Bygger spørringen med alle aktive filtre – brukes både av listen og CSV-eksporten
+  const applyLeadFilters = (q: any, folderIds: string[] | null) => {
     if (folderIds) q = q.in("id", folderIds);
     const term = search.trim();
     if (term) {
@@ -322,6 +320,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (contactFilter === "uten_epost") q = q.is("email", null);
     if (contactFilter === "kontaktet") q = q.gt("email_count", 0);
     if (contactFilter === "ikke_kontaktet") q = q.eq("email_count", 0);
+    return q;
+  };
+
+  const fetchLeads = async () => {
+    setLoading(true);
+    const folderIds = await resolveFolderIds();
+    if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
+    const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" }), folderIds);
     const { data, count } = await q
       .order("registered_at", { ascending: false, nullsFirst: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
@@ -329,6 +336,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setTotal(count || 0);
     setLoading(false);
   };
+
 
   const activeFilterCount =
     orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
