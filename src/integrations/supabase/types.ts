@@ -2398,6 +2398,8 @@ export type Database = {
         Row: {
           auth_email_ttl_minutes: number
           batch_size: number
+          bulk_max_delay_seconds: number
+          bulk_min_delay_seconds: number
           id: number
           retry_after_until: string | null
           send_delay_ms: number
@@ -2407,6 +2409,8 @@ export type Database = {
         Insert: {
           auth_email_ttl_minutes?: number
           batch_size?: number
+          bulk_max_delay_seconds?: number
+          bulk_min_delay_seconds?: number
           id?: number
           retry_after_until?: string | null
           send_delay_ms?: number
@@ -2416,6 +2420,8 @@ export type Database = {
         Update: {
           auth_email_ttl_minutes?: number
           batch_size?: number
+          bulk_max_delay_seconds?: number
+          bulk_min_delay_seconds?: number
           id?: number
           retry_after_until?: string | null
           send_delay_ms?: number
@@ -4808,6 +4814,10 @@ export type Database = {
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      enqueue_email_delayed: {
+        Args: { delay_seconds?: number; payload: Json; queue_name: string }
         Returns: number
       }
       get_advisor_unavailability: {

@@ -72,6 +72,25 @@ async function unsubscribeToken(admin: any, email: string) {
   return (stored?.token as string) || token;
 }
 
+
+// --- Utsendingstempo: 5-10 min mellom hver e-post i masseutsendelser ---
+const DEFAULT_MIN_DELAY_SECONDS = 300; // 5 min
+const DEFAULT_MAX_DELAY_SECONDS = 600; // 10 min
+
+async function loadPacing(admin: any) {
+  const { data } = await admin
+    .from("email_send_state")
+    .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
+    .maybeSingle();
+  const min = Math.max(0, data?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS);
+  const max = Math.max(min, data?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS);
+  return { min, max };
+}
+
+function nextGap({ min, max }: { min: number; max: number }) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -144,6 +163,10 @@ Deno.serve(async (req) => {
 
   const results = { sent: 0, skipped: 0, failed: 0, details: [] as any[] };
 
+  // Sprer utsendingen: første e-post går med én gang, deretter 5-10 min mellom hver.
+  const pacing = await loadPacing(admin);
+  let delaySeconds = 0;
+
   for (const lead of leads) {
     const recipient = (body.testEmail as string) || lead.email;
     if (!recipient) { results.skipped++; continue; }
@@ -175,8 +198,10 @@ Deno.serve(async (req) => {
       const html = wrap(rendered, render(tpl.reason || DEFAULT_REASON, lead), unsubUrl, render(tpl.preheader || "", lead));
       const text = rendered.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
-      const { error } = await admin.rpc("enqueue_email", {
+      const scheduledAt = new Date(Date.now() + delaySeconds * 1000).toISOString();
+      const { error } = await admin.rpc("enqueue_email_delayed", {
         queue_name: "transactional_emails",
+        delay_seconds: delaySeconds,
         payload: {
           message_id: messageId,
           to: recipient,
@@ -190,10 +215,13 @@ Deno.serve(async (req) => {
           label: "crm-outreach",
           idempotency_key: `crm-${lead.id}-${messageId}`,
           unsubscribe_token: unsubToken,
-          queued_at: new Date().toISOString(),
+          // TTL regnes fra planlagt sendetidspunkt, ikke fra køtidspunktet
+          queued_at: scheduledAt,
+          scheduled_at: scheduledAt,
         },
       });
       if (error) throw error;
+      delaySeconds += nextGap(pacing);
 
       await admin.from("email_send_log").insert({
         message_id: messageId,
@@ -240,5 +268,5 @@ Deno.serve(async (req) => {
     await admin.from("crm_automation_settings").update({ last_autopilot_at: new Date().toISOString() }).eq("id", 1);
   }
 
-  return json({ success: true, ...results });
+  return json({ success: true, ...results, pacing_seconds: pacing, spread_minutes: Math.round(delaySeconds / 60) });
 });
