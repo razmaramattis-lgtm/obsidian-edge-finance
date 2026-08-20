@@ -18,6 +18,7 @@ import {
   Bookmark, BookmarkPlus, History as HistoryIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import SendPacingControl, { DEFAULT_PACING, SendPacing } from "@/components/admin/email/SendPacingControl";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
 import { buildLeadEmail } from "./emailPreview";
 import { Highlight as Hl, matchReasons } from "./Highlight";
@@ -156,6 +157,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [mailOpen, setMailOpen] = useState(false);
   const [mailTemplate, setMailTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
+  const [pacing, setPacing] = useState<SendPacing>(DEFAULT_PACING);
   const [sending, setSending] = useState(false);
   const [previewIdx, setPreviewIdx] = useState(0);
 
@@ -1360,6 +1362,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
               </div>
             )}
 
+            <SendPacingControl value={pacing} onChange={setPacing} recipients={mailRecipients.length} />
+
             <div>
               <Label className="text-xs">Testadresse (valgfritt – sender alt hit i stedet)</Label>
               <Input value={testEmail} onChange={(e) => setTestEmail(e.target.value)} placeholder="kontakt@avargo.no" />
@@ -1376,7 +1380,14 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
               setSending(true);
               try {
                 const { data, error } = await supabase.functions.invoke("crm-send-email", {
-                  body: { mode: "manual", leadIds: selected, templateId: mailTemplate, testEmail: testEmail || undefined },
+                  body: {
+                    mode: "manual",
+                    leadIds: selected,
+                    templateId: mailTemplate,
+                    testEmail: testEmail || undefined,
+                    minDelayMinutes: pacing.min,
+                    maxDelayMinutes: pacing.max,
+                  },
                 });
                 if (error) throw error;
                 if (data?.error) throw new Error(data.error);
