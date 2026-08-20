@@ -100,6 +100,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -384,6 +385,9 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   };
 
   const fetchSeq = useRef(0);
+  // Keyset-markører: cursors[n] = startpunkt for side n (null = første side).
+  // Offset-paginering kollapser på ~590 000 rader (60 s+), keyset er millisekunder.
+  const cursorsRef = useRef<({ r: string | null; id: string } | null)[]>([null]);
 
   const fetchLeads = async () => {
     const seq = ++fetchSeq.current;
@@ -397,15 +401,30 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: "estimated" } : undefined),
       folderIds,
     );
-    const { data, count, error } = await q
+    let q2 = q
       .order("registered_at", { ascending: false, nullsFirst: false })
-      .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+      .order("id", { ascending: false });
+    const cursor = page > 0 ? cursorsRef.current[page] : null;
+    if (cursor?.r) {
+      q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
+      q2 = q2.limit(PAGE_SIZE);
+    } else if (page > 0) {
+      q2 = q2.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+    } else {
+      q2 = q2.limit(PAGE_SIZE);
+    }
+    const { data, count, error } = await q2;
     if (seq !== fetchSeq.current) return; // eldre svar – ignorer
     if (error) {
       toast.error("Kunne ikke hente selskaper: " + error.message);
       setLeads([]); setTotal(0); setLoading(false); return;
     }
-    setLeads(((data as unknown) as CrmLead[]) || []);
+    const rows = ((data as unknown) as CrmLead[]) || [];
+    setLeads(rows);
+    if (page === 0) cursorsRef.current = [null];
+    const last = rows[rows.length - 1];
+    cursorsRef.current[page + 1] = last ? { r: last.registered_at, id: last.id } : null;
+    setHasNext(rows.length === PAGE_SIZE);
     if (withCount) setTotal(count || 0);
     setLoading(false);
   };
@@ -1162,11 +1181,13 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             </div>
           )}
         </div>
-        {total > PAGE_SIZE && (
+        {(page > 0 || hasNext) && (
           <div className="flex items-center justify-between px-3 py-2 border-t border-border/50">
-            <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>Forrige</Button>
-            <span className="text-[11px] text-muted-foreground">Side {page + 1} av {Math.ceil(total / PAGE_SIZE)}</span>
-            <Button size="sm" variant="outline" disabled={(page + 1) * PAGE_SIZE >= total} onClick={() => setPage((p) => p + 1)}>Neste</Button>
+            <Button size="sm" variant="outline" disabled={page === 0 || loading} onClick={() => setPage((p) => p - 1)}>Forrige</Button>
+            <span className="text-[11px] text-muted-foreground">
+              Side {page + 1}{total > 0 ? ` av ca. ${Math.ceil(total / PAGE_SIZE).toLocaleString("nb-NO")}` : ""} · {total.toLocaleString("nb-NO")} selskaper
+            </span>
+            <Button size="sm" variant="outline" disabled={!hasNext || loading} onClick={() => setPage((p) => p + 1)}>Neste</Button>
           </div>
         )}
       </Card>

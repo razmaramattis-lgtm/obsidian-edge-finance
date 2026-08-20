@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_crm_leads_regat_id_desc ON public.crm_leads (registered_at DESC, id DESC);
