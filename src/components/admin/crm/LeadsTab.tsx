@@ -751,11 +751,13 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         rows = leads;
       } else {
         const folderIds = await resolveFolderIds();
-        if (folderIds && !folderIds.length) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
+        const searchIds = await resolveSearchIds();
+        if ((folderIds && !folderIds.length) || (searchIds && !searchIds.length)) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
         const max = Math.max(1, Math.min(Number(exportLimit) || 5000, 50000));
         const CHUNK = 1000;
         for (let from = 0; from < max; from += CHUNK) {
-          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds);
+          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds, searchIds);
+
           const { data, error } = await q
             .order("registered_at", { ascending: false, nullsFirst: false })
             .range(from, Math.min(from + CHUNK, max) - 1);
