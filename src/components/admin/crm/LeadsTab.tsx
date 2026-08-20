@@ -15,6 +15,7 @@ import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
   CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
   FolderOpen, FolderPlus, UserRound, Eye, ChevronLeft, ChevronRight, Sparkles, TrendingUp,
+  Bookmark, BookmarkPlus, History as HistoryIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
@@ -78,6 +79,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [accountantFilter, setAccountantFilter] = useState("alle"); // alle | ja | nei
   const [accountantName, setAccountantName] = useState("");
   const [unsubFilter, setUnsubFilter] = useState("alle"); // alle | aktive | avmeldte
+
+  // ── lagrede visninger og nylige søk ──
+  const [savedViews, setSavedViews] = useState<any[]>([]);
+  const [saveViewOpen, setSaveViewOpen] = useState(false);
+  const [saveViewName, setSaveViewName] = useState("");
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("crm_recent_searches") || "[]"); } catch { return []; }
+  });
+
+
 
 
   const [selected, setSelected] = useState<string[]>([]);
@@ -337,8 +348,74 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const toggleIn = (setter: (fn: (s: string[]) => string[]) => void, v: string) =>
     setter((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
 
+  // ── lagrede visninger ──
+  const currentFilters = () => ({
+    search, category, status, municipality, fromDate, toDate, contactFilter,
+    orgFormFilter, municipalityMulti, industryGroups, industryText, employeeBands,
+    hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter,
+    orgnrFilter, empMin, empMax, activeFolder,
+  });
+
+  const fetchSavedViews = async () => {
+    const { data } = await supabase.from("crm_saved_views" as any)
+      .select("id,name,filters,last_used_at,created_at")
+      .order("last_used_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(30);
+    setSavedViews((data as any[]) || []);
+  };
+
+  const saveView = async () => {
+    const name = saveViewName.trim();
+    if (!name) return;
+    const { data: u } = await supabase.auth.getUser();
+    const { error } = await supabase.from("crm_saved_views" as any)
+      .insert({ name, filters: currentFilters(), created_by: u?.user?.id ?? null } as any);
+    if (error) { toast.error("Kunne ikke lagre visningen"); return; }
+    toast.success(`Visningen «${name}» er lagret`);
+    setSaveViewName(""); setSaveViewOpen(false);
+    fetchSavedViews();
+  };
+
+  const applyView = async (view: any) => {
+    const f = (view?.filters || {}) as Record<string, any>;
+    setSearch(f.search ?? ""); setCategory(f.category ?? "alle"); setStatus(f.status ?? "alle");
+    setMunicipality(f.municipality ?? "alle"); setFromDate(f.fromDate ?? ""); setToDate(f.toDate ?? "");
+    setContactFilter(f.contactFilter ?? "alle"); setOrgFormFilter(f.orgFormFilter ?? []);
+    setMunicipalityMulti(f.municipalityMulti ?? []); setIndustryGroups(f.industryGroups ?? []);
+    setIndustryText(f.industryText ?? ""); setEmployeeBands(f.employeeBands ?? []);
+    setHasEmail(f.hasEmail ?? "alle"); setHasPhone(f.hasPhone ?? "alle"); setHasWebsite(f.hasWebsite ?? "alle");
+    setAccountantFilter(f.accountantFilter ?? "alle"); setAccountantName(f.accountantName ?? "");
+    setUnsubFilter(f.unsubFilter ?? "alle"); setOrgnrFilter(f.orgnrFilter ?? "");
+    setEmpMin(f.empMin ?? ""); setEmpMax(f.empMax ?? ""); setActiveFolder(f.activeFolder ?? "alle");
+    setPage(0);
+    await supabase.from("crm_saved_views" as any).update({ last_used_at: new Date().toISOString() } as any).eq("id", view.id);
+    fetchSavedViews();
+  };
+
+  const deleteView = async (id: string) => {
+    await supabase.from("crm_saved_views" as any).delete().eq("id", id);
+    setSavedViews((v) => v.filter((x) => x.id !== id));
+  };
+
+  // ── nylige søk ──
+  const pushRecentSearch = (term: string) => {
+    const t = term.trim();
+    if (t.length < 2) return;
+    setRecentSearches((prev) => {
+      const next = [t, ...prev.filter((p) => p.toLowerCase() !== t.toLowerCase())].slice(0, 8);
+      localStorage.setItem("crm_recent_searches", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    localStorage.removeItem("crm_recent_searches");
+    setRecentSearches([]);
+  };
+
   useEffect(() => {
-    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders();
+    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders(); fetchSavedViews();
     const t = setInterval(fetchImportState, 20000);
     return () => clearInterval(t);
   }, []);
@@ -346,7 +423,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
+  useEffect(() => {
+    setPage(0);
+    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, 400);
+    return () => clearTimeout(t);
+  },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
      unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
@@ -544,6 +625,47 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
         <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
       </div>
+
+      {/* lagrede visninger og nylige søk */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Bookmark size={13} className="text-muted-foreground" />
+        <span className="text-[11px] text-muted-foreground">Lagrede visninger:</span>
+        {savedViews.length === 0 && <span className="text-[11px] text-muted-foreground/70">ingen enda</span>}
+        {savedViews.map((v) => (
+          <span key={v.id} className="group inline-flex items-center">
+            <button type="button" onClick={() => applyView(v)} title="Bruk denne visningen"
+              className="px-2.5 py-1 rounded-full text-[11px] border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors">
+              {v.name}
+            </button>
+            <button type="button" onClick={() => deleteView(v.id)} aria-label={`Slett visningen ${v.name}`}
+              className="ml-0.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity">
+              <X size={11} />
+            </button>
+          </span>
+        ))}
+        <Button size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setSaveViewOpen(true)}>
+          <BookmarkPlus size={13} className="mr-1" />Lagre dagens filter
+        </Button>
+
+        {recentSearches.length > 0 && (
+          <>
+            <span className="w-px h-4 bg-border mx-1" />
+            <HistoryIcon size={13} className="text-muted-foreground" />
+            <span className="text-[11px] text-muted-foreground">Nylige søk:</span>
+            {recentSearches.map((t) => (
+              <button key={t} type="button" onClick={() => setSearch(t)}
+                className="px-2.5 py-1 rounded-full text-[11px] border border-border/70 bg-muted/40 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
+                {t}
+              </button>
+            ))}
+            <Button size="sm" variant="ghost" className="h-7 text-[11px] text-muted-foreground" onClick={clearRecentSearches}>
+              Tøm
+            </Button>
+          </>
+        )}
+      </div>
+
+
 
       {/* mapper */}
       <div className="flex flex-wrap items-center gap-1.5">
@@ -873,6 +995,27 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           </div>
         )}
       </Card>
+
+      {/* lagre visning */}
+      <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Lagre søkevisning</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Navn på visningen</Label>
+              <Input value={saveViewName} onChange={(e) => setSaveViewName(e.target.value)}
+                placeholder="F.eks. AS uten regnskapsfører i Kongsvinger" className="mt-1.5 h-9 text-sm" />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Lagrer søkeord, kategori, status, mappe og alle aktive filtre slik de står nå ({activeFilterCount} aktive filtre).
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveViewOpen(false)}>Avbryt</Button>
+            <Button onClick={saveView} disabled={!saveViewName.trim()}>Lagre visning</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ny mappe */}
       <Dialog open={folderDialog} onOpenChange={setFolderDialog}>
