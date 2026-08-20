@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Save, Zap, Send } from "lucide-react";
 import { toast } from "sonner";
-import { CATEGORIES, categoryMeta, type CrmTemplate } from "./types";
+import { CATEGORIES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmTemplate } from "./types";
 
 interface Settings {
   id: number;
@@ -25,6 +25,10 @@ interface Settings {
   lookback_days: number;
   min_delay_minutes: number;
   max_delay_minutes: number;
+  employees_min: number | null;
+  employees_max: number | null;
+  require_phone: boolean;
+  accountant_filter: string;
 }
 
 const AutopilotTab = () => {
