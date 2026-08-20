@@ -57,11 +57,16 @@ const AutopilotTab = () => {
       send_hour: s.send_hour,
       municipality_numbers: s.municipality_numbers,
       org_forms: s.org_forms,
+      industry_prefixes: s.industry_prefixes,
       categories: s.categories,
       template_map: s.template_map,
       lookback_days: s.lookback_days,
       min_delay_minutes: s.min_delay_minutes,
       max_delay_minutes: s.max_delay_minutes,
+      employees_min: s.employees_min,
+      employees_max: s.employees_max,
+      require_phone: s.require_phone,
+      accountant_filter: s.accountant_filter || "alle",
     } as any).eq("id", s.id);
     setSaving(false);
     if (error) return toast.error(error.message);
