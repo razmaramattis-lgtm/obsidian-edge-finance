@@ -471,10 +471,25 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       {/* mapper */}
       <div className="flex flex-wrap items-center gap-1.5">
         <FolderOpen size={13} className="text-muted-foreground" />
+        {/* Rullegardin for rask bytting når det er mange mapper */}
+        <Select value={activeFolder} onValueChange={setActiveFolder}>
+          <SelectTrigger className="h-7 w-[190px] text-[11px]" aria-label="Velg mappe">
+            <SelectValue placeholder="Velg mappe" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="alle">Alle selskaper</SelectItem>
+            {folders.map((f) => (
+              <SelectItem key={f.id} value={f.id}>
+                {f.name}{typeof f.count === "number" ? ` (${f.count})` : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <button type="button" onClick={() => setActiveFolder("alle")}
           className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === "alle" ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}>
           Alle selskaper
         </button>
+
         {folders.map((f) => (
           <span key={f.id} className="group inline-flex items-center">
             <button type="button" onClick={() => setActiveFolder(f.id)}
