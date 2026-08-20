@@ -160,6 +160,18 @@ Deno.serve(async (req) => {
       .order("registered_at", { ascending: false })
       .limit(Math.max(1, Math.min(settings.daily_limit ?? 25, 200)));
     if (settings.municipality_numbers?.length) query.in("municipality_number", settings.municipality_numbers);
+    if (settings.org_forms?.length) query.in("org_form", settings.org_forms);
+    if (settings.industry_prefixes?.length) {
+      const or = settings.industry_prefixes
+        .map((p: string) => `industry_code.like.${String(p).replace(/[^0-9.]/g, "")}%`)
+        .join(",");
+      if (or) query.or(or);
+    }
+    if (settings.employees_min != null) query.gte("employees", settings.employees_min);
+    if (settings.employees_max != null) query.lte("employees", settings.employees_max);
+    if (settings.require_phone) query.not("phone", "is", null);
+    if (settings.accountant_filter === "med") query.eq("has_accountant", true);
+    if (settings.accountant_filter === "uten") query.eq("has_accountant", false);
     const { data } = await query;
     leads = data || [];
   }
