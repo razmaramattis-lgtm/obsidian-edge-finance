@@ -288,5 +288,5 @@ Deno.serve(async (req) => {
     await admin.from("crm_automation_settings").update({ last_autopilot_at: new Date().toISOString() }).eq("id", 1);
   }
 
-  return json({ success: true, ...results, pacing_seconds: pacing, spread_minutes: Math.round(delaySeconds / 60) });
+  return json({ success: true, batch_id: batchId, ...results, pacing_seconds: pacing, spread_minutes: Math.round(delaySeconds / 60) });
 });
