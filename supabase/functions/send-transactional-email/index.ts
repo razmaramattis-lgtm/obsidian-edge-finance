@@ -116,12 +116,20 @@ Deno.serve(async (req) => {
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-  // 2. Check suppression list (fail-closed: if we can't verify, don't send)
-  const { data: suppressed, error: suppressionError } = await supabase
-    .from('suppressed_emails')
-    .select('id')
-    .eq('email', effectiveRecipient.toLowerCase())
-    .maybeSingle()
+  // 2. Check suppression list (fail-closed, but retry transient DB/schema-cache errors)
+  let suppressed: { id: string } | null = null
+  let suppressionError: unknown = null
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await supabase
+      .from('suppressed_emails')
+      .select('id')
+      .eq('email', effectiveRecipient.toLowerCase())
+      .maybeSingle()
+    suppressionError = res.error
+    suppressed = (res.data as { id: string } | null) ?? null
+    if (!res.error) break
+    await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
+  }
 
   if (suppressionError) {
     console.error('Suppression check failed — refusing to send', {
@@ -136,6 +144,7 @@ Deno.serve(async (req) => {
       }
     )
   }
+
 
   if (suppressed) {
     // Log the suppressed attempt
