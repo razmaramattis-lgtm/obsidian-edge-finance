@@ -486,6 +486,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           {rolesBusy ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <UserRound size={14} className="mr-1.5" />}
           Hent daglig leder
         </Button>
+        <Button size="sm" variant="outline" onClick={runFullEnrich} disabled={fullEnriching}>
+          {fullEnriching ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Sparkles size={14} className="mr-1.5" />}
+          Full selskapsinfo
+        </Button>
+
         <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
       </div>
 
