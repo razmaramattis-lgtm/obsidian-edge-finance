@@ -14,10 +14,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import {
   Search, RefreshCw, Download, Mail, Building2, Phone, Globe, MapPin, Users, Calendar,
   CheckCircle2, Send, Loader2, Trash2, ExternalLink, Radar, Lock, SlidersHorizontal, X,
-  FolderOpen, FolderPlus, UserRound,
+  FolderOpen, FolderPlus, UserRound, Eye, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
+import { buildLeadEmail } from "./emailPreview";
+
 
 const PAGE_SIZE = 50;
 
@@ -88,6 +90,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [mailTemplate, setMailTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [previewIdx, setPreviewIdx] = useState(0);
+
 
   // ── mapper ──
   const [folders, setFolders] = useState<{ id: string; name: string; description: string | null; count?: number }[]>([]);
@@ -423,6 +427,19 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
   const withEmail = useMemo(() => selected.filter((id) => leads.find((l) => l.id === id)?.email).length, [selected, leads]);
 
+  // Mottakerne som faktisk får e-post – i samme rekkefølge som de sendes ut.
+  const mailRecipients = useMemo(
+    () => leads.filter((l) => selected.includes(l.id) && !!l.email && !l.unsubscribed),
+    [leads, selected],
+  );
+  const previewLead = mailRecipients[Math.min(previewIdx, Math.max(0, mailRecipients.length - 1))] || null;
+  const previewTemplate = templates.find((t) => t.id === mailTemplate) || null;
+  const previewMail = useMemo(
+    () => buildLeadEmail(previewTemplate, previewLead),
+    [previewTemplate, previewLead],
+  );
+
+
   const quickFilters = [
     { id: "alle", label: "Alle" },
     { id: "uten_epost", label: "Mangler e-post" },
@@ -454,10 +471,25 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       {/* mapper */}
       <div className="flex flex-wrap items-center gap-1.5">
         <FolderOpen size={13} className="text-muted-foreground" />
+        {/* Rullegardin for rask bytting når det er mange mapper */}
+        <Select value={activeFolder} onValueChange={setActiveFolder}>
+          <SelectTrigger className="h-7 w-[190px] text-[11px]" aria-label="Velg mappe">
+            <SelectValue placeholder="Velg mappe" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="alle">Alle selskaper</SelectItem>
+            {folders.map((f) => (
+              <SelectItem key={f.id} value={f.id}>
+                {f.name}{typeof f.count === "number" ? ` (${f.count})` : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <button type="button" onClick={() => setActiveFolder("alle")}
           className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${activeFolder === "alle" ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-primary/40"}`}>
           Alle selskaper
         </button>
+
         {folders.map((f) => (
           <span key={f.id} className="group inline-flex items-center">
             <button type="button" onClick={() => setActiveFolder(f.id)}
@@ -882,18 +914,59 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
       {/* send email dialog */}
       <Dialog open={mailOpen} onOpenChange={setMailOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Send e-post til {selected.length} selskaper</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div>
               <Label className="text-xs">Mal</Label>
-              <Select value={mailTemplate} onValueChange={setMailTemplate}>
+              <Select value={mailTemplate} onValueChange={(v) => { setMailTemplate(v); setPreviewIdx(0); }}>
                 <SelectTrigger aria-label="Velg mal"><SelectValue placeholder="Velg mal" /></SelectTrigger>
                 <SelectContent>
                   {templates.map((t) => <SelectItem key={t.id} value={t.id}>{t.name} · {categoryMeta(t.category).label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Forhåndsvisning av den faktiske e-posten første mottaker får */}
+            {mailTemplate && (
+              <div className="rounded-xl border border-border/40 overflow-hidden">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 border-b border-border/30 text-xs">
+                  <Eye size={13} className="text-primary shrink-0" />
+                  <span className="font-medium shrink-0">Forhåndsvisning</span>
+                  {mailRecipients.length > 0 ? (
+                    <>
+                      <span className="truncate text-muted-foreground">
+                        {previewLead?.name} · {previewLead?.email}
+                      </span>
+                      <div className="ml-auto flex items-center gap-1 shrink-0">
+                        <span className="text-muted-foreground">{Math.min(previewIdx + 1, mailRecipients.length)}/{mailRecipients.length}</span>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" aria-label="Forrige mottaker"
+                          disabled={previewIdx <= 0} onClick={() => setPreviewIdx((i) => Math.max(0, i - 1))}>
+                          <ChevronLeft size={13} />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" aria-label="Neste mottaker"
+                          disabled={previewIdx >= mailRecipients.length - 1} onClick={() => setPreviewIdx((i) => Math.min(mailRecipients.length - 1, i + 1))}>
+                          <ChevronRight size={13} />
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-muted-foreground">Ingen av de valgte selskapene har e-postadresse</span>
+                  )}
+                </div>
+                <div className="px-3 py-2 border-b border-border/30 text-xs">
+                  <span className="text-muted-foreground">Emne: </span>
+                  <span className="font-medium">{previewMail.subject || "(tomt emne)"}</span>
+                </div>
+                <iframe
+                  title="E-post forhåndsvisning"
+                  srcDoc={previewMail.html}
+                  className="w-full h-[360px] bg-white"
+                  sandbox=""
+                />
+              </div>
+            )}
+
             <div>
               <Label className="text-xs">Testadresse (valgfritt – sender alt hit i stedet)</Label>
               <Input value={testEmail} onChange={(e) => setTestEmail(e.target.value)} placeholder="kontakt@avargo.no" />
@@ -901,6 +974,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <p className="text-[11px] text-muted-foreground">
               Kun mottakere med e-postadresse får e-post. Avmeldte og blokkerte adresser hoppes over automatisk.
             </p>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setMailOpen(false)}>Avbryt</Button>

@@ -1,5 +1,6 @@
 // Sends CRM emails to Brreg leads – manually from the admin panel or automatically (autopilot).
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isServiceRoleToken } from "../_shared/crm-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -81,7 +82,7 @@ Deno.serve(async (req) => {
 
   const authHeader = req.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "").trim();
-  const internal = !!token && token === serviceKey;
+  const internal = isServiceRoleToken(token, serviceKey);
   let senderId: string | null = null;
 
   if (!internal) {

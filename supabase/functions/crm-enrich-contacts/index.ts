@@ -1,6 +1,7 @@
 // Finds missing contact info (e-mail) for CRM leads by crawling the company website
 // and, when no website is registered, by looking the company up on the open web.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isServiceRoleToken } from "../_shared/crm-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -116,7 +117,7 @@ Deno.serve(async (req) => {
   const admin = createClient(url, serviceKey);
 
   const token = (req.headers.get("Authorization") || "").replace("Bearer ", "").trim();
-  if (token !== serviceKey) {
+  if (!isServiceRoleToken(token, serviceKey)) {
     if (!token) return json({ error: "Unauthorized" }, 401);
     const anon = createClient(url, anonKey);
     const { data: userData, error } = await anon.auth.getUser(token);

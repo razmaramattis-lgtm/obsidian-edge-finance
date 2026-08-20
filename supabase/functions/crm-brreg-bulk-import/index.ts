@@ -2,6 +2,7 @@
 // Walks the Enhetsregisteret API backwards in date windows, resumable and time-boxed:
 // each invocation continues from the stored cursor until the whole register is covered.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isServiceRoleToken } from "../_shared/crm-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +14,9 @@ const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
 const TIME_BUDGET_MS = 60_000;
 const WINDOW_DAYS = 10;
+const MAX_WINDOW_DAYS = 730;
+const LOCK_MS = 90_000;
+
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -56,7 +60,7 @@ function mapRow(e: any) {
     has_auditor: false,
     category: categorize(registered),
     source: "brreg_bulk",
-    raw: e,
+    raw: null,
     synced_at: new Date().toISOString(),
   };
 }
@@ -82,7 +86,7 @@ Deno.serve(async (req) => {
   const admin = createClient(url, serviceKey);
 
   const token = (req.headers.get("Authorization") || "").replace("Bearer ", "").trim();
-  if (token !== serviceKey) {
+  if (!isServiceRoleToken(token, serviceKey)) {
     if (!token) return json({ error: "Unauthorized" }, 401);
     const anon = createClient(url, anonKey);
     const { data: userData, error } = await anon.auth.getUser(token);
@@ -105,13 +109,24 @@ Deno.serve(async (req) => {
   } else if (body.action === "stop") {
     await admin.from("crm_import_state").update({ status: "paused" }).eq("id", 1);
     return json({ stopped: true });
+  } else if (body.action === "resume_from") {
+    // Continue an interrupted import without losing the counters.
+    await admin.from("crm_import_state").update({ status: "running", error_message: null }).eq("id", 1);
+    state = { ...(state || {}), status: "running" } as any;
   } else if (!state || state.status !== "running") {
     return json({ skipped: true, status: state?.status ?? "idle" });
   }
 
+  // Simple run lock so overlapping cron ticks don't fetch the same window twice.
+  if (body.action !== "start" && state?.last_run_at && Date.now() - new Date(state.last_run_at as string).getTime() < LOCK_MS) {
+    return json({ skipped: true, reason: "already_running" });
+  }
+  await admin.from("crm_import_state").update({ last_run_at: new Date().toISOString() }).eq("id", 1);
+
   let cursor = (state?.cursor_date as string) || iso(new Date());
   let processed = Number(state?.processed || 0);
   let imported = Number(state?.imported || 0);
+  let windowDays = WINDOW_DAYS;
   const startedAt = Date.now();
 
   try {
@@ -119,14 +134,16 @@ Deno.serve(async (req) => {
 
     while (Date.now() - startedAt < TIME_BUDGET_MS) {
       const to = cursor;
-      const fromDate = new Date(new Date(to).getTime() - WINDOW_DAYS * 86_400_000);
+      const fromDate = new Date(new Date(to).getTime() - windowDays * 86_400_000);
       const from = iso(fromDate);
       let windowComplete = true;
+      let windowCount = 0;
 
       for (let page = 0; page < 20; page++) {
         const data = await fetchPage(from, to, page);
         const enheter = data?._embedded?.enheter || [];
         if (enheter.length) {
+          windowCount += enheter.length;
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
           );
@@ -152,6 +169,12 @@ Deno.serve(async (req) => {
 
       if (!windowComplete) break;
 
+      // Adaptive window: sparse/empty periods (older years) are skipped much faster,
+      // dense periods stay small so we never hit the API's 10 000-result page cap.
+      if (windowCount === 0) windowDays = Math.min(MAX_WINDOW_DAYS, windowDays * 4);
+      else if (windowCount < 1500) windowDays = Math.min(MAX_WINDOW_DAYS, Math.ceil(windowDays * 1.5));
+      else if (windowCount > 8000) windowDays = Math.max(2, Math.floor(windowDays / 2));
+
       cursor = iso(new Date(fromDate.getTime() - 86_400_000));
       await admin.from("crm_import_state").update({
         processed, imported, cursor_date: cursor, last_run_at: new Date().toISOString(), error_message: null,
@@ -159,6 +182,7 @@ Deno.serve(async (req) => {
 
       if (new Date(cursor) <= new Date(OLDEST)) { done = true; break; }
     }
+
 
     if (done) {
       await admin.from("crm_import_state").update({ status: "done", finished_at: new Date().toISOString() }).eq("id", 1);
