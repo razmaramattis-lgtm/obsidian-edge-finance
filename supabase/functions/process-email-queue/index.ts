@@ -393,6 +393,15 @@ Deno.serve(async (req) => {
         if (payload?.message_id && typeof payload.message_id === 'string') {
           failedAttemptsByMessageId.set(payload.message_id, failedAttempts + 1)
         }
+
+        // Eksponentiell backoff: 30s, 60s, 120s, 240s, maks 300s før nytt forsøk
+        const backoffSeconds = Math.min(300, 30 * Math.pow(2, failedAttempts))
+        await supabase.rpc('defer_email', {
+          queue_name: queue,
+          message_id: msg.msg_id,
+          vt_seconds: Math.round(backoffSeconds),
+        })
+
       }
 
       if (i < messages.length - 1) {
