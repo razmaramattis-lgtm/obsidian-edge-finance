@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { Send, Upload, Mail } from "lucide-react";
 import SendPacingControl, { DEFAULT_PACING, SendPacing } from "./SendPacingControl";
+import SendProgressPanel from "./SendProgressPanel";
 
 const EmailBulkPanel = () => {
   const [emails, setEmails] = useState("");
