@@ -90,6 +90,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [mailTemplate, setMailTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [previewIdx, setPreviewIdx] = useState(0);
+
 
   // ── mapper ──
   const [folders, setFolders] = useState<{ id: string; name: string; description: string | null; count?: number }[]>([]);
