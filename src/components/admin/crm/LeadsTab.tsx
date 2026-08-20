@@ -439,9 +439,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     const rows = leads.map((l) => [
       l.orgnr, l.name, l.org_form || "", l.industry_text || "", l.municipality || "",
       l.registered_at || "", l.employees ?? "", l.email || "", l.phone || "", l.contact_name || "",
+      l.ceo_name || "", l.owners?.map((o) => o.name).join(" / ") || "",
       l.accountant_name || "", categoryMeta(l.category).label, l.status,
+      l.fiscal_year ?? "", l.revenue ?? "", l.operating_result ?? "", l.net_result ?? "", l.equity ?? "",
+      l.website || "",
     ]);
-    const header = ["Orgnr", "Navn", "Form", "Bransje", "Kommune", "Registrert", "Ansatte", "E-post", "Telefon", "Kontakt", "Regnskapsfører", "Kategori", "Status"];
+    const header = ["Orgnr", "Navn", "Form", "Bransje", "Kommune", "Registrert", "Ansatte", "E-post", "Telefon", "Kontakt",
+      "Daglig leder", "Eiere", "Regnskapsfører", "Kategori", "Status",
+      "Regnskapsår", "Driftsinntekter", "Driftsresultat", "Årsresultat", "Egenkapital", "Nettside"];
+
     const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
