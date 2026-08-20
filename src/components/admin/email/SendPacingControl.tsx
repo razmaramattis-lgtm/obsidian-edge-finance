@@ -71,15 +71,16 @@ const SendPacingControl = ({ value, onChange, recipients = 0, className = "" }: 
           <Label className="text-[11px] text-muted-foreground">Min. pause (min)</Label>
           <Input
             type="number"
-            min={0}
+            min={1}
             max={720}
             className="h-8"
             value={value.min}
             onChange={(e) => {
-              const min = Math.max(0, Number(e.target.value) || 0);
+              const min = Math.max(1, Number(e.target.value) || 1);
               onChange({ min, max: Math.max(min, value.max) });
             }}
           />
+
         </div>
         <div className="space-y-1">
           <Label className="text-[11px] text-muted-foreground">Maks. pause (min)</Label>
