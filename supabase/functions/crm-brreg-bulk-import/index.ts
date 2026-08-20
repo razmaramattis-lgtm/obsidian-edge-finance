@@ -12,10 +12,11 @@ const corsHeaders = {
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
 const ORG_FORMS = ["AS", "ENK"];
 const OLDEST = "1900-01-01";
-const TIME_BUDGET_MS = 60_000;
-const WINDOW_DAYS = 10;
+const TIME_BUDGET_MS = 110_000;
+const WINDOW_DAYS = 20;
 const MAX_WINDOW_DAYS = 730;
-const LOCK_MS = 90_000;
+const LOCK_MS = 150_000;
+
 
 
 const json = (body: unknown, status = 200) =>
