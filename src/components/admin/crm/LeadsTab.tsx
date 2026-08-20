@@ -23,6 +23,7 @@ import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYE
 import { buildLeadEmail } from "./emailPreview";
 import { Highlight as Hl, matchReasons } from "./Highlight";
 import ImportStatusPanel from "./ImportStatusPanel";
+import SendProgressPanel from "../email/SendProgressPanel";
 
 
 const PAGE_SIZE = 50;
