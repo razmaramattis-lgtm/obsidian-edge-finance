@@ -650,7 +650,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         {recentSearches.length > 0 && (
           <>
             <span className="w-px h-4 bg-border mx-1" />
-            <History size={13} className="text-muted-foreground" />
+            <HistoryIcon size={13} className="text-muted-foreground" />
             <span className="text-[11px] text-muted-foreground">Nylige søk:</span>
             {recentSearches.map((t) => (
               <button key={t} type="button" onClick={() => setSearch(t)}
