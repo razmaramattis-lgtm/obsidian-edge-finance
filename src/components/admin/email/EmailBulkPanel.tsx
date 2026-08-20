@@ -87,7 +87,7 @@ const EmailBulkPanel = () => {
     triggerSend();
 
     setSending(false);
-    toast.success(`${emailList.length} e-poster sendes nå`);
+    toast.success(`${emailList.length} e-poster lagt i kø – sendes med 5–10 min mellomrom`);
     setEmails(""); setSubject(""); setBody(""); setGroupId(""); setProgress(0);
   };
 

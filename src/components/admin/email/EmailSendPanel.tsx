@@ -109,7 +109,7 @@ const EmailSendPanel = () => {
     triggerSend();
 
     setSending(false);
-    toast.success(`${allRecipients.length} e-post(er) sendes nå`);
+    toast.success(`${allRecipients.length} e-post(er) lagt i kø – sendes med 5–10 min mellomrom`);
     setEmail(""); setName(""); setSubject(""); setBody(""); setTemplateId("");
     clearSelection();
     setProgress(0);
