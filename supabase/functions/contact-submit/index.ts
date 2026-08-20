@@ -198,43 +198,62 @@ serve(async (req) => {
 
     const sectionLabel = safeSection ? SECTION_LABELS[safeSection] || safeSection : null;
 
-    const { error: dbError } = await supabase
-      .from("contact_submissions")
-      .insert({
-        company_name: safeCompany, org_number: safeOrg, contact_person: safeContact, email: safeEmail || null, phone: safePhone,
-        industry: safeIndustry, industry_code: safeIndustryCode, revenue_target: safeRevenue, message: safeMessage, package: safePackage,
-        section: safeSection, source: safeSource, referrer: safeReferrer,
-      });
+    // Retry the insert on transient backend errors so leads are never lost
+    let dbError: unknown = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert({
+          company_name: safeCompany, org_number: safeOrg, contact_person: safeContact, email: safeEmail || null, phone: safePhone,
+          industry: safeIndustry, industry_code: safeIndustryCode, revenue_target: safeRevenue, message: safeMessage, package: safePackage,
+          section: safeSection, source: safeSource, referrer: safeReferrer,
+        });
+      dbError = error;
+      if (!error) break;
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
 
-    if (dbError) console.error("DB error:", dbError);
+    if (dbError) {
+      console.error("DB error:", dbError);
+      throw new Error("Vi klarte ikke å lagre henvendelsen akkurat nå. Prøv igjen om litt, eller ring 98 64 23 91.");
+    }
 
     let emailSent = false;
-    try {
-      const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "admin-contact-notification",
-          recipientEmail: "kontakt@avargo.no",
-          idempotencyKey: `contact-${crypto.randomUUID()}`,
-          templateData: {
-            company_name: safeCompany,
-            org_number: safeOrg,
-            contact_person: safeContact,
-            email: safeEmail || null,
-            phone: safePhone,
-            industry: safeIndustry,
-            revenue_target: safeRevenue,
-            message: safeMessage,
-            section_label: sectionLabel,
-            package_name: safePackage,
-            source: safeSource,
-          },
-        },
-      });
-      if (emailErr) console.error("Email invoke error:", emailErr);
-      else emailSent = true;
-    } catch (emailErr) {
-      console.error("Email error:", emailErr);
+    const emailPayload = {
+      templateName: "admin-contact-notification",
+      recipientEmail: "kontakt@avargo.no",
+      idempotencyKey: `contact-${crypto.randomUUID()}`,
+      templateData: {
+        company_name: safeCompany,
+        org_number: safeOrg,
+        contact_person: safeContact,
+        email: safeEmail || null,
+        phone: safePhone,
+        industry: safeIndustry,
+        revenue_target: safeRevenue,
+        message: safeMessage,
+        section_label: sectionLabel,
+        package_name: safePackage,
+        source: safeSource,
+      },
+    };
+
+    for (let attempt = 0; attempt < 2 && !emailSent; attempt++) {
+      try {
+        const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
+          body: emailPayload,
+        });
+        if (emailErr) {
+          console.error("Email invoke error:", emailErr);
+          await new Promise((r) => setTimeout(r, 1200));
+        } else {
+          emailSent = true;
+        }
+      } catch (emailErr) {
+        console.error("Email error:", emailErr);
+      }
     }
+
 
 
     return new Response(
