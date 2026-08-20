@@ -364,12 +364,18 @@ Deno.serve(async (req) => {
           throw error
         }
 
+        if (isBulk) {
+          bulkSentThisRun++
+          lastBulkSentMs = Date.now()
+        }
+
         await supabase.from('email_send_log').insert({
           message_id: payload.message_id,
           template_name: payload.label || queue,
           recipient_email: payload.to,
           status: 'sent',
         })
+
 
         const { error: delError } = await supabase.rpc('delete_email', {
           queue_name: queue,
