@@ -212,9 +212,13 @@ Deno.serve(async (req) => {
     return json({ success: true, processed, imported, cursor, done });
   } catch (e) {
     const message = e instanceof Error ? e.message : JSON.stringify(e);
+    // Importen skal aldri stoppe helt av en midlertidig feil – vi beholder "running"
+    // slik at neste kjøring (hvert minutt) fortsetter fra samme punkt.
     await admin.from("crm_import_state").update({
-      status: "error", error_message: message, processed, imported, cursor_date: cursor, last_run_at: new Date().toISOString(),
+      status: "running", error_message: message, processed, imported, cursor_date: cursor,
+      last_run_at: new Date(Date.now() - LOCK_MS).toISOString(),
     }).eq("id", 1);
+
     await admin.from("crm_sync_log").insert({ mode: "bulk_import", fetched: processed, inserted: imported, updated: 0, status: "error", error_message: message });
     return json({ error: message }, 500);
   }
