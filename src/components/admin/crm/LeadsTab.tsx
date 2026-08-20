@@ -290,6 +290,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     }
     if (hasEmail === "ja") q = q.not("email", "is", null);
     if (hasEmail === "nei") q = q.is("email", null);
+    if (hasEmail === "verifisert") q = q.not("email", "is", null).eq("email_verified", true);
+    if (hasEmail === "uverifisert") q = q.not("email", "is", null).eq("email_verified", false);
+    if (orgnrFilter.replace(/\D/g, "")) q = q.like("orgnr", `${orgnrFilter.replace(/\D/g, "")}%`);
+    if (empMin.trim()) q = q.gte("employees", Number(empMin));
+    if (empMax.trim()) q = q.lte("employees", Number(empMax));
     if (hasPhone === "ja") q = q.not("phone", "is", null);
     if (hasPhone === "nei") q = q.is("phone", null);
     if (hasWebsite === "ja") q = q.not("website", "is", null);
