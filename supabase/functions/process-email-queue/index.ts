@@ -261,10 +261,19 @@ Deno.serve(async (req) => {
           ? (failedAttemptsByMessageId.get(payload.message_id) ?? 0)
           : msg.read_ct ?? 0
 
+      const batchId = typeof payload.batch_id === 'string' ? payload.batch_id : null
+
+      // Pauset masseutsending: legg meldingen tilbake uten å miste fremdrift
+      if (batchId && pausedBatches.has(batchId)) {
+        await supabase.rpc('defer_email', { queue_name: queue, message_id: msg.msg_id, vt_seconds: 120 })
+        continue
+      }
+
       const queuedAt = payload.queued_at ?? msg.enqueued_at
       if (queuedAt) {
         const ageMs = Date.now() - new Date(queuedAt).getTime()
-        const maxAgeMs = ttlMinutes[queue] * 60 * 1000
+        const pausedGraceMs = (batchId ? (pausedSecondsByBatch.get(batchId) ?? 0) : 0) * 1000
+        const maxAgeMs = ttlMinutes[queue] * 60 * 1000 + pausedGraceMs
         if (ageMs > maxAgeMs) {
           console.warn('Email expired (TTL exceeded)', {
             queue,
@@ -276,6 +285,7 @@ Deno.serve(async (req) => {
           continue
         }
       }
+
 
       if (failedAttempts >= MAX_RETRIES) {
         await moveToDlq(supabase, queue, msg, `Max retries (${MAX_RETRIES}) exceeded (attempted ${failedAttempts} times)`)
