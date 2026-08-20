@@ -11,11 +11,12 @@ export interface SendPacing {
 export const DEFAULT_PACING: SendPacing = { min: 5, max: 10 };
 
 const PRESETS: { label: string; value: SendPacing }[] = [
-  { label: "Umiddelbart", value: { min: 0, max: 0 } },
   { label: "1–3 min", value: { min: 1, max: 3 } },
+  { label: "3–6 min", value: { min: 3, max: 6 } },
   { label: "5–10 min", value: { min: 5, max: 10 } },
   { label: "15–30 min", value: { min: 15, max: 30 } },
 ];
+
 
 interface Props {
   value: SendPacing;
