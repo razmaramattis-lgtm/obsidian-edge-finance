@@ -4764,6 +4764,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      crm_municipalities: {
+        Args: never
+        Returns: {
+          municipality: string
+        }[]
+      }
       current_profile_id: { Args: { uid?: string }; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -4809,6 +4815,8 @@ export type Database = {
           read_ct: number
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "employee" | "customer"
