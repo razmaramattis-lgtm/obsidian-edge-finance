@@ -397,6 +397,12 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // Offset-paginering kollapser på ~590 000 rader (60 s+), keyset er millisekunder.
   const cursorsRef = useRef<({ r: string | null; id: string } | null)[]>([null]);
 
+  const SEARCH_CAP = 500;
+  const searchTerm = () => {
+    const esc = search.trim().replace(/[%,()]/g, " ").trim();
+    return esc.length >= 3 || /^\d{6,9}$/.test(esc.replace(/\s/g, "")) ? esc : "";
+  };
+
   const fetchLeads = async () => {
     const seq = ++fetchSeq.current;
     setLoading(true);
@@ -404,23 +410,32 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
     // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten.
     // Antall telles kun på første side (estimat), resten av sidene gjenbruker tallet = mye raskere bla.
-    const withCount = page === 0;
+    const searching = !!searchTerm();
+    const withCount = page === 0 && !searching;
     const q = applyLeadFilters(
       supabase.from("crm_leads").select(LIST_COLUMNS, withCount ? { count: "estimated" } : undefined),
       folderIds,
     );
-    let q2 = q
-      .order("registered_at", { ascending: false, nullsFirst: false })
-      .order("id", { ascending: false });
-    const cursor = page > 0 ? cursorsRef.current[page] : null;
-    if (cursor?.r) {
-      q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
-      q2 = q2.limit(PAGE_SIZE);
-    } else if (page > 0) {
-      q2 = q2.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+
+    // Ved fritekstsøk sorterer vi IKKE i databasen: ORDER BY registered_at får planleggeren
+    // til å droppe trigram-indeksen og skanne 590 000 rader (statement timeout).
+    // I stedet henter vi inntil 500 treff usortert (~0,5 s) og sorterer/paginerer i nettleseren.
+    let q2: any = q;
+    if (!searching) {
+      q2 = q2.order("registered_at", { ascending: false, nullsFirst: false }).order("id", { ascending: false });
+      const cursor = page > 0 ? cursorsRef.current[page] : null;
+      if (cursor?.r) {
+        q2 = q2.or(`registered_at.lt.${cursor.r},and(registered_at.eq.${cursor.r},id.lt.${cursor.id})`);
+        q2 = q2.limit(PAGE_SIZE);
+      } else if (page > 0) {
+        q2 = q2.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+      } else {
+        q2 = q2.limit(PAGE_SIZE);
+      }
     } else {
-      q2 = q2.limit(PAGE_SIZE);
+      q2 = q2.limit(SEARCH_CAP);
     }
+
     let { data, count, error } = await q2;
     // 57014 = statement timeout (kald cache på 590 000 rader). Prøv én gang til –
     // andre forsøk går normalt på under 100 ms fordi indeksen da ligger i minnet.
@@ -437,7 +452,19 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       setLeads([]); setTotal(0); setLoading(false); return;
     }
 
-    const rows = ((data as unknown) as CrmLead[]) || [];
+    let rows = ((data as unknown) as CrmLead[]) || [];
+
+    if (searching) {
+      rows = [...rows].sort((a, b) =>
+        (b.registered_at || "").localeCompare(a.registered_at || "") || b.id.localeCompare(a.id));
+      setTotal(rows.length);
+      const slice = rows.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+      setLeads(slice);
+      setHasNext((page + 1) * PAGE_SIZE < rows.length);
+      setLoading(false);
+      return;
+    }
+
     setLeads(rows);
     if (page === 0) cursorsRef.current = [null];
     const last = rows[rows.length - 1];
@@ -446,6 +473,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (withCount) setTotal(count || 0);
     setLoading(false);
   };
+
 
 
 
