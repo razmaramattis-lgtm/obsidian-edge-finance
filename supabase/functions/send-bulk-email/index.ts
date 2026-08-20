@@ -48,14 +48,16 @@ Deno.serve(async (req) => {
     .from("email_send_state")
     .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
     .maybeSingle();
+  const FLOOR_DELAY_SECONDS = 60; // aldri raskere enn 1 e-post per minutt
   const minDelay = Math.max(
-    0,
+    FLOOR_DELAY_SECONDS,
     minOverride ?? maxOverride ?? sendState?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS,
   );
   const maxDelay = Math.max(
     minDelay,
     maxOverride ?? (minOverride !== null ? minDelay : (sendState?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS)),
   );
+
   const nextGap = () => minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
 
   // Første e-post går ut med én gang, deretter spres resten 5-10 min fra hverandre.
