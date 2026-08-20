@@ -11,11 +11,12 @@ export interface SendPacing {
 export const DEFAULT_PACING: SendPacing = { min: 5, max: 10 };
 
 const PRESETS: { label: string; value: SendPacing }[] = [
-  { label: "Umiddelbart", value: { min: 0, max: 0 } },
   { label: "1–3 min", value: { min: 1, max: 3 } },
+  { label: "3–6 min", value: { min: 3, max: 6 } },
   { label: "5–10 min", value: { min: 5, max: 10 } },
   { label: "15–30 min", value: { min: 15, max: 30 } },
 ];
+
 
 interface Props {
   value: SendPacing;
@@ -70,26 +71,27 @@ const SendPacingControl = ({ value, onChange, recipients = 0, className = "" }: 
           <Label className="text-[11px] text-muted-foreground">Min. pause (min)</Label>
           <Input
             type="number"
-            min={0}
+            min={1}
             max={720}
             className="h-8"
             value={value.min}
             onChange={(e) => {
-              const min = Math.max(0, Number(e.target.value) || 0);
+              const min = Math.max(1, Number(e.target.value) || 1);
               onChange({ min, max: Math.max(min, value.max) });
             }}
           />
+
         </div>
         <div className="space-y-1">
           <Label className="text-[11px] text-muted-foreground">Maks. pause (min)</Label>
           <Input
             type="number"
-            min={0}
+            min={1}
             max={720}
             className="h-8"
             value={value.max}
             onChange={(e) => {
-              const max = Math.max(0, Number(e.target.value) || 0);
+              const max = Math.max(1, Number(e.target.value) || 1);
               onChange({ min: Math.min(value.min, max), max });
             }}
           />
@@ -98,8 +100,9 @@ const SendPacingControl = ({ value, onChange, recipients = 0, className = "" }: 
 
       <p className="text-[11px] text-muted-foreground">
         Systemet venter et tilfeldig antall minutter innenfor intervallet mellom hver e-post, slik at utsendelsen ser naturlig ut og
-        unngår spamfiltre.
+        unngår spamfiltre. Minimum 1 minutt mellom hver e-post håndheves også i køen.
       </p>
+
     </div>
   );
 };

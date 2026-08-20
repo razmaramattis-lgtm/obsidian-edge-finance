@@ -76,6 +76,7 @@ async function unsubscribeToken(admin: any, email: string) {
 // --- Utsendingstempo: 5-10 min mellom hver e-post i masseutsendelser ---
 const DEFAULT_MIN_DELAY_SECONDS = 300; // 5 min
 const DEFAULT_MAX_DELAY_SECONDS = 600; // 10 min
+const FLOOR_DELAY_SECONDS = 60; // aldri raskere enn 1 e-post per minutt
 
 async function loadPacing(admin: any, override?: { min?: unknown; max?: unknown }) {
   const asSeconds = (v: unknown) =>
@@ -84,7 +85,7 @@ async function loadPacing(admin: any, override?: { min?: unknown; max?: unknown 
   const minOverride = asSeconds(override?.min);
   const maxOverride = asSeconds(override?.max);
   if (minOverride !== null || maxOverride !== null) {
-    const min = minOverride ?? maxOverride ?? DEFAULT_MIN_DELAY_SECONDS;
+    const min = Math.max(FLOOR_DELAY_SECONDS, minOverride ?? maxOverride ?? DEFAULT_MIN_DELAY_SECONDS);
     const max = Math.max(min, maxOverride ?? min);
     return { min, max };
   }
@@ -93,10 +94,11 @@ async function loadPacing(admin: any, override?: { min?: unknown; max?: unknown 
     .from("email_send_state")
     .select("bulk_min_delay_seconds, bulk_max_delay_seconds")
     .maybeSingle();
-  const min = Math.max(0, data?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS);
+  const min = Math.max(FLOOR_DELAY_SECONDS, data?.bulk_min_delay_seconds ?? DEFAULT_MIN_DELAY_SECONDS);
   const max = Math.max(min, data?.bulk_max_delay_seconds ?? DEFAULT_MAX_DELAY_SECONDS);
   return { min, max };
 }
+
 
 function nextGap({ min, max }: { min: number; max: number }) {
   return min + Math.floor(Math.random() * (max - min + 1));
