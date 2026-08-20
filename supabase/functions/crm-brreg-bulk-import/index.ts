@@ -60,7 +60,7 @@ function mapRow(e: any) {
     has_auditor: false,
     category: categorize(registered),
     source: "brreg_bulk",
-    raw: e,
+    raw: null,
     synced_at: new Date().toISOString(),
   };
 }
