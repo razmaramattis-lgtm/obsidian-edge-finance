@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { CATEGORIES, STATUSES, categoryMeta, INDUSTRY_GROUPS, ORG_FORMS, EMPLOYEE_BANDS, type CrmLead, type CrmTemplate } from "./types";
 import { buildLeadEmail } from "./emailPreview";
+import { Highlight as Hl, matchReasons } from "./Highlight";
 import ImportStatusPanel from "./ImportStatusPanel";
 
 
@@ -1019,32 +1020,44 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             <div className="divide-y divide-border/40">
               {leads.map((l) => {
                 const meta = categoryMeta(l.category);
+                const reasons = matchReasons(l, search);
                 return (
                   <div key={l.id} className="grid grid-cols-[28px_minmax(0,2fr)_minmax(0,1.6fr)_110px_90px_130px] items-center gap-2 px-3 py-1.5 hover:bg-muted/30 transition-colors text-xs">
                     <Checkbox checked={selected.includes(l.id)} onCheckedChange={() => toggle(l.id)} aria-label={`Velg ${l.name}`} />
                     <button className="min-w-0 text-left" onClick={() => openDetail(l)}>
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="font-medium truncate">{l.name}</span>
+                        <span className="font-medium truncate"><Hl text={l.name} term={search} /></span>
                         {l.manual_lock && <Lock size={10} className="text-muted-foreground shrink-0" />}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-muted-foreground truncate">
-                        <span>{l.orgnr}</span>
+                        <span><Hl text={l.orgnr} term={search} /></span>
                         {l.org_form && <span>{l.org_form}</span>}
-                        {l.municipality && <span className="flex items-center gap-0.5"><MapPin size={9} />{l.municipality}</span>}
+                        {l.municipality && <span className="flex items-center gap-0.5"><MapPin size={9} /><Hl text={l.municipality} term={search} /></span>}
                         {l.registered_at && <span className="flex items-center gap-0.5"><Calendar size={9} />{l.registered_at}</span>}
                       </div>
+                      {!!reasons.length && (
+                        <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                          <span className="text-[9px] text-muted-foreground">Treff i:</span>
+                          {reasons.map((r) => (
+                            <span key={r} className="text-[9px] px-1.5 py-px rounded-full bg-primary/10 text-primary">{r}</span>
+                          ))}
+                        </div>
+                      )}
                     </button>
                     <div className="min-w-0 text-[10px]">
                       {l.email ? (
-                        <a href={`mailto:${l.email}`} className="text-primary truncate block">{l.email}</a>
+                        <a href={`mailto:${l.email}`} className="text-primary truncate block"><Hl text={l.email} term={search} /></a>
                       ) : (
                         <span className="text-muted-foreground/60">ingen e-post{l.enrich_status ? ` · ${l.enrich_status}` : ""}</span>
                       )}
-                      <span className="text-muted-foreground truncate block">{[l.phone, l.contact_name].filter(Boolean).join(" · ") || "—"}</span>
+                      <span className="text-muted-foreground truncate block">
+                        <Hl text={[l.phone, l.contact_name].filter(Boolean).join(" · ") || "—"} term={search} />
+                      </span>
                       <span className={`truncate block ${l.has_accountant ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
-                        {l.has_accountant ? `Regnskapsfører: ${l.accountant_name || "ukjent"}` : "Ingen regnskapsfører registrert"}
+                        {l.has_accountant ? <>Regnskapsfører: <Hl text={l.accountant_name || "ukjent"} term={search} /></> : "Ingen regnskapsfører registrert"}
                       </span>
                     </div>
+
                     <Badge variant="outline" className={`text-[9px] justify-center ${meta.color}`}>{meta.label.split(" ")[0]}</Badge>
                     <span className="text-[10px] text-muted-foreground">
                       {l.email_count > 0
@@ -1384,23 +1397,33 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         <SheetContent className="w-full sm:max-w-md overflow-y-auto">
           {detail && (
             <>
-              <SheetHeader><SheetTitle className="pr-6">{detail.name}</SheetTitle></SheetHeader>
+              <SheetHeader><SheetTitle className="pr-6"><Hl text={detail.name} term={search} /></SheetTitle></SheetHeader>
               <div className="space-y-4 mt-4 text-sm">
+                {!!search.trim() && !!matchReasons(detail, search).length && (
+                  <div className="flex flex-wrap items-center gap-1.5 rounded-lg bg-primary/5 border border-primary/20 px-2.5 py-1.5">
+                    <Search size={11} className="text-primary" />
+                    <span className="text-[11px] text-muted-foreground">Treff på «{search.trim()}» i:</span>
+                    {matchReasons(detail, search).map((r) => (
+                      <span key={r} className="text-[10px] px-1.5 py-px rounded-full bg-primary/10 text-primary">{r}</span>
+                    ))}
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className={categoryMeta(detail.category).color}>{categoryMeta(detail.category).label}</Badge>
                   {detail.org_form_text && <Badge variant="secondary">{detail.org_form_text}</Badge>}
                   {detail.email_source && <Badge variant="outline" className="text-[10px]">Kilde: {detail.email_source}</Badge>}
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                  <span>Org.nr</span><span className="text-foreground">{detail.orgnr}</span>
+                  <span>Org.nr</span><span className="text-foreground"><Hl text={detail.orgnr} term={search} /></span>
                   <span>Registrert</span><span className="text-foreground">{detail.registered_at || "–"}</span>
-                  <span>Bransje</span><span className="text-foreground">{detail.industry_text || "–"}</span>
-                  <span>Adresse</span><span className="text-foreground">{[detail.address, detail.postal_code, detail.postal_area].filter(Boolean).join(", ") || "–"}</span>
+                  <span>Bransje</span><span className="text-foreground"><Hl text={detail.industry_text || "–"} term={search} /></span>
+                  <span>Adresse</span><span className="text-foreground"><Hl text={[detail.address, detail.postal_code, detail.postal_area].filter(Boolean).join(", ") || "–"} term={search} /></span>
                   <span>Ansatte</span><span className="text-foreground flex items-center gap-1"><Users size={11} />{detail.employees ?? "–"}</span>
-                  <span>Daglig leder</span><span className="text-foreground">{detail.ceo_name || "–"}</span>
+                  <span>Daglig leder</span><span className="text-foreground"><Hl text={detail.ceo_name || "–"} term={search} /></span>
                   <span>Styreleder</span><span className="text-foreground">{detail.chair_name || "–"}</span>
                   <span>Eiere / innehaver</span><span className="text-foreground">{detail.owners?.map((o) => o.name).join(", ") || "–"}</span>
-                  <span>Regnskapsfører</span><span className="text-foreground">{detail.accountant_name || "Ingen registrert"}</span>
+                  <span>Regnskapsfører</span><span className="text-foreground"><Hl text={detail.accountant_name || "Ingen registrert"} term={search} /></span>
+
                   <span>Revisor</span><span className="text-foreground">{detail.has_auditor ? "Ja" : "Nei"}</span>
                   <span>E-post sendt</span><span className="text-foreground">{detail.email_count || 0}{detail.last_emailed_at ? ` · sist ${detail.last_emailed_at.slice(0, 10)}` : ""}</span>
                   <span>Nettsøk</span><span className="text-foreground">{detail.scan_status || detail.enrich_status || "ikke kjørt"}</span>
