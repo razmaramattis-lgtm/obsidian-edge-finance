@@ -206,7 +206,7 @@ Deno.serve(async (req) => {
   const cols = "id, orgnr, name, website, email, phone, contact_name, manual_lock";
   let q = leadIds.length
     ? admin.from("crm_leads").select(cols).in("id", leadIds).limit(Math.max(limit, leadIds.length))
-    : admin.from("crm_leads").select(cols).is("financials_fetched_at", null).order("registered_at", { ascending: false, nullsFirst: false }).limit(limit);
+    : admin.from("crm_leads").select(cols).is("financials_fetched_at", null).order("registered_at", { ascending: true, nullsFirst: false }).limit(limit);
 
   const { data: leads, error } = await q;
   if (error) return json({ error: error.message }, 500);
