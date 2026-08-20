@@ -23,6 +23,11 @@ import { buildLeadEmail } from "./emailPreview";
 
 const PAGE_SIZE = 50;
 
+// Kolonner listen faktisk trenger – utelater tunge felt (raw, financials, roles, owners)
+const LIST_COLUMNS =
+  "id,orgnr,name,org_form,org_form_text,industry_code,industry_text,municipality,municipality_number,postal_code,postal_area,address,registered_at,employees,website,email,email_verified,phone,contact_name,ceo_name,has_accountant,accountant_name,has_auditor,category,status,notes,last_emailed_at,email_count,unsubscribed,contacted_at,email_source,enriched_at,enrich_status,manual_lock,fiscal_year,revenue,net_result";
+
+
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
 
