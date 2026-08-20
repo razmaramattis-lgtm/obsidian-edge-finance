@@ -144,6 +144,9 @@ Deno.serve(async (req) => {
             template_name: "bulk-broadcast",
             recipient_email: email.recipient_email,
             status: "pending",
+            batch_id: batchId,
+            batch_label: "Masseutsending",
+            scheduled_at: scheduledAt,
           });
 
           await adminSb.from("email_messages").update({
