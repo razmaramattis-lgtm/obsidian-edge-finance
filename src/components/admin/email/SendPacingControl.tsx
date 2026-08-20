@@ -86,12 +86,12 @@ const SendPacingControl = ({ value, onChange, recipients = 0, className = "" }: 
           <Label className="text-[11px] text-muted-foreground">Maks. pause (min)</Label>
           <Input
             type="number"
-            min={0}
+            min={1}
             max={720}
             className="h-8"
             value={value.max}
             onChange={(e) => {
-              const max = Math.max(0, Number(e.target.value) || 0);
+              const max = Math.max(1, Number(e.target.value) || 1);
               onChange({ min: Math.min(value.min, max), max });
             }}
           />
@@ -100,8 +100,9 @@ const SendPacingControl = ({ value, onChange, recipients = 0, className = "" }: 
 
       <p className="text-[11px] text-muted-foreground">
         Systemet venter et tilfeldig antall minutter innenfor intervallet mellom hver e-post, slik at utsendelsen ser naturlig ut og
-        unngår spamfiltre.
+        unngår spamfiltre. Minimum 1 minutt mellom hver e-post håndheves også i køen.
       </p>
+
     </div>
   );
 };
