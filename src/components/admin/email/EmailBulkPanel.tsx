@@ -101,6 +101,8 @@ const EmailBulkPanel = () => {
 
   return (
     <div className="max-w-2xl space-y-5">
+      <SendProgressPanel />
+
       <div className="rounded-md bg-muted/50 p-3 flex items-center gap-2 text-xs text-muted-foreground">
         <Mail size={14} className="text-primary shrink-0" />
         Sendes fra <strong className="text-foreground">kontakt@avargo.no</strong>
