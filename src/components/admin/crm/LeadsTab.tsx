@@ -68,7 +68,10 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [industryGroups, setIndustryGroups] = useState<string[]>([]);
   const [industryText, setIndustryText] = useState("");
   const [employeeBands, setEmployeeBands] = useState<string[]>([]);
-  const [hasEmail, setHasEmail] = useState("alle"); // alle | ja | nei
+  const [hasEmail, setHasEmail] = useState("alle"); // alle | ja | nei | verifisert | uverifisert
+  const [orgnrFilter, setOrgnrFilter] = useState("");
+  const [empMin, setEmpMin] = useState("");
+  const [empMax, setEmpMax] = useState("");
   const [hasPhone, setHasPhone] = useState("alle");
   const [hasWebsite, setHasWebsite] = useState("alle");
   const [accountantFilter, setAccountantFilter] = useState("alle"); // alle | ja | nei
@@ -287,6 +290,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     }
     if (hasEmail === "ja") q = q.not("email", "is", null);
     if (hasEmail === "nei") q = q.is("email", null);
+    if (hasEmail === "verifisert") q = q.not("email", "is", null).eq("email_verified", true);
+    if (hasEmail === "uverifisert") q = q.not("email", "is", null).eq("email_verified", false);
+    if (orgnrFilter.replace(/\D/g, "")) q = q.like("orgnr", `${orgnrFilter.replace(/\D/g, "")}%`);
+    if (empMin.trim()) q = q.gte("employees", Number(empMin));
+    if (empMax.trim()) q = q.lte("employees", Number(empMax));
     if (hasPhone === "ja") q = q.not("phone", "is", null);
     if (hasPhone === "nei") q = q.is("phone", null);
     if (hasWebsite === "ja") q = q.not("website", "is", null);
@@ -314,6 +322,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
     (industryText.trim() ? 1 : 0) + (accountantName.trim() ? 1 : 0) +
     [hasEmail, hasPhone, hasWebsite, accountantFilter, unsubFilter].filter((v) => v !== "alle").length +
+    (orgnrFilter.trim() ? 1 : 0) + (empMin.trim() ? 1 : 0) + (empMax.trim() ? 1 : 0) +
     (fromDate ? 1 : 0) + (toDate ? 1 : 0);
 
   const resetFilters = () => {
@@ -321,6 +330,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setIndustryText(""); setEmployeeBands([]); setHasEmail("alle"); setHasPhone("alle");
     setHasWebsite("alle"); setAccountantFilter("alle"); setAccountantName("");
     setUnsubFilter("alle"); setFromDate(""); setToDate(""); setMunicipality("alle");
+    setOrgnrFilter(""); setEmpMin(""); setEmpMax("");
   };
 
   const toggleIn = (setter: (fn: (s: string[]) => string[]) => void, v: string) =>
@@ -337,7 +347,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
-     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter, activeFolder]);
+     industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
+     unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
 
 
   const allSelected = leads.length > 0 && selected.length === leads.length;
@@ -638,18 +649,34 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                   </button>
                 ))}
               </div>
+              <div className="flex items-center gap-2 mt-2">
+                <Input type="number" min={0} value={empMin} onChange={(e) => setEmpMin(e.target.value)}
+                  placeholder="Fra" className="h-8 text-xs" aria-label="Ansatte fra" />
+                <span className="text-[11px] text-muted-foreground">–</span>
+                <Input type="number" min={0} value={empMax} onChange={(e) => setEmpMax(e.target.value)}
+                  placeholder="Til" className="h-8 text-xs" aria-label="Ansatte til" />
+              </div>
+            </div>
+
+            {/* Org.nr */}
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Org.nr</Label>
+              <Input value={orgnrFilter} onChange={(e) => setOrgnrFilter(e.target.value)}
+                placeholder="Hele eller starten av org.nr (f.eks. 938)" className="h-8 text-xs mt-1.5" aria-label="Org.nr" />
             </div>
 
             {/* Kontaktinfo */}
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <Label className="text-[11px] text-muted-foreground">E-post</Label>
+                <Label className="text-[11px] text-muted-foreground">E-poststatus</Label>
                 <Select value={hasEmail} onValueChange={setHasEmail}>
-                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="Har e-post"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-xs mt-1.5" aria-label="E-poststatus"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="alle">Alle</SelectItem>
                     <SelectItem value="ja">Har e-post</SelectItem>
                     <SelectItem value="nei">Mangler e-post</SelectItem>
+                    <SelectItem value="verifisert">Verifisert e-post</SelectItem>
+                    <SelectItem value="uverifisert">Uverifisert e-post</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
