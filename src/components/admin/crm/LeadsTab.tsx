@@ -421,12 +421,22 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     } else {
       q2 = q2.limit(PAGE_SIZE);
     }
-    const { data, count, error } = await q2;
+    let { data, count, error } = await q2;
+    // 57014 = statement timeout (kald cache på 590 000 rader). Prøv én gang til –
+    // andre forsøk går normalt på under 100 ms fordi indeksen da ligger i minnet.
+    if (error && (error as any).code === "57014" && seq === fetchSeq.current) {
+      ({ data, count, error } = await q2);
+    }
     if (seq !== fetchSeq.current) return; // eldre svar – ignorer
     if (error) {
-      toast.error("Kunne ikke hente selskaper: " + error.message);
+      toast.error(
+        (error as any).code === "57014"
+          ? "Søket tok for lang tid. Prøv et mer spesifikt søk eller færre filtre."
+          : "Kunne ikke hente selskaper: " + error.message,
+      );
       setLeads([]); setTotal(0); setLoading(false); return;
     }
+
     const rows = ((data as unknown) as CrmLead[]) || [];
     setLeads(rows);
     if (page === 0) cursorsRef.current = [null];
