@@ -68,7 +68,10 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [industryGroups, setIndustryGroups] = useState<string[]>([]);
   const [industryText, setIndustryText] = useState("");
   const [employeeBands, setEmployeeBands] = useState<string[]>([]);
-  const [hasEmail, setHasEmail] = useState("alle"); // alle | ja | nei
+  const [hasEmail, setHasEmail] = useState("alle"); // alle | ja | nei | verifisert | uverifisert
+  const [orgnrFilter, setOrgnrFilter] = useState("");
+  const [empMin, setEmpMin] = useState("");
+  const [empMax, setEmpMax] = useState("");
   const [hasPhone, setHasPhone] = useState("alle");
   const [hasWebsite, setHasWebsite] = useState("alle");
   const [accountantFilter, setAccountantFilter] = useState("alle"); // alle | ja | nei
