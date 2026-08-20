@@ -192,13 +192,15 @@ Deno.serve(async (req) => {
         if (Date.now() - startedAt >= TIME_BUDGET_MS) { windowComplete = false; break; }
       }
 
+      if (tooBig) { windowDays = Math.max(1, Math.floor(windowDays / 3)); continue; }
       if (!windowComplete) break;
 
       // Adaptive window: sparse/empty periods (older years) are skipped much faster,
       // dense periods stay small so we never hit the API's 10 000-result page cap.
       if (windowCount === 0) windowDays = Math.min(MAX_WINDOW_DAYS, windowDays * 4);
       else if (windowCount < 1500) windowDays = Math.min(MAX_WINDOW_DAYS, Math.ceil(windowDays * 1.5));
-      else if (windowCount > 8000) windowDays = Math.max(2, Math.floor(windowDays / 2));
+      else if (windowCount > 6000) windowDays = Math.max(1, Math.floor(windowDays / 2));
+
 
       cursor = iso(new Date(fromDate.getTime() - 86_400_000));
       await admin.from("crm_import_state").update({
