@@ -1043,15 +1043,80 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
                   <span>Bransje</span><span className="text-foreground">{detail.industry_text || "–"}</span>
                   <span>Adresse</span><span className="text-foreground">{[detail.address, detail.postal_code, detail.postal_area].filter(Boolean).join(", ") || "–"}</span>
                   <span>Ansatte</span><span className="text-foreground flex items-center gap-1"><Users size={11} />{detail.employees ?? "–"}</span>
+                  <span>Daglig leder</span><span className="text-foreground">{detail.ceo_name || "–"}</span>
+                  <span>Styreleder</span><span className="text-foreground">{detail.chair_name || "–"}</span>
+                  <span>Eiere / innehaver</span><span className="text-foreground">{detail.owners?.map((o) => o.name).join(", ") || "–"}</span>
                   <span>Regnskapsfører</span><span className="text-foreground">{detail.accountant_name || "Ingen registrert"}</span>
                   <span>Revisor</span><span className="text-foreground">{detail.has_auditor ? "Ja" : "Nei"}</span>
                   <span>E-post sendt</span><span className="text-foreground">{detail.email_count || 0}{detail.last_emailed_at ? ` · sist ${detail.last_emailed_at.slice(0, 10)}` : ""}</span>
-                  <span>Nettsøk</span><span className="text-foreground">{detail.enrich_status || "ikke kjørt"}</span>
+                  <span>Nettsøk</span><span className="text-foreground">{detail.scan_status || detail.enrich_status || "ikke kjørt"}</span>
                 </div>
+
+                <Button size="sm" variant="outline" className="w-full" disabled={fullEnriching}
+                  onClick={async () => {
+                    setFullEnriching(true);
+                    try {
+                      const { data, error } = await supabase.functions.invoke("crm-enrich-company", { body: { leadIds: [detail.id] } });
+                      if (error) throw error;
+                      if (data?.error) throw new Error(data.error);
+                      const { data: fresh } = await supabase.from("crm_leads").select("*").eq("id", detail.id).maybeSingle();
+                      if (fresh) { setDetail(fresh as any); setLeads((ls) => ls.map((l) => (l.id === fresh.id ? (fresh as any) : l))); }
+                      toast.success("Kundekortet er oppdatert");
+                    } catch (e: any) { toast.error(e.message || "Kunne ikke hente selskapsinfo"); }
+                    finally { setFullEnriching(false); }
+                  }}>
+                  {fullEnriching ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Sparkles size={14} className="mr-1.5" />}
+                  Hent full selskapsinfo (eier, regnskap, nett)
+                </Button>
+
+                {detail.company_summary && (
+                  <p className="text-xs text-muted-foreground leading-relaxed border-l-2 border-primary/40 pl-3">{detail.company_summary}</p>
+                )}
+
+                {/* Regnskapstall */}
+                <div>
+                  <Label className="text-xs flex items-center gap-1.5"><TrendingUp size={12} />Regnskap{detail.fiscal_year ? ` ${detail.fiscal_year}` : ""}</Label>
+                  {detail.fiscal_year ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mt-1.5">
+                        <span>Driftsinntekter</span><span className="text-foreground">{nok(detail.revenue)}</span>
+                        <span>Driftsresultat</span><span className="text-foreground">{nok(detail.operating_result)}</span>
+                        <span>Resultat før skatt</span><span className="text-foreground">{nok(detail.profit_before_tax)}</span>
+                        <span>Årsresultat</span><span className={`font-medium ${(detail.net_result ?? 0) < 0 ? "text-destructive" : "text-foreground"}`}>{nok(detail.net_result)}</span>
+                        <span>Egenkapital</span><span className="text-foreground">{nok(detail.equity)}</span>
+                        <span>Sum eiendeler</span><span className="text-foreground">{nok(detail.total_assets)}</span>
+                        <span>Sum gjeld</span><span className="text-foreground">{nok(detail.total_debt)}</span>
+                      </div>
+                      {!!detail.financials?.length && detail.financials.length > 1 && (
+                        <div className="mt-2 text-[11px] text-muted-foreground space-y-0.5">
+                          {detail.financials.slice(1).map((f) => (
+                            <div key={f.year} className="flex justify-between gap-2">
+                              <span>{f.year}</span>
+                              <span>Oms. {nok(f.revenue)} · Res. {nok(f.net_result)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {detail.financials_fetched_at ? "Ingen regnskap publisert (typisk ENK eller nystartet)" : "Ikke hentet enda"}
+                    </p>
+                  )}
+                </div>
+
                 {detail.website && (
                   <a href={detail.website.startsWith("http") ? detail.website : `https://${detail.website}`} target="_blank" rel="noopener"
                     className="flex items-center gap-2 text-xs text-primary"><Globe size={12} />{detail.website}<ExternalLink size={10} /></a>
                 )}
+                {detail.social_links && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(detail.social_links).map(([k, v]) => (
+                      <a key={k} href={v} target="_blank" rel="noopener" className="text-[10px] px-2 py-1 rounded-full border text-primary capitalize">{k}</a>
+                    ))}
+                  </div>
+                )}
+
                 {!!detail.roles?.length && (
                   <div>
                     <Label className="text-xs">Roller</Label>
