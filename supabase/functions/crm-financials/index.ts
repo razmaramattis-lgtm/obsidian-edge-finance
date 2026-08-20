@@ -203,7 +203,7 @@ Deno.serve(async (req) => {
       if (r?.fratraadt) continue;
       const name = r?.person
         ? [r.person?.navn?.fornavn, r.person?.navn?.mellomnavn, r.person?.navn?.etternavn].filter(Boolean).join(" ")
-        : r?.enhet?.navn || "";
+        : (Array.isArray(r?.enhet?.navn) ? r.enhet.navn.filter(Boolean).join(" ") : r?.enhet?.navn) || "";
       if (!name) continue;
       const kode = r?.type?.kode || g?.type?.kode || "";
       if (kode === "DAGL" && !ceo) ceo = name;
