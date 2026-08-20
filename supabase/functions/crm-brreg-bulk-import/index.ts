@@ -10,7 +10,8 @@ const corsHeaders = {
 };
 
 const BRREG = "https://data.brreg.no/enhetsregisteret/api/enheter";
-const ORG_FORMS = ["AS", "ENK"];
+// Fase 1: hent hele AS-registeret (ca. 431 000 selskaper). ENK hentes i en senere fase.
+const ORG_FORMS = (Deno.env.get("CRM_IMPORT_ORG_FORMS") || "AS").split(",").map((s) => s.trim()).filter(Boolean);
 const OLDEST = "1900-01-01";
 const TIME_BUDGET_MS = 110_000;
 const WINDOW_DAYS = 20;
