@@ -101,11 +101,18 @@ Deno.serve(async (req) => {
   let { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
 
   if (body.action === "start") {
+    // Fortsetter der importen sto sist – nullstiller BARE hvis man ber om det eksplisitt
+    // (ellers begynner man forfra på dagens dato og henter de samme selskapene om igjen).
+    const restart = body.restart === true || !state?.cursor_date;
+    const cursor_date = restart ? iso(new Date()) : (state!.cursor_date as string);
     await admin.from("crm_import_state").upsert({
-      id: 1, status: "running", processed: 0, imported: 0, error_message: null,
-      cursor_date: iso(new Date()), started_at: new Date().toISOString(), finished_at: null,
+      id: 1, status: "running", error_message: null,
+      processed: restart ? 0 : Number(state?.processed || 0),
+      imported: restart ? 0 : Number(state?.imported || 0),
+      cursor_date, started_at: new Date().toISOString(), finished_at: null,
     });
-    state = { ...(state || {}), status: "running", processed: 0, imported: 0, cursor_date: iso(new Date()) } as any;
+    state = { ...(state || {}), status: "running", cursor_date } as any;
+
   } else if (body.action === "stop") {
     await admin.from("crm_import_state").update({ status: "paused" }).eq("id", 1);
     return json({ stopped: true });
