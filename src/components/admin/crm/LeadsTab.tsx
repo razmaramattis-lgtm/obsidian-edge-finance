@@ -697,7 +697,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           Full selskapsinfo
         </Button>
 
-        <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
+        <Button size="sm" variant="outline" onClick={() => setExportOpen(true)}><Download size={14} className="mr-1.5" />Eksporter CSV</Button>
       </div>
 
       {/* lagrede visninger og nylige søk */}
