@@ -4,7 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Mail, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
+import { RefreshCw, Mail, CheckCircle2, Clock, AlertTriangle, Pause, Play, RotateCcw, ChevronDown } from "lucide-react";
+import BatchErrorLog from "./BatchErrorLog";
 
 type Batch = {
   batch_id: string;
@@ -16,6 +18,8 @@ type Batch = {
   pending: number;
   next_scheduled_at: string | null;
   last_scheduled_at: string | null;
+  status: string | null;
+  paused_seconds: number | null;
 };
 
 const fmtClock = (iso: string | null) =>
@@ -31,10 +35,12 @@ const fmtRemaining = (iso: string | null) => {
   return `ca. ${h} t ${min % 60} min igjen`;
 };
 
-/** Viser fremdrift (sendt / gjenstående / estimert tid) for hver masseutsending. */
+/** Viser fremdrift, pause/gjenoppta og feillogg for hver masseutsending. */
 export default function SendProgressPanel({ limit = 5 }: { limit?: number }) {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [openLog, setOpenLog] = useState<string | null>(null);
 
   const load = async () => {
     const { data, error } = await supabase.rpc("email_batch_progress" as any, { _limit: limit });
@@ -48,6 +54,39 @@ export default function SendProgressPanel({ limit = 5 }: { limit?: number }) {
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
+
+  const togglePause = async (batchId: string, paused: boolean) => {
+    setBusy(batchId);
+    const { error } = await supabase.rpc("email_batch_set_paused" as any, {
+      _batch_id: batchId,
+      _paused: paused,
+    });
+    setBusy(null);
+    if (error) {
+      toast.error(error.message || "Kunne ikke endre status");
+      return;
+    }
+    toast.success(paused ? "Utsending satt på pause – fremdriften er beholdt" : "Utsending gjenopptatt");
+    load();
+  };
+
+  const retryFailed = async (batchId: string) => {
+    setBusy(batchId);
+    const { data, error } = await supabase.rpc("requeue_failed_batch" as any, {
+      _batch_id: batchId,
+      _limit: 500,
+    });
+    setBusy(null);
+    if (error) {
+      toast.error(error.message || "Kunne ikke starte nytt forsøk");
+      return;
+    }
+    const count = Number(data ?? 0);
+    toast[count > 0 ? "success" : "info"](
+      count > 0 ? `${count} e-poster lagt i kø for nytt forsøk` : "Ingen e-poster klare for nytt forsøk ennå"
+    );
+    load();
+  };
 
   if (loading || !batches.length) return null;
 
@@ -67,7 +106,9 @@ export default function SendProgressPanel({ limit = 5 }: { limit?: number }) {
         const total = Number(b.total) || 1;
         const pct = Math.round((done / total) * 100);
         const eta = fmtRemaining(b.last_scheduled_at);
+        const paused = b.status === "paused";
         const active = Number(b.pending) > 0;
+        const isBusy = busy === b.batch_id;
         return (
           <div key={b.batch_id} className="space-y-2 border-t pt-3 first:border-t-0 first:pt-0">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -77,7 +118,9 @@ export default function SendProgressPanel({ limit = 5 }: { limit?: number }) {
                   startet {new Date(b.started_at).toLocaleString("nb-NO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
-              <Badge variant={active ? "default" : "secondary"}>{active ? "Pågår" : "Fullført"}</Badge>
+              <Badge variant={paused ? "outline" : active ? "default" : "secondary"}>
+                {paused ? "Pauset" : active ? "Pågår" : "Fullført"}
+              </Badge>
             </div>
 
             <Progress value={pct} className="h-2" />
@@ -95,13 +138,45 @@ export default function SendProgressPanel({ limit = 5 }: { limit?: number }) {
                 </span>
               )}
               <span>av {b.total} totalt ({pct}%)</span>
-              {active && (
+              {active && !paused && (
                 <>
                   <span>neste kl. {fmtClock(b.next_scheduled_at)}</span>
                   <span>ferdig ca. kl. {fmtClock(b.last_scheduled_at)}{eta ? ` · ${eta}` : ""}</span>
                 </>
               )}
+              {paused && <span>Utsendingen står i kø og fortsetter der den slapp når du gjenopptar.</span>}
             </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {active && (
+                <Button
+                  variant={paused ? "default" : "outline"}
+                  size="sm"
+                  disabled={isBusy}
+                  onClick={() => togglePause(b.batch_id, !paused)}
+                  className="gap-1.5"
+                >
+                  {paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+                  {paused ? "Gjenoppta" : "Pause"}
+                </Button>
+              )}
+              {Number(b.failed) > 0 && (
+                <Button variant="outline" size="sm" disabled={isBusy} onClick={() => retryFailed(b.batch_id)} className="gap-1.5">
+                  <RotateCcw className="h-3.5 w-3.5" /> Prøv feilede på nytt
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setOpenLog(openLog === b.batch_id ? null : b.batch_id)}
+              >
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openLog === b.batch_id ? "rotate-180" : ""}`} />
+                Feillogg
+              </Button>
+            </div>
+
+            {openLog === b.batch_id && <BatchErrorLog batchId={b.batch_id} />}
           </div>
         );
       })}

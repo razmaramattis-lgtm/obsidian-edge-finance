@@ -188,7 +188,26 @@ Deno.serve(async (req) => {
     transactional_emails: state?.transactional_email_ttl_minutes ?? DEFAULT_TRANSACTIONAL_TTL_MINUTES,
   }
 
+  // Pausede masseutsendinger: meldinger utsettes i stedet for å sendes
+  const pausedBatches = new Set<string>()
+  const pausedSecondsByBatch = new Map<string, number>()
+  {
+    const { data: batchRows } = await supabase
+      .from('email_batches')
+      .select('batch_id, status, paused_at, paused_seconds')
+    for (const row of batchRows ?? []) {
+      const id = String(row.batch_id)
+      let extra = Number(row.paused_seconds ?? 0)
+      if (row.status === 'paused') {
+        pausedBatches.add(id)
+        if (row.paused_at) extra += Math.max(0, (Date.now() - new Date(row.paused_at).getTime()) / 1000)
+      }
+      pausedSecondsByBatch.set(id, extra)
+    }
+  }
+
   let totalProcessed = 0
+
 
   for (const queue of ['auth_emails', 'transactional_emails']) {
     const { data: messages, error: readError } = await supabase.rpc('read_email_batch', {
@@ -242,10 +261,19 @@ Deno.serve(async (req) => {
           ? (failedAttemptsByMessageId.get(payload.message_id) ?? 0)
           : msg.read_ct ?? 0
 
+      const batchId = typeof payload.batch_id === 'string' ? payload.batch_id : null
+
+      // Pauset masseutsending: legg meldingen tilbake uten å miste fremdrift
+      if (batchId && pausedBatches.has(batchId)) {
+        await supabase.rpc('defer_email', { queue_name: queue, message_id: msg.msg_id, vt_seconds: 120 })
+        continue
+      }
+
       const queuedAt = payload.queued_at ?? msg.enqueued_at
       if (queuedAt) {
         const ageMs = Date.now() - new Date(queuedAt).getTime()
-        const maxAgeMs = ttlMinutes[queue] * 60 * 1000
+        const pausedGraceMs = (batchId ? (pausedSecondsByBatch.get(batchId) ?? 0) : 0) * 1000
+        const maxAgeMs = ttlMinutes[queue] * 60 * 1000 + pausedGraceMs
         if (ageMs > maxAgeMs) {
           console.warn('Email expired (TTL exceeded)', {
             queue,
@@ -257,6 +285,7 @@ Deno.serve(async (req) => {
           continue
         }
       }
+
 
       if (failedAttempts >= MAX_RETRIES) {
         await moveToDlq(supabase, queue, msg, `Max retries (${MAX_RETRIES}) exceeded (attempted ${failedAttempts} times)`)
@@ -364,6 +393,15 @@ Deno.serve(async (req) => {
         if (payload?.message_id && typeof payload.message_id === 'string') {
           failedAttemptsByMessageId.set(payload.message_id, failedAttempts + 1)
         }
+
+        // Eksponentiell backoff: 30s, 60s, 120s, 240s, maks 300s før nytt forsøk
+        const backoffSeconds = Math.min(300, 30 * Math.pow(2, failedAttempts))
+        await supabase.rpc('defer_email', {
+          queue_name: queue,
+          message_id: msg.msg_id,
+          vt_seconds: Math.round(backoffSeconds),
+        })
+
       }
 
       if (i < messages.length - 1) {

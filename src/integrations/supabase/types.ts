@@ -2145,6 +2145,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_batches: {
+        Row: {
+          batch_id: string
+          created_at: string
+          label: string | null
+          paused_at: string | null
+          paused_seconds: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          label?: string | null
+          paused_at?: string | null
+          paused_seconds?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          label?: string | null
+          paused_at?: string | null
+          paused_seconds?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_campaign_contacts: {
         Row: {
           campaign_id: string
@@ -4822,9 +4852,23 @@ export type Database = {
         }[]
       }
       current_profile_id: { Args: { uid?: string }; Returns: string }
+      defer_email: {
+        Args: { message_id: number; queue_name: string; vt_seconds: number }
+        Returns: boolean
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
+      }
+      email_batch_errors: {
+        Args: { _batch_id: string; _limit?: number }
+        Returns: {
+          attempts: number
+          error_message: string
+          last_attempt_at: string
+          recipient_email: string
+          status: string
+        }[]
       }
       email_batch_progress: {
         Args: { _limit?: number }
@@ -4834,11 +4878,31 @@ export type Database = {
           failed: number
           last_scheduled_at: string
           next_scheduled_at: string
+          paused_seconds: number
           pending: number
           sent: number
           started_at: string
+          status: string
           total: number
         }[]
+      }
+      email_batch_set_paused: {
+        Args: { _batch_id: string; _paused: boolean }
+        Returns: {
+          batch_id: string
+          created_at: string
+          label: string | null
+          paused_at: string | null
+          paused_seconds: number
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "email_batches"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
@@ -4883,6 +4947,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      requeue_failed_batch: {
+        Args: { _batch_id: string; _limit?: number }
+        Returns: number
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

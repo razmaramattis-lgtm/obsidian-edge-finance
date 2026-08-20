@@ -173,6 +173,11 @@ Deno.serve(async (req) => {
   }
 
   const batchId = crypto.randomUUID();
+  await admin.from("email_batches").insert({
+    batch_id: batchId,
+    label: mode === "autopilot" ? "CRM autopilot" : "CRM-utsending",
+    status: "running",
+  });
   const results = { sent: 0, skipped: 0, failed: 0, details: [] as any[] };
 
   // Sprer utsendingen: første e-post går med én gang, deretter 5-10 min mellom hver.
@@ -231,6 +236,7 @@ Deno.serve(async (req) => {
           purpose: "transactional",
           label: "crm-outreach",
           idempotency_key: `crm-${lead.id}-${messageId}`,
+          batch_id: batchId,
           unsubscribe_token: unsubToken,
           // TTL regnes fra planlagt sendetidspunkt, ikke fra køtidspunktet
           queued_at: scheduledAt,
