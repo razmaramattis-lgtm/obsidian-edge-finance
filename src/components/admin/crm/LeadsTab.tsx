@@ -33,6 +33,41 @@ const LIST_COLUMNS =
 const nok = (v: number | null | undefined) =>
   typeof v === "number" ? new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 0 }).format(v) + " kr" : "–";
 
+// Felt som kan velges i CSV-eksporten (kun kolonner listespørringen henter)
+const EXPORT_FIELDS: { key: string; label: string; group: string; get: (l: CrmLead) => string | number }[] = [
+  { key: "orgnr", label: "Orgnr", group: "Selskap", get: (l) => l.orgnr || "" },
+  { key: "name", label: "Navn", group: "Selskap", get: (l) => l.name || "" },
+  { key: "org_form", label: "Selskapsform", group: "Selskap", get: (l) => l.org_form || "" },
+  { key: "industry_code", label: "Næringskode", group: "Selskap", get: (l) => l.industry_code || "" },
+  { key: "industry_text", label: "Bransje", group: "Selskap", get: (l) => l.industry_text || "" },
+  { key: "registered_at", label: "Registrert", group: "Selskap", get: (l) => l.registered_at || "" },
+  { key: "employees", label: "Ansatte", group: "Selskap", get: (l) => l.employees ?? "" },
+  { key: "website", label: "Nettside", group: "Kontakt", get: (l) => l.website || "" },
+  { key: "email", label: "E-post", group: "Kontakt", get: (l) => l.email || "" },
+  { key: "email_verified", label: "E-post verifisert", group: "Kontakt", get: (l) => (l.email_verified ? "ja" : "nei") },
+  { key: "phone", label: "Telefon", group: "Kontakt", get: (l) => l.phone || "" },
+  { key: "contact_name", label: "Kontaktperson", group: "Kontakt", get: (l) => l.contact_name || "" },
+  { key: "ceo_name", label: "Daglig leder", group: "Kontakt", get: (l) => l.ceo_name || "" },
+  { key: "address", label: "Adresse", group: "Adresse", get: (l) => l.address || "" },
+  { key: "postal_code", label: "Postnr", group: "Adresse", get: (l) => l.postal_code || "" },
+  { key: "postal_area", label: "Poststed", group: "Adresse", get: (l) => l.postal_area || "" },
+  { key: "municipality", label: "Kommune", group: "Adresse", get: (l) => l.municipality || "" },
+  { key: "municipality_number", label: "Kommunenr", group: "Adresse", get: (l) => l.municipality_number || "" },
+  { key: "has_accountant", label: "Har regnskapsfører", group: "Status", get: (l) => (l.has_accountant ? "ja" : "nei") },
+  { key: "accountant_name", label: "Regnskapsfører", group: "Status", get: (l) => l.accountant_name || "" },
+  { key: "category", label: "Kategori", group: "Status", get: (l) => categoryMeta(l.category).label },
+  { key: "status", label: "Status", group: "Status", get: (l) => l.status || "" },
+  { key: "email_count", label: "Antall e-poster sendt", group: "Status", get: (l) => l.email_count ?? 0 },
+  { key: "last_emailed_at", label: "Sist kontaktet", group: "Status", get: (l) => l.last_emailed_at || "" },
+  { key: "unsubscribed", label: "Avmeldt", group: "Status", get: (l) => (l.unsubscribed ? "ja" : "nei") },
+  { key: "notes", label: "Notater", group: "Status", get: (l) => l.notes || "" },
+  { key: "fiscal_year", label: "Regnskapsår", group: "Økonomi", get: (l) => l.fiscal_year ?? "" },
+  { key: "revenue", label: "Driftsinntekter", group: "Økonomi", get: (l) => l.revenue ?? "" },
+  { key: "net_result", label: "Årsresultat", group: "Økonomi", get: (l) => l.net_result ?? "" },
+];
+const DEFAULT_EXPORT_FIELDS = ["orgnr", "name", "org_form", "industry_text", "municipality", "employees", "email", "phone", "contact_name", "accountant_name", "category", "status"];
+
+
 
 const KOMMUNE_PRESETS = [
   { label: "Kongsvinger", nr: "3401" },
@@ -92,6 +127,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
 
   const [selected, setSelected] = useState<string[]>([]);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportScope, setExportScope] = useState<"side" | "valgte" | "treff">("treff");
+  const [exportLimit, setExportLimit] = useState("5000");
+  const [exportFields, setExportFields] = useState<string[]>(DEFAULT_EXPORT_FIELDS);
   const [detail, setDetail] = useState<CrmLead | null>(null);
 
   const [syncOpen, setSyncOpen] = useState(false);
@@ -262,18 +302,16 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (data) setDetail((d) => (d && d.id === (data as any).id ? (data as any) : d));
   };
 
-  const fetchLeads = async () => {
+  // Henter id-ene i valgt mappe (null = ingen mappebegrensning)
+  const resolveFolderIds = async (): Promise<string[] | null> => {
+    if (activeFolder === "alle") return null;
+    const { data: mem } = await supabase
+      .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
+    return ((mem as any[]) || []).map((m) => m.lead_id);
+  };
 
-    setLoading(true);
-    let folderIds: string[] | null = null;
-    if (activeFolder !== "alle") {
-      const { data: mem } = await supabase
-        .from("crm_lead_folder_members").select("lead_id").eq("folder_id", activeFolder).limit(5000);
-      folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
-      if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
-    }
-    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
-    let q = supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" });
+  // Bygger spørringen med alle aktive filtre – brukes både av listen og CSV-eksporten
+  const applyLeadFilters = (q: any, folderIds: string[] | null) => {
     if (folderIds) q = q.in("id", folderIds);
     const term = search.trim();
     if (term) {
@@ -322,6 +360,15 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (contactFilter === "uten_epost") q = q.is("email", null);
     if (contactFilter === "kontaktet") q = q.gt("email_count", 0);
     if (contactFilter === "ikke_kontaktet") q = q.eq("email_count", 0);
+    return q;
+  };
+
+  const fetchLeads = async () => {
+    setLoading(true);
+    const folderIds = await resolveFolderIds();
+    if (folderIds && !folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
+    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
+    const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" }), folderIds);
     const { data, count } = await q
       .order("registered_at", { ascending: false, nullsFirst: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
@@ -329,6 +376,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     setTotal(count || 0);
     setLoading(false);
   };
+
 
   const activeFilterCount =
     orgFormFilter.length + municipalityMulti.length + industryGroups.length + employeeBands.length +
@@ -556,26 +604,52 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     fetchLeads();
   };
 
-  const exportCsv = () => {
-    const rows = leads.map((l) => [
-      l.orgnr, l.name, l.org_form || "", l.industry_text || "", l.municipality || "",
-      l.registered_at || "", l.employees ?? "", l.email || "", l.phone || "", l.contact_name || "",
-      l.ceo_name || "", l.owners?.map((o) => o.name).join(" / ") || "",
-      l.accountant_name || "", categoryMeta(l.category).label, l.status,
-      l.fiscal_year ?? "", l.revenue ?? "", l.operating_result ?? "", l.net_result ?? "", l.equity ?? "",
-      l.website || "",
-    ]);
-    const header = ["Orgnr", "Navn", "Form", "Bransje", "Kommune", "Registrert", "Ansatte", "E-post", "Telefon", "Kontakt",
-      "Daglig leder", "Eiere", "Regnskapsfører", "Kategori", "Status",
-      "Regnskapsår", "Driftsinntekter", "Driftsresultat", "Årsresultat", "Egenkapital", "Nettside"];
+  // Kjører eksporten med valgt omfang og valgte felter
+  const runExport = async () => {
+    const fields = EXPORT_FIELDS.filter((f) => exportFields.includes(f.key));
+    if (!fields.length) { toast.error("Velg minst ett felt"); return; }
+    setExporting(true);
+    try {
+      let rows: CrmLead[] = [];
+      if (exportScope === "valgte") {
+        rows = leads.filter((l) => selected.includes(l.id));
+      } else if (exportScope === "side") {
+        rows = leads;
+      } else {
+        const folderIds = await resolveFolderIds();
+        if (folderIds && !folderIds.length) { toast.error("Ingen treff å eksportere"); setExporting(false); return; }
+        const max = Math.max(1, Math.min(Number(exportLimit) || 5000, 50000));
+        const CHUNK = 1000;
+        for (let from = 0; from < max; from += CHUNK) {
+          const q = applyLeadFilters(supabase.from("crm_leads").select(LIST_COLUMNS), folderIds);
+          const { data, error } = await q
+            .order("registered_at", { ascending: false, nullsFirst: false })
+            .range(from, Math.min(from + CHUNK, max) - 1);
+          if (error) throw error;
+          const batch = ((data as unknown) as CrmLead[]) || [];
+          rows = rows.concat(batch);
+          if (batch.length < CHUNK) break;
+        }
+      }
+      if (!rows.length) { toast.error("Ingen rader å eksportere"); setExporting(false); return; }
 
-    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `avargo-leads-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
+      const csv = [fields.map((f) => f.label), ...rows.map((l) => fields.map((f) => f.get(l)))]
+        .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `avargo-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast.success(`Eksporterte ${rows.length} rader`);
+      setExportOpen(false);
+    } catch (e: any) {
+      toast.error(e?.message || "Kunne ikke eksportere");
+    } finally {
+      setExporting(false);
+    }
   };
+
 
   const withEmail = useMemo(() => selected.filter((id) => leads.find((l) => l.id === id)?.email).length, [selected, leads]);
 
@@ -623,7 +697,7 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           Full selskapsinfo
         </Button>
 
-        <Button size="sm" variant="outline" onClick={exportCsv}><Download size={14} className="mr-1.5" />CSV</Button>
+        <Button size="sm" variant="outline" onClick={() => setExportOpen(true)}><Download size={14} className="mr-1.5" />Eksporter CSV</Button>
       </div>
 
       {/* lagrede visninger og nylige søk */}
@@ -995,6 +1069,76 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
           </div>
         )}
       </Card>
+
+      {/* eksport */}
+      <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Eksporter til CSV</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Hva skal eksporteres?</Label>
+                <Select value={exportScope} onValueChange={(v) => setExportScope(v as any)}>
+                  <SelectTrigger className="mt-1.5 h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="treff">Alle treff i dagens filter</SelectItem>
+                    <SelectItem value="side">Denne siden ({leads.length})</SelectItem>
+                    <SelectItem value="valgte">Kun valgte ({selected.length})</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {exportScope === "treff" && (
+                <div>
+                  <Label className="text-xs">Maks antall rader</Label>
+                  <Input type="number" min={1} max={50000} value={exportLimit}
+                    onChange={(e) => setExportLimit(e.target.value)} className="mt-1.5 h-9 text-sm" />
+                  <p className="text-[11px] text-muted-foreground mt-1">Ca. {total.toLocaleString("nb-NO")} treff i filteret nå.</p>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-xs">Felter ({exportFields.length} valgt)</Label>
+                <div className="flex gap-1.5">
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields(EXPORT_FIELDS.map((f) => f.key))}>Velg alle</Button>
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields(DEFAULT_EXPORT_FIELDS)}>Standard</Button>
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields([])}>Tøm</Button>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+                {Array.from(new Set(EXPORT_FIELDS.map((f) => f.group))).map((group) => (
+                  <div key={group}>
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5">{group}</p>
+                    <div className="space-y-1.5">
+                      {EXPORT_FIELDS.filter((f) => f.group === group).map((f) => (
+                        <label key={f.key} className="flex items-center gap-2 text-xs cursor-pointer">
+                          <Checkbox
+                            checked={exportFields.includes(f.key)}
+                            onCheckedChange={() =>
+                              setExportFields((prev) => prev.includes(f.key) ? prev.filter((k) => k !== f.key) : [...prev, f.key])
+                            }
+                          />
+                          {f.label}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setExportOpen(false)}>Avbryt</Button>
+            <Button onClick={runExport} disabled={exporting || !exportFields.length}>
+              {exporting ? "Eksporterer …" : "Last ned CSV"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* lagre visning */}
       <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
