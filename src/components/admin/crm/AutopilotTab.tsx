@@ -23,6 +23,8 @@ interface Settings {
   categories: string[] | null;
   template_map: Record<string, string> | null;
   lookback_days: number;
+  min_delay_minutes: number;
+  max_delay_minutes: number;
 }
 
 const AutopilotTab = () => {
@@ -54,6 +56,8 @@ const AutopilotTab = () => {
       categories: s.categories,
       template_map: s.template_map,
       lookback_days: s.lookback_days,
+      min_delay_minutes: s.min_delay_minutes,
+      max_delay_minutes: s.max_delay_minutes,
     } as any).eq("id", s.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -117,7 +121,26 @@ const AutopilotTab = () => {
             <Label className="text-xs">Hent selskaper siste X dager</Label>
             <Input type="number" min={1} value={s.lookback_days} onChange={(e) => setS({ ...s, lookback_days: Number(e.target.value) })} />
           </div>
+          <div>
+            <Label className="text-xs">Min. pause mellom e-post (min)</Label>
+            <Input type="number" min={0} max={720} value={s.min_delay_minutes ?? 5}
+              onChange={(e) => {
+                const min = Math.max(0, Number(e.target.value) || 0);
+                setS({ ...s, min_delay_minutes: min, max_delay_minutes: Math.max(min, s.max_delay_minutes ?? 10) });
+              }} />
+          </div>
+          <div>
+            <Label className="text-xs">Maks. pause mellom e-post (min)</Label>
+            <Input type="number" min={0} max={720} value={s.max_delay_minutes ?? 10}
+              onChange={(e) => {
+                const max = Math.max(0, Number(e.target.value) || 0);
+                setS({ ...s, max_delay_minutes: max, min_delay_minutes: Math.min(s.min_delay_minutes ?? 5, max) });
+              }} />
+          </div>
         </div>
+        <p className="text-[11px] text-muted-foreground">
+          Autopilot venter et tilfeldig antall minutter innenfor dette intervallet mellom hver e-post.
+        </p>
 
         <div>
           <Label className="text-xs">Kategorier som skal med i autopilot</Label>
