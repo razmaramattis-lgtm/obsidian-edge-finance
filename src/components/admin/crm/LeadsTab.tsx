@@ -337,11 +337,13 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     if (term) {
       const esc = term.replace(/[%,()]/g, " ").trim();
       const digits = esc.replace(/\s/g, "");
-      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret
-      q = /^\d{6,9}$/.test(digits)
-        ? q.like("orgnr", `${digits}%`)
-        : q.ilike("search_text", `%${esc}%`);
+      // Ett samlet trigram-indeksert søkefelt = millisekundsøk i hele registeret.
+      // Færre enn 3 tegn kan ikke bruke trigram-indeksen og vil skanne 590 000 rader
+      // (statement timeout), så da søker vi ikke før brukeren har skrevet nok.
+      if (/^\d{6,9}$/.test(digits)) q = q.like("orgnr", `${digits}%`);
+      else if (esc.length >= 3) q = q.ilike("search_text", `%${esc}%`);
     }
+
 
 
     if (category !== "alle") q = q.eq("category", category);
