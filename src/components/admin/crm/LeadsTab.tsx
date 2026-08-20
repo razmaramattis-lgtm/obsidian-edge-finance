@@ -1070,6 +1070,76 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         )}
       </Card>
 
+      {/* eksport */}
+      <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Eksporter til CSV</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Hva skal eksporteres?</Label>
+                <Select value={exportScope} onValueChange={(v) => setExportScope(v as any)}>
+                  <SelectTrigger className="mt-1.5 h-9 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="treff">Alle treff i dagens filter</SelectItem>
+                    <SelectItem value="side">Denne siden ({leads.length})</SelectItem>
+                    <SelectItem value="valgte">Kun valgte ({selected.length})</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {exportScope === "treff" && (
+                <div>
+                  <Label className="text-xs">Maks antall rader</Label>
+                  <Input type="number" min={1} max={50000} value={exportLimit}
+                    onChange={(e) => setExportLimit(e.target.value)} className="mt-1.5 h-9 text-sm" />
+                  <p className="text-[11px] text-muted-foreground mt-1">Ca. {total.toLocaleString("nb-NO")} treff i filteret nå.</p>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-xs">Felter ({exportFields.length} valgt)</Label>
+                <div className="flex gap-1.5">
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields(EXPORT_FIELDS.map((f) => f.key))}>Velg alle</Button>
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields(DEFAULT_EXPORT_FIELDS)}>Standard</Button>
+                  <Button size="sm" variant="ghost" className="h-7 text-[11px]"
+                    onClick={() => setExportFields([])}>Tøm</Button>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+                {Array.from(new Set(EXPORT_FIELDS.map((f) => f.group))).map((group) => (
+                  <div key={group}>
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5">{group}</p>
+                    <div className="space-y-1.5">
+                      {EXPORT_FIELDS.filter((f) => f.group === group).map((f) => (
+                        <label key={f.key} className="flex items-center gap-2 text-xs cursor-pointer">
+                          <Checkbox
+                            checked={exportFields.includes(f.key)}
+                            onCheckedChange={() =>
+                              setExportFields((prev) => prev.includes(f.key) ? prev.filter((k) => k !== f.key) : [...prev, f.key])
+                            }
+                          />
+                          {f.label}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setExportOpen(false)}>Avbryt</Button>
+            <Button onClick={runExport} disabled={exporting || !exportFields.length}>
+              {exporting ? "Eksporterer …" : "Last ned CSV"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* lagre visning */}
       <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
         <DialogContent className="max-w-md">
