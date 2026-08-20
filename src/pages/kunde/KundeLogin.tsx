@@ -83,7 +83,7 @@ const KundeLogin = () => {
                   <Check size={24} className="text-primary" />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Hvis e-posten er registrert, har vi sendt et midlertidig passord til <strong>{forgotEmail}</strong>.
+                  Hvis e-posten er registrert, har vi sendt en lenke for å velge nytt passord til <strong>{forgotEmail}</strong>.
                 </p>
                 <button onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); }}
                   className="text-sm text-primary hover:underline">
@@ -101,7 +101,7 @@ const KundeLogin = () => {
                 </div>
                 <button type="submit" disabled={forgotLoading}
                   className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50">
-                  {forgotLoading ? "Sender…" : "Send midlertidig passord"}
+                  {forgotLoading ? "Sender…" : "Send tilbakestillingslenke"}
                 </button>
                 <button type="button" onClick={() => { setShowForgot(false); setError(""); }}
                   className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors">
