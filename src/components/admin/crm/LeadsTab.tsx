@@ -244,9 +244,18 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
       folderIds = ((mem as any[]) || []).map((m) => m.lead_id);
       if (!folderIds.length) { setLeads([]); setTotal(0); setLoading(false); return; }
     }
-    let q = supabase.from("crm_leads").select("*", { count: "exact" });
+    // Henter kun kolonnene listen viser (uten tunge jsonb-felt) – detaljkortet laster resten
+    let q = supabase.from("crm_leads").select(LIST_COLUMNS, { count: "estimated" });
     if (folderIds) q = q.in("id", folderIds);
-    if (search.trim()) q = q.or(`name.ilike.%${search.trim()}%,orgnr.ilike.%${search.trim()}%`);
+    const term = search.trim();
+    if (term) {
+      const esc = term.replace(/[%,()]/g, " ").trim();
+      const digits = esc.replace(/\s/g, "");
+      q = /^\d{6,9}$/.test(digits)
+        ? q.like("orgnr", `${digits}%`)
+        : q.or(`name.ilike.%${esc}%,orgnr.ilike.%${esc}%,email.ilike.%${esc}%,contact_name.ilike.%${esc}%,municipality.ilike.%${esc}%`);
+    }
+
     if (category !== "alle") q = q.eq("category", category);
     if (status !== "alle") q = q.eq("status", status);
     if (municipality !== "alle") q = q.eq("municipality", municipality);
