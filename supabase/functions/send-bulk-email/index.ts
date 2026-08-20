@@ -182,6 +182,7 @@ Deno.serve(async (req) => {
       .eq("status", "queued");
 
     return json({
+      batch_id: batchId,
       processed: totalProcessed,
       queued: totalQueued,
       failed: totalFailed,
