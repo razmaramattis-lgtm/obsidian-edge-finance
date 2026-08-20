@@ -347,8 +347,74 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const toggleIn = (setter: (fn: (s: string[]) => string[]) => void, v: string) =>
     setter((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
 
+  // ── lagrede visninger ──
+  const currentFilters = () => ({
+    search, category, status, municipality, fromDate, toDate, contactFilter,
+    orgFormFilter, municipalityMulti, industryGroups, industryText, employeeBands,
+    hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName, unsubFilter,
+    orgnrFilter, empMin, empMax, activeFolder,
+  });
+
+  const fetchSavedViews = async () => {
+    const { data } = await supabase.from("crm_saved_views" as any)
+      .select("id,name,filters,last_used_at,created_at")
+      .order("last_used_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(30);
+    setSavedViews((data as any[]) || []);
+  };
+
+  const saveView = async () => {
+    const name = saveViewName.trim();
+    if (!name) return;
+    const { data: u } = await supabase.auth.getUser();
+    const { error } = await supabase.from("crm_saved_views" as any)
+      .insert({ name, filters: currentFilters(), created_by: u?.user?.id ?? null } as any);
+    if (error) { toast.error("Kunne ikke lagre visningen"); return; }
+    toast.success(`Visningen «${name}» er lagret`);
+    setSaveViewName(""); setSaveViewOpen(false);
+    fetchSavedViews();
+  };
+
+  const applyView = async (view: any) => {
+    const f = (view?.filters || {}) as Record<string, any>;
+    setSearch(f.search ?? ""); setCategory(f.category ?? "alle"); setStatus(f.status ?? "alle");
+    setMunicipality(f.municipality ?? "alle"); setFromDate(f.fromDate ?? ""); setToDate(f.toDate ?? "");
+    setContactFilter(f.contactFilter ?? "alle"); setOrgFormFilter(f.orgFormFilter ?? []);
+    setMunicipalityMulti(f.municipalityMulti ?? []); setIndustryGroups(f.industryGroups ?? []);
+    setIndustryText(f.industryText ?? ""); setEmployeeBands(f.employeeBands ?? []);
+    setHasEmail(f.hasEmail ?? "alle"); setHasPhone(f.hasPhone ?? "alle"); setHasWebsite(f.hasWebsite ?? "alle");
+    setAccountantFilter(f.accountantFilter ?? "alle"); setAccountantName(f.accountantName ?? "");
+    setUnsubFilter(f.unsubFilter ?? "alle"); setOrgnrFilter(f.orgnrFilter ?? "");
+    setEmpMin(f.empMin ?? ""); setEmpMax(f.empMax ?? ""); setActiveFolder(f.activeFolder ?? "alle");
+    setPage(0);
+    await supabase.from("crm_saved_views" as any).update({ last_used_at: new Date().toISOString() } as any).eq("id", view.id);
+    fetchSavedViews();
+  };
+
+  const deleteView = async (id: string) => {
+    await supabase.from("crm_saved_views" as any).delete().eq("id", id);
+    setSavedViews((v) => v.filter((x) => x.id !== id));
+  };
+
+  // ── nylige søk ──
+  const pushRecentSearch = (term: string) => {
+    const t = term.trim();
+    if (t.length < 2) return;
+    setRecentSearches((prev) => {
+      const next = [t, ...prev.filter((p) => p.toLowerCase() !== t.toLowerCase())].slice(0, 8);
+      localStorage.setItem("crm_recent_searches", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    localStorage.removeItem("crm_recent_searches");
+    setRecentSearches([]);
+  };
+
   useEffect(() => {
-    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders();
+    fetchMunicipalities(); fetchTemplates(); fetchImportState(); fetchFolders(); fetchSavedViews();
     const t = setInterval(fetchImportState, 20000);
     return () => clearInterval(t);
   }, []);
@@ -356,7 +422,11 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setPage(0); const t = setTimeout(fetchLeads, 400); return () => clearTimeout(t); },
+  useEffect(() => {
+    setPage(0);
+    const t = setTimeout(() => { pushRecentSearch(search); fetchLeads(); }, 400);
+    return () => clearTimeout(t);
+  },
     [search, category, status, municipality, fromDate, toDate, contactFilter, orgFormFilter, municipalityMulti,
      industryGroups, industryText, employeeBands, hasEmail, hasPhone, hasWebsite, accountantFilter, accountantName,
      unsubFilter, activeFolder, orgnrFilter, empMin, empMax]);
