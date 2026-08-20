@@ -22,35 +22,40 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error: signInError } = await signIn(email, password);
-    if (signInError) {
-      setError("Ugyldig e-post eller passord. Prøv igjen.");
+    try {
+      const { error: signInError } = await signIn(email, password);
+      if (signInError) {
+        const timedOut = signInError.message.includes("tok for lang tid");
+        setError(timedOut
+          ? signInError.message
+          : "Ugyldig e-post eller passord. Prøv igjen.");
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError("Noe gikk galt. Prøv igjen.");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profile?.role === "customer") {
+        navigate("/kunde/dashboard");
+      } else if (profile?.role === "admin" || profile?.role === "employee") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch {
+      setError("Kunne ikke fullføre innloggingen. Prøv igjen.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Fetch profile to determine role-based redirect
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setError("Noe gikk galt. Prøv igjen.");
-      setLoading(false);
-      return;
-    }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (profile?.role === "customer") {
-      navigate("/kunde/dashboard");
-    } else if (profile?.role === "admin" || profile?.role === "employee") {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/");
-    }
-    setLoading(false);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {

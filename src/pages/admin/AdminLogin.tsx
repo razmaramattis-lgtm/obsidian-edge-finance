@@ -22,13 +22,19 @@ const AdminLogin = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError("Ugyldig e-post eller passord. Prøv igjen.");
-    } else {
-      navigate("/admin/dashboard");
+    try {
+      const { error } = await signIn(email, password);
+      if (error) {
+        const timedOut = error.message.includes("tok for lang tid");
+        setError(timedOut ? error.message : "Ugyldig e-post eller passord. Prøv igjen.");
+      } else {
+        navigate("/admin/dashboard");
+      }
+    } catch {
+      setError("Kunne ikke fullføre innloggingen. Prøv igjen.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
