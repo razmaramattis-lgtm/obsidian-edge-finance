@@ -218,7 +218,6 @@ serve(async (req) => {
       throw new Error("Vi klarte ikke å lagre henvendelsen akkurat nå. Prøv igjen om litt, eller ring 98 64 23 91.");
     }
 
-    let emailSent = false;
     const emailPayload = {
       templateName: "admin-contact-notification",
       recipientEmail: "kontakt@avargo.no",
@@ -238,26 +237,35 @@ serve(async (req) => {
       },
     };
 
-    for (let attempt = 0; attempt < 2 && !emailSent; attempt++) {
-      try {
-        const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
-          body: emailPayload,
-        });
-        if (emailErr) {
+    // The visitor should not have to wait for email rendering and queueing.
+    // Once the inquiry is safely stored, enqueue its notification in the
+    // background and return success to the form immediately.
+    const enqueueNotification = async () => {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const { error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
+            body: emailPayload,
+          });
+          if (!emailErr) return;
           console.error("Email invoke error:", emailErr);
-          await new Promise((r) => setTimeout(r, 1200));
-        } else {
-          emailSent = true;
+        } catch (emailErr) {
+          console.error("Email error:", emailErr);
         }
-      } catch (emailErr) {
-        console.error("Email error:", emailErr);
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 1200));
       }
+    };
+
+    const edgeRuntime = (globalThis as typeof globalThis & {
+      EdgeRuntime?: { waitUntil(promise: Promise<unknown>): void };
+    }).EdgeRuntime;
+    if (edgeRuntime) {
+      edgeRuntime.waitUntil(enqueueNotification());
+    } else {
+      // Local-runtime fallback; production uses waitUntil above.
+      void enqueueNotification();
     }
-
-
-
     return new Response(
-      JSON.stringify({ success: true, email_sent: emailSent }),
+      JSON.stringify({ success: true, email_queued: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
