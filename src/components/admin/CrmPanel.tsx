@@ -64,6 +64,7 @@ const CrmPanel = () => {
           <span><b className="text-foreground text-sm">{stats.withEmail.toLocaleString("nb-NO")}</b> med e-post</span>
           <span><b className="text-foreground text-sm">{stats.contacted.toLocaleString("nb-NO")}</b> kontaktet</span>
           <span><b className="text-foreground text-sm">{stats.nye.toLocaleString("nb-NO")}</b> nyetablerte</span>
+          <WipeDatabaseButton onWiped={handleWiped} />
         </div>
       </div>
 
@@ -75,7 +76,7 @@ const CrmPanel = () => {
           <TabsTrigger value="log"><History size={14} className="mr-1.5" />Logg</TabsTrigger>
         </TabsList>
         <TabsContent value="leads" className={fullscreen ? "flex-1 min-h-0 overflow-hidden mt-3" : "mt-4"}>
-          <LeadsTab fullscreen={fullscreen} />
+          <LeadsTab fullscreen={fullscreen} key={reloadKey} />
         </TabsContent>
         <TabsContent value="templates" className={fullscreen ? "flex-1 min-h-0 overflow-y-auto mt-3" : "mt-4"}><TemplatesTab /></TabsContent>
         <TabsContent value="autopilot" className={fullscreen ? "flex-1 min-h-0 overflow-y-auto mt-3" : "mt-4"}><AutopilotTab /></TabsContent>
