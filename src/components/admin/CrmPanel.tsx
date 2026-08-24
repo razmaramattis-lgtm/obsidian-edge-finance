@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,26 +7,35 @@ import LeadsTab from "./crm/LeadsTab";
 import TemplatesTab from "./crm/TemplatesTab";
 import AutopilotTab from "./crm/AutopilotTab";
 import LogTab from "./crm/LogTab";
+import WipeDatabaseButton from "./crm/WipeDatabaseButton";
 
 const CrmPanel = () => {
   const [fullscreen, setFullscreen] = useState(false);
   const [stats, setStats] = useState({ total: 0, withEmail: 0, contacted: 0, nye: 0 });
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const loadStats = useCallback(async () => {
+    // Eksakt telling av ~590 000 rader gir timeout, og PostgREST-estimatet blir
+    // feil (RLS-funksjonen gjør at planleggeren gjetter 1/3 av tabellen).
+    // Derfor leses ferdig utregnede tall fra crm_stats_cache (oppdateres hvert 10. min).
+    const { data } = await supabase.from("crm_stats_cache").select("key,value");
+    const m = Object.fromEntries(((data as { key: string; value: number }[]) || []).map((r) => [r.key, Number(r.value)]));
+    setStats({
+      total: m.total || 0,
+      withEmail: m.with_email || 0,
+      contacted: m.contacted || 0,
+      nye: m.new_business || 0,
+    });
+  }, []);
 
   useEffect(() => {
-    (async () => {
-      // Eksakt telling av ~590 000 rader gir timeout, og PostgREST-estimatet blir
-      // feil (RLS-funksjonen gjør at planleggeren gjetter 1/3 av tabellen).
-      // Derfor leses ferdig utregnede tall fra crm_stats_cache (oppdateres hvert 10. min).
-      const { data } = await supabase.from("crm_stats_cache").select("key,value");
-      const m = Object.fromEntries(((data as { key: string; value: number }[]) || []).map((r) => [r.key, Number(r.value)]));
-      setStats({
-        total: m.total || 0,
-        withEmail: m.with_email || 0,
-        contacted: m.contacted || 0,
-        nye: m.new_business || 0,
-      });
-    })();
-  }, []);
+    loadStats();
+  }, [loadStats, reloadKey]);
+
+  const handleWiped = useCallback(() => {
+    loadStats();
+    setReloadKey((k) => k + 1);
+  }, [loadStats]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFullscreen(false); };
