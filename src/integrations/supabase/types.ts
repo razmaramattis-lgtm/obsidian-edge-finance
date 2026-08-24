@@ -4890,6 +4890,7 @@ export type Database = {
           id: string
         }[]
       }
+      crm_wipe_leads: { Args: never; Returns: Json }
       current_profile_id: { Args: { uid?: string }; Returns: string }
       defer_email: {
         Args: { message_id: number; queue_name: string; vt_seconds: number }
