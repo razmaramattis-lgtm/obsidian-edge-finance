@@ -100,6 +100,9 @@ Deno.serve(async (req) => {
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch { /* cron */ }
 
+  // Krav: kun selskaper med e-post i Brønnøysund importeres (kan overstyres med requireEmail:false)
+  const requireEmail = body.requireEmail !== false;
+
   let { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
 
   if (body.action === "start") {
