@@ -1,0 +1,1 @@
+TRUNCATE TABLE public.crm_leads, public.crm_email_events, public.crm_lead_folder_members CASCADE;
