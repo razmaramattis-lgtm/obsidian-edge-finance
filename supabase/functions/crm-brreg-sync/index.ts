@@ -208,8 +208,16 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Krav: nye leads må ha e-post i Brønnøysund for å importeres.
+    // Eksisterende kort berøres ikke (de beholdes og oppdateres som før).
+    const requireEmail = body.requireEmail !== false;
+    const withEmail = requireEmail
+      ? filtered.filter((e: any) => existing.has(e.organisasjonsnummer) || (e.epostadresse || "").trim())
+      : filtered;
+    const skippedNoEmail = filtered.length - withEmail.length;
+
     // Role + contact-detail lookups for the newest entries first
-    const needRoles = filtered.filter((e: any) => !existing.has(e.organisasjonsnummer)).slice(0, MAX_ROLE_LOOKUPS);
+    const needRoles = withEmail.filter((e: any) => !existing.has(e.organisasjonsnummer)).slice(0, MAX_ROLE_LOOKUPS);
     const roleMap = new Map<string, Awaited<ReturnType<typeof fetchRoles>>>();
     const detailMap = new Map<string, any>();
     await mapLimit(needRoles, 5, async (e: any) => {
@@ -219,7 +227,7 @@ Deno.serve(async (req) => {
       if (d) detailMap.set(orgnr, d);
     });
 
-    const rows = filtered.map((e: any) => {
+    const rows = withEmail.map((e: any) => {
       const roleInfo = roleMap.get(e.organisasjonsnummer);
       const detail = detailMap.get(e.organisasjonsnummer) || {};
       const registered = e.registreringsdatoEnhetsregisteret || null;
@@ -333,11 +341,11 @@ Deno.serve(async (req) => {
       inserted,
       updated,
       status: "ok",
-      details: { from, to, municipalities, orgForms, industryPrefixes, roles_filled: rolesFilled },
+      details: { from, to, municipalities, orgForms, industryPrefixes, roles_filled: rolesFilled, skipped_no_email: skippedNoEmail },
     });
 
     const orgnrs_out = deduped.map((r: any) => r.orgnr).filter(Boolean).slice(0, 5000);
-    return json({ success: true, fetched, inserted, updated, rolesFilled, from, to, orgnrs: orgnrs_out });
+    return json({ success: true, fetched, inserted, updated, rolesFilled, skippedNoEmail, from, to, orgnrs: orgnrs_out });
   } catch (e) {
     const message = e instanceof Error ? e.message : typeof e === "string" ? e : JSON.stringify(e);
     await admin.from("crm_sync_log").insert({ mode, fetched, inserted, updated, status: "error", error_message: message });

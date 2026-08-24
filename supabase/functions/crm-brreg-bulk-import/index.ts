@@ -100,6 +100,9 @@ Deno.serve(async (req) => {
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch { /* cron */ }
 
+  // Krav: kun selskaper med e-post i Brønnøysund importeres (kan overstyres med requireEmail:false)
+  const requireEmail = body.requireEmail !== false;
+
   let { data: state } = await admin.from("crm_import_state").select("*").eq("id", 1).maybeSingle();
 
   if (body.action === "start") {
@@ -163,7 +166,9 @@ Deno.serve(async (req) => {
           windowCount += enheter.length;
           const rows = Array.from(
             enheter.reduce((m: Map<string, any>, e: any) => (e?.organisasjonsnummer ? m.set(e.organisasjonsnummer, mapRow(e)) : m), new Map()).values(),
-          );
+          )
+            // Krav: kun selskaper med e-post i Brønnøysund importeres.
+            .filter((r: any) => requireEmail === false || !!r.email);
           // Mindre bolker + retry: store bolker kan treffe databasens statement timeout.
           for (let i = 0; i < rows.length; i += 150) {
             const chunk = rows.slice(i, i + 150);
