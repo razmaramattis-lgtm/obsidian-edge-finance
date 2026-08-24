@@ -227,7 +227,7 @@ Deno.serve(async (req) => {
       if (d) detailMap.set(orgnr, d);
     });
 
-    const rows = filtered.map((e: any) => {
+    const rows = withEmail.map((e: any) => {
       const roleInfo = roleMap.get(e.organisasjonsnummer);
       const detail = detailMap.get(e.organisasjonsnummer) || {};
       const registered = e.registreringsdatoEnhetsregisteret || null;
