@@ -1374,10 +1374,10 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
 
       {/* sync dialog */}
       <Dialog open={syncOpen} onOpenChange={setSyncOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Hent selskaper fra Brønnøysund</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+        <DialogContent className="flex max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-lg flex-col gap-0 overflow-hidden p-0 sm:max-h-[calc(100dvh-2rem)] sm:w-full">
+          <DialogHeader className="shrink-0 border-b border-border px-4 py-4 pr-12 sm:px-6 sm:pr-12"><DialogTitle>Hent selskaper fra Brønnøysund</DialogTitle></DialogHeader>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+            <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
               <div><Label className="text-xs">Registrert fra</Label><Input type="date" value={syncFrom} onChange={(e) => setSyncFrom(e.target.value)} /></div>
               <div><Label className="text-xs">Registrert til</Label><Input type="date" value={syncTo} onChange={(e) => setSyncTo(e.target.value)} /></div>
             </div>
@@ -1443,14 +1443,14 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             </p>
 
             <div className="rounded-xl border border-border p-3 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold">Full import – alle AS og ENK i Norge</p>
                   <p className="text-[11px] text-muted-foreground">
                     Laster ned hele Enhetsregisteret fra oppstart til i dag (kommune, navn, telefon, e-post, næring m.m.) og fortsetter automatisk hvert 5. minutt til den er ferdig.
                   </p>
                 </div>
-                <Button size="sm" variant={importState?.status === "running" ? "outline" : "default"} disabled={bulkBusy}
+                <Button size="sm" className="shrink-0" variant={importState?.status === "running" ? "outline" : "default"} disabled={bulkBusy}
                   onClick={() => bulkImport(importState?.status === "running" ? "stop" : "start")}>
                   {bulkBusy ? <Loader2 size={14} className="mr-2 animate-spin" /> : <Download size={14} className="mr-2" />}
                   {importState?.status === "running" ? "Pause" : "Start full import"}
@@ -1465,8 +1465,8 @@ const LeadsTab = ({ fullscreen = false }: { fullscreen?: boolean }) => {
             </div>
           </div>
 
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
+          <DialogFooter className="grid shrink-0 grid-cols-2 gap-2 border-t border-border px-4 py-3 sm:flex sm:px-6">
+            <Button className="col-span-2 sm:col-span-1" variant="outline" onClick={() => setSyncOpen(false)}>Avbryt</Button>
             <Button variant="secondary" onClick={() => runSync(true)} disabled={syncing} title="Fortsetter bakover i tid fra det eldste selskapet du har – gir alltid nye selskaper">
               {syncing ? <Loader2 size={14} className="mr-2 animate-spin" /> : <RefreshCw size={14} className="mr-2" />}Hent flere (eldre)
             </Button>
