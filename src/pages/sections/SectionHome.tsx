@@ -58,7 +58,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       tagline: "For små og mellomstore bedrifter som ønsker trygghet",
       h1: <>Regnskapet ditt<br /><span className="text-gradient-rose italic">fortjener bedre.</span></>,
       sub: "Du får en fast, statsautorisert regnskapsfører som kjenner selskapet ditt — støttet av et helt team som tar seg av regnskap, rådgivning og det du ikke har tid til selv. Alt inkludert. Ingen overraskelser.",
-      priceLine: "Fra 1 499 kr/mnd for nyoppstartede selskaper.",
+      priceLine: "Fra 1 950 kr/mnd for nyoppstartede selskaper.",
       ctaPrimary: "Få et uforpliktende tilbud",
       ctaSecondary: "Slik jobber vi",
       ctaSecondaryHref: "#metoden",
@@ -384,7 +384,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       button: "Bestill din gratis gjennomgang",
     },
     faq: [
-      { q: "Hva koster en nettside?", a: "En skreddersydd nettside starter på 14 900 kr som engangssum. Vedlikehold og hosting er fra 990 kr/mnd." },
+      { q: "Hva koster en nettside?", a: "En skreddersydd nettside starter på 14 900 kr som engangssum. Vedlikehold og hosting er fra 1 950 kr/mnd." },
       { q: "Kan dere bygge hva som helst?", a: "Vi bygger nettsider, nettbutikker, interne systemer, dashboards, chatboter og automatiseringsløsninger." },
       { q: "Hvor lang tid tar et prosjekt?", a: "En nettside leveres typisk på 2–4 uker. Større systemer tar 4–12 uker, avhengig av kompleksitet." },
       { q: "Hvem drifter etter lansering?", a: "Vi tar oss av all drift, oppdateringer og support — alt inkludert i den løpende prisen." },

@@ -83,8 +83,8 @@ export const translations: Dict = {
   "faq.link": { no: "Se alle 120+ spørsmål", en: "See all 120+ questions" },
   "faq.q1": { no: "Hva koster det å bruke Avargo?", en: "What does it cost to use Avargo?" },
   "faq.a1": {
-    no: "Regnskap starter på 1 499 kr i måneden, og HR har egne fastprispakker. Alt er inkludert i prisen — ingen timefakturering, ingen skjulte tillegg. Kombinerer du regnskap og HR får du bedre totalpris og ett samlet team.",
-    en: "Accounting starts at NOK 1,499 per month, and HR has its own fixed-price packages. Everything is included in the price — no hourly billing, no hidden add-ons. Combine accounting and HR for a better total price and one unified team.",
+    no: "Regnskap starter på 1 950 kr i måneden, og HR har egne fastprispakker. Alt er inkludert i prisen — ingen timefakturering, ingen skjulte tillegg. Kombinerer du regnskap og HR får du bedre totalpris og ett samlet team.",
+    en: "Accounting starts at NOK 1,950 per month, and HR has its own fixed-price packages. Everything is included in the price — no hourly billing, no hidden add-ons. Combine accounting and HR for a better total price and one unified team.",
   },
   "faq.q2": { no: "Må jeg binde meg?", en: "Do I have to commit?" },
   "faq.a2": {

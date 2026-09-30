@@ -19,7 +19,7 @@ const RegnskapsforerPris = () => (
               <li><strong>Mellomstort AS</strong> (100–500 bilag/mnd): 4 000–9 000 kr/mnd</li>
               <li><strong>Større AS</strong> med lønn for ansatte: 10 000–25 000+ kr/mnd</li>
             </ul>
-            <p>Hos Avargo starter vi på <strong>1 590 kr/mnd</strong> for nye AS — fast pris, ingen skjulte tillegg.</p>
+            <p>Hos Avargo starter vi på <strong>1 950 kr/mnd</strong> for nye AS — fast pris, ingen skjulte tillegg.</p>
           </>
         ),
       },
@@ -69,7 +69,7 @@ const RegnskapsforerPris = () => (
       },
     ]}
     faq={[
-      { q: "Hva er den billigste regnskapsføreren i Norge?", a: "Den billigste er ikke nødvendigvis den beste. For ENK med veldig få bilag finnes løsninger fra rundt 800 kr/mnd, men de mangler ofte rådgivning. Hos Avargo starter fastpris på 1 590 kr/mnd og inkluderer dedikert kontaktperson, rådgivning og full delegering." },
+      { q: "Hva er den billigste regnskapsføreren i Norge?", a: "Den billigste er ikke nødvendigvis den beste. For ENK med veldig få bilag finnes løsninger fra rundt 800 kr/mnd, men de mangler ofte rådgivning. Hos Avargo starter fastpris på 1 950 kr/mnd og inkluderer dedikert kontaktperson, rådgivning og full delegering." },
       { q: "Hvor mye koster lønnskjøring per ansatt?", a: "Typisk 100–250 kr per lønnsslipp. Avargo inkluderer lønnskjøring i bedriftspakkene uten ekstra tillegg per ansatt opp til et visst antall." },
       { q: "Hva koster årsregnskap og skattemelding?", a: "Hos tradisjonelle byråer koster årsoppgjør 8 000–25 000 kr ekstra. Hos Avargo er det inkludert i den månedlige fastprisen — du betaler aldri for årsregnskapet separat." },
       { q: "Kan jeg gjøre regnskapet selv og spare penger?", a: "Ja — for ENK med svært få transaksjoner. Men feil i MVA, lønn eller årsregnskap koster typisk mer enn et byrå. For AS er regnskapsfører i praksis nødvendig fra dag én." },
