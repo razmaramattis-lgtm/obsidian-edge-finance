@@ -21,14 +21,14 @@ export type City = {
 };
 
 export const CITIES: City[] = [
-  // Telemark / hjemmeområde
+  // Telemark
   {
     slug: "skien",
     name: "Skien",
     region: "Grenland",
     county: "Telemark",
     population: "55 000",
-    intro: "Skien er en av byene Avargo kjenner godt — vi kjenner det lokale næringslivet bedre enn de fleste.",
+    intro: "Skien har et variert næringsliv med industri, handel og tjenesteyting. Vi hjelper lokale bedrifter digitalt.",
     nearby: ["Porsgrunn", "Siljan", "Bamble"],
     industries: ["Industri & produksjon", "Bygg & anlegg", "Handel", "Tjenesteyting"],
   },

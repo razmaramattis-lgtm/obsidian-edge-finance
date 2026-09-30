@@ -75,7 +75,7 @@ export const newBlock = (type: BlockType): EmailBlock => {
     case "bullets": return { ...base, type, items: ["Første punkt", "Andre punkt", "Tredje punkt"] };
     case "button": return { ...base, type, text: "Book et møte", url: "https://avargo.no/book-mote", align: "left" };
     case "image": return { ...base, type, src: "", alt: "Bilde" };
-    case "highlight": return { ...base, type, text: "Fast pris fra 1 490 kr/mnd – ingen bindingstid." };
+    case "highlight": return { ...base, type, text: "Fast pris fra 1 950 kr/mnd – ingen bindingstid." };
     case "spacer": return { ...base, type, size: "md" };
     default: return { ...base, type };
   }

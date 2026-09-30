@@ -18,7 +18,7 @@ const categories: FAQCategory[] = [
   {
     title: "Regnskap & Regnskapsfører",
     items: [
-      { q: "Hva koster en regnskapsfører?", a: "Hos Avargo starter prisene fra 1 499 kr/mnd for nyoppstartede selskaper. Alt er inkludert i fastprisen — bokføring, årsregnskap, skattemelding, MVA-rapportering og rådgivning. Du betaler aldri ekstra for telefoner, spørsmål eller rådgivning." },
+      { q: "Hva koster en regnskapsfører?", a: "Hos Avargo starter prisene fra 1 950 kr/mnd for nyoppstartede selskaper. Alt er inkludert i fastprisen — bokføring, årsregnskap, skattemelding, MVA-rapportering og rådgivning. Du betaler aldri ekstra for telefoner, spørsmål eller rådgivning." },
       { q: "Hva gjør en regnskapsfører?", a: "En regnskapsfører håndterer den økonomiske administrasjonen i bedriften din: løpende bokføring, MVA-rapportering, årsregnskap og næringsoppgave, skattemelding, aksjonærregisteroppgave og proaktiv rådgivning. Hos Avargo får du én fast person som kjenner selskapet og bransjen din." },
       { q: "Hvordan bytter jeg regnskapsfører?", a: "1) Ta kontakt med oss for en uforpliktende samtale. 2) Vi sender oppsigelsesbrev til din nåværende regnskapsfører. 3) Vi henter alle data og setter opp systemene. 4) Du får en dedikert regnskapsfører fra dag én. Prosessen tar 2–4 uker, og vi håndterer alt det praktiske." },
       { q: "Trenger jeg en autorisert regnskapsfører?", a: "I Norge er det lovpålagt at regnskapsførere som fører regnskap for andre er autorisert av Finanstilsynet. Alle regnskapsførere hos Avargo er autoriserte og oppdaterte gjennom obligatorisk etterutdanning." },

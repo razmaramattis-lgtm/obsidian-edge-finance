@@ -69,7 +69,7 @@ const FastprisRegnskap = () => (
       },
     ]}
     faq={[
-      { q: "Hva koster fastpris regnskap?", a: "Hos Avargo starter fastpris på 1 590 kr/mnd for nye AS og enkeltpersonforetak. Større bedrifter får tilbud basert på volum — alltid med fast pris, aldri timer." },
+      { q: "Hva koster fastpris regnskap?", a: "Hos Avargo starter fastpris på 1 950 kr/mnd for nye AS og enkeltpersonforetak. Større bedrifter får tilbud basert på volum — alltid med fast pris, aldri timer." },
       { q: "Lønner fastpris seg for små bedrifter?", a: "Ja, særlig for små bedrifter. Du får forutsigbare kostnader fra dag én og slipper å frykte spørsmål du burde ha stilt." },
       { q: "Er fastpris dyrere enn timepris?", a: "Som regel ikke. Tradisjonelle timepris-byråer havner ofte høyere når du regner inn ekstra fakturering for spørsmål, årsregnskap og rådgivning." },
       { q: "Hva hvis jeg vokser mye?", a: "Da justeres pakken — men alltid på fastpris. Du forhandler én gang i året, ikke hver måned." },

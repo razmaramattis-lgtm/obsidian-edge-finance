@@ -49,23 +49,23 @@ const Regnskapsforer = () => (
   <>
     <Helmet>
       <title>Dedikert regnskapsfører for din bedrift | Avargo</title>
-      <meta name="description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 499 kr/mnd." />
+      <meta name="description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 950 kr/mnd." />
       <link rel="canonical" href="https://avargo.no/tjenester/regnskapsforer" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="Dedikert regnskapsfører for din bedrift | Avargo" />
-      <meta property="og:description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 499 kr/mnd." />
+      <meta property="og:description" content="Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning — fra 1 950 kr/mnd." />
       <meta property="og:url" content="https://avargo.no/tjenester/regnskapsforer" />
       <meta property="og:image" content="https://avargo.no/og-image.jpg" />
       <meta property="og:locale" content="nb_NO" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content="Dedikert regnskapsfører for din bedrift | Avargo" />
-      <meta name="twitter:description" content="Fast regnskapsfører, fastpris fra 1 499 kr/mnd og rådgivning inkludert." />
+      <meta name="twitter:description" content="Fast regnskapsfører, fastpris fra 1 950 kr/mnd og rådgivning inkludert." />
       <meta name="twitter:image" content="https://avargo.no/og-image.jpg" />
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "Hva koster en regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo starter prisene fra 1 499 kr/mnd for nyoppstartede selskaper. Alt er inkludert i fastprisen — bokføring, årsregnskap, skattemelding, MVA-rapportering og rådgivning. Ingen skjulte kostnader eller tillegg." }},
+          { "@type": "Question", "name": "Hva koster en regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo starter prisene fra 1 950 kr/mnd for nyoppstartede selskaper. Alt er inkludert i fastprisen — bokføring, årsregnskap, skattemelding, MVA-rapportering og rådgivning. Ingen skjulte kostnader eller tillegg." }},
           { "@type": "Question", "name": "Hva gjør en regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "En regnskapsfører håndterer den økonomiske administrasjonen i bedriften din: løpende bokføring, MVA-rapportering, årsregnskap, skattemelding, aksjonærregisteroppgave og proaktiv rådgivning. Hos Avargo får du én fast person som kjenner selskapet ditt og bransjen din." }},
           { "@type": "Question", "name": "Hvordan bytte regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Å bytte regnskapsfører er enkelt: 1) Ta kontakt med oss for en uforpliktende samtale. 2) Vi sender oppsigelsesbrev til din nåværende regnskapsfører. 3) Vi henter alle data og setter opp systemene. 4) Du får en dedikert regnskapsfører fra dag én. Hele prosessen tar vanligvis 2-4 uker." }},
           { "@type": "Question", "name": "Trenger jeg en autorisert regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Ja, i Norge er det lovpålagt at regnskapsførere som tilbyr tjenester til andre må være autorisert av Finanstilsynet. Alle regnskapsførere hos Avargo er autoriserte og holder seg oppdatert på gjeldende regelverk." }},
@@ -80,7 +80,7 @@ const Regnskapsforer = () => (
         "description": "Få en fast regnskapsfører som kjenner bransjen din. Løpende regnskap, skatteoptimalisering og rådgivning.",
         "url": "https://avargo.no/tjenester/regnskapsforer",
         "areaServed": { "@type": "Country", "name": "Norway" },
-        "offers": { "@type": "Offer", "price": "1499", "priceCurrency": "NOK", "description": "Fra 1 499 kr/mnd" }
+        "offers": { "@type": "Offer", "price": "1950", "priceCurrency": "NOK", "description": "Fra 1 950 kr/mnd" }
       })}</script>
     </Helmet>
     {/* HERO */}

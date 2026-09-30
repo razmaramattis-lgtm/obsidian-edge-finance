@@ -25,7 +25,7 @@ const regnskapPlans: SectionPricingPlan[] = [
   {
     id: "r-start",
     name: "Start",
-    price: 1499,
+    price: 1950,
     price_suffix: "/mnd",
     description: "For nyetablerte selskaper eller selskaper med litt vekst.",
     features: [

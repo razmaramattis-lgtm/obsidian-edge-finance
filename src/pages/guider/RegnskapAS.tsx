@@ -34,7 +34,7 @@ const RegnskapAS = () => (
               <li><strong>Mellomstort AS</strong> (100–500 bilag, 1–5 ansatte): 4 000–9 000 kr/mnd</li>
               <li><strong>Større AS</strong> (500+ bilag, 6+ ansatte): 10 000–25 000+ kr/mnd</li>
             </ul>
-            <p>Hos Avargo starter prisen for AS på <strong>1 590 kr/mnd</strong> — fastpris, alt inkludert, inkludert årsregnskap.</p>
+            <p>Hos Avargo starter prisen for AS på <strong>1 950 kr/mnd</strong> — fastpris, alt inkludert, inkludert årsregnskap.</p>
           </>
         ),
       },

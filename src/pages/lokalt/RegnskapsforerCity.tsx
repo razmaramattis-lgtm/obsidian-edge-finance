@@ -10,18 +10,18 @@ const RegnskapsforerCity = () => {
 
   if (!city) return <Navigate to="/regnskapsforer-i" replace />;
 
-  const title = `Regnskapsfører i ${city.name} 2026 | Avargo — fast pris fra 1 590 kr`;
-  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 590 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Rask respons.`;
+  const title = `Regnskapsfører i ${city.name} 2026 | Avargo — fast pris fra 1 950 kr`;
+  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 950 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Rask respons.`;
   const url = `https://avargo.no/regnskapsforer-i/${city.slug}`;
 
   const faq = [
     {
       q: `Hva koster en regnskapsfører i ${city.name}?`,
-      a: `Hos Avargo starter regnskap fra 1 590 kr/mnd for nye AS og enkeltpersonforetak i ${city.name}. Vi har fast pris uten skjulte tillegg — du vet alltid hva du betaler. Større selskaper får tilbud basert på antall bilag og tjenestebehov. Se hele prislisten på /priser.`,
+      a: `Hos Avargo starter regnskap fra 1 950 kr/mnd for nye AS og enkeltpersonforetak i ${city.name}. Vi har fast pris uten skjulte tillegg — du vet alltid hva du betaler. Større selskaper får tilbud basert på antall bilag og tjenestebehov. Se hele prislisten på /priser.`,
     },
     {
       q: `Trenger jeg en lokal regnskapsfører i ${city.name}?`,
-      a: `Nei. Moderne regnskapsføring foregår 100 % digitalt — du laster opp bilag fra mobilen, vi tar resten. Avargo har hovedkontor i Skien (Telemark), men leverer til hele Norge inkludert ${city.name}. Du får én dedikert kontaktperson som kjenner deg og bedriften din — ofte bedre oppfølging enn fra et lokalt byrå.`,
+      a: `Nei. Moderne regnskapsføring foregår 100 % digitalt — du laster opp bilag fra mobilen, vi tar resten. Vi leverer til hele Norge, inkludert ${city.name}, uten at du trenger å besøke et kontor. Du får én dedikert kontaktperson som kjenner deg og bedriften din — ofte bedre oppfølging enn fra et lokalt byrå.`,
     },
     {
       q: `Hvordan bytter jeg regnskapsfører i ${city.name}?`,
@@ -189,7 +189,7 @@ const RegnskapsforerCity = () => {
                   desc: `Du får én fast regnskapsfører som kjenner ${city.name}-bedriften din og bransjen. Ingen call center, ingen ticket-systemer.`,
                 },
                 {
-                  title: "Fast pris fra 1 590 kr/mnd",
+                  title: "Fast pris fra 1 950 kr/mnd",
                   desc: "Du betaler ikke per spørsmål eller per minutt. Pakkene inkluderer alt du trenger — fra bilag til årsregnskap.",
                 },
                 {
@@ -315,7 +315,7 @@ const RegnskapsforerCity = () => {
               </p>
               <div className="grid md:grid-cols-3 gap-4">
                 {[
-                  { name: "Oppstart", price: "fra 1 590 kr", per: "/mnd", desc: `Nystartet ENK eller AS i ${city.name} med få bilag.` },
+                  { name: "Oppstart", price: "fra 1 950 kr", per: "/mnd", desc: `Nystartet ENK eller AS i ${city.name} med få bilag.` },
                   { name: "Vekst", price: "fra 2 990 kr", per: "/mnd", desc: "Aktive AS med MVA, lønn til 1–3 ansatte og rapportering." },
                   { name: "Pro", price: "fra 5 490 kr", per: "/mnd", desc: "Etablerte selskaper med større volum, CFO-rådgivning og styrearbeid." },
                 ].map((p) => (

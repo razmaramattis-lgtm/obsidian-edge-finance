@@ -88,7 +88,7 @@ const TEMPLATES: Record<string, { title: string; intro: string; description: str
 };
 
 const emptyForm = {
-  title: "", slug: "", category: "Regnskap", location: "Skien",
+  title: "", slug: "", category: "Regnskap", location: "Fjernarbeid",
   employment_type: "Fast, heltid 100%", work_hours: "Dagtid, ukedager",
   work_language: "Norsk eller engelsk", work_location: "Hybridkontor",
   num_positions: 1, start_date: "Etter avtale", deadline: "",

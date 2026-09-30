@@ -16,7 +16,7 @@ const objections = [
   },
   {
     q: "Hva er den faktiske månedsprisen for min bedrift?",
-    a: "Fra 1 590 kr/mnd for små selskaper. Du får en konkret pris basert på antall bilag, ansatte og behov — ingen skjulte tillegg.",
+    a: "Fra 1 950 kr/mnd for små selskaper. Du får en konkret pris basert på antall bilag, ansatte og behov — ingen skjulte tillegg.",
   },
   {
     q: "Kan jeg snakke med en ekte person, ikke en chatbot?",
