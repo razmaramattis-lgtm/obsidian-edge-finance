@@ -271,20 +271,20 @@ const Hub = () => {
             {lang === "en" ? "Partner" : "Partner"}
           </p>
           <div className="flex items-center gap-4 md:gap-8">
-            <div className="flex min-w-0 flex-1 items-center justify-around gap-3 md:gap-6">
+            <div className="flex min-w-0 flex-1 items-center justify-around gap-2 md:gap-6">
               {[
-                { name: "Tripletex", logo: tripletexLogo.url, width: "max-w-[110px] md:max-w-[138px]" },
-                { name: "Folio", logo: folioLogo.url, width: "max-w-[46px] md:max-w-[52px]" },
-                { name: "Fiken", logo: fikenLogo.url, width: "max-w-[100px] md:max-w-[126px]" },
+                { name: "Tripletex", logo: tripletexLogo.url, width: "max-w-[86px] md:max-w-[138px]" },
+                { name: "Folio", logo: folioLogo.url, width: "max-w-[38px] md:max-w-[52px]" },
+                { name: "Fiken", logo: fikenLogo.url, width: "max-w-[78px] md:max-w-[126px]" },
               ].map(({ name, logo, width }) => (
                 <div key={name} className="h-12 md:h-14 flex min-w-0 items-center justify-center">
-                  <img src={logo} alt={name} loading="lazy" className={`max-h-10 md:max-h-12 w-auto max-w-full object-contain ${width}`} />
+                  <img src={logo} alt={name} loading="lazy" className={`max-h-9 md:max-h-12 w-auto max-w-full object-contain ${width}`} />
                 </div>
               ))}
             </div>
-            <span aria-hidden="true" className="h-10 md:h-12 w-px shrink-0 bg-border" />
+            <span aria-hidden="true" className="h-9 md:h-12 w-px shrink-0 bg-border" />
             <div className="h-12 md:h-14 flex shrink-0 items-center justify-center">
-              <img src={regnskapNorgeLogo.url} alt="Regnskap Norge" loading="lazy" className="max-h-10 md:max-h-12 w-auto max-w-[110px] md:max-w-[144px] object-contain" />
+              <img src={regnskapNorgeLogo.url} alt="Regnskap Norge" loading="lazy" className="max-h-9 md:max-h-12 w-auto max-w-[92px] md:max-w-[144px] object-contain" />
             </div>
           </div>
         </div>
