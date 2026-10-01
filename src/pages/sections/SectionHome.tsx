@@ -384,7 +384,7 @@ const sectionHomeContent: Record<SectionId, SectionHomeContent> = {
       button: "Bestill din gratis gjennomgang",
     },
     faq: [
-      { q: "Hva koster en nettside?", a: "En skreddersydd nettside starter på 14 900 kr som engangssum. Vedlikehold og hosting er fra 1 950 kr/mnd." },
+      { q: "Hva koster en nettside?", a: "En skreddersydd nettside starter på 14 900 kr som engangssum. Vedlikehold og hosting er fra 990 kr/mnd." },
       { q: "Kan dere bygge hva som helst?", a: "Vi bygger nettsider, nettbutikker, interne systemer, dashboards, chatboter og automatiseringsløsninger." },
       { q: "Hvor lang tid tar et prosjekt?", a: "En nettside leveres typisk på 2–4 uker. Større systemer tar 4–12 uker, avhengig av kompleksitet." },
       { q: "Hvem drifter etter lansering?", a: "Vi tar oss av all drift, oppdateringer og support — alt inkludert i den løpende prisen." },
