@@ -95,9 +95,18 @@ const EmailCampaignsPanel = () => {
       status: "queued" as const,
     }));
 
-    await supabase.from("email_messages").insert(msgs);
+    const { error: insErr } = await supabase.from("email_messages").insert(msgs);
+    if (insErr) { toast.error("Kunne ikke legge e-poster i kø"); return; }
     await supabase.from("email_campaigns").update({ status: "sending" }).eq("id", id);
     toast.success(`${msgs.length} e-poster lagt i kø`);
+    fetchAll();
+    // Dispatch the queued messages (paced server-side)
+    try {
+      for (let i = 0; i < 20; i++) {
+        const { data } = await supabase.functions.invoke("send-bulk-email", { body: {} });
+        if (!data || (data as any).remaining === 0 || (data as any).processed === 0) break;
+      }
+    } catch { /* surfaced via campaign sent_count */ }
     fetchAll();
   };
 
