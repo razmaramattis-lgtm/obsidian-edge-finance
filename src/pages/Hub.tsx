@@ -266,7 +266,7 @@ const Hub = () => {
       </section>
 
       {/* Partners and membership */}
-      <section className="border-y border-border/60 bg-card py-7 md:py-9" aria-label={lang === "en" ? "Our partners and membership" : "Våre partnere og medlemskap"}>
+      <section className="bg-background py-7 md:py-9" aria-label={lang === "en" ? "Our partners and membership" : "Våre partnere og medlemskap"}>
         <div className="container mx-auto px-4 md:px-6">
           <p className="text-[11px] tracking-[0.24em] uppercase text-muted-foreground font-semibold mb-4">
             {lang === "en" ? "Partner" : "Partner"}

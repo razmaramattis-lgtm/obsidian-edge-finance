@@ -7,7 +7,7 @@ import { useLang } from "@/contexts/LanguageContext";
 type Review = { id: string; name: string; photo: string | null; rating: number; text: string; date: string };
 type Payload = { averageRating: number; totalReviewCount: number; reviews: Review[] };
 
-const INTERVAL = 9000;
+const INTERVAL = 6000;
 const REVIEWS_URL = "https://www.google.com/search?q=Avargo+Regnskap+AS+anmeldelser";
 
 function useVisibleCount() {
