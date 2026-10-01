@@ -12,11 +12,10 @@ let cache: { at: number; payload: unknown } | null = null;
 
 function clean(comment = "") {
   // Keep the original-language text, drop Google's auto-translation
+  const orig = comment.indexOf("(Original)");
+  if (orig >= 0) return comment.slice(orig + "(Original)".length).replace(/\(Translated by Google\)[\s\S]*$/, "").trim();
   const idx = comment.indexOf("(Translated by Google)");
-  let text = idx >= 0 ? comment.slice(0, idx) : comment;
-  const orig = text.indexOf("(Original)");
-  if (orig >= 0) text = text.slice(orig + "(Original)".length);
-  return text.trim();
+  return (idx >= 0 ? comment.slice(0, idx) : comment).trim();
 }
 
 Deno.serve(async (req) => {
