@@ -14,6 +14,10 @@ import heroBg from "@/assets/hero-bg.jpg";
 import hubPartner from "@/assets/hub-partner.jpg";
 import hubFastpris from "@/assets/hub-fastpris.jpg";
 import hubTeam from "@/assets/hub-team.jpg";
+import regnskapNorgeLogo from "@/assets/partners/RN_sort-logo-digitalt-bruk.webp.asset.json";
+import tripletexLogo from "@/assets/partners/Tripletex-logo.webp.asset.json";
+import folioLogo from "@/assets/partners/Folio-logo.png.asset.json";
+import fikenLogo from "@/assets/partners/fiken-hovedlogo2x.png.asset.json";
 import reviewer1 from "@/assets/reviewer-1.jpg";
 import reviewer2 from "@/assets/reviewer-2.jpg";
 import reviewer3 from "@/assets/reviewer-3.jpg";
@@ -257,6 +261,29 @@ const Hub = () => {
               ))}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Partners and membership */}
+      <section className="border-y border-border/60 bg-card py-7 md:py-9" aria-label={lang === "en" ? "Our partners and membership" : "Våre partnere og medlemskap"}>
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-7 items-center max-w-4xl mx-auto">
+            {[
+              { name: "Tripletex", logo: tripletexLogo.url, partner: true, width: "max-w-[138px]" },
+              { name: "Folio", logo: folioLogo.url, partner: true, width: "max-w-[52px]" },
+              { name: "Fiken", logo: fikenLogo.url, partner: true, width: "max-w-[126px]" },
+              { name: "Regnskap Norge", logo: regnskapNorgeLogo.url, partner: false, width: "max-w-[144px]" },
+            ].map(({ name, logo, partner, width }) => (
+              <div key={name} className="flex min-w-0 flex-col items-center justify-center gap-2.5 text-center">
+                <div className="h-14 w-full flex items-center justify-center">
+                  <img src={logo} alt={name} loading="lazy" className={`max-h-12 md:max-h-14 w-auto max-w-full object-contain ${width}`} />
+                </div>
+                <span className="text-[10px] md:text-xs text-muted-foreground font-medium">
+                  {partner ? (lang === "en" ? `Partner with ${name}` : `Partner med ${name}`) : "\u00a0"}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
