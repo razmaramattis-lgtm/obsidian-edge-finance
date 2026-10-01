@@ -13,7 +13,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
-  Mail, Phone, ShieldCheck, Linkedin, Instagram,
+  Mail, Phone, ShieldCheck, Instagram,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
@@ -459,7 +459,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
               <div className="flex items-center gap-3 mb-7" aria-label="Sosiale medier">
                 <a href="https://www.linkedin.com/company/avargo-regnskap" target="_blank" rel="noopener noreferrer" aria-label="Avargo på LinkedIn" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-secondary-foreground/25 text-secondary-foreground hover:border-accent hover:text-accent transition-colors">
-                  <Linkedin size={17} strokeWidth={1.8} aria-hidden="true" />
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-[17px] w-[17px]" aria-hidden="true">
+                    <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+                  </svg>
                 </a>
                 <a href="https://www.instagram.com/avargo.regnskap/" target="_blank" rel="noopener noreferrer" aria-label="Avargo på Instagram" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-secondary-foreground/25 text-secondary-foreground hover:border-accent hover:text-accent transition-colors">
                   <Instagram size={17} strokeWidth={1.8} aria-hidden="true" />
