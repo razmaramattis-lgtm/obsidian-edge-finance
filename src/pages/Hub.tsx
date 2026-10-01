@@ -275,7 +275,7 @@ const Hub = () => {
             <div className="flex min-w-0 flex-1 items-center justify-around gap-2 md:gap-6">
               {[
                 { name: "Tripletex", logo: tripletexLogo.url, width: "max-w-[86px] md:max-w-[138px]" },
-                { name: "Folio", logo: folioLogo.url, width: "max-w-[38px] md:max-w-[52px]" },
+                { name: "Folio", logo: folioLogo.url, width: "max-w-[38px] md:max-w-[52px]", href: "https://folio.no/finn-regnskapsforer/avargo-regnskap" },
                 { name: "Fiken", logo: fikenLogo.url, width: "max-w-[78px] md:max-w-[126px]", href: "https://fiken.no/regnskapsforere/avargo-regnskap-as" },
               ].map(({ name, logo, width, href }) => {
                 const img = <img src={logo} alt={name} loading="lazy" className={`max-h-9 md:max-h-12 w-auto max-w-full object-contain ${width}`} />;
