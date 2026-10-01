@@ -276,16 +276,23 @@ const Hub = () => {
               {[
                 { name: "Tripletex", logo: tripletexLogo.url, width: "max-w-[86px] md:max-w-[138px]" },
                 { name: "Folio", logo: folioLogo.url, width: "max-w-[38px] md:max-w-[52px]" },
-                { name: "Fiken", logo: fikenLogo.url, width: "max-w-[78px] md:max-w-[126px]" },
-              ].map(({ name, logo, width }) => (
-                <div key={name} className="h-12 md:h-14 flex min-w-0 items-center justify-center">
-                  <img src={logo} alt={name} loading="lazy" className={`max-h-9 md:max-h-12 w-auto max-w-full object-contain ${width}`} />
-                </div>
-              ))}
+                { name: "Fiken", logo: fikenLogo.url, width: "max-w-[78px] md:max-w-[126px]", href: "https://fiken.no/regnskapsforere/avargo-regnskap-as" },
+              ].map(({ name, logo, width, href }) => {
+                const img = <img src={logo} alt={name} loading="lazy" className={`max-h-9 md:max-h-12 w-auto max-w-full object-contain ${width}`} />;
+                return (
+                  <div key={name} className="h-12 md:h-14 flex min-w-0 items-center justify-center">
+                    {href ? (
+                      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={name} className="hover:opacity-80 transition-opacity">{img}</a>
+                    ) : img}
+                  </div>
+                );
+              })}
             </div>
             <span aria-hidden="true" className="h-9 md:h-12 w-px shrink-0 bg-border" />
             <div className="h-12 md:h-14 flex shrink-0 items-center justify-center">
-              <img src={regnskapNorgeLogo.url} alt="Regnskap Norge" loading="lazy" className="max-h-9 md:max-h-12 w-auto max-w-[92px] md:max-w-[144px] object-contain" />
+              <a href="https://www.regnskapnorge.no/" target="_blank" rel="noopener noreferrer" aria-label="Regnskap Norge" className="hover:opacity-80 transition-opacity">
+                <img src={regnskapNorgeLogo.url} alt="Regnskap Norge" loading="lazy" className="max-h-9 md:max-h-12 w-auto max-w-[92px] md:max-w-[144px] object-contain" />
+              </a>
             </div>
           </div>
         </div>
