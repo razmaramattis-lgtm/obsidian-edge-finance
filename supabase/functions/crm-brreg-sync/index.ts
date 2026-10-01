@@ -211,13 +211,10 @@ Deno.serve(async (req) => {
     // Krav: nye leads må ha e-post i Brønnøysund for å importeres.
     // Eksisterende kort berøres ikke (de beholdes og oppdateres som før).
     const requireEmail = body.requireEmail !== false;
-    const withEmail = requireEmail
-      ? filtered.filter((e: any) => existing.has(e.organisasjonsnummer) || (e.epostadresse || "").trim())
-      : filtered;
-    const skippedNoEmail = filtered.length - withEmail.length;
 
-    // Role + contact-detail lookups for the newest entries first
-    const needRoles = withEmail.filter((e: any) => !existing.has(e.organisasjonsnummer)).slice(0, MAX_ROLE_LOOKUPS);
+    // Role + contact-detail lookups for new entries first, so e-mail found only
+    // in the detail record is considered before the e-mail requirement is applied.
+    const needRoles = filtered.filter((e: any) => !existing.has(e.organisasjonsnummer)).slice(0, MAX_ROLE_LOOKUPS);
     const roleMap = new Map<string, Awaited<ReturnType<typeof fetchRoles>>>();
     const detailMap = new Map<string, any>();
     await mapLimit(needRoles, 5, async (e: any) => {
@@ -226,6 +223,14 @@ Deno.serve(async (req) => {
       if (r) roleMap.set(orgnr, r);
       if (d) detailMap.set(orgnr, d);
     });
+
+    // Krav: nye leads må ha e-post i Brønnøysund for å importeres.
+    const withEmail = requireEmail
+      ? filtered.filter((e: any) =>
+          existing.has(e.organisasjonsnummer) ||
+          (e.epostadresse || detailMap.get(e.organisasjonsnummer)?.epostadresse || "").trim())
+      : filtered;
+    const skippedNoEmail = filtered.length - withEmail.length;
 
     const rows = withEmail.map((e: any) => {
       const roleInfo = roleMap.get(e.organisasjonsnummer);
