@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     const payload = { averageRating, totalReviewCount, reviews };
     cache = { at: Date.now(), payload };
     return new Response(JSON.stringify(payload), {
-      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "public, max-age=900" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
   } catch (e) {
     console.error(e);
