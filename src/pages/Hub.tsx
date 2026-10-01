@@ -8,6 +8,7 @@ import { useLang } from "@/contexts/LanguageContext";
 
 import HubFAQ from "@/components/HubFAQ";
 import HeroQuickContact from "@/components/HeroQuickContact";
+import GoogleReviews from "@/components/GoogleReviews";
 
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -370,6 +371,9 @@ const Hub = () => {
           </div>
         </div>
       </section>
+
+      {/* ═══ GOOGLE REVIEWS ═══ */}
+      <GoogleReviews />
 
       {/* ═══ FAQ ═══ */}
 
