@@ -267,22 +267,25 @@ const Hub = () => {
       {/* Partners and membership */}
       <section className="border-y border-border/60 bg-card py-7 md:py-9" aria-label={lang === "en" ? "Our partners and membership" : "Våre partnere og medlemskap"}>
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-7 items-center max-w-4xl mx-auto">
-            {[
-              { name: "Tripletex", logo: tripletexLogo.url, partner: true, width: "max-w-[138px]" },
-              { name: "Folio", logo: folioLogo.url, partner: true, width: "max-w-[52px]" },
-              { name: "Fiken", logo: fikenLogo.url, partner: true, width: "max-w-[126px]" },
-              { name: "Regnskap Norge", logo: regnskapNorgeLogo.url, partner: false, width: "max-w-[144px]" },
-            ].map(({ name, logo, partner, width }) => (
-              <div key={name} className="flex min-w-0 flex-col items-center justify-center gap-2.5 text-center">
-                <div className="h-14 w-full flex items-center justify-center">
-                  <img src={logo} alt={name} loading="lazy" className={`max-h-12 md:max-h-14 w-auto max-w-full object-contain ${width}`} />
+          <p className="text-[11px] tracking-[0.24em] uppercase text-muted-foreground font-semibold mb-4">
+            {lang === "en" ? "Partner" : "Partner"}
+          </p>
+          <div className="flex items-center gap-4 md:gap-8">
+            <div className="flex min-w-0 flex-1 items-center justify-around gap-3 md:gap-6">
+              {[
+                { name: "Tripletex", logo: tripletexLogo.url, width: "max-w-[110px] md:max-w-[138px]" },
+                { name: "Folio", logo: folioLogo.url, width: "max-w-[46px] md:max-w-[52px]" },
+                { name: "Fiken", logo: fikenLogo.url, width: "max-w-[100px] md:max-w-[126px]" },
+              ].map(({ name, logo, width }) => (
+                <div key={name} className="h-12 md:h-14 flex min-w-0 items-center justify-center">
+                  <img src={logo} alt={name} loading="lazy" className={`max-h-10 md:max-h-12 w-auto max-w-full object-contain ${width}`} />
                 </div>
-                <span className="text-[10px] md:text-xs text-muted-foreground font-medium">
-                  {partner ? (lang === "en" ? `Partner with ${name}` : `Partner med ${name}`) : "\u00a0"}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
+            <span aria-hidden="true" className="h-10 md:h-12 w-px shrink-0 bg-border" />
+            <div className="h-12 md:h-14 flex shrink-0 items-center justify-center">
+              <img src={regnskapNorgeLogo.url} alt="Regnskap Norge" loading="lazy" className="max-h-10 md:max-h-12 w-auto max-w-[110px] md:max-w-[144px] object-contain" />
+            </div>
           </div>
         </div>
       </section>
