@@ -13,7 +13,7 @@ import {
   Building2, Landmark, HardHat, Store, Heart, Zap,
   BookMarked, Newspaper, CalendarClock, FileSignature,
   Calculator, ArrowRight, Receipt, PieChart, BarChart3, Users, Globe, Car,
-  Mail, Phone, ShieldCheck,
+  Mail, Phone, ShieldCheck, Linkedin, Instagram,
 } from "lucide-react";
 
 /* ── Editorial nav data — regnskap first, HR as one line at the end ── */
@@ -455,6 +455,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <span className="inline-flex items-center gap-2 text-secondary-foreground/70">
                   <ShieldCheck size={13} strokeWidth={1.7} className="text-accent" /> {t("footer.orgline")}
                 </span>
+              </div>
+
+              <div className="flex items-center gap-3 mb-7" aria-label="Sosiale medier">
+                <a href="https://www.linkedin.com/company/avargo-regnskap" target="_blank" rel="noopener noreferrer" aria-label="Avargo på LinkedIn" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-secondary-foreground/25 text-secondary-foreground hover:border-accent hover:text-accent transition-colors">
+                  <Linkedin size={17} strokeWidth={1.8} aria-hidden="true" />
+                </a>
+                <a href="https://www.instagram.com/avargo.regnskap/" target="_blank" rel="noopener noreferrer" aria-label="Avargo på Instagram" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-secondary-foreground/25 text-secondary-foreground hover:border-accent hover:text-accent transition-colors">
+                  <Instagram size={17} strokeWidth={1.8} aria-hidden="true" />
+                </a>
               </div>
 
               <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-[12.5px] font-medium rounded-full hover:brightness-110 transition-all duration-300 tracking-wide">
