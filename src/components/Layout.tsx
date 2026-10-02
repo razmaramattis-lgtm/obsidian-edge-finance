@@ -528,6 +528,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <Link to="/personvern" className="hover:text-accent transition-colors">{t("footer.legal.privacy")}</Link>
               <Link to="/vilkar"     className="hover:text-accent transition-colors">{t("footer.legal.terms")}</Link>
               <Link to="/sikkerhet"  className="hover:text-accent transition-colors">{t("footer.legal.security")}</Link>
+              <button type="button" onClick={() => window.dispatchEvent(new Event("avargo-open-cookie-settings"))} className="hover:text-accent transition-colors">Cookie-innstillinger</button>
             </div>
           </div>
         </div>
