@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION private_utils.is_customer(uuid) TO anon;
