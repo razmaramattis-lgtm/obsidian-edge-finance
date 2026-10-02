@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -232,6 +233,7 @@ const App = () => (
         <Sonner />
         <InstallPromptSuppressor />
         <BrowserRouter>
+          <CookieConsentBanner />
           <AuthProvider>
             <LanguageProvider>
             <SectionProvider>
