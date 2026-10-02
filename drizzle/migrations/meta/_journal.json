@@ -8,6 +8,13 @@
       "when": 1790880409526,
       "tag": "0000_fix_own_company_id_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790950984553,
+      "tag": "0001_grant_is_customer_anon",
+      "breakpoints": true
     }
   ]
 }
