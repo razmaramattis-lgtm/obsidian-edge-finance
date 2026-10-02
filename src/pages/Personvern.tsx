@@ -89,7 +89,9 @@ const Personvern = () => (
 
               <section>
                 <h2 className="font-heading text-xl md:text-2xl text-foreground mb-3">8. Informasjonskapsler</h2>
-                <p>Nettsiden bruker nødvendige informasjonskapsler for å sikre funksjonalitet. Vi bruker ingen sporings- eller markedsføringskapsler uten ditt samtykke.</p>
+                <p>Nettsiden bruker nødvendige informasjonskapsler for å sikre funksjonalitet.</p>
+                <p className="mt-3"><strong>Google Ads-måling:</strong> Hvis du godtar det, bruker vi Google Ads (Google Ireland Ltd.) for å måle om et besøk fra en av våre annonser fører til at du sender et kontaktskjema. Google mottar da informasjonskapsler, opplysninger om annonseklikket, sidebesøket og at skjemaet ble sendt – ikke innholdet du skriver i skjemaet. Formålet er å måle og forbedre annonsene våre. Besøkende i EØS, Storbritannia og Sveits blir spurt først, og ingenting sendes før du har godtatt. Vi lagrer valget ditt, tidspunktet og hvilken versjon av samtykketeksten du så, i nettleseren din.</p>
+                <p className="mt-3">Du kan trekke tilbake eller endre samtykket når som helst via «Cookie-innstillinger» nederst på siden. Les hvordan Google bruker data: <a href="https://business.safety.google/privacy/" target="_blank" rel="noopener noreferrer" className="underline">business.safety.google/privacy</a>.</p>
               </section>
 
               <section>
