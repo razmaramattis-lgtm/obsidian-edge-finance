@@ -99,12 +99,19 @@ let installed = false;
 export function installLeadTracking() {
   if (installed) return;
   installed = true;
-  const fns = supabase.functions as any;
-  const original = fns.invoke.bind(fns);
-  fns.invoke = async (name: string, options?: unknown) => {
-    const result = await original(name, options);
-    if (name === "contact-submit" && !result?.error) void reportLeadConversion();
-    return result;
+  // supabase.functions returns a fresh client per access, so wrapping
+  // invoke() does not stick. Watch fetch instead: every public form posts
+  // to the "contact-submit" function — report a conversion on success.
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const res = await originalFetch(input, init);
+    try {
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+      if (url.includes("/functions/v1/contact-submit") && res.ok) void reportLeadConversion();
+    } catch {
+      /* never break the form */
+    }
+    return res;
   };
   window.addEventListener("storage", (e) => {
     if (e.key === STORAGE_KEY && (e.newValue === "granted" || e.newValue === "denied")) {
