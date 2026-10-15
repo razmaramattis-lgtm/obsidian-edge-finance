@@ -1,8 +1,6 @@
-import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  ArrowLeft,
   Check,
   Calculator,
   Building2,
@@ -11,66 +9,11 @@ import {
   Receipt,
   Shield,
   MessageCircle,
-  Sparkles,
-  Send,
-  CheckCircle2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Helmet } from "react-helmet-async";
 import { useSection } from "@/contexts/SectionContext";
-import { supabase } from "@/integrations/supabase/client";
-
-// ── Pricing model ────────────────────────────────────────────
-const BASE_PRICE = 1950;
-
-const companyForms = [
-  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 0 },
-  { key: "ENK", label: "ENK", desc: "Enkeltpersonforetak", addon: 0 },
-];
-
-const industries = [
-  { key: "tjeneste", label: "Tjenesteyting" },
-  { key: "varehandel", label: "Varehandel" },
-  { key: "nettbutikk", label: "Nettbutikk" },
-  { key: "bygg", label: "Bygg og anlegg" },
-  { key: "industri", label: "Industri" },
-  { key: "eiendom", label: "Eiendom" },
-  { key: "it", label: "IT og teknologi" },
-  { key: "bruktbil", label: "Bruktbil" },
-  { key: "helse", label: "Helse" },
-  { key: "restaurant", label: "Restaurant og kafé" },
-  { key: "transport", label: "Transport" },
-  { key: "kultur", label: "Kultur og media" },
-  { key: "utdanning", label: "Utdanning og kurs" },
-  { key: "annet", label: "Annet" },
-];
-
-// Revenue as a continuous slider. Values in NOK. > 5 000 000 triggers "custom offer" flow.
-const REVENUE_MIN = 0;
-const REVENUE_MAX = 5_000_000;
-const REVENUE_STEP = 100_000;
-const REVENUE_CUSTOM = REVENUE_MAX + REVENUE_STEP; // 5,1 mill = custom-tilbud flagg
-
-// Continuous pricing based on revenue (only counts up to 5 mill.)
-const priceFromRevenue = (nok: number) => {
-  const v = Math.min(nok, REVENUE_MAX);
-  if (v <= 500_000) return 0;
-  if (v <= 2_000_000) return 400;
-  if (v <= 3_500_000) return 900;
-  return 1400;
-};
-
-const bilagTiers = [
-  { key: "0", label: "0 – 20 bilag", addon: 0 },
-  { key: "1", label: "21 – 50 bilag", addon: 500 },
-  { key: "2", label: "51 – 100 bilag", addon: 1200 },
-  { key: "3", label: "101 – 200 bilag", addon: 2000 },
-  { key: "4", label: "200+ bilag", addon: 3000 },
-];
-
-const PER_PAYSLIP = 150;
-const AARSOPPGJOR = 714;
+import PricingCalculator from "@/components/PricingCalculator";
 
 const includedServices = [
   { icon: Receipt, title: "Daglig bokføring", description: "Automatisk bankintegrasjon, bilagsregistrering og månedlig avstemming — uten tillegg i timen." },
@@ -86,96 +29,10 @@ const Pricing = () => {
   const { isInSection, section } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
 
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState<string | null>(null);
-  const [industry, setIndustry] = useState<string>("");
-  const [revenue, setRevenue] = useState<number>(500_000); // NOK
-  const [bilag, setBilag] = useState<number>(0);
-  const [payslips, setPayslips] = useState<number>(0);
-  const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
-
-  // Step 6 form fields
-  const [contactCompany, setContactCompany] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const isCustomOffer = revenue >= REVENUE_CUSTOM;
-
-  const revenueLabel = useMemo(() => {
-    if (isCustomOffer) return "5 mill.+ (skreddersydd tilbud)";
-    return `${revenue.toLocaleString("nb-NO")} kr`;
-  }, [revenue, isCustomOffer]);
-
-  const price = useMemo(() => {
-    let p = BASE_PRICE;
-    p += priceFromRevenue(revenue);
-    p += bilagTiers[bilag]?.addon ?? 0;
-    p += payslips * PER_PAYSLIP;
-    if (aarsoppgjor) p += AARSOPPGJOR;
-    return p;
-  }, [revenue, bilag, payslips, aarsoppgjor]);
-
-  const contactValid =
-    contactCompany.trim().length > 1 &&
-    contactPhone.trim().length > 3 &&
-    /^\S+@\S+\.\S+$/.test(contactEmail.trim());
-
-  const canNext =
-    (step === 1 && !!form) ||
-    (step === 2 && !!industry) ||
-    step === 3 ||
-    step === 4 ||
-    step === 5;
-
-  const goNext = () => setStep((s) => Math.min(6, s + 1));
-  const goBack = () => setStep((s) => Math.max(1, s - 1));
-
   const pageTitle = "Priser | Fastpris fra 1 950 kr/mnd — Avargo";
   const pageDesc =
     "Fastpris på regnskap fra 1 950 kr/mnd hos Avargo. Ingen skjulte tillegg. Bokføring, MVA, lønn, årsregnskap og rådgivning — alt inkludert.";
   const pageUrl = `https://avargo.no${sectionPath}/priser`;
-
-  const submitOffer = async () => {
-    if (!contactValid || submitting) return;
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const summaryLines = [
-        `Selskapsform: ${form ?? "—"}`,
-        `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
-        `Årlig omsetning: ${revenueLabel}`,
-        `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
-        `Lønnsslipper/mnd: ${payslips}`,
-        `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-        `${isCustomOffer ? "Kunde ønsker skreddersydd tilbud (omsetning > 5 mill.)" : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
-      ].join("\n");
-      const fullMessage =
-        `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
-        `Kundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
-      const { error } = await supabase.functions.invoke("contact-submit", {
-        body: {
-          contact_person: contactCompany.trim().slice(0, 160),
-          company_name: contactCompany.trim().slice(0, 160),
-          email: contactEmail.trim().toLowerCase().slice(0, 255),
-          phone: contactPhone.trim().slice(0, 40),
-          source: `pricing-calculator:${typeof window !== "undefined" ? window.location.pathname : ""}`,
-          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
-          message: fullMessage.slice(0, 2000),
-        },
-      });
-      if (error) throw error;
-      setSubmitted(true);
-    } catch (e) {
-      console.error(e);
-      setSubmitError("Noe gikk galt. Prøv igjen eller send e-post til kontakt@avargo.no");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <>
