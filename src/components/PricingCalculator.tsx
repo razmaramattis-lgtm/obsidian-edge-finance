@@ -55,7 +55,8 @@ const bilagTiers = [
   { key: "4", label: "200+ bilag", addon: 3000 },
 ];
 
-const PER_PAYSLIP = 150;
+const PAYROLL_ADDON = 100;
+const PAYROLL_EMPLOYEE_LIMIT = 5;
 const AARSOPPGJOR = 714;
 
 const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
@@ -79,18 +80,18 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const isCustomOffer = revenue >= REVENUE_CUSTOM;
+  const isCustomOffer = revenue >= REVENUE_CUSTOM || payslips > PAYROLL_EMPLOYEE_LIMIT;
 
   const revenueLabel = useMemo(() => {
-    if (isCustomOffer) return "5 mill.+ (skreddersydd tilbud)";
+    if (revenue >= REVENUE_CUSTOM) return "5 mill.+ (skreddersydd tilbud)";
     return `${revenue.toLocaleString("nb-NO")} kr`;
-  }, [revenue, isCustomOffer]);
+  }, [revenue]);
 
   const price = useMemo(() => {
     let p = BASE_PRICE;
     p += priceFromRevenue(revenue);
     p += bilagTiers[bilag]?.addon ?? 0;
-    p += payslips * PER_PAYSLIP;
+    if (payslips > 0 && payslips <= PAYROLL_EMPLOYEE_LIMIT) p += PAYROLL_ADDON;
     if (aarsoppgjor) p += AARSOPPGJOR;
     return p;
   }, [revenue, bilag, payslips, aarsoppgjor]);
@@ -120,9 +121,9 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
         `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
         `Årlig omsetning: ${revenueLabel}`,
         `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
-        `Lønnsslipper/mnd: ${payslips}`,
+        `Antall ansatte: ${payslips}`,
         `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-        `${isCustomOffer ? "Kunde ønsker skreddersydd tilbud (omsetning > 5 mill.)" : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
+        `${isCustomOffer ? `Kunde ønsker skreddersydd tilbud (${[revenue >= REVENUE_CUSTOM ? "omsetning > 5 mill." : "", payslips > PAYROLL_EMPLOYEE_LIMIT ? "flere enn 5 ansatte" : ""].filter(Boolean).join(", ")})` : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
       ].join("\n");
       const fullMessage =
         `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
@@ -285,7 +286,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                             Omsetning
                           </span>
                           <span className="font-heading text-2xl text-foreground">
-                            {isCustomOffer ? "5 mill.+" : `${(revenue / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`}
+                            {revenue >= REVENUE_CUSTOM ? "5 mill.+" : `${(revenue / 1_000_000).toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill.`}
                           </span>
                         </div>
 
@@ -306,7 +307,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                           <span>5 mill.+</span>
                         </div>
 
-                        {isCustomOffer && (
+                        {revenue >= REVENUE_CUSTOM && (
                           <div className="mt-6 p-4 rounded-2xl bg-primary/8 border border-primary/25">
                             <p className="text-sm text-foreground leading-relaxed">
                               Omsetning over 5 mill. gir stor variasjon i behov. Trykk deg videre — så gir vi deg et <span className="font-medium">skreddersydd tilbud</span> basert på hva du faktisk trenger.
@@ -351,18 +352,18 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                       <>
                         <p className="text-lg font-medium text-foreground mb-2">5. Lønn og årsoppgjør</p>
                         <p className="text-sm text-foreground/60 font-light mb-6">
-                          Hvor mange lønnsslipper kjører du per måned, og skal årsoppgjøret være inkludert?
+                          Hvor mange ansatte skal vi kjøre lønn for, og skal årsoppgjøret være inkludert?
                         </p>
 
                         <label htmlFor={`${id}-payslips`} className="text-xs uppercase tracking-[0.15em] text-foreground/50 font-medium">
-                          Lønnsslipper per måned
+                          Antall ansatte
                         </label>
                         <div className="flex items-center gap-3 mt-2 mb-6">
                           <Button
                             variant="ghost"
                                 type="button"
                             onClick={() => setPayslips((n) => Math.max(0, n - 1))}
-                            aria-label="Reduser antall lønnsslipper"
+                            aria-label="Reduser antall ansatte"
                             className="w-11 h-11 rounded-full border border-border/60 bg-card/50 hover:border-primary/40 hover:bg-primary/5 flex items-center justify-center text-lg"
                           >
                             −
@@ -371,16 +372,17 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                             id={`${id}-payslips`}
                             type="number"
                             min={0}
+                            step={1}
                             value={payslips}
-                            onChange={(e) => setPayslips(Math.max(0, Number(e.target.value) || 0))}
-                            aria-label="Antall lønnsslipper per måned"
+                            onChange={(e) => setPayslips(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                            aria-label="Antall ansatte"
                             className="min-w-0 flex-1 text-center text-xl font-medium bg-card/50 border border-border/60 rounded-xl py-2.5 focus:outline-none focus:border-primary/50"
                           />
                           <Button
                             variant="ghost"
                                 type="button"
                             onClick={() => setPayslips((n) => n + 1)}
-                            aria-label="Øk antall lønnsslipper"
+                            aria-label="Øk antall ansatte"
                             className="w-11 h-11 rounded-full border border-border/60 bg-card/50 hover:border-primary/40 hover:bg-primary/5 flex items-center justify-center text-lg"
                           >
                             +
@@ -436,7 +438,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                             ["Bransje", industries.find((i) => i.key === industry)?.label ?? "—"],
                             ["Årlig omsetning", revenueLabel],
                             ["Bilag / mnd", bilagTiers[bilag]?.label ?? "—"],
-                            ["Lønnsslipper / mnd", String(payslips)],
+                            ["Antall ansatte", String(payslips)],
                             ["Årsoppgjør", aarsoppgjor ? "Ja" : "Nei"],
                           ].map(([k, v]) => (
                             <div key={k} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
