@@ -36,7 +36,7 @@ const PricingCalculatorDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto overscroll-contain rounded-lg p-5 sm:p-8">
+      <DialogContent className="z-[110] max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto overscroll-contain rounded-lg p-5 sm:p-8">
         <DialogHeader className="pr-6 text-left">
           <DialogTitle className="flex items-center gap-2 font-heading text-xl sm:text-2xl">
             <Calculator className="h-5 w-5 shrink-0 text-primary" /> Din fastpris hos Avargo
