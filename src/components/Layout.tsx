@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import StickyMobileCta from "@/components/StickyMobileCta";
-import ExitIntentDialog from "@/components/ExitIntentDialog";
 import PricingCalculatorDialog from "@/components/PricingCalculatorDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -400,7 +399,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main>{children}</main>
 
       <StickyMobileCta />
-      <ExitIntentDialog />
       <PricingCalculatorDialog />
       <FloatingActionMenu />
 

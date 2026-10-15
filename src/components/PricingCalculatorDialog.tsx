@@ -23,7 +23,7 @@ const PricingCalculatorDialog = () => {
     if (shown.current) return;
 
     const check = () => {
-      if (shown.current || Date.now() - started < 30_000 || document.visibilityState !== "visible") return;
+      if (shown.current || Date.now() - started < 8_000 || document.visibilityState !== "visible") return;
       // Never stack on consent, booking, contact, or other dialogs.
       if (document.querySelector('[role="dialog"], [role="alertdialog"], [data-avargo-overlay]')) return;
       shown.current = true;
