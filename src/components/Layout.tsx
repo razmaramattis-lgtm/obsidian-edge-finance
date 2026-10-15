@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import AdminFloatingBar from "@/components/AdminFloatingBar";
 import StickyMobileCta from "@/components/StickyMobileCta";
 import ExitIntentDialog from "@/components/ExitIntentDialog";
+import PricingCalculatorDialog from "@/components/PricingCalculatorDialog";
 import FloatingActionMenu from "@/components/FloatingActionMenu";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Logo from "@/components/Logo";
@@ -400,6 +401,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       <StickyMobileCta />
       <ExitIntentDialog />
+      <PricingCalculatorDialog />
       <FloatingActionMenu />
 
       {/* ── Footer — editorial masthead ─────────── */}

@@ -48,6 +48,7 @@ const ExitIntentDialog = () => {
 
     const onLeave = (e: MouseEvent) => {
       if (!armed) return;
+      if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return;
       // Mus ut over toppen av viewporten
       if (e.clientY <= 0) {
         setOpen(true);
@@ -90,7 +91,7 @@ const ExitIntentDialog = () => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div data-avargo-overlay className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-md rounded-3xl border border-border/30 bg-card/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl shadow-primary/10">
         <button
           onClick={() => setOpen(false)}
