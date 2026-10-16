@@ -29,6 +29,13 @@
       "when": 1792178397022,
       "tag": "0003_restrict_reads_per_user_choice",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792178481159,
+      "tag": "0004_ws_posts_author_read",
+      "breakpoints": true
     }
   ]
 }
