@@ -329,19 +329,19 @@ const Hub = () => {
                 icon: Layers,
                 title: t("value.1.title"),
                 desc: t("value.1.desc"),
-                image: hubPartner,
+                image: hubPartner.url,
               },
               {
                 icon: BadgeCheck,
                 title: t("value.2.title"),
                 desc: t("value.2.desc"),
-                image: hubFastpris,
+                image: hubFastpris.url,
               },
               {
                 icon: HeartHandshake,
                 title: t("value.3.title"),
                 desc: t("value.3.desc"),
-                image: hubTeam,
+                image: hubTeam.url,
               },
             ].map((item, i) => (
               <motion.div
