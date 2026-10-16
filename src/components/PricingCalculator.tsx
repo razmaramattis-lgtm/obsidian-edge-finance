@@ -105,7 +105,6 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
     (step === 1 && contactValid) ||
     (step === 2 && !!form) ||
     (step === 3 && !!industry) ||
-    step === 3 ||
     step === 4 ||
     step === 5 ||
     step === 6;
