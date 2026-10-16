@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Avargo" />
     <title>Regnskapsfører for små og mellomstore selskap | Avargo</title>
-    <meta name="description" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
+    <meta name="description" data-rh="true" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
     <meta name="author" content="Avargo" />
     <meta name="google-site-verification" content="QqN74kz1TLAP2hVIUCV5cY-yPsFmwKZfCmKayRpiBs4" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -38,18 +38,21 @@
 
     <!-- Hero image preloaded via JS import in Index.tsx for Vite compatibility -->
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" data-rh="true" content="website" />
 
-  <meta property="og:url" content="https://avargo.no/" />
-  <meta property="og:image" content="https://avargo.no/og-image.jpg">
-  <meta name="twitter:image" content="https://avargo.no/og-image.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:title" content="Regnskapsfører for små og mellomstore selskap | Avargo">
-  <meta name="twitter:title" content="Regnskapsfører for små og mellomstore selskap | Avargo">
-  <meta property="og:description" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
-  <meta name="twitter:description" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
-  <meta property="og:locale" content="nb_NO">
-  <meta property="og:site_name" content="Avargo">
+  <meta property="og:url" data-rh="true" content="https://avargo.no/" />
+  <meta property="og:image" data-rh="true" content="https://avargo.no/og-avargo.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Avargo – logo">
+  <meta name="twitter:image" data-rh="true" content="https://avargo.no/og-avargo.jpg">
+  <meta name="twitter:card" data-rh="true" content="summary_large_image">
+  <meta property="og:title" data-rh="true" content="Regnskapsfører for små og mellomstore selskap | Avargo">
+  <meta name="twitter:title" data-rh="true" content="Regnskapsfører for små og mellomstore selskap | Avargo">
+  <meta property="og:description" data-rh="true" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
+  <meta name="twitter:description" data-rh="true" content="Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn og rådgivning til fast månedspris — svar innen 24 timer.">
+  <meta property="og:locale" data-rh="true" content="nb_NO">
+  <meta property="og:site_name" data-rh="true" content="Avargo">
 
     <script type="application/ld+json">
     {
@@ -62,8 +65,8 @@
           "alternateName": "Avargo",
           "url": "https://avargo.no/",
           "logo": "https://avargo.no/logo.png",
-          "image": "https://avargo.no/og-image.jpg",
-          "description": "Autorisert regnskapsbyrå for små og mellomstore bedrifter. Regnskap, HR, lønn, rådgivning og skatterådgivning til fast månedspris.",
+          "image": "https://avargo.no/og-avargo.jpg",
+          "description": "Regnskapsbyrå godkjent av Finanstilsynet for små og mellomstore bedrifter. Regnskap, lønn, årsoppgjør og rådgivning til fast månedspris.",
           "email": "kontakt@avargo.no",
           "telephone": "+4798642391",
           "vatID": "NO938076669MVA",
@@ -72,34 +75,108 @@
           "priceRange": "$$",
           "address": {
             "@type": "PostalAddress",
-            "addressCountry": "NO",
-            "addressRegion": "Telemark"
+            "addressLocality": "Lillestrøm",
+            "addressRegion": "Akershus",
+            "addressCountry": "NO"
           },
-          "areaServed": { "@type": "Country", "name": "Norge" },
-          "knowsLanguage": ["no", "en"],
-          "sameAs": ["https://avargo.no/"],
-          "contactPoint": [{
-            "@type": "ContactPoint",
-            "telephone": "+4798642391",
-            "email": "kontakt@avargo.no",
-            "contactType": "customer service",
-            "availableLanguage": ["Norwegian", "English"],
-            "areaServed": "NO"
-          }],
-          "openingHoursSpecification": [{
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-            "opens": "08:00",
-            "closes": "16:00"
-          }],
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "Lillestrøm"
+            },
+            {
+              "@type": "City",
+              "name": "Oslo"
+            },
+            {
+              "@type": "City",
+              "name": "Jessheim"
+            },
+            {
+              "@type": "City",
+              "name": "Asker"
+            },
+            {
+              "@type": "City",
+              "name": "Kongsvinger"
+            },
+            {
+              "@type": "Country",
+              "name": "Norge"
+            }
+          ],
+          "knowsLanguage": [
+            "no",
+            "en"
+          ],
+          "sameAs": [
+            "https://www.linkedin.com/company/avargo-regnskap",
+            "https://www.instagram.com/avargo.regnskap/",
+            "https://www.facebook.com/avargo.regnskap"
+          ],
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "telephone": "+4798642391",
+              "email": "kontakt@avargo.no",
+              "contactType": "customer service",
+              "availableLanguage": [
+                "Norwegian",
+                "English"
+              ],
+              "areaServed": "NO"
+            }
+          ],
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday"
+              ],
+              "opens": "08:00",
+              "closes": "16:00"
+            }
+          ],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
             "name": "Tjenester",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Regnskapsføring", "url": "https://avargo.no/tjenester/regnskapsforer" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Lønn og HR", "url": "https://avargo.no/tjenester/hr-og-lonn" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Årsregnskap", "url": "https://avargo.no/tjenester/arsregnskap" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Skatteplanlegging", "url": "https://avargo.no/tjenester/skatteplanlegging" } }
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Regnskapsføring",
+                  "url": "https://avargo.no/tjenester/regnskapsforer"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Lønn og HR",
+                  "url": "https://avargo.no/tjenester/hr-og-lonn"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Årsregnskap",
+                  "url": "https://avargo.no/tjenester/arsregnskap"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Skatteplanlegging",
+                  "url": "https://avargo.no/tjenester/skatteplanlegging"
+                }
+              }
             ]
           }
         },
@@ -109,40 +186,82 @@
           "url": "https://avargo.no/",
           "name": "Avargo",
           "inLanguage": "nb-NO",
-          "publisher": { "@id": "https://avargo.no/#organization" },
+          "publisher": {
+            "@id": "https://avargo.no/#organization"
+          },
           "potentialAction": {
             "@type": "SearchAction",
-            "target": { "@type": "EntryPoint", "urlTemplate": "https://avargo.no/ressurser/regnskapsord?q={search_term_string}" },
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://avargo.no/ressurser/regnskapsord?q={search_term_string}"
+            },
             "query-input": "required name=search_term_string"
           }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://avargo.no/#webpage",
-          "url": "https://avargo.no/",
-          "name": "Regnskapsfører for små og mellomstore selskap | Avargo",
-          "isPartOf": { "@id": "https://avargo.no/#website" },
-          "about": { "@id": "https://avargo.no/#organization" },
-          "inLanguage": "nb-NO",
-          "primaryImageOfPage": "https://avargo.no/og-image.jpg"
         },
         {
           "@type": "ItemList",
           "@id": "https://avargo.no/#sitenav",
           "name": "Hovednavigasjon",
           "itemListElement": [
-            { "@type": "SiteNavigationElement", "position": 1, "name": "Tjenester", "description": "Regnskap, lønn, HR og rådgivning for små og mellomstore bedrifter.", "url": "https://avargo.no/tjenester" },
-            { "@type": "SiteNavigationElement", "position": 2, "name": "Priser", "description": "Se pris på regnskap med vår priskalkulator — fast månedspris uten skjulte tillegg.", "url": "https://avargo.no/priser" },
-            { "@type": "SiteNavigationElement", "position": 3, "name": "Book møte", "description": "Book et uforpliktende 30-minutters møte med en rådgiver.", "url": "https://avargo.no/book-mote" },
-            { "@type": "SiteNavigationElement", "position": 4, "name": "Kontakt oss", "description": "Ring 98 64 23 91 eller send skjema — svar innen 24 timer.", "url": "https://avargo.no/kontakt" },
-            { "@type": "SiteNavigationElement", "position": 5, "name": "Bransjer", "description": "Regnskapsfører med bransjekunnskap for din type virksomhet.", "url": "https://avargo.no/bransjer" },
-            { "@type": "SiteNavigationElement", "position": 6, "name": "Ressurser", "description": "Kalkulatorer, skattekalender, kontoplan og regnskapsordbok.", "url": "https://avargo.no/ressurser" },
-            { "@type": "SiteNavigationElement", "position": 7, "name": "Om oss", "description": "Om Avargo Regnskap AS og menneskene bak.", "url": "https://avargo.no/om-oss" },
-            { "@type": "SiteNavigationElement", "position": 8, "name": "Ofte stilte spørsmål", "description": "Svar på de vanligste spørsmålene om regnskap, lønn og bytte av regnskapsfører.", "url": "https://avargo.no/faq" }
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Tjenester",
+              "description": "Regnskap, lønn, HR og rådgivning for små og mellomstore bedrifter.",
+              "url": "https://avargo.no/tjenester"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Priser",
+              "description": "Se pris på regnskap med vår priskalkulator — fast månedspris uten skjulte tillegg.",
+              "url": "https://avargo.no/priser"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "Book møte",
+              "description": "Book et uforpliktende 30-minutters møte med en rådgiver.",
+              "url": "https://avargo.no/book-mote"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "Kontakt oss",
+              "description": "Ring 98 64 23 91 eller send skjema — svar innen 24 timer.",
+              "url": "https://avargo.no/kontakt"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 5,
+              "name": "Bransjer",
+              "description": "Regnskapsfører med bransjekunnskap for din type virksomhet.",
+              "url": "https://avargo.no/bransjer"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 6,
+              "name": "Ressurser",
+              "description": "Kalkulatorer, skattekalender, kontoplan og regnskapsordbok.",
+              "url": "https://avargo.no/ressurser"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 7,
+              "name": "Om oss",
+              "description": "Om Avargo Regnskap AS og menneskene bak.",
+              "url": "https://avargo.no/om-oss"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 8,
+              "name": "Ofte stilte spørsmål",
+              "description": "Svar på de vanligste spørsmålene om regnskap, lønn og bytte av regnskapsfører.",
+              "url": "https://avargo.no/faq"
+            }
           ]
         }
       ]
-
     }
     </script>
 

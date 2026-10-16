@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { canonicalFor } from "@/lib/seo";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, CheckCircle2, ChevronRight } from "lucide-react";
@@ -69,6 +70,9 @@ const BransjePage = ({
 
   const sp = (path: string) => (isInSection && section ? `${section.basePath}${path}` : path);
   const roleLabel = section ? sectionRoleLabel[section.id] || "rådgiver" : "regnskapsfører";
+  // The page's own address. Building it from the display name produced
+  // addresses that do not exist (e.g. /bransjer/eiendom-utvikling).
+  const { pathname } = useLocation();
   const titlePrefix = section ? sectionTitlePrefix[section.id] || "Rådgiver" : "Regnskapsfører";
 
   return (
@@ -76,7 +80,7 @@ const BransjePage = ({
     {(() => {
       const bransjeTitle = `${titlePrefix} for ${name} | Avargo`;
       const bransjeDesc = intro.length > 160 ? intro.slice(0, 157) + "..." : intro;
-      const bransjeUrl = `https://avargo.no${isInSection && section ? section.basePath : ""}/bransjer/${name.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "o").replace(/[å]/g, "a").replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}`;
+      const bransjeUrl = canonicalFor(pathname);
       return (
         <Helmet>
           <title>{bransjeTitle}</title>

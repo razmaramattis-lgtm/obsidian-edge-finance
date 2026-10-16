@@ -1,40 +1,51 @@
+# Alle søkemotorer og AI-tjenester kan lese de offentlige sidene.
+# Interne sider for ansatte (/admin) og kunder (/kunde) skal ikke indekseres.
+# NB: en robot følger bare den mest spesifikke gruppen som nevner den, så
+# sperrene må stå i hver gruppe.
+
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-# AI Crawlers — explicitly allowed for citation
 User-agent: GPTBot
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: Google-Extended
 Allow: /
-
-User-agent: Gemini
-Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /admin
+Disallow: /kunde
 
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /kunde/
+Disallow: /admin
+Disallow: /kunde
 
 Sitemap: https://avargo.no/sitemap.xml

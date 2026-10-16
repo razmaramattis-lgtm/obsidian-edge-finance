@@ -64,7 +64,7 @@ const Hub = () => {
           "name": "Avargo",
           "url": "https://avargo.no",
           "logo": "https://avargo.no/logo.png",
-          "image": "https://avargo.no/og-image.jpg",
+          "image": "https://avargo.no/og-avargo.jpg",
           "description": "Avargo samler regnskap og HR under ett tak for små og mellomstore bedrifter i Norge.",
           "address": { "@type": "PostalAddress", "addressLocality": "Oslo", "addressCountry": "NO" },
           "areaServed": { "@type": "Country", "name": "Norway" },
