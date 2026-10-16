@@ -13,6 +13,9 @@ const PricingCalculatorDialog = () => {
   const shown = useRef(false);
 
   useEffect(() => {
+    // Pages that already show the calculator or a contact/booking form: a
+    // popup there would cover the very form the visitor is about to use.
+    if (/(^|\/)(priser|kontakt|book-mote)\/?$/.test(pathname)) return;
     let started = Date.now();
     try {
       if (sessionStorage.getItem(SHOWN_KEY)) return;

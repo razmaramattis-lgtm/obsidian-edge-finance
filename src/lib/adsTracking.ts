@@ -92,9 +92,26 @@ export async function reportLeadConversion() {
 }
 
 let installed = false;
+// The same function also receives job applications and feedback, and the
+// pricing calculator saves a lead first and then updates it (sending
+// `submission_id`). Only a new customer inquiry or booking is a lead.
+const NON_LEAD_ACTIONS = new Set(["job_application", "open_application", "account_feedback"]);
+
+function isNewLead(init?: RequestInit) {
+  if (typeof init?.body !== "string") return true;
+  try {
+    const body = JSON.parse(init.body) as { action?: string; submission_id?: string | null };
+    if (body.action && NON_LEAD_ACTIONS.has(body.action)) return false;
+    if (body.submission_id) return false;
+  } catch {
+    /* unknown body: count it, as before */
+  }
+  return true;
+}
+
 /**
  * Every public contact/offer form submits through the "contact-submit" function.
- * Report one conversion whenever that call succeeds.
+ * Report one conversion for each new customer inquiry or booking.
  */
 export function installLeadTracking() {
   if (installed) return;
@@ -107,7 +124,7 @@ export function installLeadTracking() {
     const res = await originalFetch(input, init);
     try {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-      if (url.includes("/functions/v1/contact-submit") && res.ok) void reportLeadConversion();
+      if (url.includes("/functions/v1/contact-submit") && res.ok && isNewLead(init)) void reportLeadConversion();
     } catch {
       /* never break the form */
     }
