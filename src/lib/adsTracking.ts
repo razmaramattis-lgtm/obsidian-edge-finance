@@ -8,7 +8,9 @@ export const STORAGE_KEY = "cookie_consent";
 export const CONSENT_RECORD_KEY = "cookie_consent_record";
 export const CONSENT_NOTICE_VERSION = "2026-10-02-v1";
 const ADS_ID = "AW-18490094209";
-const LEAD_SEND_TO = "AW-18490094209/rYnaCObSg44dEIHl4fBE";
+// "Henvendelse" (conversion action 7816571419) — the conversion the user
+// chose for every lead reported from the site's contact forms.
+const LEAD_SEND_TO = "AW-18490094209/PhC3CJvUnY8dEIHl4fBE";
 const CONSENT_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH','CA'];
 let consentRegion: Promise<boolean> | undefined;
 
