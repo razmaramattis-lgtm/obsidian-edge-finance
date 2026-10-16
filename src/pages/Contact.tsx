@@ -393,6 +393,10 @@ const Contact = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
                 <span>Ring oss på <a href="tel:+4798642391" className="text-primary hover:underline">98 64 23 91</a></span>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                <span>Postadresse: Linjevegen 16B, 2005 Rælingen</span>
+              </div>
             </div>
           </AnimatedSection>
 

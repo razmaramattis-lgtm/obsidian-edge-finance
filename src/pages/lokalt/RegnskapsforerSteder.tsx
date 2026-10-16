@@ -4,8 +4,8 @@ import { CITIES } from "@/data/cities";
 import { MapPin, ArrowRight } from "lucide-react";
 
 const RegnskapsforerSteder = () => {
-  const title = "Regnskapsfører i Norge | Avargo dekker hele landet";
-  const description = "Avargo er regnskapsbyrået for hele Norge — fra Skien og Oslo til Tromsø. Finn din by og få dedikert regnskapsfører med fast pris.";
+  const title = "Regnskapsfører i Oslo, Akershus, Buskerud og Kongsvinger | Avargo";
+  const description = "Avargo holder til i Lillestrøm og fører regnskap for små og mellomstore bedrifter i Oslo, Lillestrøm, Jessheim, Eidsvoll, Årnes, Kongsvinger, Asker, Bærum og Drammen. Fast månedspris.";
   const url = "https://avargo.no/regnskapsforer-i";
 
   // Group by county
@@ -33,13 +33,13 @@ const RegnskapsforerSteder = () => {
           <div className="container mx-auto px-5 md:px-6 relative max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[11px] tracking-wider uppercase mb-6">
               <MapPin className="w-3 h-3" />
-              Hele Norge
+              Østlandet
             </div>
             <h1 className="font-serif text-4xl md:text-6xl font-light text-foreground mb-6 leading-[1.05]">
               Regnskapsfører <span className="text-primary">der du er</span>
             </h1>
             <p className="text-lg md:text-xl text-foreground/65 font-light leading-relaxed max-w-2xl">
-              Avargo er digitalt levert — du får dedikert regnskapsfører uavhengig av hvor i Norge du holder til. Velg byen din nedenfor for lokal informasjon, priser og tilbud.
+              Avargo holder til i Lillestrøm og har møtelokaler på Lysaker og i Oslo sentrum. Det meste av samarbeidet skjer digitalt. Velg området ditt for lokal informasjon og spørsmål og svar.
             </p>
           </div>
         </section>

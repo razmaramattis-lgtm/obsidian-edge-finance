@@ -23,6 +23,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const PrisguidePrint = lazy(() => import("./pages/PrisguidePrint"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
+const BytteRegnskapsforer = lazy(() => import("./pages/BytteRegnskapsforer"));
 
 const Tjenester = lazy(() => import("./pages/Tjenester"));
 const Bransjer = lazy(() => import("./pages/Bransjer"));
@@ -469,6 +470,7 @@ const App = () => (
                             <Route path="/nyhet/:slug" element={<BlogPost />} />
                             <Route path="/om-oss" element={<About />} />
                             <Route path="/kontakt" element={<Contact />} />
+                            <Route path="/bytte-regnskapsforer" element={<BytteRegnskapsforer />} />
                             <Route path="/book-mote" element={<BookMote />} />
                             <Route path="/personvern" element={<Personvern />} />
                             <Route path="/sikkerhet" element={<Sikkerhet />} />

@@ -25,6 +25,31 @@ const includedServices = [
 ];
 
 // ── Component ─────────────────────────────────────────────────
+// Spørsmål og svar godkjent i «Avargo.no – tekstutkast» (okt. 2026). Vises på siden
+// og i de strukturerte dataene, slik at de to alltid er like.
+const PRICING_FAQ = [
+  {
+    q: "Hva koster en regnskapsfører for et lite AS?",
+    a: "Hos Avargo starter fast månedspris på 1 950 kr eks. mva for et lite AS. Prisen øker med omsetning, antall bilag og ansatte. Kalkulatoren gir deg et estimat for ditt selskap.",
+  },
+  {
+    q: "Hva er inkludert i månedsprisen?",
+    a: "Løpende bokføring, avstemming, MVA-meldinger og rådgivning på telefon og e-post. Lønn og årsoppgjør.",
+  },
+  {
+    q: "Hvorfor fast pris i stedet for timepris?",
+    a: "Med fast pris vet du hva regnskapet koster hver måned, og du kan ringe med spørsmål uten å tenke på klokka. For arbeid utenfor avtalen bruker vi timepris, og du får beskjed før vi starter.",
+  },
+  {
+    q: "Hva hvis bedriften vokser?",
+    a: "Vi går gjennom prisen sammen med deg hvis volumet endrer seg mye, for eksempel ved flere ansatte eller mange flere bilag. Du får aldri en ny pris uten å ha fått beskjed først.",
+  },
+  {
+    q: "Er det bindingstid?",
+    a: "Avtales dersom det er hensiktsmessig, men benyttes ikke alltid.",
+  },
+];
+
 const Pricing = () => {
   const { isInSection, section } = useSection();
   const sectionPath = isInSection && section ? section.basePath : "";
@@ -76,12 +101,7 @@ const Pricing = () => {
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          "mainEntity": [
-            { "@type": "Question", "name": "Hva koster en regnskapsfører?", "acceptedAnswer": { "@type": "Answer", "text": "Hos Avargo starter fast månedspris på 1 950 kr. Prisen avhenger av selskapsform, omsetning, antall bilag og ansatte. Bruk priskalkulatoren på siden for et estimat på sekunder." } },
-            { "@type": "Question", "name": "Er det bindingstid?", "acceptedAnswer": { "@type": "Answer", "text": "Nei. Du står fritt til å avslutte samarbeidet, og vi overleverer alle data ved en eventuell avslutning." } },
-            { "@type": "Question", "name": "Hva er inkludert i fastprisen?", "acceptedAnswer": { "@type": "Answer", "text": "Løpende bokføring, MVA-rapportering, årsregnskap, skattemelding og rådgivning underveis. Ingen timepris på vanlige spørsmål." } },
-            { "@type": "Question", "name": "Kommer det tillegg?", "acceptedAnswer": { "@type": "Answer", "text": "Kun hvis du bestiller tjenester utenfor avtalen, som lønnskjøring for flere ansatte eller ekstra rapportering. Alt avtales på forhånd." } }
-          ]
+          "mainEntity": PRICING_FAQ.map((f) => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } }))
         })}</script>
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -244,6 +264,31 @@ const Pricing = () => {
               </div>
             </div>
           </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ── Spørsmål og svar ─────────────────────────────── */}
+      <section className="py-20 md:py-28 border-t border-border/30">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Vanlige spørsmål</p>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-10">Spørsmål om pris</h2>
+            <div className="space-y-4">
+              {PRICING_FAQ.map((f) => (
+                <details key={f.q} className="group rounded-2xl border border-border/30 bg-card/30 p-6">
+                  <summary className="cursor-pointer flex items-center justify-between gap-4 font-heading text-lg text-foreground">
+                    {f.q}
+                    <ArrowRight size={16} className="text-primary group-open:rotate-90 transition-transform shrink-0" />
+                  </summary>
+                  <p className="mt-4 text-foreground/65 font-light leading-relaxed">{f.a}</p>
+                </details>
+              ))}
+            </div>
+            <p className="mt-8 text-foreground/65 font-light">
+              Vurderer du å bytte fra en annen regnskapsfører?{" "}
+              <Link to="/bytte-regnskapsforer" className="text-primary hover:underline">Slik går byttet til</Link>.
+            </p>
+          </div>
         </div>
       </section>
 

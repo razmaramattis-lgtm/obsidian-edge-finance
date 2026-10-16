@@ -1,606 +1,335 @@
 /**
- * Lokal SEO-database — alle byer/regioner Avargo tilbyr regnskapsfører-tjenester for.
- * Hver oppføring genererer en dedikert landingsside under /regnskapsforer-i/:slug.
+ * Lokale landingssider under /regnskapsforer-i/:slug.
+ *
+ * Bare kjerneområdene har egen side. Tekstene er godkjent i dokumentet
+ * «Avargo.no – tekstutkast: lokale sider og bytte regnskapsfører» (okt. 2026).
+ * Adresser for byer som ikke står her, sendes videre til oversikten.
  */
+
+export type CityFaq = { q: string; a: string };
 
 export type City = {
   slug: string;
   name: string;
-  /** Genitiv eller tilpasset form i tekst, f.eks. "Oslo-bedrifter" */
-  inhabitants?: string;
+  /** Preposisjon foran stedsnavnet: «i Oslo», «på Jessheim». */
+  prep: "i" | "på";
   region: string;
   county: string;
-  /** Kort lokal vinkling — næringsliv, bransjer etc. */
+  /** Ingress øverst på siden. */
   intro: string;
-  /** Antall innbyggere (avrundet, brukes i tekst) */
-  population?: string;
-  /** Områder/nærliggende byer som dekkes herfra */
-  nearby?: string[];
-  /** Vanlige bransjer i området */
-  industries: string[];
+  /** Avsnittet «Næringslivet i …». */
+  business: string;
+  /** Punktene under «Hvem vi hjelper …». */
+  helps: string[];
+  /** Valgfri linje under punktene. */
+  helpsNote?: string;
+  /** Avsnittet «Møter og samarbeid». */
+  meeting: string;
+  /** To lokale spørsmål og svar. */
+  localFaq: CityFaq[];
+  /** Nabobyer blant kjerneområdene (slugs). */
+  nearby: string[];
 };
 
-export const CITIES: City[] = [
-  // Telemark
-  {
-    slug: "skien",
-    name: "Skien",
-    region: "Grenland",
-    county: "Telemark",
-    population: "55 000",
-    intro: "Skien har et variert næringsliv med industri, handel og tjenesteyting. Vi hjelper lokale bedrifter digitalt.",
-    nearby: ["Porsgrunn", "Siljan", "Bamble"],
-    industries: ["Industri & produksjon", "Bygg & anlegg", "Handel", "Tjenesteyting"],
-  },
-  {
-    slug: "porsgrunn",
-    name: "Porsgrunn",
-    region: "Grenland",
-    county: "Telemark",
-    population: "37 000",
-    intro: "Porsgrunn er en av Norges viktigste industribyer — og en av Avargos kjernemarkeder. Vi har dyp erfaring med prosess-, maritim- og handelsbedrifter.",
-    nearby: ["Skien", "Bamble", "Brevik"],
-    industries: ["Industri", "Maritim", "Handel", "Bygg"],
-  },
-  {
-    slug: "telemark",
-    name: "Telemark",
-    region: "Telemark",
-    county: "Telemark",
-    intro: "Avargo er regnskapsbyrået for Telemark — fra Grenland til indre Telemark. Lokalt forankret, digitalt levert.",
-    nearby: ["Skien", "Porsgrunn", "Notodden", "Bø", "Kragerø"],
-    industries: ["Industri", "Reiseliv", "Tjenesteyting"],
-  },
-  {
-    slug: "kragero",
-    name: "Kragerø",
-    region: "Telemark",
-    county: "Telemark",
-    population: "10 500",
-    intro: "Kragerø-bedrifter får regnskapsfører fra Avargo — vi forstår sesongdrift, reiseliv og småbedriftens hverdag i sørlandsbyen.",
-    nearby: ["Risør", "Bamble", "Tvedestrand"],
-    industries: ["Reiseliv", "Restaurant", "Handel", "Båt & maritim"],
-  },
-  {
-    slug: "notodden",
-    name: "Notodden",
-    region: "Øst-Telemark",
-    county: "Telemark",
-    population: "13 000",
-    intro: "Notodden-bedrifter får dedikert regnskapsfører hos Avargo — uten lokalkontor, men med full lokal forståelse.",
-    nearby: ["Kongsberg", "Bø"],
-    industries: ["Industri", "Handel", "Tjenesteyting"],
-  },
-  {
-    slug: "bo",
-    name: "Bø i Telemark",
-    region: "Midt-Telemark",
-    county: "Telemark",
-    population: "7 000",
-    intro: "Bø er et knutepunkt for studenter, småbedrifter og reiseliv. Avargo leverer regnskap for hele Midt-Telemark.",
-    nearby: ["Notodden", "Seljord"],
-    industries: ["Reiseliv", "Tjenesteyting", "Handel"],
-  },
+const HELFO = "Helse- og behandlerbedrifter med eller uten HELFO refusjon";
+const FAGFOLK = "Fagfolk innen ulike bransjer som eiendom, bygg, håndverk";
 
-  // Større byer i Norge
+export const CITIES: City[] = [
   {
     slug: "oslo",
     name: "Oslo",
-    region: "Østlandet",
+    prep: "i",
+    region: "Oslo",
     county: "Oslo",
-    population: "710 000",
-    intro: "Oslo-bedrifter velger Avargo for digital regnskapsføring uten unødvendig overhead. Vi leverer landsdekkende, men med personlig oppfølging.",
-    nearby: ["Bærum", "Asker", "Lillestrøm"],
-    industries: ["Tech & SaaS", "Konsulent", "Handel", "Eiendom", "Tjenesteyting"],
-  },
-  {
-    slug: "bergen",
-    name: "Bergen",
-    region: "Vestlandet",
-    county: "Vestland",
-    population: "290 000",
-    intro: "Bergen-bedrifter får regnskapsfører fra Avargo — digital levering, fast pris og dedikert kontaktperson.",
-    nearby: ["Askøy", "Os", "Voss"],
-    industries: ["Maritim", "Olje & gass", "Tech", "Handel", "Reiseliv"],
-  },
-  {
-    slug: "trondheim",
-    name: "Trondheim",
-    region: "Trøndelag",
-    county: "Trøndelag",
-    population: "215 000",
-    intro: "Trondheim er Norges teknologihovedstad — og Avargo er regnskapsbyrået for SaaS, scale-ups og kunnskapsbedrifter i regionen.",
-    nearby: ["Stjørdal", "Melhus", "Orkanger"],
-    industries: ["Tech & SaaS", "Forskning", "Handel", "Konsulent"],
-  },
-  {
-    slug: "stavanger",
-    name: "Stavanger",
-    region: "Rogaland",
-    county: "Rogaland",
-    population: "145 000",
-    intro: "Stavanger-bedrifter — fra olje- og energi til tech og handel — får full regnskapsstøtte fra Avargo.",
-    nearby: ["Sandnes", "Sola", "Randaberg"],
-    industries: ["Energi", "Olje & gass", "Tech", "Handel"],
-  },
-  {
-    slug: "kristiansand",
-    name: "Kristiansand",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "115 000",
-    intro: "Kristiansand-bedrifter velger Avargo for fast pris, digital levering og en regnskapsfører som faktisk svarer.",
-    nearby: ["Vennesla", "Søgne", "Lillesand"],
-    industries: ["Industri", "Handel", "Reiseliv", "Tech"],
-  },
-  {
-    slug: "drammen",
-    name: "Drammen",
-    region: "Buskerud",
-    county: "Buskerud",
-    population: "105 000",
-    intro: "Drammen er en knutepunkts­by for handel og logistikk. Avargo leverer regnskap for SMB i hele Drammensregionen.",
-    nearby: ["Lier", "Mjøndalen", "Kongsberg"],
-    industries: ["Handel", "Logistikk", "Bygg", "Tjenesteyting"],
-  },
-  {
-    slug: "tonsberg",
-    name: "Tønsberg",
-    region: "Vestfold",
-    county: "Vestfold",
-    population: "57 000",
-    intro: "Tønsberg-bedrifter får dedikert regnskapsfører hos Avargo — vi kjenner Vestfold og kysten godt.",
-    nearby: ["Sandefjord", "Horten", "Larvik"],
-    industries: ["Reiseliv", "Handel", "Maritim", "Tjenesteyting"],
-  },
-  {
-    slug: "sandefjord",
-    name: "Sandefjord",
-    region: "Vestfold",
-    county: "Vestfold",
-    population: "63 000",
-    intro: "Sandefjord-bedrifter — fra reiseliv til industri — får komplett regnskapsstøtte fra Avargo.",
-    nearby: ["Larvik", "Tønsberg"],
-    industries: ["Reiseliv", "Handel", "Industri", "Maritim"],
-  },
-  {
-    slug: "larvik",
-    name: "Larvik",
-    region: "Vestfold",
-    county: "Vestfold",
-    population: "47 000",
-    intro: "Larvik-bedrifter får regnskap, lønn og rådgivning fra Avargo — én dedikert kontaktperson som kjenner deg.",
-    nearby: ["Sandefjord", "Stavern"],
-    industries: ["Industri", "Handel", "Reiseliv", "Bygg"],
-  },
-  {
-    slug: "horten",
-    name: "Horten",
-    region: "Vestfold",
-    county: "Vestfold",
-    population: "28 000",
-    intro: "Horten har et sterkt teknologi- og forsvarsmiljø. Avargo leverer regnskap for SMB og scale-ups i regionen.",
-    nearby: ["Tønsberg", "Holmestrand"],
-    industries: ["Tech", "Maritim", "Handel"],
+    intro:
+      "Oslo har flest små bedrifter i landet, og mange av dem er rådgivere, klinikker og salonger med én til ti ansatte. De trenger en regnskapsfører som svarer raskt og forstår hverdagen deres. Avargo fører regnskap for små og mellomstore bedrifter i hele Oslo, til fast månedspris.",
+    business:
+      "Oslo er landets største marked for kunnskaps- og tjenestebedrifter. Fra sentrum og Majorstuen til Bjørvika, Nydalen og Skøyen finner du konsulentselskaper, IT-rådgivere, arkitekter, helseklinikker, tannleger, fysioterapeuter og et stort utvalg av andre bransjer. Mange er enkeltpersonforetak eller små AS med eier som jobber i driften selv, og som har lite tid til bilag og frister.",
+    helps: [
+      "Konsulenter og rådgivere med eget AS",
+      "Bedrifter som leverer helsetjenester, med og uten HELFO avtale",
+      "Frisører, hudpleie- og skjønnhetssalonger",
+      "E-handel/netthandelbedrifter",
+      "Holdingselskaper for eiere av slike bedrifter",
+    ],
+    helpsNote: "Driver du et AS med en nisje? Vi hjelper gjerne deg også.",
+    meeting:
+      "Vi møter Oslo-kunder i Oslo sentrum eller på Lysaker etter avtale, og på video når det passer bedre. Bilag, lønn og rapporter håndteres i regnskapssystemet ditt, så du slipper å levere permer.",
+    localFaq: [
+      {
+        q: "Jeg har et konsulent-AS i Oslo. Hva trenger jeg hjelp til?",
+        a: "Typisk løpende bokføring, MVA-meldinger, lønn til deg selv, årsregnskap og skattemelding. Vi hjelper deg også med å vurdere fordelingen mellom lønn og utbytte, og om et holdingselskap lønner seg.",
+      },
+      {
+        q: "Driver dere med helseklinikker i Oslo?",
+        a: "Ja. Vi fører regnskap for klinikker og behandlere, og kjenner til hvordan helsetjenester behandles i MVA-sammenheng og hvordan oppgjør fra behandlere og leietakere bør føres.",
+      },
+    ],
+    nearby: ["baerum", "lillestrom", "asker"],
   },
   {
     slug: "lillestrom",
     name: "Lillestrøm",
+    prep: "i",
     region: "Romerike",
     county: "Akershus",
-    population: "90 000",
-    intro: "Lillestrøm er en av Østlandets raskest voksende kommuner. Avargo følger SMB i hele Romerike.",
-    nearby: ["Skedsmokorset", "Strømmen", "Kjeller"],
-    industries: ["Handel", "Tjenesteyting", "Bygg", "Logistikk"],
-  },
-  {
-    slug: "fredrikstad",
-    name: "Fredrikstad",
-    region: "Østfold",
-    county: "Østfold",
-    population: "85 000",
-    intro: "Fredrikstad-bedrifter velger Avargo for digital regnskapsføring uten å miste den lokale forankringen.",
-    nearby: ["Sarpsborg", "Hvaler"],
-    industries: ["Industri", "Handel", "Maritim", "Reiseliv"],
-  },
-  {
-    slug: "sarpsborg",
-    name: "Sarpsborg",
-    region: "Østfold",
-    county: "Østfold",
-    population: "60 000",
-    intro: "Sarpsborg-bedrifter får dedikert regnskapsfører fra Avargo — fast pris, full delegering, ingen overraskelser.",
-    nearby: ["Fredrikstad", "Halden"],
-    industries: ["Industri", "Bygg", "Handel"],
-  },
-  {
-    slug: "moss",
-    name: "Moss",
-    region: "Østfold",
-    county: "Østfold",
-    population: "50 000",
-    intro: "Moss-bedrifter får full regnskaps- og lønnsstøtte fra Avargo, levert digitalt med personlig oppfølging.",
-    nearby: ["Rygge", "Råde"],
-    industries: ["Logistikk", "Handel", "Industri"],
-  },
-  {
-    slug: "halden",
-    name: "Halden",
-    region: "Østfold",
-    county: "Østfold",
-    population: "32 000",
-    intro: "Halden-bedrifter — fra industri til IT — bruker Avargo som ekstern regnskapsavdeling.",
-    nearby: ["Sarpsborg"],
-    industries: ["Industri", "Tech", "Handel"],
-  },
-  {
-    slug: "kongsvinger",
-    name: "Kongsvinger",
-    region: "Innlandet",
-    county: "Innlandet",
-    population: "18 000",
-    intro: "Kongsvinger-bedrifter får regnskap og lønn levert av et team — ikke bare én regnskapsfører som er på ferie.",
-    nearby: ["Eidskog", "Sør-Odal"],
-    industries: ["Handel", "Bygg", "Logistikk"],
-  },
-  {
-    slug: "kongsberg",
-    name: "Kongsberg",
-    region: "Buskerud",
-    county: "Buskerud",
-    population: "28 000",
-    intro: "Kongsberg er teknologi- og forsvarsindustriens hovedstad. Avargo leverer regnskap for ingeniør- og teknologiselskaper i regionen.",
-    nearby: ["Drammen", "Notodden"],
-    industries: ["Tech", "Industri", "Forsvar", "Konsulent"],
-  },
-  {
-    slug: "hamar",
-    name: "Hamar",
-    region: "Innlandet",
-    county: "Innlandet",
-    population: "32 000",
-    intro: "Hamar-bedrifter velger Avargo for forutsigbar regnskapsføring og strategisk rådgivning.",
-    nearby: ["Stange", "Brumunddal"],
-    industries: ["Handel", "Tjenesteyting", "Industri"],
-  },
-  {
-    slug: "gjovik",
-    name: "Gjøvik",
-    region: "Innlandet",
-    county: "Innlandet",
-    population: "30 000",
-    intro: "Gjøvik-bedrifter får dedikert regnskapsfører hos Avargo — uten lokalkontor men med rask responstid — vi vet tiden din er verdifull.",
-    nearby: ["Toten", "Lillehammer"],
-    industries: ["Industri", "Handel", "Tech", "Tjenesteyting"],
-  },
-  {
-    slug: "lillehammer",
-    name: "Lillehammer",
-    region: "Innlandet",
-    county: "Innlandet",
-    population: "28 000",
-    intro: "Lillehammer-bedrifter — fra reiseliv til kunnskapsindustri — bruker Avargo som ekstern regnskapsavdeling.",
-    nearby: ["Gjøvik", "Øyer"],
-    industries: ["Reiseliv", "Handel", "Tjenesteyting", "Kultur"],
-  },
-  {
-    slug: "arendal",
-    name: "Arendal",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "45 000",
-    intro: "Arendal-bedrifter får regnskap, lønn og rådgivning fra Avargo — én dedikert kontaktperson som svarer så raskt vi kan.",
-    nearby: ["Grimstad", "Tvedestrand", "Risør"],
-    industries: ["Reiseliv", "Maritim", "Handel", "Industri"],
-  },
-  {
-    slug: "grimstad",
-    name: "Grimstad",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "24 000",
-    intro: "Grimstad-bedrifter får digital regnskapsføring med personlig oppfølging — Avargo er regnskapsbyrået for Sørlandet.",
-    nearby: ["Arendal", "Lillesand"],
-    industries: ["Reiseliv", "Tech", "Handel", "Maritim"],
-  },
-  {
-    slug: "lillesand",
-    name: "Lillesand",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "12 000",
-    intro: "Lillesand-bedrifter velger Avargo for fast pris og dedikert regnskapsfører — uten skjulte tillegg.",
-    nearby: ["Grimstad", "Kristiansand"],
-    industries: ["Reiseliv", "Handel", "Bygg"],
-  },
-  {
-    slug: "risor",
-    name: "Risør",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "7 000",
-    intro: "Risør-bedrifter — fra reiseliv til håndverk — får komplett regnskapsstøtte hos Avargo.",
-    nearby: ["Tvedestrand", "Kragerø"],
-    industries: ["Reiseliv", "Restaurant", "Handverk", "Båt"],
-  },
-  {
-    slug: "tvedestrand",
-    name: "Tvedestrand",
-    region: "Sørlandet",
-    county: "Agder",
-    population: "6 500",
-    intro: "Tvedestrand-bedrifter får dedikert regnskapsfører hos Avargo — vi forstår små bedrifter på Sørlandet.",
-    nearby: ["Risør", "Arendal"],
-    industries: ["Reiseliv", "Handverk", "Handel"],
-  },
-  {
-    slug: "asker",
-    name: "Asker",
-    region: "Akershus",
-    county: "Akershus",
-    population: "95 000",
-    intro: "Asker-bedrifter — fra konsulentselskaper til e-handel — bruker Avargo som ekstern regnskapsavdeling.",
-    nearby: ["Bærum", "Oslo"],
-    industries: ["Konsulent", "Tech", "Eiendom", "Handel"],
-  },
-  {
-    slug: "baerum",
-    name: "Bærum",
-    region: "Akershus",
-    county: "Akershus",
-    population: "130 000",
-    intro: "Bærum har Norges tetteste konsentrasjon av kunnskapsbedrifter. Avargo leverer regnskap for SMB og scale-ups i regionen.",
-    nearby: ["Asker", "Oslo"],
-    industries: ["Konsulent", "Tech", "Finans", "Eiendom"],
-  },
-  {
-    slug: "alesund",
-    name: "Ålesund",
-    region: "Sunnmøre",
-    county: "Møre og Romsdal",
-    population: "67 000",
-    intro: "Ålesund er en sterk maritim- og handelsby. Avargo leverer regnskap for SMB i hele Sunnmøre.",
-    nearby: ["Sula", "Giske"],
-    industries: ["Maritim", "Sjømat", "Handel", "Industri"],
-  },
-  {
-    slug: "bodo",
-    name: "Bodø",
-    region: "Nordland",
-    county: "Nordland",
-    population: "53 000",
-    intro: "Bodø-bedrifter får dedikert regnskapsfører fra Avargo — digital levering, lokal forståelse, fast pris.",
-    nearby: ["Fauske", "Saltdal"],
-    industries: ["Sjømat", "Handel", "Reiseliv", "Tjenesteyting"],
-  },
-  {
-    slug: "tromso",
-    name: "Tromsø",
-    region: "Nord-Norge",
-    county: "Troms",
-    population: "78 000",
-    intro: "Tromsø-bedrifter — fra fiskeri til forskning — bruker Avargo som ekstern regnskapsavdeling.",
-    nearby: ["Karlsøy", "Balsfjord"],
-    industries: ["Sjømat", "Forskning", "Reiseliv", "Handel"],
-  },
-  // Innlandet & Romerike
-  {
-    slug: "innlandet",
-    name: "Innlandet",
-    region: "Innlandet",
-    county: "Innlandet",
-    intro: "Avargo er regnskapsbyrået for hele Innlandet — fra Kongsvinger og Odalen til Hamar, Gjøvik, Lillehammer og fjellbygdene. Digitalt levert, lokalt forstått.",
-    nearby: ["Hamar", "Kongsvinger", "Elverum", "Gjøvik", "Lillehammer", "Årnes"],
-    industries: ["Landbruksrelatert handel", "Bygg & anlegg", "Industri", "Transport", "Tjenesteyting"],
-  },
-  {
-    slug: "arnes",
-    name: "Årnes",
-    region: "Romerike",
-    county: "Akershus",
-    population: "3 000",
-    intro: "Årnes og Nes kommune har et næringsliv preget av håndverk, handel og små tjenestebedrifter. Avargo leverer regnskap, lønn og rådgivning til fast månedspris.",
-    nearby: ["Skarnes", "Jessheim", "Sørumsand", "Kongsvinger"],
-    industries: ["Bygg & anlegg", "Handel", "Transport", "Tjenesteyting"],
-  },
-  {
-    slug: "skarnes",
-    name: "Skarnes",
-    region: "Odalen",
-    county: "Innlandet",
-    population: "2 000",
-    intro: "Skarnes i Sør-Odal er et knutepunkt mellom Kongsvinger og Romerike. Avargo er regnskapsføreren for lokale håndverkere, transportbedrifter og butikker.",
-    nearby: ["Sagstua", "Kongsvinger", "Årnes"],
-    industries: ["Bygg & anlegg", "Transport", "Handel", "Landbruksrelatert virksomhet"],
-  },
-  {
-    slug: "odalen",
-    name: "Odalen",
-    region: "Odalen",
-    county: "Innlandet",
-    intro: "Nord-Odal og Sør-Odal er småbedriftsland — Avargo tar hele regnskapet, lønnen og rapporteringen så du kan bruke tiden i drifta.",
-    nearby: ["Skarnes", "Sagstua", "Kongsvinger", "Årnes"],
-    industries: ["Bygg & anlegg", "Skog & trelast", "Transport", "Handel"],
+    intro:
+      "Avargo har kontor i Lillestrøm, og her er vi lokale. Vi fører regnskap for små og mellomstore bedrifter i hele Lillestrøm kommune, fra Strømmen og Skedsmokorset til Fetsund og Sørumsand, til fast månedspris.",
+    business:
+      "Lillestrøm er en av de raskest voksende kommunene på Østlandet, med kort vei til Oslo og Gardermoen. Rundt sentrum, Strømmen og Kjeller vokser det fram nye boligområder, og med dem følger behovet for lokale tjenester innen helse og velvære, konsulent og rådgivning, handel og e-handel. Mange konsulenter og rådgivere bor i kommunen og driver eget selskap herfra, og nærheten til Ahus i Lørenskog gir et sterkt miljø av helsepersonell som også driver privat praksis.",
+    helps: [
+      "Behandlere og helsepersonell med eller uten HELFO refusjon",
+      "Frisører, hudpleie- og skjønnhetssalonger",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi møter deg gjerne i Lillestrøm. Det meste av samarbeidet skjer likevel digitalt, i regnskapssystemet og på video, så du får svar uten å måtte sette av tid til møter.",
+    localFaq: [
+      {
+        q: "Har dere kontor i Lillestrøm?",
+        a: "Ja. Avargo holder til i Lillestrøm, og vi møter kunder her etter avtale. Vi har også møtelokaler på Lysaker og i Oslo sentrum.",
+      },
+      {
+        q: "Jeg er fysioterapeut med egen praksis. Trenger jeg regnskapsfører?",
+        a: "Det er ikke påkrevd, men de fleste sparer tid og unngår feil. Vi fører bilag, holder orden på MVA-reglene for helsetjenester, ordner lønn eller uttak til deg selv og leverer årsregnskap og skattemelding.",
+      },
+    ],
+    nearby: ["oslo", "jessheim", "arnes"],
   },
   {
     slug: "jessheim",
     name: "Jessheim",
+    prep: "på",
     region: "Romerike",
     county: "Akershus",
-    population: "18 000",
-    intro: "Jessheim og Ullensaker vokser raskt med Gardermoen som motor. Avargo leverer regnskap og lønn til vekstbedrifter, håndverkere og handel.",
-    nearby: ["Kløfta", "Eidsvoll", "Årnes", "Nannestad"],
-    industries: ["Logistikk", "Bygg & anlegg", "Handel", "Tjenesteyting"],
-  },
-  {
-    slug: "elverum",
-    name: "Elverum",
-    region: "Sør-Østerdal",
-    county: "Innlandet",
-    population: "21 000",
-    intro: "Elverum-bedrifter innen skog, bygg og handel får dedikert regnskapsfører hos Avargo — uten lokalkontor, men med lokal forståelse.",
-    nearby: ["Hamar", "Rena", "Trysil"],
-    industries: ["Skog & trelast", "Bygg & anlegg", "Handel", "Helse"],
-  },
-  {
-    slug: "brumunddal",
-    name: "Brumunddal",
-    region: "Ringsaker",
-    county: "Innlandet",
-    population: "11 000",
-    intro: "Brumunddal og Ringsaker har et sterkt nærings- og industrimiljø. Avargo er den eksterne økonomiavdelingen for små og mellomstore bedrifter i området.",
-    nearby: ["Moelv", "Hamar", "Lillehammer"],
-    industries: ["Næringsmiddel", "Industri", "Bygg & anlegg", "Handel"],
-  },
-  {
-    slug: "moelv",
-    name: "Moelv",
-    region: "Ringsaker",
-    county: "Innlandet",
-    population: "4 500",
-    intro: "Moelv ligger midt mellom Hamar og Lillehammer. Avargo leverer regnskap, lønn og rådgivning til bedrifter i hele Ringsaker.",
-    nearby: ["Brumunddal", "Lillehammer", "Gjøvik"],
-    industries: ["Industri", "Bygg & anlegg", "Handel", "Transport"],
-  },
-  {
-    slug: "stange",
-    name: "Stange",
-    region: "Hedmarken",
-    county: "Innlandet",
-    population: "21 000",
-    intro: "Stange-bedrifter får fast månedspris på regnskap, lønn og årsoppgjør — med en rådgiver som svarer når du ringer.",
-    nearby: ["Hamar", "Løten", "Elverum"],
-    industries: ["Bygg & anlegg", "Handel", "Transport", "Tjenesteyting"],
-  },
-  {
-    slug: "loten",
-    name: "Løten",
-    region: "Hedmarken",
-    county: "Innlandet",
-    population: "7 500",
-    intro: "Løten er småbedriftskommune med håndverk, handel og tjenesteyting. Avargo tar regnskapet så du slipper papirarbeidet.",
-    nearby: ["Hamar", "Elverum", "Stange"],
-    industries: ["Bygg & anlegg", "Handel", "Tjenesteyting"],
-  },
-  {
-    slug: "flisa",
-    name: "Flisa",
-    region: "Solør",
-    county: "Innlandet",
-    population: "1 800",
-    intro: "Flisa og Solør-regionen lever av skog, industri og håndverk. Avargo er regnskapsføreren som forstår sesongsvingninger og prosjektøkonomi.",
-    nearby: ["Kongsvinger", "Elverum", "Kirkenær"],
-    industries: ["Skog & trelast", "Industri", "Bygg & anlegg", "Transport"],
-  },
-  {
-    slug: "trysil",
-    name: "Trysil",
-    region: "Østerdalen",
-    county: "Innlandet",
-    population: "6 500",
-    intro: "Trysil er Norges største vintersportsdestinasjon — Avargo kjenner sesongdrift, utleie og reiselivsregnskap.",
-    nearby: ["Elverum", "Rena"],
-    industries: ["Reiseliv", "Utleie & eiendom", "Restaurant", "Bygg & anlegg"],
-  },
-  {
-    slug: "rena",
-    name: "Rena",
-    region: "Østerdalen",
-    county: "Innlandet",
-    population: "2 300",
-    intro: "Rena og Åmot har et næringsliv rundt forsvar, utdanning og håndverk. Avargo leverer komplett regnskap til fast pris.",
-    nearby: ["Elverum", "Trysil", "Koppang"],
-    industries: ["Bygg & anlegg", "Handel", "Tjenesteyting"],
-  },
-  {
-    slug: "tynset",
-    name: "Tynset",
-    region: "Nord-Østerdal",
-    county: "Innlandet",
-    population: "5 600",
-    intro: "Tynset er regionsenteret i Nord-Østerdal. Avargo leverer regnskap digitalt — avstand er ingen hindring.",
-    nearby: ["Alvdal", "Os", "Røros"],
-    industries: ["Landbruksrelatert handel", "Bygg & anlegg", "Helse", "Handel"],
-  },
-  {
-    slug: "raufoss",
-    name: "Raufoss",
-    region: "Toten",
-    county: "Innlandet",
-    population: "8 000",
-    intro: "Raufoss er et av Norges sterkeste industrimiljøer. Avargo leverer regnskap og økonomistyring til underleverandører og teknologibedrifter.",
-    nearby: ["Gjøvik", "Lena", "Moelv"],
-    industries: ["Industri", "Teknologi", "Bygg & anlegg", "Transport"],
-  },
-  {
-    slug: "lena",
-    name: "Lena",
-    region: "Toten",
-    county: "Innlandet",
-    population: "2 600",
-    intro: "Lena og Østre Toten har mange små bedrifter innen handel, håndverk og næringsmiddel. Avargo tar hele økonomifunksjonen.",
-    nearby: ["Raufoss", "Gjøvik", "Hamar"],
-    industries: ["Næringsmiddel", "Bygg & anlegg", "Handel", "Transport"],
-  },
-  {
-    slug: "gran",
-    name: "Gran",
-    region: "Hadeland",
-    county: "Innlandet",
-    population: "13 800",
-    intro: "Hadeland ligger mellom Oslo og Gjøvik — Avargo er regnskapsbyrået for pendlerbedrifter, håndverkere og handel i Gran, Jevnaker og Lunner.",
-    nearby: ["Jaren", "Jevnaker", "Lunner", "Gjøvik"],
-    industries: ["Bygg & anlegg", "Handel", "Reiseliv", "Tjenesteyting"],
-  },
-  {
-    slug: "dokka",
-    name: "Dokka",
-    region: "Land",
-    county: "Innlandet",
-    population: "2 800",
-    intro: "Dokka og Nordre Land har et variert småbedriftsmiljø. Avargo leverer regnskap, lønn og årsoppgjør til fast månedspris.",
-    nearby: ["Gjøvik", "Fagernes", "Raufoss"],
-    industries: ["Industri", "Bygg & anlegg", "Handel", "Transport"],
-  },
-  {
-    slug: "fagernes",
-    name: "Fagernes",
-    region: "Valdres",
-    county: "Innlandet",
-    population: "1 900",
-    intro: "Valdres lever av reiseliv, hytteutbygging og håndverk. Avargo kjenner sesongøkonomi, utleie og prosjektregnskap.",
-    nearby: ["Dokka", "Beitostølen", "Gol"],
-    industries: ["Reiseliv", "Bygg & anlegg", "Utleie & eiendom", "Handel"],
-  },
-  {
-    slug: "otta",
-    name: "Otta",
-    region: "Gudbrandsdalen",
-    county: "Innlandet",
-    population: "1 700",
-    intro: "Otta og Sel er porten til Gudbrandsdalen. Avargo leverer regnskap digitalt til bedrifter i hele dalen.",
-    nearby: ["Vinstra", "Dombås", "Lillehammer"],
-    industries: ["Reiseliv", "Bygg & anlegg", "Handel", "Transport"],
-  },
-  {
-    slug: "vinstra",
-    name: "Vinstra",
-    region: "Gudbrandsdalen",
-    county: "Innlandet",
-    population: "2 400",
-    intro: "Vinstra og Nord-Fron har mange små og mellomstore bedrifter innen bygg, reiseliv og handel — Avargo tar økonomien.",
-    nearby: ["Otta", "Ringebu", "Lillehammer"],
-    industries: ["Bygg & anlegg", "Reiseliv", "Handel", "Landbruksrelatert virksomhet"],
+    intro:
+      "Jessheim har vokst raskt de siste årene, og mange nye bedrifter har etablert seg rundt sentrum og næringsområdene i Ullensaker. Avargo fører regnskap for små og mellomstore bedrifter på Jessheim og resten av øvre Romerike, til fast månedspris.",
+    business:
+      "Nærheten til Oslo lufthavn Gardermoen preger Ullensaker, med logistikk, transport og reiseliv. Samtidig har den store befolkningsveksten gitt et voksende marked for lokale tjenester: helsesentre, tannleger, fysioterapeuter, frisører og skjønnhetssalonger rundt Jessheim sentrum. Mange som jobber i Oslo eller på Gardermoen driver også konsulentselskap ved siden av eller på heltid fra hjemmekontor her.",
+    helps: [
+      HELFO,
+      "Frisører, hudpleie og skjønnhet",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer i Ullensaker",
+    ],
+    meeting:
+      "Vi samarbeider digitalt med de fleste kunder på Jessheim, og møtes i Lillestrøm eller på video når det trengs. Fra Lillestrøm er det kort vei opp til Jessheim om et møte på stedet er bedre.",
+    localFaq: [
+      {
+        q: "Jeg har nettopp startet en salong på Jessheim. Når bør jeg skaffe regnskapsfører?",
+        a: "Helst fra start. Da blir kassasystem, MVA-registrering og bilagsflyt satt opp riktig fra dag én, og du slipper å rydde i etterkant.",
+      },
+      {
+        q: "Tar dere enkeltpersonforetak, eller bare AS?",
+        a: "Begge deler. Mange starter som enkeltpersonforetak og går over til AS når driften vokser. Vi kan hjelpe deg med å vurdere når det lønner seg.",
+      },
+    ],
+    nearby: ["lillestrom", "eidsvoll", "arnes"],
   },
   {
     slug: "eidsvoll",
     name: "Eidsvoll",
+    prep: "i",
     region: "Romerike",
     county: "Akershus",
-    population: "27 000",
-    intro: "Eidsvoll og Øvre Romerike vokser raskt. Avargo leverer regnskap og lønn til håndverkere, handel og tjenestebedrifter.",
-    nearby: ["Jessheim", "Årnes", "Hamar"],
-    industries: ["Bygg & anlegg", "Handel", "Transport", "Tjenesteyting"],
+    intro:
+      "På Råholt, Eidsvoll Verk og Sundet finnes det mange små bedrifter som drives av eieren selv. Avargo fører regnskap for små og mellomstore bedrifter i Eidsvoll, til fast månedspris og med en fast kontaktperson.",
+    business:
+      "Eidsvoll ligger mellom Gardermoen og Mjøsa, med jernbane og E6 som gjør det enkelt å pendle både nord og sør. Kommunen har et næringsliv preget av små bedrifter: lokale helsetilbud, frisører og skjønnhetssalonger, treningssentre, håndverkere og konsulenter som jobber fra hjemmekontor. Råholt har vokst til et handels- og servicesentrum, og Eidsvollsbygningen trekker besøkende til området hele året.",
+    helps: [
+      HELFO,
+      "Frisører, hudpleie og skjønnhet",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi samarbeider digitalt med kunder i Eidsvoll og møtes på video eller i Lillestrøm etter avtale. Du får en fast kontaktperson som kjenner bedriften din.",
+    localFaq: [
+      {
+        q: "Er det lurt å bruke en regnskapsfører som ikke er i Eidsvoll?",
+        a: "For de fleste små bedrifter spiller avstand liten rolle, fordi bilag og dokumenter ligger digitalt. Det viktigste er at du får svar når du trenger det. Vil du møtes, avtaler vi det.",
+      },
+      {
+        q: "Jeg driver enkeltpersonforetak ved siden av jobben. Trenger jeg regnskapsfører?",
+        a: "Ikke nødvendigvis, men mange velger det for å slippe feil i næringsspesifikasjonen og MVA. Vi kan ta bare årsoppgjøret, eller hele regnskapet, etter hva du trenger.",
+      },
+    ],
+    nearby: ["jessheim", "arnes", "lillestrom"],
+  },
+  {
+    slug: "arnes",
+    name: "Årnes",
+    prep: "på",
+    region: "Romerike",
+    county: "Akershus",
+    intro:
+      "Årnes er sentrum i Nes kommune, og her driver mange eiere sin egen bedrift med kunder i hele Romerike. Avargo fører regnskap for små og mellomstore bedrifter på Årnes og i resten av Nes, til fast månedspris.",
+    business:
+      "Nes har mye landbruk, men Årnes sentrum har også et voksende tilbud av lokale tjenester: helse og behandling, frisører og skjønnhet, trening og andre servicebedrifter for innbyggerne i kommunen. Med tog langs Kongsvingerbanen og kort vei til Gardermoen bor det også mange her som driver konsulentvirksomhet med kunder i Oslo-området.",
+    helps: [
+      HELFO,
+      "Landbruksnæring og nærliggende virkeområder",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi samarbeider digitalt og møtes i Lillestrøm eller på video etter avtale. Du får en fast kontaktperson og svar på spørsmålene dine uten å måtte reise.",
+    localFaq: [
+      {
+        q: "Jeg er fra Årnes og har kunder i Oslo. Spiller det noen rolle hvor regnskapsføreren holder til?",
+        a: "Nei. Regnskapet føres likt uansett hvor kundene dine er. Det som betyr noe, er at regnskapsføreren kjenner bransjen din og svarer når du trenger det.",
+      },
+      {
+        q: "Hvordan leverer jeg bilag?",
+        a: "Du tar bilde av kvitteringen med mobilen eller videresender fakturaen på e-post til regnskapssystemet. Vi gjør resten. Du trenger ikke levere noe fysisk.",
+      },
+    ],
+    nearby: ["jessheim", "kongsvinger", "lillestrom"],
+  },
+  {
+    slug: "kongsvinger",
+    name: "Kongsvinger",
+    prep: "i",
+    region: "Glåmdalen",
+    county: "Innlandet",
+    intro:
+      "Kongsvinger er regionsenteret i Glåmdalen, og mange bedrifter her betjener hele regionen. Avargo fører regnskap for små og mellomstore bedrifter i Kongsvinger og omegn, til fast månedspris og med en fast kontaktperson.",
+    business:
+      "Kongsvinger har sykehus, videregående skole og offentlige arbeidsplasser som trekker folk fra hele Glåmdalen, og et sentrum med handel og service. Det gir et marked for private helsetilbud, tannleger, fysioterapeuter, frisører, hudpleie og treningssentre. Nærheten til svenskegrensen og togforbindelsen til Lillestrøm og Oslo gjør også byen attraktiv for konsulenter som jobber fra hjemmekontor.",
+    helps: [
+      HELFO,
+      "Landbruksnæring og nærliggende virkeområder",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer i Glåmdalen",
+    ],
+    meeting:
+      "Vi har allerede kunder i Kongsvinger-regionen. Samarbeidet skjer stort sett digitalt, og vi møtes på video eller i Lillestrøm, en kort togtur unna, når det trengs. Det er heller ikke noe i veien for å ta et fysisk møte i Kongsvinger.",
+    localFaq: [
+      {
+        q: "Har dere kunder i Kongsvinger-regionen?",
+        a: "Ja. Vi fører regnskap for flere bedrifter i Kongsvinger og omegn, og kjenner det lokale næringslivet.",
+      },
+      {
+        q: "Jeg har kunder eller leverandører i Sverige. Kan dere håndtere det?",
+        a: "Ja. Vi fører kjøp og salg fra utland iht. gjeldende regelverk, slik at du er trygg på at regnskapet blir riktig.",
+      },
+    ],
+    nearby: ["arnes", "lillestrom"],
+  },
+  {
+    slug: "asker",
+    name: "Asker",
+    prep: "i",
+    region: "Asker",
+    county: "Akershus",
+    intro:
+      "Asker har mange små kunnskapsbedrifter og lokale tjenestetilbud, fra Asker sentrum og Billingstad til Slemmestad og Heggedal. Avargo fører regnskap for små og mellomstore bedrifter i hele Asker, til fast månedspris.",
+    business:
+      "Etter sammenslåingen med Røyken og Hurum dekker Asker kommune et stort område med både tett by og spredt bebyggelse. Mange som bor her driver konsulent- og rådgivningsselskaper med kunder i Oslo og Bærum. I sentrumsområdene er det et rikt tilbud av private helsetjenester, tannleger, fysioterapeuter, frisører, hudpleie og treningssentre, og et voksende marked for velvære og behandling.",
+    helps: [
+      HELFO,
+      "Frisører, hudpleie og skjønnhet",
+      "Konsulenter og rådgivere med eget AS",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi møter kunder fra Asker på Lysaker etter avtale, eller på video. Det meste av samarbeidet skjer digitalt i regnskapssystemet ditt.",
+    localFaq: [
+      {
+        q: "Jeg har et driftsselskap og et holdingselskap. Kan dere føre begge?",
+        a: "Ja. Vi fører regnskap for begge selskapene og hjelper deg med utbytte, konsernbidrag og hva som lønner seg å ha i hvilket selskap.",
+      },
+      {
+        q: "Hvor møtes vi hvis jeg bor i Asker?",
+        a: "Vi kan møtes på Lysaker eller avtale møte ute hos deg som kunde dersom det er ønskelig. De fleste møter tar vi likevel på video.",
+      },
+    ],
+    nearby: ["baerum", "drammen", "oslo"],
+  },
+  {
+    slug: "baerum",
+    name: "Bærum",
+    prep: "i",
+    region: "Bærum",
+    county: "Akershus",
+    intro:
+      "Bærum har et av landets tetteste miljøer av små rådgivnings- og kunnskapsbedrifter. Avargo har møtelokale på Lysaker og fører regnskap for små og mellomstore bedrifter i hele Bærum, fra Sandvika og Bekkestua til Stabekk og Fornebu, til fast månedspris.",
+    business:
+      "Lysaker og Fornebu er blant de største kontorområdene i landet, med store selskaper innen teknologi og energi. Rundt dem har det vokst fram et stort antall små konsulent- og rådgivningsselskaper, ofte med eieren som eneste ansatt og et holdingselskap ved siden av. I Sandvika, på Bekkestua og andre lokalsentre er det også mange private klinikker, tannleger, fysioterapeuter, frisører og velværetilbud.",
+    helps: [
+      "Konsulenter og rådgivere med eget AS og holdingselskap",
+      HELFO,
+      "Frisører, hudpleie og skjønnhet",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi møter kunder på Lysaker etter avtale, og på video når det passer bedre. Bilag, lønn og rapporter håndteres digitalt i regnskapssystemet ditt.",
+    localFaq: [
+      {
+        q: "Jeg er innleid konsulent gjennom eget AS. Hva bør jeg tenke på?",
+        a: "Du bør ha orden på lønn eller utbytte til deg selv, MVA på fakturaene og at selskapet setter av til skatt. Vi fører regnskapet løpende og gir deg råd om hvordan du tar ut penger mest gunstig.",
+      },
+      {
+        q: "Har dere kontor i Bærum?",
+        a: "Vi har møtelokale på Lysaker, der vi møter kunder ved behov. Hovedkontoret ligger i Lillestrøm.",
+      },
+    ],
+    nearby: ["oslo", "asker", "drammen"],
+  },
+  {
+    slug: "drammen",
+    name: "Drammen",
+    prep: "i",
+    region: "Drammensregionen",
+    county: "Buskerud",
+    intro:
+      "Drammen er regionsenteret i Buskerud, med et levende sentrum på begge sider av elva. Avargo fører regnskap for små og mellomstore bedrifter i Drammen og omegn, til fast månedspris og med en fast kontaktperson.",
+    business:
+      "Drammen har sykehus, høgskole og et handels- og servicesentrum på Bragernes og Strømsø som trekker kunder fra hele regionen. Det gir et stort marked for private helsetjenester, tannleger, fysioterapeuter, andre tjenester og samt varehandel. Med kort togreise til Oslo bor det også mange konsulenter og rådgivere i Drammen som driver eget selskap.",
+    helps: [
+      "Konsulenter og rådgivere med eget AS og holdingselskap",
+      HELFO,
+      "Frisører, hudpleie og skjønnhet",
+      FAGFOLK,
+      "Andre lokale bedrifter som yter tjenester og varer",
+    ],
+    meeting:
+      "Vi samarbeider digitalt med kunder i Drammen og møtes på video eller på Lysaker etter avtale.",
+    localFaq: [
+      {
+        q: "Jeg skal åpne klinikk i Drammen. Hva må jeg tenke på regnskapsmessig?",
+        a: "Valg av selskapsform, om tjenestene er MVA-pliktige eller unntatt, kassasystem og hvordan du skiller egne og selskapets penger. Vi hjelper deg med oppstarten, slik at regnskapet er satt opp riktig fra første dag.",
+      },
+      {
+        q: "Kan jeg ha regnskapsfører i Lillestrøm når bedriften er i Drammen?",
+        a: "Ja. Bilag, rapporter og møter håndteres digitalt. Det viktigste er en fast kontaktperson som svarer raskt.",
+      },
+    ],
+    nearby: ["asker", "baerum", "oslo"],
+  },
+];
+
+/** Tre spørsmål som står på alle bysidene. */
+export const sharedCityFaq = (city: City): CityFaq[] => [
+  {
+    q: "Må jeg møte opp på kontoret?",
+    a: "Nei. Det meste av samarbeidet skjer digitalt, med bilag i regnskapssystemet og møter på video. Vil du heller møtes fysisk, avtaler vi det i Lillestrøm, på Lysaker eller i Oslo.",
+  },
+  {
+    q: `Hva koster en regnskapsfører for et lite AS ${city.prep} ${city.name}?`,
+    a: "Vi har fast månedspris fra 1 950 kr eks. mva. Prisen avhenger av omsetning, antall bilag og om du har ansatte, og den er den samme uansett hvor i området du holder til. Kalkulatoren gir deg et estimat på et par minutter.",
+  },
+  {
+    q: "Kan dere ta over fra regnskapsføreren jeg har i dag?",
+    a: "Ja. Vi tar kontakt med nåværende regnskapsfører og ordner overleveringen. Les mer på siden om å bytte regnskapsfører.",
   },
 ];
 

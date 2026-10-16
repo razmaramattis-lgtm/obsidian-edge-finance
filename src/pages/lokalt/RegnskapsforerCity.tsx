@@ -1,73 +1,45 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { getCityBySlug, CITIES } from "@/data/cities";
-import { ArrowRight, MapPin, Phone, Clock, ShieldCheck, CheckCircle2, Building2 } from "lucide-react";
+import { getCityBySlug, CITIES, sharedCityFaq } from "@/data/cities";
+import { ArrowRight, MapPin, ShieldCheck, CheckCircle2, BadgeCheck, Layers, Building2 } from "lucide-react";
 import CityContactForm from "@/components/lokalt/CityContactForm";
+
+/** The shared answer ends with this sentence; it becomes a link to the switching page. */
+const SWITCH_SENTENCE = "Les mer på siden om å bytte regnskapsfører.";
 
 const RegnskapsforerCity = () => {
   const { city: slug } = useParams<{ city: string }>();
   const city = getCityBySlug(slug);
 
+  // Cities outside the core area no longer have their own page.
   if (!city) return <Navigate to="/regnskapsforer-i" replace />;
 
-  const title = `Regnskapsfører i ${city.name} 2026 | Avargo — fast pris fra 1 950 kr`;
-  const description = `Regnskapsfører i ${city.name}: fast pris fra 1 950 kr/mnd, dedikert kontaktperson, full digital flyt. Avargo tar regnskap, lønn, MVA og årsoppgjør for ${city.name}-bedrifter. Rask respons.`;
+  const where = `${city.prep} ${city.name}`;
+  const title = `Regnskapsfører ${where} – fast månedspris | Avargo`;
+  const description = `Statsautorisert regnskapsfører for små og mellomstore bedrifter ${where}. Fast pris fra 1 950 kr/mnd. Fiken, Tripletex og andre systemer.`;
   const url = `https://avargo.no/regnskapsforer-i/${city.slug}`;
 
-  const faq = [
-    {
-      q: `Hva koster en regnskapsfører i ${city.name}?`,
-      a: `Hos Avargo starter regnskap fra 1 950 kr/mnd for nye AS og enkeltpersonforetak i ${city.name}. Vi har fast pris uten skjulte tillegg — du vet alltid hva du betaler. Større selskaper får tilbud basert på antall bilag og tjenestebehov. Se hele prislisten på /priser.`,
-    },
-    {
-      q: `Trenger jeg en lokal regnskapsfører i ${city.name}?`,
-      a: `Nei. Moderne regnskapsføring foregår 100 % digitalt — du laster opp bilag fra mobilen, vi tar resten. Vi leverer til hele Norge, inkludert ${city.name}, uten at du trenger å besøke et kontor. Du får én dedikert kontaktperson som kjenner deg og bedriften din — ofte bedre oppfølging enn fra et lokalt byrå.`,
-    },
-    {
-      q: `Hvordan bytter jeg regnskapsfører i ${city.name}?`,
-      a: `Vi tar over hele regnskapet ditt — også hvis du har et eksisterende byrå i ${city.name}. Vi henter inn data fra Tripletex, Fiken, Conta, PowerOffice eller Visma, varsler tidligere byrå og gjør overgangen sømløs. Du betaler ingenting før du er over hos oss, og det tar typisk 2–4 uker.`,
-    },
-    {
-      q: `Hvor raskt svarer Avargo på henvendelser?`,
-      a: `Vi prioriterer å svare deg raskt på alle henvendelser fra ${city.name}-kunder, hverdager. Eksisterende kunder har i tillegg ubegrenset gratis telefonsupport — du betaler ikke per spørsmål eller per minutt.`,
-    },
-    {
-      q: `Hvilke bransjer i ${city.name} jobber dere med?`,
-      a: `Vi har spesialisert kompetanse på ${city.industries.join(", ").toLowerCase()} og en rekke andre bransjer i ${city.region}. Vi jobber ikke med sport- eller fritidsklienter.`,
-    },
-    {
-      q: `Tar dere både AS og enkeltpersonforetak i ${city.name}?`,
-      a: `Ja. Vi leverer komplett regnskap for både aksjeselskap (AS), enkeltpersonforetak (ENK), DA og NUF i ${city.name}. Pakkene tilpasses størrelse og kompleksitet — fra nystartet ENK til AS med ansatte og MVA-pliktig drift.`,
-    },
-    {
-      q: `Tar Avargo seg av lønn og A-melding for ${city.name}-bedrifter?`,
-      a: `Ja. Vi kjører lønn, beregner skattetrekk, sender A-melding hver måned, håndterer feriepenger og rapporterer arbeidsgiveravgift. Alt er inkludert i lønnspakken — ingen overraskelser.`,
-    },
-    {
-      q: `Kan jeg starte AS i ${city.name} med hjelp fra Avargo?`,
-      a: `Ja. Vi hjelper med oppstart av aksjeselskap eller enkeltpersonforetak i ${city.name} — fra valg av selskapsform, registrering i Brønnøysund, MVA-vurdering og oppsett av regnskapssystem. Første samtale er alltid gratis.`,
-    },
-    {
-      q: `Bruker dere Tripletex, Fiken eller Conta?`,
-      a: `Vi jobber med alle de store norske regnskapssystemene — Tripletex, Fiken, Conta, PowerOffice Go, Visma og Xledger. Du beholder systemet du har, eller vi anbefaler det som passer best for ${city.name}-bedriften din.`,
-    },
-  ];
+  const faq = [...city.localFaq, ...sharedCityFaq(city)];
+  const neighbours = city.nearby
+    .map((s) => CITIES.find((c) => c.slug === s))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "AccountingService",
-    name: `Avargo — Regnskapsfører i ${city.name}`,
+    "@id": `${url}#service`,
+    name: `Avargo – Regnskapsfører ${where}`,
     description,
     url,
-    image: "https://avargo.no/logo.png",
-    telephone: "",
+    image: "https://avargo.no/og-avargo.jpg",
     email: "kontakt@avargo.no",
+    telephone: "+4798642391",
     priceRange: "$$",
+    parentOrganization: { "@id": "https://avargo.no/#organization" },
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Blåbærbakken 17",
-      addressLocality: "Skarnes",
-      postalCode: "2100",
+      addressLocality: "Lillestrøm",
+      addressRegion: "Akershus",
       addressCountry: "NO",
     },
     areaServed: {
@@ -75,7 +47,7 @@ const RegnskapsforerCity = () => {
       name: city.name,
       containedInPlace: { "@type": "AdministrativeArea", name: city.county },
     },
-    serviceType: ["Regnskap", "Lønn", "Årsregnskap", "Skatteplanlegging", "CFO-tjenester"],
+    serviceType: ["Regnskap", "Lønn", "MVA", "Årsregnskap", "Skattemelding"],
   };
 
   const faqJsonLd = {
@@ -93,8 +65,8 @@ const RegnskapsforerCity = () => {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Hjem", item: "https://avargo.no/" },
-      { "@type": "ListItem", position: 2, name: "Regnskapsfører i Norge", item: "https://avargo.no/regnskapsforer-i" },
-      { "@type": "ListItem", position: 3, name: `${city.name}`, item: url },
+      { "@type": "ListItem", position: 2, name: "Områder", item: "https://avargo.no/regnskapsforer-i" },
+      { "@type": "ListItem", position: 3, name: city.name, item: url },
     ],
   };
 
@@ -114,14 +86,14 @@ const RegnskapsforerCity = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        {/* Hero */}
+        {/* 1–2. Overskrift og ingress */}
         <section className="relative overflow-hidden border-b border-border/10 pt-12 md:pt-20 pb-16 md:pb-24">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
           <div className="container mx-auto px-5 md:px-6 relative">
-            <nav className="flex items-center gap-2 text-[12px] text-foreground/40 mb-6">
+            <nav className="flex items-center gap-2 text-[12px] text-foreground/40 mb-6" aria-label="Brødsmuler">
               <Link to="/" className="hover:text-foreground/70">Hjem</Link>
               <span>/</span>
-              <Link to="/regnskapsforer-i" className="hover:text-foreground/70">Steder</Link>
+              <Link to="/regnskapsforer-i" className="hover:text-foreground/70">Områder</Link>
               <span>/</span>
               <span className="text-foreground/60">{city.name}</span>
             </nav>
@@ -129,12 +101,12 @@ const RegnskapsforerCity = () => {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[11px] tracking-wider uppercase mb-6">
                 <MapPin className="w-3 h-3" />
-                {city.region} · {city.county}
+                {city.region === city.county ? city.county : `${city.region} · ${city.county}`}
               </div>
 
               <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-light leading-[1.05] text-foreground mb-6">
                 Regnskapsfører<br />
-                <span className="text-primary">i {city.name}</span>
+                <span className="text-primary">{where}</span>
               </h1>
 
               <p className="text-lg md:text-xl text-foreground/70 font-light leading-relaxed max-w-2xl mb-10">
@@ -142,25 +114,24 @@ const RegnskapsforerCity = () => {
               </p>
 
               <div className="flex flex-wrap gap-3">
-                <Link to="/kontakt" className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
-                  Få tilbud — rask respons
+                <Link to="/priser" className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
+                  Se hva det koster for deg
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
-                <Link to="/priser" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-border/30 text-foreground/80 text-[14px] font-medium hover:bg-muted/30 transition-colors">
-                  Se priser
+                <Link to="/kontakt" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-border/30 text-foreground/80 text-[14px] font-medium hover:bg-muted/30 transition-colors">
+                  Ta kontakt
                 </Link>
               </div>
 
-              {/* Trust bar */}
               <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
                 {[
-                  { icon: ShieldCheck, label: "Autorisert byrå" },
-                  { icon: Clock, label: "Rask respons" },
-                  { icon: CheckCircle2, label: "Fast pris" },
-                  { icon: Phone, label: "Gratis support" },
+                  { icon: ShieldCheck, label: "Godkjent av Finanstilsynet" },
+                  { icon: BadgeCheck, label: "Statsautorisert regnskapsfører" },
+                  { icon: CheckCircle2, label: "Fast månedspris" },
+                  { icon: Layers, label: "Fiken, Tripletex, Conta" },
                 ].map((t) => (
                   <div key={t.label} className="flex items-center gap-2 text-[12px] text-foreground/55">
-                    <t.icon className="w-4 h-4 text-primary/70" />
+                    <t.icon className="w-4 h-4 text-primary/70 shrink-0" />
                     {t.label}
                   </div>
                 ))}
@@ -169,208 +140,64 @@ const RegnskapsforerCity = () => {
           </div>
         </section>
 
-        {/* Why Avargo for this city */}
-        <section className="py-16 md:py-24 border-b border-border/10">
-          <div className="container mx-auto px-5 md:px-6">
-            <div className="max-w-3xl mb-12">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Hvorfor Avargo</p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
-                Et helt team — ikke bare én regnskapsfører
-              </h2>
-              <p className="text-foreground/65 font-light text-lg leading-relaxed">
-                {city.name}-bedrifter trenger trygghet, ikke ferier som setter regnskapet på vent. Hos Avargo får du en dedikert kontaktperson, men hele teamet står bak — vi er aldri utilgjengelige fordi noen er borte.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Dedikert kontaktperson",
-                  desc: `Du får én fast regnskapsfører som kjenner ${city.name}-bedriften din og bransjen. Ingen call center, ingen ticket-systemer.`,
-                },
-                {
-                  title: "Fast pris fra 1 950 kr/mnd",
-                  desc: "Du betaler ikke per spørsmål eller per minutt. Pakkene inkluderer alt du trenger — fra bilag til årsregnskap.",
-                },
-                {
-                  title: "Full digital flyt",
-                  desc: "Last opp bilag fra mobilen, signér digitalt, se økonomien i sanntid. Tripletex, Fiken, Conta — vi bruker det du allerede har.",
-                },
-                {
-                  title: "Lokal bransjekompetanse",
-                  desc: `Vi har erfaring med ${city.industries.slice(0, 3).join(", ").toLowerCase()} og andre nøkkelbransjer i ${city.region}.`,
-                },
-                {
-                  title: "Strategisk rådgivning inkludert",
-                  desc: "Vi gjør mer enn å bokføre. Du får løpende rådgivning om skatt, lønn, vekst og struktur — uten timepris.",
-                },
-                {
-                  title: "Bytt regnskapsfører gratis",
-                  desc: `Bytter du fra et eksisterende byrå i ${city.name}? Vi tar over hele regnskapet kostnadsfritt — du betaler ingenting før du er over.`,
-                },
-              ].map((item) => (
-                <div key={item.title} className="p-6 rounded-2xl border border-border/15 bg-card/30 hover:border-primary/30 transition-colors">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="font-serif text-xl font-medium text-foreground mb-3">{item.title}</h3>
-                  <p className="text-foreground/60 text-[14px] leading-relaxed font-light">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Local industries + nearby */}
+        {/* 3–4. Næringslivet og hvem vi hjelper */}
         <section className="py-16 md:py-24 border-b border-border/10">
           <div className="container mx-auto px-5 md:px-6">
             <div className="grid md:grid-cols-2 gap-12 max-w-5xl">
               <div>
-                <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Bransjer i {city.name}</p>
+                <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Lokalt næringsliv</p>
                 <h2 className="font-serif text-3xl md:text-4xl font-light text-foreground mb-6">
-                  Vi kjenner næringslivet i {city.region}
+                  Næringslivet {where}
                 </h2>
-                <div className="flex flex-wrap gap-2">
-                  {city.industries.map((ind) => (
-                    <span key={ind} className="px-4 py-2 rounded-full bg-muted/40 border border-border/15 text-[13px] text-foreground/75">
-                      {ind}
-                    </span>
+                <p className="text-foreground/65 font-light text-lg leading-relaxed">{city.business}</p>
+              </div>
+              <div>
+                <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Kundene våre</p>
+                <h2 className="font-serif text-3xl md:text-4xl font-light text-foreground mb-6">
+                  Hvem vi hjelper {where}
+                </h2>
+                <ul className="space-y-3">
+                  {city.helps.map((h) => (
+                    <li key={h} className="flex gap-3 text-foreground/75 font-light leading-relaxed">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                      {h}
+                    </li>
                   ))}
-                </div>
+                </ul>
+                {city.helpsNote && <p className="mt-5 text-foreground/65 font-light">{city.helpsNote}</p>}
               </div>
-
-              {city.nearby && city.nearby.length > 0 && (
-                <div>
-                  <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Også i nærområdet</p>
-                  <h2 className="font-serif text-3xl md:text-4xl font-light text-foreground mb-6">
-                    Vi dekker hele regionen
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {city.nearby.map((n) => {
-                      const nearbyCity = CITIES.find((c) => c.name.toLowerCase() === n.toLowerCase());
-                      return nearbyCity ? (
-                        <Link
-                          key={n}
-                          to={`/regnskapsforer-i/${nearbyCity.slug}`}
-                          className="px-4 py-2 rounded-full bg-primary/5 border border-primary/20 text-[13px] text-primary hover:bg-primary/10 transition-colors"
-                        >
-                          {n}
-                        </Link>
-                      ) : (
-                        <span key={n} className="px-4 py-2 rounded-full bg-muted/40 border border-border/15 text-[13px] text-foreground/60">
-                          {n}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </section>
 
-        {/* Tjenester for byen */}
-        <section className="py-16 md:py-24 border-b border-border/10">
-          <div className="container mx-auto px-5 md:px-6">
-            <div className="max-w-3xl mb-10">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Tjenester</p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
-                Alt en regnskapsfører i {city.name} bør kunne — under ett tak
-              </h2>
-              <p className="text-foreground/65 font-light text-lg leading-relaxed">
-                Du slipper å sjonglere flere leverandører. Avargo dekker hele økonomifunksjonen for små og mellomstore bedrifter i {city.name} og {city.region}.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { t: `Løpende regnskap i ${city.name}`, d: "Bilagsføring, avstemming, rapporter og innsikt — månedlig oppdatert og tilgjengelig digitalt." },
-                { t: "Lønn og A-melding", d: `Vi kjører lønn for ansatte i ${city.name}-bedriften din, beregner trekk og sender A-melding hver måned.` },
-                { t: "MVA og merverdiavgift", d: "Toårige eller tomånedlige terminer — vi rapporterer og betaler i tide, hver gang." },
-                { t: "Årsregnskap og ligning", d: "Komplett årsoppgjør, signert av autorisert regnskapsfører og innsendt til Brønnøysund og Skatteetaten." },
-                { t: "Skatterådgivning", d: "Optimalisering av lønn vs. utbytte, skattefradrag, SkatteFUNN og pensjon — løpende, uten timepris." },
-                { t: "Oppstart av AS / ENK", d: `Hjelper deg å starte aksjeselskap eller enkeltpersonforetak i ${city.name} — fra registrering til første faktura.` },
-                { t: "CFO-tjenester", d: "Likviditetsstyring, budsjett, rapportering til styret og bank — som en intern økonomisjef, men leid inn." },
-                { t: "Bytte regnskapsfører", d: `Vi tar over hele regnskapet ditt fra eksisterende byrå i ${city.name} — kostnadsfritt og sømløst.` },
-                { t: "HR og personalhåndbok", d: "Arbeidsavtaler, HMS-håndbok, sykefraværsoppfølging og personalsystem — inkludert i HR-pakken." },
-              ].map((s) => (
-                <div key={s.t} className="p-5 rounded-2xl border border-border/15 bg-card/20 hover:border-primary/30 transition-colors">
-                  <h3 className="font-medium text-foreground mb-2 text-[15px]">{s.t}</h3>
-                  <p className="text-foreground/55 text-[13px] leading-relaxed font-light">{s.d}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Pris */}
-        <section className="py-16 md:py-24 border-b border-border/10">
-          <div className="container mx-auto px-5 md:px-6">
-            <div className="max-w-4xl">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Pris</p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
-                Hva koster en regnskapsfører i {city.name}?
-              </h2>
-              <p className="text-foreground/65 font-light text-lg leading-relaxed mb-10 max-w-2xl">
-                Avargo har fast månedspris — ingen timeforing, ingen overraskelser. Du vet hva du betaler før du begynner. Prisene gjelder hele {city.region}.
-              </p>
-              <div className="grid md:grid-cols-3 gap-4">
-                {[
-                  { name: "Oppstart", price: "fra 1 950 kr", per: "/mnd", desc: `Nystartet ENK eller AS i ${city.name} med få bilag.` },
-                  { name: "Vekst", price: "fra 2 990 kr", per: "/mnd", desc: "Aktive AS med MVA, lønn til 1–3 ansatte og rapportering." },
-                  { name: "Pro", price: "fra 5 490 kr", per: "/mnd", desc: "Etablerte selskaper med større volum, CFO-rådgivning og styrearbeid." },
-                ].map((p) => (
-                  <div key={p.name} className="p-6 rounded-2xl border border-border/20 bg-card/30">
-                    <p className="text-[11px] tracking-[0.25em] uppercase text-primary/70 mb-3">{p.name}</p>
-                    <p className="font-serif text-3xl text-foreground">{p.price}<span className="text-base text-foreground/50 font-light">{p.per}</span></p>
-                    <p className="mt-3 text-foreground/60 text-[14px] font-light leading-relaxed">{p.desc}</p>
-                  </div>
-                ))}
-              </div>
-              <Link to="/priser" className="mt-8 inline-flex items-center gap-2 text-primary text-[14px] hover:underline">
-                Se full prisoversikt <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Bytteprosess */}
+        {/* 5–6. Møter og samarbeid + knapp til kalkulatoren */}
         <section className="py-16 md:py-24 border-b border-border/10">
           <div className="container mx-auto px-5 md:px-6">
             <div className="max-w-3xl">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Bytte regnskapsfører</p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-6">
-                Slik bytter du til Avargo i {city.name}
-              </h2>
-              <p className="text-foreground/65 font-light text-lg leading-relaxed mb-10">
-                Mange {city.name}-bedrifter sitter fast hos et byrå som er for dyrt, for tregt eller for lite tilgjengelig. Å bytte er enklere enn du tror — og du betaler ingenting før alt er på plass.
-              </p>
-              <ol className="space-y-5">
-                {[
-                  { t: "1. Uforpliktende samtale", d: "Vi tar kontakt raskt — som regel samme arbeidsdag, kartlegger behov og gir et fast pristilbud — gratis." },
-                  { t: "2. Vi tar kontakt med tidligere byrå", d: `Du slipper de ubehagelige meldingene. Vi henter inn data, saldobalanse og åpne poster fra eksisterende regnskapsfører i ${city.name}.` },
-                  { t: "3. Oppsett og overgang", d: "Vi setter opp regnskapssystem (Tripletex, Fiken, Conta osv.), bankkobling og lønnssystem. Tar 1–2 uker." },
-                  { t: "4. Du er over — og betaler først nå", d: "Første faktura kommer den måneden vi tar over. Ingen oppsett-kostnad, ingen bindingstid." },
-                ].map((step) => (
-                  <li key={step.t} className="flex gap-5 p-5 rounded-2xl border border-border/15 bg-card/20">
-                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 shrink-0" />
-                    <div>
-                      <p className="font-medium text-foreground mb-1">{step.t}</p>
-                      <p className="text-foreground/60 text-[14px] font-light leading-relaxed">{step.d}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Samarbeid</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-light text-foreground mb-6">Møter og samarbeid</h2>
+              <p className="text-foreground/65 font-light text-lg leading-relaxed mb-10">{city.meeting}</p>
+              <div className="p-6 md:p-8 rounded-2xl border border-primary/20 bg-primary/5">
+                <p className="font-serif text-2xl text-foreground mb-2">Fast månedspris fra 1 950 kr</p>
+                <p className="text-foreground/65 font-light mb-5">
+                  Prisen avhenger av selskapsform, omsetning, antall bilag og om du har ansatte. Kalkulatoren gir deg et estimat på et par minutter.
+                </p>
+                <Link to="/priser" className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground text-[14px] font-medium hover:scale-[1.02] transition-transform">
+                  Beregn din pris
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
+        {/* 7. Spørsmål og svar */}
         <section className="py-16 md:py-24 border-b border-border/10">
           <div className="container mx-auto px-5 md:px-6">
             <div className="max-w-3xl mx-auto">
               <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Vanlige spørsmål</p>
               <h2 className="font-serif text-3xl md:text-5xl font-light text-foreground mb-12">
-                Regnskapsfører i {city.name} — hva lurer du på?
+                Regnskapsfører {where} – spørsmål og svar
               </h2>
               <div className="space-y-4">
                 {faq.map((f) => (
@@ -379,7 +206,18 @@ const RegnskapsforerCity = () => {
                       {f.q}
                       <ArrowRight className="w-4 h-4 text-primary group-open:rotate-90 transition-transform shrink-0" />
                     </summary>
-                    <p className="mt-4 text-foreground/65 font-light leading-relaxed">{f.a}</p>
+                    <p className="mt-4 text-foreground/65 font-light leading-relaxed">
+                      {f.a.endsWith(SWITCH_SENTENCE) ? (
+                        <>
+                          {f.a.slice(0, -SWITCH_SENTENCE.length)}
+                          <Link to="/bytte-regnskapsforer" className="text-primary hover:underline">
+                            {SWITCH_SENTENCE}
+                          </Link>
+                        </>
+                      ) : (
+                        f.a
+                      )}
+                    </p>
                   </details>
                 ))}
               </div>
@@ -387,16 +225,39 @@ const RegnskapsforerCity = () => {
           </div>
         </section>
 
-        {/* CTA — city-specific form */}
+        {/* 8. Lenker til nabobyer og bytte-siden */}
+        <section className="py-16 md:py-20 border-b border-border/10">
+          <div className="container mx-auto px-5 md:px-6">
+            <div className="max-w-3xl">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-primary/70 mb-4">Også i nærområdet</p>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {neighbours.map((n) => (
+                  <Link
+                    key={n.slug}
+                    to={`/regnskapsforer-i/${n.slug}`}
+                    className="px-4 py-2 rounded-full bg-primary/5 border border-primary/20 text-[13px] text-primary hover:bg-primary/10 transition-colors"
+                  >
+                    Regnskapsfører {n.prep} {n.name}
+                  </Link>
+                ))}
+              </div>
+              <Link to="/bytte-regnskapsforer" className="inline-flex items-center gap-2 text-primary text-[14px] hover:underline">
+                Vurderer du å bytte regnskapsfører? Slik går det til <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Kontaktskjema */}
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-5 md:px-6">
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-10">
                 <h2 className="font-serif text-4xl md:text-5xl font-light text-foreground mb-5">
-                  Klar for et regnskapsbyrå som faktisk svarer?
+                  Få et fastpristilbud
                 </h2>
                 <p className="text-foreground/65 font-light text-lg">
-                  Send en uforpliktende henvendelse — vi gir deg tilbud raskt, fast pris og full oversikt før du bestemmer deg.
+                  Send en uforpliktende henvendelse, så tar vi kontakt med et tilbud med fast månedspris.
                 </p>
               </div>
 
@@ -404,7 +265,7 @@ const RegnskapsforerCity = () => {
 
               <div className="mt-8 text-center inline-flex items-center gap-2 text-[13px] text-foreground/50 w-full justify-center">
                 <Building2 className="w-4 h-4" />
-                Avargo · Blåbærbakken 17, 2100 Skarnes · kontakt@avargo.no
+                Avargo Regnskap AS · Lillestrøm · kontakt@avargo.no
               </div>
             </div>
           </div>
