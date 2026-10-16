@@ -7,57 +7,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// ── Pricing model ────────────────────────────────────────────
-const BASE_PRICE = 1950;
-
-const companyForms = [
-  { key: "AS", label: "AS", desc: "Aksjeselskap", addon: 0 },
-  { key: "ENK", label: "ENK", desc: "Enkeltpersonforetak", addon: 0 },
-];
-
-const industries = [
-  { key: "tjeneste", label: "Tjenesteyting" },
-  { key: "varehandel", label: "Varehandel" },
-  { key: "nettbutikk", label: "Nettbutikk" },
-  { key: "bygg", label: "Bygg og anlegg" },
-  { key: "industri", label: "Industri" },
-  { key: "eiendom", label: "Eiendom" },
-  { key: "it", label: "IT og teknologi" },
-  { key: "bruktbil", label: "Bruktbil" },
-  { key: "helse", label: "Helse" },
-  { key: "restaurant", label: "Restaurant og kafé" },
-  { key: "transport", label: "Transport" },
-  { key: "kultur", label: "Kultur og media" },
-  { key: "utdanning", label: "Utdanning og kurs" },
-  { key: "annet", label: "Annet" },
-];
-
-// Revenue as a continuous slider. Values in NOK. > 5 000 000 triggers "custom offer" flow.
-const REVENUE_MIN = 0;
-const REVENUE_MAX = 5_000_000;
-const REVENUE_STEP = 100_000;
-const REVENUE_CUSTOM = REVENUE_MAX + REVENUE_STEP; // 5,1 mill = custom-tilbud flagg
-
-// Continuous pricing based on revenue (only counts up to 5 mill.)
-const priceFromRevenue = (nok: number) => {
-  const v = Math.min(nok, REVENUE_MAX);
-  if (v <= 500_000) return 0;
-  if (v <= 2_000_000) return 400;
-  if (v <= 3_500_000) return 900;
-  return 1400;
-};
-
-const bilagTiers = [
-  { key: "0", label: "0 – 20 bilag", addon: 0 },
-  { key: "1", label: "21 – 50 bilag", addon: 500 },
-  { key: "2", label: "51 – 100 bilag", addon: 1200 },
-  { key: "3", label: "101 – 200 bilag", addon: 2000 },
-  { key: "4", label: "200+ bilag", addon: 3000 },
-];
-
-const PAYROLL_ADDON = 100;
-const PAYROLL_EMPLOYEE_LIMIT = 5;
-const AARSOPPGJOR = 714;
+import {
+  companyForms,
+  industries,
+  REVENUE_MIN,
+  REVENUE_CUSTOM,
+  REVENUE_STEP,
+  bilagTiers,
+  PAYROLL_EMPLOYEE_LIMIT,
+  estimateMonthlyPrice,
+  needsCustomOffer,
+  priceForDisplay,
+} from "@/config/pricingModel";
 
 const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
   const id = useId();
@@ -81,21 +42,19 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const leadIdRef = useRef<Promise<string | null> | null>(null);
 
-  const isCustomOffer = revenue >= REVENUE_CUSTOM || payslips > PAYROLL_EMPLOYEE_LIMIT;
+  const isCustomOffer = needsCustomOffer({ revenue, employees: payslips });
 
   const revenueLabel = useMemo(() => {
     if (revenue >= REVENUE_CUSTOM) return "5 mill.+ (skreddersydd tilbud)";
     return `${revenue.toLocaleString("nb-NO")} kr`;
   }, [revenue]);
 
-  const price = useMemo(() => {
-    let p = BASE_PRICE;
-    p += priceFromRevenue(revenue);
-    p += bilagTiers[bilag]?.addon ?? 0;
-    if (payslips > 0 && payslips <= PAYROLL_EMPLOYEE_LIMIT) p += PAYROLL_ADDON;
-    if (aarsoppgjor) p += AARSOPPGJOR;
-    return p;
-  }, [revenue, bilag, payslips, aarsoppgjor]);
+  const price = useMemo(
+    () => estimateMonthlyPrice({ revenue, bilagIndex: bilag, employees: payslips, aarsoppgjor }),
+    [revenue, bilag, payslips, aarsoppgjor],
+  );
+  // What the visitor sees; the exact price is always stored on the inquiry.
+  const shownPrice = priceForDisplay(price);
 
   const contactValid =
     contactCompany.trim().length > 1 &&
@@ -157,7 +116,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
       `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
       `Antall ansatte: ${payslips}`,
       `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-      `${isCustomOffer ? `Kunde ønsker skreddersydd tilbud (${[revenue >= REVENUE_CUSTOM ? "omsetning > 5 mill." : "", payslips > PAYROLL_EMPLOYEE_LIMIT ? "flere enn 5 ansatte" : ""].filter(Boolean).join(", ")})` : `Pris vist til kunden: ${price.toLocaleString("nb-NO")} kr/mnd eks. mva`}`,
+      `${isCustomOffer ? `Kunde ønsker skreddersydd tilbud (${[revenue >= REVENUE_CUSTOM ? "omsetning > 5 mill." : "", payslips > PAYROLL_EMPLOYEE_LIMIT ? "flere enn 5 ansatte" : ""].filter(Boolean).join(", ")})` : `Beregnet pris: ${price.toLocaleString("nb-NO")} kr/mnd eks. mva (kunden så: ${shownPrice.prefix}${shownPrice.amount} kr/mnd)`}`,
     ].join("\n");
     return `${heading}\n\n${summaryLines}\n\nKundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
   };
@@ -525,7 +484,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                         <p className="text-lg font-medium text-foreground mb-4">7. Din pris</p>
                         <div className="p-5 rounded-2xl bg-primary/8 border border-primary/20 mb-5">
                           <p className="text-xs uppercase tracking-[0.15em] text-primary/80 font-medium mb-1">
-                            {isCustomOffer ? "Skreddersydd tilbud" : "Din fastpris"}
+                            {isCustomOffer ? "Skreddersydd tilbud" : shownPrice.isEstimate ? "Ditt prisestimat" : "Din fastpris"}
                           </p>
                           {isCustomOffer ? (
                             <p className="font-heading text-3xl md:text-4xl text-foreground">Tilpasset tilbud</p>
@@ -536,7 +495,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                               transition={{ duration: 0.35 }}
                               className="font-heading text-4xl md:text-5xl text-foreground"
                             >
-                              {price.toLocaleString("nb-NO")}{" "}
+                              {shownPrice.prefix}{shownPrice.amount}{" "}
                               <span className="text-lg md:text-xl text-foreground/50 font-light">kr/mnd (eks. mva)</span>
                             </motion.p>
                           )}
@@ -605,7 +564,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                             <p className="font-heading text-2xl text-foreground">Skreddersydd tilbud</p>
                           ) : (
                             <p className="font-heading text-2xl text-foreground">
-                              {price.toLocaleString("nb-NO")}{" "}
+                              {shownPrice.prefix}{shownPrice.amount}{" "}
                               <span className="text-base text-foreground/50 font-light">kr/mnd</span>
                             </p>
                           )}

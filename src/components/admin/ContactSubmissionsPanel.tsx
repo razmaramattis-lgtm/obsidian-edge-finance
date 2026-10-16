@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2, UserPlus, Eye, EyeOff, Shuffle, CheckSquare, Square } from "lucide-react";
+import { Mail, Phone, Building2, User, Package, TrendingUp, MapPin, MessageSquare, Check, Archive, ChevronDown, ChevronUp, Loader2, Search, Clock, CheckCircle, ArchiveIcon, Trash2, UserPlus, Eye, EyeOff, Shuffle, CheckSquare, Square, CalendarCheck, Send, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -34,11 +34,21 @@ interface CreateCustomerForm {
   contact_phone: string;
 }
 
+// The sales pipeline for an inquiry, in order. "contacted" and "archived"
+// keep their old keys so notifications and older rows still match.
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   new: { label: "Ny", color: "bg-destructive/10 text-destructive", icon: Clock },
-  contacted: { label: "Kundearkiv", color: "bg-primary/10 text-primary", icon: CheckCircle },
-  archived: { label: "Arkivert", color: "bg-muted text-muted-foreground", icon: ArchiveIcon },
+  contacted: { label: "Kontaktet", color: "bg-primary/10 text-primary", icon: Phone },
+  meeting: { label: "Møte avtalt", color: "bg-primary/10 text-primary", icon: CalendarCheck },
+  offer: { label: "Tilbud sendt", color: "bg-primary/10 text-primary", icon: Send },
+  won: { label: "Ble kunde", color: "bg-green-500/10 text-green-600", icon: CheckCircle },
+  lost: { label: "Tapt", color: "bg-muted text-muted-foreground", icon: XCircle },
+  archived: { label: "Ikke aktuell", color: "bg-muted text-muted-foreground", icon: ArchiveIcon },
 };
+const STATUS_ORDER = ["new", "contacted", "meeting", "offer", "won", "lost", "archived"] as const;
+type StatusKey = (typeof STATUS_ORDER)[number];
+/** Inquiries still being worked on: not yet won, lost or set aside. */
+const OPEN_STATUSES = new Set<string>(["new", "contacted", "meeting", "offer"]);
 
 const inputCls = "w-full h-10 rounded-xl border border-border/30 bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
 
@@ -54,7 +64,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "new" | "contacted" | "archived">("all");
+  const [filter, setFilter] = useState<"all" | "open" | StatusKey>("all");
   const [viewTarget, setViewTarget] = useState<Submission | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -79,13 +89,12 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    await supabase.from("contact_submissions").update({ status }).eq("id", id);
-    if (status === "contacted") {
-      toast.success("Markert som kontaktet – flyttet til kundearkiv");
-      setFilter("contacted");
-    } else {
-      toast.success(status === "archived" ? "Arkivert" : "Status oppdatert");
+    const { error } = await supabase.from("contact_submissions").update({ status, updated_at: new Date().toISOString() }).eq("id", id);
+    if (error) {
+      toast.error("Kunne ikke oppdatere status");
+      return;
     }
+    toast.success(`Status: ${statusConfig[status]?.label ?? status}`);
     await load();
     onStatusChange?.();
   };
@@ -173,7 +182,7 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
 
       // Mark submission as archived after customer creation
       if (createSource) {
-        await supabase.from("contact_submissions").update({ status: "archived" }).eq("id", createSource.id);
+        await supabase.from("contact_submissions").update({ status: "won", updated_at: new Date().toISOString() }).eq("id", createSource.id);
       }
 
       toast.success(`Kunde opprettet! Velkomst-e-post sendt til ${createForm.email}`);
@@ -188,16 +197,16 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
   };
 
   const filtered = items.filter(s => {
-    if (filter !== "all" && s.status !== filter) return false;
+    if (filter === "open" && !OPEN_STATUSES.has(s.status)) return false;
+    if (filter !== "all" && filter !== "open" && s.status !== filter) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return [s.company_name, s.contact_person, s.email, s.phone, s.message, s.package, s.industry]
       .some(f => f?.toLowerCase().includes(q));
   });
 
-  const newCount = items.filter(s => s.status === "new").length;
-  const contactedCount = items.filter(s => s.status === "contacted").length;
-  const archivedCount = items.filter(s => s.status === "archived").length;
+  const countOf = (k: string) => items.filter(s => s.status === k).length;
+  const openCount = items.filter(s => OPEN_STATUSES.has(s.status)).length;
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Loader2 size={20} className="animate-spin text-muted-foreground" /></div>;
@@ -211,11 +220,15 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
         {[
-          { label: "Nye", count: newCount, color: "text-destructive", filterKey: "new" as const },
-          { label: "Kundearkiv", count: contactedCount, color: "text-primary", filterKey: "contacted" as const },
-          { label: "Arkivert", count: archivedCount, color: "text-muted-foreground", filterKey: "archived" as const },
+          { label: "Under arbeid", count: openCount, color: "text-foreground", filterKey: "open" as const },
+          ...STATUS_ORDER.map(k => ({
+            label: statusConfig[k].label,
+            count: countOf(k),
+            color: k === "new" ? "text-destructive" : k === "won" ? "text-green-600" : k === "lost" || k === "archived" ? "text-muted-foreground" : "text-primary",
+            filterKey: k,
+          })),
         ].map(s => (
           <button
             key={s.filterKey}
@@ -389,46 +402,19 @@ const ContactSubmissionsPanel = ({ onStatusChange }: { onStatusChange?: () => vo
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-3 border-t border-border/10 flex-wrap">
-                    {s.status === "new" && (
-                      <>
-                        <button
-                          onClick={() => updateStatus(s.id, "contacted")}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                        >
-                          <Check size={11} />
-                          Marker som kontaktet
-                        </button>
-                        <button
-                          onClick={() => updateStatus(s.id, "archived")}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                        >
-                          <Archive size={11} />
-                          Arkiver
-                        </button>
-                      </>
-                    )}
-                    {s.status === "contacted" && (
-                      <>
-                        <button
-                          onClick={() => openCreateDialog(s)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                        >
-                          <UserPlus size={11} />
-                          Opprett som kunde
-                        </button>
-                      </>
-                    )}
-                    {s.status === "archived" && (
-                      <button
-                        onClick={() => updateStatus(s.id, "new")}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    <label className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                      Status
+                      <select
+                        value={STATUS_ORDER.includes(s.status as StatusKey) ? s.status : "new"}
+                        onChange={(e) => updateStatus(s.id, e.target.value)}
+                        className="h-8 rounded-lg border border-border/30 bg-muted/30 px-2 text-[11px] font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
                       >
-                        <Clock size={11} />
-                        Gjenåpne
-                      </button>
-                    )}
-
-                    {s.status === "new" && (
+                        {STATUS_ORDER.map(k => (
+                          <option key={k} value={k}>{statusConfig[k].label}</option>
+                        ))}
+                      </select>
+                    </label>
+                    {s.status !== "won" && (
                       <button
                         onClick={() => openCreateDialog(s)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors"
