@@ -12,9 +12,9 @@ import GoogleReviews from "@/components/GoogleReviews";
 
 import heroBg from "@/assets/hero-bg.jpg";
 
-import hubPartner from "@/assets/hub-partner.jpg";
-import hubFastpris from "@/assets/hub-fastpris.jpg";
-import hubTeam from "@/assets/hub-team.jpg";
+import hubPartner from "@/assets/hub-partner.jpg.asset.json";
+import hubFastpris from "@/assets/hub-fastpris.jpg.asset.json";
+import hubTeam from "@/assets/hub-team.jpg.asset.json";
 import regnskapNorgeLogo from "@/assets/partners/RN_sort-logo-digitalt-bruk.webp.asset.json";
 import tripletexLogo from "@/assets/partners/Tripletex-logo.webp.asset.json";
 import folioLogo from "@/assets/partners/Folio-logo.png.asset.json";
