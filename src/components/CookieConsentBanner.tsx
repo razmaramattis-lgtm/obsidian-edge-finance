@@ -34,17 +34,17 @@ const CookieConsentBanner = () => {
       role="dialog"
       aria-modal="false"
       aria-labelledby="cookie-title"
-      className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-xl rounded-xl border border-border bg-card p-5 text-card-foreground shadow-2xl sm:bottom-5"
+      className="fixed inset-x-2 bottom-2 z-[100] mx-auto max-w-xl rounded-xl border border-border bg-card px-4 py-3 text-card-foreground shadow-2xl sm:bottom-5 sm:p-5"
     >
-      <h2 id="cookie-title" className="font-heading text-base font-semibold">Informasjonskapsler</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Vil du la oss bruke informasjonskapsler fra Google Ads for å måle hvilke annonser som fører til at noen tar kontakt?
-        Ingenting brukes til dette uten ditt samtykke, og du kan endre valget når som helst via «Cookie-innstillinger» nederst på siden.{" "}
-        <Link to="/personvern" className="underline underline-offset-2">Les mer i personvernerklæringen</Link>.
+      <h2 id="cookie-title" className="sr-only">Informasjonskapsler</h2>
+      <p className="text-[13px] leading-snug text-muted-foreground sm:text-sm">
+        Vi vil bruke informasjonskapsler fra Google Ads for å måle hvilke annonser som gir henvendelser. Det skjer bare hvis du godtar,
+        og du kan endre valget nederst på siden.{" "}
+        <Link to="/personvern" className="underline underline-offset-2">Personvern</Link>
       </p>
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <Button variant="outline" onClick={() => choose("denied")}>Avslå</Button>
-        <Button onClick={() => choose("granted")}>Godta</Button>
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+        <Button variant="outline" size="sm" onClick={() => choose("denied")}>Avslå</Button>
+        <Button size="sm" onClick={() => choose("granted")}>Godta</Button>
       </div>
     </div>
   );

@@ -6,6 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 const PricingCalculator = lazy(() => import("@/components/PricingCalculator"));
 const SHOWN_KEY = "avargo_pricing_popup_shown";
 const START_KEY = "avargo_pricing_popup_started";
+/** Time on site and share of the page read before the invitation may open. */
+const MIN_TIME_MS = 45_000;
+const MIN_SCROLL_SHARE = 0.5;
+/** Phones get the fixed bottom button instead; a full-screen dialog there blocks reading. */
+const DESKTOP_QUERY = "(min-width: 768px)";
 
 const PricingCalculatorDialog = () => {
   const { pathname } = useLocation();
@@ -16,6 +21,7 @@ const PricingCalculatorDialog = () => {
     // Pages that already show the calculator or a contact/booking form: a
     // popup there would cover the very form the visitor is about to use.
     if (/(^|\/)(priser|kontakt|book-mote)\/?$/.test(pathname)) return;
+    if (!window.matchMedia(DESKTOP_QUERY).matches) return;
     let started = Date.now();
     try {
       if (sessionStorage.getItem(SHOWN_KEY)) return;
@@ -25,8 +31,16 @@ const PricingCalculatorDialog = () => {
     } catch { /* Session memory still prevents repeat prompts. */ }
     if (shown.current) return;
 
+    let readShare = 0;
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0) readShare = Math.max(readShare, window.scrollY / max);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     const check = () => {
-      if (shown.current || Date.now() - started < 8_000 || document.visibilityState !== "visible") return;
+      if (shown.current || Date.now() - started < MIN_TIME_MS || document.visibilityState !== "visible") return;
+      if (readShare < MIN_SCROLL_SHARE) return;
       // Never stack on consent, booking, contact, or other dialogs.
       if (document.querySelector('[role="dialog"], [role="alertdialog"], [data-avargo-overlay]')) return;
       shown.current = true;
@@ -34,7 +48,10 @@ const PricingCalculatorDialog = () => {
       setOpen(true);
     };
     const timer = window.setInterval(check, 500);
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [pathname]);
 
   return (

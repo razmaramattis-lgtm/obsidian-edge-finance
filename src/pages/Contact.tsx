@@ -362,24 +362,24 @@ const Contact = () => {
       })}</script>
 
     </Helmet>
-    <section className="py-24 md:py-40 relative">
+    <section className="pt-24 pb-16 md:py-40 relative">
       <div className="absolute inset-0 ambient-glow opacity-40" />
       <div className="container mx-auto px-4 md:px-6 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24 max-w-5xl mx-auto">
           {/* Left */}
           <AnimatedSection>
             <p className="text-xs tracking-[0.4em] uppercase text-secondary mb-5 md:mb-6">{contactCopy?.tag || "Uforpliktende henvendelse"}</p>
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl mb-6 md:mb-8 leading-snug">
+            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl mb-4 md:mb-8 leading-snug">
               {contactCopy?.headline || "Fortell oss om selskapet ditt."}{" "}
               <span className="italic text-gradient-rose">Vi tar det derfra.</span>
             </h1>
-            <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
+            <p className="hidden md:block text-foreground/70 text-base md:text-lg leading-relaxed mb-5 md:mb-6 font-light">
               {contactCopy?.sub || "Du får en dedikert, statsautorisert regnskapsfører som investerer seg i selskapet ditt. Fyll ut skjemaet, så tar vi kontakt raskt — som regel samme arbeidsdag — med et tilpasset og helt uforpliktende forslag."}
             </p>
-            <p className="text-sm text-primary italic font-light mb-8 md:mb-10">
+            <p className="hidden md:block text-sm text-primary italic font-light mb-8 md:mb-10">
               {contactCopy?.italic || "Ingen binding. Ingen forpliktelser. Bare en samtale om hva du faktisk trenger."}
             </p>
-            <div className="space-y-3 md:space-y-4 mb-8 md:mb-10">
+            <div className="hidden md:block space-y-3 md:space-y-4 mb-8 md:mb-10">
               {(contactCopy?.bullets || ["Statsautorisert regnskapsfører fra dag én", "Alt inkludert i én fast pris", "Tilpasset din bransje og ditt selskap", "Rask respons — vi vet tiden din er verdifull"]).map((item) => (
                 <div key={item} className="flex items-center gap-3 text-sm text-foreground/70 font-light">
                   <Check size={14} className="text-secondary shrink-0" strokeWidth={2} />
@@ -387,6 +387,7 @@ const Contact = () => {
                 </div>
               ))}
             </div>
+            <p className="md:hidden text-sm text-foreground/70 font-light mb-2">Svar som regel samme arbeidsdag. Ingen binding.</p>
             <div className="space-y-3 text-sm text-foreground/60 font-light">
               <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary/50" /><span>Åpent man–fre 08:00–16:00</span></div>
               <div className="flex items-center gap-3">
