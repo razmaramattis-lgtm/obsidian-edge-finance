@@ -1,4 +1,4 @@
-import { useState, useMemo, useId } from "react";
+import { useState, useMemo, useId, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Sparkles, Send, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -71,7 +71,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
   const [payslips, setPayslips] = useState<number>(0);
   const [aarsoppgjor, setAarsoppgjor] = useState<boolean>(false);
 
-  // Step 6 form fields
+  // Contact fields (step 1)
   const [contactCompany, setContactCompany] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -79,6 +79,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const leadIdRef = useRef<Promise<string | null> | null>(null);
 
   const isCustomOffer = revenue >= REVENUE_CUSTOM || payslips > PAYROLL_EMPLOYEE_LIMIT;
 
@@ -111,55 +112,90 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
 
   const goNext = () => setStep((s) => Math.min(7, s + 1));
 
+  const pagePath = typeof window !== "undefined" ? window.location.pathname : "";
+
+  const contactBody = () => ({
+    contact_person: contactCompany.trim().slice(0, 160),
+    company_name: contactCompany.trim().slice(0, 160),
+    email: contactEmail.trim().toLowerCase().slice(0, 255),
+    phone: contactPhone.trim().slice(0, 40),
+    referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
+  });
+
+  // Saves the lead as soon as contact details are entered, so it is kept even
+  // if the visitor stops here. The returned id lets the later summary update
+  // the same inquiry instead of creating a second one.
   const startLead = () => {
     if (!contactValid) return;
-    // Save the lead immediately so it is kept even if the visitor stops here.
-    supabase.functions
-      .invoke("contact-submit", {
-        body: {
-          contact_person: contactCompany.trim().slice(0, 160),
-          company_name: contactCompany.trim().slice(0, 160),
-          email: contactEmail.trim().toLowerCase().slice(0, 255),
-          phone: contactPhone.trim().slice(0, 40),
-          source: `pricing-calculator-start:${typeof window !== "undefined" ? window.location.pathname : ""}`,
-          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
-          message: "Startet priskalkulator",
-        },
-      })
-      .catch((e) => console.error(e));
+    if (!leadIdRef.current) {
+      leadIdRef.current = supabase.functions
+        .invoke("contact-submit", {
+          body: {
+            ...contactBody(),
+            source: `pricing-calculator-start:${pagePath}`,
+            message: "Startet priskalkulator (har ikke sett prisen ennå)",
+          },
+        })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return (data?.submission_id as string | undefined) ?? null;
+        })
+        .catch((e) => {
+          console.error(e);
+          return null;
+        });
+    }
     goNext();
   };
   const goBack = () => setStep((s) => Math.max(1, s - 1));
+
+  const buildSummary = (heading: string) => {
+    const summaryLines = [
+      `Selskapsform: ${form ?? "—"}`,
+      `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
+      `Årlig omsetning: ${revenueLabel}`,
+      `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
+      `Antall ansatte: ${payslips}`,
+      `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
+      `${isCustomOffer ? `Kunde ønsker skreddersydd tilbud (${[revenue >= REVENUE_CUSTOM ? "omsetning > 5 mill." : "", payslips > PAYROLL_EMPLOYEE_LIMIT ? "flere enn 5 ansatte" : ""].filter(Boolean).join(", ")})` : `Pris vist til kunden: ${price.toLocaleString("nb-NO")} kr/mnd eks. mva`}`,
+    ].join("\n");
+    return `${heading}\n\n${summaryLines}\n\nKundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
+  };
+
+  const sendSummary = async (source: string, heading: string) => {
+    // Wait briefly for the step 1 save. If it is slow or failed, send anyway as
+    // a new inquiry rather than leaving the visitor waiting.
+    const submissionId = leadIdRef.current
+      ? await Promise.race([
+          leadIdRef.current,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000)),
+        ])
+      : null;
+    const { data, error } = await supabase.functions.invoke("contact-submit", {
+      body: {
+        ...contactBody(),
+        submission_id: submissionId,
+        source: `${source}:${pagePath}`,
+        message: buildSummary(heading).slice(0, 2000),
+      },
+    });
+    if (error) throw error;
+    if (data?.submission_id) leadIdRef.current = Promise.resolve(data.submission_id as string);
+  };
+
+  // Step 6 → 7: the visitor now sees the price. Store the full answers and the
+  // price on the lead right away, whether or not they press "Send forespørsel".
+  const showPrice = () => {
+    goNext();
+    sendSummary("pricing-calculator-price", "Kunden har sett prisen i kalkulatoren").catch((e) => console.error(e));
+  };
 
   const submitOffer = async () => {
     if (submitting) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const summaryLines = [
-        `Selskapsform: ${form ?? "—"}`,
-        `Bransje: ${industries.find((i) => i.key === industry)?.label ?? "—"}`,
-        `Årlig omsetning: ${revenueLabel}`,
-        `Bilag/mnd: ${bilagTiers[bilag]?.label ?? "—"}`,
-        `Antall ansatte: ${payslips}`,
-        `Årsoppgjør: ${aarsoppgjor ? "Ja" : "Nei"}`,
-        `${isCustomOffer ? `Kunde ønsker skreddersydd tilbud (${[revenue >= REVENUE_CUSTOM ? "omsetning > 5 mill." : "", payslips > PAYROLL_EMPLOYEE_LIMIT ? "flere enn 5 ansatte" : ""].filter(Boolean).join(", ")})` : `Estimert fastpris: ${price.toLocaleString("nb-NO")} kr/mnd`}`,
-      ].join("\n");
-      const fullMessage =
-        `Prisforespørsel fra prisvurderingskalkulator\n\n${summaryLines}\n\n` +
-        `Kundens melding:\n${contactMessage.trim() || "(Ingen melding)"}`;
-      const { error } = await supabase.functions.invoke("contact-submit", {
-        body: {
-          contact_person: contactCompany.trim().slice(0, 160),
-          company_name: contactCompany.trim().slice(0, 160),
-          email: contactEmail.trim().toLowerCase().slice(0, 255),
-          phone: contactPhone.trim().slice(0, 40),
-          source: `pricing-calculator:${typeof window !== "undefined" ? window.location.pathname : ""}`,
-          referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) : null,
-          message: fullMessage.slice(0, 2000),
-        },
-      });
-      if (error) throw error;
+      await sendSummary("pricing-calculator", "Kunden ber om gjennomgang av tilbudet");
       setSubmitted(true);
     } catch (e) {
       console.error(e);
@@ -596,7 +632,7 @@ const PricingCalculator = ({ embedded = false }: { embedded?: boolean }) => {
                     <Button
                       variant="ghost"
                                 type="button"
-                      onClick={step === 1 ? startLead : goNext}
+                      onClick={step === 1 ? startLead : step === 6 ? showPrice : goNext}
                       disabled={!canNext}
                       className="group flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-full bg-foreground text-background text-sm font-medium tracking-wider hover:bg-primary hover:text-primary-foreground transition-all duration-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-foreground disabled:hover:text-background"
                     >

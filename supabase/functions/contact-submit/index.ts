@@ -198,18 +198,50 @@ serve(async (req) => {
 
     const sectionLabel = safeSection ? SECTION_LABELS[safeSection] || safeSection : null;
 
+    // The pricing calculator stores the lead as soon as contact details are
+    // entered, then sends the full answers later. When it passes back the id
+    // from that first save, update the same row instead of creating a second
+    // inquiry. The id must match the same email, a calculator start row and a
+    // recent timestamp, so an id alone cannot be used to overwrite other rows.
+    const submissionId = asString(body?.submission_id, 64);
+    let savedId: string | null = null;
+    if (/^[0-9a-f-]{36}$/i.test(submissionId) && safeEmail) {
+      const since = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+      const { data: updated, error: updateError } = await supabase
+        .from("contact_submissions")
+        .update({
+          company_name: safeCompany, contact_person: safeContact, phone: safePhone,
+          industry: safeIndustry, revenue_target: safeRevenue, message: safeMessage,
+          package: safePackage, source: safeSource, updated_at: new Date().toISOString(),
+        })
+        .eq("id", submissionId)
+        .eq("email", safeEmail)
+        .like("source", "pricing-calculator%")
+        .gte("created_at", since)
+        .select("id")
+        .maybeSingle();
+      if (updateError) console.error("Update error:", updateError);
+      if (updated?.id) savedId = updated.id as string;
+    }
+
     // Retry the insert on transient backend errors so leads are never lost
     let dbError: unknown = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const { error } = await supabase
+    for (let attempt = 0; attempt < 3 && !savedId; attempt++) {
+      const { data: inserted, error } = await supabase
         .from("contact_submissions")
         .insert({
           company_name: safeCompany, org_number: safeOrg, contact_person: safeContact, email: safeEmail || null, phone: safePhone,
           industry: safeIndustry, industry_code: safeIndustryCode, revenue_target: safeRevenue, message: safeMessage, package: safePackage,
           section: safeSection, source: safeSource, referrer: safeReferrer,
-        });
+        })
+        .select("id")
+        .single();
       dbError = error;
-      if (!error) break;
+      if (!error) {
+        savedId = (inserted?.id as string) ?? null;
+        dbError = null;
+        break;
+      }
       await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
     }
 
@@ -265,7 +297,7 @@ serve(async (req) => {
       void enqueueNotification();
     }
     return new Response(
-      JSON.stringify({ success: true, email_queued: true }),
+      JSON.stringify({ success: true, email_queued: true, submission_id: savedId }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
